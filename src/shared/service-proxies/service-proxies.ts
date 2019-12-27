@@ -7111,8 +7111,8 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateContactInput | null | undefined): Observable<CreateContactOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/Create";
+    createOrUpdateContact(body: CreateOrUpdateContactInput | null | undefined): Observable<CreateOrUpdateContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/CreateOrUpdateContact";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -7128,20 +7128,20 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
+            return this.processCreateOrUpdateContact(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreate(<any>response_);
+                    return this.processCreateOrUpdateContact(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateContactOutput>><any>_observableThrow(e);
+                    return <Observable<CreateOrUpdateContactOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateContactOutput>><any>_observableThrow(response_);
+                return <Observable<CreateOrUpdateContactOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<CreateContactOutput> {
+    protected processCreateOrUpdateContact(response: HttpResponseBase): Observable<CreateOrUpdateContactOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7152,7 +7152,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateContactOutput.fromJS(resultData200) : new CreateContactOutput();
+            result200 = resultData200 ? CreateOrUpdateContactOutput.fromJS(resultData200) : new CreateOrUpdateContactOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -7160,7 +7160,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateContactOutput>(<any>null);
+        return _observableOf<CreateOrUpdateContactOutput>(<any>null);
     }
 
     /**
@@ -42429,8 +42429,9 @@ export interface ITrackingInfo {
     clientIp: string | undefined;
 }
 
-export class CreateContactInput implements ICreateContactInput {
+export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     matchExisting!: boolean | undefined;
+    contactId!: number | undefined;
     contactXRef!: string | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
@@ -42470,7 +42471,7 @@ export class CreateContactInput implements ICreateContactInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
 
-    constructor(data?: ICreateContactInput) {
+    constructor(data?: ICreateOrUpdateContactInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -42482,6 +42483,7 @@ export class CreateContactInput implements ICreateContactInput {
     init(data?: any) {
         if (data) {
             this.matchExisting = data["matchExisting"];
+            this.contactId = data["contactId"];
             this.contactXRef = data["contactXRef"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
@@ -42551,9 +42553,9 @@ export class CreateContactInput implements ICreateContactInput {
         }
     }
 
-    static fromJS(data: any): CreateContactInput {
+    static fromJS(data: any): CreateOrUpdateContactInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactInput();
+        let result = new CreateOrUpdateContactInput();
         result.init(data);
         return result;
     }
@@ -42561,6 +42563,7 @@ export class CreateContactInput implements ICreateContactInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["matchExisting"] = this.matchExisting;
+        data["contactId"] = this.contactId;
         data["contactXRef"] = this.contactXRef;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
@@ -42631,8 +42634,9 @@ export class CreateContactInput implements ICreateContactInput {
     }
 }
 
-export interface ICreateContactInput {
+export interface ICreateOrUpdateContactInput {
     matchExisting: boolean | undefined;
+    contactId: number | undefined;
     contactXRef: string | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
@@ -42673,14 +42677,14 @@ export interface ICreateContactInput {
     newUserPassword: string | undefined;
 }
 
-export class CreateContactOutput implements ICreateContactOutput {
+export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput {
     contactId!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
-    userCode!: string | undefined;
+    userKey!: string | undefined;
     autoLoginLink!: string | undefined;
 
-    constructor(data?: ICreateContactOutput) {
+    constructor(data?: ICreateOrUpdateContactOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -42694,14 +42698,14 @@ export class CreateContactOutput implements ICreateContactOutput {
             this.contactId = data["contactId"];
             this.leadId = data["leadId"];
             this.userId = data["userId"];
-            this.userCode = data["userCode"];
+            this.userKey = data["userKey"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
 
-    static fromJS(data: any): CreateContactOutput {
+    static fromJS(data: any): CreateOrUpdateContactOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactOutput();
+        let result = new CreateOrUpdateContactOutput();
         result.init(data);
         return result;
     }
@@ -42711,17 +42715,17 @@ export class CreateContactOutput implements ICreateContactOutput {
         data["contactId"] = this.contactId;
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
-        data["userCode"] = this.userCode;
+        data["userKey"] = this.userKey;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
 }
 
-export interface ICreateContactOutput {
+export interface ICreateOrUpdateContactOutput {
     contactId: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
-    userCode: string | undefined;
+    userKey: string | undefined;
     autoLoginLink: string | undefined;
 }
 
@@ -59116,7 +59120,6 @@ export interface IImportBusinessInput {
 export class ImportItemInput implements IImportItemInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
-    userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
@@ -59157,7 +59160,6 @@ export class ImportItemInput implements IImportItemInput {
         if (data) {
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
-            this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -59198,7 +59200,6 @@ export class ImportItemInput implements IImportItemInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
-        data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
@@ -59232,7 +59233,6 @@ export class ImportItemInput implements IImportItemInput {
 export interface IImportItemInput {
     contactId: number | undefined;
     contactXref: string | undefined;
-    userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
@@ -59539,7 +59539,6 @@ export class ImportContactInput implements IImportContactInput {
     overrideLists!: boolean | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
-    userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
@@ -59600,7 +59599,6 @@ export class ImportContactInput implements IImportContactInput {
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
-            this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -59658,7 +59656,6 @@ export class ImportContactInput implements IImportContactInput {
         data["overrideLists"] = this.overrideLists;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
-        data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
@@ -59701,7 +59698,6 @@ export interface IImportContactInput {
     overrideLists: boolean | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
-    userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
@@ -62039,7 +62035,7 @@ export class CreateLeadOutput implements ICreateLeadOutput {
     contactId!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
-    userCode!: string | undefined;
+    userKey!: string | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateLeadOutput) {
@@ -62056,7 +62052,7 @@ export class CreateLeadOutput implements ICreateLeadOutput {
             this.contactId = data["contactId"];
             this.leadId = data["leadId"];
             this.userId = data["userId"];
-            this.userCode = data["userCode"];
+            this.userKey = data["userKey"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -62073,7 +62069,7 @@ export class CreateLeadOutput implements ICreateLeadOutput {
         data["contactId"] = this.contactId;
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
-        data["userCode"] = this.userCode;
+        data["userKey"] = this.userKey;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
@@ -62083,7 +62079,7 @@ export interface ICreateLeadOutput {
     contactId: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
-    userCode: string | undefined;
+    userKey: string | undefined;
     autoLoginLink: string | undefined;
 }
 

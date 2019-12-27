@@ -290,7 +290,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         saveButton.disabled = true;
         let createContactInput = CreateContactInput.fromJS(dataObj);
         createContactInput.statusId = this.data.isInLeadMode ? ContactStatus.Prospective : ContactStatus.Active;
-        this.contactProxy.create(createContactInput)
+        this.contactProxy.createOrUpdateContact(createContactInput)
             .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
             .subscribe(result => {
                 dataObj.id = result.contactId;
