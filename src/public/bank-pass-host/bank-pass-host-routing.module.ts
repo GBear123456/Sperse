@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BankPassHostComponent } from '@root/bank-pass-host/bank-pass-host.component';
+import { BankPassHostComponent } from '@root/public/bank-pass-host/bank-pass-host.component';
 
 @NgModule({
     imports: [

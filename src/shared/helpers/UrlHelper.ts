@@ -5,7 +5,8 @@ export class UrlHelper {
     static readonly initialUrl = location.href;
 
     static publicUrls = [
-        'bank-pass'
+        'bank-pass',
+        'why-they-buy'
     ];
 
     static getQueryParameters(): any {

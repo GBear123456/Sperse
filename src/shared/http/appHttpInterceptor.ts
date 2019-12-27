@@ -106,7 +106,13 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             const queryParams = UrlHelper.getQueryParameters();
             if (queryParams['user-key']) {
                 request = request.clone({
-                    headers: request.headers.append('user-key', queryParams['user-key'])
+                    headers: request.headers.append('user-key', queryParams['user-key']),
+                    params: request.params.append(
+                        'tenantId',
+                        abp.session.tenantId
+                            ? abp.session.tenantId.toString()
+                            : ''
+                    )
                 });
             }
             return request;
