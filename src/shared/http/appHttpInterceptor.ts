@@ -5,6 +5,7 @@ import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders } from '@angular/commo
 import { finalize } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { AppConsts } from '@shared/AppConsts';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Injectable()
 export class AppHttpInterceptor extends AbpHttpInterceptor {
@@ -101,7 +102,14 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                 headers: modifiedHeaders
             });
         } else {
-            return super.normalizeRequestHeaders(request);
+            request = super.normalizeRequestHeaders(request);
+            const queryParams = UrlHelper.getQueryParameters();
+            if (queryParams['user-key']) {
+                request = request.clone({
+                    headers: request.headers.append('user-key', queryParams['user-key'])
+                });
+            }
+            return request;
         }
     }
 

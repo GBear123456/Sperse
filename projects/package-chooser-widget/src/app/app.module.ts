@@ -28,13 +28,17 @@ import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-numb
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { createCustomElement } from '@angular/elements';
 
 export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
 }
 
 export function initialize(widgetsService: WidgetsService, injector: Injector) {
-    return widgetsService.initialize(injector);
+    return widgetsService.initialize(injector, () => {
+        const packageChooserElement = createCustomElement(PackageChooserWidgetComponent, { injector: injector });
+        customElements.define('package-chooser-widget', packageChooserElement);
+    });
 }
 
 @NgModule({

@@ -1,7 +1,6 @@
 import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Route, Router, Routes, NavigationEnd, PreloadingStrategy } from '@angular/router';
 import { RouteGuard } from '@shared/common/auth/route-guard';
-
 import { Observable, of } from 'rxjs';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 

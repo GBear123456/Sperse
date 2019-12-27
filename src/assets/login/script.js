@@ -21,7 +21,7 @@
 
     var params = queryString(document.location.search.substr(1), '&');
     if (
-        !checkSetDomainToken() && !params.secureId && 
+        !checkSetDomainToken() && !params.secureId &&
         !params.tenantId && !params.switchAccountToken && (
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
@@ -348,7 +348,7 @@
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json",
-                        [origRefererKey]: sessionStorage.getItem(origRefererKey) 
+                        [origRefererKey]: sessionStorage.getItem(origRefererKey)
                     },
                     error: function(request) {
                         abp.ui.clearBusy();

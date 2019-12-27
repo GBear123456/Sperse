@@ -22,6 +22,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @NgModule({
     imports: [
@@ -55,6 +56,7 @@ import { AccessCodeInstructionsModule } from '@shared/common/access-code-instruc
     exports: [],
     declarations: [ BankPassHostComponent ],
     providers: [
+        LifecycleSubjectsService,
         ProductsService,
         AppUrlService,
         CacheHelper,
