@@ -107,12 +107,9 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             if (queryParams['user-key']) {
                 request = request.clone({
                     headers: request.headers.append('user-key', queryParams['user-key']),
-                    params: request.params.append(
-                        'tenantId',
-                        abp.session.tenantId
-                            ? abp.session.tenantId.toString()
-                            : ''
-                    )
+                    params: queryParams['tenantId']
+                        ? request.params.append('tenantId', queryParams['tenantId'])
+                        : request.params
                 });
             }
             return request;

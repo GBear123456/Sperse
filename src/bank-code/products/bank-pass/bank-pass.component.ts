@@ -30,6 +30,7 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { DOCUMENT } from '@angular/common';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     selector: 'bank-pass',
@@ -58,7 +59,15 @@ export class BankPassComponent implements OnInit, OnDestroy {
                     request.params.quickSearchString = this.searchValue;
                 }
                 request.params.contactGroupId = ContactGroup.Client;
-                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                const queryParams = UrlHelper.getQueryParameters();
+                if (queryParams['user-key']) {
+                    request.headers['user-key'] = queryParams['user-key'];
+                    if (queryParams['tenantId']) {
+                        request.params['tenantId'] = queryParams['tenantId'];
+                    }
+                } else {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                }
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
             deserializeDates: false,
