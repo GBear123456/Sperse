@@ -40,6 +40,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
+import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 
 @Component({
     selector: 'app-pipeline',
@@ -116,6 +117,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private stagePageCount;
     private subscribers = [];
     private _contactGroupId: ContactGroup;
+    stageWidths = StageWidth;
+    stageColumnWidths: string[] = Object.keys(StageWidth);
 
     constructor(
         injector: Injector,
@@ -130,6 +133,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
+        window['t'] = this;
         this.filtersService.filterFixed$.pipe(
             switchMap(() => this.pipelineService.dataLayoutType$),
             filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
@@ -169,6 +173,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
             this.stages = pipeline.stages.map((stage: StageDto) => {
+                const sameStageOldData = this.stages && this.stages.find((oldStage: Stage) => oldStage.id === stage.id);
                 return new Stage({
                     ...stage,
                     entities: [],
@@ -177,7 +182,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     isLoading: true,
                     stageIndex: undefined,
                     total: undefined,
-                    lastStageIndex: undefined
+                    lastStageIndex: undefined,
+                    width: sameStageOldData && sameStageOldData.width
+                        ? sameStageOldData.width
+                        : (stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium)
                 });
             });
 
@@ -435,7 +443,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stage.entities = [];
         else {
             stage.isLoading = true;
-            let filter = {StageId: stage.id},
+            let filter = { StageId: stage.id },
                 dataSource = this._dataSources[stage.name];
 
             if (!dataSource)
@@ -686,8 +694,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getStageSelectedEntitiesCount(stage): number {
-        const stageSelectedEntities = this.getStageSelectedEntities(stage);
-        return stageSelectedEntities.length;
+        return this.getStageSelectedEntities(stage).length;
     }
 
     private getStageSelectedEntities(stage) {
@@ -801,7 +808,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return result;
     }
 
-    moveStage(stage: Stage, reverse: boolean) {
+    moveStage(stage: Stage, reverse = false) {
         stage.isLoading = true;
         if (this.disallowMove(stage, reverse))
             return ;
@@ -866,4 +873,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
         return topPosition;
     }
+
+    changeWidth(stage: Stage, direction: -1 | 1) {
+        const stageWidths = this.stageColumnWidths.filter(key => !isNaN(+key));
+        const currentWidthIndex = stageWidths.indexOf(stage.width.toString());
+        stage.width = currentWidthIndex + direction + 1;
+        setTimeout(() => this.changeDetector.detectChanges());
+    }
+
 }

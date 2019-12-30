@@ -36,8 +36,6 @@
 
         .column {
             min-height: 50px;
-            width: 100%;
-            min-width: 80px;
             margin: 0;
             padding: 70px 0 0 0;
 
@@ -455,11 +453,34 @@
                     }
                 }
             }
+
+            &.narrow {
+                max-width: 50px;
+                @media (min-width: 768px) {
+                    max-width: 80px;
+                }
+                @media (min-width: 992px) {
+                    max-width: 100px;
+                }
+                @media (min-width: 1200px) {
+                    max-width: 120px;
+                }
+                @media (min-width: 1500px) {
+                    max-width: 140px;
+                }
+                .card .pipeline-photo-wrap {
+                    display: none;
+                }
+            }
+            &.medium {
+
+            }
+            &.wide {
+                //flex-grow: 100;
+            }
         }
         .column0 {
             z-index: 17;
-            width: auto;
-            min-width: 14vw;
             margin: 0 11px!important;
             .column-title {
                 &:before,
@@ -649,13 +670,15 @@
 
         .list-group-item {
             margin: 0;
-            padding: 0;
+            padding: 12px 0 0 0;
             min-width: 170px;
             border: none;
             text-align: left;
+            align-items: center;
+            display: flex;
             &:first-child, &:last-child {
                 a {
-                    padding: 12px 22px;
+                    padding: 0 22px 12px;
                 }
             }
             &:first-child {
@@ -682,9 +705,15 @@
                    }
                 }
             }
+            &.width-change {
+                justify-content: center;
+                a {
+                    padding: 0 10px;
+                }
+            }
             a {
                 display: inline-block;
-                padding: 12px 22px 0 22px;
+                padding: 0 22px;
 
                 & > i {
                     width: 21px;
@@ -707,18 +736,9 @@
                     }
                 }
 
-                & > span {
-                    vertical-align: super;
-                    padding-left: 10px;
-                    font-size: 14px;
-                    font-weight: 300;
-                    font-style: normal;
-                    font-stretch: normal;
-                    line-height: 1.71;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
+                &.hidden {
+                    visibility: hidden;
                 }
-
                 .dx-checkbox-text {
                     margin-left: -16px;
                 }
@@ -727,6 +747,21 @@
                     width: 19px;
                     height: 19px;
                 }
+            }
+            a > span,
+            & > span {
+                vertical-align: super;
+                padding-left: 10px;
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.71;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+            & > span {
+                padding-left: 0;
             }
         }
     }

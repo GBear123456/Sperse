@@ -1,9 +1,11 @@
 <div class="pipeline-wrapper">
     <div *ngFor="let stage of stages; let i = index;"
-         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}">
+         class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}"
+        [ngStyle]="{ flexGrow: stage.width * 3, flexBasis: 'calc(100% / ' + stages.length + ')' }"
+        [ngClass]="stageWidths[stage.width].toLowerCase()">
         <div class="column-title"
-             title="{{stage.name}}"
-             [hidden]="loading && !disabled"
+             [title]="stage.name"
+             [hidden]="loading"
              [ngStyle]="{
                 width: columnItems.offsetWidth + 'px',
                 backgroundColor: stage.color,
@@ -11,8 +13,8 @@
                 borderRightColor: stage.color
              }">
             <span class="stageName">{{stage.name}}</span>
-            <div *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">
-                <span>({{ selectedEntitiesCount | number }} of {{ stage?.total | number }})</span>
+            <div *ngIf="stage?.total">
+                <span>({{ getStageSelectedEntitiesCount(stage) | number }} of {{ stage?.total | number }})</span>
                 <span *ngIf="stage.total && allStagesEntitiesTotal">{{ getStageRatio(stage.total) }}</span>
             </div>
             <button [id]="'ident' + stage.id" class="edit-button">
@@ -34,6 +36,17 @@
                                     [value]="allEntitiesAreSelected(stage)"
                                     (onValueChanged)="toggleAllEntitiesInStage($event, stage)">
                                 </dx-check-box>
+                            </a>
+                        </li>
+                        <li class="list-group-item width-change">
+                            <a [ngClass]="{ hidden: stage.width === stageWidths.Narrow }"
+                               (click)="changeWidth(stage, -1)">
+                                <i class="delete-stage"></i>
+                            </a>
+                            <span>{{ l(stageWidths[stage.width]) }}</span>
+                            <a [ngClass]="{ hidden: stage.width === stageWidths.Wide }"
+                               (click)="changeWidth(stage, 1)">
+                                <i class="add-stage"></i>
                             </a>
                         </li>
                         <li class="list-group-item" [hidden]="stage.isFinal">
