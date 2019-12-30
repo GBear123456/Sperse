@@ -81,6 +81,7 @@ export class CompanyDialogComponent implements OnInit {
         primaryPhoto: null,
         affiliateCode: null
     };
+    manageAllowed = this.contactService.checkCGPermission(this.data.contactInfo.groupId);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     affiliateRegex = /^[a-zA-Z0-9_-]*$/;
@@ -91,13 +92,15 @@ export class CompanyDialogComponent implements OnInit {
             id: 'saveCompany',
             title: this.ls.l('Save'),
             class: 'primary saveButton',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            disabled: !this.manageAllowed
         },
         {
             id: 'deleteCompany',
             title: this.ls.l('Delete'),
             class: 'button-layout button-default delete-button',
-            action: () => this.delete()
+            action: () => this.delete(),
+            disabled: !this.manageAllowed
         }
     ];
 
@@ -219,10 +222,11 @@ export class CompanyDialogComponent implements OnInit {
     }
 
     showUploadPhotoDialog(e) {
-        this.contactService.showUploadPhotoDialog(this.company, e).subscribe((photo: string) => {
-            this.company.primaryPhoto = photo;
-            this.changeDetectorRef.detectChanges();
-        });
+        if (this.manageAllowed)
+            this.contactService.showUploadPhotoDialog(this.company, e).subscribe((photo: string) => {
+                this.company.primaryPhoto = photo;
+                this.changeDetectorRef.detectChanges();
+            });
     }
 
     onInput(e, maxLength: number, mask?: string) {

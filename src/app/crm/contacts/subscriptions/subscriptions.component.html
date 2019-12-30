@@ -3,7 +3,7 @@
     <span class="history-button clickable-item pull-right" (click)="toggleHistory()">
         {{ showAll ? 'Hide history' : 'Show history' }}
     </span>
-    <span class="add-subscription pull-right" (click)="openSubscriptionDialog($event)">
+    <span *ngIf="manageAllowed" class="add-subscription pull-right" (click)="openSubscriptionDialog($event)">
         {{ ls.l('AddSubscription') }}
     </span>
 </h2>
