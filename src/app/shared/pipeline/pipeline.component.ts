@@ -874,7 +874,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     changeWidth(stage: Stage, direction: -1 | 1) {
         const stageWidths = this.stageColumnWidths.filter(key => !isNaN(+key));
         const currentWidthIndex = stageWidths.indexOf(stage.width.toString());
-        stage.width = currentWidthIndex + direction;
+        stage.width = currentWidthIndex + direction + 1;
         setTimeout(() => this.changeDetector.detectChanges());
     }
 
