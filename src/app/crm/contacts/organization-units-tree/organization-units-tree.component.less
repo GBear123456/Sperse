@@ -1,4 +1,15 @@
 :host {
     display: block;
     padding: 0 20px;
+    .clipboard-holder {
+        display: flex;
+        .save-to-clipboard {
+            display: none;                
+        }
+        &:hover {
+            .save-to-clipboard {
+                display: inline-block;
+            }
+        }
+    }
 }

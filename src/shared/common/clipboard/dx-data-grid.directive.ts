@@ -39,8 +39,7 @@ export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
                         if (!this.pool[i]) {
                             this.pool[i] = this.renderer.createElement('i');
                             this.pool[i].addEventListener('click', this.copyToClipboard);
-                            this.renderer.addClass(this.pool[i], 'fa-clone');
-                            this.renderer.addClass(this.pool[i], 'fa');
+                            this.renderer.addClass(this.pool[i], 'save-to-clipboard');
                         }
                         this.renderer.appendChild(elm, this.pool[i]);
                     }
@@ -60,8 +59,7 @@ export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
         this.observer.disconnect();
         this.pool.forEach(elm => {
             elm.removeEventListener('click', this.copyToClipboard);
-            this.renderer.removeClass(elm, 'fa-clone');
-            this.renderer.removeClass(elm, 'fa');
+            this.renderer.removeClass(elm, 'save-to-clipboard');
             if (elm.parentNode)
                 this.renderer.removeChild(elm.parentNode, elm);
         });

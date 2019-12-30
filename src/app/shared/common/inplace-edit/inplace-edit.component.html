@@ -8,7 +8,7 @@
     <div class="actions {{ buttonsPosition }}" [ngClass]="{ hidden: isReadOnlyField }">
         <i *ngIf="isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
         <i *ngIf="isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
-        <img *ngIf="isCopyEnabled && value" src="./assets/common/icons/copy.svg" (click)="copyItem($event)"/>
+        <i *ngIf="isCopyEnabled && value" class="save-to-clipboard" aria-hidden="true" (click)="copyItem($event)"></i>
     </div>
 </div>
 <div *ngIf="!isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">

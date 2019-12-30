@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { ClipboardService } from 'ngx-clipboard';
 import { OrganizationUnitDto, OrganizationUnitServiceProxy,
     UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
@@ -89,6 +90,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
     ];
 
     constructor(
+        private clipboardService: ClipboardService,
         private userOrgUnitsService: OrganizationUnitServiceProxy,
         private contactsService: ContactsService,
         private ls: AppLocalizationService,
@@ -171,6 +173,13 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
                 this.contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
             }
         }
+    }
+
+    saveToClipboard(event, value: string) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.clipboardService.copyFromContent(value);
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {

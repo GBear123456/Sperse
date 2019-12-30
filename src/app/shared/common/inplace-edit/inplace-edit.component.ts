@@ -72,7 +72,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() isReadOnlyField = false;
     @Input() isEditDialogEnabled = false;
     @Input() isDeleteEnabled = false;
-    @Input() isCopyEnabled = false;
+    @Input() isCopyEnabled = true;
     @Input() lEntityName: string;
     @Input() editPlaceholder: string;
     @Input() lDeleteConfirmTitle: string;
@@ -164,13 +164,6 @@ export class InplaceEditComponent extends AppComponentBase {
         });
     }
 
-    copyToClipbord() {
-        if (this.value) {
-            this.clipboardService.copyFromContent(this.value);
-            this.notifyService.info(this.l('Copied'));
-        }
-    }
-
     showDialog(event) {
         if (this.showEditModeOnEditButtonClick) {
             this.showInput(true);
@@ -207,7 +200,7 @@ export class InplaceEditComponent extends AppComponentBase {
 
     copyItem(event) {
         this.clipboardService.copyFromContent(this.value);
-        this.notifyService.info(this.l('Copied'));
+        this.notifyService.info(this.l('SavedToClipboard'));
         event.stopPropagation();
     }
 }

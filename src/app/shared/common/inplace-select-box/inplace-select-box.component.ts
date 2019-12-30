@@ -1,4 +1,7 @@
+/** Core imports */
 import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({

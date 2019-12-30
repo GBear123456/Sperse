@@ -30,8 +30,8 @@
 
             <div *dxTemplate="let cellData of 'fileNameCell'">
                 <ng-container *ngIf="getFileExtensionByFileName(cellData.value) as extension">
-                    <div [ngClass]="['file-name', extension, getViewerType(extension), 'clipboard-holder']">
-                        {{ cellData.value }}
+                    <div [ngClass]="['file-name', extension, getViewerType(extension)]">
+                        <span class="clipboard-holder">{{ cellData.value }}</span>
                     </div>
                 </ng-container>
             </div>

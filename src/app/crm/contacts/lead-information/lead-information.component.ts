@@ -11,6 +11,7 @@ import upperCase from 'lodash/upperCase';
 
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
+import { ClipboardService } from 'ngx-clipboard';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -117,6 +118,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private contactsService: ContactsService,
+        private clipboardService: ClipboardService,
         private applicationProxy: ApplicationServiceProxy,
         private store$: Store<CrmStore.State>,
         private lifeCycleService: LifecycleSubjectsService
@@ -286,6 +288,13 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                 }
             })
         );
+    }
+
+    saveToClipboard(event, value: string) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.clipboardService.copyFromContent(value);
+        this.notify.info(this.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {

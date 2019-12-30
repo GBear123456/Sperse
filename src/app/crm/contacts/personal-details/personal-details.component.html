@@ -41,6 +41,7 @@
                                 (onValueChanged)="updateValue($event.value, field.name)">
                             </dx-tag-box>
                         </div>
+                        <i class="save-to-clipboard" [hidden]="!person[field.name] || (field.type != 'date' && !person[field.name].length) || field.type == 'string'" (click)="saveToClipboard($event, person[field.name])"></i>
                     </ng-container>
                 </div>
             </div>

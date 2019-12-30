@@ -83,7 +83,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     copyToClipboard(text) {
         this.clipboardService.copyFromContent(text);
-        abp.notify.info(this.l('Copied'));
+        abp.notify.info(this.l('SavedToClipboard'));
     }
 
     showTooltip() {

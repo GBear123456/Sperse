@@ -22,6 +22,7 @@ import { PersonalDetailsDialogComponent } from './personal-details-dialog/person
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
+import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
     templateUrl: './personal-details.component.html',
@@ -85,6 +86,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private _permission: AppPermissionService,
         private _personContactService: PersonContactServiceProxy,
         private _dictionaryProxy: DictionaryServiceProxy,
+        private clipboardService: ClipboardService,
         private _asyncPipe: AsyncPipe
     ) {
         this.contactsService.contactInfoSubscribe((contactInfo) => {
@@ -206,6 +208,13 @@ export class PersonalDetailsComponent implements OnDestroy {
                 data: {}
             })
         );
+    }
+
+    saveToClipboard(event, value) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.clipboardService.copyFromContent(value);
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {

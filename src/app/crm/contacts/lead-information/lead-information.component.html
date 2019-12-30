@@ -18,10 +18,10 @@
                                 <div *ngIf="!item.hideLabel" class="item-edit-label">{{l(capitalize(item?.name || item))}}:</div>
                                 <ng-container [ngSwitch]="item?.name">
                                     <ng-container *ngSwitchCase="'partnerSource'">
-                                        <a id="contactSourceLink" [class.selected]="sourceContactName" [class.disabled]="!isCGManageAllowed" (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? l('SelectAnItem') : '')}}</a>
+                                        <a id="contactSourceLink" class="clipboard-holder" [class.selected]="sourceContactName" [class.disabled]="!isCGManageAllowed" (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? l('SelectAnItem') : '')}}<i class="save-to-clipboard" [hidden]="!sourceContactName" (click)="saveToClipboard($event, sourceContactName)"></i></a>
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
-                                        <div *ngIf="!isEditAllowed || item.readonly" (click)="showApplicationAllowed && item.action && item.action()" [ngClass]="{'item-link': showApplicationAllowed && item.action}">{{getPropValue(item.name)}}</div>
+                                        <div *ngIf="getPropValue(item.name) as value" [hidden]="isEditAllowed && !item.readonly" (click)="showApplicationAllowed && item.action && item.action()" [ngClass]="{'item-link': showApplicationAllowed && item.action, 'clipboard-holder': true}">{{value}}<i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i></div>
                                         <ng-container *ngIf="isEditAllowed && !item.readonly">
                                             <div [ngSwitch]="item?.data ? 'select' : 'text'">
                                                 <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
