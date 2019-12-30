@@ -40,6 +40,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
+import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 
 @Component({
     selector: 'app-pipeline',
@@ -116,6 +117,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private stagePageCount;
     private subscribers = [];
     private _contactGroupId: ContactGroup;
+    stageWidths = StageWidth;
+    stageColumnWidths: string[] = Object.keys(StageWidth);
 
     constructor(
         injector: Injector,
@@ -435,7 +438,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stage.entities = [];
         else {
             stage.isLoading = true;
-            let filter = {StageId: stage.id},
+            let filter = { StageId: stage.id },
                 dataSource = this._dataSources[stage.name];
 
             if (!dataSource)
@@ -541,6 +544,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stages && this.stages.forEach((stage) => {
                             stage.total = stages[stage.id] || 0;
                             stage.isFull = stage.total <= stage.entities.length;
+                            stage.width = stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium;
                             this._dataSources[stage.name]['total'] = stage.total;
                             this.allStagesEntitiesTotal += stage.total;
                             this.detectChanges();
@@ -866,4 +870,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
         return topPosition;
     }
+
+    changeWidth(stage: Stage, direction: -1 | 1) {
+        const stageWidths = this.stageColumnWidths.filter(key => !isNaN(+key));
+        const currentWidthIndex = stageWidths.indexOf(stage.width.toString());
+        stage.width = currentWidthIndex + direction;
+        setTimeout(() => this.changeDetector.detectChanges());
+    }
+
 }
