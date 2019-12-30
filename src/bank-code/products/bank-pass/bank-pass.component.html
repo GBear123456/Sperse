@@ -104,21 +104,22 @@
                             <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="150"></dxi-column>
                             <dxi-column dataField="Email" [caption]="ls.l('Email')" [width]="160"></dxi-column>
                             <dxi-column dataField="Phone" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                            <dxi-column dataField="City" [caption]="ls.l('City')" [width]="90"></dxi-column>
-                            <dxi-column dataField="StateId" [caption]="ls.l('State')"></dxi-column>
+                            <dxi-column dataField="CountryId" [caption]="ls.l('CountryCode')"></dxi-column>
+                            <dxi-column dataField="City" [caption]="ls.l('City')" [width]="90" [visible]="false"></dxi-column>
+                            <dxi-column dataField="StateId" [caption]="ls.l('State')" [visible]="false"></dxi-column>
                             <dxi-column dataField="Stage" [caption]="ls.l('Stage')"></dxi-column>
                             <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')" [width]="105"></dxi-column>
-                            <dxi-column dataField="CreationTime" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="ContactDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                {{cellData.value | date: formatting.date : userTimezone}}
                             </div>
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                             </div>
-                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-sorting mode="none"></dxo-sorting>
                         </dx-data-grid>
                     </div>
                     <app-no-data [hidden]="totalCount > 0"
