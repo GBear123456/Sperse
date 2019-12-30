@@ -135,8 +135,8 @@
         </div>
     </section>
     <ng-template #noSubscription>
-        <section class="iframe">
-            <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
+        <section class="iframe" *ngIf="environmentLink$ | async as environmentLink">
+            <iframe [src]="environmentLink" frameborder="0"></iframe>
         </section>
     </ng-template>
 </div>
