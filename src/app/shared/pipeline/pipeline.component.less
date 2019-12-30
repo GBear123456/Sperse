@@ -453,6 +453,31 @@
                     }
                 }
             }
+
+            &.narrow {
+                max-width: 50px;
+                @media (min-width: 768px) {
+                    max-width: 80px;
+                }
+                @media (min-width: 992px) {
+                    max-width: 100px;
+                }
+                @media (min-width: 1200px) {
+                    max-width: 120px;
+                }
+                @media (min-width: 1500px) {
+                    max-width: 140px;
+                }
+                .card .pipeline-photo-wrap {
+                    display: none;
+                }
+            }
+            &.medium {
+
+            }
+            &.wide {
+                //flex-grow: 100;
+            }
         }
         .column0 {
             z-index: 17;

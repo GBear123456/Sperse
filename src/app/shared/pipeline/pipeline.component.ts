@@ -173,6 +173,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
             this.stages = pipeline.stages.map((stage: StageDto) => {
+                const sameStageOldData = this.stages && this.stages.find((oldStage: Stage) => oldStage.id === stage.id);
                 return new Stage({
                     ...stage,
                     entities: [],
@@ -181,7 +182,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     isLoading: true,
                     stageIndex: undefined,
                     total: undefined,
-                    lastStageIndex: undefined
+                    lastStageIndex: undefined,
+                    width: sameStageOldData && sameStageOldData.width
+                        ? sameStageOldData.width
+                        : (stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium)
                 });
             });
 
@@ -545,7 +549,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stages && this.stages.forEach((stage) => {
                             stage.total = stages[stage.id] || 0;
                             stage.isFull = stage.total <= stage.entities.length;
-                            stage.width = stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium;
                             this._dataSources[stage.name]['total'] = stage.total;
                             this.allStagesEntitiesTotal += stage.total;
                             this.detectChanges();
