@@ -1,9 +1,10 @@
 <div class="pipeline-wrapper">
     <div *ngFor="let stage of stages; let i = index;"
          class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}"
-        [ngStyle]="{ flexGrow: stage.width * 3, width: 'calc(100% / ' + (stages.length + 2) + ')' }">
+        [ngStyle]="{ flexGrow: stage.width * 3, flexBasis: 'calc(100% / ' + stages.length + ')' }"
+        [ngClass]="stageWidths[stage.width].toLowerCase()">
         <div class="column-title"
-             title="{{stage.name}}"
+             [title]="stage.name"
              [hidden]="loading"
              [ngStyle]="{
                 width: columnItems.offsetWidth + 'px',
