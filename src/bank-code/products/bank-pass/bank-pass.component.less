@@ -5,7 +5,12 @@
     padding: 10px;
     display: block;
     @media (min-width: 768px) {
-        padding: 28px 39px;
+        padding: 0;
+        
+        iframe {
+            width: 100%;
+            height: 100vh;
+        }
     }
     section {
         position: relative;
@@ -257,6 +262,7 @@
     }
 
     /deep/ .mat-tab-group.mat-primary {
+        padding: 28px 39px;
 
         .mat-ink-bar {
             background-color: #ac1f22;
