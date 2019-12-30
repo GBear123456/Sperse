@@ -8,6 +8,7 @@
                     <div class="field">
                         <label for="shortName">{{ls.l('Company_ShortName')}}</label>
                         <dx-text-box name="shortName"
+                                     [disabled]="!manageAllowed"
                                      [inputAttr]="{ id: 'shortName' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.shortName">
@@ -18,6 +19,7 @@
                         <label for="companyType">{{ls.l('Company_CompanyType')}}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
+                                [disabled]="!manageAllowed"
                                 [inputAttr]="{ id: 'companyType' }"
                                 name="companyType"
                                 displayExpr="name"
@@ -32,6 +34,7 @@
                         <label for="companySize">{{ ls.l('Company_CompanySize') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
+                                [disabled]="!manageAllowed"
                                 [inputAttr]="{ id: 'companySize' }"
                                 name="companySize"
                                 displayExpr="name"
@@ -45,6 +48,7 @@
                     <div class="field annualRevenue">
                         <label for="annualRevenue">{{ls.l('Company_AnnualRevenue')}}</label>
                         <dx-number-box name="annualRevenue"
+                                     [disabled]="!manageAllowed"
                                      format="currency"
                                      [inputAttr]="{ id: 'annualRevenue' }"
                                      [valueChangeEvent]="'focusout'"
@@ -57,6 +61,7 @@
                         <label for="country">{{ ls.l('Country') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
+                                [disabled]="!manageAllowed"
                                 [inputAttr]="{ id: 'country' }"
                                 displayExpr="name"
                                 valueExpr="code"
@@ -71,6 +76,7 @@
                         <label for="state">{{ ls.l('State') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
+                                [disabled]="!manageAllowed"
                                 [inputAttr]="{ id: 'state' }"
                                 name="state"
                                 displayExpr="name"
@@ -84,6 +90,7 @@
                     <div class="field industry">
                         <label for="industry">{{ls.l('Company_Industry')}}</label>
                         <dx-text-box name="industry"
+                                     [disabled]="!manageAllowed"
                                      [inputAttr]="{ id: 'industry' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.industry">
@@ -93,6 +100,7 @@
                     <div class="field sicCode">
                         <label for="sicCode">{{ls.l('Company_sicCode')}}</label>
                         <dx-number-box name="sicCode"
+                                     [disabled]="!manageAllowed"
                                      (onInput)="onInput($event, 4)"
                                      [inputAttr]="{ id: 'sicCode' }"
                                      [valueChangeEvent]="'focusout'"
@@ -103,6 +111,7 @@
                     <div class="field affiliateCode">
                         <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
                         <dx-text-box name="affiliateCode"
+                                     [disabled]="!manageAllowed"
                                      (onInput)="onInput($event, 50)"
                                      [inputAttr]="{ id: 'affiliateCode' }"
                                      [valueChangeEvent]="'focusout'"
@@ -116,6 +125,7 @@
                     <div class="field productsAndServices">
                         <label for="productsAndServices">{{ls.l('Company_ProductsAndServices')}}</label>
                         <dx-text-area
+                            [disabled]="!manageAllowed"
                             name="productsAndServices"
                             [inputAttr]="{ id: 'productsAndServices' }"
                             [height]="'140px'"
@@ -129,13 +139,14 @@
                         <img *ngIf="company.primaryPhoto; else addCompanyPhotoButton" [src]="'data:image/png;base64,' + company.primaryPhoto" alt="Organization Logo">
                         <ng-template #addCompanyPhotoButton>
                             <div class="add-company-logo">
-                                <a (click)="addCompanyLogo($event)">+ {{ ls.l('AddCompanyLogo') }}</a>
+                                <a [hidden]="!manageAllowed">+ {{ ls.l('AddCompanyLogo') }}</a>
                             </div>
                         </ng-template>
                     </div>
                     <div class="field foundedIn">
                         <label for="foundedIn">{{ls.l('Company_FoundedIn')}}</label>
                         <dx-date-box
+                            [disabled]="!manageAllowed"
                             name="foundedIn"
                             [max]="currentDate"
                             [(value)]="company.formedDate"
@@ -147,6 +158,7 @@
                     <div class="field ein">
                         <label for="ein">{{ls.l('Company_EIN')}}</label>
                         <dx-text-box name="ein"
+                                     [disabled]="!manageAllowed"
                                      [inputAttr]="{ id: 'ein' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.ein"
@@ -160,6 +172,7 @@
                     <div class="field duns">
                         <label for="dusn">{{ls.l('Company_DUNS')}}</label>
                         <dx-text-box name="duns"
+                                     [disabled]="!manageAllowed"
                                      [inputAttr]="{ id: 'dusn' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.duns"
@@ -173,6 +186,7 @@
                     <div class="field stockSymbol">
                         <label for="stockSymbol">{{ls.l('Company_StockSymbol')}}</label>
                         <dx-text-box name="stockSymbol"
+                                     [disabled]="!manageAllowed"
                                      [inputAttr]="{ id: 'stockSymbol' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.ticker"
@@ -183,6 +197,7 @@
                     <div *ngIf="company.rootOrganizationUnitId" class="field">
                         <label for="departmentCode">{{ls.l('Department Code')}}</label>
                         <dx-text-box name="departmentCode"
+                                     [disabled]="!manageAllowed"
                                      [inputAttr]="{ id: 'departmentCode' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.departmentCode"
@@ -194,6 +209,7 @@
                         <label for="notes">{{ls.l('Company_Notes')}}</label>
                         <dx-text-area
                             name="notes"
+                            [disabled]="!manageAllowed"
                             [inputAttr]="{ id: 'notes' }"
                             [height]="'140px'"
                             [(value)]="company.notes">

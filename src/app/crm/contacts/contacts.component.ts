@@ -110,6 +110,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     targetDirections = TargetDirectionEnum;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
+    manageAllowed = false;
 
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
@@ -339,6 +340,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(result.groupId);
+        this.manageAllowed = this.contactsService.checkCGPermission(result.groupId);
         this.assignedUsersSelector = select(
             ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
             { contactGroup: result.groupId }

@@ -44,6 +44,8 @@ export class SubscriptionsComponent implements OnInit {
     showAll = false;
     impersonateTenantId: number;
     permissions = AppPermissions;
+    manageAllowed = false;
+
     constructor(
         injector: Injector,
         private invoicesService: InvoicesService,
@@ -56,7 +58,7 @@ export class SubscriptionsComponent implements OnInit {
         public permission: PermissionCheckerService,
         public ls: AppLocalizationService
     ) {
-        contactsService.invalidateSubscribe((area) => {
+        contactsService.invalidateSubscribe(area => {
             if (area == 'subscriptions') {
                 this.refreshData(true);
             }
@@ -65,8 +67,11 @@ export class SubscriptionsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.data = this.contactService['data'];
-        this.refreshData();
+        this.contactsService.contactInfoSubscribe(contactInfo => {
+            this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+            this.data = this.contactService['data'];
+            this.refreshData();
+        });
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {

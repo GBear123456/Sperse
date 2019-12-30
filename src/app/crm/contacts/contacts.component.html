@@ -49,7 +49,7 @@
                 </div>
 
                 <ng-template #addNew>
-                    <div class="contact-persons-info" (click)="addNewContact($event)" *ngIf="contactInfo?.primaryOrganizationContactId">
+                    <div class="contact-persons-info" (click)="addNewContact($event)" *ngIf="contactInfo?.primaryOrganizationContactId && manageAllowed">
                         <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
                         <a class="add-new-contact">{{l('AddRelatedContact')}}</a>
                     </div>

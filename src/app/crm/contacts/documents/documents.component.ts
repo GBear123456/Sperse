@@ -94,6 +94,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public viewerToolbarConfig: any = [];
     public parsedCsv: any;
     archiveFiles$: Observable<{ name: string, data: Date }[]>;
+    manageAllowed = false;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -109,6 +110,16 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private csvParser: Papa
     ) {
         super(injector);
+        this.data = this._contactService['data'];
+        clientService.invalidateSubscribe((area) => {
+            if (area == 'documents') {
+                this._documentService['data'] = undefined;
+                this.loadDocuments();
+            }
+        });
+    }
+
+    private initActionMenuItems() {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
@@ -120,16 +131,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             },
             {
                 text: this.l('Delete'),
-                action: this.deleteDocument.bind(this)
+                action: this.deleteDocument.bind(this),
+                disabled: !this.manageAllowed
             }
         ];
-        this.data = this._contactService['data'];
-        clientService.invalidateSubscribe((area) => {
-            if (area == 'documents') {
-                this._documentService['data'] = undefined;
-                this.loadDocuments();
-            }
-        });
     }
 
     private storeWopiRequestInfoToCache(wopiDocumentDataCacheKey: string, requestInfo: WopiRequestOutcoming) {
@@ -278,7 +283,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit() {
-        this.clientService.contactInfoSubscribe(() => {
+        this.clientService.contactInfoSubscribe(contactInfo => {
+            this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
+            this.initActionMenuItems();
             this.loadDocuments();
         });
     }
