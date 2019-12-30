@@ -177,7 +177,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 text: this.ls.l('AddFiles'),
                 selected: false,
                 icon: 'files',
-                visible: true,
+                visible: this.manageAllowed,
                 contactGroups: this.allContactGroups
             },
             {
@@ -185,7 +185,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 text: this.ls.l('AddNotes'),
                 selected: false,
                 icon: 'note',
-                visible: true,
+                visible: this.manageAllowed,
                 contactGroups: this.allContactGroups
             },
             {
@@ -309,6 +309,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     showUploadPhotoDialog(event, isCompany?: boolean) {
+        if (!this.manageAllowed)
+            return false;
+
         if (isCompany) {
             let companyInfo = this.data['organizationContactInfo'];
             if (!companyInfo || !companyInfo.id)
