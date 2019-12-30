@@ -3,6 +3,7 @@ import { State } from './state';
 import { PipelineDto } from 'shared/service-proxies/service-proxies';
 import { StageDto } from '@shared/service-proxies/service-proxies';
 import { ContactGroup } from '@shared/AppEnums';
+import { Stage } from '@app/shared/pipeline/stage.model';
 
 interface Filter {
     id?: number;
@@ -45,9 +46,9 @@ export const getSortedPipeline = (filter: Filter) => createSelector(
         if (pipeline) {
             pipeline.stages.sort((a, b) => {
                 return a.sortOrder > b.sortOrder ? 1 : -1;
-            }).forEach((item) => {
-                item['index'] = Math.abs(item.sortOrder);
-                item['dragAllowed'] = true;
+            }).forEach((item: Stage) => {
+                item.index = Math.abs(item.sortOrder);
+                item.dragAllowed = true;
             });
             result = pipeline;
         }

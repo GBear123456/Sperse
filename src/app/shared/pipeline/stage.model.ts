@@ -7,6 +7,8 @@ export class Stage extends StageDto {
     isLoading: boolean;
     isFull: boolean;
     stageIndex: number;
+    index: number;
+    dragAllowed: boolean;
     total: number;
     lastStageIndex: number;
     width: StageWidth;

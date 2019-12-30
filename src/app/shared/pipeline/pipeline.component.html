@@ -4,7 +4,7 @@
         [ngStyle]="{ flexGrow: stage.width * 3, width: 'calc(100% / ' + (stages.length + 1.5) + ')' }">
         <div class="column-title"
              title="{{stage.name}}"
-             [hidden]="loading && !disabled"
+             [hidden]="loading"
              [ngStyle]="{
                 width: columnItems.offsetWidth + 'px',
                 backgroundColor: stage.color,
@@ -12,8 +12,8 @@
                 borderRightColor: stage.color
              }">
             <span class="stageName">{{stage.name}}</span>
-            <div *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">
-                <span>({{ selectedEntitiesCount | number }} of {{ stage?.total | number }})</span>
+            <div *ngIf="stage?.total">
+                <span>({{ getStageSelectedEntitiesCount(stage) | number }} of {{ stage?.total | number }})</span>
                 <span *ngIf="stage.total && allStagesEntitiesTotal">{{ getStageRatio(stage.total) }}</span>
             </div>
             <button [id]="'ident' + stage.id" class="edit-button">

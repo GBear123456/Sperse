@@ -133,6 +133,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
+        window['t'] = this;
         this.filtersService.filterFixed$.pipe(
             switchMap(() => this.pipelineService.dataLayoutType$),
             filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
@@ -690,8 +691,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getStageSelectedEntitiesCount(stage): number {
-        const stageSelectedEntities = this.getStageSelectedEntities(stage);
-        return stageSelectedEntities.length;
+        return this.getStageSelectedEntities(stage).length;
     }
 
     private getStageSelectedEntities(stage) {
@@ -805,7 +805,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return result;
     }
 
-    moveStage(stage: Stage, reverse: boolean) {
+    moveStage(stage: Stage, reverse = false) {
         stage.isLoading = true;
         if (this.disallowMove(stage, reverse))
             return ;
