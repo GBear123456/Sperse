@@ -1,6 +1,5 @@
 import { StageDto } from '@shared/service-proxies/service-proxies';
 import { IStage } from '@app/shared/pipeline/stage.interface';
-import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 
 export class Stage extends StageDto {
     entities: any[];
@@ -9,7 +8,6 @@ export class Stage extends StageDto {
     stageIndex: number;
     total: number;
     lastStageIndex: number;
-    width: StageWidth;
     constructor(data?: IStage) {
         super(data);
     }
