@@ -10,6 +10,7 @@ import capitalize from 'underscore.string/capitalize';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -112,7 +113,7 @@ export abstract class AppComponentBase implements OnDestroy {
         this.cacheHelper = _injector.get(CacheHelper);
         this.loadingService = _injector.get(LoadingService);
         this.profileService = _injector.get(ProfileService);
-        this.userTimezone = this.getUserTimezone();
+        this.userTimezone = DateHelper.getUserTimezone();
         this.fullScreenService = _injector.get(FullScreenService);
         this.titleService = _injector.get(TitleService);
         this.fullScreenService.isFullScreenMode$
@@ -130,10 +131,6 @@ export abstract class AppComponentBase implements OnDestroy {
         if (!this._elementRef)
             this._elementRef = this._injector.get(ElementRef);
         return this._elementRef;
-    }
-
-    getUserTimezone() {
-        return moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
     }
 
     getCacheKey(key: string): string {

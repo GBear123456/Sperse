@@ -25,6 +25,10 @@ export class DateHelper {
         return moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset();
     }
 
+    static getUserTimezone(): string {
+        return moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
+    }
+
     /**
      * Returns moment with user date in utc timezone without hours, minutes and seconds
      * @return {moment.Moment}

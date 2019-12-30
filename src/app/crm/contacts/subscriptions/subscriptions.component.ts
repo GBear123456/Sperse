@@ -27,6 +27,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'subscriptions',
@@ -45,6 +47,8 @@ export class SubscriptionsComponent implements OnInit {
     impersonateTenantId: number;
     permissions = AppPermissions;
     manageAllowed = false;
+    formatting = AppConsts.formatting;
+    userTimezone = DateHelper.getUserTimezone();
 
     constructor(
         injector: Injector,
