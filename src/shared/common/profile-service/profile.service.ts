@@ -87,7 +87,8 @@ export class ProfileService {
         return this.bankCodeMemberInfo$.pipe(
             map((memberInfo: GetMemberInfoOutput) => {
                 return memberInfo.subscriptions.some((sub: SubscriptionShortInfoOutput) => {
-                    return sub.serviceTypeId == serviceTypeId && (!sub.endDate || sub.endDate.diff(moment()) > 0);
+                    return sub.serviceTypeId.toLowerCase() === serviceTypeId.toString().toLowerCase()
+                        && (!sub.endDate || sub.endDate.diff(moment()) > 0);
                 });
             })
         );
