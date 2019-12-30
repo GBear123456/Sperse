@@ -189,7 +189,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 followUpDateTime: this.followupDate || undefined,
                 dateTime: this.currentDate || undefined,
                 addedByUserId: parseInt(this.addedBy) || undefined,
-                orderId: this.orderId
+                orderId: this.orderId,
+                leadId: this._contactInfo['leadId']
             })).subscribe(() => {
                 /** Clear the form data */
                 this.resetFields();
