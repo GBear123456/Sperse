@@ -46,36 +46,6 @@
         }
     }
 
-    .my-access-code {
-        font-family: @title-font;
-        font-size: 13px;
-        line-height: normal;
-        letter-spacing: normal;
-        color: #7a7979;
-        position: absolute;
-        right: 39px;
-        top: 43px;
-        z-index: 1;
-
-        @media all and (min-width: 768px) {
-            position: absolute;
-            right: 39px;
-            top: 43px;
-            text-align: center;
-        }
-
-        inplace-edit {
-            font-family: @text-font;
-            font-size: 16px;
-            font-weight: 600;
-            line-height: 1.38;
-            letter-spacing: normal;
-            color: #ac1f22;
-            max-width: 169px;
-            display: inline-block;
-        }
-    }
-
     /deep/ access-code-instructions {
         text-align: center;
         padding: 10px 0;
@@ -125,7 +95,7 @@
                 overflow: hidden;
 
                 @media all and (max-width: 767px) {
-                    margin-left: 0;
+                    max-width: 100%;
                 }
 
                 a {
@@ -135,10 +105,6 @@
                     letter-spacing: normal;
                     text-align: center;
                     color: #ac1f22;
-
-                    @media all and (max-width: 767px) {
-                        max-width: 315px;
-                    }
                 }
             }
         }
@@ -345,7 +311,7 @@
         padding-left: 443px;
         justify-content: space-between;
         flex-wrap: wrap;
-        z-index: 1;
+        z-index: 2;
         .search {
             width: 263px;
             /deep/ .dx-textbox {
