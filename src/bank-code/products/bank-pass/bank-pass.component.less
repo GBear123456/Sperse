@@ -36,13 +36,16 @@
         position: absolute;
         right: 0;
         top: 15px;
-        .code {
+        z-index: 1;
+        inplace-edit {
             font-family: @text-font;
             font-size: 16px;
             font-weight: 600;
             line-height: 1.38;
             letter-spacing: normal;
             color: #ac1f22;
+            max-width: 169px;
+            display: inline-block;
         }
     }
 
@@ -226,42 +229,44 @@
         border-bottom: solid 1px #dadada;
     }
 
-    /deep/ .dx-textbox {
-        width: 263px;
-        margin-top: 30px;
+    .grid {
+        /deep/ .dx-textbox {
+            width: 263px;
+            margin-top: 30px;
 
-        input {
-            width: 100%;
-            color: #677380;
-            font-weight: 300;
-            line-height: 1.71;
-            letter-spacing: 0.3px;
-            text-align: left;
-            padding-left: 36px;
-            border: 1px solid #dadee1;
-            border-radius: 3px;
-            font-size: 14px;
-            height: 39px;
-            outline: none;
+            input {
+                width: 100%;
+                color: #677380;
+                font-weight: 300;
+                line-height: 1.71;
+                letter-spacing: 0.3px;
+                text-align: left;
+                padding-left: 36px;
+                border: 1px solid #dadee1;
+                border-radius: 3px;
+                font-size: 14px;
+                height: 39px;
+                outline: none;
 
-            @media screen and (max-width: 480px) {
-                width: auto;
+                @media screen and (max-width: 480px) {
+                    width: auto;
+                }
             }
-        }
 
-        .dx-icon-search,
-        .dx-icon-clear {
-            font: 14px/1 DXIcons !important;
-        }
+            .dx-icon-search,
+            .dx-icon-clear {
+                font: 14px/1 DXIcons !important;
+            }
 
-        &.dx-state-focused .dx-placeholder {
-            top: -25px!important;
-        }
+            &.dx-state-focused .dx-placeholder {
+                top: -25px!important;
+            }
 
-        .dx-placeholder {
-            font-size: 13px!important;
-            font-weight: 300!important;
-            letter-spacing: .3px!important;
+            .dx-placeholder {
+                font-size: 13px!important;
+                font-weight: 300!important;
+                letter-spacing: .3px!important;
+            }
         }
     }
 

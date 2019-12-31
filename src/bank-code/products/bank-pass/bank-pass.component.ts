@@ -9,6 +9,7 @@ import {
     OnInit,
     OnDestroy
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -28,15 +29,16 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProductsService } from '@root/bank-code/products/products.service';
-import { DOCUMENT } from '@angular/common';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'bank-pass',
     templateUrl: 'bank-pass.component.html',
     styleUrls: ['./bank-pass.component.less'],
-    providers: [ LifecycleSubjectsService ],
+    providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
@@ -138,7 +140,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private productsService: ProductsService,
         private renderer: Renderer2,
+        private appSession: AppSessionService,
         private lifecycleSubjectService: LifecycleSubjectsService,
+        private memberSettingsService: MemberSettingsServiceProxy,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
@@ -174,6 +178,18 @@ export class BankPassComponent implements OnInit, OnDestroy {
             this.searchValue = e.value;
             this.dataGrid.instance.getDataSource().load();
         }
+    }
+
+    accessCodeChanged(accessCode: string) {
+        this.profileService.updateAccessCode(accessCode);
+        this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: accessCode })).subscribe(
+            () => {
+                abp.notify.info(this.ls.l('AccessCodeUpdated'));
+                this.appSession.user.affiliateCode = accessCode;
+            },
+            /** Update back if error comes */
+            () => this.profileService.updateAccessCode(this.appSession.user.affiliateCode)
+        );
     }
 
     ngOnDestroy() {

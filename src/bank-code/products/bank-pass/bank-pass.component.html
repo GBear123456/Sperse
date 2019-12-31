@@ -129,9 +129,16 @@
                 <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
             </mat-tab>
         </mat-tab-group>
-        <div class="my-access-code" *ngIf="accessCode$ | async as accessCode">
+        <div class="my-access-code">
             <span>{{ ls.l('MyAccessCode') }}: </span>
-            <span class="code">{{ accessCode }}</span>
+            <inplace-edit [value]="accessCode$ | async"
+                          [editPlaceholder]="ls.l('YourAccessCode')"
+                          [isCopyEnabled]="true"
+                          [isEditDialogEnabled]="true"
+                          buttonsPosition="below"
+                          [showEditModeOnEditButtonClick]="true"
+                          (valueChanged)="accessCodeChanged($event)">
+            </inplace-edit>
         </div>
     </section>
     <ng-template #noSubscription>

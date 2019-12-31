@@ -23,6 +23,8 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
+import { MemberSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -37,6 +39,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
         PhoneFormatModule,
         BankPassHostRoutingModule,
         MatTabsModule,
+        InplaceEditModule,
         NgCircleProgressModule.forRoot({
             // defaults config
             'radius': 32,
@@ -58,6 +61,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     providers: [
         LifecycleSubjectsService,
         ProductsService,
+        MemberSettingsServiceProxy,
         AppUrlService,
         CacheHelper,
         ClipboardService,
