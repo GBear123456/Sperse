@@ -46,6 +46,36 @@
         }
     }
 
+    .my-access-code {
+        font-family: @title-font;
+        font-size: 13px;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #7a7979;
+        position: absolute;
+        right: 39px;
+        top: 43px;
+        z-index: 1;
+
+        @media all and (min-width: 768px) {
+            position: absolute;
+            right: 39px;
+            top: 43px;
+            text-align: center;
+        }
+
+        inplace-edit {
+            font-family: @text-font;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.38;
+            letter-spacing: normal;
+            color: #ac1f22;
+            max-width: 169px;
+            display: inline-block;
+        }
+    }
+
     /deep/ access-code-instructions {
         text-align: center;
         padding: 10px 0;
@@ -78,6 +108,10 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+
+                @media all and (max-width: 767px) {
+                    flex-direction: column;
+                }
                 & > p {
                     white-space: nowrap;
                 }
@@ -89,6 +123,11 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
+
+                @media all and (max-width: 767px) {
+                    margin-left: 0;
+                }
+
                 a {
                     font-family: @text-font;
                     font-size: 15px !important;
@@ -96,6 +135,10 @@
                     letter-spacing: normal;
                     text-align: center;
                     color: #ac1f22;
+
+                    @media all and (max-width: 767px) {
+                        max-width: 315px;
+                    }
                 }
             }
         }
@@ -112,7 +155,12 @@
         }
         .achievements-content {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+
+            @media all and (min-width: 768px) {
+                flex-direction: row;
+            }
+
             .collect-bankcodes,
             .collect-badges {
                 width: 100%;
@@ -120,6 +168,7 @@
                     width: 50%;
                 }
             }
+
             h6 {
                 font-family: @title-font;
                 font-size: 16px;
@@ -127,7 +176,13 @@
                 text-align: center;
                 color: #7a7979;
                 text-transform: uppercase;
+
+                @media all and (max-width: 768px) {
+                    margin-bottom: 10px !important;
+                    margin-top: 15px;
+                }
             }
+
             .collect-bankcodes {
                 text-align: center;
                 h6 {
@@ -186,6 +241,16 @@
             & > div {
                 margin-right: 20.5px;
             }
+
+            @media (max-width: 767px) {
+                flex-direction: column;
+
+                & > div {
+                    width: 100%;
+                    margin-right: 0;
+                }
+            }
+
             label {
                 font-family: @title-font;
                 font-size: 12px;
@@ -193,6 +258,7 @@
                 letter-spacing: normal;
                 color: #7a7979;
             }
+
             button {
                 padding: 16px 40px;
                 font-family: @title-font;
@@ -206,13 +272,22 @@
                 height: 48px;
                 border: none;
                 width: 152px;
+
+                @media all and (max-width: 767px) {
+                    margin: 15px auto;
+                }
             }
+
             /deep/ .dx-textbox {
                 margin-top: 0;
                 height: 48px;
                 input {
                     padding-left: 17px;
                     height: 100%;
+
+                    @media (max-width: 767px) {
+                        width: 100%;
+                    }
                 }
             }
             @media (min-width: 768px) {
@@ -274,7 +349,9 @@
         .search {
             width: 263px;
             /deep/ .dx-textbox {
-                width: 263px;
+                @media all and (min-width: 1400px) {
+                    width: 263px;
+                }
 
                 input {
                     width: 100%;
@@ -381,6 +458,10 @@
     /deep/ .mat-tab-group.mat-primary {
         padding: 10px;
 
+        @media (min-width: 768px) {
+            padding: 28px 39px;
+        }
+
         .mat-ink-bar {
             background-color: #ac1f22;
         }
@@ -398,5 +479,9 @@
         @media (min-width: 768px) {
             padding: 28px 39px;
         }
+    }
+
+    /deep/ #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
+        padding: 4px 5px 5px;
     }
 }
