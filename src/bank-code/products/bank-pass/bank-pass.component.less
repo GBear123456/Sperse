@@ -293,11 +293,12 @@
     }
 
     /deep/ mat-tab-group {
-        @media (max-width: 768px) {
-            .mat-tab-header {
-                height: 70px;
+        .mat-tab-header {
+            .mat-tab-label-container {
+                z-index: 0;
             }
         }
+
     }
 
     .header {
@@ -307,8 +308,7 @@
         right: 39px;
         flex-direction: row-reverse;
         align-items: center;
-        width: 100%;
-        padding-left: 443px;
+        width: calc(100% - 438px);
         justify-content: space-between;
         flex-wrap: wrap;
         z-index: 1;
@@ -367,6 +367,9 @@
                     font-size: 13px!important;
                     font-weight: 300!important;
                     letter-spacing: .3px!important;
+                    &:before {
+                        padding-left: 20px;
+                    }
                 }
 
             }
@@ -405,7 +408,13 @@
         }
 
         @media (max-width: 768px) {
-            display: none;
+            position: static;
+            width: 100%;
+            justify-content: center;
+            .search,
+            .access-code {
+                margin: 5px;
+            }
         }
 
         @media (min-width: 1350px) {

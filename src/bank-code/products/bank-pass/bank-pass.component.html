@@ -1,5 +1,25 @@
 <div class="bank-pass">
     <section *ngIf="hasSubscription$ | async; else noSubscription">
+        <div class="header">
+            <div class="search">
+                <dx-text-box [placeholder]="ls.l('Search')"
+                             [value]="searchValue"
+                             [showClearButton]="false"
+                             mode="search"
+                             (onValueChanged)="searchValueChange($event)">
+                </dx-text-box>
+            </div>
+            <div class="my-access-code">
+                <span>{{ ls.l('MyAccessCode') }}: </span>
+                <inplace-edit [value]="accessCode$ | async"
+                              [editPlaceholder]="ls.l('YourAccessCode')"
+                              [isCopyEnabled]="true"
+                              [isEditDialogEnabled]="true"
+                              [showEditModeOnEditButtonClick]="true"
+                              (valueChanged)="accessCodeChanged($event)">
+                </inplace-edit>
+            </div>
+        </div>
         <mat-tab-group>
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
@@ -130,26 +150,6 @@
                 <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
             </mat-tab>
         </mat-tab-group>
-        <div class="header">
-            <div class="search">
-                <dx-text-box [placeholder]="ls.l('Search')"
-                             [value]="searchValue"
-                             [showClearButton]="false"
-                             mode="search"
-                             (onValueChanged)="searchValueChange($event)">
-                </dx-text-box>
-            </div>
-            <div class="my-access-code">
-                <span>{{ ls.l('MyAccessCode') }}: </span>
-                <inplace-edit [value]="accessCode$ | async"
-                              [editPlaceholder]="ls.l('YourAccessCode')"
-                              [isCopyEnabled]="true"
-                              [isEditDialogEnabled]="true"
-                              [showEditModeOnEditButtonClick]="true"
-                              (valueChanged)="accessCodeChanged($event)">
-                </inplace-edit>
-            </div>
-        </div>
     </section>
     <ng-template #noSubscription>
         <section class="iframe" *ngIf="environmentLink$ | async as environmentLink">
