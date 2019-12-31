@@ -8,6 +8,12 @@
                     <div class="achievements-content">
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
+                            <div class="letters">
+                                <img src="./assets/common/images/bank-code/B1.png">
+                                <img src="./assets/common/images/bank-code/A1.png">
+                                <img src="./assets/common/images/bank-code/N1.png">
+                                <img src="./assets/common/images/bank-code/K1.png">
+                            </div>
                             <img src="./assets/common/images/bank-code/bank-codes.png">
                         </div>
                         <div class="collect-badges">
@@ -75,11 +81,6 @@
             <mat-tab [label]="ls.l('Leads').toUpperCase()">
                 <div [hidden]="dataIsLoading">
                     <div class="grid" [hidden]="totalCount <= 0">
-                        <dx-text-box [placeholder]="ls.l('Search')"
-                                     [value]="searchValue"
-                                     mode="search"
-                                     (onValueChanged)="searchValueChange($event)">
-                        </dx-text-box>
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
                                       accessKey="narrowHeaderPanel"
@@ -129,16 +130,25 @@
                 <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
             </mat-tab>
         </mat-tab-group>
-        <div class="my-access-code">
-            <span>{{ ls.l('MyAccessCode') }}: </span>
-            <inplace-edit [value]="accessCode$ | async"
-                          [editPlaceholder]="ls.l('YourAccessCode')"
-                          [isCopyEnabled]="true"
-                          [isEditDialogEnabled]="true"
-                          buttonsPosition="below"
-                          [showEditModeOnEditButtonClick]="true"
-                          (valueChanged)="accessCodeChanged($event)">
-            </inplace-edit>
+        <div class="header">
+            <div class="search">
+                <dx-text-box [placeholder]="ls.l('Search')"
+                             [value]="searchValue"
+                             [showClearButton]="false"
+                             mode="search"
+                             (onValueChanged)="searchValueChange($event)">
+                </dx-text-box>
+            </div>
+            <div class="my-access-code">
+                <span>{{ ls.l('MyAccessCode') }}: </span>
+                <inplace-edit [value]="accessCode$ | async"
+                              [editPlaceholder]="ls.l('YourAccessCode')"
+                              [isCopyEnabled]="true"
+                              [isEditDialogEnabled]="true"
+                              [showEditModeOnEditButtonClick]="true"
+                              (valueChanged)="accessCodeChanged($event)">
+                </inplace-edit>
+            </div>
         </div>
     </section>
     <ng-template #noSubscription>

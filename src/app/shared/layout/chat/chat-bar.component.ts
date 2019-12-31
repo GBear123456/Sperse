@@ -2,7 +2,7 @@
 import { AfterViewInit, Component, EventEmitter, Injector, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import min from 'lodash/min';
 import * as moment from 'moment';
 

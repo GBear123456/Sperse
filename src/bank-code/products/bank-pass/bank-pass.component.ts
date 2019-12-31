@@ -13,6 +13,7 @@ import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
+import { MatTabGroup } from '@angular/material/tabs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
@@ -43,6 +44,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 })
 export class BankPassComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     totalCount: number;
     searchValue: '';
     dataSourceURI = 'Lead';
@@ -97,36 +99,36 @@ export class BankPassComponent implements OnInit, OnDestroy {
         },
         {
             text: this.ls.l('Weekly'),
-            number: 15,
+            number: 20,
             currentNumber: 10,
             innerColor: '#ce767f',
             outerColor: '#ac1f22'
         },
         {
             text: this.ls.l('Monthly'),
-            number: 60,
-            currentNumber: 29,
+            number: 90,
+            currentNumber: 70,
             innerColor: '#ecd68a',
             outerColor: '#f09e1e'
         },
         {
             text: this.ls.l('Quarterly'),
-            number: 120,
-            currentNumber: 29,
+            number: 250,
+            currentNumber: 180,
             innerColor: '#87c796',
             outerColor: '#1b6634'
         },
         {
             text: this.ls.l('Annual'),
-            number: 720,
-            currentNumber: 348,
+            number: 1000,
+            currentNumber: 718,
             innerColor: '#c8c0e1',
             outerColor: '#004a81'
         },
         {
             text: this.ls.l('Lifetime'),
-            number: 1000,
-            currentNumber: 850,
+            number: 25000,
+            currentNumber: 17651,
             innerColor: '#ddbcdb',
             outerColor: '#b142ab'
         }
@@ -174,10 +176,12 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     searchValueChange(e) {
-        if (e.value !== this.searchValue) {
-            this.searchValue = e.value;
-            this.dataGrid.instance.getDataSource().load();
+        /** If selected tab is not leads */
+        if (this.matTabGroup.selectedIndex !== 1) {
+            this.matTabGroup.selectedIndex = 1;
         }
+        this.searchValue = e.value;
+        this.dataGrid.instance.getDataSource().load();
     }
 
     accessCodeChanged(accessCode: string) {
