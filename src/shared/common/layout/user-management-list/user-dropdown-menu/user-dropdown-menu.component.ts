@@ -12,9 +12,8 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
@@ -40,7 +39,6 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -69,7 +67,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     accessCode$ = this.profileService.accessCode$;
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
     showAccessCode$: Observable<boolean> = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
-        ? forkJoin(
+        ? zip(
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault)
@@ -90,8 +88,6 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private bankCodeService: BankCodeService,
         private memberSettingsService: MemberSettingsServiceProxy,
         private profileService: ProfileService,
-        private notifyService: NotifyService,
-        private clipboardService: ClipboardService,
         public appSession: AppSessionService,
         public userManagementService: UserManagementService,
         public ls: AppLocalizationService
