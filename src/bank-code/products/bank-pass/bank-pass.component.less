@@ -33,10 +33,16 @@
         line-height: normal;
         letter-spacing: normal;
         color: #7a7979;
-        position: absolute;
-        right: 39px;
-        top: 43px;
+        text-align: right;
         z-index: 1;
+    
+        @media all and (min-width: 768px) {
+            position: absolute;
+            right: 39px;
+            top: 43px;
+            text-align: center;
+        }
+    
         inplace-edit {
             font-family: @text-font;
             font-size: 16px;
@@ -80,11 +86,20 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                
+                @media all and (max-width: 767px) {
+                    flex-direction: column;
+                }
             }
             .link {
                 max-width: initial;
                 justify-content: center;
                 margin-left: 10px;
+                
+                @media all and (max-width: 767px) {
+                    margin-left: 0;
+                }
+                
                 a {
                     font-family: @text-font;
                     font-size: 15px !important;
@@ -92,6 +107,10 @@
                     letter-spacing: normal;
                     text-align: center;
                     color: #ac1f22;
+                    
+                    @media all and (max-width: 767px) {
+                        max-width: 315px;
+                    }
                 }
             }
         }
@@ -108,10 +127,21 @@
         }
         .achievements-content {
             display: flex;
+            flex-direction: column;
+    
+            @media all and (min-width: 768px) {
+                flex-direction: row;
+            }
+            
             .collect-bankcodes,
             .collect-badges {
-                width: 50%;
+                width: 100%;
+                
+                @media all and (min-width: 768px) {
+                    width: 50%;
+                }
             }
+            
             h6 {
                 font-family: @title-font;
                 font-size: 16px;
@@ -119,7 +149,13 @@
                 text-align: center;
                 color: #7a7979;
                 text-transform: uppercase;
+                
+                @media all and (max-width: 768px) {
+                    margin-bottom: 10px !important;
+                    margin-top: 15px;
+                }
             }
+            
             .collect-bankcodes {
                 text-align: center;
                 h6 {
@@ -157,9 +193,20 @@
             align-items: flex-end;
             justify-content: center;
             margin-bottom: 10px;
+            
             & > div {
                 margin-right: 20.5px;
             }
+    
+            @media (max-width: 767px) {
+                flex-direction: column;
+                
+                & > div {
+                    width: 100%;
+                    margin-right: 0;
+                }
+            }
+            
             label {
                 font-family: @title-font;
                 font-size: 12px;
@@ -167,6 +214,7 @@
                 letter-spacing: normal;
                 color: #7a7979;
             }
+            
             button {
                 padding: 16px 40px;
                 font-family: @title-font;
@@ -180,13 +228,22 @@
                 height: 48px;
                 border: none;
                 width: 152px;
+                
+                @media all and (max-width: 767px) {
+                    margin: 15px auto;
+                }
             }
+            
             /deep/ .dx-textbox {
                 margin-top: 0;
                 height: 48px;
                 input {
                     padding-left: 17px;
                     height: 100%;
+                    
+                    @media (max-width: 767px) {
+                        width: 100%;
+                    }
                 }
             }
             @media (min-width: 768px) {
@@ -228,12 +285,14 @@
     .bank-pass-achievements {
         border-bottom: solid 1px #dadada;
     }
-
+    
     .grid {
-        /deep/ .dx-textbox {
-            width: 263px;
+        /deep/ dx-select-box {
+            @media all and (min-width: 1400px) {
+                width: 263px;
+            }
             margin-top: 30px;
-
+    
             input {
                 width: 100%;
                 color: #677380;
@@ -247,21 +306,21 @@
                 font-size: 14px;
                 height: 39px;
                 outline: none;
-
+    
                 @media screen and (max-width: 480px) {
                     width: auto;
                 }
             }
-
+    
             .dx-icon-search,
             .dx-icon-clear {
                 font: 14px/1 DXIcons !important;
             }
-
+    
             &.dx-state-focused .dx-placeholder {
                 top: -25px!important;
             }
-
+    
             .dx-placeholder {
                 font-size: 13px!important;
                 font-weight: 300!important;
@@ -275,7 +334,11 @@
     }
 
     /deep/ .mat-tab-group.mat-primary {
-        padding: 28px 39px;
+        padding: 10px;
+        
+        @media (min-width: 768px) {
+            padding: 28px 39px;
+        }
 
         .mat-ink-bar {
             background-color: #ac1f22;
@@ -291,5 +354,9 @@
                 color: #000;
             }
         }
+    }
+    
+    /deep/ #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
+        padding: 4px 5px 5px;
     }
 }

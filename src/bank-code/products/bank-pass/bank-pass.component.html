@@ -1,5 +1,16 @@
 <div class="bank-pass">
     <section *ngIf="hasSubscription$ | async; else noSubscription">
+        <div class="my-access-code">
+            <span>{{ ls.l('MyAccessCode') }}: </span>
+            <inplace-edit [value]="accessCode$ | async"
+                          [editPlaceholder]="ls.l('YourAccessCode')"
+                          [isCopyEnabled]="true"
+                          [isEditDialogEnabled]="true"
+                          buttonsPosition="below"
+                          [showEditModeOnEditButtonClick]="true"
+                          (valueChanged)="accessCodeChanged($event)">
+            </inplace-edit>
+        </div>
         <mat-tab-group>
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
@@ -8,7 +19,7 @@
                     <div class="achievements-content">
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
-                            <img src="./assets/common/images/bank-code/bank-codes.png">
+                            <img src="./assets/common/images/bank-code/bank-codes.png" class="img-fluid">
                         </div>
                         <div class="collect-badges">
                             <h6>{{ ls.l('CollectAllBadges') }}</h6>
@@ -28,7 +39,7 @@
                     </div>
                 </div>
                 <div class="road-tracker">
-                    <h2>{{ ls.l('BankPassRoadTracker') }}</h2>
+                    <h2>{{ ls.l('BankPassGoalTracker') }}</h2>
                     <div class="settings">
                         <div>
                             <label>{{ ls.l('WorkDaysPerWeek') }}</label>
@@ -129,17 +140,6 @@
                 <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
             </mat-tab>
         </mat-tab-group>
-        <div class="my-access-code">
-            <span>{{ ls.l('MyAccessCode') }}: </span>
-            <inplace-edit [value]="accessCode$ | async"
-                          [editPlaceholder]="ls.l('YourAccessCode')"
-                          [isCopyEnabled]="true"
-                          [isEditDialogEnabled]="true"
-                          buttonsPosition="below"
-                          [showEditModeOnEditButtonClick]="true"
-                          (valueChanged)="accessCodeChanged($event)">
-            </inplace-edit>
-        </div>
     </section>
     <ng-template #noSubscription>
         <section class="iframe" *ngIf="environmentLink$ | async as environmentLink">
