@@ -51,6 +51,16 @@ export class BankPassComponent implements OnInit, OnDestroy {
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
     dataSource = new DataSource({
         requireTotalCount: true,
+        select: [
+            'PhotoPublicId',
+            'Name',
+            'Email',
+            'Phone',
+            'CountryId',
+            'StateId',
+            'BankCode',
+            'ContactDate'
+        ],
         store: {
             key: 'Id',
             type: 'odata',
