@@ -437,8 +437,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             const filteredRowsKeys = this.filteredRowsData.map((row: Category) => row.key);
             filteredRowsKeys.forEach(filteredRowKey => {
                 let rowIndex = this.categoryList.instance.getRowIndexByKey(filteredRowKey);
-                let row = this.categoryList.instance.getRowElement(rowIndex);
-                if (row && row[0]) row[0].classList.add('filtered-category');
+                if (rowIndex !== -1) {
+                    let row = this.categoryList.instance.getRowElement(rowIndex);
+                    if (row && row[0]) row[0].classList.add('filtered-category');
+                }
             });
         }
     }
@@ -968,9 +970,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     clearSelection(wrapper?: HTMLElement, clearedItemKey?: number): boolean {
         let clearFilter = true;
         this.categoryList.instance.deselectAll();
-        if (clearedItemKey && this.filteredRowsData && this.filteredRowsData.length) {
-            const filterItemIndex = this.filteredRowsData.findIndex((category: Category) => category.key === clearedItemKey);
-            if (filterItemIndex !== -1) {
+        if (this.filteredRowsData && this.filteredRowsData.length) {
+            let filterItemIndex;
+            if (clearedItemKey) {
+                filterItemIndex = this.filteredRowsData.findIndex((category: Category) => category.key === clearedItemKey);
+            }
+            if (filterItemIndex && filterItemIndex !== -1) {
                 this.filteredRowsData.splice(filterItemIndex, 1);
             } else {
                 this.filteredRowsData = [];
@@ -980,10 +985,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             clearFilter = wrapper.classList.contains('filtered-category');
             if (clearFilter) {
                 wrapper.classList.remove('filtered-category');
-                this.onFilterSelected.emit(this.filteredRowsData);
-            } else {
-                $('.filtered-category').removeClass('filtered-category');
             }
+        } else {
+            $('.filtered-category').removeClass('filtered-category');
+        }
+        if (clearFilter) {
+            this.onFilterSelected.emit(this.filteredRowsData);
         }
         return clearFilter;
     }

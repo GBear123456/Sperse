@@ -17,12 +17,12 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 export class SourceDataComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Input() historicalSourceData: Array<BankAccountDailyStatDto>;
     @Input() forecastSourceData: Array<BankAccountDailyStatDto>;
-    @Output('onClose') closingSourceDataEmmitter: EventEmitter<any> = new EventEmitter();
+    @Output('onClose') closingSourceDataEmitter: EventEmitter<any> = new EventEmitter();
 
     amountOfItemsOnPage: number;
     constructor(
         injector: Injector,
-        private _cfoPreferencesService: CfoPreferencesService,
+        private cfoPreferencesService: CfoPreferencesService,
     ) {
         super(injector);
     }
@@ -39,10 +39,10 @@ export class SourceDataComponent extends AppComponentBase implements OnInit, OnD
     }
 
     updateCurrencySymbol = (data) => {
-        return data.valueText.replace('$', this._cfoPreferencesService.selectedCurrencySymbol);
+        return data.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
     }
 
     emitClosingSourceData() {
-        this.closingSourceDataEmmitter.emit();
+        this.closingSourceDataEmitter.emit();
     }
 }

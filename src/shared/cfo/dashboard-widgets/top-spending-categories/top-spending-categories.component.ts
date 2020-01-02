@@ -1,11 +1,12 @@
 /** Core import */
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, HostBinding, Input } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party import */
 import { select, Store } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
-import { filter, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { first, filter, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
 
 /** Application imports */
@@ -22,8 +23,8 @@ import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { CurrencyPipe } from '@angular/common';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { PeriodModel } from '@app/shared/common/period/period.model';
 
 @Component({
     selector: 'top-spending-categories',
@@ -97,13 +98,20 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     }
 
     private redirectToTransactions(categoryId: number) {
-        this.router.navigate(
-            ['../transactions'],
-            {
-                queryParams: { categoryIds: [ categoryId ]},
-                relativeTo: this.route
-            }
-        );
+        this.dashboardService.period$.pipe(
+            first()
+        ).subscribe((period: PeriodModel) => {
+            this.router.navigate(
+                ['../transactions'],
+                {
+                    queryParams: {
+                        categoryIds: [ categoryId ],
+                        period: period.period
+                    },
+                    relativeTo: this.route
+                }
+            );
+        });
     }
 
     ngOnDestroy() {

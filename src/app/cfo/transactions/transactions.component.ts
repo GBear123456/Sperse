@@ -67,6 +67,7 @@ import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accoun
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -512,10 +513,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
         const startDate = params.get('startDate');
         const endDate = params.get('endDate');
-        if (startDate || endDate) {
+        const period = params.get('period');
+        if (startDate || endDate || period) {
             this.cfoPreferencesService.dateRange.next({
                 from: { value: startDate ? new Date(startDate) : undefined },
-                to: { value: endDate ? new Date(endDate) : undefined }
+                to: { value: endDate ? new Date(endDate) : undefined },
+                period: period as Period
             });
         }
 
@@ -1023,7 +1026,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     filterByCashflowCategories(categories: Category[]) {
         this.clearCategoriesFilters();
-        if (categories && categories.length) {
+        if (Array.isArray(categories)) {
             if (categories.length === 1 && !this.isCategory(categories[0])) {
                 if (this.isCashflowType(categories[0])) {
                     this.selectedCashflowTypeIds.next([categories[0].key.toString()]);
