@@ -350,6 +350,12 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         this.setGridDataLoaded();
     }
 
+    onInitialized(event) {
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1
+        });
+    }
+
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
         this.appService.updateToolbar(null);

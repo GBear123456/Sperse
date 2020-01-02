@@ -171,13 +171,18 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     }
 
     showActionsMenu(event) {
-        this.actionRecord = event.data;
+        setTimeout(() => {
+            this.actionRecord = event.data;
+            this.changeDetectorRef.detectChanges();
+        }, this.actionRecord ? 500 : 0);
+        this.actionRecord = null;
         event.cancel = true;
     }
 
     onMenuItemClick($event) {
         $event.itemData.action.call(this);
         this.actionRecord = null;
+        this.changeDetectorRef.detectChanges();
     }
 
     deleteEdition(edition: EditionListDto): void {
@@ -197,6 +202,12 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     onContentReady() {
         this.setGridDataLoaded();
         this.changeDetectorRef.detectChanges();
+    }
+
+    onInitialized(event) {
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1
+        });
     }
 
     searchValueChange(e: object) {

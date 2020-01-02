@@ -16,14 +16,6 @@
     }
 
     /deep/ #gridContainer {
-        table {
-            direction: rtl;
-
-            td {
-                direction: ltr;
-            }
-        }
-
         .dx-datagrid .dx-link.dx-link-edit {
             width: 18px !important;
         }
@@ -31,9 +23,11 @@
         td.dx-command-edit {
             min-width: 40px;
             width: 40px;
-
+            & + td::before {
+                display: none !important;
+            }
             &:before {
-                left: 37px !important;
+                left: 25px !important;
             }
         }
 

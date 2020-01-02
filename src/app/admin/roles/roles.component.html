@@ -29,6 +29,7 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
+                                  (onInitialized)="onInitialized($event)"
                                   (onContentReady)="onContentReady()"
                                   (onCellClick)="editRole($event)"
                                   (onEditingStart)="showActionsMenu($event)"
@@ -39,9 +40,9 @@
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
 
-                        <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="moduleId" caption="{{l('Module')}}" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="displayName" caption="{{l('Role')}}" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="moduleId" caption="{{l('Module')}}" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{ cellData.value | date: formatting.dateTime : userTimezone }}
