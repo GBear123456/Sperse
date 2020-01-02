@@ -592,12 +592,21 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    onContentReady() {
+    onContentReady(event) {
         this.setGridDataLoaded();
     }
 
+    onInitialized(event) {
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1
+        });
+    }
+
     showActionsMenu(event) {
-        this.actionRecord = event.data;
+        setTimeout(() => {
+            this.actionRecord = event.data;
+        }, this.actionRecord ? 500 : 0);
+        this.actionRecord = null;
         event.cancel = true;
     }
 

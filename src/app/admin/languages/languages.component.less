@@ -15,20 +15,17 @@
     }
 
     /deep/ #gridContainer {
-        table {
-            direction: rtl;
-
-            td {
-                direction: ltr;
-            }
-        }
-
         .dx-datagrid .dx-link.dx-link-edit {
             width: 18px!important;
         }
 
-        td.dx-command-edit:before {
-            left: 60px!important;
+        td.dx-command-edit {
+            & + td::before {
+                display: none !important;
+            }
+            &:before {
+                left: 47px !important;
+            }
         }
 
         .dx-datagrid-rowsview {
