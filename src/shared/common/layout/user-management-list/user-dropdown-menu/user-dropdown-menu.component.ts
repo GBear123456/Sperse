@@ -97,7 +97,7 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.showAccessCode$.pipe(first()).subscribe((showAccessCode: boolean) => {
+        this.showAccessCode$.subscribe((showAccessCode: boolean) => {
             this.showAccessCode = showAccessCode;
         });
     }

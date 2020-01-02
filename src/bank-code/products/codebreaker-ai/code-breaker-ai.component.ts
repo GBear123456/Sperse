@@ -1,9 +1,10 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /** Application imports */
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
@@ -17,11 +18,14 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodeBreakerAiComponent {
-    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
+        tap(() => setTimeout(() => this.changeDetectorRef.detectChanges()))
+    );
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('codebreaker-ai-landing');
 
     constructor(
         private profileService: ProfileService,
-        private productsService: ProductsService
+        private productsService: ProductsService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {}
 }

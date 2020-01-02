@@ -18,7 +18,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -84,7 +84,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
+        tap(() => setTimeout(() => this.changeDetectorRef.detectChanges()))
+    );
     dataIsLoading = false;
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
     userTimezone = '0000';
