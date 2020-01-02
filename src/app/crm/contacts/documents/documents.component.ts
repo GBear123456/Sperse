@@ -180,7 +180,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     },
                     {
                         name: 'delete',
-                        action: this.deleteDocument.bind(this)
+                        action: this.deleteDocument.bind(this),
+                        visible: this.manageAllowed
                     }
                 ]
             },
@@ -197,8 +198,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                             const viewedDocument = <any>this.getViewedDocumentElement();
                             if (this.showViewerType !== DocumentViewerType.WOPI && this.showViewerType !== DocumentViewerType.VIDEO) {
                                 const printSrc = this.showViewerType == DocumentViewerType.IMAGE ?
-                                    this.imageViewer.images[0] :
-                                    viewedDocument.textContent;
+                                    this.imageViewer.images[0] : viewedDocument.textContent;
                                 const format = <any>this.getFileExtensionByFileName(this.currentDocumentInfo.fileName);
                                 this.printerService.printDocument(printSrc, format);
                             }
@@ -287,7 +287,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();
             this.loadDocuments();
-        })
+        });
     }
 
     loadDocumentTypes() {
