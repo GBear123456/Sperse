@@ -14,7 +14,9 @@
              }">
             <span class="stageName">{{stage.name}}</span>
             <div *ngIf="stage?.total">
-                <span>({{ getStageSelectedEntitiesCount(stage) | number }} of {{ stage?.total | number }})</span>
+                <span>
+                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{ selectedEntitiesCount | number }} of </ng-container>{{ stage?.total | number }})
+                </span>
                 <span *ngIf="stage.total && allStagesEntitiesTotal">{{ getStageRatio(stage.total) }}</span>
             </div>
             <button [id]="'ident' + stage.id" class="edit-button">
