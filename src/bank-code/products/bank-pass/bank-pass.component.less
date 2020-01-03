@@ -319,6 +319,7 @@
         .search {
             width: 263px;
             /deep/ .dx-textbox {
+                border: none;
                 @media all and (min-width: 1400px) {
                     width: 263px;
                 }
@@ -463,5 +464,11 @@
     
     app-no-data {
         height: calc(~"100vh - 146px") !important;
+    }
+
+    /deep/ circle-progress svg {
+        text {
+            transform: translate(0px, 6px);
+        }
     }
 }

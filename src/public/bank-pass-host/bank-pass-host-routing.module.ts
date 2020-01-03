@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BankPassHostComponent } from '@root/public/bank-pass-host/bank-pass-host.component';
+import { AppComponent } from '@root/public/bank-pass-host/app.component';
 
 @NgModule({
     imports: [
         RouterModule.forChild([
             {
                 path: '',
-                component: BankPassHostComponent,
+                component: AppComponent,
                 canActivate: [],
                 canActivateChild: []
             }
