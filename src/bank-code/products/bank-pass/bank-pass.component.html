@@ -128,7 +128,7 @@
                             <dxi-column dataField="CountryId" [caption]="ls.l('CountryCode')"></dxi-column>
                             <dxi-column dataField="StateId" [caption]="ls.l('State')"></dxi-column>
                             <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')" [width]="105"></dxi-column>
-                            <dxi-column dataField="ContactDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
