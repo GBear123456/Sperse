@@ -195,15 +195,19 @@
 
     .road-tracker {
         padding-top: 10px;
+        padding-bottom: 28px;
+        
         h2 {
             margin-bottom: 25px;
         }
+        
         .settings {
-            display: flex;
+            //display: flex;
             align-items: flex-end;
             justify-content: center;
             margin-bottom: 10px;
             display: none;
+            
             & > div {
                 margin-right: 20.5px;
             }
@@ -427,15 +431,11 @@
     }
 
     #gridContainer {
-        height: auto;
+        height: calc(~"100vh - 146px");
     }
 
     /deep/ .mat-tab-group.mat-primary {
         padding: 10px;
-
-        @media (min-width: 768px) {
-            padding: 28px 39px;
-        }
 
         .mat-ink-bar {
             background-color: #ac1f22;
@@ -451,12 +451,17 @@
                 color: #000;
             }
         }
+        
         @media (min-width: 768px) {
-            padding: 28px 39px;
+            padding: 28px 39px 0;
         }
     }
 
     /deep/ #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
         padding: 4px 5px 5px;
+    }
+    
+    app-no-data {
+        height: calc(~"100vh - 146px") !important;
     }
 }

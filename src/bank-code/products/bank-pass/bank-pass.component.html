@@ -20,7 +20,7 @@
                 </inplace-edit>
             </div>
         </div>
-        <mat-tab-group>
+        <mat-tab-group (selectedTabChange)="tabChanged($event)">
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
                 <div class="bank-pass-achievements">
@@ -99,7 +99,7 @@
                 </div>
             </mat-tab>
             <mat-tab [label]="ls.l('Leads').toUpperCase()">
-                <div [hidden]="dataIsLoading">
+                <div [hidden]="dataIsLoading" *ngIf="currentTabIndex == 1">
                     <div class="grid" [hidden]="totalCount <= 0">
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
@@ -142,7 +142,6 @@
                         </dx-data-grid>
                     </div>
                     <app-no-data [hidden]="totalCount > 0"
-                                 height="calc(100vh - 69px)"
                                  title="No contacts added yet"
                                  [showLink]="false">
                     </app-no-data>

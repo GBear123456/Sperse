@@ -13,7 +13,7 @@ import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
-import { MatTabGroup } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
@@ -46,6 +46,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     totalCount: number;
+    currentTabIndex = 0;
     searchValue: '';
     dataSourceURI = 'Lead';
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -175,6 +176,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
                     this.renderer.removeClass(this.document.body, 'overflow-hidden');
                 }
             });
+    }
+
+    tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+        this.currentTabIndex = tabChangeEvent.index;
     }
 
     getQuickSearchParam() {
