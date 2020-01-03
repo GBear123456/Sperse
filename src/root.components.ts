@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { Component, Inject, AfterViewInit, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
@@ -22,7 +22,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     template: '<router-outlet></router-outlet>',
     styleUrls: ['./root.component.less']
 })
-export class RootComponent implements OnInit {
+export class RootComponent implements OnInit, AfterViewInit {
     constructor(
         public loadingService: LoadingService,
         private router: Router,

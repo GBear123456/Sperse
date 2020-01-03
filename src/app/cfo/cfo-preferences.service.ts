@@ -15,6 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Injectable()
 export class CfoPreferencesService {
@@ -27,12 +28,12 @@ export class CfoPreferencesService {
         ? {
             from: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'quarter').startOf('quarter').toDate(), true) },
             to: { value: DateHelper.addTimezoneOffset(moment().subtract(1, 'quarter').endOf('quarter').toDate(), true) },
-            period: 'LastQuarter'
+            period: Period.LastQuarter
         }
         : {
             from: { value: DateHelper.addTimezoneOffset(moment().startOf('year').toDate(), true) },
             to: { value: DateHelper.addTimezoneOffset(moment().endOf('year').toDate(), true) },
-            period: 'ThisYear'
+            period: Period.ThisYear
         }
     );
     dateRange$: Observable<CalendarValuesModel> = this.dateRange.asObservable();
