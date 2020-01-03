@@ -1,5 +1,5 @@
 <section class="iframe">
-    <iframe src="https://wp.bankcode.pro/the-vault-access/"
+    <iframe [src]="accessLink$ | async"
             *ngIf="hasSubscription$ | async; else noSubscription"
             frameborder="0">
     </iframe>
