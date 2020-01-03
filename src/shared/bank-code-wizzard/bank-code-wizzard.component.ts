@@ -1,9 +1,10 @@
 /** Core imports */
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 /** Third party imports */
 import { Chart } from 'chart.js';
 import * as $ from 'jquery';
+import * as moment from 'moment';
 
 /** Application imports */
 
@@ -12,7 +13,7 @@ import * as $ from 'jquery';
     templateUrl: './bank-code-wizzard.component.html',
     styleUrls: ['./bank-code-wizzard.component.less']
 })
-export class BankCodeWizzardComponent implements OnInit {
+export class BankCodeWizzardComponent {
     requestUrl = 'https://testadmin.sperse.com/api/services/CRM/External/GetBankCode?content=';
     textForAnalyse = '';
     chart: any;
@@ -41,12 +42,7 @@ export class BankCodeWizzardComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: false
     };
-
-    constructor(
-    ) {
-    }
-
-    ngOnInit() {}
+    currentYear: number = moment().year();
 
     categorizeText(text: string) {
         event.preventDefault();
@@ -65,7 +61,6 @@ export class BankCodeWizzardComponent implements OnInit {
         };
         $.ajax(settings)
             .done(function (response) {
-                console.log(response);
                 let dimentions = response.result.dimmensions;
                 this.analyseResult = dimentions;
                 let scores = [0, 0, 0, 0];
