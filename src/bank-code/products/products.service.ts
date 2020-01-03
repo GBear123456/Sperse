@@ -4,7 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 /** Application imports */
 import { environment } from '@root/environments/environment';
@@ -29,6 +29,7 @@ export class ProductsService {
 
     getResourceLink(route): Observable<SafeUrl> {
         return this.profileService.secureId$.pipe(
+            filter(Boolean),
             map((secureId: string) => this.getLink(route, secureId))
         );
     }

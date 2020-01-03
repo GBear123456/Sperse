@@ -133,7 +133,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
-        window['t'] = this;
         this.filtersService.filterFixed$.pipe(
             switchMap(() => this.pipelineService.dataLayoutType$),
             filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
@@ -549,6 +548,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stages && this.stages.forEach((stage) => {
                             stage.total = stages[stage.id] || 0;
                             stage.isFull = stage.total <= stage.entities.length;
+                            stage.width = stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium;
                             this._dataSources[stage.name]['total'] = stage.total;
                             this.allStagesEntitiesTotal += stage.total;
                             this.detectChanges();

@@ -4,7 +4,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import * as moment from 'moment';

@@ -3,7 +3,7 @@ import { Component, Directive, Injector, OnDestroy, OnInit, ViewChild, ViewConta
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
-import { forkJoin } from 'rxjs';
+import { zip } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -59,7 +59,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                 });
             });
         if (this.appSession.user) {
-            forkJoin(
+            zip(
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
             ).subscribe((subcriptions: boolean[]) => {
