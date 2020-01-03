@@ -59,7 +59,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
             'CountryId',
             'StateId',
             'BankCode',
-            'ContactDate'
+            'LeadDate'
         ],
         store: {
             key: 'Id',
