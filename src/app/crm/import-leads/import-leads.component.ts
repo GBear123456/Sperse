@@ -67,6 +67,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zipCode';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryCode';
+    private readonly PERSONAL_IS_ACTIVE_MILITARY_DUTY = 'personalInfo_isActiveMilitaryDuty';
+    private readonly PERSONAL_IS_US_CITIZEN = 'personalInfo_isUSCitizen';
+    private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
@@ -114,6 +117,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_FULL_ADDRESS_CITY,
         this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
         this.BUSINESS_WORK_FULL_ADDRESS_CITY
+    ];
+
+    private readonly BOOLEAN_FIELDS = [
+        this.BUSINESS_IS_EMPLOYED,
+        this.PERSONAL_IS_US_CITIZEN,
+        this.PERSONAL_IS_ACTIVE_MILITARY_DUTY
     ];
 
     private readonly PHONE_FIELDS = [
@@ -268,6 +277,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.fieldsConfig[field] = { cellTemplate: 'phoneCell' };
         });
 
+        this.BOOLEAN_FIELDS.forEach(field => {
+            this.fieldsConfig[field] = { dataType: 'boolean' };
+        });
+
         let fieldIndex = 1;
         this.FIELDS_ORDER.forEach(field => {
             if (this.fieldsConfig[field])
@@ -338,6 +351,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private normalizePhoneNumber(field, phoneNumber, dataSource) {
         let value = phoneNumber.replace(/[^\d+]/g, '');
         this.setFieldIfDefined(value || phoneNumber, field.mappedField, dataSource);
+        return true;
+    }
+
+    private normalizeBooleanValue(field, value, dataSource) {
+        value = value.trim().toLowerCase();
+        dataSource[field.mappedField] = value ?
+            ['true', 'yes', 'y', '1'].indexOf(value) >= 0
+            : undefined;
         return true;
     }
 
@@ -553,6 +574,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
         } else if (this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
             return this.parseCurrency(field, sourceValue, reviewDataSource);
+        } else if (this.BOOLEAN_FIELDS.indexOf(field.mappedField) >= 0) {
+            return this.normalizeBooleanValue(field, sourceValue, reviewDataSource);
         }
         return false;
     }
