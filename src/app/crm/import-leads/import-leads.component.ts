@@ -398,21 +398,23 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId: number) => {
                             if (importId && !isNaN(importId))
-                                this.importProxy.getStatuses(importId).subscribe((res: GetImportStatusOutput[]) => {
-                                    let importStatus: GetImportStatusOutput = res[0];
-                                    this.updateImportStatus(importStatus);
-                                    if (!this.showedFinishStep())
-                                         this.wizard.showFinishStep();
-                                    if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
-                                        this.importLeadsService.setupImportCheck(
-                                            importId,
-                                            (importStatus: GetImportStatusOutput) => {
-                                                this.updateImportStatus(importStatus);
-                                            },
-                                            uri
-                                        );
-                                    }
-                                });
+                                setTimeout(() => {
+                                    this.importProxy.getStatuses(importId).subscribe((res: GetImportStatusOutput[]) => {
+                                        let importStatus: GetImportStatusOutput = res[0];
+                                        this.updateImportStatus(importStatus);
+                                        if (!this.showedFinishStep())
+                                             this.wizard.showFinishStep();
+                                        if (<ImportStatus>importStatus.statusId != ImportStatus.Completed) {
+                                            this.importLeadsService.setupImportCheck(
+                                                importId,
+                                                (importStatus: GetImportStatusOutput) => {
+                                                    this.updateImportStatus(importStatus);
+                                                },
+                                                uri
+                                            );
+                                        }
+                                    });
+                                }, 3000);
                             this.clearToolbarSelectedItems();
                         });
                 }

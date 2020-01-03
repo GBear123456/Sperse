@@ -20,7 +20,8 @@
                 <p>{{l('Imported')}}: {{importedCount}}</p>
                 <p>{{l('Failed')}}: {{failedCount}}</p>
                 <import-progress-bar [summaryTooltip]="false"></import-progress-bar>
-                <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
+                <button class="button-layout button-primary" (click)="navigateToList()">{{l('ViewAllImports')}}</button>
+                <button class="button-layout button-primary" (click)="reset()" [ngStyle]="{'background-color': '#34bfa3'}">{{l('AnotherImport')}}</button>
                 <button class="button-layout button-default" (click)="cancelImport()">{{l('CancelImport')}}</button>
             </div>
 
