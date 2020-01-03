@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { Store, select } from '@ngrx/store';
 import { map } from 'rxjs/operators';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -22,7 +23,6 @@ import { PersonalDetailsDialogComponent } from './personal-details-dialog/person
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
-import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
     templateUrl: './personal-details.component.html',

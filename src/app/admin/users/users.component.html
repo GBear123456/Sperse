@@ -25,13 +25,14 @@
                                   class="limitedPagerTotal"
                                   [remoteOperations]="true"
                                   [dataSource]="dataSource"
+                                  [allowColumnResizing]="true"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
-                                  [loadPanel]="{ enabled: false }"
-                                  [allowColumnResizing]="true"
+                                  [loadPanel]="{ enabled: false }"                                  
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
-                                  (onContentReady)="onContentReady()"
+                                  (onInitialized)="onInitialized($event)"
+                                  (onContentReady)="onContentReady($event)"
                                   (onCellClick)="editUser($event)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
@@ -39,31 +40,50 @@
                                        showCheckBoxesMode="always"
                                        mode="none">
                         </dxo-selection>
-                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
 
-                        <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="isActive" [caption]="l('Active')"></dxi-column>
-                        <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false"></dxi-column>
-                        <dxi-column dataField="surname" [caption]="l('Surname')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="name" [caption]="l('Name')" cssClass="clipboard-holder"></dxi-column>
+                        <dxo-editing 
+                            mode="popup" 
+                            [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" 
+                            [allowUpdating]="true">
+                        </dxo-editing>
+
+                        <dxi-column 
+                            caption=" "
+                            dataField="profileThumbnailId"
+                            cellTemplate="photoTemplate"
+                            [width]="50"
+                            [showInColumnChooser]="false"
+                            [allowExporting]="false"
+                            [allowGrouping]="false" 
+                            [allowSorting]="false">
+                        </dxi-column>
                         <dxi-column dataField="userName" [caption]="l('UserName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="profileThumbnailId" caption=" " cellTemplate="photoTemplate"
-                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="name" [caption]="l('Name')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="surname" [caption]="l('Surname')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="isActive" [caption]="l('Active')"></dxi-column>
+                        <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(data.data.profileThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'" class="clipboard-holder">
-                            <span class="role-container"><ng-container *ngFor="let item of cellData.value; let i = index">{{(i ? ',&nbsp;': '') + item.roleName}}</ng-container></span>
+                            <span class="role-container">
+                                <ng-container *ngFor="let item of cellData.value; let i = index">
+                                    {{(i ? ',&nbsp;': '') + item.roleName}}
+                                </ng-container>
+                            </span>
                         </div>
+
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone }}
                         </div>
+
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
                         </div>

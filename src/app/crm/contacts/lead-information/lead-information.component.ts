@@ -8,10 +8,10 @@ import { finalize, filter, takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
-import { ClipboardService } from 'ngx-clipboard';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
 import {
