@@ -106,12 +106,12 @@ const routes: Routes = [
                 data: { localizationSource: 'Platform' }
             },
             {
-                path: 'bank-pass',
+                path: 'shared/bank-pass',
                 loadChildren: 'public/bank-pass-host/bank-pass-host.module#BankPassHostModule',
                 data: { localizationSource: 'Platform' }
             },
             {
-                path: 'why-they-buy',
+                path: 'shared/why-they-buy',
                 loadChildren: 'public/why-they-buy-host/why-they-buy-host.module#WhyTheyBuyHostModule',
                 data: { localizationSource: 'Platform' }
             }

@@ -9,14 +9,16 @@ import {
     OnInit,
     OnDestroy
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
+import { MatTabGroup } from '@angular/material/tabs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -28,25 +30,37 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProductsService } from '@root/bank-code/products/products.service';
-import { DOCUMENT } from '@angular/common';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'bank-pass',
     templateUrl: 'bank-pass.component.html',
     styleUrls: ['./bank-pass.component.less'],
-    providers: [ LifecycleSubjectsService ],
+    providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     totalCount: number;
     searchValue: '';
     dataSourceURI = 'Lead';
     gridPagerConfig = DataGridService.defaultGridPagerConfig;
     dataSource = new DataSource({
         requireTotalCount: true,
+        select: [
+            'PhotoPublicId',
+            'Name',
+            'Email',
+            'Phone',
+            'CountryId',
+            'StateId',
+            'BankCode',
+            'LeadDate'
+        ],
         store: {
             key: 'Id',
             type: 'odata',
@@ -80,7 +94,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
         }
     });
     formatting = AppConsts.formatting;
-    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
+        tap(() => setTimeout(() => this.changeDetectorRef.detectChanges()))
+    );
     dataIsLoading = false;
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
     userTimezone = '0000';
@@ -95,36 +111,36 @@ export class BankPassComponent implements OnInit, OnDestroy {
         },
         {
             text: this.ls.l('Weekly'),
-            number: 15,
+            number: 20,
             currentNumber: 10,
             innerColor: '#ce767f',
             outerColor: '#ac1f22'
         },
         {
             text: this.ls.l('Monthly'),
-            number: 60,
-            currentNumber: 29,
+            number: 90,
+            currentNumber: 70,
             innerColor: '#ecd68a',
             outerColor: '#f09e1e'
         },
         {
             text: this.ls.l('Quarterly'),
-            number: 120,
-            currentNumber: 29,
+            number: 250,
+            currentNumber: 180,
             innerColor: '#87c796',
             outerColor: '#1b6634'
         },
         {
             text: this.ls.l('Annual'),
-            number: 720,
-            currentNumber: 348,
+            number: 1000,
+            currentNumber: 718,
             innerColor: '#c8c0e1',
             outerColor: '#004a81'
         },
         {
             text: this.ls.l('Lifetime'),
-            number: 1000,
-            currentNumber: 850,
+            number: 25000,
+            currentNumber: 17651,
             innerColor: '#ddbcdb',
             outerColor: '#b142ab'
         }
@@ -138,7 +154,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private productsService: ProductsService,
         private renderer: Renderer2,
+        private appSession: AppSessionService,
         private lifecycleSubjectService: LifecycleSubjectsService,
+        private memberSettingsService: MemberSettingsServiceProxy,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
@@ -170,10 +188,24 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     searchValueChange(e) {
-        if (e.value !== this.searchValue) {
-            this.searchValue = e.value;
-            this.dataGrid.instance.getDataSource().load();
+        /** If selected tab is not leads */
+        if (this.matTabGroup.selectedIndex !== 1) {
+            this.matTabGroup.selectedIndex = 1;
         }
+        this.searchValue = e.value;
+        this.dataGrid.instance.getDataSource().load();
+    }
+
+    accessCodeChanged(accessCode: string) {
+        this.profileService.updateAccessCode(accessCode);
+        this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: accessCode })).subscribe(
+            () => {
+                abp.notify.info(this.ls.l('AccessCodeUpdated'));
+                this.appSession.user.affiliateCode = accessCode;
+            },
+            /** Update back if error comes */
+            () => this.profileService.updateAccessCode(this.appSession.user.affiliateCode)
+        );
     }
 
     ngOnDestroy() {

@@ -14,7 +14,6 @@
                     displayExpr="text"
                     valueExpr="value"
                     [items]="contactGroups"
-                    [width]="'160px'"
                     fieldTemplate="selectTemplate"
                     [(value)]="selectedContactGroup"
                     (onValueChanged)="onContactGroupChanged($event)">
@@ -109,13 +108,12 @@
                             </dxi-column>
                         </ng-container>
 
-                        <dxi-column dataField="ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="LeadRequestDate" [caption]="l('LeadRequestDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>

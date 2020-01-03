@@ -20,6 +20,7 @@
             bottom: 2px;
             left: 5px;
             visibility: hidden;
+            display: flex;
 
             i, img {
                 font-size: 18px;
@@ -37,9 +38,12 @@
 
             &.below {
                 position: absolute;
-                bottom: -33px;
+                bottom: -32px;
                 left: initial;
                 right: 0;
+            }
+            @media (max-width: 768px) {
+                display: none;
             }
         }
 

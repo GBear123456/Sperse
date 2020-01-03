@@ -1,5 +1,25 @@
 <div class="bank-pass">
     <section *ngIf="hasSubscription$ | async; else noSubscription">
+        <div class="header">
+            <div class="search">
+                <dx-text-box [placeholder]="ls.l('Search')"
+                             [value]="searchValue"
+                             [showClearButton]="false"
+                             mode="search"
+                             (onValueChanged)="searchValueChange($event)">
+                </dx-text-box>
+            </div>
+            <div class="my-access-code">
+                <span>{{ ls.l('MyAccessCode') }}: </span>
+                <inplace-edit [value]="accessCode$ | async"
+                              [editPlaceholder]="ls.l('YourAccessCode')"
+                              [isCopyEnabled]="true"
+                              [isEditDialogEnabled]="true"
+                              [showEditModeOnEditButtonClick]="true"
+                              (valueChanged)="accessCodeChanged($event)">
+                </inplace-edit>
+            </div>
+        </div>
         <mat-tab-group>
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
@@ -8,27 +28,33 @@
                     <div class="achievements-content">
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
-                            <img src="">
+                            <div class="letters">
+                                <img src="./assets/common/images/bank-code/B1.png">
+                                <img src="./assets/common/images/bank-code/A1.png">
+                                <img src="./assets/common/images/bank-code/N1.png">
+                                <img src="./assets/common/images/bank-code/K1.png">
+                            </div>
+                            <img src="./assets/common/images/bank-code/bank-codes.png" class="img-fluid">
                         </div>
                         <div class="collect-badges">
                             <h6>{{ ls.l('CollectAllBadges') }}</h6>
                             <div class="badges">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
-                                <img src="./assets/common/images/bank-code/codebreaker-8.png">
+                                <img src="./assets/common/images/bank-code/badges/L1-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L2-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L3-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L4-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L5-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L6-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L7-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L8-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L9-1.png">
+                                <img src="./assets/common/images/bank-code/badges/L10-0.png">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="road-tracker">
-                    <h2>{{ ls.l('BankPassRoadTracker') }}</h2>
+                    <h2>{{ ls.l('BankPassGoalTracker') }}</h2>
                     <div class="settings">
                         <div>
                             <label>{{ ls.l('WorkDaysPerWeek') }}</label>
@@ -75,11 +101,6 @@
             <mat-tab [label]="ls.l('Leads').toUpperCase()">
                 <div [hidden]="dataIsLoading">
                     <div class="grid" [hidden]="totalCount <= 0">
-                        <dx-text-box [placeholder]="ls.l('Search')"
-                                     [value]="searchValue"
-                                     mode="search"
-                                     (onValueChanged)="searchValueChange($event)">
-                        </dx-text-box>
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
                                       accessKey="narrowHeaderPanel"
@@ -104,21 +125,20 @@
                             <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="150"></dxi-column>
                             <dxi-column dataField="Email" [caption]="ls.l('Email')" [width]="160"></dxi-column>
                             <dxi-column dataField="Phone" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                            <dxi-column dataField="City" [caption]="ls.l('City')" [width]="90"></dxi-column>
+                            <dxi-column dataField="CountryId" [caption]="ls.l('CountryCode')"></dxi-column>
                             <dxi-column dataField="StateId" [caption]="ls.l('State')"></dxi-column>
-                            <dxi-column dataField="Stage" [caption]="ls.l('Stage')"></dxi-column>
                             <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')" [width]="105"></dxi-column>
-                            <dxi-column dataField="CreationTime" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                {{cellData.value | date: formatting.date : userTimezone}}
                             </div>
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                             </div>
-                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-sorting mode="none"></dxo-sorting>
                         </dx-data-grid>
                     </div>
                     <app-no-data [hidden]="totalCount > 0"
@@ -130,14 +150,10 @@
                 <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
             </mat-tab>
         </mat-tab-group>
-        <div class="my-access-code" *ngIf="accessCode$ | async as accessCode">
-            <span>{{ ls.l('MyAccessCode') }}: </span>
-            <span class="code">{{ accessCode }}</span>
-        </div>
     </section>
     <ng-template #noSubscription>
-        <section class="iframe">
-            <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
+        <section class="iframe" *ngIf="environmentLink$ | async as environmentLink">
+            <iframe [src]="environmentLink" frameborder="0"></iframe>
         </section>
     </ng-template>
 </div>

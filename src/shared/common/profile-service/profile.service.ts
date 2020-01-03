@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, publishReplay, refCount } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { delay, distinctUntilChanged, map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -19,35 +19,38 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 
 @Injectable()
 export class ProfileService {
-    public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> = this.subscriptionProxy.getMemberInfo(
-        'BankCode',
-        undefined,
-        undefined
-    )
-        /**of(new GetMemberInfoOutput({
-            subscriptions: [ new SubscriptionShortInfoOutput({
-                serviceType: BankCodeServiceType.BANKPass,
-                serviceTypeId: BankCodeServiceType.BANKPass,
-                serviceName: null,
-                serviceId: null,
-                endDate: null
-            })],
-            secureId: 'sadasdg'
-        }))*/
-        .pipe(
+    private loadMemberInfo: Subject<null> = new Subject<null>();
+    public bankCodeMemberInfo$: Observable<GetMemberInfoOutput> =
+        this.loadMemberInfo.pipe(
+            delay(3000),
+            startWith(null),
+            switchMap(() => this.subscriptionProxy.getMemberInfo(
+                'BankCode',
+                undefined,
+                undefined
+            )),
             publishReplay(),
             refCount()
         );
-    secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(map((bankCodeMemberInfo: GetMemberInfoOutput) => {
-        return bankCodeMemberInfo.secureId;
-    }));
+    secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(
+        map((bankCodeMemberInfo: GetMemberInfoOutput) => bankCodeMemberInfo.secureId),
+        distinctUntilChanged()
+    );
     private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);
     accessCode$: Observable<string> = this.accessCode.asObservable();
 
     constructor(
         private appSession: AppSessionService,
         private subscriptionProxy: MemberSubscriptionServiceProxy
-    ) {}
+    ) {
+        const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
+        const messageEvent = window[eventMethod] === 'attachEvent' ? 'onmessage' : 'message';
+        window.addEventListener(messageEvent, this.refreshMemberInfo.bind(this), false);
+    }
+
+    refreshMemberInfo() {
+        this.loadMemberInfo.next();
+    }
 
     getPhoto(photo, gender = null): string {
         if (photo)
@@ -87,7 +90,8 @@ export class ProfileService {
         return this.bankCodeMemberInfo$.pipe(
             map((memberInfo: GetMemberInfoOutput) => {
                 return memberInfo.subscriptions.some((sub: SubscriptionShortInfoOutput) => {
-                    return sub.serviceTypeId == serviceTypeId && (!sub.endDate || sub.endDate.diff(moment()) > 0);
+                    return sub.serviceTypeId.toLowerCase() === serviceTypeId.toString().toLowerCase()
+                        && (!sub.endDate || sub.endDate.diff(moment()) > 0);
                 });
             })
         );

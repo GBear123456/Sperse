@@ -123,13 +123,13 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
 
         this.ordersDataSource = new DataSource({
-            sort: [{ selector: 'CreationTime', desc: true }],
-            select: ['Id', 'ContactId', 'Stage', 'OrderType', 'CreationTime', 'DateProcessed', 'Name'],
+            sort: [{ selector: 'Date', desc: true }],
+            select: ['OrderId', 'ContactId', 'OrderStage', 'OrderType', 'Date'],
             requireTotalCount: false,
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl('Order'),
+                url: this.getODataUrl('OrderInvoices'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -258,7 +258,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.contactId || this._contactInfo.id]);
             this.ordersDataSource.load().then((items) => {
                 let topItem = items[0];
-                if (topItem && !topItem.DateProcessed)
+                if (topItem && topItem.OrderStage != 'Complete')
                     this.orderId = topItem.Id;
             });
         }
@@ -310,8 +310,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     orderDisplayValue(data) {
         if (data)
-            return data.CreationTime.split('T').shift() +
-                ' ' + data.OrderType + ' - ' + data.Stage;
+            return data.Date.split('T').shift() +
+                ' ' + data.OrderType + ' - ' + data.OrderStage;
         return data;
     }
 
