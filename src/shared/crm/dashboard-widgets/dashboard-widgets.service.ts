@@ -19,6 +19,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Injectable()
 export class DashboardWidgetsService  {
+
     private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject<PeriodModel>(this.periodService.selectedPeriod);
     private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
     totalsData$: Observable<GetTotalsOutput> = this._totalsData.asObservable();
@@ -56,19 +57,6 @@ export class DashboardWidgetsService  {
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
 
-    private _starColorTypes = {
-        Yellow: 'rgb(230, 230, 0)',
-        Blue: 'blue',
-        Green: 'green',
-        Purple: 'purple',
-        Red: 'red',
-        Gradient1: ['#24c26c', '#5ac860'],
-        Gradient2: ['#82cc57', '#b1d049'],
-        Gradient3: ['#f0eb56', '#ffc800'],
-        Gradient4: ['#f3852a', '#e14617'],
-        Gradient5: '#959595'
-    };
-
     constructor(
         private permissionService: AppPermissionService,
         private dashboardServiceProxy: DashboardServiceProxy,
@@ -89,14 +77,6 @@ export class DashboardWidgetsService  {
         ).subscribe((totalData: GetTotalsOutput) => {
             this._totalsData.next(totalData);
         });
-    }
-
-    getStarColorByType(type: ContactStarColorType, gradient = false) {
-        let colors: any = this._starColorTypes[type];
-        if (colors && colors.join)
-            return gradient ? 'linear-gradient(' + colors.join(',') + ')' : colors.shift();
-        else
-            return colors;
     }
 
     refresh() {

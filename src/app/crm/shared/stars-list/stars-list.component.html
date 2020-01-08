@@ -4,10 +4,10 @@
     <div *dxTemplate="let data of 'content'">
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
-                <span class="title">{{l('Stars')}}</span>
+                <span class="title">{{ls.l('Stars')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !starslist.selectedItemKeys?.length" (click)="apply()">{{l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !starslist.selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <dx-list #starslist
@@ -22,9 +22,9 @@
                 (onSelectionChanged)="onSelectionChange($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row" data-id="{{data.id}}">
-                        <div class="star" [ngStyle]="{'background': this.dashboardWidgetsService.getStarColorByType(data.colorType, true)}"></div>
-                        <span>{{ l(data.name) }}</span>
-                        <a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a>
+                        <div class="star" [ngStyle]="{ 'background': getStarColorByType(data.colorType, true) }"></div>
+                        <span>{{ ls.l(data.name) }}</span>
+                        <a *ngIf="filterModel" class="dx-link dx-link-filter" [title]="ls.l('Filter')" (click)="applyFilter($event, data)"></a>
                     </div>
                 </div>
             </dx-list>
