@@ -24,7 +24,8 @@ export class ModulesEditionsSelectComponent {
         private ls: AppLocalizationService,
     ) {}
 
-    onEditionChange(moduleId: string) {
+    onEditionChange(e: any, moduleId: string) {
+        this.editionsModels[moduleId].editionId = +e.target.value;
         /** if edition value 'Not Assigned' - clear max count */
         if (this.editionsModels[moduleId].editionId == 0) {
             this.editionsModels[moduleId].maxUserCount = null;
