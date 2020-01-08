@@ -95,6 +95,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input() get contactGroupId(): ContactGroup {
         return this._contactGroupId;
     }
+    @Input() dateField: string;
     set contactGroupId(value: ContactGroup) {
         if (this._contactGroupId) {
             this.destroyPipeline();
