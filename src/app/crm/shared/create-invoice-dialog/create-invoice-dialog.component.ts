@@ -683,7 +683,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         let address = this.selectedContact.address,
             customerNameParts = (this.customer || '').split(' '),
             dialogData: any = this[field] || {
-                contactId: this.contactId,
                 countryId: address.countryCode,
                 stateId: undefined,
                 country: address.country,
@@ -699,6 +698,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 phone: undefined
             };
         dialogData['viewMode'] = this.disabledForUpdate;
+        dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         this.dialog.open(InvoiceAddressDialog, {
             id: field,
             data: dialogData,
