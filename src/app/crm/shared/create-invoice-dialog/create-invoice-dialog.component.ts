@@ -625,7 +625,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    addNewLine(data) {
+    addNewLine() {
         this.lines.push({});
         this.changeDetectorRef.detectChanges();
     }
@@ -698,6 +698,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 email: this.selectedContact.email,
                 phone: undefined
             };
+        dialogData['viewMode'] = this.disabledForUpdate;
         this.dialog.open(InvoiceAddressDialog, {
             id: field,
             data: dialogData,

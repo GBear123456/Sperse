@@ -11,6 +11,7 @@ import { PhoneNumberComponent } from '../../../node_modules/ngx-international-ph
 export class CountryPhoneNumberComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
     @Input() required = true;
+    @Input() disabled = false;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
@@ -24,40 +25,6 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
 
     constructor(injector: Injector) {
         super(injector);
-    }
-
-    isValid() {
-        return this.isEmpty() || this.model.valid;
-    }
-
-    isEmpty() {
-        let value = this.value;
-        let dialCode = this.getCountryCode();
-        return !value || (dialCode && value.match(
-            new RegExp('^\\' + dialCode + '$')));
-    }
-
-    getCountryCode() {
-        let country = this.intPhoneNumber.selectedCountry;
-        return country && country.dialCode ? '+' + country.dialCode : '';
-    }
-
-    keyUp(event) {
-        this.onKeyUp.emit(event);
-    }
-
-    focusIn(event) {
-        this.focused = true;
-    }
-
-    focusOut(event) {
-        this.focused = false;
-    }
-
-    reset() {
-        this.phoneNumber = AppConsts.defaultCountryCode;
-        this.model.control.markAsPristine();
-        this.model.control.markAsUntouched();
     }
 
     ngOnInit() {
@@ -77,5 +44,39 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
                 this.intPhoneNumber.updateValue();
             });
         }
+    }
+
+    isValid() {
+        return this.disabled || this.isEmpty() || this.model.valid;
+    }
+
+    isEmpty() {
+        let value = this.value;
+        let dialCode = this.getCountryCode();
+        return !value || (dialCode && value.match(
+            new RegExp('^\\' + dialCode + '$')));
+    }
+
+    getCountryCode() {
+        let country = this.intPhoneNumber.selectedCountry;
+        return country && country.dialCode ? '+' + country.dialCode : '';
+    }
+
+    keyUp(event) {
+        this.onKeyUp.emit(event);
+    }
+
+    focusIn() {
+        this.focused = true;
+    }
+
+    focusOut() {
+        this.focused = false;
+    }
+
+    reset() {
+        this.phoneNumber = AppConsts.defaultCountryCode;
+        this.model.control.markAsPristine();
+        this.model.control.markAsUntouched();
     }
 }
