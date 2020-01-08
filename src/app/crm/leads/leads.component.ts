@@ -193,6 +193,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return dataLayoutType !== DataLayoutType.Map;
     }));
     private readonly dataSourceURI = 'Lead';
+    private readonly totalDataSourceURI = 'Lead/$count';
     private readonly groupDataSourceURI = 'LeadSlice';
     private filters: FilterModel[];
     private filterChanged = false;
@@ -439,21 +440,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.totalDataSource = new DataSource({
-            requireTotalCount: true,
             store: {
-                key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
+                url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    this.totalCount = null;
                     request.params.contactGroupId = this.contactGroupId.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
-                deserializeDates: false,
-                paginate: true
-            },
-            select: [ 'Count' ],
+                onLoaded: (count: number) => {
+                    this.totalCount = count;
+                }
+            }
         });
         this.searchValue = '';
         if (this.userManagementService.checkBankCodeFeature()) {
@@ -1172,7 +1172,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.filtersService.getCheckCustom
                     );
                     if (this.showDataGrid) {
-                        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.dataSourceURI, filterQuery);
+                        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
                         this.totalDataSource.load();
                     }
                 }
@@ -1185,6 +1185,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.pipelineDataSource)
                 setTimeout(() => { this.pipelineDataSource = this.dataSource; });
         } else if (this.showDataGrid) {
+            this.totalDataSource.load();
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
