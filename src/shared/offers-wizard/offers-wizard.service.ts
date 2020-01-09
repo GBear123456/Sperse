@@ -75,7 +75,7 @@ export class OffersWizardService {
     states$: Observable<CountryStateDto[]> = this.store$.pipe(
         select(StatesStoreSelectors.getState, { countryCode: this.countryCode }),
         filter(Boolean)
-    );
+    ) as Observable<CountryStateDto[]>;
 
     constructor(
         public ls: AppLocalizationService,

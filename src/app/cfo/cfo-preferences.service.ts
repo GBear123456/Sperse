@@ -97,7 +97,7 @@ export class CfoPreferencesService {
         this.currencies$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getCurrencies),
             filter(Boolean)
-        );
+        ) as Observable<Partial<CurrencyInfo>[]>;
     }
 
     private formatDate(date: Date): string {
@@ -117,7 +117,7 @@ export class CfoPreferencesService {
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             filter(Boolean),
             first()
-        );
+        ) as Observable<string>;
     }
 
 }

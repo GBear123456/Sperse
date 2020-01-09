@@ -29,8 +29,11 @@
       "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ]
     }
   },
+  "angularCompilerOptions": {
+    "enableIvy": false
+  },
   "include": [
-      "./**/*",
+      "./*",
       "./node_modules/ngx-international-phone-number/src/"
   ],
   "exclude": [

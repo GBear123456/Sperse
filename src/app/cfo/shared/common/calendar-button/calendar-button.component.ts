@@ -50,7 +50,7 @@ export class CalendarButtonComponent {
                 }
             }).afterClosed().pipe(
                 filter(Boolean)
-            ).subscribe((dateRange) => {
+            ).subscribe((dateRange: any) => {
                 this.cfoPreferencesService.dateRange.next({
                     from: { value: dateRange.dateFrom },
                     to: { value: dateRange.dateTo },
