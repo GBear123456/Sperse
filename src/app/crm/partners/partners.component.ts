@@ -244,6 +244,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             },
             {
                 area: 'filter',
+                dataField: 'LeadDate',
+                dataType: 'date',
+                groupInterval: 'day',
+                showTotals: false
+            },
+            {
+                area: 'filter',
                 dataField: 'BankCode'
             },
             {
