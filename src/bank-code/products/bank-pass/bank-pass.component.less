@@ -323,8 +323,10 @@
         justify-content: space-between;
         flex-wrap: wrap;
         z-index: 1;
+        
         .search {
             width: 263px;
+            
             /deep/ .dx-textbox {
                 border: none;
                 @media all and (min-width: 1400px) {
@@ -344,10 +346,6 @@
                     font-size: 14px;
                     height: 39px;
                     outline: none;
-
-                    @media screen and (max-width: 480px) {
-                        width: auto;
-                    }
                 }
 
                 .dx-icon-search {
@@ -442,6 +440,14 @@
 
     #gridContainer {
         height: calc(~"100vh - 146px");
+        
+        @media all and (max-width:  800px) {
+            height: calc(~"100vh - 160px");
+        }
+        
+        @media all and (max-width: 540px) {
+            height: calc(~"100vh - 244px");
+        }
     }
 
     /deep/ .mat-tab-group.mat-primary {
