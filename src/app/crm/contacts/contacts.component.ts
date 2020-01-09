@@ -131,11 +131,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             type: 'pattern',
             pattern: AppConsts.regexPatterns.affiliateCode,
             message: this.l('AffiliateCodeIsNotValid')
-        },
-        {
-            type: 'stringLength',
-            max: 50,
-            message: this.l('MaxLengthIs', 50)
         }
     ];
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);

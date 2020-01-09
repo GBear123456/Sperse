@@ -102,6 +102,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
     userTimezone = '0000';
     accessCode$: Observable<string> = this.profileService.accessCode$;
+    accessCodeValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.ls.l('AccessCodeIsNotValid')
+        }
+    ];
     goalTypes = [
         {
             text: this.ls.l('Daily'),

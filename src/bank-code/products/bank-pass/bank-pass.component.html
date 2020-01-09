@@ -15,6 +15,7 @@
                               [editPlaceholder]="ls.l('YourAccessCode')"
                               [isCopyEnabled]="true"
                               [isEditDialogEnabled]="true"
+                              [validationRules]="accessCodeValidationRules"
                               [showEditModeOnEditButtonClick]="true"
                               (valueChanged)="accessCodeChanged($event)">
                 </inplace-edit>
