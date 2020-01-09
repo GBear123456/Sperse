@@ -397,7 +397,7 @@
                 margin-right: 5px;
                 white-space: nowrap;
             }
-            inplace-edit {
+            /deep/ inplace-edit {
                 font-family: @text-font;
                 font-size: 16px;
                 font-weight: 600;
@@ -406,9 +406,15 @@
                 color: #ac1f22;
                 max-width: 169px;
                 display: inline-block;
+                .inplace-edit-view-mode .actions {
+                    bottom: initial;
+                    left: initial;
+                    position: absolute;
+                    right: -60px;
+                }
+
                 @media (max-width: 767px) {
                     max-width: 125px;
-                    
                     .button-exit {
                         display: none;
                     }
