@@ -22,10 +22,18 @@ import { environment } from '@root/environments/environment';
 export class AccessCodeInstructionsComponent {
     accessCode$: Observable<string> = this.profileService.accessCode$;
     trackingLink$: Observable<string> = this.accessCode$.pipe(
-        map((accessCode: string) => (environment.production ? 'https://www.CrackMyCode.com/' : 'https://bankpass.bankcode.com/') + accessCode)
+        map((accessCode: string) => {
+            return (environment.production
+                ? 'https://www.CrackMyCode.com/'
+                : 'https://bankpass.bankcode.com/') + accessCode;
+        })
     );
     affiliateLink$: Observable<string> = this.accessCode$.pipe(
-        map((accessCode: string) => 'https://www.CodebreakerTech.com/' + accessCode)
+        map((accessCode: string) => {
+            return (environment.production
+                ? 'https://www.CodebreakerTech.com'
+                : 'https://wp.bankcode.pro') + '/?ref=' + accessCode;
+        })
     );
     constructor(
         private profileService: ProfileService,
