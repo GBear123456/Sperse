@@ -26,7 +26,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     host: {
         '(document:mouseup)': 'mouseUp($event)',
         '(document:mousemove)': 'mouseMove($event)'
-    }
+    },
+    providers: [ GooglePlaceHelper ]
 })
 export class InvoiceAddressDialog {
     validator: any;
