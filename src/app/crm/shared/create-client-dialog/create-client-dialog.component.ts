@@ -186,6 +186,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         private pipelineService: PipelineService,
         private dialogService: DialogService,
         private angularGooglePlaceService: AngularGooglePlaceService,
+        private googlePlaceHelper: GooglePlaceHelper,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -536,8 +537,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.checkAddressControls(i);
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
-        this.contacts.addresses[i].stateCode = GooglePlaceHelper.getStateCode(event.address_components);
+        this.contacts.addresses[i].stateCode = this.googlePlaceHelper.getStateCode(event.address_components);
         this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
+        this.contacts.addresses[i].city = this.googlePlaceHelper.getCity(event.address_components);
         this.changeDetectorRef.detectChanges();
     }
 

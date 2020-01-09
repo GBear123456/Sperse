@@ -277,5 +277,6 @@ export class BusinessEntityEditDialogComponent implements OnInit {
 
     onAddressChanged(event) {
         this.address.state = this.googlePlaceHelper.getState(event.address_components);
+        this.businessEntity.city = this.googlePlaceHelper.getCity(event.address_components);
     }
 }

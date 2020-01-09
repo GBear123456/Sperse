@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularGooglePlaceService } from 'angular-google-place';
+import { AddressComponent, AngularGooglePlaceService } from 'angular-google-place';
 
 @Injectable()
 export class GooglePlaceHelper {
@@ -8,27 +8,36 @@ export class GooglePlaceHelper {
         private angularGooglePlaceService: AngularGooglePlaceService
     ) {}
 
-    static getFieldValue(components, field, value): string {
+    static getFieldValue(components: AddressComponent[], field, value): string {
         for (const attr of components)
             for (const type of attr.types)
                 if (field === type)
                     return (<any>attr)[value];
     }
 
-    static getStateCode(components): string {
+    static getStateCode(components: AddressComponent[]): string {
         return GooglePlaceHelper.getFieldValue(components, 'administrative_area_level_1', 'short_name');
     }
 
-    static getCountryCode(components): string {
+    static getCountryCode(components: AddressComponent[]): string {
         return GooglePlaceHelper.getFieldValue(components, 'country', 'short_name');
     }
 
-    getState(components): string {
+    static getCity(components: AddressComponent[]): string {
+        return GooglePlaceHelper.getFieldValue(components, 'postal_town', 'short_name');
+    }
+
+    getStateCode(components: AddressComponent[]): string {
+        return this.normalize(GooglePlaceHelper.getStateCode(components));
+    }
+
+    getState(components: AddressComponent[]): string {
         return this.normalize(this.angularGooglePlaceService.state(components));
     }
 
-    getCity(components): string {
-        return this.normalize(this.angularGooglePlaceService.city(components));
+    getCity(components: AddressComponent[]): string {
+        const city = this.angularGooglePlaceService.city(components) || GooglePlaceHelper.getCity(components);
+        return this.normalize(city);
     }
 
     normalize(value: string): string {

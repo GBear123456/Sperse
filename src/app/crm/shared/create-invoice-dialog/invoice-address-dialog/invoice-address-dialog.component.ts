@@ -46,6 +46,7 @@ export class InvoiceAddressDialog {
         private contactProxy: ContactServiceProxy,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
+        private googlePlaceService: GooglePlaceHelper,
         public dialogRef: MatDialogRef<InvoiceAddressDialog>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -117,6 +118,7 @@ export class InvoiceAddressDialog {
         let street = this.angularGooglePlaceService.street(event.address_components);
         this.data.stateId = GooglePlaceHelper.getStateCode(event.address_components);
         this.data.countryId = GooglePlaceHelper.getCountryCode(event.address_components);
+        this.data.city = this.googlePlaceService.getCity(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
     }
 

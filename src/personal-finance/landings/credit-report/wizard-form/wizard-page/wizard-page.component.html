@@ -201,11 +201,10 @@
                                            placeholder="{{l('AddressPlaceholder')}}"
                                            [(ngModel)]="model.address.streetAddress"
                                            class="dx-texteditor-input"
-                                           [options]="option"
+                                           [options]="options"
                                            (country)="updateCountryInfo($event)"
                                            (street_number)='street_number=$event'
                                            (street)='street_name=$event'
-                                           (city)='model.address.city=$event'
                                            (postal_code)='model.address.zip=$event'
                                            (setAddress)="onAddressChanged($event)"
                                            angularGooglePlace />

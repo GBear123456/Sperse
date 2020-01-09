@@ -94,12 +94,13 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
     constructor(
         injector: Injector,
-        public loginService: LoginService,
         private data: PackageIdService,
         private memberService: MemberServiceProxy,
         private angularGooglePlaceService: AngularGooglePlaceService,
+        private googlePlaceHelper: GooglePlaceHelper,
+        private store$: Store<RootStore.State>,
         public inputStatusesService: InputStatusesService,
-        private store$: Store<RootStore.State>
+        public loginService: LoginService
     ) {
         super(injector);
         this.minAge = this.minDate.setFullYear(this.minDate.getFullYear() - 18);
@@ -274,6 +275,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
         this.model.address.stateId = GooglePlaceHelper.getStateCode(event.address_components);
+        this.model.address.city = this.googlePlaceHelper.getCity(event.address_components);
         this.model.address.streetAddress = this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
     }
 

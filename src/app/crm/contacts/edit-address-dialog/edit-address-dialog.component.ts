@@ -93,6 +93,7 @@ export class EditAddressDialog {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
         this.data.state = this.googlePlaceHelper.getState(event.address_components);
+        this.data.city = this.googlePlaceHelper.getCity(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
     }
 

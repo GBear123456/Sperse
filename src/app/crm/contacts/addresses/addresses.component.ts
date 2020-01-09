@@ -320,6 +320,7 @@ export class AddressesComponent implements OnInit {
     addressChanged(address, event) {
         this._latestFormatedAddress = address.autoComplete = event.formatted_address;
         this.state = this.googlePlaceHelper.getState(event.address_components);
+        this.city = this.googlePlaceHelper.getCity(event.address_components);
     }
 
     updateCountryInfo(countryName: string) {
