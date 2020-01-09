@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 /** Third party imports */
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { Papa } from 'ngx-papaparse';
-import { UploadFile } from 'ngx-file-drop';
+import { NgxFileDropEntry } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 
@@ -65,7 +65,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     dataMapping: FormGroup;
 
     _toolbarConfig: any[];
-    private files: UploadFile[] = [];
+    private files: NgxFileDropEntry[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];
     private validateFieldList: string[] = ['email', 'phone', 'url', 'revenue'];
@@ -396,8 +396,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     highlightUnmappedField(row) {
         let rowIndex = this.mapGrid.instance.getRowIndexByKey(row.id);
-        let cellElement = this.mapGrid.instance.getCellElement(rowIndex, 'mappedField');
-        let rows = cellElement.closest('.dx-datagrid-rowsview').querySelectorAll(`tr:nth-of-type(${rowIndex + 1})`);
+        let cellElement = this.mapGrid.instance.getCellElement(rowIndex, 'mappedField') || null;
+        let rows = cellElement ? cellElement.closest('.dx-datagrid-rowsview').querySelectorAll(`tr:nth-of-type(${rowIndex + 1})`) : [];
         for (let i = 0; i < rows.length; i++) {
             rows[i].classList.add(`unmapped-field`);
         }

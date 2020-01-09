@@ -49,7 +49,7 @@ import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
 import { ModalModule } from 'ngx-bootstrap';
-import { FileDropModule } from 'ngx-file-drop';
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
@@ -126,7 +126,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         MatSlideToggleModule,
         MatAutocompleteModule,
         ReactiveFormsModule,
-        FileDropModule,
+        NgxFileDropModule,
         PapaParseModule,
         ImageCropperModule,
 

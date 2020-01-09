@@ -305,7 +305,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             first(),
             mapTo(data)
         )),
-        switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
+        switchMap(([filter, mapArea, refresh]: [any, MapArea, null]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea

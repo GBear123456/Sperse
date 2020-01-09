@@ -64,7 +64,7 @@
             }
         }
 
-        /deep/ &.navbar-fixed-top,
+        ::ng-deep &.navbar-fixed-top,
         &.navbar-static-top {
             z-index: 3;
         }
@@ -102,7 +102,7 @@
     }
 
     &.withContactInfo {
-        /deep/ top-bar {
+        ::ng-deep top-bar {
             left: 0;
             .adaptive-menu {
                 margin-left: auto;
@@ -113,9 +113,9 @@
 
 }
 
-/deep/ body.lend-space {
+::ng-deep body.lend-space {
     .page-header .page-top {
-        /deep/ i[aria-label="Notifications"] {
+        ::ng-deep i[aria-label="Notifications"] {
             display: inline-block!important;
             background: url('../../../../assets/common/images/lend-space-dark/notification.svg') no-repeat!important;
             width: 17px!important;
@@ -125,7 +125,7 @@
             }
         }
 
-        /deep/ .m-nav__item {
+        ::ng-deep .m-nav__item {
             .m-nav__link {
                 white-space: nowrap;
             }

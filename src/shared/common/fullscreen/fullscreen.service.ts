@@ -15,7 +15,7 @@ export class FullScreenService {
     }
 
     private exitFullscreen() {
-        let method = (document.exitFullscreen || document.webkitExitFullscreen
+        let method = (document['exitFullscreen'] || document['webkitExitFullscreen']
             || document['mozCancelFullScreen'] || document['msExitFullscreen']);
         if (method) {
             method.call(document);

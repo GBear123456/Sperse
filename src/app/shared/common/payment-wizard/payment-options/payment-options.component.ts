@@ -179,7 +179,7 @@ export class PaymentOptionsComponent extends AppComponentBase {
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
-        let method = paymentMethod == PaymentMethods.PayPal
+        let method: Observable<any> = paymentMethod == PaymentMethods.PayPal
             ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
             : paymentMethod === PaymentMethods.BankTransfer
                 ? this.tenantSubscriptionServiceProxy.requestPayment(
@@ -194,8 +194,7 @@ export class PaymentOptionsComponent extends AppComponentBase {
                   )
                 : this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
-        method
-            .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
+        method.pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
             .subscribe(
                 res => {
                     if (!this.paymentMethodsConfig[paymentMethod] || !this.paymentMethodsConfig[paymentMethod].skipRefreshAfterClose) {

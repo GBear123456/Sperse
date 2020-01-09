@@ -31,11 +31,11 @@
                 display: flex;
                 flex-direction: column;
                 flex-basis: 70%;
-                /deep/ .mat-form-field-wrapper {
+                ::ng-deep .mat-form-field-wrapper {
                     padding-bottom: .4em;
                 }
             }
-            /deep/ .mat-input-element {
+            ::ng-deep .mat-input-element {
                 font-family: Montserrat;
                 font-size: 14px;
                 font-weight: 500;
@@ -90,7 +90,7 @@
         .paymentsNumbers {
             display: flex;
             justify-content: space-between;
-            /deep/ .mat-form-field-infix {
+            ::ng-deep .mat-form-field-infix {
                 width: 245px;
                 img {
                     float: right;
@@ -128,7 +128,7 @@
 
         }
 
-        /deep/ .mat-form-field-label {
+        ::ng-deep .mat-form-field-label {
             font-size: 12px;
             font-weight: 600;
             font-style: normal;
@@ -139,7 +139,7 @@
             text-transform: uppercase;
         }
 
-        /deep/ .mat-form-field-underline {
+        ::ng-deep .mat-form-field-underline {
             display: none;
         }
     }

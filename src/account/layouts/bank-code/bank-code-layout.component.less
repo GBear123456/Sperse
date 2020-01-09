@@ -6,12 +6,12 @@ Login page
     height: 100%;
 }
 
-/deep/ body {
+::ng-deep body {
     height: calc(~"100vh - 70px");
     padding-top: 70px;
 }
 
-/deep/ .cdk-global-scrollblock {
+::ng-deep .cdk-global-scrollblock {
     position: static !important;
     width: initial !important;
 }
@@ -637,7 +637,7 @@ input.form-control {
     color: red;
 }
 
-/deep/ .bank-code .page-header.navbar .page-logo {
+::ng-deep .bank-code .page-header.navbar .page-logo {
     @media all and (min-width: 1024px) {
         position: relative;
         min-width: 250px !important;

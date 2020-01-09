@@ -23,9 +23,9 @@
             </div>
         </mat-tab>
     </mat-tab-group>
-    <file-drop (onFileDrop)="fileDropped($event)">
+    <ngx-file-drop (onFileDrop)="fileDropped($event)">
         <img-cropper #cropper [image]="imageData" [settings]="cropperSettings" (onCrop)="onCrop($event)"></img-cropper>
-    </file-drop>
+    </ngx-file-drop>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button class="button-layout button-default clear" [disabled]="clearDisabled" (click)="clearPhoto()">{{ ls.l('Clear') }}</button>

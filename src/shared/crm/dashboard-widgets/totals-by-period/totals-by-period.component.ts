@@ -153,7 +153,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.startLoading()),
-            switchMap(([period, isCumulative]: [TotalsByPeriodModel, boolean]) => {
+            switchMap(([period, isCumulative, refresh]: [TotalsByPeriodModel, boolean, null]) => {
                 return this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
                     catchError(() => of([])),
                     finalize(() => { this.finishLoading(); })

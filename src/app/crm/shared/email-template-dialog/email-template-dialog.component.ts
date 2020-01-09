@@ -139,10 +139,11 @@ export class EmailTemplateDialogComponent implements OnInit {
         };
 
         this.startLoading();
-        (this.data.templateId ?
+        let request$: Observable<any> = this.data.templateId ?
             this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data)) :
-            this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data))
-        ).pipe(finalize(() => this.finishLoading())).subscribe(id => {
+            this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
+
+        request$.pipe(finalize(() => this.finishLoading())).subscribe(id => {
             if (id)
                 this.data.templateId = id;
             this.onSave.emit(this.data);

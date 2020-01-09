@@ -159,8 +159,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 this.isDataLoaded = false;
                 abp.ui.setBusy();
             }),
-            switchMap(([forecastModelId, currencyId, requestFilter]:
-                              [number, string, StatsFilter]) => {
+            switchMap(([forecastModelId, currencyId, requestFilter, refresh]:[number, string, StatsFilter, null]) => {
                 return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,

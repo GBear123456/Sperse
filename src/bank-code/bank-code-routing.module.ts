@@ -26,7 +26,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
                     },
                     {
                         path: 'products',
-                        loadChildren: 'bank-code/products/products.module#ProductsModule'
+                        loadChildren: () => import('bank-code/products/products.module').then(m => m.ProductsModule)
                     },
                     {
                         path: 'resources',

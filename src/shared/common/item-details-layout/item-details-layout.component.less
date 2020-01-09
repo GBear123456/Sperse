@@ -3,7 +3,7 @@
     position: relative;
     display: block;
 
-    /deep/ header {
+    ::ng-deep header {
         height: 82px;
         background: #f3f7fa;
         display: flex;
@@ -17,7 +17,7 @@
             height: 44px;
             margin: 5px 0 5px 0;
 
-            /deep/ path {
+            ::ng-deep path {
                 stroke: #00aeef;
             }
         }
@@ -42,7 +42,7 @@
         }
     }
 
-    /deep/ .mat-sidenav-content {
+    ::ng-deep .mat-sidenav-content {
         border-left: 1px solid #e5e9ec;
         border-right: 1px solid #e5e9ec;
         background: #fff;
@@ -53,7 +53,7 @@
         width: 400px;
         padding-top: 0;
 
-        /deep/ .mat-tab-label {
+        ::ng-deep .mat-tab-label {
             text-transform: uppercase;
             font-size: 12px;
             line-height: 1.67;
@@ -64,7 +64,7 @@
             opacity: 1;
         }
 
-        /deep/ .mat-tab-label-active {
+        ::ng-deep .mat-tab-label-active {
             border-bottom: none;
             background: #fff;
             font-weight: 500;
@@ -83,7 +83,7 @@
         height: -moz-calc(~"100vh - 215px"); /* firefox */
     }
 
-    /deep/ .mat-tab-links {
+    ::ng-deep .mat-tab-links {
         flex-direction: column;
 
         .mat-tab-disabled {
@@ -92,7 +92,7 @@
         }
     }
 
-    /deep/ i.icons {
+    ::ng-deep i.icons {
         background-repeat: no-repeat;
 
         &.email {
@@ -137,76 +137,76 @@
         border-left: 3px solid #00aeef;
     }
 
-    /deep/ h1 {
+    ::ng-deep h1 {
         margin-top: 5px;
     }
 
-    /deep/ h3.lab {
+    ::ng-deep h3.lab {
         color: #b1b6bc;
         text-transform: uppercase;
         font-size: 16px;
     }
 
-    /deep/ ul {
+    ::ng-deep ul {
         padding-left: 0;
     }
 
-    /deep/ li {
+    ::ng-deep li {
         list-style-type: none;
     }
 
-    /deep/ .mat-ink-bar {
+    ::ng-deep .mat-ink-bar {
         background-color: #00aeef !important;
     }
 
-    /deep/ .green {
+    ::ng-deep .green {
         color: #37d749;
     }
 
-    /deep/ .red {
+    ::ng-deep .red {
         color: #ff6066;
     }
 
-    /deep/ .grey {
+    ::ng-deep .grey {
         color: #424c56;
     }
 
-    /deep/ .mat-tab-label {
+    ::ng-deep .mat-tab-label {
         border-bottom: none;
     }
 
-    /deep/ .mat-tab-label-active {
+    ::ng-deep .mat-tab-label-active {
         border-bottom: none;
     }
 
-    /deep/ .mat-tab-body-wrapper {
+    ::ng-deep .mat-tab-body-wrapper {
         padding: 20px;
         position: static !important;
     }
 
-    /deep/ .mat-tab-body {
+    ::ng-deep .mat-tab-body {
         position: absolute !important;
         margin-top: 60px;
     }
 
-    /deep/ .mat-tab-body-content {
+    ::ng-deep .mat-tab-body-content {
         overflow: hidden !important;
     }
 
-    /deep/ mat-dialog-container {
+    ::ng-deep mat-dialog-container {
         overflow: visible !important;
         min-width: 400px;
     }
 
-    /deep/ .mat-dialog-content {
+    ::ng-deep .mat-dialog-content {
         max-height: initial;
     }
 
-    /deep/ .cdk-global-scrollblock {
+    ::ng-deep .cdk-global-scrollblock {
         overflow-y: hidden;
     }
 
-    /deep/ .button-clean-red {
+    ::ng-deep .button-clean-red {
         position: absolute;
         padding: 0;
         margin-left: 0;
@@ -214,10 +214,9 @@
         left: 0;
     }
 
-    /deep/ .main-content {
+    ::ng-deep .main-content {
         margin: 0;
         width: 100%;
         height: 100%;
     }
-
 }

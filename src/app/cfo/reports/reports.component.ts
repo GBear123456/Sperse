@@ -432,7 +432,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         if (!this.openReportMode)
                             setTimeout(() => this.showReportFullscreen(), 300);
                         this.openReportMode = true;
-                        this.previewContent = StringHelper.getBase64(reader.result);
+                        this.previewContent = StringHelper.getBase64(reader.result as string);
                         this.changeDetector.markForCheck();
                     });
                     reader.readAsDataURL(blob);

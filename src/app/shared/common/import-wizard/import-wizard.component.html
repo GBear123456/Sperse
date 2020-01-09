@@ -26,7 +26,7 @@
             <form [formGroup]="uploadFile">
                 <div class="block left">
                     <h3 [hidden]="dropZoneProgress || loadProgress" class="title">{{l('Upload from computer')}}</h3>
-                    <file-drop [hidden]="dropZoneProgress || loadProgress" (onFileDrop)="fileDropped($event)">
+                    <ngx-file-drop [hidden]="dropZoneProgress || loadProgress" (onFileDrop)="fileDropped($event)">
                         <p>Drag and Drop file from your computer here
                             <br> or
                             <br>
@@ -34,7 +34,7 @@
                                 <input name="importFile" type="file" #importFileInput (change)="fileSelected($event)" accept=".csv">browse
                             </a>
                         </p>
-                    </file-drop>
+                    </ngx-file-drop>
                     <!-- uploaded template -->
                     <h3 class="title" [hidden]="!dropZoneProgress && !loadProgress">{{l('File uploaded successfully')}}
                         <b>{{l('Total')}} {{fileData?.data ? fileData?.data?.length - 1: ''}} {{l('records')}}</b>

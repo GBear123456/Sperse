@@ -258,7 +258,7 @@ export class CreateUserDialogComponent implements OnInit {
                 this.modalDialog.finishLoading();
                 this.changeDetectorRef.detectChanges();
             }))
-            .subscribe((userId) => this.afterSave(userId || this.user.id));
+            .subscribe(() => this.afterSave(this.user.id));
     }
 
     validateEmailAddress(value): boolean {

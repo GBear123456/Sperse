@@ -24,7 +24,7 @@ import { DxoLoadPanelComponent } from '@root/node_modules/devextreme-angular/ui/
 import { NoDataComponent } from '@shared/common/widgets/no-data/no-data.component';
 import { DxoScrollingComponent } from '@root/node_modules/devextreme-angular/ui/nested/scrolling';
 import { CalculatorComponent } from '@app/cfo/shared/calculator-widget/calculator-widget.component';
-import { RoundProgressComponent } from '@root/node_modules/angular-svg-round-progressbar';
+import { RoundProgressComponent } from 'angular-svg-round-progressbar';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';

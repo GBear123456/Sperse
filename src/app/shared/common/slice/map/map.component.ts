@@ -55,10 +55,10 @@ export class MapComponent implements OnChanges {
     decimalPipe: any = new DecimalPipe('en-US');
     mapAreasItems: MapAreaItem[] = this.mapService.mapAreasItems;
     selectedMapAreaItem$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$;
-    selectedMapAreaZoomFactor$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$.pipe(
+    selectedMapAreaZoomFactor$: Observable<number> = this.mapService.selectedMapAreaItem$.pipe(
         pluck('zoomFactor')
     );
-    selectedMapAreaBounds$: Observable<MapAreaItem> = this.mapService.selectedMapAreaItem$.pipe(
+    selectedMapAreaBounds$: Observable<number[]> = this.mapService.selectedMapAreaItem$.pipe(
         pluck('bounds')
     );
     selectedMap$: Observable<any> = this.mapService.selectedMapAreaItem$.pipe(

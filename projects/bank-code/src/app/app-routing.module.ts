@@ -9,7 +9,7 @@ const routes: Routes = [
     },
     {
         path: 'bank-pass',
-        loadChildren: './bank-pass/bank-pass-host.module#BankPassHostModule',
+        loadChildren: () => import('./bank-pass/bank-pass-host.module').then(m => m.BankPassHostModule),
         data: { localizationSource: 'Platform' }
     }
 ];

@@ -160,8 +160,7 @@ export class SocialsComponent {
     deleteLink(id) {
         this.dialog.closeAll();
         this.contactLinkService.deleteContactLink(
-            this.contactInfoData.contactId, id).subscribe(result => {
-            if (!result) {
+            this.contactInfoData.contactId, id).subscribe(() => {
                 this.contactInfoData.links.every((item, index) => {
                     if (item.id == id) {
                         this.contactInfoData.links.splice(index, 1);
@@ -169,7 +168,6 @@ export class SocialsComponent {
                     }
                     return true;
                 });
-            }
         });
     }
 

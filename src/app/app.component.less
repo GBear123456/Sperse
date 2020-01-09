@@ -49,7 +49,7 @@
 
     &.subscription-bar-visible {
         margin-top: 45px;
-        /deep/ ng-component {
+        ::ng-deep ng-component {
             #gridContainer, .funnel-wrapper, dx-scheduler {
                 height: calc(~"100vh - 256px")!important;
             }
@@ -57,15 +57,15 @@
     }
 }
 
-/deep/ .modal-backdrop {
+::ng-deep .modal-backdrop {
     z-index: 1001;
 }
 
-/deep/ .modal {
+::ng-deep .modal {
     z-index: 1002;
 }
 
-/deep/ .dxc-tooltip {
+::ng-deep .dxc-tooltip {
     z-index: 1000 !important;
 }
 

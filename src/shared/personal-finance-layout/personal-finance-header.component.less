@@ -10,7 +10,7 @@
         box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.08);
     }
 
-    /deep/ a.disabled {
+    ::ng-deep a.disabled {
         pointer-events: none!important;
         i, span {
             color: #ddd!important;
@@ -146,7 +146,7 @@
     }
 }
 
-/deep/ body.lend-space {
+::ng-deep body.lend-space {
     &.lending-page {
         .top-headline {
             display: block!important;
@@ -199,7 +199,7 @@
     }
 }
 
-/deep/ button.teal {
+::ng-deep button.teal {
     outline: none;
     cursor: pointer;
     padding: 10px 20px;

@@ -1,5 +1,5 @@
 :host {
-    /deep/ .mat-dialog-actions {
+    ::ng-deep .mat-dialog-actions {
         width: 200px;
         .mat-dialog-buttons {
             height: 50px!important;
@@ -9,7 +9,7 @@
         }
     }
 
-    /deep/ .mat-dialog-header {
+    ::ng-deep .mat-dialog-header {
         label {
             color: #8a969b;
             padding: 20px 0;
@@ -83,7 +83,7 @@
         app-toolbar {
             float: right;
 
-            /deep/ .dx-selectbox-container {
+            ::ng-deep .dx-selectbox-container {
                 input {
                     border: none;
                 }
@@ -126,7 +126,7 @@
             height: 34px;
             overflow: hidden;
             display: inline-block;
-            /deep/ .dx-widget {
+            ::ng-deep .dx-widget {
                 margin: 0;
                 input {
                     font-size: 15px;
@@ -145,7 +145,7 @@
             }
         }
 
-        /deep/ .field-area {
+        ::ng-deep .field-area {
             display: block;
             margin-bottom: 20px;
             &.flex-space-between {
@@ -407,7 +407,7 @@
         }
     }
 
-    /deep/ dx-data-grid {
+    ::ng-deep dx-data-grid {
         max-width: 810px!important;
         .dx-command-edit {
             .dx-link-delete {
@@ -449,7 +449,7 @@
             }
             tr:nth-child(odd) td { 
                 background: rgba(243, 247, 250, 0.7);
-                /deep/ dx-text-box, /deep/ dx-select-box {
+                ::ng-deep dx-text-box, ::ng-deep dx-select-box {
                     &, input {
                         background: transparent;
                     }

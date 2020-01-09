@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, Subject, of ,  BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, tap, map, skip, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
@@ -14,7 +14,6 @@ import {
     MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { SyncTypeIds } from '@shared/AppEnums';
@@ -95,7 +94,7 @@ export class SynchProgressService {
     }
 
     private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
-        const method = this.cfoService.isForUser && syncType == SyncTypeIds.Quovo
+        const method: Observable<any> = this.cfoService.isForUser && syncType == SyncTypeIds.Quovo
             ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
             : (
                 syncAccountIds && syncAccountIds.length

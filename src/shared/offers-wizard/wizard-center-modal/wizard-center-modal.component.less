@@ -1,6 +1,6 @@
 @mainFont: inherit;
 
-/deep/ #offers-wizard {
+::ng-deep #offers-wizard {
     background: #E7E7E7 url(../../../assets/images/hero.jpg) bottom 0 left 0 no-repeat;
     padding-bottom: 0;
     position: relative;
@@ -10,13 +10,13 @@
     }
 }
 
-/deep/ .cdk-overlay-pane.offers-wizard.setup {
+::ng-deep .cdk-overlay-pane.offers-wizard.setup {
     @media all and (max-width: 450px) {
         max-width: 95vw!important;
     }       
 }
 
-/deep/ .scroll-zone {
+::ng-deep .scroll-zone {
     max-height: 400px;
     height: auto;
     overflow: auto;
@@ -79,7 +79,7 @@
         }
     }
     
-    /deep/ .step-item {
+    ::ng-deep .step-item {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -168,13 +168,13 @@
         }
     }
     
-    /deep/ .mat-dialog-content {
+    ::ng-deep .mat-dialog-content {
         height: 100%;
         min-height: 100%;
         position: relative;
     }
     
-    /deep/ .dx-field {
+    ::ng-deep .dx-field {
         align-items: center;
         width: 100%;
         
@@ -202,7 +202,7 @@
         }
     }
     
-    /deep/ .dx-radiobutton-checked {
+    ::ng-deep .dx-radiobutton-checked {
         .dx-radiobutton-icon {
             .dx-radiobutton-icon-dot {
                 background: #f0d500;
@@ -210,11 +210,11 @@
         }
     }
     
-    /deep/ .dx-state-focused {
+    ::ng-deep .dx-state-focused {
         border-color: #f0d500;
     }
     
-    /deep/ mat-horizontal-stepper {
+    ::ng-deep mat-horizontal-stepper {
         position: absolute;
         height: 100%;
         width: calc(~"100% - 48px");
@@ -304,7 +304,7 @@
         }
     }
     
-    /deep/ dx-validation-group {
+    ::ng-deep dx-validation-group {
         height: 100%;
         display: flex;
         flex-direction: column;

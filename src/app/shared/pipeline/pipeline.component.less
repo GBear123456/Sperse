@@ -63,7 +63,7 @@
                     width: 15px;
                     height: 15px;
                     display: none;
-                    /deep/ .dx-checkbox-icon {
+                    ::ng-deep .dx-checkbox-icon {
                         width: 15px;
                         height: 15px;
                     }
@@ -295,13 +295,13 @@
                             height: 18px;
                             line-height: 0;
 
-                            /deep/ .dx-checkbox-icon {
+                            ::ng-deep .dx-checkbox-icon {
                                 width: 18px;
                                 height: 18px;
                             }
 
-                            /deep/ .dx-checkbox-icon,
-                            /deep/ .dx-checkbox-container {
+                            ::ng-deep .dx-checkbox-icon,
+                            ::ng-deep .dx-checkbox-container {
                                 pointer-events: none;
                             }
                         }
@@ -646,20 +646,20 @@
             height: 18px;
             line-height: 0;
 
-            /deep/ .dx-checkbox-icon {
+            ::ng-deep .dx-checkbox-icon {
                 width: 18px;
                 height: 18px;
             }
 
-            /deep/ .dx-checkbox-icon,
-            /deep/ .dx-checkbox-container {
+            ::ng-deep .dx-checkbox-icon,
+            ::ng-deep .dx-checkbox-container {
                 pointer-events: none;
             }
         }
     }
 }
 
-/deep/ .pipeline-actions {
+::ng-deep .pipeline-actions {
     padding: 0!important;
 
     .stage-actions {
@@ -767,7 +767,7 @@
     }
 }
 
-/deep/ .funnel-wrapper {
+::ng-deep .funnel-wrapper {
     padding: 0;
     height: calc(~'100vh - 210px');
     overflow-x: hidden;

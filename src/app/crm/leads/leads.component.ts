@@ -369,7 +369,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             first(),
             mapTo(data)
         )),
-        switchMap(([contactGroupId, filter, mapArea]: [ContactGroup, any, MapArea]) => this.mapService.loadSliceMapData(
+        switchMap(([contactGroupId, filter, mapArea, refresh]: [ContactGroup, any, MapArea, null]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,

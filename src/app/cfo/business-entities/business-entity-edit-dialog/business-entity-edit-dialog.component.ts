@@ -217,7 +217,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                 ].filter(val => val).join(' ');
             }
 
-            const request$ = this.isNew
+            const request$: Observable<any> = this.isNew
                 ? this._businessEntityService.createBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
                 : this._businessEntityService.updateBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity));
             request$.pipe(finalize(() => this.modalDialog.finishLoading()))

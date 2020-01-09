@@ -45,7 +45,7 @@
     cursor: move;
   }
 
-  /deep/ .dx-texteditor-container {
+  ::ng-deep .dx-texteditor-container {
     width: 240px;
   }
 
@@ -53,7 +53,7 @@
   dx-text-box,
   dx-number-box {
     display: inline-block;
-    /deep/ input {
+    ::ng-deep input {
       height: 48px;
     }
   }
@@ -67,31 +67,31 @@
   }
 
   .type-item-wrapper {
-    /deep/ input {
+    ::ng-deep input {
       padding-left: 40px;
       background-repeat: no-repeat;
       background-position: 10px 15px;
     }
-    /deep/ input[value=""] {
+    ::ng-deep input[value=""] {
       background-image: none!important;
     }
   }
 
   .addressType {
     &.type-P {
-      /deep/ input {
+      ::ng-deep input {
         background-image: url("../../../../assets/common/icons/address-primary.png");
         background-position: 10px 12px;
       }
     }
     &.type-H {
-      /deep/ input {
+      ::ng-deep input {
         background-image: url("../../../../assets/common/icons/address-home.png");
         background-position: 10px 12px;
       }
     }
     &.type-S, &.type-W {
-      /deep/ input {
+      ::ng-deep input {
         background-image: url("../../../../assets/common/icons/address-shipping.png");
         background-position: 10px 12px;
       }

@@ -8,7 +8,7 @@
         overflow: hidden;
         height: calc(100% - 5px);
 
-        /deep/ .avatar {
+        ::ng-deep .avatar {
             width: 80px;
             height: 80px;
             border-radius: 50%;
@@ -23,7 +23,7 @@
 
         .inbox-list {
             width: 30%;
-            /deep/ dx-list {
+            ::ng-deep dx-list {
                 .dx-placeholder {
                     font-size: 14px;
                     font-weight: 300;
@@ -97,7 +97,7 @@
             width: 70%; 
             border-left: 1px solid #dfdfdf;
 
-            /deep/ app-toolbar dx-toolbar {
+            ::ng-deep app-toolbar dx-toolbar {
                 border-bottom: none !important;
             }
           

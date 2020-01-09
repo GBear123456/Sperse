@@ -73,19 +73,19 @@ export class CfoActivateService implements CanActivate {
                     { path: 'access-denied', component: AccessDeniedComponent },
                     {
                         path: 'admin',
-                        loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
+                        loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule), //Lazy load admin module
                         resolve: { admin: ModulePathResolverService },
                         data: { feature: 'Admin', localizationSource: 'Platform' }
                     },
                     {
                         path: 'api',
-                        loadChildren: 'app/api/api.module#ApiModule', //Lazy load main module
+                        loadChildren: () => import('app/api/api.module').then(m => m.ApiModule), //Lazy load main module
                         resolve: { api: ModulePathResolverService },
                         data: { feature: 'API', localizationSource: 'Platform' }
                     },
                     {
                         path: 'crm',
-                        loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
+                        loadChildren: () => import('app/crm/crm.module').then(m => m.CrmModule), //Lazy load admin module
                         resolve: { crm: ModulePathResolverService },
                         data: { feature: 'CRM', localizationSource: 'CRM' }
                     },
@@ -96,7 +96,7 @@ export class CfoActivateService implements CanActivate {
                     },
                     {
                         path: 'pfm',
-                        loadChildren: 'app/pfm/pfm.module#PfmModule', //Lazy load admin module
+                        loadChildren: () => import('app/pfm/pfm.module').then(m => m.PfmModule), //Lazy load admin module
                         resolve: { crm: ModulePathResolverService },
                         data: { feature: 'PFM', localizationSource: 'PFM' }
                     },
@@ -106,13 +106,13 @@ export class CfoActivateService implements CanActivate {
                     },
                     {
                         path: 'cfo/:instance',
-                        loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
+                        loadChildren: () => import('app/cfo/cfo.module').then(m => m.CfoModule), //Lazy load cfo *module
                         data: { feature: 'CFO', localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     },
                     {
                         path: 'cfo-portal',
-                        loadChildren: 'app/cfo-portal/cfo-portal.module#CfoPortalModule', //Lazy load cfo-portal *module
+                        loadChildren: () => import('app/cfo-portal/cfo-portal.module').then(m => m.CfoPortalModule), //Lazy load cfo-portal *module
                         data: { feature: 'CFO.Partner', permission: AppPermissions.CFOMemberAccess, localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     }

@@ -17,83 +17,83 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
                 children: [
                     {
                         path: 'start',
-                        loadChildren: 'personal-finance/pages/lendspace-welcome/lendspace-welcome.module#LendspaceWelcomeModule',
+                        loadChildren: () => import('personal-finance/pages/lendspace-welcome/lendspace-welcome.module').then(m => m.LendspaceWelcomeModule),
                         data: {
                             wrapperDisabled: true
                         }
                     },
                     {
                         path: 'home',
-                        loadChildren: 'personal-finance/pages/home/home.module#HomeModule',
+                        loadChildren: () => import('personal-finance/pages/home/home.module').then(m => m.HomeModule),
                         data: {
                             wrapperDisabled: true
                         }
                     },
                     {
                         path: 'signup',
-                        loadChildren: 'personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.module#WizardPageModule'
+                        loadChildren: () => import('personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.module').then(m => m.WizardPageModule)
                     },
                     {
                         path: 'sign-up',
-                        loadChildren: 'personal-finance/landings/lend-space-dark/signup/lend-space-signup.module#LendSpaceSignupModule',
+                        loadChildren: () => import('personal-finance/landings/lend-space-dark/signup/lend-space-signup.module').then(m => m.LendSpaceSignupModule),
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'kba-result',
-                        loadChildren: 'personal-finance/pages/kba-result/kba-result.module#KbaResultModule',
+                        loadChildren: () => import('personal-finance/pages/kba-result/kba-result.module').then(m => m.KbaResultModule),
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'privacy-policy',
-                        loadChildren: 'personal-finance/pages/privacy-policy/privacy-policy.module#PrivacyPolicyModule',
+                        loadChildren: () => import('personal-finance/pages/privacy-policy/privacy-policy.module').then(m => m.PrivacyPolicyModule),
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'terms-of-service',
-                        loadChildren: 'personal-finance/pages/terms-of-service/terms-of-service.module#TermsOfServiceModule',
+                        loadChildren: () => import('personal-finance/pages/terms-of-service/terms-of-service.module').then(m => m.TermsOfServiceModule),
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'about',
-                        loadChildren: 'personal-finance/pages/about-us/about-us.module#AboutUsModule',
+                        loadChildren: () => import('personal-finance/pages/about-us/about-us.module').then(m => m.AboutUsModule),
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'contact-us',
-                        loadChildren: 'personal-finance/pages/contact-us/contact-us.module#ContactUsModule',
+                        loadChildren: () => import('personal-finance/pages/contact-us/contact-us.module').then(m => m.ContactUsModule),
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'resources',
-                        loadChildren: 'personal-finance/pages/articles/articles.module#ArticlesModule',
+                        loadChildren: () => import('personal-finance/pages/articles/articles.module').then(m => m.ArticlesModule),
                         data: { wrapperDisabled: true, isPublic: true }
                     },
                     {
                         path: 'offers',
-                        loadChildren: 'personal-finance/shared/offers/offers.module#OffersModule',
+                        loadChildren: () => import('personal-finance/shared/offers/offers.module').then(m => m.OffersModule),
                         data: { preload: false }
                     },
                     {
                         path: 'credit-report',
                         canActivate: [ LoggedOutCreditReportGuard ],
-                        loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
+                        loadChildren: () => import('personal-finance/pages/credit-report/credit-report.module').then(m => m.CreditReportModule)
                     },
                     {
                         path: 'credit-reports',
                         canActivate: [ LoggedInCreditReportGuard ],
-                        loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
+                        loadChildren: () => import('personal-finance/pages/credit-report/credit-report.module').then(m => m.CreditReportModule)
                     },
                     {
                         path: 'credit-simulator',
-                        loadChildren: 'personal-finance/pages/credit-simulator/credit-simulator.module#CreditSimulatorModule'
+                        loadChildren: () => import('personal-finance/pages/credit-simulator/credit-simulator.module').then(m => m.CreditSimulatorModule)
                     },
                     {
                         path: 'credit-resources',
-                        loadChildren: 'personal-finance/pages/credit-resources/credit-resources.module#CreditResourcesModule'
+                        loadChildren: () => import('personal-finance/pages/credit-resources/credit-resources.module').then(m => m.CreditResourcesModule)
                     },
                     {
                         path: 'my-finances',
-                        loadChildren: 'personal-finance/pages/accounts/accounts.module#AccountsModule',
+                        loadChildren: () => import('personal-finance/pages/accounts/accounts.module').then(m => m.AccountsModule),
                         data: { wrapperDisabled: true }
                     },
                     {

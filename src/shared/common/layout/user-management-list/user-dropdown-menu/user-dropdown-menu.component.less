@@ -88,7 +88,7 @@
     }
 
     .header-profile-picture,
-    /deep/ #header_notification_bar .header-profile-picture{
+    ::ng-deep #header_notification_bar .header-profile-picture{
         width: 41px;
         height: 41px;
         max-width: 41px!important;
@@ -158,7 +158,7 @@
             border-bottom: 1px solid #dfdfdf;
             padding: 15px 0;
         }
-        /deep/ bank-code-letters {
+        ::ng-deep bank-code-letters {
             display: flex;
             align-items: center;
             bank-code-letter {
@@ -207,7 +207,7 @@
         }
 
         .access-code {
-            /deep/ inplace-edit {
+            ::ng-deep inplace-edit {
                 width: 169px;
                 border-radius: 4px;
                 border: solid 1px #e5e9ec;
@@ -236,9 +236,9 @@
     }
 }
 
-/deep/ body.lend-space {
+::ng-deep body.lend-space {
     .page-header .page-top {
-        /deep/ .m-nav__item {
+        ::ng-deep .m-nav__item {
             .m-nav__link-title {
                 .m-nav__link-text {
                     font-family: Poppins;

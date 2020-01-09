@@ -2,8 +2,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { throwError as observableThrowError,  Observable } from 'rxjs';
 
 /** Application imports */
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
@@ -107,7 +107,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
                                 this.organizationUnitService.moveOrganizationUnit(input)
                                     .pipe(catchError(error => {
                                         this._$tree.jstree('refresh'); //rollback
-                                        return Observable.throw(error);
+                                        return observableThrowError(error);
                                     }))
                                     .subscribe(() => {
                                         this.notify.success(this.ls.l('SuccessfullyMoved'));

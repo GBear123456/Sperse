@@ -1,5 +1,4 @@
 :host {
-
     header {
         padding: 0 60px 0 10px;
         img {
@@ -7,7 +6,7 @@
             max-height: 50px;
             margin-right: 10px;
         }
-        /deep/ inplace-edit {
+        ::ng-deep inplace-edit {
             .inplace-edit-view-mode {
                 display: flex;
                 align-items: center;
@@ -51,7 +50,7 @@
 
         .navigation {
             margin: 0 20px;
-            /deep/ .dx-button {
+            ::ng-deep .dx-button {
                 &.prev {
                     border-top-right-radius: 0;
                     border-bottom-right-radius: 0;
@@ -87,7 +86,7 @@
         .filters {
             margin-left: auto;
             padding-right: 20px;
-            /deep/ .dx-widget {
+            ::ng-deep .dx-widget {
                 input {
                     background: #f3f7fa;
                 }
@@ -109,10 +108,10 @@
             }
         }
     }
-    /deep/ .mat-sidenav-container {
+    ::ng-deep .mat-sidenav-container {
         height: calc(100vh - 158px) !important;
     }
-    /deep/ .main-content {
+    ::ng-deep .main-content {
         padding: 20px;
         .field {
             align-items: baseline;
@@ -175,7 +174,7 @@
                 }
             }
 
-            /deep/ stars-rating {
+            ::ng-deep stars-rating {
                 align-self: center;
             }
         }

@@ -34,7 +34,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 
-import { FileDropModule } from 'ngx-file-drop';
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
 import { VgCoreModule } from 'videogular2/core';
 import { VgControlsModule } from 'videogular2/controls';
@@ -230,7 +230,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         RoundProgressModule,
         PipelineModule,
         DxRadioGroupModule,
-        FileDropModule,
+        NgxFileDropModule,
         ImageViewerModule,
         DxDropDownBoxModule,
         VgCoreModule,

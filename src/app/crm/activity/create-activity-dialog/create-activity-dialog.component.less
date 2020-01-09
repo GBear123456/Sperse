@@ -1,13 +1,13 @@
-/deep/ .dx-submenu {
+::ng-deep .dx-submenu {
     border-radius: 5px;
 }
 
 :host {
-    /deep/ .mat-dialog-header {
+    ::ng-deep .mat-dialog-header {
         padding: 0 10px 0 20px!important;
     }
 
-    /deep/ .dx-toolbar [accesskey="select-box"] {
+    ::ng-deep .dx-toolbar [accesskey="select-box"] {
         &::after {
             color: #677380;
             font-size: 13px;
@@ -21,13 +21,13 @@
         }
     }
 
-    /deep/ .mat-dialog-actions {
+    ::ng-deep .mat-dialog-actions {
         #saveActivityOptions {
             width: 227px;
         }
     }
 
-    /deep/ .tab-content {
+    ::ng-deep .tab-content {
         display: flex;
         flex-direction: column;
         padding: 30px 50px !important;
@@ -135,7 +135,7 @@
     }
 
     .date-selector {
-        /deep/ dx-date-box {
+        ::ng-deep dx-date-box {
             width: 100% !important;
             max-width: 190px;
 

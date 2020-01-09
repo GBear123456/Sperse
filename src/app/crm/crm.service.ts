@@ -23,7 +23,7 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class CrmService {
-    windowResize$: Observable<Event> = fromEvent(window, 'resize').pipe(startWith(window.innerWidth));
+    windowResize$: Observable<Event | number> = fromEvent(window, 'resize').pipe(startWith(window.innerWidth));
     contentWidth$: Observable<number> = combineLatest(
         this.filtersService.filterFixed$,
         this.windowResize$
@@ -32,7 +32,7 @@ export class CrmService {
         this.appService.toolbarIsHidden$,
         this.fullScreenService.isFullScreenMode$,
         this.windowResize$
-    ).pipe(map(([toolbarIsHidden, isFullScreenMode]: [boolean, boolean]) => {
+    ).pipe(map(([toolbarIsHidden, isFullScreenMode, resize]: [boolean, boolean, any]) => {
         let height: number;
         if (isFullScreenMode) {
             height = window.innerHeight - 60;

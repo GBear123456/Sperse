@@ -1,5 +1,5 @@
 :host{
-    /deep/ .dx-scrollview-content {
+    ::ng-deep .dx-scrollview-content {
         display: flex;
         justify-content: center;
     }
@@ -45,7 +45,7 @@
                 color: #677380;        
             }
 
-            /deep/ .dx-placeholder:before {
+            ::ng-deep .dx-placeholder:before {
                 font-style: italic;
                 font-size: 12px;
                 font-weight: 200;
@@ -53,7 +53,7 @@
                 color: rgba(0, 0, 0, 0.87);
             }
 
-            /deep/ .dx-widget {
+            ::ng-deep .dx-widget {
                 input {
                     font-weight: 400;
                     color: rgba(0, 0, 0, 0.87);
@@ -61,7 +61,7 @@
                 }
             }
 
-            /deep/ dx-date-box {
+            ::ng-deep dx-date-box {
                 &.dx-state-focused .dx-placeholder {
                     top: -25px!important;
                 }
@@ -70,11 +70,11 @@
                 }
             }
           
-            /deep/ dx-check-box {
+            ::ng-deep dx-check-box {
                 padding: 7px 0;
             }
 
-            /deep/ dx-tag-box {
+            ::ng-deep dx-tag-box {
                 input {
                     margin: 0px;
                     padding: 0px;

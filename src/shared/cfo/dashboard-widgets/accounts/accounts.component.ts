@@ -72,7 +72,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this._loadingService.startLoading(this.networth.nativeElement)),
-            switchMap(([currencyId, bankAccountIds]: [ string, number[]]) => {
+            switchMap(([currencyId, bankAccountIds, refresh]: [ string, number[], null]) => {
                 return this._dashboardProxy.getAccountTotals(
                     InstanceType[this.instanceType],
                     this.instanceId,
@@ -94,7 +94,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this._loadingService.startLoading(this.dailyStats.nativeElement)),
-            switchMap(([currencyId, bankAccountIds, period]: [string, number[], DailyStatsPeriodModel]) => {
+            switchMap(([currencyId, bankAccountIds, period, refresh]: [string, number[], DailyStatsPeriodModel, null]) => {
                 return this._dashboardProxy.getDailyBalanceStats(
                     InstanceType[this.instanceType],
                     this.instanceId,

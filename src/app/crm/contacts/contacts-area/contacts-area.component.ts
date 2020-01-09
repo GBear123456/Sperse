@@ -228,11 +228,9 @@ export class ContactsAreaComponent {
             if (result) {
                 this.dialog.closeAll();
                 this.contactEmailService.deleteContactEmail(
-                    this.contactInfoData.contactId, email.id).subscribe(result => {
-                    if (!result) {
+                    this.contactInfoData.contactId, email.id).subscribe(() => {
                         this.contactInfoData.emails.splice(index, 1);
                         this.contactsService.verificationUpdate();
-                    }
                 });
             }
         });
@@ -249,11 +247,9 @@ export class ContactsAreaComponent {
             if (result) {
                 this.dialog.closeAll();
                 this.contactPhoneService.deleteContactPhone(
-                    this.contactInfoData.contactId, phone.id).subscribe(result => {
-                    if (!result) {
+                    this.contactInfoData.contactId, phone.id).subscribe(() => {
                         this.contactInfoData.phones.splice(index, 1);
                         this.contactsService.verificationUpdate();
-                    }
                 });
             }
         });

@@ -310,7 +310,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             first(),
             mapTo(data)
         )),
-        switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
+        switchMap(([filter, mapArea, refresh]: [any, MapArea, null]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea

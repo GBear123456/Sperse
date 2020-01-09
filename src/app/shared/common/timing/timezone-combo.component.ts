@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 import {
     SettingScopes,
-    NameValueDtoListResultDto,
+    NameValueDto,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
@@ -31,7 +31,7 @@ export class TimeZoneComboComponent implements OnInit {
     @Input() selectedTimeZone: string = undefined;
     @Input() defaultTimezoneScope: SettingScopes;
     @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();
-    timeZones$: Observable<NameValueDtoListResultDto[]>;
+    timeZones$: Observable<NameValueDto[]>;
 
     constructor(private _timingService: TimingServiceProxy) {}
 

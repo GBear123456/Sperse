@@ -124,7 +124,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         );
     }
 
-    private getCardDetails(cardId: number): any {
+    private getCardDetails(cardId: number): Observable<OfferDetailsDto> {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
         return combineLatest(this.category$, this.offersService.memberInfo$)
             .pipe(

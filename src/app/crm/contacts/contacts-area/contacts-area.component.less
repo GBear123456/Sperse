@@ -17,7 +17,7 @@
     .inplace-edit-wrapper {
         height: 35px;
 
-        /deep/ input {
+        ::ng-deep input {
             margin: 0;
             padding: 0 0 0 5px;
             font-size: 15px;
@@ -38,10 +38,10 @@
         }
 
         dx-button {
-            /deep/ &.update i {
+            ::ng-deep &.update i {
                 color: #00aeef;
             }
-            /deep/ &.exit i {
+            ::ng-deep &.exit i {
                 color: #f44336;
             }
 
@@ -50,7 +50,7 @@
         }
 
         dx-validation-group {
-            /deep/ dx-button {
+            ::ng-deep dx-button {
                 top: -14px;
             }
         }

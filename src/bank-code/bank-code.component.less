@@ -4,7 +4,7 @@
     background-image: url('../assets/common/images/bank-code/background.jpg');
     background-attachment: fixed;
 
-    /deep/ .app-list-item {
+    ::ng-deep .app-list-item {
         * {
             font-size: 16px !important;
             font-family: 'AvianoSans-Reg', sans-serif !important;
@@ -26,13 +26,13 @@
         }
     }
 
-    /deep/ h1,
-    /deep/ h2,
-    /deep/ h3,
-    /deep/ h4,
-    /deep/ h5,
-    /deep/ h6,
-    /deep/ .btn {
+    ::ng-deep h1,
+    ::ng-deep h2,
+    ::ng-deep h3,
+    ::ng-deep h4,
+    ::ng-deep h5,
+    ::ng-deep h6,
+    ::ng-deep .btn {
         font-family: 'AvianoSans-Bla', sans-serif !important;
         font-weight: normal;
 
@@ -60,7 +60,7 @@
     }
 }
 
-/deep/ .cdk-overlay-container .cdk-overlay-pane.slider.footer-slider {
+::ng-deep .cdk-overlay-container .cdk-overlay-pane.slider.footer-slider {
     max-width: 50vw !important;
 
     @media all and (max-width: 768px) {
@@ -68,12 +68,12 @@
     }
 }
 
-/deep/ .cdk-global-scrollblock {
+::ng-deep .cdk-global-scrollblock {
     position: static !important;
     width: initial !important;
 }
 
-/deep/ .bank-code .page-header.navbar .page-logo {
+::ng-deep .bank-code .page-header.navbar .page-logo {
     @media all and (min-width: 1024px) {
         position: relative;
         min-width: 250px !important;

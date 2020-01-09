@@ -35,7 +35,7 @@ ul {
         margin-bottom: 26px;
         font-size: 30px;
         font-weight: bold;
-        /deep/ span {
+        ::ng-deep span {
             font-weight: 700;
             position: relative;
             display: inline-block;
@@ -64,14 +64,14 @@ ul {
     h3 {
         font-size: 22px;
         letter-spacing: 0.2px;
-        /deep/ span {
+        ::ng-deep span {
             font-weight: 600;
 
             @media all and (max-width: 460px) {
                 display: block;
             }
         }
-        /deep/ sup {
+        ::ng-deep sup {
             font-family: Poppins;
         }
     }

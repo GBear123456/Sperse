@@ -27,13 +27,13 @@
         }
     }
 
-    /deep/ body.finance-page {
+    ::ng-deep body.finance-page {
         .page-content {
             height: 0;
         }
     }
 
-    /deep/ * {
+    ::ng-deep * {
         .form-control[disabled] {
             opacity: .7;
         }
@@ -258,7 +258,7 @@
     }
 
     /* Devextreme */
-    /deep/ .dx-texteditor-input,
+    ::ng-deep .dx-texteditor-input,
     input.form-control {
         font-family: @lato;
         font-size: 18px;
@@ -268,16 +268,16 @@
         border-bottom: 1px solid #dfdfdf;
     }
 
-    /deep/ .dx-texteditor-input {
+    ::ng-deep .dx-texteditor-input {
         padding: 12px 8px;
     }
 
-    /deep/ .dx-datebox-calendar.dx-dropdowneditor-active {
+    ::ng-deep .dx-datebox-calendar.dx-dropdowneditor-active {
         box-shadow: none;
     }
 
-    /deep/ .dx-placeholder,
-    /deep/ .dx-radiobutton .dx-item-content {
+    ::ng-deep .dx-placeholder,
+    ::ng-deep .dx-radiobutton .dx-item-content {
         font-family: @lato;
         font-size: 18px;
         font-weight: 600;
@@ -285,8 +285,8 @@
         transition: .2s;
     }
 
-    /deep/ .dx-placeholder.dx-state-invisible,
-    /deep/ .dx-datebox.dx-texteditor-empty.dx-state-focused .dx-placeholder {
+    ::ng-deep .dx-placeholder.dx-state-invisible,
+    ::ng-deep .dx-datebox.dx-texteditor-empty.dx-state-focused .dx-placeholder {
         display: block !important;
         font-size: 11px;
         color: #8a9da1;
@@ -294,11 +294,11 @@
         opacity: 1;
     }
 
-    /deep/ .dx-radiobutton.dx-radiobutton-checked .dx-item-content {
+    ::ng-deep .dx-radiobutton.dx-radiobutton-checked .dx-item-content {
         color: #171c1d;
     }
 
-    /deep/ .dx-radiobutton {
+    ::ng-deep .dx-radiobutton {
         .dx-radiobutton-icon {
             margin: 0;
             width: 24px;
@@ -347,7 +347,7 @@
         }
     }
     /* dx-checkbox-icon */
-    /deep/ .dx-checkbox-icon {
+    ::ng-deep .dx-checkbox-icon {
         width: 20px;
         height: 20px;
         border-radius: 3px;
@@ -355,19 +355,19 @@
         background-color: #fff;
     }
 
-    /deep/ .dx-checkbox.dx-state-hover .dx-checkbox-icon,
-    /deep/ .dx-checkbox.dx-state-focused .dx-checkbox-icon {
+    ::ng-deep .dx-checkbox.dx-state-hover .dx-checkbox-icon,
+    ::ng-deep .dx-checkbox.dx-state-focused .dx-checkbox-icon {
         border-color: #f58023 !important;
     }
 
-    /deep/ .dx-checkbox-checked .dx-checkbox-icon {
+    ::ng-deep .dx-checkbox-checked .dx-checkbox-icon {
         border: 1px solid #f58023 !important;
         background-color: #f58023 !important;
         color: #fff;
         font-size: 12px;
     }
 
-    /deep/ .custom-radio-2-btn {
+    ::ng-deep .custom-radio-2-btn {
         .dx-field-label {
             margin: 7px 0;
         }
@@ -408,7 +408,7 @@
         }
     }
 
-    /deep/ .dx-checkbox-text {
+    ::ng-deep .dx-checkbox-text {
         font-family: @lato;
         font-size: 17px;
         font-weight: 500;
@@ -416,13 +416,13 @@
         padding-left: 32px;
     }
 
-    /deep/ .dx-slider-range.dx-slider-range-visible {
+    ::ng-deep .dx-slider-range.dx-slider-range-visible {
         border: 1px solid #ed9d1a;
         background: #ed9d1a;
         border-radius: 2px;
     }
 
-    /deep/ .dx-slider-handle {
+    ::ng-deep .dx-slider-handle {
         margin-top: -11px;
         margin-right: -27.5px;
         width: 55px;
@@ -464,7 +464,7 @@
         }
     }
 
-    /deep/ .dx-tooltip-wrapper {
+    ::ng-deep .dx-tooltip-wrapper {
         .dx-overlay-content {
             border: 0 !important;
 
@@ -481,7 +481,7 @@
         }
     }
 
-    /deep/ .dx-slider-label {
+    ::ng-deep .dx-slider-label {
         font-family: @lato;
         font-size: 14px;
         font-weight: 500;
@@ -515,7 +515,7 @@
         }
     }
 
-    /deep/ .content-wrap {
+    ::ng-deep .content-wrap {
         position: relative;
         border-radius: 6px;
         background-color: #ffffff;

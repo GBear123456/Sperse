@@ -1,5 +1,5 @@
 :host {
-    /deep/ .mat-dialog-header {
+    ::ng-deep .mat-dialog-header {
         padding: 0px 10px 0px 42px !important;
 
         .dx-placeholder {
@@ -7,7 +7,7 @@
         }
     }
 
-    /deep/ .mat-dialog-actions {
+    ::ng-deep .mat-dialog-actions {
         #saveClientOptions {
             width: 227px;
         }
@@ -58,7 +58,7 @@
         }
     }
 
-    /deep/.form-content {
+    ::ng-deep.form-content {
         display: flex;
         margin-top: 39px;
         flex-direction: column;
@@ -74,7 +74,7 @@
             overflow: hidden;
             display: inline-block;
 
-            /deep/ .dx-widget {
+            ::ng-deep .dx-widget {
                 margin: 0px;
                 width: 100%;
 
@@ -95,7 +95,7 @@
             }
         }
 
-        /deep/ .field {
+        ::ng-deep .field {
             margin-bottom: 19px;
             display: flex;
             position: relative;
@@ -192,7 +192,7 @@
             }
         }
 
-        /deep/ .drop-zone {
+        ::ng-deep .drop-zone {
             border-radius: 0;
             height: 193px;
             width: 255px;
@@ -227,7 +227,7 @@
         .field.annualRevenue,
         .field.affiliateCode,
         .field.stubField,
-        /deep/ .drop-zone {
+        ::ng-deep .drop-zone {
             margin-bottom: 37px;
         }
         .field.stubField {
@@ -247,7 +247,7 @@
             flex: 1;
         }
 
-        /deep/ label + * {
+        ::ng-deep label + * {
             .dx-placeholder:before {
                 padding: 0 0 5px 0;
             }

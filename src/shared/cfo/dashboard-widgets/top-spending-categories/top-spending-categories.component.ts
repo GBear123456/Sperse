@@ -46,7 +46,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         this.dashboardService.refresh$
     ).pipe(
         tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-        switchMap(([selectedBankAccountsIds, currencyId, period]: [ number[], string, DailyStatsPeriodModel]) => {
+        switchMap(([selectedBankAccountsIds, currencyId, period, refresh]: [number[], string, DailyStatsPeriodModel, null]) => {
             this.currencyId = currencyId;
             return this.dashboardServiceProxy.getSpendingCategories(
                 this.cfoService.instanceType as InstanceType,

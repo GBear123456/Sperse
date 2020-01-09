@@ -224,7 +224,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
-            switchMap(([currencyId, forecastModelId, requestFilter]: [string, number, StatsFilter]) => {
+            switchMap(([currencyId, forecastModelId, requestFilter, refresh]: [string, number, StatsFilter, null]) => {
                 return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,

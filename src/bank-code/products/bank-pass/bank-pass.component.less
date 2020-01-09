@@ -28,7 +28,7 @@
     }
 
     h2,
-    /deep/ access-code-instructions h6 {
+    ::ng-deep access-code-instructions h6 {
         &:after {
             content: '';
             display: block;
@@ -46,7 +46,7 @@
         }
     }
 
-    /deep/ access-code-instructions {
+    ::ng-deep access-code-instructions {
         text-align: center;
         padding: 10px 0;
         display: block;
@@ -244,7 +244,7 @@
                 }
             }
 
-            /deep/ .dx-textbox {
+            ::ng-deep .dx-textbox {
                 margin-top: 0;
                 height: 48px;
                 input {
@@ -292,7 +292,7 @@
         }
     }
 
-    /deep/ mat-tab-group {
+    ::ng-deep mat-tab-group {
         .mat-tab-header {
             .mat-tab-label-container {
                 z-index: 0;
@@ -314,7 +314,7 @@
         z-index: 1;
         .search {
             width: 263px;
-            /deep/ .dx-textbox {
+            ::ng-deep .dx-textbox {
                 @media all and (min-width: 1400px) {
                     width: 263px;
                 }
@@ -430,7 +430,7 @@
         height: auto;
     }
 
-    /deep/ .mat-tab-group.mat-primary {
+    ::ng-deep .mat-tab-group.mat-primary {
         padding: 10px;
 
         @media (min-width: 768px) {
@@ -456,7 +456,7 @@
         }
     }
 
-    /deep/ #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
+    ::ng-deep #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
         padding: 4px 5px 5px;
     }
 }
