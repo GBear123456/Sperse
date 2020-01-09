@@ -184,7 +184,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
         if (invoice && invoice.InvoiceId) {
             this.modalDialog.startLoading();
-            if (!this.data.addNew) {
+            if (this.data.addNew)
+                this.status = InvoiceStatus.Draft;
+            else {
                 this.invoiceId = invoice.InvoiceId;
                 this.invoiceNo = invoice.InvoiceNumber;
                 this.status = invoice.InvoiceStatus;
@@ -281,9 +283,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     saveOptionsInit() {
         let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name);
         this.selectedOption = this.saveContextMenuItems[
-            this.cacheService.exists(cacheKey)
-                ? this.cacheService.get(cacheKey)
-                : this.data.saveAsDraft ? this.SAVE_OPTION_DRAFT : this.SAVE_OPTION_DEFAULT
+            this.data.saveAsDraft
+                ? this.SAVE_OPTION_DRAFT : this.cacheService.exists(cacheKey)
+                ? this.cacheService.get(cacheKey) : this.SAVE_OPTION_DEFAULT
         ];
         this.selectedOption.selected = true;
         this.buttons[0].title = this.selectedOption.text;
