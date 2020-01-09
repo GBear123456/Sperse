@@ -138,7 +138,7 @@ export class AddressesComponent implements OnInit {
     }
 
     showAddressDialog(address, event, index) {
-        let dialogData = _.pick(address || {isActive: true}, 'id', 'city',
+        let dialogData = _.pick(address || { isActive: true, isConfirmed: false }, 'id', 'city',
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');
         dialogData.groupId = this.contactInfo.groupId;
