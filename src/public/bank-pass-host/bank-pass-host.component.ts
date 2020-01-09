@@ -6,7 +6,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     selector: 'bank-pass-host',
     templateUrl: '../../bank-code/products/bank-pass/bank-pass.component.html',
     styleUrls: [
-        '../../bank-code/products/bank-pass/bank-pass.component.less'
+        '../../bank-code/products/bank-pass/bank-pass.component.less',
+        './bank-pass-host.component.less'
     ],
     providers: [ LifecycleSubjectsService ]
 })
