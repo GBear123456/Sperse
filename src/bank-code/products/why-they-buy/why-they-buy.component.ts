@@ -1,6 +1,7 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -19,8 +20,12 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WhyTheyBuyComponent {
+    dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.WTBeBook).pipe(
-        tap(() => setTimeout(() => this.changeDetectorRef.detectChanges()))
+        tap((hasSubscription) => setTimeout(() => {
+            if (hasSubscription) this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        }))
     );
     bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('why-they-buy-digital-landing');
@@ -28,6 +33,12 @@ export class WhyTheyBuyComponent {
     constructor(
         private profileService: ProfileService,
         private productsService: ProductsService,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        @Inject(DOCUMENT) private document: any
     ) {}
+
+    onIframeLoad() {
+        this.dataIsLoading = false;
+        this.changeDetectorRef.detectChanges();
+    }
 }

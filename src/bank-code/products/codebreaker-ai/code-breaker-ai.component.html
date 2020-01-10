@@ -1,9 +1,10 @@
 <section class="iframe">
     <iframe *ngIf="hasSubscription$ | async; else noSubscription"
             id="theFrame" src="https://v5.bankcode.pro"
-            frameborder="0">
+            frameborder="0" (load)="onIframeLoad()">
     </iframe>
     <ng-template #noSubscription>
-        <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
+        <iframe [src]="environmentLink$ | async" frameborder="0" (load)="onIframeLoad()"></iframe>
     </ng-template>
+    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
 </section>

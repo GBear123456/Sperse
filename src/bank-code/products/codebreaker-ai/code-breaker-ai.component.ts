@@ -1,6 +1,7 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -18,14 +19,24 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CodeBreakerAiComponent {
+    dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
-        tap(() => setTimeout(() => this.changeDetectorRef.detectChanges()))
+        tap((dataIsLoading) => setTimeout(() => {
+            if (dataIsLoading) this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        }))
     );
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('codebreaker-ai-landing');
 
     constructor(
         private profileService: ProfileService,
         private productsService: ProductsService,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        @Inject(DOCUMENT) private document: any
     ) {}
+
+    onIframeLoad() {
+        this.dataIsLoading = false;
+        this.changeDetectorRef.detectChanges();
+    }
 }

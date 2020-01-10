@@ -45,6 +45,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 export class BankPassComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
+    dataIsLoading = true;
     totalCount: number;
     currentTabIndex = 0;
     searchValue: '';
@@ -89,16 +90,18 @@ export class BankPassComponent implements OnInit, OnDestroy {
             paginate: true
         },
         onChanged: () => {
-            this.dataIsLoading = false;
             this.totalCount = this.dataSource.totalCount();
+            this.dataIsLoading = false;
             this.changeDetectorRef.detectChanges();
         }
     });
     formatting = AppConsts.formatting;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
-        tap(() => setTimeout(() => this.changeDetectorRef.detectChanges()))
+        tap((hasSubscription) => setTimeout(() => {
+            if (hasSubscription) this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        }))
     );
-    dataIsLoading = false;
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
     userTimezone = '0000';
     accessCode$: Observable<string> = this.profileService.accessCode$;
@@ -225,5 +228,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
             this.renderer.addClass(this.document.body, 'overflow-hidden');
         }
         this.lifecycleSubjectService.destroy.next(null);
+    }
+
+    onIframeLoad() {
+        this.dataIsLoading = false;
+        this.changeDetectorRef.detectChanges();
     }
 }

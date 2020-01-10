@@ -100,7 +100,7 @@
                 </div>
             </mat-tab>
             <mat-tab [label]="ls.l('Leads').toUpperCase()">
-                <div [hidden]="dataIsLoading" *ngIf="currentTabIndex == 1">
+                <div *ngIf="currentTabIndex == 1">
                     <div class="grid" [hidden]="totalCount <= 0">
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
@@ -147,13 +147,13 @@
                                  [showLink]="false">
                     </app-no-data>
                 </div>
-                <loading-spinner [hidden]="!dataIsLoading"></loading-spinner>
             </mat-tab>
         </mat-tab-group>
     </section>
     <ng-template #noSubscription>
-        <section class="iframe" *ngIf="environmentLink$ | async as environmentLink">
-            <iframe [src]="environmentLink" frameborder="0"></iframe>
-        </section>
+        <div class="iframe">
+            <iframe [src]="environmentLink$ | async" frameborder="0" (load)="onIframeLoad()"></iframe>
+        </div>
     </ng-template>
+    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
 </div>
