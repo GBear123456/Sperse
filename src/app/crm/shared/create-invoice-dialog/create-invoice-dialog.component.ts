@@ -562,15 +562,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     selectContact(event) {
-        this.selectedContact = event.selectedItem;
-        this.contactId = event.selectedItem && event.selectedItem.id;
-        if (this.orderId && !this.data.invoice) {
-            this.orderId = undefined;
-            this.orderNumber = undefined;
+        let contactId = event.selectedItem && event.selectedItem.id;
+        if (contactId != this.contactId) {
+            this.contactId = contactId;
+            this.selectedContact = event.selectedItem;
+            if (this.orderId && !this.data.invoice) {
+                this.orderId = undefined;
+                this.orderNumber = undefined;
+            }
+            this.orderDropdown.initOrderDataSource();
+            this.initContactAddresses(this.contactId);
+            this.changeDetectorRef.detectChanges();
         }
-        this.orderDropdown.initOrderDataSource();
-        this.initContactAddresses(this.contactId);
-        this.changeDetectorRef.detectChanges();
     }
 
     clearClient() {
