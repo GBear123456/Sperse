@@ -307,8 +307,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             this.finishLoading(true);
             if (declinedList.length)
                 event.value = event.data.OrderStage;
-            else
+            else {
+                this.contactService['data'].refresh = true;
                 this.notify.success(this.l('StageSuccessfullyUpdated'));
+                this.dataGrid.instance.getVisibleRows().map(row => {
+                    if (event.data.OrderId == row.data.OrderId)
+                        row.data.OrderStage = event.value;
+                });
+            }
         });
     }
 
