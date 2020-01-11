@@ -30,7 +30,6 @@ import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/countr
 export class SMSDialogComponent {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(CountryPhoneNumberComponent) countryPhoneNumber: CountryPhoneNumberComponent;
-    phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
     phoneNumber: string;
     phones: string[];
     smsText = '';

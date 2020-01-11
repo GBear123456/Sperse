@@ -17,7 +17,9 @@
                 <div *dxTemplate="let item of 'phoneTemplate'">
                     <div class="phone-wrapper">
                         <dx-text-box [value]="phoneFormatPipe.transform(item)"></dx-text-box>
-                        <country-phone-number (click)="phoneNumberClick($event)" [(phoneNumber)]="phoneNumber"></country-phone-number>
+                        <country-phone-number [(phoneNumber)]="phoneNumber"
+                                              (click)="phoneNumberClick($event)">
+                        </country-phone-number>
                     </div>
                 </div>
                 <div *dxTemplate="let item of 'phoneItemTemplate'">

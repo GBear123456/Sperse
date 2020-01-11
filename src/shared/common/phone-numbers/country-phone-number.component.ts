@@ -1,14 +1,14 @@
-import { Component, OnInit, AfterViewInit, Injector, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'country-phone-number',
     templateUrl: './country-phone-number.component.html',
     styleUrls: ['./country-phone-number.component.less']
 })
-export class CountryPhoneNumberComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
     @Input() required = true;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
@@ -22,8 +22,25 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     value = '';
     focused = false;
 
-    constructor(injector: Injector) {
-        super(injector);
+    constructor(public ls: AppLocalizationService) {}
+
+    ngOnInit() {
+        if (!this.phoneNumber)
+            this.phoneNumber = AppConsts.defaultCountryCode;
+        this.onInitialized.emit(this);
+    }
+
+    ngAfterViewInit() {
+        this.intPhoneNumber.registerOnChange((value) => {
+            this.phoneNumberChange.emit(this.value = value);
+            this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);
+        });
+        if (this.phoneNumber !== AppConsts.defaultCountryCode) {
+            setTimeout(() => {
+                this.intPhoneNumber.writeValue(this.phoneNumber);
+                this.intPhoneNumber.updateValue();
+            });
+        }
     }
 
     isValid() {
@@ -46,11 +63,11 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
         this.onKeyUp.emit(event);
     }
 
-    focusIn(event) {
+    focusIn() {
         this.focused = true;
     }
 
-    focusOut(event) {
+    focusOut() {
         this.focused = false;
     }
 
@@ -58,24 +75,5 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
         this.phoneNumber = AppConsts.defaultCountryCode;
         this.model.control.markAsPristine();
         this.model.control.markAsUntouched();
-    }
-
-    ngOnInit() {
-        if (!this.phoneNumber)
-            this.phoneNumber = AppConsts.defaultCountryCode;
-        this.onInitialized.emit(this);
-    }
-
-    ngAfterViewInit() {
-        this.intPhoneNumber.registerOnChange((value) => {
-            this.phoneNumberChange.emit(this.value = value);
-            this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);
-        });
-        if (this.phoneNumber !== AppConsts.defaultCountryCode) {
-            setTimeout(() => {
-                this.intPhoneNumber.writeValue(this.phoneNumber);
-                this.intPhoneNumber.updateValue();
-            });
-        }
     }
 }
