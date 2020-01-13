@@ -16708,7 +16708,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
+    create(body: CreateOrUpdateLeadInput | null | undefined): Observable<CreateOrUpdateLeadOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -16731,14 +16731,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateLeadOutput>><any>_observableThrow(e);
+                    return <Observable<CreateOrUpdateLeadOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateLeadOutput>><any>_observableThrow(response_);
+                return <Observable<CreateOrUpdateLeadOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<CreateLeadOutput> {
+    protected processCreate(response: HttpResponseBase): Observable<CreateOrUpdateLeadOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16749,7 +16749,7 @@ export class LeadServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateLeadOutput.fromJS(resultData200) : new CreateLeadOutput();
+            result200 = resultData200 ? CreateOrUpdateLeadOutput.fromJS(resultData200) : new CreateOrUpdateLeadOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16757,7 +16757,7 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateLeadOutput>(<any>null);
+        return _observableOf<CreateOrUpdateLeadOutput>(<any>null);
     }
 
     /**
@@ -42069,7 +42069,7 @@ export interface ICreateContactEmailInput {
     usageTypeId: string | undefined;
 }
 
-export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneInputWithoutCheck {
     contactId!: number;
     phoneNumber!: string;
     phoneExtension!: string | undefined;
@@ -42078,7 +42078,7 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
-    constructor(data?: ICreateContactPhoneInput) {
+    constructor(data?: ICreateContactPhoneInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -42099,9 +42099,9 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
         }
     }
 
-    static fromJS(data: any): CreateContactPhoneInput {
+    static fromJS(data: any): CreateContactPhoneInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhoneInput();
+        let result = new CreateContactPhoneInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -42119,7 +42119,7 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     }
 }
 
-export interface ICreateContactPhoneInput {
+export interface ICreateContactPhoneInputWithoutCheck {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string | undefined;
@@ -42458,6 +42458,7 @@ export interface ITrackingInfo {
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
+    personAffiliateCode!: string | undefined;
     matchExisting!: boolean | undefined;
     contactId!: number | undefined;
     contactXRef!: string | undefined;
@@ -42468,7 +42469,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
     emailAddresses!: CreateContactEmailInput[] | undefined;
-    phoneNumbers!: CreateContactPhoneInput[] | undefined;
+    phoneNumbers!: CreateContactPhoneInputWithoutCheck[] | undefined;
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
@@ -42510,6 +42511,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 
     init(data?: any) {
         if (data) {
+            this.personAffiliateCode = data["personAffiliateCode"];
             this.matchExisting = data["matchExisting"];
             this.contactId = data["contactId"];
             this.contactXRef = data["contactXRef"];
@@ -42527,7 +42529,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
                 this.phoneNumbers = [];
                 for (let item of data["phoneNumbers"])
-                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+                    this.phoneNumbers.push(CreateContactPhoneInputWithoutCheck.fromJS(item));
             }
             if (data["addresses"] && data["addresses"].constructor === Array) {
                 this.addresses = [];
@@ -42590,6 +42592,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["personAffiliateCode"] = this.personAffiliateCode;
         data["matchExisting"] = this.matchExisting;
         data["contactId"] = this.contactId;
         data["contactXRef"] = this.contactXRef;
@@ -42663,6 +42666,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 }
 
 export interface ICreateOrUpdateContactInput {
+    personAffiliateCode: string | undefined;
     matchExisting: boolean | undefined;
     contactId: number | undefined;
     contactXRef: string | undefined;
@@ -42673,7 +42677,7 @@ export interface ICreateOrUpdateContactInput {
     nameSuffix: string | undefined;
     nickName: string | undefined;
     emailAddresses: CreateContactEmailInput[] | undefined;
-    phoneNumbers: CreateContactPhoneInput[] | undefined;
+    phoneNumbers: CreateContactPhoneInputWithoutCheck[] | undefined;
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
@@ -46447,6 +46451,7 @@ export class Lead implements ILead {
     stage!: Stage | undefined;
     cancellationReason!: LeadCancellationReason | undefined;
     sourceContact!: Contact | undefined;
+    leadDate!: moment.Moment | undefined;
     leadRequests!: LeadRequest[] | undefined;
     orders!: Order[] | undefined;
     isDeleted!: boolean | undefined;
@@ -46491,6 +46496,7 @@ export class Lead implements ILead {
             this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
             this.cancellationReason = data["cancellationReason"] ? LeadCancellationReason.fromJS(data["cancellationReason"]) : <any>undefined;
             this.sourceContact = data["sourceContact"] ? Contact.fromJS(data["sourceContact"]) : <any>undefined;
+            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
             if (data["leadRequests"] && data["leadRequests"].constructor === Array) {
                 this.leadRequests = [];
                 for (let item of data["leadRequests"])
@@ -46543,6 +46549,7 @@ export class Lead implements ILead {
         data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
         data["cancellationReason"] = this.cancellationReason ? this.cancellationReason.toJSON() : <any>undefined;
         data["sourceContact"] = this.sourceContact ? this.sourceContact.toJSON() : <any>undefined;
+        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
         if (this.leadRequests && this.leadRequests.constructor === Array) {
             data["leadRequests"] = [];
             for (let item of this.leadRequests)
@@ -46588,6 +46595,7 @@ export interface ILead {
     stage: Stage | undefined;
     cancellationReason: LeadCancellationReason | undefined;
     sourceContact: Contact | undefined;
+    leadDate: moment.Moment | undefined;
     leadRequests: LeadRequest[] | undefined;
     orders: Order[] | undefined;
     isDeleted: boolean | undefined;
@@ -51777,6 +51785,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     lists!: ContactList[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
+    starId!: number | undefined;
     userId!: number | undefined;
     affiliateCode!: string | undefined;
     xref!: string | undefined;
@@ -51853,6 +51862,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
+            this.starId = data["starId"];
             this.userId = data["userId"];
             this.affiliateCode = data["affiliateCode"];
             this.xref = data["xref"];
@@ -51929,6 +51939,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
+        data["starId"] = this.starId;
         data["userId"] = this.userId;
         data["affiliateCode"] = this.affiliateCode;
         data["xref"] = this.xref;
@@ -51974,6 +51985,7 @@ export interface IOrganizationBusinessInfo {
     lists: ContactList[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
+    starId: number | undefined;
     userId: number | undefined;
     affiliateCode: string | undefined;
     xref: string | undefined;
@@ -52969,6 +52981,66 @@ export class UpdateContactListInput implements IUpdateContactListInput {
 export interface IUpdateContactListInput {
     id: number;
     name: string;
+}
+
+export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+    contactId!: number;
+    phoneNumber!: string;
+    phoneExtension!: string | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactPhoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhoneInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactPhoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhoneInput {
+    contactId: number;
+    phoneNumber: string;
+    phoneExtension: string | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
 }
 
 export class CreateContactPhoneOutput implements ICreateContactPhoneOutput {
@@ -61819,7 +61891,7 @@ export interface ILeadCancellationReasonDtoListResultDto {
     items: LeadCancellationReasonDto[] | undefined;
 }
 
-export class CreateLeadInput implements ICreateLeadInput {
+export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     contactId!: number | undefined;
     contactXRef!: string | undefined;
     namePrefix!: string | undefined;
@@ -61829,7 +61901,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
     emailAddresses!: CreateContactEmailInput[] | undefined;
-    phoneNumbers!: CreateContactPhoneInput[] | undefined;
+    phoneNumbers!: CreateContactPhoneInputWithoutCheck[] | undefined;
     addresses!: CreateContactAddressInput[] | undefined;
     links!: CreateContactLinkInput[] | undefined;
     dob!: moment.Moment | undefined;
@@ -61860,7 +61932,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
 
-    constructor(data?: ICreateLeadInput) {
+    constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -61887,7 +61959,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
                 this.phoneNumbers = [];
                 for (let item of data["phoneNumbers"])
-                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+                    this.phoneNumbers.push(CreateContactPhoneInputWithoutCheck.fromJS(item));
             }
             if (data["addresses"] && data["addresses"].constructor === Array) {
                 this.addresses = [];
@@ -61941,9 +62013,9 @@ export class CreateLeadInput implements ICreateLeadInput {
         }
     }
 
-    static fromJS(data: any): CreateLeadInput {
+    static fromJS(data: any): CreateOrUpdateLeadInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadInput();
+        let result = new CreateOrUpdateLeadInput();
         result.init(data);
         return result;
     }
@@ -62021,7 +62093,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     }
 }
 
-export interface ICreateLeadInput {
+export interface ICreateOrUpdateLeadInput {
     contactId: number | undefined;
     contactXRef: string | undefined;
     namePrefix: string | undefined;
@@ -62031,7 +62103,7 @@ export interface ICreateLeadInput {
     nameSuffix: string | undefined;
     nickName: string | undefined;
     emailAddresses: CreateContactEmailInput[] | undefined;
-    phoneNumbers: CreateContactPhoneInput[] | undefined;
+    phoneNumbers: CreateContactPhoneInputWithoutCheck[] | undefined;
     addresses: CreateContactAddressInput[] | undefined;
     links: CreateContactLinkInput[] | undefined;
     dob: moment.Moment | undefined;
@@ -62063,14 +62135,14 @@ export interface ICreateLeadInput {
     newUserPassword: string | undefined;
 }
 
-export class CreateLeadOutput implements ICreateLeadOutput {
+export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
     contactId!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
     userKey!: string | undefined;
     autoLoginLink!: string | undefined;
 
-    constructor(data?: ICreateLeadOutput) {
+    constructor(data?: ICreateOrUpdateLeadOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -62089,9 +62161,9 @@ export class CreateLeadOutput implements ICreateLeadOutput {
         }
     }
 
-    static fromJS(data: any): CreateLeadOutput {
+    static fromJS(data: any): CreateOrUpdateLeadOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadOutput();
+        let result = new CreateOrUpdateLeadOutput();
         result.init(data);
         return result;
     }
@@ -62107,7 +62179,7 @@ export class CreateLeadOutput implements ICreateLeadOutput {
     }
 }
 
-export interface ICreateLeadOutput {
+export interface ICreateOrUpdateLeadOutput {
     contactId: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
