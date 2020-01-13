@@ -208,7 +208,31 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
     };
 
-    public readonly compareFields: any = [
+    readonly countryFields = {
+        personal: {
+            name: this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
+            code: this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE
+        },
+        company: {
+            name: this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME,
+            code: this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE
+        },
+        work: {
+            name: this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME,
+            code: this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE
+        }
+    };
+
+    readonly phoneRelatedCountryFields = {
+        [this.PERSONAL_MOBILE_PHONE]: this.countryFields.personal,
+        [this.PERSONAL_HOME_PHONE]: this.countryFields.personal,
+        [this.BUSINESS_COMPANY_PHONE]: this.countryFields.company,
+        [this.BUSINESS_WORK_PHONE_1]: this.countryFields.work,
+        [this.BUSINESS_WORK_PHONE_2]: this.countryFields.work,
+        [this.BUSINESS_FAX]: this.countryFields.company
+    };
+
+    readonly compareFields: any = [
         [this.FIRST_NAME_FIELD + ':' + this.LAST_NAME_FIELD],
         [this.PERSONAL_EMAIL1, this.PERSONAL_EMAIL2, this.PERSONAL_EMAIL3, this.BUSINESS_COMPANY_EMAIL, this.BUSINESS_WORK_EMAIL1, this.BUSINESS_WORK_EMAIL2, this.BUSINESS_WORK_EMAIL3],
         [this.PERSONAL_MOBILE_PHONE, this.PERSONAL_HOME_PHONE, this.BUSINESS_COMPANY_PHONE, this.BUSINESS_WORK_PHONE_1, this.BUSINESS_WORK_PHONE_2],
