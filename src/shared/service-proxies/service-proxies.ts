@@ -35792,9 +35792,10 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
-    address!: string | undefined;
+    streetAddress!: string | undefined;
     statusId!: string | undefined;
     isDefault!: boolean | undefined;
     id!: number | undefined;
@@ -35823,9 +35824,10 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
-            this.address = data["address"];
+            this.streetAddress = data["streetAddress"];
             this.statusId = data["statusId"];
             this.isDefault = data["isDefault"];
             this.id = data["id"];
@@ -35854,9 +35856,10 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
-        data["address"] = this.address;
+        data["streetAddress"] = this.streetAddress;
         data["statusId"] = this.statusId;
         data["isDefault"] = this.isDefault;
         data["id"] = this.id;
@@ -35878,9 +35881,10 @@ export interface IBusinessEntityInfoDto {
     alternativeEmail: string | undefined;
     countryId: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
-    address: string | undefined;
+    streetAddress: string | undefined;
     statusId: string | undefined;
     isDefault: boolean | undefined;
     id: number | undefined;
@@ -35899,10 +35903,12 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     email!: string | undefined;
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
+    country!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
-    address!: string | undefined;
+    streetAddress!: string | undefined;
     isDefault!: boolean | undefined;
 
     constructor(data?: ICreateBusinessEntityDto) {
@@ -35928,10 +35934,12 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.email = data["email"];
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
+            this.country = data["country"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
-            this.address = data["address"];
+            this.streetAddress = data["streetAddress"];
             this.isDefault = data["isDefault"];
         }
     }
@@ -35957,10 +35965,12 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["email"] = this.email;
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
+        data["country"] = this.country;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
-        data["address"] = this.address;
+        data["streetAddress"] = this.streetAddress;
         data["isDefault"] = this.isDefault;
         return data; 
     }
@@ -35979,10 +35989,12 @@ export interface ICreateBusinessEntityDto {
     email: string | undefined;
     alternativeEmail: string | undefined;
     countryId: string | undefined;
+    country: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
-    address: string | undefined;
+    streetAddress: string | undefined;
     isDefault: boolean | undefined;
 }
 
@@ -36001,10 +36013,12 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     email!: string | undefined;
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
+    country!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
-    address!: string | undefined;
+    streetAddress!: string | undefined;
     isDefault!: boolean | undefined;
 
     constructor(data?: IUpdateBusinessEntityDto) {
@@ -36032,10 +36046,12 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.email = data["email"];
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
+            this.country = data["country"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
-            this.address = data["address"];
+            this.streetAddress = data["streetAddress"];
             this.isDefault = data["isDefault"];
         }
     }
@@ -36063,10 +36079,12 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["email"] = this.email;
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
+        data["country"] = this.country;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
-        data["address"] = this.address;
+        data["streetAddress"] = this.streetAddress;
         data["isDefault"] = this.isDefault;
         return data; 
     }
@@ -36087,10 +36105,12 @@ export interface IUpdateBusinessEntityDto {
     email: string | undefined;
     alternativeEmail: string | undefined;
     countryId: string | undefined;
+    country: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
-    address: string | undefined;
+    streetAddress: string | undefined;
     isDefault: boolean | undefined;
 }
 
@@ -51004,6 +51024,7 @@ export class ContactCache implements IContactCache {
     phoneExtension!: string | undefined;
     countryId!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     city!: string | undefined;
     streetAddress!: string | undefined;
     zip!: string | undefined;
@@ -51061,6 +51082,7 @@ export class ContactCache implements IContactCache {
             this.phoneExtension = data["phoneExtension"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
             this.zip = data["zip"];
@@ -51118,6 +51140,7 @@ export class ContactCache implements IContactCache {
         data["phoneExtension"] = this.phoneExtension;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
         data["zip"] = this.zip;
@@ -51168,6 +51191,7 @@ export interface IContactCache {
     phoneExtension: string | undefined;
     countryId: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     city: string | undefined;
     streetAddress: string | undefined;
     zip: string | undefined;
