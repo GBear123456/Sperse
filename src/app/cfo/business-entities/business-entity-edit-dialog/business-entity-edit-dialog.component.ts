@@ -106,7 +106,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
 
                         if (this.googleAutoComplete) {
                             this.address['address'] = [
-                                this.businessEntity.address,
+                                this.businessEntity.streetAddress,
                                 this.businessEntity.city,
                                 this.businessEntity.stateId,
                                 this.businessEntity.countryId
@@ -211,7 +211,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
             this.businessEntity.stateId = this.getStateCode(this.address.state);
 
             if (this.googleAutoComplete) {
-                this.businessEntity.address = [
+                this.businessEntity.streetAddress = [
                     this.address['streetNumber'],
                     this.address['street']
                 ].filter(val => val).join(' ');

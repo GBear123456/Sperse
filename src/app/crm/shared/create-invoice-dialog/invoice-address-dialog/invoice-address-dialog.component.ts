@@ -57,7 +57,7 @@ export class InvoiceAddressDialog {
                 this.googleAutoComplete ? [
                     data.address1,
                     data.city,
-                    data.stateId,
+                    data.stateName,
                     data.countryId
                 ].join(',') : data.address1;
         }
@@ -78,7 +78,7 @@ export class InvoiceAddressDialog {
                 item['text'] = [
                     item.streetAddress,
                     item.city,
-                    item.state,
+                    item.stateName,
                     item.country
                 ].filter(Boolean).join(',');
                 return item;
@@ -186,7 +186,7 @@ export class InvoiceAddressDialog {
     onAddressSelected(event, component) {
         let address = this.contactDetails.addresses[event.itemIndex];
         this.data.country = address.country;
-        this.data.state = address.state;
+        this.data.state = address.stateId;
         this.data.city = address.city;
         this.data.zip = address.zip;
         this.data.address1 = address.streetAddress;

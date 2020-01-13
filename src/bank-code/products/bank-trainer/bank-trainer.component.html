@@ -1,4 +1,4 @@
 <section class="iframe">
     <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
-    <iframe [src]="environmentLink$ | async" frameborder="0" (load)="onIframeLoad()"></iframe>
+    <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
 </section>

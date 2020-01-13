@@ -112,9 +112,13 @@
                                       [loadPanel]="{ enabled: false }"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
-                                      [pager]="gridPagerConfig"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-paging [pageSize]="10"></dxo-paging>
+                            <dxo-pager
+                                [showPageSizeSelector]="true"
+                                [allowedPageSizes]="[10, 20, 50]"
+                                [showInfo]="true">
+                            </dxo-pager>
                             <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                                         [width]="50" [allowExporting]="false"
                                         [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -152,7 +156,7 @@
     </section>
     <ng-template #noSubscription>
         <div class="iframe">
-            <iframe [src]="environmentLink$ | async" frameborder="0" (load)="onIframeLoad()"></iframe>
+            <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
         </div>
     </ng-template>
     <loading-spinner *ngIf="dataIsLoading"></loading-spinner>

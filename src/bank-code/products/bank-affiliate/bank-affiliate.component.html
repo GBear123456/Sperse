@@ -2,13 +2,11 @@
     <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
     <iframe src="https://wp.bankcode.pro/affiliate-stats/"
             *ngIf="hasSubscription$ | async; else noSubscription"
-            frameborder="0"
-            (load)="onIframeLoad()">
+            frameborder="0">
     </iframe>
     <ng-template #noSubscription>
         <iframe [src]="environmentLink$ | async"
-                frameborder="0"
-                (load)="onIframeLoad()">
+                frameborder="0">
         </iframe>
     </ng-template>
 </section>
