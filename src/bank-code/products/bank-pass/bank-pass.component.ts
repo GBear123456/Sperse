@@ -50,7 +50,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
     currentTabIndex = 0;
     searchValue: '';
     dataSourceURI = 'Lead';
-    gridPagerConfig = DataGridService.defaultGridPagerConfig;
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
