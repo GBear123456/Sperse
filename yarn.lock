@@ -918,25 +918,25 @@
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.3.5.tgz#e0bead520450ff0af51d353a17ac6bf864ba0f49"
 
-"@ngrx/effects@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-6.1.0.tgz#3c1e1ab1e5a86c6d9c29d4f3771e42cc9bd8576c"
+"@ngrx/effects@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-8.6.0.tgz#a0d7339597a5128c5cf896ddcf93f73406a45860"
 
-"@ngrx/entity@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/entity/-/entity-6.1.0.tgz#9ea34beef25e458b45638095875b2548d484df9f"
+"@ngrx/entity@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/entity/-/entity-8.6.0.tgz#63e7875d0e83e552249b8b75bb9b6aba248cae2a"
 
-"@ngrx/schematics@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/schematics/-/schematics-6.1.0.tgz#4e784da5502829700895ca87d4cc5da93bf3ec84"
+"@ngrx/schematics@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/schematics/-/schematics-8.6.0.tgz#5387c0abc438768e4cb56c0b617082e0db2f00d7"
 
-"@ngrx/store-devtools@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-6.1.0.tgz#cf65a3149628dc37badd094204484dde9ba14200"
+"@ngrx/store-devtools@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/store-devtools/-/store-devtools-8.6.0.tgz#ac287e4b094d099781cdc9f3281039c0e988296c"
 
-"@ngrx/store@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-6.1.0.tgz#5b027647a797bf027912568214b10375dd75af38"
+"@ngrx/store@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-8.6.0.tgz#8540c5bd40b33fc2f443e7e86f47c0d801b8f413"
 
 "@ngtools/webpack@8.3.22":
   version "8.3.22"
@@ -10578,9 +10578,9 @@ xlsx@^0.13.2:
     exit-on-epipe "~1.0.1"
     ssf "~0.10.2"
 
-xml-js@^1.6.9:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.9.tgz#6e516ce53c64ea0043cbc6ee8500e5d693602757"
+xml-js@^1.6.11:
+  version "1.6.11"
+  resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.11.tgz#927d2f6947f7f1c19a316dd8eea3614e8b18f8e9"
   dependencies:
     sax "^1.2.4"
 
