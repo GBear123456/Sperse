@@ -41381,7 +41381,8 @@ export class ContactAddressDto implements IContactAddressDto {
     usageTypeId!: string | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
-    state!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
     country!: string | undefined;
     zip!: string | undefined;
     isActive!: boolean | undefined;
@@ -41405,7 +41406,8 @@ export class ContactAddressDto implements IContactAddressDto {
             this.usageTypeId = data["usageTypeId"];
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
-            this.state = data["state"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.country = data["country"];
             this.zip = data["zip"];
             this.isActive = data["isActive"];
@@ -41429,7 +41431,8 @@ export class ContactAddressDto implements IContactAddressDto {
         data["usageTypeId"] = this.usageTypeId;
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
-        data["state"] = this.state;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["country"] = this.country;
         data["zip"] = this.zip;
         data["isActive"] = this.isActive;
@@ -41446,7 +41449,8 @@ export interface IContactAddressDto {
     usageTypeId: string | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
-    state: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
     country: string | undefined;
     zip: string | undefined;
     isActive: boolean | undefined;
@@ -42110,6 +42114,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
@@ -42135,6 +42140,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
@@ -42160,6 +42166,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
@@ -42178,6 +42185,7 @@ export interface ICreateContactAddressInput {
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
@@ -43189,6 +43197,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
@@ -43215,6 +43224,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
@@ -43241,6 +43251,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
@@ -43260,6 +43271,7 @@ export interface IUpdateContactAddressInput {
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
@@ -43516,7 +43528,7 @@ export class AddressInfo implements IAddressInfo {
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
-    state!: string | undefined;
+    stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
     country!: string | undefined;
@@ -43539,7 +43551,7 @@ export class AddressInfo implements IAddressInfo {
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.stateId = data["stateId"];
-            this.state = data["state"];
+            this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.country = data["country"];
@@ -43562,7 +43574,7 @@ export class AddressInfo implements IAddressInfo {
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
-        data["state"] = this.state;
+        data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
@@ -43578,7 +43590,7 @@ export interface IAddressInfo {
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
-    state: string | undefined;
+    stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
     country: string | undefined;
@@ -45325,11 +45337,11 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
     citizenshipCountry!: Country | undefined;
     countryId!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     city!: string | undefined;
     streetAddress!: string | undefined;
     zip!: string | undefined;
     country!: Country | undefined;
-    state!: CountryState | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -45374,11 +45386,11 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
             this.citizenshipCountry = data["citizenshipCountry"] ? Country.fromJS(data["citizenshipCountry"]) : <any>undefined;
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
             this.zip = data["zip"];
             this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
-            this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -45423,11 +45435,11 @@ export class LeadPersonalInfo implements ILeadPersonalInfo {
         data["citizenshipCountry"] = this.citizenshipCountry ? this.citizenshipCountry.toJSON() : <any>undefined;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
         data["zip"] = this.zip;
         data["country"] = this.country ? this.country.toJSON() : <any>undefined;
-        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -45465,11 +45477,11 @@ export interface ILeadPersonalInfo {
     citizenshipCountry: Country | undefined;
     countryId: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     city: string | undefined;
     streetAddress: string | undefined;
     zip: string | undefined;
     country: Country | undefined;
-    state: CountryState | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -49517,7 +49529,6 @@ export class CountryState implements ICountryState {
     countryId!: string | undefined;
     name!: string | undefined;
     country!: Country | undefined;
-    contactAddresses!: ContactAddress[] | undefined;
     formedOrganizations!: Organization[] | undefined;
     invoiceAddresses!: InvoiceAddress[] | undefined;
     isDeleted!: boolean | undefined;
@@ -49543,11 +49554,6 @@ export class CountryState implements ICountryState {
             this.countryId = data["countryId"];
             this.name = data["name"];
             this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
-            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
-                this.contactAddresses = [];
-                for (let item of data["contactAddresses"])
-                    this.contactAddresses.push(ContactAddress.fromJS(item));
-            }
             if (data["formedOrganizations"] && data["formedOrganizations"].constructor === Array) {
                 this.formedOrganizations = [];
                 for (let item of data["formedOrganizations"])
@@ -49581,11 +49587,6 @@ export class CountryState implements ICountryState {
         data["countryId"] = this.countryId;
         data["name"] = this.name;
         data["country"] = this.country ? this.country.toJSON() : <any>undefined;
-        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
-            data["contactAddresses"] = [];
-            for (let item of this.contactAddresses)
-                data["contactAddresses"].push(item.toJSON());
-        }
         if (this.formedOrganizations && this.formedOrganizations.constructor === Array) {
             data["formedOrganizations"] = [];
             for (let item of this.formedOrganizations)
@@ -49612,7 +49613,6 @@ export interface ICountryState {
     countryId: string | undefined;
     name: string | undefined;
     country: Country | undefined;
-    contactAddresses: ContactAddress[] | undefined;
     formedOrganizations: Organization[] | undefined;
     invoiceAddresses: InvoiceAddress[] | undefined;
     isDeleted: boolean | undefined;
@@ -49757,11 +49757,11 @@ export class ContactAddress implements IContactAddress {
     contactPrimary!: Contact | undefined;
     countryId!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     city!: string | undefined;
     streetAddress!: string | undefined;
     zip!: string | undefined;
     country!: Country | undefined;
-    state!: CountryState | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -49798,11 +49798,11 @@ export class ContactAddress implements IContactAddress {
             this.contactPrimary = data["contactPrimary"] ? Contact.fromJS(data["contactPrimary"]) : <any>undefined;
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
             this.zip = data["zip"];
             this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
-            this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -49839,11 +49839,11 @@ export class ContactAddress implements IContactAddress {
         data["contactPrimary"] = this.contactPrimary ? this.contactPrimary.toJSON() : <any>undefined;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
         data["zip"] = this.zip;
         data["country"] = this.country ? this.country.toJSON() : <any>undefined;
-        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -49873,11 +49873,11 @@ export interface IContactAddress {
     contactPrimary: Contact | undefined;
     countryId: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     city: string | undefined;
     streetAddress: string | undefined;
     zip: string | undefined;
     country: Country | undefined;
-    state: CountryState | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
