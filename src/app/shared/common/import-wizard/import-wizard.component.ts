@@ -197,21 +197,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     if (result) {
                         let records = this.reviewGrid.instance.getSelectedRowsData();
                         records = records.length && records || this.reviewDataSource;
-                        if (dialogData.importAll)
-                            this.complete(records.map((row) => {
-                                let rowData = row;
-                                if (this.invalidRowKeys[row.uniqueIdent]) {
-                                    rowData = _.clone(row);
-                                    this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
-                                        rowData[field] = undefined;
-                                    });
-                                }
-                                return rowData;
-                            }), dialogData.importAll);
-                        else
-                            this.complete(records.filter((row) => {
-                                return !this.invalidRowKeys[row.uniqueIdent];
-                            }), dialogData.importAll);
+                        this.complete(records, dialogData.importAll);
                     }
                 });
             } else
