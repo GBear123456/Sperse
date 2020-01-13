@@ -24,16 +24,11 @@ export class AdLayoutHostDirective {
 })
 export class AccountComponent implements OnInit {
     @ViewChild(AdLayoutHostDirective) adLayoutHost: AdLayoutHostDirective;
-    private viewContainerRef: ViewContainerRef;
 
     constructor(
         private appSession: AppSessionService,
-        private componentFactoryResolver: ComponentFactoryResolver,
-        viewContainerRef: ViewContainerRef
-    ) {
-        // We need this small hack in order to catch application root view container ref for modals
-        this.viewContainerRef = viewContainerRef;
-    }
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) { }
 
     ngOnInit(): void {
         this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
