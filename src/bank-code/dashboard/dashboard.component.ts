@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -6,10 +6,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     templateUrl: 'dashboard.component.html',
     styleUrls: ['./dashboard.component.less']
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent {
     constructor(
         public ls: AppLocalizationService
-    ) { }
+    ) {}
 
-    ngAfterViewInit() {}
 }

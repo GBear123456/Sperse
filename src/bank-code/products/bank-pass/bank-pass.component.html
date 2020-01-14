@@ -29,27 +29,26 @@
                     <div class="achievements-content">
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
-                            <div class="letters">
-                                <img src="./assets/common/images/bank-code/B1.png">
-                                <img src="./assets/common/images/bank-code/A1.png">
-                                <img src="./assets/common/images/bank-code/N1.png">
-                                <img src="./assets/common/images/bank-code/K1.png">
+                            <div class="bank-code-groups">
+                                <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
+                                    <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png">
+                                    <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroupsTitles[i][0]) }">
+                                        {{ bankCodeGroupsTitles[i] }}
+                                    </div>
+                                    <div>
+                                        <bank-code-letters *ngFor="let bankCode of bankCodeGroups[i]"
+                                                           [bankCode]="bankCode"
+                                                           [active]="isBankCodeActive(bankCode)">
+                                        </bank-code-letters>
+                                    </div>
+                                </div>
                             </div>
-                            <img src="./assets/common/images/bank-code/bank-codes.png" class="img-fluid">
                         </div>
                         <div class="collect-badges">
                             <h6>{{ ls.l('CollectAllBadges') }}</h6>
                             <div class="badges">
-                                <img src="./assets/common/images/bank-code/badges/L1-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L2-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L3-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L4-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L5-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L6-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L7-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L8-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L9-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L10-0.png">
+                                <img *ngFor="let bankCodeBadge of bankCodeBadges; let i = index"
+                                     src="./assets/common/images/bank-code/badges/L{{i + 1}}-{{ bankCodeClientsCount > bankCodeBadges[i] ? '1' : '0' }}.png">
                             </div>
                         </div>
                     </div>

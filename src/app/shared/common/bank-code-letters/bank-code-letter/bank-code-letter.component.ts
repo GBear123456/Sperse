@@ -13,12 +13,22 @@ export class BankCodeLetterComponent {
     @Input() showDescriptionOnHover = false;
     @Input() allowEdit = false;
     @Input() key = '';
+    @Input() active = true;
     @Output() onClick: EventEmitter<null> = new EventEmitter<null>();
     letters = BankCodeLetter;
 
-    constructor(public bankCodeService: BankCodeService) {}
+    constructor(private bankCodeService: BankCodeService) {}
 
     click(e) {
         this.onClick.emit(e);
+    }
+
+    getColorsByLetter(letter) {
+        let colors = this.bankCodeService.getColorsByLetter(letter);
+        if (colors && colors.background && !this.active) {
+            colors['border'] = '1px solid ' + colors.background;
+            delete colors.background;
+        }
+        return colors;
     }
 }

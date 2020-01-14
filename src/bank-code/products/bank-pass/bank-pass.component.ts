@@ -11,6 +11,7 @@ import {
     OnDestroy
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -19,7 +20,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap, map, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -28,13 +29,14 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { BankCodeGroup } from '@root/bank-code/products/bank-pass/bank-code-group.interface';
+import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 
 @Component({
     selector: 'bank-pass',
@@ -51,6 +53,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     currentTabIndex = 0;
     searchValue: '';
     dataSourceURI = 'Lead';
+    private readonly groupDataSourceURI = 'LeadSlice';
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
@@ -159,6 +162,54 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
+    bankCodeClientsCount: number;
+    bankCodeBadges = [
+        50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000
+    ];
+    availableBankCodes: {[bankCode: string]: number};
+    bankClientsCodesCount$: Observable<number> = this.getClientsBankCodes().pipe(
+        map((bankCodeGroups: BankCodeGroup[]) => bankCodeGroups.reduce((sum, group) => sum + group.count, 0))
+    );
+    bankCodeGroupsTitles = [
+        this.ls.l('Bluprint'),
+        this.ls.l('Action'),
+        this.ls.l('Nurturing'),
+        this.ls.l('Knowledge')
+    ];
+    bankCodeGroups = [
+        [
+            'BANK',
+            'BAKN',
+            'BNAK',
+            'BNKA',
+            'BKNA',
+            'BKAN'
+        ],
+        [
+            'ABNK',
+            'ABKN',
+            'ANBK',
+            'ANKB',
+            'AKNB',
+            'AKBN'
+        ],
+        [
+            'NABK',
+            'NAKB',
+            'NBAK',
+            'NBKA',
+            'NKBA',
+            'NKAB'
+        ],
+        [
+            'KANB',
+            'KABN',
+            'KNAB',
+            'KNBA',
+            'KBNA',
+            'KBAN'
+        ]
+    ];
 
     constructor(
         private oDataService: ODataService,
@@ -168,6 +219,8 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
         private appSession: AppSessionService,
         private lifecycleSubjectService: LifecycleSubjectsService,
         private memberSettingsService: MemberSettingsServiceProxy,
+        private httpClient: HttpClient,
+        public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
@@ -186,6 +239,12 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.renderer.removeClass(this.document.body, 'overflow-hidden');
                 }
             });
+        this.bankClientsCodesCount$.subscribe((bankCodeClientsCount: number) => {
+            this.bankCodeClientsCount = bankCodeClientsCount;
+        });
+        this.getAvailableBankCodes().subscribe((availableBankCodes) => {
+            this.availableBankCodes = availableBankCodes;
+        });
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
@@ -221,6 +280,45 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
             /** Update back if error comes */
             () => this.profileService.updateAccessCode(this.appSession.user.affiliateCode)
         );
+    }
+
+    getClientsBankCodes(): Observable<BankCodeGroup[]> {
+        let params = {
+            group: '[{"selector":"BankCode","isExpanded":false}]',
+            contactGroupId: ContactGroup.Client
+        };
+        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/' + this.groupDataSourceURI, {
+            params: params,
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            })
+        }).pipe(
+            map((result: any) => {
+                let items = [];
+                if (result && result.data) {
+                    items = result.data.filter(bankCodeGroup => !!bankCodeGroup.key);
+                }
+                return items;
+            }),
+            publishReplay(),
+            refCount()
+        );
+    }
+
+    getAvailableBankCodes(): Observable<{[bankCode: string]: number}> {
+        return this.getClientsBankCodes().pipe(
+            map((bankCodeGroups: BankCodeGroup[]) => {
+                let availableBankCodes = {};
+                bankCodeGroups.forEach((bankCodeGroup: BankCodeGroup) => {
+                    availableBankCodes[bankCodeGroup.key] = bankCodeGroup.count;
+                });
+                return availableBankCodes;
+            })
+        );
+    }
+
+    isBankCodeActive(bankCode: string): boolean {
+        return !!this.availableBankCodes[bankCode];
     }
 
     ngOnDestroy() {
