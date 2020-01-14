@@ -24,7 +24,7 @@ export class AccessCodeInstructionsComponent {
     trackingLink$: Observable<string> = this.accessCode$.pipe(
         map((accessCode: string) => {
             return (environment.releaseStage === 'production'
-                ? 'https://www.CrackMyCode.com/'
+                ? 'https://www.MyBankCode.com/'
                 : 'https://bankpass.bankcode.com/') + accessCode;
         })
     );
