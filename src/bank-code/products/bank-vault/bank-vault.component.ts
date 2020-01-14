@@ -22,7 +22,6 @@ export class BankVaultComponent implements AfterViewInit {
     dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault).pipe(
         tap((hasSubscription) => setTimeout(() => {
-            if (hasSubscription) this.dataIsLoading = false;
             this.changeDetectorRef.detectChanges();
         }))
     );

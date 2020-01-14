@@ -23,7 +23,6 @@ export class BankAffiliateComponent implements AfterViewInit {
     dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate).pipe(
         tap((hasSubscription) => setTimeout(() => {
-            if (hasSubscription) this.dataIsLoading = false;
             this.changeDetectorRef.detectChanges();
         }))
     );
