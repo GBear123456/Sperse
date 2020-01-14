@@ -113,6 +113,16 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 {
                     name: 'Comments',
                     items: [ { name: 'comments', hideLabel: true } ]
+                },
+                {
+                    name: 'CustomFields',
+                    items: [
+                        { name: 'customField1', readonly: true },
+                        { name: 'customField2', readonly: true },
+                        { name: 'customField3', readonly: true },
+                        { name: 'customField4', readonly: true },
+                        { name: 'customField5', readonly: true }
+                    ]
                 }
             ]
         }
