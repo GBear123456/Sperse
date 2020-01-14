@@ -138,14 +138,15 @@ export class BankCodeService {
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             })
-        });
+        }).pipe(
+            publishReplay(),
+            refCount()
+        );
     }
 
     getClientsBankCodes(filters = []): Observable<BankCodeGroup[]> {
         return this.getClientsBankCodesData(filters).pipe(
-            map((result: any) => result && result.data),
-            publishReplay(),
-            refCount()
+            map((result: any) => result && result.data)
         );
     }
 
@@ -173,6 +174,18 @@ export class BankCodeService {
             filter = this.getFilterFromTime(time);
         }
         return this.getClientsBankCodesTotalCount(filter);
+    }
+
+    getPercent(number$: Observable<number>, total: number): Observable<number> {
+        return number$.pipe(
+            map((number: number) => +(number / total * 100).toFixed())
+        );
+    }
+
+    getPercentString(number: Observable<number>, total: number): Observable<string> {
+        return this.getPercent(number, total).pipe(
+            map((percent: number) => percent + '%')
+        );
     }
 
     private getFilterFromTime(time: BankCodeTime) {

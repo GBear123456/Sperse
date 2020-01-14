@@ -7,7 +7,7 @@ import range from 'lodash/range';
     templateUrl: './counters.component.html',
     styleUrls: ['./counters.component.less']
 })
-export class CountersComponent implements OnChanges{
+export class CountersComponent implements OnChanges {
     @Input() crackedCodesNumbers: { percent: number, count: number }[];
     @Input() totalCrackedCodesNumber: string;
     myCodesCracked = [

@@ -11,6 +11,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 export class TotalCodesCrackedComponent implements OnChanges {
     @Input() level: number;
     @Input() values: number[];
+    @Input() total: number;
     type = 'pie';
     data = {
         labels: [

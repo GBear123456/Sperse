@@ -38,14 +38,14 @@ export class DashboardComponent {
         withLatestFrom(this.bankCodeTotalCount$),
         map(([bankCodeGroupsCounts, total]: [number[], string]) => {
             return bankCodeGroupsCounts.map((groupCount: number) => ({
-                percent: groupCount / (+total) * 100,
+                percent: +total ? groupCount / (+total) * 100 : 0,
                 count: groupCount
             }));
         })
     );
 
     constructor(
-        private bankCodeService: BankCodeService,
+        public bankCodeService: BankCodeService,
         public ls: AppLocalizationService
     ) {}
 }

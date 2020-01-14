@@ -1,20 +1,16 @@
 <h5 class="card-title">{{ls.l('BankCode_CodeCrackedAtAGlance')}}</h5>
 <div class="bar-info row" *ngFor="let item of goalTypes">
-    <ng-container *ngIf="item.currentNumber$ | async as currentNumber">
-        <ng-container *ngIf="(currentNumber / item.number * 100).toFixed() as percent">
-            <div class="col-4">{{ item.text + ' ' + ls.l('goal') }}</div>
-            <div class="col-4 text-center font-weight-bold">{{ percent }}%</div>
-            <div class="col-4 text-secondary text-right">{{ currentNumber }} of {{ item.number }}</div>
-            <div class="col-12 bar bar-red">
-                <dx-progress-bar width="100%"
-                                 [class]="item.name + '-goal'"
-                                 height="12"
-                                 [min]="0"
-                                 [max]="100"
-                                 [value]="percent"
-                                 [showStatus]="false">
-                </dx-progress-bar>
-            </div>
-        </ng-container>
-    </ng-container>
+    <div class="col-4">{{ item.text + ' ' + ls.l('goal') }}</div>
+    <div class="col-4 text-center font-weight-bold">{{ bankCodeService.getPercentString(item.currentNumber$, item.number) | async }}</div>
+    <div class="col-4 text-secondary text-right">{{ item.currentNumber$ | async }} of {{ item.number }}</div>
+    <div class="col-12 bar bar-red">
+        <dx-progress-bar width="100%"
+                         [class]="item.name + '-goal'"
+                         height="12"
+                         [min]="0"
+                         [max]="100"
+                         [value]="bankCodeService.getPercent(item.currentNumber$, item.number) | async"
+                         [showStatus]="false">
+        </dx-progress-bar>
+    </div>
 </div>

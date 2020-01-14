@@ -81,26 +81,22 @@
                         <div *ngFor="let goal of goalTypes" class="goal">
                             <div class="text">{{ goal.text + ' ' + ls.l('Goal') }}</div>
                             <div class="number">{{ goal.number }}</div>
-                            <ng-container *ngIf="goal.currentNumber$ | async as currentNumber">
-                                <ng-container *ngIf="(currentNumber / goal.number * 100).toFixed() as percent">
-                                    <circle-progress [percent]="+percent"
-                                                     [outerStrokeColor]="goal.outerColor"
-                                                     [innerStrokeColor]="goal.innerColor"
-                                                     [title]="percent + '%'"
-                                                     [radius]="42"
-                                                     [titleFontWeight]="900"
-                                                     [titleColor]="goal.innerColor"
-                                                     [animation]="false"
-                                                     [animateTitle]="false"
-                                                     [animationDuration]="0"
-                                                     titleFontSize="23px"
-                                                     subtitleFontSize="12px"
-                                                     [subtitleFontWeight]="700"
-                                                     [subtitleColor]="goal.innerColor"
-                                                     [subtitle]="currentNumber">
-                                    </circle-progress>
-                                </ng-container>
-                            </ng-container>
+                            <circle-progress [percent]="bankCodeService.getPercent(goal.currentNumber$, goal.number) | async"
+                                             [outerStrokeColor]="goal.outerColor"
+                                             [innerStrokeColor]="goal.innerColor"
+                                             [title]="bankCodeService.getPercentString(goal.currentNumber$, goal.number) | async"
+                                             [radius]="42"
+                                             [titleFontWeight]="900"
+                                             [titleColor]="goal.innerColor"
+                                             [animation]="false"
+                                             [animateTitle]="false"
+                                             [animationDuration]="0"
+                                             titleFontSize="23px"
+                                             subtitleFontSize="12px"
+                                             [subtitleFontWeight]="700"
+                                             [subtitleColor]="goal.innerColor"
+                                             [subtitle]="goal.currentNumber$ | async">
+                            </circle-progress>
                         </div>
                     </div>
                 </div>
