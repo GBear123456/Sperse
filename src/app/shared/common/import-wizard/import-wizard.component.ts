@@ -16,6 +16,7 @@ import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -29,7 +30,7 @@ import { StringHelper } from '@root/shared/helpers/StringHelper';
     selector: 'import-wizard',
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less'],
-    providers: [ PhoneNumberService ]
+    providers: [ PhoneNumberService, PhoneFormatPipe ]
 })
 export class ImportWizardComponent extends AppComponentBase implements AfterViewInit {
 
@@ -119,6 +120,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         private parser: Papa,
         private dialog: MatDialog,
         private formBuilder: FormBuilder,
+        private phoneFormat: PhoneFormatPipe,
         private store$: Store<RootStore.State>,
         private importProxy: ImportServiceProxy,
         private phoneNumberService: PhoneNumberService
@@ -733,9 +735,14 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     checkFieldValid(key, data, field) {
         let value = data[field];
-        if (key == 'phone')
-            return this.phoneNumberService.isPhoneNumberValid(value, this.getFieldCountryCode(data, field));
-        else if (key == 'revenue')
+        if (key == 'phone') {
+            let isValid = this.phoneNumberService.isPhoneNumberValid(
+                value, this.getFieldCountryCode(data, field));
+            if (isValid)
+                data[field] = this.phoneFormat.transform(
+                    value, this.getFieldDefaultCountry(data, field));
+            return isValid;
+        } else if (key == 'revenue')
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
         else if (key == 'countryName')
             return value.trim().length > 3;
@@ -746,7 +753,11 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     getPhoneDefaultCountry(cellData) {
-        let countryCode = this.getFieldCountryCode(cellData.data, cellData.column.dataField);
+        return this.getFieldDefaultCountry(cellData.data, cellData.column.dataField);
+    }
+
+    getFieldDefaultCountry(data, field) {
+        let countryCode = this.getFieldCountryCode(data, field);
         if (countryCode)
             return {defaultCountry: countryCode};
     }
