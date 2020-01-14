@@ -4,21 +4,25 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
+import { first } from 'rxjs/operators';
 
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
-import { ImportServiceProxy, ImportFieldInfoDto } from '@shared/service-proxies/service-proxies';
+import { ImportServiceProxy, ImportFieldInfoDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 
 @Component({
@@ -40,6 +44,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Input() title: string;
     @Input() icon: string;
     @Input() checkSimilarFields: Array<any>;
+    @Input() phoneRelatedCountryFields = {};
     @Input() columnsConfig: any = {};
     @Input() lookupFields: any;
     @Input() preProcessFieldBeforeReview: Function;
@@ -68,9 +73,17 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];
-    private validateFieldList: string[] = ['email', 'phone', 'url', 'revenue'];
     private invalidRowKeys: any = {};
+    private validateFieldList: string[] = [
+        'url',
+        'email',
+        'phone',
+        'revenue',
+        'countryName',
+        'countryCode'
+    ];
     private similarFieldsIndex: any = {};
+    private countries: CountryDto[];
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
@@ -106,6 +119,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         private parser: Papa,
         private dialog: MatDialog,
         private formBuilder: FormBuilder,
+        private store$: Store<RootStore.State>,
         private importProxy: ImportServiceProxy,
         private phoneNumberService: PhoneNumberService
     ) {
@@ -124,6 +138,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 return validationResult && validationResult.isMapped && !validationResult.error ? null : validationResult;
             }]
         });
+
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries), first())
+            .subscribe(countries => this.countries = countries);
     }
 
     public static getFieldLocalizationName(dataField: string): string {
@@ -179,21 +197,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     if (result) {
                         let records = this.reviewGrid.instance.getSelectedRowsData();
                         records = records.length && records || this.reviewDataSource;
-                        if (dialogData.importAll)
-                            this.complete(records.map((row) => {
-                                let rowData = row;
-                                if (this.invalidRowKeys[row.uniqueIdent]) {
-                                    rowData = _.clone(row);
-                                    this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
-                                        rowData[field] = undefined;
-                                    });
-                                }
-                                return rowData;
-                            }), dialogData.importAll);
-                        else
-                            this.complete(records.filter((row) => {
-                                return !this.invalidRowKeys[row.uniqueIdent];
-                            }), dialogData.importAll);
+                        this.complete(records, dialogData.importAll);
                     }
                 });
             } else
@@ -699,21 +703,20 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     */
 
     initColumnTemplate(column) {
-        let field;
         this.validateFieldList.some((fld) => {
-            if (column.dataField.toLowerCase().includes(fld))
-                return Boolean(field = fld);
+            if (column.dataField.toLowerCase().includes(fld.toLowerCase()))
+                return !!(column.cellTemplate = ([
+                    'phone',
+                    'revenue'
+                ].indexOf(fld) < 0 ? 'common' : fld) + 'Cell');
         });
-
-        if (field)
-            column.cellTemplate = field + 'Cell';
     }
 
     validateRowFields(data) {
         this.validateFieldList.forEach((fld) => {
             Object.keys(data).forEach((field) => {
-                if (field.toLowerCase().includes(fld) &&
-                    !this.checkFieldValid(fld, {value: data[field]})
+                if (field.toLowerCase().includes(fld.toLowerCase()) &&
+                    !this.checkFieldValid(fld, data, field)
                 )
                     this.addInvalidField(data.uniqueIdent, field);
             });
@@ -728,14 +731,44 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             this.invalidRowKeys[key] = [field];
     }
 
-    checkFieldValid(field, dataCell) {
-        let value = dataCell.value;
-        if (field == 'phone')
-            return this.phoneNumberService.isPhoneNumberValid(value);
-        else if (field == 'revenue')
+    checkFieldValid(key, data, field) {
+        let value = data[field];
+        if (key == 'phone')
+            return this.phoneNumberService.isPhoneNumberValid(value, this.getFieldCountryCode(data, field));
+        else if (key == 'revenue')
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
+        else if (key == 'countryName')
+            return value.trim().length > 3;
+        else if (key == 'countryCode')
+            return value.trim().length == 2;
         else
-            return !value || AppConsts.regexPatterns[field].test(value);
+            return !value || AppConsts.regexPatterns[key].test(value);
+    }
+
+    getPhoneDefaultCountry(cellData) {
+        let countryCode = this.getFieldCountryCode(cellData.data, cellData.column.dataField);
+        if (countryCode)
+            return {defaultCountry: countryCode};
+    }
+
+    getFieldCountryCode(data, field) {
+        let country = this.phoneRelatedCountryFields[field];
+        if (country) {
+            if (country.code && data[country.code])
+                return data[country.code];
+            if (country.name && data[country.name])
+                return this.getCountryCodeByCountryName(data[country.name]);
+        }
+    }
+
+    getCountryCodeByCountryName(name) {
+        let country = _.findWhere(this.countries, {name: name});
+        return country && country.code;
+    }
+
+    checkFieldInvalid(cellData) {
+        let invalidList = this.invalidRowKeys[cellData.data.uniqueIdent];
+        return invalidList && invalidList.indexOf(cellData.column.dataField) >= 0;
     }
 
     calculateDisplayValue(data) {

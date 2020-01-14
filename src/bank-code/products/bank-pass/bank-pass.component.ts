@@ -7,6 +7,7 @@ import {
     ViewChild,
     Inject,
     OnInit,
+    AfterViewInit,
     OnDestroy
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
@@ -42,7 +43,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankPassComponent implements OnInit, OnDestroy {
+export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     dataIsLoading = true;
@@ -229,8 +230,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         this.lifecycleSubjectService.destroy.next(null);
     }
 
-    onIframeLoad() {
-        this.dataIsLoading = false;
-        this.changeDetectorRef.detectChanges();
+    ngAfterViewInit() {
+        this.document.querySelector('iframe').addEventListener('load', () => {
+            this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 }

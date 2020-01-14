@@ -2,6 +2,7 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import * as moment from 'moment-timezone';
 import { select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as addressParser from 'parse-address';
@@ -50,6 +51,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
 
     private readonly MAX_REQUEST_SIZE = 55;
+
+    private readonly DATE_CREATED = 'dateCreated';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
@@ -58,6 +61,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly NICK_NAME_FIELD = 'personalInfo_fullName_nickName';
     private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_suffix';
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
+    private readonly PERSONAL_DOB = 'personalInfo_doB';
     private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
     private readonly PERSONAL_FULL_ADDRESS_STREET = 'personalInfo_fullAddress_street';
     private readonly PERSONAL_FULL_ADDRESS_ADDRESSLINE2 = 'personalInfo_fullAddress_addressline2';
@@ -68,6 +72,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryCode';
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
+    private readonly BUSINESS_DATE_FOUNDED = 'businessInfo_dateFounded';
+    private readonly BUSINESS_EMPLOYMENY_START_DATE = 'businessInfo_employmentStartDate';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_companyFullAddress_addressline2';
@@ -133,6 +139,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.NAME_SUFFIX_FIELD,
         this.NICK_NAME_FIELD,
         this.COMPANY_NAME_FIELD
+    ];
+
+    private readonly FIELDS_DATE = [
+        this.DATE_CREATED,
+        this.PERSONAL_DOB,
+        this.BUSINESS_DATE_FOUNDED,
+        this.BUSINESS_EMPLOYMENY_START_DATE
     ];
 
     private readonly FIELDS_CAPTIONS = [
@@ -208,7 +221,31 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
     };
 
-    public readonly compareFields: any = [
+    readonly countryFields = {
+        personal: {
+            name: this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
+            code: this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE
+        },
+        company: {
+            name: this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME,
+            code: this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE
+        },
+        work: {
+            name: this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME,
+            code: this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE
+        }
+    };
+
+    readonly phoneRelatedCountryFields = {
+        [this.PERSONAL_MOBILE_PHONE]: this.countryFields.personal,
+        [this.PERSONAL_HOME_PHONE]: this.countryFields.personal,
+        [this.BUSINESS_COMPANY_PHONE]: this.countryFields.company,
+        [this.BUSINESS_WORK_PHONE_1]: this.countryFields.work,
+        [this.BUSINESS_WORK_PHONE_2]: this.countryFields.work,
+        [this.BUSINESS_FAX]: this.countryFields.company
+    };
+
+    readonly compareFields: any = [
         [this.FIRST_NAME_FIELD + ':' + this.LAST_NAME_FIELD],
         [this.PERSONAL_EMAIL1, this.PERSONAL_EMAIL2, this.PERSONAL_EMAIL3, this.BUSINESS_COMPANY_EMAIL, this.BUSINESS_WORK_EMAIL1, this.BUSINESS_WORK_EMAIL2, this.BUSINESS_WORK_EMAIL3],
         [this.PERSONAL_MOBILE_PHONE, this.PERSONAL_HOME_PHONE, this.BUSINESS_COMPANY_PHONE, this.BUSINESS_WORK_PHONE_1, this.BUSINESS_WORK_PHONE_2],
@@ -293,7 +330,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private setFieldIfDefined(value, fieldName, dataSource) {
-        (value || !isNaN(value)) && (dataSource[fieldName] = value);
+        return (value || !isNaN(value)) && (dataSource[fieldName] = value);
     }
 
     private parseFullNameIntoDataSource(fullName, dataSource) {
@@ -551,6 +588,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
         } else if (this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
             return this.parseCurrency(field, sourceValue, reviewDataSource);
+        } else if (this.FIELDS_DATE.indexOf(field.mappedField) >= 0) {
+            if (!moment(sourceValue).toJSON()) {
+                reviewDataSource[field.mappedField] = undefined;
+                return true;
+            }
         }
         return false;
     }

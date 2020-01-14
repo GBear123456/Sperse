@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
@@ -16,7 +16,7 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     styleUrls: ['./bank-trainer.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankTrainerComponent {
+export class BankTrainerComponent implements AfterViewInit {
     dataIsLoading = true;
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('become-a-trainer-landing');
 
@@ -27,8 +27,10 @@ export class BankTrainerComponent {
         @Inject(DOCUMENT) private document: any
     ) {}
 
-    onIframeLoad() {
-        this.dataIsLoading = false;
-        this.changeDetectorRef.detectChanges();
+    ngAfterViewInit() {
+        this.document.querySelector('iframe').addEventListener('load', () => {
+            this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 }
