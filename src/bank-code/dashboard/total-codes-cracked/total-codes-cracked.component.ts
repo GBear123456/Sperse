@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-total-codes-cracked',
@@ -7,6 +7,7 @@ import {AppLocalizationService} from '@app/shared/common/localization/app-locali
     styleUrls: ['./total-codes-cracked.component.less']
 })
 export class TotalCodesCrackedComponent implements OnInit {
+    @Input() level: number;
     type = 'pie';
     data = {
         labels: [

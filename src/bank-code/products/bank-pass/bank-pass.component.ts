@@ -53,7 +53,6 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     currentTabIndex = 0;
     searchValue: '';
     dataSourceURI = 'Lead';
-    private readonly groupDataSourceURI = 'LeadSlice';
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
@@ -163,13 +162,9 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
     bankCodeClientsCount: number;
-    bankCodeBadges = [
-        50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000
-    ];
+    bankCodeBadges = this.bankCodeService.bankCodeBadges;
+    bankCodeLevel: number;
     availableBankCodes: {[bankCode: string]: number};
-    bankClientsCodesCount$: Observable<number> = this.getClientsBankCodes().pipe(
-        map((bankCodeGroups: BankCodeGroup[]) => bankCodeGroups.reduce((sum, group) => sum + group.count, 0))
-    );
     bankCodeGroupsTitles = [
         this.ls.l('Bluprint'),
         this.ls.l('Action'),
@@ -239,11 +234,14 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.renderer.removeClass(this.document.body, 'overflow-hidden');
                 }
             });
-        this.bankClientsCodesCount$.subscribe((bankCodeClientsCount: number) => {
+        this.bankCodeService.bankCodeClientsCount$.subscribe((bankCodeClientsCount: number) => {
             this.bankCodeClientsCount = bankCodeClientsCount;
         });
         this.getAvailableBankCodes().subscribe((availableBankCodes) => {
             this.availableBankCodes = availableBankCodes;
+        });
+        this.bankCodeService.bankCodeLevel$.subscribe((bankCodeLevel: number) => {
+            this.bankCodeLevel = bankCodeLevel;
         });
     }
 
@@ -282,31 +280,8 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
         );
     }
 
-    getClientsBankCodes(): Observable<BankCodeGroup[]> {
-        let params = {
-            group: '[{"selector":"BankCode","isExpanded":false}]',
-            contactGroupId: ContactGroup.Client
-        };
-        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/' + this.groupDataSourceURI, {
-            params: params,
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            })
-        }).pipe(
-            map((result: any) => {
-                let items = [];
-                if (result && result.data) {
-                    items = result.data.filter(bankCodeGroup => !!bankCodeGroup.key);
-                }
-                return items;
-            }),
-            publishReplay(),
-            refCount()
-        );
-    }
-
     getAvailableBankCodes(): Observable<{[bankCode: string]: number}> {
-        return this.getClientsBankCodes().pipe(
+        return this.bankCodeService.getClientsBankCodes().pipe(
             map((bankCodeGroups: BankCodeGroup[]) => {
                 let availableBankCodes = {};
                 bankCodeGroups.forEach((bankCodeGroup: BankCodeGroup) => {

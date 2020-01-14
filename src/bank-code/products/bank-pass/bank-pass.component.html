@@ -48,7 +48,7 @@
                             <h6>{{ ls.l('CollectAllBadges') }}</h6>
                             <div class="badges">
                                 <img *ngFor="let bankCodeBadge of bankCodeBadges; let i = index"
-                                     src="./assets/common/images/bank-code/badges/L{{i + 1}}-{{ bankCodeClientsCount > bankCodeBadges[i] ? '1' : '0' }}.png">
+                                     src="./assets/common/images/bank-code/badges/L{{i + 1}}-{{ (i + 1) <= bankCodeLevel ? '1' : '0' }}.png">
                             </div>
                         </div>
                     </div>

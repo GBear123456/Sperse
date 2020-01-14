@@ -26,7 +26,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <bank-code-total-codes-cracked></bank-code-total-codes-cracked>
+                                    <bank-code-total-codes-cracked [level]="bankCodeLevel$ | async"></bank-code-total-codes-cracked>
                                 </div>
                                 <div class="col-lg-5 offset-lg-1">
                                     <bank-code-goals-cracked></bank-code-goals-cracked>

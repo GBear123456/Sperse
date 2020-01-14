@@ -1,11 +1,33 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { map, publishReplay, refCount } from 'rxjs/operators';
+
+/** Application imports */
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { BankCodeGroup } from '@root/bank-code/products/bank-pass/bank-code-group.interface';
+import { ContactGroup } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class BankCodeService {
-
-    constructor(private ls: AppLocalizationService) {}
+    bankCodeBadges: number[] = [ 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000 ];
+    bankCodeClientsCount$: Observable<number> = this.getClientsBankCodes().pipe(
+        map((bankCodeGroups: BankCodeGroup[]) => bankCodeGroups.reduce((sum, group) => sum + group.count, 0))
+    );
+    bankCodeLevel$: Observable<number> = this.bankCodeClientsCount$.pipe(
+        map((currentBankCodeClientsCount: number) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
+            return currentBankCodeClientsCount <= bankCodeBadgeCount;
+        }))
+    );
+    constructor(
+        private ls: AppLocalizationService,
+        private httpClient: HttpClient
+    ) {}
 
     private bankCodeConfig = {
         [BankCodeLetter.A]: {
@@ -48,6 +70,29 @@ export class BankCodeService {
 
     getBankCodeDefinition(bankCodeLetter: BankCodeLetter): string {
         return this.bankCodeConfig[bankCodeLetter] && this.bankCodeConfig[bankCodeLetter].definition;
+    }
+
+    getClientsBankCodes(): Observable<BankCodeGroup[]> {
+        let params = {
+            group: '[{"selector":"BankCode","isExpanded":false}]',
+            contactGroupId: ContactGroup.Client
+        };
+        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/LeadSlice', {
+            params: params,
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            })
+        }).pipe(
+            map((result: any) => {
+                let items = [];
+                if (result && result.data) {
+                    items = result.data.filter(bankCodeGroup => !!bankCodeGroup.key);
+                }
+                return items;
+            }),
+            publishReplay(),
+            refCount()
+        );
     }
 
 }
