@@ -46,7 +46,9 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body pb-lg-0 ">
-                            <bank-code-counters></bank-code-counters>
+                            <bank-code-counters [crackedCodesNumbers]="bankCodesGroupsCountsWithPercents$ | async"
+                                                [totalCrackedCodesNumber]="bankCodeTotalCount$ | async">
+                            </bank-code-counters>
                         </div>
                     </div>
                 </div>

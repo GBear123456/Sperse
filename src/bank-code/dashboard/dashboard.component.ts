@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -30,6 +30,18 @@ export class DashboardComponent {
            }
            return values(bankCodeGroups);
        })
+    );
+    bankCodeTotalCount$: Observable<string> = this.bankCodeService.bankCodeClientsCount$.pipe(
+        map((count) => count.toString())
+    );
+    bankCodesGroupsCountsWithPercents$ = this.bankCodeGroupsCounts$.pipe(
+        withLatestFrom(this.bankCodeTotalCount$),
+        map(([bankCodeGroupsCounts, total]: [number[], string]) => {
+            return bankCodeGroupsCounts.map((groupCount: number) => ({
+                percent: groupCount / (+total) * 100,
+                count: groupCount
+            }));
+        })
     );
 
     constructor(

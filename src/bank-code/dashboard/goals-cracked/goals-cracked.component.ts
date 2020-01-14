@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
+import { Component } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-goals-cracked',
     templateUrl: './goals-cracked.component.html',
     styleUrls: ['./goals-cracked.component.less']
 })
-export class GoalsCrackedComponent implements OnInit {
+export class GoalsCrackedComponent {
     goalProgress = [
         { name: this.ls.l('Daily goal'), class: 'daily-goal', progress: 67 },
         { name: this.ls.l('Weekly goal'), class: 'weekly-goal', progress: 28 },
@@ -17,10 +17,6 @@ export class GoalsCrackedComponent implements OnInit {
 
     constructor(
         public ls: AppLocalizationService
-    ) {
-    }
-
-    ngOnInit() {
-    }
+    ) {}
 
 }

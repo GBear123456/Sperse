@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import range from 'lodash/range';
 
 @Component({
     selector: 'bank-code-counters',
     templateUrl: './counters.component.html',
     styleUrls: ['./counters.component.less']
 })
-export class CountersComponent {
+export class CountersComponent implements OnChanges{
+    @Input() crackedCodesNumbers: { percent: number, count: number }[];
+    @Input() totalCrackedCodesNumber: string;
     myCodesCracked = [
         { percent: 90, outerColor: '#004a81', innerColor: '#91bfdd', title: '90%', subtitle: '4230' },
         { percent: 40, outerColor: '#ac1f22', innerColor: '#ce767f', title: '40%', subtitle: '930' },
@@ -19,6 +22,18 @@ export class CountersComponent {
         { percent: 36.1, outerColor: '#f09e1f', innerColor: '#ecd68a', title: '36.1%', subtitle: '46087' },
         { percent: 16.5, outerColor: '#1b6634', innerColor: '#87c796', title: '16.5%', subtitle: '21067' }
     ];
+    range = range;
     constructor(public ls: AppLocalizationService) {}
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes && changes.crackedCodesNumbers && changes.crackedCodesNumbers.currentValue) {
+            this.myCodesCracked.forEach((crackedCode, index: number) => {
+                const value = changes.crackedCodesNumbers.currentValue[index];
+                crackedCode.percent = value.percent;
+                crackedCode.title = crackedCode.percent.toFixed() + '%';
+                crackedCode.subtitle = value.count;
+            });
+        }
+    }
 
 }
