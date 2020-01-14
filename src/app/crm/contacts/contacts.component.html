@@ -69,6 +69,16 @@
                           [isReadOnlyField]="!contactsService.checkCGPermission(this.contactInfo.groupId)"
                           (valueChanged)="updateAffiliateCode($event)">
             </inplace-edit>
+            <ng-container *ngFor="let n of [1,2,3,4,5]">
+                <ng-container *ngIf="contactInfo?.personContactInfo['customField' + n]">
+                    <h4>{{ l('CustomField' + n) }}</h4>
+                    <p>{{ contactInfo?.personContactInfo['customField' + n] }}</p>
+                </ng-container>
+            </ng-container>
+            <div *ngIf="contactInfo?.personContactInfo.xref" class="pt-4">
+                <h3>{{ l('Xref') }}</h3>
+                <h4>{{ contactInfo?.personContactInfo.xref }}</h4>
+            </div>
         </div>
         <ng-template #matGroup>
             <mat-tab-group>

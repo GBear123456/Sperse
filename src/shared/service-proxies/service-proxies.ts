@@ -41637,6 +41637,12 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     person!: PersonInfoDto | undefined;
     jobTitle!: string | undefined;
     orgRelationId!: number | undefined;
+    xref!: string | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
@@ -41661,6 +41667,12 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.jobTitle = data["jobTitle"];
             this.orgRelationId = data["orgRelationId"];
+            this.xref = data["xref"];
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
             if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
@@ -41689,6 +41701,12 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["jobTitle"] = this.jobTitle;
         data["orgRelationId"] = this.orgRelationId;
+        data["xref"] = this.xref;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
         if (this.orgRelations && this.orgRelations.constructor === Array) {
             data["orgRelations"] = [];
             for (let item of this.orgRelations)
@@ -41710,6 +41728,12 @@ export interface IPersonContactInfoDto {
     person: PersonInfoDto | undefined;
     jobTitle: string | undefined;
     orgRelationId: number | undefined;
+    xref: string | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
     id: number | undefined;
     fullName: string | undefined;
@@ -42499,6 +42523,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
+    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
         if (data) {
@@ -42580,6 +42605,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
+            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -42661,6 +42687,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
+        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -42707,6 +42734,7 @@ export interface ICreateOrUpdateContactInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
+    litePhoneValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput {
@@ -59426,6 +59454,7 @@ export class ImportInput implements IImportInput {
     fileSize!: number;
     fileContent!: string;
     ignoreInvalidValues!: boolean | undefined;
+    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -59468,6 +59497,7 @@ export class ImportInput implements IImportInput {
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
+            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -59510,6 +59540,7 @@ export class ImportInput implements IImportInput {
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
+        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -59529,6 +59560,7 @@ export interface IImportInput {
     fileSize: number;
     fileContent: string;
     ignoreInvalidValues: boolean | undefined;
+    litePhoneValidation: boolean | undefined;
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
@@ -59637,6 +59669,7 @@ export class ImportContactInput implements IImportContactInput {
     partnerTypeName!: string | undefined;
     ignoreInvalidValues!: boolean | undefined;
     overrideLists!: boolean | undefined;
+    litePhoneValidation!: boolean | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
     userPassword!: string | undefined;
@@ -59698,6 +59731,7 @@ export class ImportContactInput implements IImportContactInput {
             this.partnerTypeName = data["partnerTypeName"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
+            this.litePhoneValidation = data["litePhoneValidation"];
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
             this.userPassword = data["userPassword"];
@@ -59756,6 +59790,7 @@ export class ImportContactInput implements IImportContactInput {
         data["partnerTypeName"] = this.partnerTypeName;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["overrideLists"] = this.overrideLists;
+        data["litePhoneValidation"] = this.litePhoneValidation;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
         data["userPassword"] = this.userPassword;
@@ -59799,6 +59834,7 @@ export interface IImportContactInput {
     partnerTypeName: string | undefined;
     ignoreInvalidValues: boolean | undefined;
     overrideLists: boolean | undefined;
+    litePhoneValidation: boolean | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
     userPassword: string | undefined;
@@ -61931,6 +61967,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
+    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
@@ -62010,6 +62047,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
+            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -62089,6 +62127,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
+        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -62133,6 +62172,7 @@ export interface ICreateOrUpdateLeadInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
+    litePhoneValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
@@ -62551,6 +62591,11 @@ export class LeadInfoDto implements ILeadInfoDto {
     primaryLeadRequestId!: number | undefined;
     sourceContactId!: number | undefined;
     sourceOrganizationUnitId!: number | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
 
     constructor(data?: ILeadInfoDto) {
         if (data) {
@@ -62586,6 +62631,11 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.primaryLeadRequestId = data["primaryLeadRequestId"];
             this.sourceContactId = data["sourceContactId"];
             this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
         }
     }
 
@@ -62621,6 +62671,11 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["primaryLeadRequestId"] = this.primaryLeadRequestId;
         data["sourceContactId"] = this.sourceContactId;
         data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
         return data; 
     }
 }
@@ -62649,6 +62704,11 @@ export interface ILeadInfoDto {
     primaryLeadRequestId: number | undefined;
     sourceContactId: number | undefined;
     sourceOrganizationUnitId: number | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
