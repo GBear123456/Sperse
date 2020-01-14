@@ -30,18 +30,23 @@
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
                             <div class="bank-code-groups">
-                                <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
-                                    <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png">
-                                    <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroupsTitles[i][0]) }">
-                                        {{ bankCodeGroupsTitles[i] }}
+                                <ng-container *ngIf="availableBankCodes$ | async; else loading">
+                                    <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
+                                        <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png">
+                                        <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroupsTitles[i][0]) }">
+                                            {{ bankCodeGroupsTitles[i] }}
+                                        </div>
+                                        <div>
+                                            <bank-code-letters *ngFor="let bankCode of bankCodeGroups[i]"
+                                                               [bankCode]="bankCode"
+                                                               [active]="isBankCodeActive(bankCode)">
+                                            </bank-code-letters>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <bank-code-letters *ngFor="let bankCode of bankCodeGroups[i]"
-                                                           [bankCode]="bankCode"
-                                                           [active]="isBankCodeActive(bankCode)">
-                                        </bank-code-letters>
-                                    </div>
-                                </div>
+                                </ng-container>
+                                <ng-template #loading>
+                                    <loading-spinner></loading-spinner>
+                                </ng-template>
                             </div>
                         </div>
                         <div class="collect-badges">
@@ -76,23 +81,25 @@
                         <div *ngFor="let goal of goalTypes" class="goal">
                             <div class="text">{{ goal.text + ' ' + ls.l('Goal') }}</div>
                             <div class="number">{{ goal.number }}</div>
-                            <ng-container *ngIf="(goal.currentNumber / goal.number * 100).toFixed(0) as percent">
-                                <circle-progress [percent]="+percent"
-                                                 [outerStrokeColor]="goal.outerColor"
-                                                 [innerStrokeColor]="goal.innerColor"
-                                                 [title]="percent + '%'"
-                                                 [radius]="42"
-                                                 [titleFontWeight]="900"
-                                                 [titleColor]="goal.innerColor"
-                                                 [animation]="false"
-                                                 [animateTitle]="false"
-                                                 [animationDuration]="0"
-                                                 titleFontSize="23px"
-                                                 subtitleFontSize="12px"
-                                                 [subtitleFontWeight]="700"
-                                                 [subtitleColor]="goal.innerColor"
-                                                 [subtitle]="goal.currentNumber">
-                                </circle-progress>
+                            <ng-container *ngIf="goal.currentNumber$ | async as currentNumber">
+                                <ng-container *ngIf="(currentNumber / goal.number * 100).toFixed() as percent">
+                                    <circle-progress [percent]="+percent"
+                                                     [outerStrokeColor]="goal.outerColor"
+                                                     [innerStrokeColor]="goal.innerColor"
+                                                     [title]="percent + '%'"
+                                                     [radius]="42"
+                                                     [titleFontWeight]="900"
+                                                     [titleColor]="goal.innerColor"
+                                                     [animation]="false"
+                                                     [animateTitle]="false"
+                                                     [animationDuration]="0"
+                                                     titleFontSize="23px"
+                                                     subtitleFontSize="12px"
+                                                     [subtitleFontWeight]="700"
+                                                     [subtitleColor]="goal.innerColor"
+                                                     [subtitle]="currentNumber">
+                                    </circle-progress>
+                                </ng-container>
                             </ng-container>
                         </div>
                     </div>

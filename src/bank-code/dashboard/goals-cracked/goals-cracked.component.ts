@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 
 @Component({
     selector: 'bank-code-goals-cracked',
@@ -7,15 +9,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./goals-cracked.component.less']
 })
 export class GoalsCrackedComponent {
-    goalProgress = [
-        { name: this.ls.l('Daily goal'), class: 'daily-goal', progress: 67 },
-        { name: this.ls.l('Weekly goal'), class: 'weekly-goal', progress: 28 },
-        { name: this.ls.l('Monthly goal'), class: 'monthly-goal', progress: 88 },
-        { name: this.ls.l('Quarterly goal'), class: 'quarterly-goal', progress: 56 },
-        { name: this.ls.l('Annual goal'), class: 'annual-goal', progress: 34 }
-    ];
+    goalTypes: GoalType[] = this.bankCodeService.goalTypes;
 
     constructor(
+        private bankCodeService: BankCodeService,
         public ls: AppLocalizationService
     ) {}
 

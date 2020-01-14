@@ -1,14 +1,14 @@
 /** Core imports */
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    Renderer2,
-    ViewChild,
     Inject,
+    OnDestroy,
     OnInit,
-    AfterViewInit,
-    OnDestroy
+    Renderer2,
+    ViewChild
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -20,7 +20,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-import { filter, takeUntil, tap, map, publishReplay, refCount } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -36,6 +36,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 
 @Component({
     selector: 'bank-pass',
@@ -113,58 +114,16 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
             message: this.ls.l('AccessCodeIsNotValid')
         }
     ];
-    goalTypes = [
-        {
-            text: this.ls.l('Daily'),
-            number: 3,
-            currentNumber: 1,
-            innerColor: '#91bfdd',
-            outerColor: '#004a81'
-        },
-        {
-            text: this.ls.l('Weekly'),
-            number: 20,
-            currentNumber: 10,
-            innerColor: '#ce767f',
-            outerColor: '#ac1f22'
-        },
-        {
-            text: this.ls.l('Monthly'),
-            number: 90,
-            currentNumber: 70,
-            innerColor: '#ecd68a',
-            outerColor: '#f09e1e'
-        },
-        {
-            text: this.ls.l('Quarterly'),
-            number: 250,
-            currentNumber: 180,
-            innerColor: '#87c796',
-            outerColor: '#1b6634'
-        },
-        {
-            text: this.ls.l('Annual'),
-            number: 1000,
-            currentNumber: 718,
-            innerColor: '#c8c0e1',
-            outerColor: '#004a81'
-        },
-        {
-            text: this.ls.l('Lifetime'),
-            number: 25000,
-            currentNumber: 17651,
-            innerColor: '#ddbcdb',
-            outerColor: '#b142ab'
-        }
-    ];
+    goalTypes: GoalType[] = this.bankCodeService.goalTypes;
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
     bankCodeBadges = this.bankCodeService.bankCodeBadges;
     bankCodeLevel: number;
+    availableBankCodes$: Observable<{[bankCode: string]: number}> = this.bankCodeService.getAvailableBankCodes();
     availableBankCodes: {[bankCode: string]: number};
     bankCodeGroupsTitles = [
-        this.ls.l('Bluprint'),
+        this.ls.l('Blueprint'),
         this.ls.l('Action'),
         this.ls.l('Nurturing'),
         this.ls.l('Knowledge')
@@ -232,7 +191,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.renderer.removeClass(this.document.body, 'overflow-hidden');
                 }
             });
-        this.bankCodeService.getAvailableBankCodes().subscribe((availableBankCodes) => {
+        this.availableBankCodes$.subscribe((availableBankCodes) => {
             this.availableBankCodes = availableBankCodes;
             this.changeDetectorRef.detectChanges();
         });

@@ -5,6 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
+import * as moment from 'moment';
+import buildQuery from 'odata-query';
 
 /** Application imports */
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
@@ -12,6 +14,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { BankCodeGroup } from '@root/bank-code/products/bank-pass/bank-code-group.interface';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
+import { BankCodeTime } from '@app/shared/common/bank-code/bank-code-time.enum';
+import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 
 @Injectable()
 export class BankCodeService {
@@ -24,6 +28,56 @@ export class BankCodeService {
             return currentBankCodeClientsCount <= bankCodeBadgeCount;
         }))
     );
+    goalTypes: GoalType[] = [
+        {
+            name: 'daily',
+            text: this.ls.l('Daily'),
+            number: 3,
+            currentNumber$: this.getBankCodesNumber(BankCodeTime.Daily),
+            innerColor: '#91bfdd',
+            outerColor: '#004a81'
+        },
+        {
+            name: 'weekly',
+            text: this.ls.l('Weekly'),
+            number: 20,
+            currentNumber$: this.getBankCodesNumber(BankCodeTime.Weekly),
+            innerColor: '#ce767f',
+            outerColor: '#ac1f22'
+        },
+        {
+            name: 'monthly',
+            text: this.ls.l('Monthly'),
+            number: 90,
+            currentNumber$: this.getBankCodesNumber(BankCodeTime.Monthly),
+            innerColor: '#ecd68a',
+            outerColor: '#f09e1e'
+        },
+        {
+            name: 'quarterly',
+            text: this.ls.l('Quarterly'),
+            number: 250,
+            currentNumber$: this.getBankCodesNumber(BankCodeTime.Quarterly),
+            innerColor: '#87c796',
+            outerColor: '#1b6634'
+        },
+        {
+            name: 'annual',
+            text: this.ls.l('Annual'),
+            number: 1000,
+            currentNumber$: this.getBankCodesNumber(BankCodeTime.Annual),
+            innerColor: '#c8c0e1',
+            outerColor: '#004a81'
+        },
+        {
+            name: 'lifetime',
+            text: this.ls.l('Lifetime'),
+            number: 25000,
+            currentNumber$: this.bankCodeClientsCount$,
+            innerColor: '#ddbcdb',
+            outerColor: '#b142ab'
+        }
+    ];
     constructor(
         private ls: AppLocalizationService,
         private httpClient: HttpClient
@@ -72,12 +126,12 @@ export class BankCodeService {
         return this.bankCodeConfig[bankCodeLetter] && this.bankCodeConfig[bankCodeLetter].definition;
     }
 
-    getClientsBankCodes(): Observable<BankCodeGroup[]> {
+    getClientsBankCodes(filter: string = ''): Observable<BankCodeGroup[]> {
         let params = {
             group: '[{"selector":"BankCode","isExpanded":false}]',
             contactGroupId: ContactGroup.Client
         };
-        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/LeadSlice', {
+        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/LeadSlice' + filter, {
             params: params,
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()
@@ -105,6 +159,30 @@ export class BankCodeService {
                 return availableBankCodes;
             })
         );
+    }
+
+    getBankCodesNumber(time?: BankCodeTime): Observable<number> {
+        let filter;
+        if (time) {
+            filter = this.getFilterFromTime(time);
+        }
+        return this.getClientsBankCodes(filter).pipe(
+            map((bankCodeGroups: BankCodeGroup[]) => bankCodeGroups.reduce((sum, group) => sum + group.count, 0))
+        );
+    }
+
+    private getFilterFromTime(time: BankCodeTime) {
+        const currentDate = moment();
+        return buildQuery({
+            filter: [
+                {
+                    LeadDate: {
+                        ge: currentDate.startOf(time.toString()).toDate(),
+                        le: currentDate.endOf(time.toString()).toDate()
+                    }
+                }
+             ]
+        });
     }
 
 }
