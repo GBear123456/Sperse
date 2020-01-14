@@ -11,7 +11,7 @@ import {
     OnDestroy
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -35,7 +35,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { BankCodeGroup } from '@root/bank-code/products/bank-pass/bank-code-group.interface';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 
 @Component({
@@ -235,6 +234,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         this.bankCodeService.getAvailableBankCodes().subscribe((availableBankCodes) => {
             this.availableBankCodes = availableBankCodes;
+            this.changeDetectorRef.detectChanges();
         });
         this.bankCodeService.bankCodeLevel$.subscribe((bankCodeLevel: number) => {
             this.bankCodeLevel = bankCodeLevel;
