@@ -1,13 +1,13 @@
 <h5 class="card-title">{{ls.l('BankCode_AtaGlance')}}</h5>
 <div class="row">
     <div class="col-md-6 p-md-5">
-        <chart [type]="type" [data]="data" [options]="options">
+        <chart *ngIf="values" [type]="type" [data]="data" [options]="options">
             <canvas width="300" height="300"></canvas>
         </chart>
         <p class="card-text-footer glance mt-4">{{ls.l('BankCode_TotalCodeCracked')}}</p>
     </div>
     <div class="col-md-6 p-md-5">
-        <img class="level-img" src="./assets/common/images/bank-code/badges/L{{level}}-1.png" alt="Codebreaker">
+        <img *ngIf="level" class="level-img" src="./assets/common/images/bank-code/badges/L{{level}}-1.png" alt="Codebreaker">
         <p class="card-text-footer glance mt-4">{{ls.l('BankCode_CurrentBadgeLvl')}}</p>
     </div>
 </div>

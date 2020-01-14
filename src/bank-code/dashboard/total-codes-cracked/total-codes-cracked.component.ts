@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -6,8 +6,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     templateUrl: './total-codes-cracked.component.html',
     styleUrls: ['./total-codes-cracked.component.less']
 })
-export class TotalCodesCrackedComponent implements OnInit {
+export class TotalCodesCrackedComponent implements OnChanges {
     @Input() level: number;
+    @Input() values: number[];
     type = 'pie';
     data = {
         labels: [
@@ -18,12 +19,7 @@ export class TotalCodesCrackedComponent implements OnInit {
         ],
         datasets: [
             {
-                data: [
-                    5,
-                    10,
-                    4,
-                    6,
-                ],
+                data: [],
                 backgroundColor: [
                     '#104779',
                     '#f09e1f',
@@ -50,10 +46,12 @@ export class TotalCodesCrackedComponent implements OnInit {
         }
     };
 
-    constructor(public ls: AppLocalizationService) {
-    }
+    constructor(public ls: AppLocalizationService) {}
 
-    ngOnInit() {
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes && changes.values) {
+            this.data.datasets[0].data = changes.values.currentValue;
+        }
     }
 
 }

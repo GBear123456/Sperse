@@ -161,7 +161,6 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
-    bankCodeClientsCount: number;
     bankCodeBadges = this.bankCodeService.bankCodeBadges;
     bankCodeLevel: number;
     availableBankCodes: {[bankCode: string]: number};
@@ -234,10 +233,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.renderer.removeClass(this.document.body, 'overflow-hidden');
                 }
             });
-        this.bankCodeService.bankCodeClientsCount$.subscribe((bankCodeClientsCount: number) => {
-            this.bankCodeClientsCount = bankCodeClientsCount;
-        });
-        this.getAvailableBankCodes().subscribe((availableBankCodes) => {
+        this.bankCodeService.getAvailableBankCodes().subscribe((availableBankCodes) => {
             this.availableBankCodes = availableBankCodes;
         });
         this.bankCodeService.bankCodeLevel$.subscribe((bankCodeLevel: number) => {
@@ -280,20 +276,8 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
         );
     }
 
-    getAvailableBankCodes(): Observable<{[bankCode: string]: number}> {
-        return this.bankCodeService.getClientsBankCodes().pipe(
-            map((bankCodeGroups: BankCodeGroup[]) => {
-                let availableBankCodes = {};
-                bankCodeGroups.forEach((bankCodeGroup: BankCodeGroup) => {
-                    availableBankCodes[bankCodeGroup.key] = bankCodeGroup.count;
-                });
-                return availableBankCodes;
-            })
-        );
-    }
-
     isBankCodeActive(bankCode: string): boolean {
-        return !!this.availableBankCodes[bankCode];
+        return !!(this.availableBankCodes && this.availableBankCodes[bankCode]);
     }
 
     ngOnDestroy() {

@@ -95,4 +95,16 @@ export class BankCodeService {
         );
     }
 
+    getAvailableBankCodes(): Observable<{[bankCode: string]: number}> {
+        return this.getClientsBankCodes().pipe(
+            map((bankCodeGroups: BankCodeGroup[]) => {
+                let availableBankCodes = {};
+                bankCodeGroups.forEach((bankCodeGroup: BankCodeGroup) => {
+                    availableBankCodes[bankCodeGroup.key] = bankCodeGroup.count;
+                });
+                return availableBankCodes;
+            })
+        );
+    }
+
 }
