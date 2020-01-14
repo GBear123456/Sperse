@@ -49,6 +49,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     dataIsLoading = true;
+    gridInitialized = false;
     totalCount: number;
     currentTabIndex = 0;
     searchValue: '';
@@ -94,6 +95,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
         onChanged: () => {
             this.totalCount = this.dataSource.totalCount();
             this.dataIsLoading = false;
+            this.gridInitialized = true;
             this.changeDetectorRef.detectChanges();
         }
     });

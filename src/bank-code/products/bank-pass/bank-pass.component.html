@@ -106,7 +106,7 @@
                 </div>
             </mat-tab>
             <mat-tab [label]="ls.l('Leads').toUpperCase()">
-                <div *ngIf="currentTabIndex == 1">
+                <div *ngIf="currentTabIndex == 1 || gridInitialized">
                     <div class="grid" [hidden]="totalCount <= 0">
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
@@ -115,7 +115,6 @@
                                       [dataSource]="dataSource"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
-                                      [loadPanel]="{ enabled: false }"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
@@ -123,6 +122,7 @@
                             <dxo-pager
                                 [showPageSizeSelector]="true"
                                 [allowedPageSizes]="[10, 20, 50]"
+                                [visible]="true"
                                 [showInfo]="true">
                             </dxo-pager>
                             <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
