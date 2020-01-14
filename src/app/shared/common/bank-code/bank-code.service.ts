@@ -138,15 +138,14 @@ export class BankCodeService {
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             })
-        }).pipe(
-            publishReplay(),
-            refCount()
-        );
+        });
     }
 
     getClientsBankCodes(filters = []): Observable<BankCodeGroup[]> {
         return this.getClientsBankCodesData(filters).pipe(
-            map((result: any) => result && result.data)
+            map((result: any) => result && result.data),
+            publishReplay(),
+            refCount()
         );
     }
 
