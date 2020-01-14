@@ -33,8 +33,8 @@
                                 <ng-container *ngIf="availableBankCodes$ | async; else loading">
                                     <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
                                         <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png">
-                                        <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroupsTitles[i][0]) }">
-                                            {{ bankCodeGroupsTitles[i] }}
+                                        <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroup[i][0]) }">
+                                            {{ bankCodeService.bankCodeConfig[bankCodeGroup[i][0]].definition }}
                                         </div>
                                         <div>
                                             <bank-code-letters *ngFor="let bankCode of bankCodeGroups[i]"

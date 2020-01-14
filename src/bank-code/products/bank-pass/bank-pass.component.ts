@@ -124,12 +124,6 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     bankCodeLevel: number;
     availableBankCodes$: Observable<{[bankCode: string]: number}> = this.bankCodeService.getAvailableBankCodes();
     availableBankCodes: {[bankCode: string]: number};
-    bankCodeGroupsTitles = [
-        this.ls.l('Blueprint'),
-        this.ls.l('Action'),
-        this.ls.l('Nurturing'),
-        this.ls.l('Knowledge')
-    ];
     bankCodeGroups = [
         [
             'BANK',

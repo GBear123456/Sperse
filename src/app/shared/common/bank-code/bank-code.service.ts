@@ -20,9 +20,7 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 @Injectable()
 export class BankCodeService {
     bankCodeBadges: number[] = [ 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000 ];
-    bankCodeClientsCount$: Observable<number> = this.getClientsBankCodes().pipe(
-        map((bankCodeGroups: BankCodeGroup[]) => bankCodeGroups.reduce((sum, group) => sum + group.count, 0))
-    );
+    bankCodeClientsCount$: Observable<number> = this.getClientsBankCodesTotalCount();
     bankCodeLevel$: Observable<number> = this.bankCodeClientsCount$.pipe(
         map((currentBankCodeClientsCount: number) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
             return currentBankCodeClientsCount <= bankCodeBadgeCount;
@@ -83,7 +81,7 @@ export class BankCodeService {
         private httpClient: HttpClient
     ) {}
 
-    private bankCodeConfig = {
+    bankCodeConfig = {
         [BankCodeLetter.A]: {
             name: 'action',
             definition: this.ls.l('BankCode_Action'),
@@ -126,26 +124,35 @@ export class BankCodeService {
         return this.bankCodeConfig[bankCodeLetter] && this.bankCodeConfig[bankCodeLetter].definition;
     }
 
-    getClientsBankCodes(filter: string = ''): Observable<BankCodeGroup[]> {
+    private getClientsBankCodesData(filters = []): Observable<any> {
         let params = {
             group: '[{"selector":"BankCode","isExpanded":false}]',
             contactGroupId: ContactGroup.Client
         };
+        filters.push({ 'BankCode': { 'ne': null }});
+        let filter = buildQuery({
+            filter: filters
+        });
         return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/LeadSlice' + filter, {
             params: params,
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             })
         }).pipe(
-            map((result: any) => {
-                let items = [];
-                if (result && result.data) {
-                    items = result.data.filter(bankCodeGroup => !!bankCodeGroup.key);
-                }
-                return items;
-            }),
             publishReplay(),
             refCount()
+        );
+    }
+
+    getClientsBankCodes(filters = []): Observable<BankCodeGroup[]> {
+        return this.getClientsBankCodesData(filters).pipe(
+            map((result: any) => result && result.data)
+        );
+    }
+
+    getClientsBankCodesTotalCount(filters = []): Observable<number> {
+        return this.getClientsBankCodesData(filters).pipe(
+            map((result: any) => result && result.totalCount)
         );
     }
 
@@ -166,23 +173,19 @@ export class BankCodeService {
         if (time) {
             filter = this.getFilterFromTime(time);
         }
-        return this.getClientsBankCodes(filter).pipe(
-            map((bankCodeGroups: BankCodeGroup[]) => bankCodeGroups.reduce((sum, group) => sum + group.count, 0))
-        );
+        return this.getClientsBankCodesTotalCount(filter);
     }
 
     private getFilterFromTime(time: BankCodeTime) {
         const currentDate = moment();
-        return buildQuery({
-            filter: [
-                {
-                    LeadDate: {
-                        ge: currentDate.startOf(time.toString()).toDate(),
-                        le: currentDate.endOf(time.toString()).toDate()
-                    }
+        return [
+            {
+                LeadDate: {
+                    ge: currentDate.startOf(time.toString()).toDate(),
+                    le: currentDate.endOf(time.toString()).toDate()
                 }
-             ]
-        });
+            }
+        ];
     }
 
 }
