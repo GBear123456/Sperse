@@ -652,7 +652,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     onRatingChanged(event) {
-        this.isRatingSelected = !!event.value;
+        if (this.isRatingSelected = !!event.value)
+            this.defaultRating = event.value;
         this.initToolbarConfig();
     }
 
