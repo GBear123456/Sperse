@@ -37,7 +37,14 @@ export class AccountConnectorChooserComponent extends AppComponentBase implement
                 iconName: 'quovo-connector',
                 title: this.l('QuovoConnectorTitle'),
                 description: this.l('QuovoConnectorDescription'),
-                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Quovo))
+                disabled: true
+            },
+            {
+                name: AccountConnectors.Plaid,
+                iconName: 'quovo-connector',
+                title: this.l('QuovoConnectorTitle'),
+                description: this.l('QuovoConnectorDescription'),
+                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
             },
             {
                 name: AccountConnectors.Xero,

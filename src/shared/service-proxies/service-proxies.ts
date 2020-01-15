@@ -25683,6 +25683,64 @@ export class SyncAccountServiceProxy {
         }
         return _observableOf<boolean>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getPlaidConfig(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<PlaidConfig> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetPlaidConfig?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPlaidConfig(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPlaidConfig(<any>response_);
+                } catch (e) {
+                    return <Observable<PlaidConfig>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PlaidConfig>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPlaidConfig(response: HttpResponseBase): Observable<PlaidConfig> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PlaidConfig.fromJS(resultData200) : new PlaidConfig();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PlaidConfig>(<any>null);
+    }
 }
 
 @Injectable()
@@ -71428,6 +71486,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
     consumerKey!: string | undefined;
     consumerSecret!: string | undefined;
+    publicToken!: string | undefined;
     isSyncBankAccountsEnabled!: boolean | undefined;
 
     constructor(data?: ICreateSyncAccountInput) {
@@ -71444,6 +71503,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
             this.typeId = data["typeId"];
             this.consumerKey = data["consumerKey"];
             this.consumerSecret = data["consumerSecret"];
+            this.publicToken = data["publicToken"];
             this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
         }
     }
@@ -71460,6 +71520,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         data["typeId"] = this.typeId;
         data["consumerKey"] = this.consumerKey;
         data["consumerSecret"] = this.consumerSecret;
+        data["publicToken"] = this.publicToken;
         data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
         return data; 
     }
@@ -71469,6 +71530,7 @@ export interface ICreateSyncAccountInput {
     typeId: string;
     consumerKey: string | undefined;
     consumerSecret: string | undefined;
+    publicToken: string | undefined;
     isSyncBankAccountsEnabled: boolean | undefined;
 }
 
@@ -71554,6 +71616,66 @@ export class RenameSyncAccountInput implements IRenameSyncAccountInput {
 export interface IRenameSyncAccountInput {
     id: number;
     newName: string;
+}
+
+export class PlaidConfig implements IPlaidConfig {
+    clientName!: string | undefined;
+    evn!: string | undefined;
+    key!: string | undefined;
+    product!: string[] | undefined;
+    webhook!: string | undefined;
+
+    constructor(data?: IPlaidConfig) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.clientName = data["clientName"];
+            this.evn = data["evn"];
+            this.key = data["key"];
+            if (data["product"] && data["product"].constructor === Array) {
+                this.product = [];
+                for (let item of data["product"])
+                    this.product.push(item);
+            }
+            this.webhook = data["webhook"];
+        }
+    }
+
+    static fromJS(data: any): PlaidConfig {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlaidConfig();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientName"] = this.clientName;
+        data["evn"] = this.evn;
+        data["key"] = this.key;
+        if (this.product && this.product.constructor === Array) {
+            data["product"] = [];
+            for (let item of this.product)
+                data["product"].push(item);
+        }
+        data["webhook"] = this.webhook;
+        return data; 
+    }
+}
+
+export interface IPlaidConfig {
+    clientName: string | undefined;
+    evn: string | undefined;
+    key: string | undefined;
+    product: string[] | undefined;
+    webhook: string | undefined;
 }
 
 export class TenantListDto implements ITenantListDto {
