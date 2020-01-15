@@ -10,6 +10,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -122,7 +123,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_WORK_FULL_ADDRESS_CITY
     ];
 
-    private readonly PHONE_FIELDS = [
+    private readonly FIELDS_PHONE = [
         this.PERSONAL_MOBILE_PHONE,
         this.PERSONAL_HOME_PHONE,
         this.BUSINESS_COMPANY_PHONE,
@@ -301,8 +302,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.fieldsConfig[field] = { cellTemplate: 'titleCaseCell' };
         });
 
-        this.PHONE_FIELDS.forEach(field => {
+        this.FIELDS_PHONE.forEach(field => {
             this.fieldsConfig[field] = { cellTemplate: 'phoneCell' };
+        });
+
+        this.FIELDS_DATE.forEach(field => {
+            this.fieldsConfig[field] = { cellTemplate: 'dateCell' };
         });
 
         let fieldIndex = 1;
@@ -584,12 +589,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE) {
             return this.parseZipCode(field, sourceValue, reviewDataSource);
-        } else if (this.PHONE_FIELDS.indexOf(field.mappedField) >= 0) {
+        } else if (this.FIELDS_PHONE.indexOf(field.mappedField) >= 0) {
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
         } else if (this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
             return this.parseCurrency(field, sourceValue, reviewDataSource);
         } else if (this.FIELDS_DATE.indexOf(field.mappedField) >= 0) {
-            if (!moment(sourceValue).toJSON()) {
+            if (moment(sourceValue).toJSON())
+                reviewDataSource[field.mappedField] =
+                    DateHelper.removeTimezoneOffset(new Date(sourceValue), true);
+            else {
                 reviewDataSource[field.mappedField] = undefined;
                 return true;
             }
