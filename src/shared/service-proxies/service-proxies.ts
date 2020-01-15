@@ -16708,7 +16708,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
+    create(body: CreateOrUpdateLeadInput | null | undefined): Observable<CreateOrUpdateLeadOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -16731,14 +16731,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateLeadOutput>><any>_observableThrow(e);
+                    return <Observable<CreateOrUpdateLeadOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateLeadOutput>><any>_observableThrow(response_);
+                return <Observable<CreateOrUpdateLeadOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<CreateLeadOutput> {
+    protected processCreate(response: HttpResponseBase): Observable<CreateOrUpdateLeadOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16749,7 +16749,7 @@ export class LeadServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateLeadOutput.fromJS(resultData200) : new CreateLeadOutput();
+            result200 = resultData200 ? CreateOrUpdateLeadOutput.fromJS(resultData200) : new CreateOrUpdateLeadOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16757,7 +16757,7 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateLeadOutput>(<any>null);
+        return _observableOf<CreateOrUpdateLeadOutput>(<any>null);
     }
 
     /**
@@ -25682,6 +25682,64 @@ export class SyncAccountServiceProxy {
             }));
         }
         return _observableOf<boolean>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getPlaidConfig(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<PlaidConfig> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetPlaidConfig?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPlaidConfig(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPlaidConfig(<any>response_);
+                } catch (e) {
+                    return <Observable<PlaidConfig>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PlaidConfig>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPlaidConfig(response: HttpResponseBase): Observable<PlaidConfig> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PlaidConfig.fromJS(resultData200) : new PlaidConfig();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PlaidConfig>(<any>null);
     }
 }
 
@@ -46415,6 +46473,7 @@ export class Lead implements ILead {
     stage!: Stage | undefined;
     cancellationReason!: LeadCancellationReason | undefined;
     sourceContact!: Contact | undefined;
+    leadDate!: moment.Moment | undefined;
     leadRequests!: LeadRequest[] | undefined;
     orders!: Order[] | undefined;
     isDeleted!: boolean | undefined;
@@ -46459,6 +46518,7 @@ export class Lead implements ILead {
             this.stage = data["stage"] ? Stage.fromJS(data["stage"]) : <any>undefined;
             this.cancellationReason = data["cancellationReason"] ? LeadCancellationReason.fromJS(data["cancellationReason"]) : <any>undefined;
             this.sourceContact = data["sourceContact"] ? Contact.fromJS(data["sourceContact"]) : <any>undefined;
+            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
             if (data["leadRequests"] && data["leadRequests"].constructor === Array) {
                 this.leadRequests = [];
                 for (let item of data["leadRequests"])
@@ -46511,6 +46571,7 @@ export class Lead implements ILead {
         data["stage"] = this.stage ? this.stage.toJSON() : <any>undefined;
         data["cancellationReason"] = this.cancellationReason ? this.cancellationReason.toJSON() : <any>undefined;
         data["sourceContact"] = this.sourceContact ? this.sourceContact.toJSON() : <any>undefined;
+        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
         if (this.leadRequests && this.leadRequests.constructor === Array) {
             data["leadRequests"] = [];
             for (let item of this.leadRequests)
@@ -46556,6 +46617,7 @@ export interface ILead {
     stage: Stage | undefined;
     cancellationReason: LeadCancellationReason | undefined;
     sourceContact: Contact | undefined;
+    leadDate: moment.Moment | undefined;
     leadRequests: LeadRequest[] | undefined;
     orders: Order[] | undefined;
     isDeleted: boolean | undefined;
@@ -51753,6 +51815,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     lists!: ContactList[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
+    starId!: number | undefined;
     userId!: number | undefined;
     affiliateCode!: string | undefined;
     xref!: string | undefined;
@@ -51829,6 +51892,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
+            this.starId = data["starId"];
             this.userId = data["userId"];
             this.affiliateCode = data["affiliateCode"];
             this.xref = data["xref"];
@@ -51905,6 +51969,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
+        data["starId"] = this.starId;
         data["userId"] = this.userId;
         data["affiliateCode"] = this.affiliateCode;
         data["xref"] = this.xref;
@@ -51950,6 +52015,7 @@ export interface IOrganizationBusinessInfo {
     lists: ContactList[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
+    starId: number | undefined;
     userId: number | undefined;
     affiliateCode: string | undefined;
     xref: string | undefined;
@@ -61795,7 +61861,7 @@ export interface ILeadCancellationReasonDtoListResultDto {
     items: LeadCancellationReasonDto[] | undefined;
 }
 
-export class CreateLeadInput implements ICreateLeadInput {
+export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     contactId!: number | undefined;
     contactXRef!: string | undefined;
     namePrefix!: string | undefined;
@@ -61836,7 +61902,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
 
-    constructor(data?: ICreateLeadInput) {
+    constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -61917,9 +61983,9 @@ export class CreateLeadInput implements ICreateLeadInput {
         }
     }
 
-    static fromJS(data: any): CreateLeadInput {
+    static fromJS(data: any): CreateOrUpdateLeadInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadInput();
+        let result = new CreateOrUpdateLeadInput();
         result.init(data);
         return result;
     }
@@ -61997,7 +62063,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     }
 }
 
-export interface ICreateLeadInput {
+export interface ICreateOrUpdateLeadInput {
     contactId: number | undefined;
     contactXRef: string | undefined;
     namePrefix: string | undefined;
@@ -62039,14 +62105,14 @@ export interface ICreateLeadInput {
     newUserPassword: string | undefined;
 }
 
-export class CreateLeadOutput implements ICreateLeadOutput {
+export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
     contactId!: number | undefined;
     leadId!: number | undefined;
     userId!: number | undefined;
     userKey!: string | undefined;
     autoLoginLink!: string | undefined;
 
-    constructor(data?: ICreateLeadOutput) {
+    constructor(data?: ICreateOrUpdateLeadOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -62065,9 +62131,9 @@ export class CreateLeadOutput implements ICreateLeadOutput {
         }
     }
 
-    static fromJS(data: any): CreateLeadOutput {
+    static fromJS(data: any): CreateOrUpdateLeadOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadOutput();
+        let result = new CreateOrUpdateLeadOutput();
         result.init(data);
         return result;
     }
@@ -62083,7 +62149,7 @@ export class CreateLeadOutput implements ICreateLeadOutput {
     }
 }
 
-export interface ICreateLeadOutput {
+export interface ICreateOrUpdateLeadOutput {
     contactId: number | undefined;
     leadId: number | undefined;
     userId: number | undefined;
@@ -71272,6 +71338,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
     consumerKey!: string | undefined;
     consumerSecret!: string | undefined;
+    publicToken!: string | undefined;
     isSyncBankAccountsEnabled!: boolean | undefined;
 
     constructor(data?: ICreateSyncAccountInput) {
@@ -71288,6 +71355,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
             this.typeId = data["typeId"];
             this.consumerKey = data["consumerKey"];
             this.consumerSecret = data["consumerSecret"];
+            this.publicToken = data["publicToken"];
             this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
         }
     }
@@ -71304,6 +71372,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         data["typeId"] = this.typeId;
         data["consumerKey"] = this.consumerKey;
         data["consumerSecret"] = this.consumerSecret;
+        data["publicToken"] = this.publicToken;
         data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
         return data; 
     }
@@ -71313,6 +71382,7 @@ export interface ICreateSyncAccountInput {
     typeId: string;
     consumerKey: string | undefined;
     consumerSecret: string | undefined;
+    publicToken: string | undefined;
     isSyncBankAccountsEnabled: boolean | undefined;
 }
 
@@ -71398,6 +71468,66 @@ export class RenameSyncAccountInput implements IRenameSyncAccountInput {
 export interface IRenameSyncAccountInput {
     id: number;
     newName: string;
+}
+
+export class PlaidConfig implements IPlaidConfig {
+    clientName!: string | undefined;
+    evn!: string | undefined;
+    key!: string | undefined;
+    product!: string[] | undefined;
+    webhook!: string | undefined;
+
+    constructor(data?: IPlaidConfig) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.clientName = data["clientName"];
+            this.evn = data["evn"];
+            this.key = data["key"];
+            if (data["product"] && data["product"].constructor === Array) {
+                this.product = [];
+                for (let item of data["product"])
+                    this.product.push(item);
+            }
+            this.webhook = data["webhook"];
+        }
+    }
+
+    static fromJS(data: any): PlaidConfig {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlaidConfig();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientName"] = this.clientName;
+        data["evn"] = this.evn;
+        data["key"] = this.key;
+        if (this.product && this.product.constructor === Array) {
+            data["product"] = [];
+            for (let item of this.product)
+                data["product"].push(item);
+        }
+        data["webhook"] = this.webhook;
+        return data; 
+    }
+}
+
+export interface IPlaidConfig {
+    clientName: string | undefined;
+    evn: string | undefined;
+    key: string | undefined;
+    product: string[] | undefined;
+    webhook: string | undefined;
 }
 
 export class TenantListDto implements ITenantListDto {
