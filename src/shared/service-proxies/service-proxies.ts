@@ -11315,15 +11315,12 @@ export class DashboardServiceProxy {
 
     /**
      * @topCount (optional) 
-     * @isProspective (optional) 
      * @return Success
      */
-    getRecentlyCreatedCustomers(topCount: number | null | undefined, isProspective: boolean | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
+    getRecentlyCreatedCustomers(topCount: number | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
-        if (isProspective !== undefined)
-            url_ += "isProspective=" + encodeURIComponent("" + isProspective) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -11373,6 +11370,65 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetRecentlyCreatedCustomersOutput[]>(<any>null);
+    }
+
+    /**
+     * @topCount (optional) 
+     * @return Success
+     */
+    getRecentlyCreatedLeads(topCount: number | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedLeads?";
+        if (topCount !== undefined)
+            url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRecentlyCreatedLeads(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecentlyCreatedLeads(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRecentlyCreatedLeadsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRecentlyCreatedLeadsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRecentlyCreatedLeads(response: HttpResponseBase): Observable<GetRecentlyCreatedLeadsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetRecentlyCreatedLeadsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRecentlyCreatedLeadsOutput[]>(<any>null);
     }
 
     /**
@@ -47748,7 +47804,6 @@ export class InvoiceAddress implements IInvoiceAddress {
     phone!: string | undefined;
     contact!: Contact | undefined;
     country!: Country | undefined;
-    state!: CountryState | undefined;
     creationTime!: moment.Moment | undefined;
     creatorUserId!: number | undefined;
     id!: number | undefined;
@@ -47779,7 +47834,6 @@ export class InvoiceAddress implements IInvoiceAddress {
             this.phone = data["phone"];
             this.contact = data["contact"] ? Contact.fromJS(data["contact"]) : <any>undefined;
             this.country = data["country"] ? Country.fromJS(data["country"]) : <any>undefined;
-            this.state = data["state"] ? CountryState.fromJS(data["state"]) : <any>undefined;
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.creatorUserId = data["creatorUserId"];
             this.id = data["id"];
@@ -47810,7 +47864,6 @@ export class InvoiceAddress implements IInvoiceAddress {
         data["phone"] = this.phone;
         data["contact"] = this.contact ? this.contact.toJSON() : <any>undefined;
         data["country"] = this.country ? this.country.toJSON() : <any>undefined;
-        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["creatorUserId"] = this.creatorUserId;
         data["id"] = this.id;
@@ -47834,7 +47887,6 @@ export interface IInvoiceAddress {
     phone: string | undefined;
     contact: Contact | undefined;
     country: Country | undefined;
-    state: CountryState | undefined;
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
@@ -49644,7 +49696,6 @@ export class CountryState implements ICountryState {
     name!: string | undefined;
     country!: Country | undefined;
     formedOrganizations!: Organization[] | undefined;
-    invoiceAddresses!: InvoiceAddress[] | undefined;
     isDeleted!: boolean | undefined;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -49672,11 +49723,6 @@ export class CountryState implements ICountryState {
                 this.formedOrganizations = [];
                 for (let item of data["formedOrganizations"])
                     this.formedOrganizations.push(Organization.fromJS(item));
-            }
-            if (data["invoiceAddresses"] && data["invoiceAddresses"].constructor === Array) {
-                this.invoiceAddresses = [];
-                for (let item of data["invoiceAddresses"])
-                    this.invoiceAddresses.push(InvoiceAddress.fromJS(item));
             }
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
@@ -49706,11 +49752,6 @@ export class CountryState implements ICountryState {
             for (let item of this.formedOrganizations)
                 data["formedOrganizations"].push(item.toJSON());
         }
-        if (this.invoiceAddresses && this.invoiceAddresses.constructor === Array) {
-            data["invoiceAddresses"] = [];
-            for (let item of this.invoiceAddresses)
-                data["invoiceAddresses"].push(item.toJSON());
-        }
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -49728,7 +49769,6 @@ export interface ICountryState {
     name: string | undefined;
     country: Country | undefined;
     formedOrganizations: Organization[] | undefined;
-    invoiceAddresses: InvoiceAddress[] | undefined;
     isDeleted: boolean | undefined;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -55865,6 +55905,50 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 }
 
 export interface IGetRecentlyCreatedCustomersOutput {
+    id: number | undefined;
+    fullName: string | undefined;
+    creationTime: moment.Moment | undefined;
+}
+
+export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOutput {
+    id!: number | undefined;
+    fullName!: string | undefined;
+    creationTime!: moment.Moment | undefined;
+
+    constructor(data?: IGetRecentlyCreatedLeadsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetRecentlyCreatedLeadsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRecentlyCreatedLeadsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetRecentlyCreatedLeadsOutput {
     id: number | undefined;
     fullName: string | undefined;
     creationTime: moment.Moment | undefined;
