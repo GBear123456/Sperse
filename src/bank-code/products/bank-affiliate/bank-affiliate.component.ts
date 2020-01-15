@@ -22,7 +22,7 @@ import { ProductsService } from '@root/bank-code/products/products.service';
 export class BankAffiliateComponent implements AfterViewInit {
     dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate).pipe(
-        tap((hasSubscription) => setTimeout(() => {
+        tap(() => setTimeout(() => {
             this.changeDetectorRef.detectChanges();
         }))
     );
