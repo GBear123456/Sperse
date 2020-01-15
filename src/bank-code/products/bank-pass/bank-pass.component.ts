@@ -57,15 +57,17 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
+            'Id',
             'PhotoPublicId',
             'Name',
             'Email',
             'Phone',
             'CountryId',
-            'StateName',
+            'State',
             'BankCode',
             'LeadDate'
         ],
+        sort: [{ selector: 'Id', desc: true }],
         store: {
             key: 'Id',
             type: 'odata',
