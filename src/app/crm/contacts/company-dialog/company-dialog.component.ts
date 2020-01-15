@@ -218,7 +218,7 @@ export class CompanyDialogComponent implements OnInit {
 
     loadStates(countryCode: string = this.company.formedCountryId) {
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.states$ = this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }));
+        this.states$ = this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode }));
     }
 
     showUploadPhotoDialog(e) {

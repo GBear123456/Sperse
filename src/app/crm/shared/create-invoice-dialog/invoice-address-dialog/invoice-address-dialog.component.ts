@@ -5,16 +5,18 @@ import { Component, Inject, ElementRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AngularGooglePlaceService } from 'angular-google-place';
+import { Observable } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryStateDto, CountryDto, ContactServiceProxy,
     PersonOrgRelationShortInfo, ContactDetailsDto, OrganizationShortInfo } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     selector: 'invoice-address-dialog',
@@ -27,7 +29,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         '(document:mouseup)': 'mouseUp($event)',
         '(document:mousemove)': 'mouseMove($event)'
     },
-    providers: [ GooglePlaceHelper ]
+    providers: [ GooglePlaceService ]
 })
 export class InvoiceAddressDialog {
     validator: any;
@@ -47,7 +49,8 @@ export class InvoiceAddressDialog {
         private contactProxy: ContactServiceProxy,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
-        private googlePlaceService: GooglePlaceHelper,
+        private googlePlaceService: GooglePlaceService,
+        private statesService: StatesService,
         public dialogRef: MatDialogRef<InvoiceAddressDialog>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -104,28 +107,40 @@ export class InvoiceAddressDialog {
 
     onCountryChange(event) {
         const countryCode = event.value;
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, {countryCode: countryCode}))
-            .subscribe(result => {
-                this.states = result;
-                let state = this.data.state;
-                if (state = state && _.findWhere(result, {name: state}))
-                    this.data.stateId = state['code'];
-            });
+        if (countryCode) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+        }
     }
 
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
-        this.data.stateId = GooglePlaceHelper.getStateCode(event.address_components);
-        this.data.countryId = GooglePlaceHelper.getCountryCode(event.address_components);
+        this.data.stateId = this.googlePlaceService.getStateCode(event.address_components);
+        this.data.stateName = this.googlePlaceService.getStateName(event.address_components);
+        this.data.countryId = GooglePlaceService.getCountryCode(event.address_components);
+        this.statesService.updateState(this.data.countryId, this.data.stateId, this.data.stateName);
         this.data.city = this.googlePlaceService.getCity(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
     }
 
+    getCountryStates(): Observable<CountryStateDto[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.data.countryId })
+        );
+    }
+
+    onCustomStateCreate(e) {
+        this.data.stateId = null;
+        this.data.stateName = e.text;
+        this.statesService.updateState(this.data.countryId, e.text, e.text);
+        e.customItem = {
+            code: e.text,
+            name: e.text
+        };
+    }
+
     onSave(event) {
         this.data.address1 = this.address;
-
         if (this.validator.validate().isValid && this.validateAddress(this.data))
             this.dialogRef.close(true);
     }
@@ -186,7 +201,8 @@ export class InvoiceAddressDialog {
     onAddressSelected(event, component) {
         let address = this.contactDetails.addresses[event.itemIndex];
         this.data.country = address.country;
-        this.data.state = address.stateId;
+        this.data.stateId = address.stateId;
+        this.data.stateName = address.stateName;
         this.data.city = address.city;
         this.data.zip = address.zip;
         this.data.address1 = address.streetAddress;

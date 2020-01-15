@@ -1,12 +1,12 @@
 import { CountryStateDto } from 'shared/service-proxies/service-proxies';
 
-interface StateEntity {
+export interface StateEntity {
     items: CountryStateDto[];
     loadedTime: number;
 }
 
 export interface State {
-    entities: { [id: number]: StateEntity };
+    entities: { [id: string]: StateEntity };
     isLoading: boolean;
     error: string;
 }

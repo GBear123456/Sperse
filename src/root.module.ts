@@ -36,6 +36,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { TitleService } from '@shared/common/title/title.service';
+import { StatesService } from '@root/store/states-store/states.service';
 
 export function errorHandlerFactory(
     bugsnagService: BugsnagService
@@ -185,6 +186,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppHttpConfiguration,
         AppHttpInterceptor,
         TitleService,
+        StatesService,
         FullScreenService,
         {
             provide: CacheStorageAbstract,

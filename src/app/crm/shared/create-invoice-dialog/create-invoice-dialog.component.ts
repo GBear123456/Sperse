@@ -689,9 +689,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             customerNameParts = (this.customer || '').split(' '),
             dialogData: any = this[field] || {
                 countryId: address.countryCode,
-                stateId: undefined,
+                stateId: address.stateId,
+                stateName: address.stateName,
                 country: address.country,
-                state: address.state,
                 city: address.city,
                 zip: address.zip,
                 address1: address.streetAddress,

@@ -112,7 +112,7 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
 
     private getStates(countryCode: string): Observable<ICountryState[]> {
         return this.store$.pipe(
-            select(StatesStoreSelectors.getState, { countryCode: countryCode }),
+            select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode }),
             filter(Boolean),
             first(),
             map((states: CountryStateDto[]) => {

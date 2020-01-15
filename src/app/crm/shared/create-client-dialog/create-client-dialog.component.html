@@ -376,7 +376,8 @@
                                     (onValueChanged)="checkAddressControls(i)">
                                 </dx-text-box>
                                 <dx-select-box
-                                    [dataSource]="states[address.country]"
+                                    [acceptCustomValue]="true"
+                                    [dataSource]="getCountryStates(address.countryCode) | async"
                                     displayExpr="name"
                                     valueExpr="code"
                                     name="state"
@@ -384,7 +385,8 @@
                                     [width]="'270px'"
                                     [searchEnabled]="true"
                                     [(value)]="address['stateCode']"
-                                    (onValueChanged)="checkAddressControls(i)">
+                                    (onValueChanged)="checkAddressControls(i)"
+                                    (onCustomItemCreating)="onCustomStateCreate($event, i)">
                                 </dx-select-box>
                             </div>
                             <div class="field addr padding-right" style="padding-bottom: 10px;">
@@ -409,7 +411,7 @@
                                 </dx-select-box>
                             </div>
                         </div>
-                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}">
+                        <div class="add-new-button" [ngClass]="{ disabled: !addButtonVisible['addresses'] }">
                             <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
@@ -16,7 +16,7 @@ import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { AppConsts } from '@shared/AppConsts';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 export interface Country {
@@ -28,7 +28,7 @@ export interface Country {
     templateUrl: './credit-card.component.html',
     styleUrls: ['./credit-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ GooglePlaceHelper ]
+    providers: [ GooglePlaceService ]
 })
 export class CreditCardComponent implements OnInit {
     @Output() onSubmit: EventEmitter<BankCardDataModel> = new EventEmitter<BankCardDataModel>();
@@ -59,11 +59,10 @@ export class CreditCardComponent implements OnInit {
     });
 
     constructor(
-        injector: Injector,
         private formBuilder: FormBuilder,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper,
+        private googlePlaceService: GooglePlaceService,
         public ls: AppLocalizationService
     ) {
         this.creditCardData.get('billingStateCode').disable();
@@ -83,7 +82,7 @@ export class CreditCardComponent implements OnInit {
 
     private filterStates(name: string): CountryStateDto[] {
         const filterValue = name.toLowerCase();
-        return this.states.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+        return this.states && this.states.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
     }
 
     updateCountryInfo(countryName: string) {
@@ -95,7 +94,7 @@ export class CreditCardComponent implements OnInit {
                 .pipe(
                     startWith<string | CountryStateDto>(''),
                     map(value => typeof value === 'string' ? value : value.name),
-                    map(name => name ? this.filterStates(name) : this.states.slice())
+                    map(name => name ? this.filterStates(name) : this.states && this.states.slice())
                 );
 
             this.countryCode = country.code;
@@ -111,8 +110,8 @@ export class CreditCardComponent implements OnInit {
                 this.creditCardData.controls.billingStateCode.setValue(state.code);
             }, 100);
         } else {
-            this.creditCardData.controls.billingState.setValue('');
-            this.creditCardData.controls.billingStateCode.setValue('');
+            this.creditCardData.controls.billingState.setValue({ code: null, name: stateName });
+            this.creditCardData.controls.billingStateCode.setValue(null);
         }
     }
 
@@ -130,9 +129,9 @@ export class CreditCardComponent implements OnInit {
             countryName = AppConsts.defaultCountryName;
 
         this.updateCountryInfo(countryName);
-        let state = this.googlePlaceHelper.getState(event.address_components);
-        this.getStates(() => this.updateStatesInfo(state));
-        this.creditCardData.controls.billingCity.setValue(this.googlePlaceHelper.getCity(event.address_components));
+        const stateName = this.googlePlaceService.getStateName(event.address_components);
+        this.getStates(() => this.updateStatesInfo(stateName));
+        this.creditCardData.controls.billingCity.setValue(this.googlePlaceService.getCity(event.address_components));
     }
 
     checkIfNumber(e) {
@@ -185,7 +184,7 @@ export class CreditCardComponent implements OnInit {
 
     getStates(callback: () => any): void {
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
+        this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
                 if (callback) callback();
@@ -212,7 +211,7 @@ export class CreditCardComponent implements OnInit {
         this.countryCode = event.option.value.code;
         this.updateCountryInfo(event.option.value.name);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
+        this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
                 setTimeout(() => {
@@ -220,7 +219,7 @@ export class CreditCardComponent implements OnInit {
                         .pipe(
                             startWith<string | CountryStateDto>(''),
                             map(value => typeof value === 'string' ? value : value.name),
-                            map(name => name ? this.filterStates(name) : this.states.slice())
+                            map(name => name ? this.filterStates(name) : this.states && this.states.slice())
                         );
                 }, 0);
             });

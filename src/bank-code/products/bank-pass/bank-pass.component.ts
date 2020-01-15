@@ -62,7 +62,7 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
             'Email',
             'Phone',
             'CountryId',
-            'StateId',
+            'StateName',
             'BankCode',
             'LeadDate'
         ],
