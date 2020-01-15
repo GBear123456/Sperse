@@ -114,6 +114,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         { text: 'Affect on page items', mode: 'page' },
         { text: 'Affect all pages items', mode: 'allPages' }
     ];
+    formatting = AppConsts.formatting;
 
     constructor(
         injector: Injector,
