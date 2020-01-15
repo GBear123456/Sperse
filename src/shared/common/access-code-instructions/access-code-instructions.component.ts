@@ -23,14 +23,14 @@ export class AccessCodeInstructionsComponent {
     accessCode$: Observable<string> = this.profileService.accessCode$;
     trackingLink$: Observable<string> = this.accessCode$.pipe(
         map((accessCode: string) => {
-            return (environment.production
-                ? 'https://www.CrackMyCode.com/'
+            return (environment.releaseStage === 'production'
+                ? 'https://www.MyBankCode.com/'
                 : 'https://bankpass.bankcode.com/') + accessCode;
         })
     );
     affiliateLink$: Observable<string> = this.accessCode$.pipe(
         map((accessCode: string) => {
-            return (environment.production
+            return (environment.releaseStage === 'production'
                 ? 'https://www.CodebreakerTech.com'
                 : 'https://wp.bankcode.pro') + '/?ref=' + accessCode;
         })

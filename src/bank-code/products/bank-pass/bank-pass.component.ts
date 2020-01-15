@@ -1,15 +1,17 @@
 /** Core imports */
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    Renderer2,
-    ViewChild,
     Inject,
+    OnDestroy,
     OnInit,
-    OnDestroy
+    Renderer2,
+    ViewChild
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -27,13 +29,14 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 
 @Component({
     selector: 'bank-pass',
@@ -42,15 +45,15 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankPassComponent implements OnInit, OnDestroy {
+export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     dataIsLoading = true;
+    gridInitialized = false;
     totalCount: number;
     currentTabIndex = 0;
     searchValue: '';
     dataSourceURI = 'Lead';
-    gridPagerConfig = DataGridService.defaultGridPagerConfig;
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
@@ -92,6 +95,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         onChanged: () => {
             this.totalCount = this.dataSource.totalCount();
             this.dataIsLoading = false;
+            this.gridInitialized = true;
             this.changeDetectorRef.detectChanges();
         }
     });
@@ -112,53 +116,48 @@ export class BankPassComponent implements OnInit, OnDestroy {
             message: this.ls.l('AccessCodeIsNotValid')
         }
     ];
-    goalTypes = [
-        {
-            text: this.ls.l('Daily'),
-            number: 3,
-            currentNumber: 1,
-            innerColor: '#91bfdd',
-            outerColor: '#004a81'
-        },
-        {
-            text: this.ls.l('Weekly'),
-            number: 20,
-            currentNumber: 10,
-            innerColor: '#ce767f',
-            outerColor: '#ac1f22'
-        },
-        {
-            text: this.ls.l('Monthly'),
-            number: 90,
-            currentNumber: 70,
-            innerColor: '#ecd68a',
-            outerColor: '#f09e1e'
-        },
-        {
-            text: this.ls.l('Quarterly'),
-            number: 250,
-            currentNumber: 180,
-            innerColor: '#87c796',
-            outerColor: '#1b6634'
-        },
-        {
-            text: this.ls.l('Annual'),
-            number: 1000,
-            currentNumber: 718,
-            innerColor: '#c8c0e1',
-            outerColor: '#004a81'
-        },
-        {
-            text: this.ls.l('Lifetime'),
-            number: 25000,
-            currentNumber: 17651,
-            innerColor: '#ddbcdb',
-            outerColor: '#b142ab'
-        }
-    ];
+    goalTypes: GoalType[] = this.bankCodeService.goalTypes;
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
+    bankCodeBadges = this.bankCodeService.bankCodeBadges;
+    bankCodeLevel: number;
+    availableBankCodes$: Observable<{[bankCode: string]: number}> = this.bankCodeService.getAvailableBankCodes();
+    availableBankCodes: {[bankCode: string]: number};
+    bankCodeGroups = [
+        [
+            'BANK',
+            'BAKN',
+            'BNAK',
+            'BNKA',
+            'BKNA',
+            'BKAN'
+        ],
+        [
+            'ABNK',
+            'ABKN',
+            'ANBK',
+            'ANKB',
+            'AKNB',
+            'AKBN'
+        ],
+        [
+            'NABK',
+            'NAKB',
+            'NBAK',
+            'NBKA',
+            'NKBA',
+            'NKAB'
+        ],
+        [
+            'KANB',
+            'KABN',
+            'KNAB',
+            'KNBA',
+            'KBNA',
+            'KBAN'
+        ]
+    ];
 
     constructor(
         private oDataService: ODataService,
@@ -168,6 +167,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private appSession: AppSessionService,
         private lifecycleSubjectService: LifecycleSubjectsService,
         private memberSettingsService: MemberSettingsServiceProxy,
+        private httpClient: HttpClient,
+        public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
@@ -186,6 +187,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
                     this.renderer.removeClass(this.document.body, 'overflow-hidden');
                 }
             });
+        this.availableBankCodes$.subscribe((availableBankCodes) => {
+            this.availableBankCodes = availableBankCodes;
+            this.changeDetectorRef.detectChanges();
+        });
+        this.bankCodeService.bankCodeLevel$.subscribe((bankCodeLevel: number) => {
+            this.bankCodeLevel = bankCodeLevel;
+        });
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
@@ -223,6 +231,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         );
     }
 
+    isBankCodeActive(bankCode: string): boolean {
+        return !!(this.availableBankCodes && this.availableBankCodes[bankCode]);
+    }
+
     ngOnDestroy() {
         if (this.hasOverflowClass) {
             this.renderer.addClass(this.document.body, 'overflow-hidden');
@@ -230,8 +242,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         this.lifecycleSubjectService.destroy.next(null);
     }
 
-    onIframeLoad() {
-        this.dataIsLoading = false;
-        this.changeDetectorRef.detectChanges();
+    ngAfterViewInit() {
+        this.document.querySelector('iframe').addEventListener('load', () => {
+            this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 }

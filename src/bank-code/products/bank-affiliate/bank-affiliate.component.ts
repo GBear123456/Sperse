@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, AfterViewInit, ViewChild } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 
@@ -19,11 +19,10 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     styleUrls: ['./bank-affiliate.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankAffiliateComponent {
+export class BankAffiliateComponent implements AfterViewInit {
     dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate).pipe(
         tap((hasSubscription) => setTimeout(() => {
-            if (hasSubscription) this.dataIsLoading = false;
             this.changeDetectorRef.detectChanges();
         }))
     );
@@ -37,8 +36,10 @@ export class BankAffiliateComponent {
         @Inject(DOCUMENT) private document: any
     ) {}
 
-    onIframeLoad() {
-        this.dataIsLoading = false;
-        this.changeDetectorRef.detectChanges();
+    ngAfterViewInit() {
+        this.document.querySelector('iframe').addEventListener('load', () => {
+            this.dataIsLoading = false;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 }

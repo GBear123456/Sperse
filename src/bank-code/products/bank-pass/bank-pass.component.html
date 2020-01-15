@@ -29,27 +29,31 @@
                     <div class="achievements-content">
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
-                            <div class="letters">
-                                <img src="./assets/common/images/bank-code/B1.png">
-                                <img src="./assets/common/images/bank-code/A1.png">
-                                <img src="./assets/common/images/bank-code/N1.png">
-                                <img src="./assets/common/images/bank-code/K1.png">
+                            <div class="bank-code-groups">
+                                <ng-container *ngIf="availableBankCodes$ | async; else loading">
+                                    <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
+                                        <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png">
+                                        <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroup[i][0]) }">
+                                            {{ bankCodeService.bankCodeConfig[bankCodeGroup[i][0]].definition }}
+                                        </div>
+                                        <div>
+                                            <bank-code-letters *ngFor="let bankCode of bankCodeGroups[i]"
+                                                               [bankCode]="bankCode"
+                                                               [active]="isBankCodeActive(bankCode)">
+                                            </bank-code-letters>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-template #loading>
+                                    <loading-spinner></loading-spinner>
+                                </ng-template>
                             </div>
-                            <img src="./assets/common/images/bank-code/bank-codes.png" class="img-fluid">
                         </div>
                         <div class="collect-badges">
                             <h6>{{ ls.l('CollectAllBadges') }}</h6>
                             <div class="badges">
-                                <img src="./assets/common/images/bank-code/badges/L1-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L2-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L3-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L4-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L5-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L6-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L7-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L8-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L9-1.png">
-                                <img src="./assets/common/images/bank-code/badges/L10-0.png">
+                                <img *ngFor="let bankCodeBadge of bankCodeBadges; let i = index"
+                                     src="./assets/common/images/bank-code/badges/L{{i + 1}}-{{ (i + 1) <= bankCodeLevel ? '1' : '0' }}.png">
                             </div>
                         </div>
                     </div>
@@ -77,30 +81,28 @@
                         <div *ngFor="let goal of goalTypes" class="goal">
                             <div class="text">{{ goal.text + ' ' + ls.l('Goal') }}</div>
                             <div class="number">{{ goal.number }}</div>
-                            <ng-container *ngIf="(goal.currentNumber / goal.number * 100).toFixed(0) as percent">
-                                <circle-progress [percent]="+percent"
-                                                 [outerStrokeColor]="goal.outerColor"
-                                                 [innerStrokeColor]="goal.innerColor"
-                                                 [title]="percent + '%'"
-                                                 [radius]="42"
-                                                 [titleFontWeight]="900"
-                                                 [titleColor]="goal.innerColor"
-                                                 [animation]="false"
-                                                 [animateTitle]="false"
-                                                 [animationDuration]="0"
-                                                 titleFontSize="23px"
-                                                 subtitleFontSize="12px"
-                                                 [subtitleFontWeight]="700"
-                                                 [subtitleColor]="goal.innerColor"
-                                                 [subtitle]="goal.currentNumber">
-                                </circle-progress>
-                            </ng-container>
+                            <circle-progress [percent]="bankCodeService.getPercent(goal.currentNumber$, goal.number) | async"
+                                             [outerStrokeColor]="goal.outerColor"
+                                             [innerStrokeColor]="goal.innerColor"
+                                             [title]="bankCodeService.getPercentString(goal.currentNumber$, goal.number) | async"
+                                             [radius]="42"
+                                             [titleFontWeight]="900"
+                                             [titleColor]="goal.innerColor"
+                                             [animation]="false"
+                                             [animateTitle]="false"
+                                             [animationDuration]="0"
+                                             titleFontSize="23px"
+                                             subtitleFontSize="12px"
+                                             [subtitleFontWeight]="700"
+                                             [subtitleColor]="goal.innerColor"
+                                             [subtitle]="goal.currentNumber$ | async">
+                            </circle-progress>
                         </div>
                     </div>
                 </div>
             </mat-tab>
             <mat-tab [label]="ls.l('Leads').toUpperCase()">
-                <div *ngIf="currentTabIndex == 1">
+                <div *ngIf="currentTabIndex == 1 || gridInitialized">
                     <div class="grid" [hidden]="totalCount <= 0">
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
@@ -109,12 +111,16 @@
                                       [dataSource]="dataSource"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
-                                      [loadPanel]="{ enabled: false }"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
-                                      [pager]="gridPagerConfig"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-paging [pageSize]="10"></dxo-paging>
+                            <dxo-pager
+                                [showPageSizeSelector]="true"
+                                [allowedPageSizes]="[10, 20, 50]"
+                                [visible]="true"
+                                [showInfo]="true">
+                            </dxo-pager>
                             <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                                         [width]="50" [allowExporting]="false"
                                         [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -152,7 +158,7 @@
     </section>
     <ng-template #noSubscription>
         <div class="iframe">
-            <iframe [src]="environmentLink$ | async" frameborder="0" (load)="onIframeLoad()"></iframe>
+            <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
         </div>
     </ng-template>
     <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
