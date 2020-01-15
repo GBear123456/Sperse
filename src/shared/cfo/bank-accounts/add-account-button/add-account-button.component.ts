@@ -33,10 +33,17 @@ export class AddAccountButtonComponent extends CFOComponentBase {
         if (!this.createAccountAvailable)
             return;
 
-        const accountConnectorDialog = this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
+        const accountConnectorDialog = this.dialog.open(AccountConnectorDialogComponent, {
+            ...AccountConnectorDialogComponent.defaultConfig,
+            ...{
+                data: {
+                    instanceType: this.instanceType,
+                    instanceId: this.instanceId
+                }
+            }
+        });
         accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
             this.onComplete.emit();
         });
     }
-
 }

@@ -8,16 +8,18 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { AccountConnectors } from '@shared/AppEnums';
+import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
+import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'account-connector-dialog',
     styleUrls: [ './qlink-icons.less', './account-connector-dialog.less' ],
     templateUrl: './account-connector-dialog.html',
+    providers: [SyncAccountServiceProxy],
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -36,6 +38,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     showBackButton = true;
 
     constructor(
+        private syncAccount: SyncAccountServiceProxy,
         private dialogRef: MatDialogRef<AccountConnectorDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: AccountConnectorDialogData
     ) {}
@@ -61,8 +64,45 @@ export class AccountConnectorDialogComponent implements OnInit {
             /** Decrease dialog sized to 0 (like hide) and open quovo iframe dialog instead,
              * setTimeout to avoid changed after check error */
             this.dialogRef.updateSize('0', '0');
+        } else if (connector === AccountConnectors.Plaid) {
+            if (window['Plaid'])
+                this.createPlaidHandler();
+            else
+              this.loadPlaidScript(() => this.createPlaidHandler());
         }
         this.selectedConnector = connector;
+    }
+
+    private loadPlaidScript(callback: () => void): void {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
+        script.addEventListener('load', callback);
+        document.head.appendChild(script);
+    }
+
+    createPlaidHandler() {
+        this.syncAccount.getPlaidConfig(this.data.instanceType, this.data.instanceId).subscribe(res => {
+            let handler = window['Plaid'].create({
+                clientName: res.clientName,
+                env: res.evn,
+                key: res.key,
+                product: res.product,
+                webhook: res.webhook,
+                onLoad: () => this.closeDialog(null),
+                onSuccess: (public_token, metadata) => {
+                    handler.exit();
+                    this.syncAccount.create(this.data.instanceType, this.data.instanceId, new CreateSyncAccountInput({
+                        isSyncBankAccountsEnabled: true,
+                        typeId: SyncTypeIds.Plaid,
+                        consumerKey: undefined,
+                        consumerSecret: undefined,
+                        publicToken: public_token
+                    })).subscribe();
+                }
+            });
+            handler.open();
+        });
     }
 
     closeDialog(e) {

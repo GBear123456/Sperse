@@ -197,7 +197,9 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
-                    connector: AccountConnectors.Quovo
+                    connector: AccountConnectors.Quovo,
+                    instanceType: this.cfoService.instanceType,
+                    instanceId: this.cfoService.instanceId
                 }
             }
         }).afterClosed().subscribe(e => {

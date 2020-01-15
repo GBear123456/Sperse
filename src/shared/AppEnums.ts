@@ -143,11 +143,13 @@ export enum ImportStatus {
 }
 
 export enum AccountConnectors {
+    Plaid = 'Plaid',
     Quovo = 'Quovo',
     Xero = 'Xero'
 }
 
 export enum SyncTypeIds {
+    Plaid = 'P',
     Quovo = 'Q',
     Xero = 'X'
 }
