@@ -53,7 +53,6 @@
                        (setAddress)="onAddressChanged($event)"
                        angularGooglePlace/>
             </div>
-
             <div>
                 <label>{{ls.l('Country')}}</label>
                 <dx-select-box
@@ -80,20 +79,20 @@
             <div>
                 <label>{{ls.l('State')}}</label>
                 <dx-select-box
-                    [dataSource]="states"
+                    [acceptCustomValue]="true"
+                    [dataSource]="getCountryStates() | async"
                     displayExpr="name"
                     valueExpr="name"
                     name="state"
                     [disabled]="!isEditAllowed"
                     [searchEnabled]="true"
-                    [(value)]="data.state"
-                    fieldTemplate="field">
+                    [(value)]="data.stateName"
+                    fieldTemplate="field"
+                    (onValueChanged)="stateChanged($event)"
+                    (onCustomItemCreating)="onCustomStateCreate($event)">
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
-                            <dx-text-box class="state"
-                                         [value]="data?.name"
-                                         [readOnly]="true">
-                            </dx-text-box>
+                            <dx-text-box class="state" [value]="data?.name"></dx-text-box>
                         </div>
                     </div>
                 </dx-select-box>
@@ -148,5 +147,7 @@
         <i class="delete fa fa-times" aria-hidden="true"></i>{{ls.l('Delete')}}
     </button>
     <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? ls.l('Update'): action}}</button>
+    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave()">
+        {{action == 'Edit' ? ls.l('Update'): action}}
+    </button>
 </mat-dialog-actions>

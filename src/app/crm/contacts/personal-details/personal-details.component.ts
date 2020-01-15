@@ -63,7 +63,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             map(countries => this.getSelectListFromObject(countries))
         )),
         drivingLicenseState: this._asyncPipe.transform(this._store$.pipe(
-            select(StatesStoreSelectors.getState, {countryCode: AppConsts.defaultCountry}),
+            select(StatesStoreSelectors.getCountryStates, { countryCode: AppConsts.defaultCountry }),
             map(states => this.getSelectListFromObject(states))
         )),
         gender: this.getGenderList(),

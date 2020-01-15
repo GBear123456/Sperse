@@ -1,13 +1,13 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 /** Application imports */
-import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { AppComponentBase } from 'shared/common/app-component-base';
+import { RootStore, StatesStoreSelectors } from '@root/store';
 import {
     BankCardInfoDto,
     CountryStateDto
@@ -15,14 +15,16 @@ import {
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
+import { StatesService } from '@root/store/states-store/states.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'payment-info',
     templateUrl: './payment-info.component.html',
     styleUrls: ['./payment-info.component.less']
 })
-export class PaymentInfoComponent extends AppComponentBase implements OnInit {
+export class PaymentInfoComponent {
     @Input() paymentAuthorizationRequired = true;
 
     validationGroup: any;
@@ -33,46 +35,47 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     countryCode = 'US';
     conditions = ConditionsType;
     public options = {
-        types: ['address'],
-        componentRestrictions: {
-            country: this.countryCode
-        }
+        types: ['address']
     };
 
     constructor(
-        injector: Injector,
         private store$: Store<RootStore.State>,
         private dialog: MatDialog,
-        private googlePlaceHelper: GooglePlaceHelper,
+        private googlePlaceService: GooglePlaceService,
+        private statesService: StatesService,
+        private ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService
-    ) {
-        super(injector);
-    }
-
-    ngOnInit() {
-        this.getStates();
-    }
+    ) {}
 
     initValidationGroup(event) {
         this.validationGroup = event.component;
     }
 
-    getStates(): void {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
-            .subscribe(result => {
-                if (result)
-                    this.states = result;
-            });
-    }
-
     onAddressChanged(event) {
         let number = event.address_components[0]['long_name'];
         let street = event.address_components[1]['long_name'];
-
         this.bankCard.billingAddress = number ? (number + ' ' + street) : street;
-        this.bankCard.billingStateCode = GooglePlaceHelper.getStateCode(event.address_components);
-        this.bankCard.billingCity = this.googlePlaceHelper.getCity(event.address_components);
+        this.bankCard.billingCity = this.googlePlaceService.getCity(event.address_components);
+        this.bankCard.billingStateCode = this.googlePlaceService.getStateCode(event.address_components);
+        this.bankCard.billingState = this.googlePlaceService.getStateName(event.address_components);
+        this.bankCard.billingCountryCode = GooglePlaceService.getCountryCode(event.address_components);
+        this.statesService.updateState(this.bankCard.billingCountryCode, this.bankCard.billingStateCode, this.bankCard.billingState);
+    }
+
+    getCountryStates(): Observable<CountryStateDto[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.bankCard.billingCountryCode })
+        );
+    }
+
+    onCustomStateCreate(e) {
+        this.bankCard.billingStateCode = null;
+        this.bankCard.billingState = e.text;
+        this.statesService.updateState(this.bankCard.billingCountryCode, e.text, e.text);
+        e.customItem = {
+            code: e.text,
+            name: e.text
+        };
     }
 
     validateExpirationDate = (options) => {

@@ -174,7 +174,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         this.states$  = this.offerDetails$.pipe(
             map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : 'US'),
             tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
-            switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
+            switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode})))
         );
         this.categoriesNames$ = this.offerDetails$.pipe(
             pluck('categories'),

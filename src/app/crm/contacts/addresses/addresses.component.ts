@@ -1,33 +1,38 @@
 /** Core imports */
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { filter, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import {
+    AddressUsageTypesStoreActions,
+    AddressUsageTypesStoreSelectors,
+    CountriesStoreActions,
+    CountriesStoreSelectors
+} from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactsService } from '../contacts.service';
 import {
-    ContactInfoDto,
-    ContactAddressServiceProxy,
     ContactAddressDto,
-    UpdateContactAddressInput,
-    CreateContactAddressInput,
+    ContactAddressServiceProxy,
     ContactInfoDetailsDto,
+    ContactInfoDto,
+    CountryDto,
+    CreateContactAddressInput,
     OrganizationContactServiceProxy,
-    CountryDto
+    UpdateContactAddressInput
 } from '@shared/service-proxies/service-proxies';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     selector: 'addresses',
@@ -36,7 +41,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         './addresses.component.less',
         './addresses.styles.less'
     ],
-    providers: [ DialogService, GooglePlaceHelper ]
+    providers: [ DialogService, GooglePlaceService ]
 })
 export class AddressesComponent implements OnInit {
     @Input() isCompany = false;
@@ -56,7 +61,8 @@ export class AddressesComponent implements OnInit {
     streetNumber: string;
     streetAddress: string;
     city: string;
-    state: string;
+    stateCode: string;
+    stateName: string;
     zip: string;
 
     isEditAllowed = false;
@@ -73,7 +79,8 @@ export class AddressesComponent implements OnInit {
         private organizationContactService: OrganizationContactServiceProxy,
         private dialogService: DialogService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper,
+        private googlePlaceService: GooglePlaceService,
+        private statesService: StatesService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
     ) {}
@@ -96,7 +103,7 @@ export class AddressesComponent implements OnInit {
     getAddressTypes() {
         return this.store$.pipe(
             select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
-            filter(types => !!types)
+            filter(Boolean)
         );
     }
 
@@ -105,7 +112,10 @@ export class AddressesComponent implements OnInit {
     }
 
     getCountries() {
-        return this.store$.pipe(select(CountriesStoreSelectors.getCountries), filter(countries => !!countries));
+        return this.store$.pipe(
+            select(CountriesStoreSelectors.getCountries),
+            filter(Boolean)
+        );
     }
 
     getDialogPosition(event) {
@@ -139,8 +149,8 @@ export class AddressesComponent implements OnInit {
 
     showAddressDialog(address, event, index) {
         let dialogData = _.pick(address || { isActive: true, isConfirmed: false }, 'id', 'city',
-            'comment', 'country', 'isActive', 'isConfirmed',
-            'state', 'streetAddress', 'usageTypeId', 'zip');
+            'comment', 'country', 'isActive', 'isConfirmed', 'stateId',
+            'stateName', 'streetAddress', 'usageTypeId', 'zip');
         dialogData.groupId = this.contactInfo.groupId;
         dialogData.contactId = this.contactInfoData && this.contactInfoData.contactId;
         dialogData.isCompany = this.isCompany;
@@ -172,7 +182,8 @@ export class AddressesComponent implements OnInit {
                 address.country = data.country;
                 address.isActive = data.isActive;
                 address.isConfirmed = data.isConfirmed;
-                address.state = data.state;
+                address.stateId = data.stateId;
+                address.stateName = data.stateName;
                 address.streetAddress = data.streetAddress;
                 address.comment = data.comment;
                 address.usageTypeId = data.usageTypeId;
@@ -242,7 +253,8 @@ export class AddressesComponent implements OnInit {
         this.streetNumber = '';
         this.streetAddress = '';
         this.city = '';
-        this.state = '';
+        this.stateCode = '';
+        this.stateName = '';
         this.zip = '';
     }
 
@@ -274,34 +286,37 @@ export class AddressesComponent implements OnInit {
                 countryId = country && country['code'];
             if (countryId) {
                 this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
-                this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryId }))
-                    .pipe(filter(states => !!states), first())
-                    .subscribe(states => {
-                        if (this.country && this.streetNumber && this.state &&
-                            this.streetAddress && this.city &&
-                            ((this.country != address.country) ||
-                                (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
-                                (this.city != address.city) ||
-                                (this.state != address.state))
-                        ) {
-                            let state = _.findWhere(states, {name: this.state});
-                            this.updateDataField(address, {
-                                id: address.id,
-                                contactId: this.contactInfoData.contactId,
-                                city: this.city,
-                                country: this.country,
-                                isActive: address.isActive,
-                                isConfirmed: address.isConfirmed,
-                                state: this.state,
-                                streetAddress: this.streetAddress + ' ' + this.streetNumber,
-                                comment: address.comment,
-                                usageTypeId: address.usageTypeId,
-                                countryId: countryId,
-                                stateId: state && state['code']
-                            });
-                            this.clearInplaceData();
-                        }
-                    });
+                this.store$.pipe(
+                    select(StatesStoreSelectors.getCountryStates, { countryCode: countryId }),
+                    filter(Boolean),
+                    first()
+                ).subscribe(() => {
+                    if (this.country && this.streetNumber && this.stateName &&
+                        this.streetAddress && this.city &&
+                        ((this.country != address.country) ||
+                            (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
+                            (this.city != address.city) ||
+                            (this.stateName != address.state))
+                    ) {
+                        this.updateDataField(address, {
+                            id: address.id,
+                            contactId: this.contactInfoData.contactId,
+                            city: this.city,
+                            country: this.country,
+                            isActive: address.isActive,
+                            isConfirmed: address.isConfirmed,
+                            streetAddress: this.streetAddress + ' ' + this.streetNumber,
+                            comment: address.comment,
+                            usageTypeId: address.usageTypeId,
+                            countryId: countryId,
+                            stateName: this.stateCode,
+                            stateId: this.stateName.length <= 3 && this.stateName !== this.stateCode
+                                ? this.stateCode
+                                : this.stateName
+                        });
+                        this.clearInplaceData();
+                    }
+                });
             }
             address.inplaceEdit = false;
         });
@@ -318,9 +333,12 @@ export class AddressesComponent implements OnInit {
     }
 
     addressChanged(address, event) {
+        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
+        this.stateCode = this.googlePlaceService.getStateCode(event.address_components);
+        this.stateName = this.googlePlaceService.getStateName(event.address_components);
+        this.statesService.updateState(countryCode, this.stateCode, this.stateName);
         this._latestFormatedAddress = address.autoComplete = event.formatted_address;
-        this.state = this.googlePlaceHelper.getState(event.address_components);
-        this.city = this.googlePlaceHelper.getCity(event.address_components);
+        this.city = this.googlePlaceService.getCity(event.address_components);
     }
 
     updateCountryInfo(countryName: string) {

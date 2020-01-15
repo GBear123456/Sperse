@@ -11,7 +11,7 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import * as statesActions from './actions';
 import { CountryStateDto, CountryServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getState, getLoadedTime } from './selectors';
+import { getCountryStates, getLoadedTime } from './selectors';
 import { StoreHelper } from '@root/store/store.helper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -27,7 +27,7 @@ export class StatesStoreEffects {
         mergeMap(action => {
             const payload$ = of(action.payload);
             /** Check if country states have been already loaded to the store */
-            const countryStates$ = this.store$.pipe(select(getState, { countryCode: action.payload }));
+            const countryStates$ = this.store$.pipe(select(getCountryStates, { countryCode: action.payload }));
             const loadedTime$ = this.store$.pipe(select(getLoadedTime, { countryCode: action.payload }));
             return zip(payload$, countryStates$, loadedTime$);
         }),

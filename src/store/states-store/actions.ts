@@ -4,7 +4,8 @@ import { CountryStateDto } from 'shared/service-proxies/service-proxies';
 export enum ActionTypes {
     LOAD_REQUEST       = '[States] Load Request',
     LOAD_FAILURE       = '[States] Load Failure',
-    LOAD_SUCCESS       = '[States] Load Success'
+    LOAD_SUCCESS       = '[States] Load Success',
+    UPDATE             = '[States] Update',
 }
 
 export class LoadRequestAction implements Action {
@@ -25,4 +26,12 @@ export class LoadSuccessAction implements Action {
     }) {}
 }
 
-export type Actions = LoadRequestAction | LoadFailureAction | LoadSuccessAction;
+export class UpdateAction implements Action {
+    readonly type = ActionTypes.UPDATE;
+    constructor(public payload: {
+        countryCode: string,
+        state: CountryStateDto
+    }) {}
+}
+
+export type Actions = LoadRequestAction | LoadFailureAction | LoadSuccessAction | UpdateAction;

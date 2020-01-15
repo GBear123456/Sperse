@@ -315,6 +315,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
+                dataField: 'State'
+            },
+            {
+                area: 'filter',
                 dataField: 'Stage'
             },
             {

@@ -145,20 +145,19 @@
             <div>
                 <label>{{ls.l('State')}}</label>
                 <dx-select-box
-                    [dataSource]="states"
+                    [acceptCustomValue]="true"
+                    [dataSource]="getCountryStates() | async"
                     displayExpr="name"
                     [disabled]="data.viewMode"
                     valueExpr="code"
                     name="state"
                     [searchEnabled]="true"
                     [(value)]="data.stateId"
-                    fieldTemplate="field">
+                    fieldTemplate="field"
+                    (onCustomItemCreating)="onCustomStateCreate($event)">
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
-                            <dx-text-box class="state"
-                                         [value]="data?.name"
-                                         [readOnly]="true">
-                            </dx-text-box>
+                            <dx-text-box class="state" [value]="data?.name"></dx-text-box>
                         </div>
                     </div>
                 </dx-select-box>

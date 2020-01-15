@@ -1,16 +1,17 @@
 /** Core imports */
-import { Component, ViewChild, OnInit, Injector } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
 import { AngularGooglePlaceService } from 'angular-google-place';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ApplicationServiceProxy,
     CountryStateDto,
@@ -29,15 +30,17 @@ import { RegisterModel } from './register.model';
 import { v4 as UUID } from 'uuid';
 import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
 import { InputStatusesService } from '@shared/utils/input-statuses.service';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
+import { StatesService } from '@root/store/states-store/states.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-wizard-page',
     templateUrl: 'wizard-page.component.html',
     styleUrls: ['wizard-page.component.less'],
-    providers: [ ApplicationServiceProxy, GooglePlaceHelper, MemberServiceProxy, LoginService ]
+    providers: [ ApplicationServiceProxy, GooglePlaceService, MemberServiceProxy, LoginService ]
 })
-export class CreditWizardPageComponent extends AppComponentBase implements OnInit {
+export class CreditWizardPageComponent implements OnInit {
     @ViewChild(WizardComponent) mWizard: WizardComponent;
     @ViewChild(PaymentInfoComponent) paymentInfo: PaymentInfoComponent;
 
@@ -88,21 +91,22 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     public options = {
         types: ['address'],
         componentRestrictions: {
-            country: this.countryCode
+            country: [ 'US', 'CA' ]
         }
     };
 
     constructor(
-        injector: Injector,
         private data: PackageIdService,
         private memberService: MemberServiceProxy,
         private angularGooglePlaceService: AngularGooglePlaceService,
-        private googlePlaceHelper: GooglePlaceHelper,
+        private googlePlaceService: GooglePlaceService,
         private store$: Store<RootStore.State>,
+        private statesService: StatesService,
+        private router: Router,
+        public ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService,
         public loginService: LoginService
     ) {
-        super(injector);
         this.minAge = this.minDate.setFullYear(this.minDate.getFullYear() - 18);
         this.maxAge = this.maxDate.setFullYear(this.maxDate.getFullYear() - 99);
         this.model.registrationId = this.uniqueId;
@@ -112,7 +116,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         this.model.address.countryId = this.countryCode;
         this.model.trackingInfo = new TrackingInfo();
         this.model.trackingInfo.sourceCode = this.sourceCode;
-
         this.googleAutoComplete = Boolean(window['google']);
     }
 
@@ -158,7 +161,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                 });
             this.getStates();
         } else
-            this._router.navigate(['personal-finance']);
+            this.router.navigate(['personal-finance']);
 
         this.passwordComplexitySetting.requireDigit = abp.setting.getBoolean('Abp.Zero.UserManagement.PasswordComplexity.RequireDigit');
         this.passwordComplexitySetting.requireLowercase = abp.setting.getBoolean('Abp.Zero.UserManagement.PasswordComplexity.RequireLowercase');
@@ -169,7 +172,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
     getStates(): void {
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
+        this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }))
             .subscribe(result => {
                 if (result)
                     this.states = result;
@@ -197,8 +200,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     memberInfoSubmit(event) {
-        this.model.name = this.capitalize(this.model.name);
-        this.model.surname = this.capitalize(this.model.surname);
+        this.model.name = capitalize(this.model.name);
+        this.model.surname = capitalize(this.model.surname);
 
         let date = new Date(this.model.doB.toString()),
             month = date.getMonth() + 1,
@@ -274,9 +277,15 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
-        this.model.address.stateId = GooglePlaceHelper.getStateCode(event.address_components);
-        this.model.address.city = this.googlePlaceHelper.getCity(event.address_components);
+        this.model.address.stateId = this.googlePlaceService.getStateCode(event.address_components);
+        this.model.address.state = this.googlePlaceService.getStateName(event.address_components);
+        this.model.address.city = this.googlePlaceService.getCity(event.address_components);
         this.model.address.streetAddress = this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
+        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
+        if (this.countryCode !== countryCode) {
+            this.model.address.countryId = this.countryCode = countryCode;
+            this.getStates();
+        }
     }
 
     updateCountryInfo(countryName: string) {
@@ -290,7 +299,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
         this.memberService.submitMemberInfo(this.convertToMemberInfo(this.model))
             .pipe(finalize(() => { event.component.option('disabled', false); }))
-            .subscribe(result => {
+            .subscribe(()  => {
                 if (this.isExistingUser) {
                     this.model.password = 'stub';
                     this.registerMemberSubmit();
@@ -311,7 +320,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                     this.loginService.authenticate(() => this.finalizeRegistering(), AppConsts.appBaseUrl + '/personal-finance');
                 } else {
                     this.finalizeRegistering();
-                    this._router.navigate(['personal-finance/credit-reports']);
+                    this.router.navigate(['personal-finance/credit-reports']);
                 }
             }, () => {
                 if (this.isExistingUser)
@@ -357,8 +366,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     validateDateBirth(event) {
-        var event = event.event,
-            value = event.target.value + event.key;
+        event = event.event;
+        let value = event.target.value + event.key;
 
         if (['ArrowRight', 'ArrowLeft', 'Backspace', 'Delete', 'Tab'].indexOf(event.key) >= 0)
             return;
@@ -381,7 +390,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
     toggleShowPassword(event) {
         this.showPassword = !this.showPassword;
-        event.currentTarget.text = this.l((this.showPassword ? 'Hide' : 'Show') + 'Password');
+        event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show') + 'Password');
     }
 
     UpdatePasswordStrength(newPassword) {
