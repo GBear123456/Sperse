@@ -1,10 +1,10 @@
 /** Core imports */
-import { Component, Directive, Injector, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Directive, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
-import { zip } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from 'shared/AppConsts';
@@ -35,11 +35,9 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     currentDate = new Date();
-    BCRMLink: string;
     memberAreaLinks: MemberAreaLink[] = this.getMemberAreaLinks();
 
     constructor(
-        injector: Injector,
         private layoutService: BankCodeLayoutService,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
@@ -60,18 +58,15 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             });
         if (this.appSession.user) {
             zip(
-                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
-                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
-            ).subscribe((subcriptions: boolean[]) => {
-                this.BCRMLink = subcriptions.some(Boolean)
-                    ? '../app/crm'
-                    : './products/bank-pass';
-                this.memberAreaLinks = this.getMemberAreaLinks();
+                this.getBCRMLink(),
+                this.showResourcesLink()
+            ).subscribe(([bcrmLink, showResourcesLink]: [string, boolean]) => {
+                this.memberAreaLinks = this.getMemberAreaLinks(showResourcesLink, bcrmLink);
             });
         }
     }
 
-    private getMemberAreaLinks() {
+    private getMemberAreaLinks(showResourcesLink?: boolean, bcrmLink?: string) {
         return [
             {
                 name: this.ls.l('Home'),
@@ -115,22 +110,44 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     }*/
                 ]
             },
-/*
             {
                 name: this.ls.l('BankCode_Resources'),
-                routerUrl: 'resources'
+                routerUrl: 'resources',
+                hidden: !showResourcesLink
             },
-*/
             {
                 name: this.ls.l('BankCode_Events'),
                 routerUrl: 'events'
             },
             {
                 name: this.ls.l('BankCode_BCRM'),
-                routerUrl: this.BCRMLink,
-                hidden: !this.BCRMLink
+                routerUrl: bcrmLink,
+                hidden: !bcrmLink
             }
         ];
+    }
+
+    private getBCRMLink(): Observable<string> {
+        return zip(
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
+        ).pipe(
+            map((subcriptions: boolean[]) => {
+                return subcriptions.some(Boolean) ? '../app/crm' : './products/bank-pass';
+            })
+        );
+    }
+
+    /**
+     * Show resources link if one of two subscription is available
+     */
+    private showResourcesLink(): Observable<boolean> {
+        return zip(
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer)
+        ).pipe(
+            map((subscriptions: boolean[]) => subscriptions.some(Boolean))
+        );
     }
 
     logoClick() {

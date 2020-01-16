@@ -21,7 +21,7 @@
             </dxo-selection>
 
             <dxi-column [caption]="l('Name')" cellTemplate="nameCell"></dxi-column>
-            <dxi-column dataField="State" [caption]="l('State')"></dxi-column>
+            <dxi-column dataField="State" [caption]="l('State')" calculateSortValue="StateCode"></dxi-column>
             <dxi-column dataField="Email" [caption]="l('Email')"></dxi-column>
             <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')"></dxi-column>
             <dxi-column dataField="Date" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
