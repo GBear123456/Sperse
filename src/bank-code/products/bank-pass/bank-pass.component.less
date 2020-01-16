@@ -335,13 +335,14 @@
         right: 39px;
         align-items: center;
         width: calc(100% - 438px);
-        justify-content: space-between;
-        flex-wrap: wrap;
+        justify-content: flex-end;
         z-index: 1;
         
         .search {
             width: 263px;
-            
+            position: absolute;
+            left: 0;
+            right: 320px;
             /deep/ .dx-textbox {
                 border: none;
                 @media all and (min-width: 1400px) {
@@ -397,6 +398,10 @@
                     }
                 }
 
+            }
+
+            @media (max-width: 1360px) {
+                position: static;
             }
         }
 
@@ -466,11 +471,11 @@
 
     #gridContainer {
         height: calc(~"100vh - 146px");
-        
+
         @media all and (max-width:  800px) {
             height: calc(~"100vh - 160px");
         }
-        
+
         @media all and (max-width: 540px) {
             height: calc(~"100vh - 244px");
         }
@@ -493,7 +498,7 @@
                 color: #000;
             }
         }
-        
+
         @media (min-width: 768px) {
             padding: 35px 39px 0;
         }
@@ -506,7 +511,7 @@
     /deep/ #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
         padding: 4px 5px 5px;
     }
-    
+
     app-no-data {
         height: calc(~"100vh - 146px") !important;
     }
