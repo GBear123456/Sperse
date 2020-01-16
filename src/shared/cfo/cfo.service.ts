@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import capitalize from 'lodash/capitalize';
 
@@ -22,8 +22,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
-    instanceChanged: Subject<InstanceModel> = new Subject<InstanceModel>();
-    instanceChanged$: Observable<InstanceModel> = this.instanceChanged.asObservable();
+    instance: ReplaySubject<InstanceModel> = new ReplaySubject<InstanceModel>(1);
+    instance$: Observable<InstanceModel> = this.instance.asObservable();
     instanceStatus$: Observable<boolean>;
     constructor(
         private router: Router,
@@ -64,7 +64,7 @@ export class CFOService extends CFOServiceBase {
                         this.updateMenuItems();
             }
         });
-        this.instanceChanged$.subscribe((instance) => {
+        this.instance$.subscribe((instance) => {
             if (instance) {
                 this.instanceType = instance.instanceType;
                 this.instanceId = instance.instanceId;
@@ -84,7 +84,7 @@ export class CFOService extends CFOServiceBase {
         if (changed) {
             this.instanceId = instanceId;
             this.instanceType = InstanceType[instanceType];
-            this.instanceChanged.next({
+            this.instance.next({
                 instanceType: this.instanceType,
                 instanceId: this.instanceId
             });

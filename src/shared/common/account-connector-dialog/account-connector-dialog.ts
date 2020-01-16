@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     Component,
     ChangeDetectionStrategy,
@@ -8,12 +9,19 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
+
+/** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { filter, first, switchMap } from 'rxjs/operators';
+
+/** Application imports */
+import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Component({
     selector: 'account-connector-dialog',
@@ -40,6 +48,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     constructor(
         private syncAccount: SyncAccountServiceProxy,
         private dialogRef: MatDialogRef<AccountConnectorDialogComponent>,
+        private cfoService: CFOService,
         @Inject(MAT_DIALOG_DATA) public data: AccountConnectorDialogData
     ) {}
 
@@ -82,7 +91,11 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     createPlaidHandler() {
-        this.syncAccount.getPlaidConfig(this.data.instanceType, this.data.instanceId).subscribe(res => {
+        this.cfoService.instance$.pipe(
+            filter(Boolean),
+            first(),
+            switchMap((instance: InstanceModel) => this.syncAccount.getPlaidConfig(instance.instanceType, instance.instanceId))
+        ).subscribe(res => {
             let handler = window['Plaid'].create({
                 clientName: res.clientName,
                 env: res.evn,

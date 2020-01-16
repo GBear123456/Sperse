@@ -12,14 +12,14 @@ export class UserOnlyCFOService extends CFOServiceBase {
     set instanceType(val: InstanceType) { }
 
     constructor(
-        private _myFinancesService: MyFinancesServiceProxy
+        private myFinancesService: MyFinancesServiceProxy
     ) {
         super();
 
         this.hasStaticInstance = true;
         this.isForUser = true;
 
-        this.instanceChanged.next({
+        this.instance.next({
             instanceType: this.instanceType,
             instanceId: this.instanceId
         });
@@ -27,7 +27,7 @@ export class UserOnlyCFOService extends CFOServiceBase {
     }
 
     instanceChangeProcess(invalidateServerCache: boolean = false) {
-        return this._myFinancesService.getUserInstanceStatus().pipe(map(data => {
+        return this.myFinancesService.getUserInstanceStatus().pipe(map(data => {
             const statusActive = data.status == InstanceStatus.Active;
             this.statusActive.next(statusActive);
             this.initialized = statusActive;

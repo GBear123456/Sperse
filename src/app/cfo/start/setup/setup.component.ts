@@ -59,11 +59,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
             return;
 
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
-            data: { 
-                loadingContainerElement: this.setupContainerElement,
-                instanceType: this.instanceType,
-                instanceId: this.instanceId
-            }
+            data: { loadingContainerElement: this.setupContainerElement }
         }};
 
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(() => {
