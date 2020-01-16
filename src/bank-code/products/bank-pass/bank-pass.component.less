@@ -331,9 +331,8 @@
     .header {
         display: flex;
         position: absolute;
-        top: 1px;
+        top: 32px;
         right: 39px;
-        flex-direction: row-reverse;
         align-items: center;
         width: calc(100% - 438px);
         justify-content: space-between;
@@ -441,19 +440,24 @@
             }
         }
 
-        @media (max-width: 768px) {
-            position: static;
-            width: 100%;
-            justify-content: center;
+        @media (max-width: 1200px) {
+            justify-content: flex-end;
+            flex-direction: column-reverse;
+            top: 0;
+            align-items: flex-end;
             .search,
             .access-code {
                 margin: 5px;
             }
         }
 
-        @media (min-width: 1350px) {
-            top: 32px;
-            flex-direction: row;
+        @media (max-width: 767px) {
+            position: static;
+            align-items: center;
+            width: 100%;
+        }
+
+        @media (min-width: 1200px) {
             .search {
                 margin: auto;
             }
@@ -491,6 +495,10 @@
         }
         
         @media (min-width: 768px) {
+            padding: 35px 39px 0;
+        }
+
+        @media (min-width: 1200px) {
             padding: 28px 39px 0;
         }
     }

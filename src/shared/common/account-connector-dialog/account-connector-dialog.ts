@@ -23,7 +23,6 @@ import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service
 import { GetSetupAccountsLinkOutput, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Component({
     selector: 'account-connector-dialog',
