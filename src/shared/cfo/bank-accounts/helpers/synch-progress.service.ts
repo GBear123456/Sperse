@@ -131,7 +131,7 @@ export class SynchProgressService {
             return of(false);
 
         this.appHttpConfiguration.avoidErrorHandling = true;
-        const syncProgress = this.syncServiceProxy.getSyncProgress(
+        const syncProgress$ = this.syncServiceProxy.getSyncProgress(
             InstanceType[this.cfoService.instanceType],
             this.cfoService.instanceId
         ).pipe(
@@ -143,8 +143,8 @@ export class SynchProgressService {
             publishReplay(),
             refCount()
         );
-        this.getSyncProgressSubscription = syncProgress.subscribe();
-        return syncProgress;
+        this.getSyncProgressSubscription = syncProgress$.subscribe();
+        return syncProgress$;
     }
 
     private subscribeToProgress() {
