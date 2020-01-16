@@ -23,6 +23,13 @@ export class AccountConnectorChooserComponent extends AppComponentBase implement
     @Output() onConnectorChosen: EventEmitter<AccountConnectors> = new EventEmitter<AccountConnectors>();
     selectedConnector: AccountConnector;
     connectors: AccountConnector[];
+    xeroConnector = {
+        name: AccountConnectors.Xero,
+        iconName: 'xero-connector',
+        title: this.l('XeroConnectorTitle'),
+        description: this.l('XeroConnectorDescription'),
+        disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Xero))
+    };
     constructor(
         injector: Injector,
         private dialogRef: MatDialogRef<AccountConnectorChooserComponent>
@@ -44,18 +51,19 @@ export class AccountConnectorChooserComponent extends AppComponentBase implement
                 iconName: 'quovo-connector',
                 title: this.l('QuovoConnectorTitle'),
                 description: this.l('QuovoConnectorDescription'),
-                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
+                disabled: false
+                // disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
             },
             {
-                name: AccountConnectors.Xero,
+                name: AccountConnectors.XeroOAuth2,
                 iconName: 'xero-connector',
                 title: this.l('XeroConnectorTitle'),
                 description: this.l('XeroConnectorDescription'),
-                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Xero))
+                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.XeroOAuth2))
             }
         ];
         /** Select quovo by default */
-        this.selectConnector(this.connectors[0]);
+        this.selectConnector(this.connectors[1]);
     }
 
     selectConnector(connector: AccountConnector, next = false) {

@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     Component,
     ChangeDetectionStrategy,
@@ -8,12 +9,21 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
+
+/** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { filter, first } from 'rxjs/operators';
+
+/** Application imports */
+import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
+import { GetSetupAccountsLinkOutput, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { CFOService } from '@shared/cfo/cfo.service';
+
 
 @Component({
     selector: 'account-connector-dialog',
@@ -36,10 +46,14 @@ export class AccountConnectorDialogComponent implements OnInit {
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
     showBackButton = true;
+    setupAccountWindow: any;
 
     constructor(
         private syncAccount: SyncAccountServiceProxy,
         private dialogRef: MatDialogRef<AccountConnectorDialogComponent>,
+        private syncServiceProxy: SyncServiceProxy,
+        private syncProgressService: SynchProgressService,
+        private cfoService: CFOService,
         @Inject(MAT_DIALOG_DATA) public data: AccountConnectorDialogData
     ) {}
 
@@ -69,8 +83,48 @@ export class AccountConnectorDialogComponent implements OnInit {
                 this.createPlaidHandler();
             else
               this.loadPlaidScript(() => this.createPlaidHandler());
+        } else if (connector === AccountConnectors.XeroOAuth2) {
+            this.dialogRef.close();
+            this.getSetupAccountLink();
         }
         this.selectedConnector = connector;
+    }
+
+    getSetupAccountLink() {
+        this.syncServiceProxy.getSetupAccountsLink(
+            <any>this.cfoService.instanceType,
+            this.cfoService.instanceId,
+            SyncTypeIds.XeroOAuth2,
+            null,
+            null
+        ).subscribe((result: GetSetupAccountsLinkOutput) => {
+            this.setupAccountWindow = window.open(
+                result.setupAccountsLink,
+                '_blank',
+                'location=yes,height=680,width=640,scrollbars=yes,status=yes'
+            );
+
+            let interval = setInterval(() => {
+                if (this.setupAccountWindow.closed) {
+                    clearInterval(interval);
+                    this.complete();
+                }
+            }, 2000);
+        });
+
+        let interval = setInterval(() => {
+            this.syncProgressService.runGetStatus();
+        }, 5000);
+
+        this.cfoService.initialized$
+            .pipe(
+                filter(Boolean),
+                first()
+            )
+            .subscribe(() => {
+                clearInterval(interval);
+                this.syncProgressService.startSynchronization(true, false, 'all');
+            });
     }
 
     private loadPlaidScript(callback: () => void): void {
