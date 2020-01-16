@@ -123,7 +123,7 @@ export class BankAccountsService {
         private cfoPreferencesService: CfoPreferencesService,
         private ls: AppLocalizationService
     ) {
-        this.cfoService.instanceChanged$.subscribe((instance: InstanceModel) => {
+        this.cfoService.instance$.subscribe((instance: InstanceModel) => {
             const instanceText = instance.instanceId || instance.instanceType;
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceText}`;
         });

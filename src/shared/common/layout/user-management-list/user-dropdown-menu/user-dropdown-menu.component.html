@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div *ngIf="hasBankCodeFeature && bankCode" class="bank-code-section">
-                    <div>{{ bankCodeService.getBankCodeDefinition(bankCode[0]) }}</div>
+                    <div>{{ bankCodeService.bankCodeConfig[bankCode[0]].definition }}</div>
                     <a [href]="'https://www.crackmycode.com/ProfileReportFiles/' + bankCode + 'ProfileReport.pdf'"
                        target="_blank"
                        download>{{ ls.l('GetReport') }}</a>

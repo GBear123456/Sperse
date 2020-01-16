@@ -120,7 +120,7 @@ export class SynchProgressService {
         }));
     }
 
-    private runGetStatus() {
+    public runGetStatus() {
         if (!this.cfoService.hasTransactions) {
             this.cfoService.instanceChangeProcess(true).subscribe();
         }

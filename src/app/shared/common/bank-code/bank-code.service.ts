@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { map, publishReplay, refCount } from 'rxjs/operators';
+import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';
 
@@ -20,7 +20,9 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 @Injectable()
 export class BankCodeService {
     bankCodeBadges: number[] = [ 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000 ];
-    bankCodeClientsCount$: Observable<number> = this.getClientsBankCodesTotalCount();
+    bankCodeClientsCount$: Observable<number> = this.getClientsBankCodesTotalCount().pipe(
+        startWith(0)
+    );
     bankCodeLevel$: Observable<number> = this.bankCodeClientsCount$.pipe(
         map((currentBankCodeClientsCount: number) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
             return currentBankCodeClientsCount <= bankCodeBadgeCount;
@@ -173,7 +175,9 @@ export class BankCodeService {
         if (time) {
             filter = this.getFilterFromTime(time);
         }
-        return this.getClientsBankCodesTotalCount(filter);
+        return this.getClientsBankCodesTotalCount(filter).pipe(
+            startWith('')
+        );
     }
 
     getPercent(number$: Observable<number>, total: number): Observable<number> {
@@ -184,6 +188,7 @@ export class BankCodeService {
 
     getPercentString(number: Observable<number>, total: number): Observable<string> {
         return this.getPercent(number, total).pipe(
+            startWith(''),
             map((percent: number) => percent + '%')
         );
     }
