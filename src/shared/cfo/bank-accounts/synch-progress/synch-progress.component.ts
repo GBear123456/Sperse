@@ -100,7 +100,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     activate() {
-        this.syncProgressService.startSynchronization();
+        this.syncProgressService.runGetStatus();
         this.syncProgressService.syncData$.pipe(takeUntil(this.deactivate$)).subscribe(syncData => {
             this.syncData = syncData;
         });

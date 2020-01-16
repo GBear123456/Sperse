@@ -61,8 +61,10 @@ export class CFOService extends CFOServiceBase {
                         this.instanceType = InstanceType.User;
                         this.hasStaticInstance = true;
                         this.instanceChangeProcess().subscribe();
-                    } else
+                    } else {
+                        this.statusActive.next(true);
                         this.updateMenuItems();
+                    }
             }
         });
         this.instance$.subscribe((instance) => {

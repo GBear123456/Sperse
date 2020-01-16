@@ -14,6 +14,7 @@ import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 /** Application imports */
 import { AccountConnectorDialogComponent } from './account-connector-dialog';
 import { AccountConnectorChooserComponent } from './account-connector-chooser/account-connector-chooser.component';
+import { PlaidLoginDirective } from './plaid-login/plaid-login.directive';
 import { QuovoLoginComponent } from './quovo-login/quovo-login.component';
 import { XeroLoginComponent } from './xero-login/xero-login.component';
 import { SyncDatePickerService } from './sync-date-picker/sync-date-picker.service';
@@ -36,6 +37,7 @@ import { XeroOauth2LoginComponent } from './xero-oauth2-login/xero-oauth2-login.
         AccountConnectorDialogComponent,
         AccountConnectorChooserComponent,
         XeroLoginComponent,
+        PlaidLoginDirective,
         QuovoLoginComponent,
         XeroOauth2LoginComponent
     ],

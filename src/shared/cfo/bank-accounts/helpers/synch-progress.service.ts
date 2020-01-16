@@ -126,7 +126,7 @@ export class SynchProgressService {
         }
     }
 
-    private runSynchProgress(): Observable<SyncProgressOutput | boolean> {
+    public runSynchProgress(): Observable<SyncProgressOutput | boolean> {
         if (this.cfoService.isForUser)
             return of(false);
 
