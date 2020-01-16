@@ -122,7 +122,7 @@ export class AccountConnectorDialogComponent implements OnInit {
             )
             .subscribe(() => {
                 clearInterval(interval);
-                this.syncProgressService.startSynchronization(true, false, 'all');
+                this.syncProgressService.startSynchronization(true, false);
             });
     }
 
@@ -156,9 +156,7 @@ export class AccountConnectorDialogComponent implements OnInit {
                         consumerKey: undefined,
                         consumerSecret: undefined,
                         publicToken: public_token
-                    })).subscribe(() => {
-                        this.syncProgressService.startSynchronization(true, true, 'all');
-                    });
+                    })).subscribe(() => this.syncProgressService.startSynchronization(true, false));
                 }
             });
             handler.open();
