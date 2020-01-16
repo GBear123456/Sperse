@@ -81,7 +81,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'phone',
         'revenue',
         'countryName',
-        'countryCode'
+        'countryCode',
+        'stateCode'
     ];
     private similarFieldsIndex: any = {};
     private countries: CountryDto[];
@@ -749,6 +750,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return value.trim().length > 3;
         else if (key == 'countryCode')
             return value.trim().length == 2;
+        else if (key == 'stateCode')
+            return value.trim().length >= 2 && 
+                value.trim().length <= 3;
         else
             return !value || AppConsts.regexPatterns[key].test(value);
     }

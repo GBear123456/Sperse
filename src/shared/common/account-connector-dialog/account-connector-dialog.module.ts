@@ -18,6 +18,7 @@ import { QuovoLoginComponent } from './quovo-login/quovo-login.component';
 import { XeroLoginComponent } from './xero-login/xero-login.component';
 import { SyncDatePickerService } from './sync-date-picker/sync-date-picker.service';
 import { SyncDatePickerComponent } from './sync-date-picker/sync-date-picker.component';
+import { XeroOauth2LoginComponent } from './xero-oauth2-login/xero-oauth2-login.component';
 
 @NgModule({
     imports: [
@@ -35,7 +36,8 @@ import { SyncDatePickerComponent } from './sync-date-picker/sync-date-picker.com
         AccountConnectorDialogComponent,
         AccountConnectorChooserComponent,
         XeroLoginComponent,
-        QuovoLoginComponent
+        QuovoLoginComponent,
+        XeroOauth2LoginComponent
     ],
     exports: [
         SyncDatePickerComponent,
