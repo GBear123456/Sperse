@@ -107,7 +107,6 @@ export class AccountConnectorDialogComponent implements OnInit {
             let interval = setInterval(() => {
                 if (this.setupAccountWindow.closed) {
                     clearInterval(interval);
-                    this.complete();
                 }
             }, 2000);
         });
@@ -136,10 +135,10 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     createPlaidHandler() {
-        this.cfoService.instance$.pipe(
+        this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap((instance: InstanceModel) => this.syncAccount.getPlaidConfig(instance.instanceType, instance.instanceId))
+            switchMap(() => this.syncAccount.getPlaidConfig(this.cfoService.instanceType, this.cfoService.instanceId))
         ).subscribe(res => {
             let handler = window['Plaid'].create({
                 clientName: res.clientName,
@@ -149,14 +148,17 @@ export class AccountConnectorDialogComponent implements OnInit {
                 webhook: res.webhook,
                 onLoad: () => this.closeDialog(null),
                 onSuccess: (public_token, metadata) => {
+                    this.complete();
                     handler.exit();
-                    this.syncAccount.create(this.data.instanceType, this.data.instanceId, new CreateSyncAccountInput({
+                    this.syncAccount.create(this.cfoService.instanceType, this.cfoService.instanceId, new CreateSyncAccountInput({
                         isSyncBankAccountsEnabled: true,
                         typeId: SyncTypeIds.Plaid,
                         consumerKey: undefined,
                         consumerSecret: undefined,
                         publicToken: public_token
-                    })).subscribe();
+                    })).subscribe(() => {
+                        this.syncProgressService.startSynchronization(true, true, 'all');
+                    });
                 }
             });
             handler.open();

@@ -37,6 +37,7 @@ export class CFOService extends CFOServiceBase {
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
+        this.statusActive$ = this.statusActive.asObservable();
         appService.subscribeModuleChange(config => {
             switch (config['code']) {
                 case 'CFO':

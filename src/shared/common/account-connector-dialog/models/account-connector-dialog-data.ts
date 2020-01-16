@@ -8,6 +8,9 @@ export interface AccountConnectorDialogData {
     config: XeroComponentConfig | QuovoComponentConfig;
     disabledConnectors?: AccountConnectors[];
     showBackButton?: boolean;
+    operationType?: 'add' | 'update';
+    overwriteCurrentCategoryTree?: boolean;
+    loadingContainerElement?: Element;
     instanceType?: InstanceType;
     instanceId?: number;
 }
