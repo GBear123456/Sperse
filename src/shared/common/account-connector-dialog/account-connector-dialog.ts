@@ -19,7 +19,6 @@ import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
-import { XeroOauth2LoginComponent } from '@shared/common/account-connector-dialog/xero-oauth2-login/xero-oauth2-login.component';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -41,7 +40,6 @@ export class AccountConnectorDialogComponent implements OnInit {
     };
     @ViewChild(QuovoLoginComponent) quovoLogin: QuovoLoginComponent;
     @ViewChild(XeroLoginComponent) xeroLogin: XeroLoginComponent;
-    @ViewChild(XeroOauth2LoginComponent) xeroOauth2Login: XeroOauth2LoginComponent;
     @Output() onComplete: EventEmitter<null> = new EventEmitter<null>();
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
@@ -83,7 +81,6 @@ export class AccountConnectorDialogComponent implements OnInit {
               this.loadPlaidScript(() => this.createPlaidHandler());
         } else if (connector === AccountConnectors.XeroOAuth2) {
             this.dialogRef.close();
-            this.xeroOauth2Login.getSetupAccountLink();
         }
         this.selectedConnector = connector;
     }

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { filter, first } from 'rxjs/operators';
@@ -14,14 +14,26 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
     selector: 'xero-oauth2-login',
     template: ``
 })
-export class XeroOauth2LoginComponent {
-    setupAccountWindow: any;
-
+export class XeroOauth2LoginComponent implements OnInit {
     constructor(
         private syncServiceProxy: SyncServiceProxy,
         private syncProgressService: SynchProgressService,
         private cfoService: CFOService
-    ) {
+    ) {}
+
+    ngOnInit() {
+        this.getSetupAccountLink();
+        let interval = setInterval(() => {
+            this.syncProgressService.runGetStatus();
+        }, 5000);
+
+        this.cfoService.initialized$.pipe(
+            filter(Boolean),
+            first()
+        ).subscribe(() => {
+            clearInterval(interval);
+            this.syncProgressService.startSynchronization(true, false);
+        });
     }
 
     getSetupAccountLink() {
@@ -32,31 +44,17 @@ export class XeroOauth2LoginComponent {
             null,
             null
         ).subscribe((result: GetSetupAccountsLinkOutput) => {
-            this.setupAccountWindow = window.open(
+            const setupAccountWindow = window.open(
                 result.setupAccountsLink,
                 '_blank',
                 'location=yes,height=680,width=640,scrollbars=yes,status=yes'
             );
 
             let interval = setInterval(() => {
-                if (this.setupAccountWindow.closed) {
+                if (setupAccountWindow.closed) {
                     clearInterval(interval);
                 }
             }, 2000);
         });
-
-        let interval = setInterval(() => {
-            this.syncProgressService.runGetStatus();
-        }, 5000);
-
-        this.cfoService.initialized$
-            .pipe(
-                filter(Boolean),
-                first()
-            )
-            .subscribe(() => {
-                clearInterval(interval);
-                this.syncProgressService.startSynchronization(true, false);
-            });
     }
 }
