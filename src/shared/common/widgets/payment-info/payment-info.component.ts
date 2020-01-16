@@ -43,7 +43,7 @@ export class PaymentInfoComponent {
         private dialog: MatDialog,
         private googlePlaceService: GooglePlaceService,
         private statesService: StatesService,
-        private ls: AppLocalizationService,
+        public ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService
     ) {}
 
