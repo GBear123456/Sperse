@@ -74,7 +74,7 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
             .subscribe(() => {
@@ -94,7 +94,7 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
+    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
         const method = this.cfoService.isForUser && syncType == SyncTypeIds.Quovo
             ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
             : (
@@ -110,7 +110,7 @@ export class SynchProgressService {
                     this.cfoService.instanceId,
                     forcedSync,
                     newOnly,
-                    syncType === 'all' ? undefined : syncType
+                    syncType
                 )
             );
 
