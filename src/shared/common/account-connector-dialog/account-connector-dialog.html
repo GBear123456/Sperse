@@ -8,7 +8,7 @@
     </account-connector-chooser>
 
     <ng-template [ngIf]="selectedConnector === accountConnectors.Plaid">
-        <plaid-login 
+        <plaid-login
             (onComplete)="complete()"
             (onClose)="closeDialog($event)">
         </plaid-login>

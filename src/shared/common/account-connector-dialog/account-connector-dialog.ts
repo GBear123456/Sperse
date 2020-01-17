@@ -12,15 +12,12 @@ import {
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { filter, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
-import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
+import { AccountConnectors } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
-import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     selector: 'account-connector-dialog',
@@ -45,8 +42,6 @@ export class AccountConnectorDialogComponent implements OnInit {
 
     constructor(
         private dialogRef: MatDialogRef<AccountConnectorDialogComponent>,
-        private syncProgressService: SynchProgressService,
-        private cfoService: CFOService,
         @Inject(MAT_DIALOG_DATA) public data: AccountConnectorDialogData
     ) {}
 
