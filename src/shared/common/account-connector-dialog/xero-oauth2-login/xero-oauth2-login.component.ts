@@ -47,7 +47,7 @@ export class XeroOauth2LoginComponent implements OnInit {
             const setupAccountWindow = window.open(
                 result.setupAccountsLink,
                 '_blank',
-                'location=yes,height=680,width=640,scrollbars=yes,status=yes'
+                `location=yes,height=680,width=640,scrollbars=yes,status=yes,left=${(window.innerWidth / 2) - 320},top=${(window.innerHeight / 2) - 340}`
             );
 
             let interval = setInterval(() => {
