@@ -63298,7 +63298,7 @@ export class MemberAddressDto implements IMemberAddressDto {
     zip!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
-    state!: string | undefined;
+    stateName!: string | undefined;
     countryId!: string | undefined;
     country!: string | undefined;
 
@@ -63317,7 +63317,7 @@ export class MemberAddressDto implements IMemberAddressDto {
             this.zip = data["zip"];
             this.city = data["city"];
             this.stateId = data["stateId"];
-            this.state = data["state"];
+            this.stateName = data["stateName"];
             this.countryId = data["countryId"];
             this.country = data["country"];
         }
@@ -63336,7 +63336,7 @@ export class MemberAddressDto implements IMemberAddressDto {
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
-        data["state"] = this.state;
+        data["stateName"] = this.stateName;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
         return data; 
@@ -63348,7 +63348,7 @@ export interface IMemberAddressDto {
     zip: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
-    state: string | undefined;
+    stateName: string | undefined;
     countryId: string | undefined;
     country: string | undefined;
 }
