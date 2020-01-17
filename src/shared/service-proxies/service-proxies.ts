@@ -1536,6 +1536,62 @@ export class ApplicationServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    registerByApplicant(body: RegisterByApplicantRequest | null | undefined): Observable<RegisterByApplicantResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterByApplicant";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRegisterByApplicant(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRegisterByApplicant(<any>response_);
+                } catch (e) {
+                    return <Observable<RegisterByApplicantResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RegisterByApplicantResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRegisterByApplicant(response: HttpResponseBase): Observable<RegisterByApplicantResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? RegisterByApplicantResponse.fromJS(resultData200) : new RegisterByApplicantResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RegisterByApplicantResponse>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getInitialMemberApplication(applicantUserId: number, applicationId: string): Observable<OfferApplicationDto> {
@@ -11321,15 +11377,12 @@ export class DashboardServiceProxy {
 
     /**
      * @topCount (optional) 
-     * @isProspective (optional) 
      * @return Success
      */
-    getRecentlyCreatedCustomers(topCount: number | null | undefined, isProspective: boolean | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
+    getRecentlyCreatedCustomers(topCount: number | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
-        if (isProspective !== undefined)
-            url_ += "isProspective=" + encodeURIComponent("" + isProspective) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -11379,6 +11432,65 @@ export class DashboardServiceProxy {
             }));
         }
         return _observableOf<GetRecentlyCreatedCustomersOutput[]>(<any>null);
+    }
+
+    /**
+     * @topCount (optional) 
+     * @return Success
+     */
+    getRecentlyCreatedLeads(topCount: number | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedLeads?";
+        if (topCount !== undefined)
+            url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRecentlyCreatedLeads(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecentlyCreatedLeads(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRecentlyCreatedLeadsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRecentlyCreatedLeadsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRecentlyCreatedLeads(response: HttpResponseBase): Observable<GetRecentlyCreatedLeadsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetRecentlyCreatedLeadsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRecentlyCreatedLeadsOutput[]>(<any>null);
     }
 
     /**
@@ -15370,6 +15482,61 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getInvoiceInfo(id: number | null | undefined): Observable<InvoiceInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetInvoiceInfo?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<InvoiceInfo>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<InvoiceInfo>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceInfo(response: HttpResponseBase): Observable<InvoiceInfo> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? InvoiceInfo.fromJS(resultData200) : new InvoiceInfo();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoiceInfo>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -15423,61 +15590,6 @@ export class InvoiceServiceProxy {
             }));
         }
         return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @id (optional) 
-     * @return Success
-     */
-    getInvoiceInfo(id: number | null | undefined): Observable<InvoiceInfo> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetInvoiceInfo?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetInvoiceInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetInvoiceInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<InvoiceInfo>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<InvoiceInfo>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetInvoiceInfo(response: HttpResponseBase): Observable<InvoiceInfo> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InvoiceInfo.fromJS(resultData200) : new InvoiceInfo();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<InvoiceInfo>(<any>null);
     }
 
     /**
@@ -34036,11 +34148,11 @@ export enum DIOSVertical {
 
 export class TrackingInformation implements ITrackingInformation {
     campaignId!: number | undefined;
-    applicantId!: string;
-    applicationId!: string;
+    applicantId!: string | undefined;
+    applicationId!: string | undefined;
     applicationDate!: moment.Moment | undefined;
     subId!: string | undefined;
-    affiliateId!: number;
+    affiliateId!: number | undefined;
     vertical!: DIOSVertical | undefined;
     ipAddress!: string | undefined;
     userAgent!: string | undefined;
@@ -34101,11 +34213,11 @@ export class TrackingInformation implements ITrackingInformation {
 
 export interface ITrackingInformation {
     campaignId: number | undefined;
-    applicantId: string;
-    applicationId: string;
+    applicantId: string | undefined;
+    applicationId: string | undefined;
     applicationDate: moment.Moment | undefined;
     subId: string | undefined;
-    affiliateId: number;
+    affiliateId: number | undefined;
     vertical: DIOSVertical | undefined;
     ipAddress: string | undefined;
     userAgent: string | undefined;
@@ -34579,13 +34691,13 @@ export interface ILegalInformation {
 }
 
 export class RegisterApplicantRequest implements IRegisterApplicantRequest {
-    systemType!: OfferProviderType;
     testMode!: boolean | undefined;
     isAuthenticated!: boolean | undefined;
     newUserPassword!: string | undefined;
     finalizeLeadUrl!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
     returnNewUserInfo!: boolean | undefined;
+    systemType!: OfferProviderType;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformationExtended | undefined;
     debtInformation!: DebtInformation | undefined;
@@ -34605,13 +34717,13 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
 
     init(data?: any) {
         if (data) {
-            this.systemType = data["systemType"];
             this.testMode = data["testMode"];
             this.isAuthenticated = data["isAuthenticated"];
             this.newUserPassword = data["newUserPassword"];
             this.finalizeLeadUrl = data["finalizeLeadUrl"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.returnNewUserInfo = data["returnNewUserInfo"];
+            this.systemType = data["systemType"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformationExtended.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
@@ -34631,13 +34743,13 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["systemType"] = this.systemType;
         data["testMode"] = this.testMode;
         data["isAuthenticated"] = this.isAuthenticated;
         data["newUserPassword"] = this.newUserPassword;
         data["finalizeLeadUrl"] = this.finalizeLeadUrl;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["returnNewUserInfo"] = this.returnNewUserInfo;
+        data["systemType"] = this.systemType;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
@@ -34650,13 +34762,13 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
 }
 
 export interface IRegisterApplicantRequest {
-    systemType: OfferProviderType;
     testMode: boolean | undefined;
     isAuthenticated: boolean | undefined;
     newUserPassword: string | undefined;
     finalizeLeadUrl: string | undefined;
     sendWelcomeEmail: boolean | undefined;
     returnNewUserInfo: boolean | undefined;
+    systemType: OfferProviderType;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformationExtended | undefined;
     debtInformation: DebtInformation | undefined;
@@ -34748,6 +34860,110 @@ export class RegisterApplicantResponse implements IRegisterApplicantResponse {
 export interface IRegisterApplicantResponse {
     applicantUserId: number | undefined;
     newUserInfo: UserInfo | undefined;
+}
+
+export class RegisterByApplicantRequest implements IRegisterByApplicantRequest {
+    systemType!: OfferProviderType;
+    trackingInformation!: TrackingInformation | undefined;
+    personalInformation!: PersonalInformationExtended | undefined;
+    debtInformation!: DebtInformation | undefined;
+    loanInformation!: LoanInformationExtended | undefined;
+    employmentInformation!: EmploymentInformationExtended | undefined;
+    bankInformation!: BankInformation | undefined;
+    legalInformation!: LegalInformation | undefined;
+
+    constructor(data?: IRegisterByApplicantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.systemType = data["systemType"];
+            this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
+            this.personalInformation = data["personalInformation"] ? PersonalInformationExtended.fromJS(data["personalInformation"]) : <any>undefined;
+            this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
+            this.loanInformation = data["loanInformation"] ? LoanInformationExtended.fromJS(data["loanInformation"]) : <any>undefined;
+            this.employmentInformation = data["employmentInformation"] ? EmploymentInformationExtended.fromJS(data["employmentInformation"]) : <any>undefined;
+            this.bankInformation = data["bankInformation"] ? BankInformation.fromJS(data["bankInformation"]) : <any>undefined;
+            this.legalInformation = data["legalInformation"] ? LegalInformation.fromJS(data["legalInformation"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RegisterByApplicantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RegisterByApplicantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["systemType"] = this.systemType;
+        data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
+        data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
+        data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
+        data["loanInformation"] = this.loanInformation ? this.loanInformation.toJSON() : <any>undefined;
+        data["employmentInformation"] = this.employmentInformation ? this.employmentInformation.toJSON() : <any>undefined;
+        data["bankInformation"] = this.bankInformation ? this.bankInformation.toJSON() : <any>undefined;
+        data["legalInformation"] = this.legalInformation ? this.legalInformation.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IRegisterByApplicantRequest {
+    systemType: OfferProviderType;
+    trackingInformation: TrackingInformation | undefined;
+    personalInformation: PersonalInformationExtended | undefined;
+    debtInformation: DebtInformation | undefined;
+    loanInformation: LoanInformationExtended | undefined;
+    employmentInformation: EmploymentInformationExtended | undefined;
+    bankInformation: BankInformation | undefined;
+    legalInformation: LegalInformation | undefined;
+}
+
+export class RegisterByApplicantResponse implements IRegisterByApplicantResponse {
+    authToken!: string | undefined;
+    secureId!: string | undefined;
+
+    constructor(data?: IRegisterByApplicantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.authToken = data["authToken"];
+            this.secureId = data["secureId"];
+        }
+    }
+
+    static fromJS(data: any): RegisterByApplicantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RegisterByApplicantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["authToken"] = this.authToken;
+        data["secureId"] = this.secureId;
+        return data; 
+    }
+}
+
+export interface IRegisterByApplicantResponse {
+    authToken: string | undefined;
+    secureId: string | undefined;
 }
 
 export class PersonalInformation implements IPersonalInformation {
@@ -48065,6 +48281,50 @@ export interface IGetRecentlyCreatedCustomersOutput {
     creationTime: moment.Moment | undefined;
 }
 
+export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOutput {
+    id!: number | undefined;
+    fullName!: string | undefined;
+    creationTime!: moment.Moment | undefined;
+
+    constructor(data?: IGetRecentlyCreatedLeadsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetRecentlyCreatedLeadsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRecentlyCreatedLeadsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetRecentlyCreatedLeadsOutput {
+    id: number | undefined;
+    fullName: string | undefined;
+    creationTime: moment.Moment | undefined;
+}
+
 export class GetCustomersByCompanySizeOutput implements IGetCustomersByCompanySizeOutput {
     customerCount!: number | undefined;
     companySizeRange!: string | undefined;
@@ -51720,7 +51980,6 @@ export class ImportInput implements IImportInput {
     fileSize!: number;
     fileContent!: string;
     ignoreInvalidValues!: boolean | undefined;
-    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -51763,7 +52022,6 @@ export class ImportInput implements IImportInput {
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
-            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -51806,7 +52064,6 @@ export class ImportInput implements IImportInput {
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -51826,7 +52083,6 @@ export interface IImportInput {
     fileSize: number;
     fileContent: string;
     ignoreInvalidValues: boolean | undefined;
-    litePhoneValidation: boolean | undefined;
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
@@ -51935,7 +52191,6 @@ export class ImportContactInput implements IImportContactInput {
     partnerTypeName!: string | undefined;
     ignoreInvalidValues!: boolean | undefined;
     overrideLists!: boolean | undefined;
-    litePhoneValidation!: boolean | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
     userPassword!: string | undefined;
@@ -51997,7 +52252,6 @@ export class ImportContactInput implements IImportContactInput {
             this.partnerTypeName = data["partnerTypeName"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
-            this.litePhoneValidation = data["litePhoneValidation"];
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
             this.userPassword = data["userPassword"];
@@ -52056,7 +52310,6 @@ export class ImportContactInput implements IImportContactInput {
         data["partnerTypeName"] = this.partnerTypeName;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["overrideLists"] = this.overrideLists;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
         data["userPassword"] = this.userPassword;
@@ -52100,7 +52353,6 @@ export interface IImportContactInput {
     partnerTypeName: string | undefined;
     ignoreInvalidValues: boolean | undefined;
     overrideLists: boolean | undefined;
-    litePhoneValidation: boolean | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
     userPassword: string | undefined;
@@ -52373,9 +52625,267 @@ export enum InvoiceStatus {
     PartiallyPaid = "PartiallyPaid", 
 }
 
+export class InvoiceAddressInfo implements IInvoiceAddressInfo {
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    city!: string | undefined;
+    zip!: string | undefined;
+    address1!: string | undefined;
+    address2!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    company!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+
+    constructor(data?: IInvoiceAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.city = data["city"];
+            this.zip = data["zip"];
+            this.address1 = data["address1"];
+            this.address2 = data["address2"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.company = data["company"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceAddressInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceAddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["city"] = this.city;
+        data["zip"] = this.zip;
+        data["address1"] = this.address1;
+        data["address2"] = this.address2;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["company"] = this.company;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        return data; 
+    }
+}
+
+export interface IInvoiceAddressInfo {
+    countryId: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    city: string | undefined;
+    zip: string | undefined;
+    address1: string | undefined;
+    address2: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    company: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+}
+
+export enum InvoiceLineUnit {
+    Day = "Day", 
+    Feet = "Feet", 
+    Hour = "Hour", 
+    Kilogram = "Kilogram", 
+    Pound = "Pound", 
+    Month = "Month", 
+    Package = "Package", 
+    Piece = "Piece", 
+    Unit = "Unit", 
+    Year = "Year", 
+}
+
+export class InvoiceLineInfo implements IInvoiceLineInfo {
+    id!: number | undefined;
+    quantity!: number | undefined;
+    rate!: number | undefined;
+    unitId!: InvoiceLineUnit | undefined;
+    total!: number | undefined;
+    productCode!: string | undefined;
+    description!: string | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IInvoiceLineInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.quantity = data["quantity"];
+            this.rate = data["rate"];
+            this.unitId = data["unitId"];
+            this.total = data["total"];
+            this.productCode = data["productCode"];
+            this.description = data["description"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceLineInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceLineInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["unitId"] = this.unitId;
+        data["total"] = this.total;
+        data["productCode"] = this.productCode;
+        data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IInvoiceLineInfo {
+    id: number | undefined;
+    quantity: number | undefined;
+    rate: number | undefined;
+    unitId: InvoiceLineUnit | undefined;
+    total: number | undefined;
+    productCode: string | undefined;
+    description: string | undefined;
+    sortOrder: number | undefined;
+}
+
+export class InvoiceInfo implements IInvoiceInfo {
+    contactName!: string | undefined;
+    orderNumber!: string | undefined;
+    status!: InvoiceStatus | undefined;
+    number!: string | undefined;
+    date!: moment.Moment | undefined;
+    dueDate!: moment.Moment | undefined;
+    grandTotal!: number | undefined;
+    discountTotal!: number | undefined;
+    shippingTotal!: number | undefined;
+    taxTotal!: number | undefined;
+    billingAddress!: InvoiceAddressInfo | undefined;
+    shippingAddress!: InvoiceAddressInfo | undefined;
+    description!: string | undefined;
+    note!: string | undefined;
+    lines!: InvoiceLineInfo[] | undefined;
+
+    constructor(data?: IInvoiceInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactName = data["contactName"];
+            this.orderNumber = data["orderNumber"];
+            this.status = data["status"];
+            this.number = data["number"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.grandTotal = data["grandTotal"];
+            this.discountTotal = data["discountTotal"];
+            this.shippingTotal = data["shippingTotal"];
+            this.taxTotal = data["taxTotal"];
+            this.billingAddress = data["billingAddress"] ? InvoiceAddressInfo.fromJS(data["billingAddress"]) : <any>undefined;
+            this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInfo.fromJS(data["shippingAddress"]) : <any>undefined;
+            this.description = data["description"];
+            this.note = data["note"];
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(InvoiceLineInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): InvoiceInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactName"] = this.contactName;
+        data["orderNumber"] = this.orderNumber;
+        data["status"] = this.status;
+        data["number"] = this.number;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["grandTotal"] = this.grandTotal;
+        data["discountTotal"] = this.discountTotal;
+        data["shippingTotal"] = this.shippingTotal;
+        data["taxTotal"] = this.taxTotal;
+        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
+        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IInvoiceInfo {
+    contactName: string | undefined;
+    orderNumber: string | undefined;
+    status: InvoiceStatus | undefined;
+    number: string | undefined;
+    date: moment.Moment | undefined;
+    dueDate: moment.Moment | undefined;
+    grandTotal: number | undefined;
+    discountTotal: number | undefined;
+    shippingTotal: number | undefined;
+    taxTotal: number | undefined;
+    billingAddress: InvoiceAddressInfo | undefined;
+    shippingAddress: InvoiceAddressInfo | undefined;
+    description: string | undefined;
+    note: string | undefined;
+    lines: InvoiceLineInfo[] | undefined;
+}
+
 export class InvoiceAddressInput implements IInvoiceAddressInput {
     countryId!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     city!: string;
     zip!: string | undefined;
     address1!: string;
@@ -52399,6 +52909,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
         if (data) {
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.city = data["city"];
             this.zip = data["zip"];
             this.address1 = data["address1"];
@@ -52422,6 +52933,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
         data = typeof data === 'object' ? data : {};
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["zip"] = this.zip;
         data["address1"] = this.address1;
@@ -52438,6 +52950,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
 export interface IInvoiceAddressInput {
     countryId: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     city: string;
     zip: string | undefined;
     address1: string;
@@ -52447,19 +52960,6 @@ export interface IInvoiceAddressInput {
     company: string | undefined;
     email: string | undefined;
     phone: string | undefined;
-}
-
-export enum InvoiceLineUnit {
-    Day = "Day", 
-    Feet = "Feet", 
-    Hour = "Hour", 
-    Kilogram = "Kilogram", 
-    Pound = "Pound", 
-    Month = "Month", 
-    Package = "Package", 
-    Piece = "Piece", 
-    Unit = "Unit", 
-    Year = "Year", 
 }
 
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
@@ -52632,246 +53132,6 @@ export interface ICreateInvoiceInput {
     description: string | undefined;
     note: string | undefined;
     lines: CreateInvoiceLineInput[] | undefined;
-}
-
-export class InvoiceAddressInfo implements IInvoiceAddressInfo {
-    countryId!: string | undefined;
-    stateId!: string | undefined;
-    city!: string | undefined;
-    zip!: string | undefined;
-    address1!: string | undefined;
-    address2!: string | undefined;
-    firstName!: string | undefined;
-    lastName!: string | undefined;
-    company!: string | undefined;
-    email!: string | undefined;
-    phone!: string | undefined;
-
-    constructor(data?: IInvoiceAddressInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.countryId = data["countryId"];
-            this.stateId = data["stateId"];
-            this.city = data["city"];
-            this.zip = data["zip"];
-            this.address1 = data["address1"];
-            this.address2 = data["address2"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            this.company = data["company"];
-            this.email = data["email"];
-            this.phone = data["phone"];
-        }
-    }
-
-    static fromJS(data: any): InvoiceAddressInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceAddressInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["countryId"] = this.countryId;
-        data["stateId"] = this.stateId;
-        data["city"] = this.city;
-        data["zip"] = this.zip;
-        data["address1"] = this.address1;
-        data["address2"] = this.address2;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["company"] = this.company;
-        data["email"] = this.email;
-        data["phone"] = this.phone;
-        return data; 
-    }
-}
-
-export interface IInvoiceAddressInfo {
-    countryId: string | undefined;
-    stateId: string | undefined;
-    city: string | undefined;
-    zip: string | undefined;
-    address1: string | undefined;
-    address2: string | undefined;
-    firstName: string | undefined;
-    lastName: string | undefined;
-    company: string | undefined;
-    email: string | undefined;
-    phone: string | undefined;
-}
-
-export class InvoiceLineInfo implements IInvoiceLineInfo {
-    id!: number | undefined;
-    quantity!: number | undefined;
-    rate!: number | undefined;
-    unitId!: InvoiceLineUnit | undefined;
-    total!: number | undefined;
-    productCode!: string | undefined;
-    description!: string | undefined;
-    sortOrder!: number | undefined;
-
-    constructor(data?: IInvoiceLineInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.quantity = data["quantity"];
-            this.rate = data["rate"];
-            this.unitId = data["unitId"];
-            this.total = data["total"];
-            this.productCode = data["productCode"];
-            this.description = data["description"];
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): InvoiceLineInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceLineInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["quantity"] = this.quantity;
-        data["rate"] = this.rate;
-        data["unitId"] = this.unitId;
-        data["total"] = this.total;
-        data["productCode"] = this.productCode;
-        data["description"] = this.description;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface IInvoiceLineInfo {
-    id: number | undefined;
-    quantity: number | undefined;
-    rate: number | undefined;
-    unitId: InvoiceLineUnit | undefined;
-    total: number | undefined;
-    productCode: string | undefined;
-    description: string | undefined;
-    sortOrder: number | undefined;
-}
-
-export class InvoiceInfo implements IInvoiceInfo {
-    contactName!: string | undefined;
-    orderNumber!: string | undefined;
-    status!: InvoiceStatus | undefined;
-    number!: string | undefined;
-    date!: moment.Moment | undefined;
-    dueDate!: moment.Moment | undefined;
-    grandTotal!: number | undefined;
-    discountTotal!: number | undefined;
-    shippingTotal!: number | undefined;
-    taxTotal!: number | undefined;
-    billingAddress!: InvoiceAddressInfo | undefined;
-    shippingAddress!: InvoiceAddressInfo | undefined;
-    description!: string | undefined;
-    note!: string | undefined;
-    lines!: InvoiceLineInfo[] | undefined;
-
-    constructor(data?: IInvoiceInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactName = data["contactName"];
-            this.orderNumber = data["orderNumber"];
-            this.status = data["status"];
-            this.number = data["number"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
-            this.grandTotal = data["grandTotal"];
-            this.discountTotal = data["discountTotal"];
-            this.shippingTotal = data["shippingTotal"];
-            this.taxTotal = data["taxTotal"];
-            this.billingAddress = data["billingAddress"] ? InvoiceAddressInfo.fromJS(data["billingAddress"]) : <any>undefined;
-            this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInfo.fromJS(data["shippingAddress"]) : <any>undefined;
-            this.description = data["description"];
-            this.note = data["note"];
-            if (data["lines"] && data["lines"].constructor === Array) {
-                this.lines = [];
-                for (let item of data["lines"])
-                    this.lines.push(InvoiceLineInfo.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): InvoiceInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactName"] = this.contactName;
-        data["orderNumber"] = this.orderNumber;
-        data["status"] = this.status;
-        data["number"] = this.number;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
-        data["grandTotal"] = this.grandTotal;
-        data["discountTotal"] = this.discountTotal;
-        data["shippingTotal"] = this.shippingTotal;
-        data["taxTotal"] = this.taxTotal;
-        data["billingAddress"] = this.billingAddress ? this.billingAddress.toJSON() : <any>undefined;
-        data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
-        data["description"] = this.description;
-        data["note"] = this.note;
-        if (this.lines && this.lines.constructor === Array) {
-            data["lines"] = [];
-            for (let item of this.lines)
-                data["lines"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IInvoiceInfo {
-    contactName: string | undefined;
-    orderNumber: string | undefined;
-    status: InvoiceStatus | undefined;
-    number: string | undefined;
-    date: moment.Moment | undefined;
-    dueDate: moment.Moment | undefined;
-    grandTotal: number | undefined;
-    discountTotal: number | undefined;
-    shippingTotal: number | undefined;
-    taxTotal: number | undefined;
-    billingAddress: InvoiceAddressInfo | undefined;
-    shippingAddress: InvoiceAddressInfo | undefined;
-    description: string | undefined;
-    note: string | undefined;
-    lines: InvoiceLineInfo[] | undefined;
 }
 
 export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
@@ -55277,7 +55537,7 @@ export class MemberAddressDto implements IMemberAddressDto {
     zip!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
-    state!: string | undefined;
+    stateName!: string | undefined;
     countryId!: string | undefined;
     country!: string | undefined;
 
@@ -55296,7 +55556,7 @@ export class MemberAddressDto implements IMemberAddressDto {
             this.zip = data["zip"];
             this.city = data["city"];
             this.stateId = data["stateId"];
-            this.state = data["state"];
+            this.stateName = data["stateName"];
             this.countryId = data["countryId"];
             this.country = data["country"];
         }
@@ -55315,7 +55575,7 @@ export class MemberAddressDto implements IMemberAddressDto {
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
-        data["state"] = this.state;
+        data["stateName"] = this.stateName;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
         return data; 
@@ -55327,7 +55587,7 @@ export interface IMemberAddressDto {
     zip: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
-    state: string | undefined;
+    stateName: string | undefined;
     countryId: string | undefined;
     country: string | undefined;
 }
