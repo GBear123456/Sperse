@@ -68,7 +68,7 @@
                                 name="country"
                                 [dataSource]="countries$ | async"
                                 [(value)]="company.formedCountryId"
-                                (onValueChanged)="loadStates($event._value)">
+                                (onValueChanged)="loadStates($event.value)">
                             </dx-select-box>
                         </div>
                     </div>

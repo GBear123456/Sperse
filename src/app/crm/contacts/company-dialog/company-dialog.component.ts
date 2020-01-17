@@ -45,8 +45,8 @@ export class CompanyDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;
-    countries$: Observable<CountryDto[]>;
-    companyTypes$: Observable<any[]>;
+    countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));
+    companyTypes$: Observable<any[]> = this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes));
     companySizes: any = [
         { id: 0, name: '1 to 9', from: 1, to: 9 },
         { id: 1, name: '10 to 19', from: 10, to: 19 },
@@ -208,17 +208,17 @@ export class CompanyDialogComponent implements OnInit {
 
     private loadCountries() {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.countries$ = this.store$.pipe(select(CountriesStoreSelectors.getCountries));
     }
 
     loadOrganizationTypes() {
         this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
-        this.companyTypes$ = this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes));
     }
 
     loadStates(countryCode: string = this.company.formedCountryId) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.states$ = this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode }));
+        if (countryCode) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+            this.states$ = this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode }));
+        }
     }
 
     showUploadPhotoDialog(e) {
