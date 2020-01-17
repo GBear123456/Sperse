@@ -43,11 +43,11 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         private dashboardWidgetsService: DashboardWidgetsService,
         private dashboardServiceProxy: DashboardServiceProxy,
         private loadingService: LoadingService,
-        private ls: AppLocalizationService,
         private elementRef: ElementRef,
         private lifeCycleService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef,
-        private layoutService: LayoutService
+        private layoutService: LayoutService,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
