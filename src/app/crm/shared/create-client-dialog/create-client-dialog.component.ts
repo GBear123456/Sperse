@@ -407,7 +407,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: address.stateCode.length <= 3 && address.stateCode !== address.stateName
+                    stateId: address.stateCode && address.stateCode.length <= 3 && address.stateCode !== address.stateName
                         ? address.stateCode
                         : null,
                     stateName: address.stateName,

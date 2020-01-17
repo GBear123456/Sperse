@@ -52,10 +52,16 @@ export class MapService {
         private http: HttpClient
     ) { }
 
-    loadSliceMapData(sourceUri: string, filter, mapArea: MapArea, params?: { [name: string]: any }): Observable<any> {
+    loadSliceMapData(
+        sourceUri: string,
+        filter,
+        mapArea: MapArea,
+        dateField: 'LeadDate' | 'ContactDate',
+        params?: { [name: string]: any }
+    ): Observable<any> {
         params = {
             group: `[{"selector":"${mapArea === MapArea.World ? 'CountryId' : 'StateId'}","isExpanded":false}]`,
-            groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
+            groupSummary: `[{"selector":"${dateField}","summaryType":"min"}]`,
             ...params
         };
         if (mapArea === MapArea.Canada) {
