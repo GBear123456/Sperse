@@ -149,6 +149,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_EMPLOYMENY_START_DATE
     ];
 
+    private readonly FIELDS_EMAIL = [
+        this.PERSONAL_EMAIL1,
+        this.PERSONAL_EMAIL2,
+        this.PERSONAL_EMAIL3,
+        this.BUSINESS_WORK_EMAIL1,
+        this.BUSINESS_WORK_EMAIL2,
+        this.BUSINESS_WORK_EMAIL3
+    ];
+
     private readonly FIELDS_CAPTIONS = [
         this.PERSONAL_FULL_ADDRESS_STREET,
         this.PERSONAL_FULL_ADDRESS_ADDRESSLINE2,
@@ -609,7 +618,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let isFistName = false,
             isLastName = false,
             isFullName = false,
-            isCompanyName = false;
+            isCompanyName = false,
+            isEmail = false;
 
         let result = { isMapped: false, error: null };
         result.isMapped = rows.every((row) => {
@@ -617,10 +627,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             isLastName = isLastName || (row.mappedField && row.mappedField == this.LAST_NAME_FIELD);
             isFullName  = isFullName || (row.mappedField && row.mappedField == this.FULL_NAME_FIELD);
             isCompanyName = isCompanyName || (row.mappedField && row.mappedField == this.COMPANY_NAME_FIELD);
+            isEmail = isEmail || (row.mappedField && this.FIELDS_EMAIL.indexOf(row.mappedField) >= 0);
             return !!row.mappedField;
         });
 
-        if (!isCompanyName && !isFullName && !isFistName && !isLastName)
+        if (!isCompanyName && !isFullName && !isFistName && !isLastName && !isEmail)
             result.error = this.l('FieldsMapError');
 
         return result;
