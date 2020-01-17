@@ -147,7 +147,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         private permissionCheckerService: PermissionCheckerService,
         public ls: AppLocalizationService
     ) {
-        contactsService.contactInfoSubscribe((contactInfo) => {
+        contactsService.contactInfoSubscribe(() => {
             setTimeout(() => contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
@@ -309,7 +309,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 hasBackdrop: false,
                 closeOnNavigation: true,
                 data: {
-                    title: this.l('Owner'),
+                    title: this.ls.l('Owner'),
                     selectionMode: 'single'
                 }
             })
@@ -320,7 +320,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         event.preventDefault();
         event.stopPropagation();
         this.clipboardService.copyFromContent(value);
-        this.notify.info(this.l('SavedToClipboard'));
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {
