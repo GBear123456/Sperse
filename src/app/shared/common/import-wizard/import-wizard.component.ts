@@ -751,7 +751,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         else if (key == 'countryCode')
             return value.trim().length == 2;
         else if (key == 'stateCode')
-            return value.trim().length >= 2 && 
+            return value.trim().length >= 2 &&
                 value.trim().length <= 3;
         else
             return !value || AppConsts.regexPatterns[key].test(value);
@@ -764,7 +764,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     getFieldDefaultCountry(data, field) {
         let countryCode = this.getFieldCountryCode(data, field);
         if (countryCode)
-            return {defaultCountry: countryCode};
+            return {defaultCountry: countryCode.length == 2 ? countryCode : AppConsts.defaultCountry};
     }
 
     getFieldCountryCode(data, field) {
