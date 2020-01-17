@@ -114,7 +114,7 @@ export class InvoiceAddressDialog {
 
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.angularGooglePlaceService.street(event.address_components);
+        let street = this.googlePlaceService.getStreet(event.address_components);
         this.data.stateId = this.googlePlaceService.getStateCode(event.address_components);
         this.data.stateName = this.googlePlaceService.getStateName(event.address_components);
         this.data.countryId = GooglePlaceService.getCountryCode(event.address_components);

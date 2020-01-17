@@ -276,7 +276,7 @@ export class CreditWizardPageComponent implements OnInit {
 
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.angularGooglePlaceService.street(event.address_components);
+        let street = this.googlePlaceService.getStreet(event.address_components);
         this.model.address.stateId = this.googlePlaceService.getStateCode(event.address_components);
         this.model.address.state = this.googlePlaceService.getStateName(event.address_components);
         this.model.address.city = this.googlePlaceService.getCity(event.address_components);

@@ -36,6 +36,11 @@ export class GooglePlaceService {
         return stateCode && this.normalize(stateCode);
     }
 
+    getStreet(components: AddressComponent[]): string {
+        const street = this.angularGooglePlaceService.street(components);
+        return street && this.normalize(street);
+    }
+
     getStateName(components: AddressComponent[]): string {
         const stateName = this.angularGooglePlaceService.state(components);
         return stateName && this.normalize(stateName);

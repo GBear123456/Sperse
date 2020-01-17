@@ -546,7 +546,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onAddressChanged(event, i: number) {
         this.checkAddressControls(i);
         let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.angularGooglePlaceService.street(event.address_components);
+        let street = this.googlePlaceService.getStreet(event.address_components);
         const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
         const stateCode = this.googlePlaceService.getStateCode(event.address_components);
         const stateName = this.googlePlaceService.getStateName(event.address_components);

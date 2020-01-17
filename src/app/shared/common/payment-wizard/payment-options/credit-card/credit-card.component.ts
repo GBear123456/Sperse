@@ -121,7 +121,7 @@ export class CreditCardComponent implements OnInit {
 
     setBillingAddress(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.angularGooglePlaceService.street(event.address_components);
+        let street = this.googlePlaceService.getStreet(event.address_components);
         let concatAddress = number ? (number + ' ' + street) : street;
         this.creditCardData.controls.billingAddress.setValue(concatAddress); // event.name - short form of address
         let countryName = this.angularGooglePlaceService.country(event.address_components);
