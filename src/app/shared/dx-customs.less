@@ -41,6 +41,18 @@ input.form-control {
     padding: 12px 8px;
 }
 
+.dx-dropdowneditor-button {
+    min-width: 0;
+}
+
+.dx-texteditor-buttons-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    height: 100%;
+}
+
 .dx-placeholder,
 .dx-radiobutton .dx-item-content {
     font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
@@ -122,6 +134,18 @@ input.form-control {
     .dx-sort-down {
         transform: rotate(180deg);
     }
+}
+
+.dx-overlay-wrapper {
+    .dx-overlay-content {
+        &::before {
+            display: inline;
+        }
+    }
+}
+
+.dx-list-item-icon-container {
+    display: none;
 }
 
 .with-custom-loader {

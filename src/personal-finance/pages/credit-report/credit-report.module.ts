@@ -10,7 +10,7 @@ import { DxBarGaugeModule } from 'devextreme-angular/ui/bar-gauge';
 import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxLoadPanelModule } from 'devextreme-angular/ui/load-panel';
-import { DxTemplateModule } from 'devextreme-angular/core/template';
+import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
 

@@ -35,7 +35,7 @@
                 margin-left: auto;
             }
         }
-        dx-select-box {
+        .dx-selectbox {
             margin: 23px 10px;
             &, input {
                 background: transparent;
@@ -319,7 +319,7 @@
                     }
                 }
             }
-            dx-text-box, dx-text-area, dx-select-box {
+            dx-text-box, dx-text-area, .dx-selectbox {
                 &.dx-state-focused {
                     .dx-placeholder {
                         top: -30px;
@@ -449,7 +449,7 @@
             }
             tr:nth-child(odd) td { 
                 background: rgba(243, 247, 250, 0.7);
-                /deep/ dx-text-box, /deep/ dx-select-box {
+                /deep/ dx-text-box, /deep/ .dx-selectbox {
                     &, input {
                         background: transparent;
                     }

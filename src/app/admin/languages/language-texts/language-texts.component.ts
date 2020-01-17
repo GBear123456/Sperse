@@ -85,7 +85,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     ngAfterViewInit(): void {
         this.dataSource = new DataSource({
-            key: 'id',
             load: (loadOptions) => {
                 this.isDataLoaded = false;
                 return this.languageService.getLanguageTexts(

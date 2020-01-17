@@ -18,7 +18,7 @@ import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
-import { DxTemplateModule } from 'devextreme-angular/core/template';
+import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';

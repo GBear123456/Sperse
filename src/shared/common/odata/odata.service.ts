@@ -13,7 +13,7 @@ export class ODataService {
     private _dxRequestPool = {};
     private pivotGridInitialBeforeSend;
     constructor() {
-        dxAjax.setStrategy((options) => {
+        dxAjax.sendRequest((options) => {
             options.responseType = 'application/json';
             let key = (options.url.match(/odata\/(\w+)[\?|$]/) || []).pop() + (options.headers.context || '');
             return (this._dxRequestPool[key] = dxAjax.sendRequest(options));
