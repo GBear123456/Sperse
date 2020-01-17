@@ -114,10 +114,16 @@ export class CrmService {
         return d.promise();
     }
 
-    loadSliceChartData(sourceUri: string, filters, summaryBy: SummaryBy, additionalParams?: { [name: string]: any}): Promise<{ items: any[], infoItems: InfoItem[] }> {
+    loadSliceChartData(
+        sourceUri: string,
+        filters,
+        summaryBy: SummaryBy,
+        dateField: 'LeadDate' | 'ContactDate',
+        additionalParams?: { [name: string]: any}
+    ): Promise<{ items: any[], infoItems: InfoItem[] }> {
         let group = [
             {
-                selector: 'CreationTime',
+                selector: dateField,
                 groupInterval: summaryBy,
                 isExpanded: false,
                 desc: false
@@ -126,7 +132,7 @@ export class CrmService {
         /** Add grouping by year also to avoid grouping by month or quarters of different years */
         if (summaryBy !== SummaryBy.Year) {
             group.unshift({
-                selector: 'CreationTime',
+                selector: dateField,
                 groupInterval: SummaryBy.Year,
                 isExpanded: false,
                 desc: false
@@ -134,7 +140,7 @@ export class CrmService {
         }
         const params = {
             group: JSON.stringify(group),
-            groupSummary: '[{"selector":"CreationTime","summaryType":"min"}]',
+            groupSummary: `[{"selector":"${dateField}","summaryType":"min"}]`,
             ...additionalParams
         };
         const filter = this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom);

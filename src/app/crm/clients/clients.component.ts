@@ -116,6 +116,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
     private readonly groupDataSourceURI: string = 'CustomerSlice';
+    private readonly dateField = 'ContactDate';
     private filters: FilterModel[];
     private rootComponent: any;
     private subRouteParams: any;
@@ -220,7 +221,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'year',
                 name: 'year',
@@ -228,14 +229,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'quarter',
                 showTotals: false,
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'month',
                 showTotals: false
@@ -303,7 +304,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
-            mapArea
+            mapArea,
+            this.dateField
         )),
         publishReplay(),
         refCount(),
@@ -318,7 +320,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return this.crmService.loadSliceChartData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                this.chartComponent.summaryBy.value
+                this.chartComponent.summaryBy.value,
+                this.dateField
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
                 return result.items;
@@ -542,7 +545,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         component: FilterCalendarComponent,
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
-                        field: 'ContactDate',
+                        field: this.dateField,
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
                         options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
