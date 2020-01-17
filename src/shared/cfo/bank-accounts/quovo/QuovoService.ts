@@ -197,6 +197,6 @@ export class QuovoService {
 
     private onQuovoSync() {
         this.quovoSynced$.next();
-        this.syncProgressService.startSynchronization(true, this.quovoOperation === QuovoOperation.Add);
+        this.syncProgressService.startSynchronization(true, this.quovoOperation === QuovoOperation.Add, SyncTypeIds.Quovo);
     }
 }

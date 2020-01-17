@@ -1,21 +1,28 @@
 /** Application imports */
-import { Component, Inject, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Inject } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import * as _ from 'underscore';
+import { select, Store } from '@ngrx/store';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AngularGooglePlaceService } from 'angular-google-place';
+import { Observable } from 'rxjs';
+import { first, map } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 /** Application imports */
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import {
+    AddressUsageTypesStoreActions,
+    AddressUsageTypesStoreSelectors,
+    CountriesStoreActions,
+    CountriesStoreSelectors
+} from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
-import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
-import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
+import { CountryDto, CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -25,7 +32,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         '(document:mouseup)': 'mouseUp($event)',
         '(document:mousemove)': 'mouseMove($event)'
     },
-    providers: [ GooglePlaceHelper ]
+    providers: [ GooglePlaceService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditAddressDialog {
     types: any[] = [];
@@ -45,7 +53,8 @@ export class EditAddressDialog {
         private contactsService: ContactsService,
         private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper,
+        private statesService: StatesService,
+        private googlePlaceService: GooglePlaceService,
         public dialogRef: MatDialogRef<EditAddressDialog>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -57,12 +66,11 @@ export class EditAddressDialog {
                 this.googleAutoComplete ? [
                     data.streetAddress,
                     data.city,
-                    data.state,
+                    data.stateName,
                     data.country
                 ].join(',') : data.streetAddress;
         } else
             this.action = 'Create';
-
         this.googleAutoComplete = Boolean(window['google']);
 
         this.addressTypesLoad();
@@ -81,18 +89,20 @@ export class EditAddressDialog {
     }
 
     onCountryChange(event) {
-        const countryCode = _.findWhere(this.countries, {name: event.value})['code'];
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
-            .subscribe(result => {
-                this.states = result;
-            });
+        this.data.countryCode = _.findWhere(this.countries, {name: event.value})['code'];
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryCode));
+        this.statesService.updateState(this.data.countryCode, this.data.stateId, this.data.stateName);
     }
 
     onAddressChanged(event) {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.angularGooglePlaceService.street(event.address_components);
-        this.data.state = this.googlePlaceHelper.getState(event.address_components);
+        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
+        this.data.stateId = this.googlePlaceService.getStateCode(event.address_components);
+        this.data.stateName = this.googlePlaceService.getStateName(event.address_components);
+        this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
+        this.data.countryCode = countryCode;
+        this.data.city = this.googlePlaceService.getCity(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
     }
 
@@ -113,19 +123,43 @@ export class EditAddressDialog {
             });
     }
 
-    onSave(event) {
+    onSave() {
         this.data.streetAddress = this.address;
-
         if (this.validator.validate().isValid && this.validateAddress(this.data)) {
             if (this.data.country)
-                this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
-            if (this.data.state) {
-                let state = _.findWhere(this.states, {name: this.data.state});
-                if (state)
-                    this.data.stateId = state['code'];
-            }
+                this.data.countryId = _.findWhere(this.countries, { name: this.data.country })['code'];
+            this.data.stateId = this.data.stateId && this.data.stateId.length <= 3 ? this.data.stateId : null;
             this.dialogRef.close(true);
         }
+    }
+
+    getCountryStates(): Observable<CountryStateDto[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.data.countryCode }),
+            map((states: CountryStateDto[]) => states || [])
+        );
+    }
+
+    stateChanged(e) {
+        this.store$.pipe(
+            select(StatesStoreSelectors.getStateCodeFromStateName, {
+                countryCode: this.data.countryCode,
+                stateName: e.value
+            }),
+            first()
+        ).subscribe((stateCode: string) => {
+            this.data.stateId = stateCode;
+        });
+    }
+
+    onCustomStateCreate(e) {
+        this.data.stateId = null;
+        this.data.stateName = e.text;
+
+        e.customItem = {
+            code: e.text,
+            name: e.text
+        };
     }
 
     validateAddress(data) {

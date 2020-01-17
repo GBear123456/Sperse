@@ -1,5 +1,6 @@
 <section class="iframe">
-    <iframe src="https://wp.bankcode.pro/the-vault-access/"
+    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
+    <iframe [src]="accessLink$ | async"
             *ngIf="hasSubscription$ | async; else noSubscription"
             frameborder="0">
     </iframe>

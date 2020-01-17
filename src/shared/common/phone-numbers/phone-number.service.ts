@@ -16,8 +16,9 @@ export class PhoneNumberService {
 
         let phoneUtil = PhoneNumberUtil.getInstance();
         try {
-            var phoneNumber = phoneUtil.parse(value, defaultCountryCode);
-            return phoneUtil.isValidNumber(phoneNumber);
+            return phoneUtil.isValidNumber(
+                phoneUtil.parse(value, defaultCountryCode)
+            );
         } catch (ex) {
             return false;
         }

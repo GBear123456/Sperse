@@ -48,8 +48,10 @@ export class ProfileService {
         window.addEventListener(messageEvent, this.refreshMemberInfo.bind(this), false);
     }
 
-    refreshMemberInfo() {
-        this.loadMemberInfo.next();
+    refreshMemberInfo(e) {
+        if (e.data === 'update') {
+            this.loadMemberInfo.next();
+        }
     }
 
     getPhoto(photo, gender = null): string {

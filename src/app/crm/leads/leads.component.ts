@@ -195,6 +195,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';
     private readonly groupDataSourceURI = 'LeadSlice';
+    private readonly dateField = 'LeadDate';
     private filters: FilterModel[];
     private filterChanged = false;
     formatting = AppConsts.formatting;
@@ -257,7 +258,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'column',
-                dataField: 'LeadDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'year',
                 name: 'year',
@@ -265,14 +266,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'column',
-                dataField: 'LeadDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'quarter',
                 showTotals: false,
             },
             {
                 area: 'column',
-                dataField: 'LeadDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'month',
                 showTotals: false
@@ -302,7 +303,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'LeadDate'
+                dataField: this.dateField
             },
             {
                 area: 'filter',
@@ -319,6 +320,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 area: 'filter',
                 dataField: 'SourceCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'State'
             },
             {
                 area: 'filter',
@@ -346,6 +351,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 this.chartComponent.summaryBy.value,
+                this.dateField,
                 { contactGroupId: this.contactGroupId.value.toString() }
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
@@ -381,6 +387,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,
+            this.dateField,
             { contactGroupId: contactGroupId.toString() }
         )),
         publishReplay(),
@@ -395,7 +402,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', 'LeadDate', 'PhotoPublicId', 'Email'];
+    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', this.dateField, 'PhotoPublicId', 'Email'];
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -683,7 +690,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
-                    field: 'LeadDate',
+                    field: this.dateField,
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
                     options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
                 }),

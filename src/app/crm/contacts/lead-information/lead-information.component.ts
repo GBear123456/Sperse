@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -9,10 +9,10 @@ import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
 import { ClipboardService } from 'ngx-clipboard';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
 import {
     ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateLeadSourceOrganizationUnitInput,
@@ -26,6 +26,10 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { SourceContactListComponent } from '../source-contact-list/source-contact-list.component';
 import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'lead-information',
@@ -33,7 +37,7 @@ import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.m
     styleUrls: ['./lead-information.component.less'],
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService ]
 })
-export class LeadInformationComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class LeadInformationComponent implements OnInit, OnDestroy {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild('loaderWrapper') loaderWrapper: ElementRef;
     data: {
@@ -102,17 +106,33 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             sections: [
                 {
                     name: 'Campaign',
-                    items: [ { name: 'campaignCode' }, { name: 'affiliateCode' }, { name: 'partnerSource' }, { name: 'channelCode' } ]
+                    items: [
+                        { name: 'campaignCode' },
+                        { name: 'affiliateCode' },
+                        { name: 'partnerSource' },
+                        { name: 'channelCode' }
+                    ]
                 },
                 {
                     name: 'Comments',
                     items: [ { name: 'comments', hideLabel: true } ]
+                },
+                {
+                    name: 'CustomFields',
+                    items: [
+                        { name: 'customField1', readonly: true },
+                        { name: 'customField2', readonly: true },
+                        { name: 'customField3', readonly: true },
+                        { name: 'customField4', readonly: true },
+                        { name: 'customField5', readonly: true }
+                    ]
                 }
             ]
         }
     ];
+    capitalize = capitalize;
 
-    constructor(injector: Injector,
+    constructor(
         private dialog: MatDialog,
         private route: ActivatedRoute,
         private contactProxy: ContactServiceProxy,
@@ -121,10 +141,12 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         private clipboardService: ClipboardService,
         private applicationProxy: ApplicationServiceProxy,
         private store$: Store<CrmStore.State>,
-        private lifeCycleService: LifecycleSubjectsService
+        private lifeCycleService: LifecycleSubjectsService,
+        private notifyService: NotifyService,
+        private loadingService: LoadingService,
+        private permissionCheckerService: PermissionCheckerService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-
         contactsService.contactInfoSubscribe((contactInfo) => {
             setTimeout(() => contactsService.toolbarUpdate({
                 optionButton: {
@@ -143,21 +165,23 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                     leadId: this.data.leadInfo.id,
                     sourceOrganizationUnitId: orgUnitId
                 })).subscribe(() =>
-                    this.notify.info(this.l('SavedSuccessfully'))
+                    this.notifyService.info(this.ls.l('SavedSuccessfully'))
                 );
             }
         }, this.constructor.name);
     }
 
     ngOnInit() {
-        this.data = this.contactProxy['data'];
+        this.contactsService.contactInfoSubscribe(() => {
+            this.data = this.contactProxy['data'];
+        });
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.sourceContactId = leadInfo.sourceContactId;
         });
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
             this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
-            this.showApplicationAllowed = this.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
+            this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
             this.updateSourceContactName();
             this.loadOrganizationUnits();
@@ -185,13 +209,15 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     }
 
     loadApplication() {
-        this.startLoading(false, this.loaderWrapper.nativeElement);
+        this.loadingService.startLoading(this.loaderWrapper.nativeElement);
         this.applicationProxy.getInitialMemberApplication(
             this.data.contactInfo.personContactInfo.userId,
-            this.data.leadInfo.applicationId).pipe(finalize(() => this.finishLoading(false, this.loaderWrapper.nativeElement))).subscribe((response) => {
-                this.application = response;
-            }
-        );
+            this.data.leadInfo.applicationId
+        ).pipe(
+            finalize(() => this.loadingService.finishLoading(this.loaderWrapper.nativeElement))
+        ).subscribe((response) => {
+            this.application = response;
+        });
     }
 
     showApplications() {
@@ -208,7 +234,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             value: this.getPropValue(field),
             isEditDialogEnabled: false,
             lEntityName: field,
-            editPlaceholder: this.l('EditValuePlaceholder')
+            editPlaceholder: this.ls.l('EditValuePlaceholder')
         };
     }
 
@@ -267,10 +293,10 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
             });
 
             this.sourceContactId = event.id;
-            this.notify.info(this.l('SavedSuccessfully'));
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
         }, () => {
             this.sourceContactName = prevName;
-            this.notify.error(this.l('AnErrorOccurred'));
+            this.notifyService.error(this.ls.l('AnErrorOccurred'));
         });
         this.sourceComponent.toggle();
     }

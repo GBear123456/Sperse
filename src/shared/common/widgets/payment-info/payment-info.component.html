@@ -11,7 +11,7 @@
         </p>
     </div>
 </div>
-<h2 class="step-title">{{l("EnterPaymentInformation")}}</h2>
+<h2 class="step-title">{{ls.l("EnterPaymentInformation")}}</h2>
 <div class="form payment">
     <dx-validation-group name="billingValidationGroup" (onInitialized)="initValidationGroup($event)">
         <div class="row">
@@ -22,7 +22,7 @@
                                [disabled]="!paymentAuthorizationRequired"
                                checked>
                         <label for="creditCard">
-                            <img src="assets/landing/check.svg" alt="check" width="20"> {{l("CreditCard")}}
+                            <img src="assets/landing/check.svg" alt="check" width="20"> {{ls.l("CreditCard")}}
                             <img src="assets/images/credit-report/card-icons.svg" alt="cards list" class="card-icons">
                         </label>
                     </div>
@@ -44,14 +44,14 @@
                             <dx-text-box class="with-icon creditCardNumber"
                                          name="creditCardNumber"
                                          [disabled]="!paymentAuthorizationRequired"
-                                         [placeholder]="l('CreditCardNumber')"
-                                         [maskInvalidMessage]="l('CreditCardFormatError')"
+                                         [placeholder]="ls.l('CreditCardNumber')"
+                                         [maskInvalidMessage]="ls.l('CreditCardFormatError')"
                                          [(value)]="bankCard.cardNumber"
                                          (onFocusIn)="inputStatusesService.focusInput($event)"
                                          (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="l('CreditCardRequired')">
+                                                         [message]="ls.l('CreditCardRequired')">
                                     </dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
@@ -62,25 +62,25 @@
                             <dx-text-box name="expirationDate"
                                          class="with-icon expDate"
                                          [disabled]="!paymentAuthorizationRequired"
-                                         [placeholder]="l('ExpirationDate')"
-                                         [maskInvalidMessage]="l('ExpirationDateFormatError')"
+                                         [placeholder]="ls.l('ExpirationDate')"
+                                         [maskInvalidMessage]="ls.l('ExpirationDateFormatError')"
                                          [(value)]="expirationDate"
                                          (onFocusIn)="inputStatusesService.focusInput($event)"
                                          (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="l('ExpirationDateRequired')"></dxi-validation-rule>
+                                                         [message]="ls.l('ExpirationDateRequired')"></dxi-validation-rule>
                                     <dxi-validation-rule type="custom"
                                                          [validationCallback]="validateExpirationDate"
-                                                         [message]="l('ExpirationDateOutdated')"></dxi-validation-rule>
+                                                         [message]="ls.l('ExpirationDateOutdated')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                         </div>
                         <div class="col-sm-5">
                             <dx-text-box class="with-icon cvvCode"
                                          maxLength="4"
-                                         [placeholder]="l('CVV')"
-                                         [maskInvalidMessage]="l('CVVErrorLength')"
+                                         [placeholder]="ls.l('CVV')"
+                                         [maskInvalidMessage]="ls.l('CVVErrorLength')"
                                          maskChar=" "
                                          name="cvvCode"
                                          [disabled]="!paymentAuthorizationRequired"
@@ -89,9 +89,9 @@
                                          (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="l('CVVRequired')"></dxi-validation-rule>
+                                                         [message]="ls.l('CVVRequired')"></dxi-validation-rule>
                                     <dxi-validation-rule type="stringLength" [min]="3"
-                                                         [message]="l('CVVErrorLength')"></dxi-validation-rule>
+                                                         [message]="ls.l('CVVErrorLength')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                         </div>
@@ -104,16 +104,16 @@
                         <div class="col-sm-12 with-icon fullAddress">
                             <input *ngIf="!googleAutoComplete" type="text"
                                    name="Address"
-                                   [placeholder]="l('AddressPlaceholder')"
+                                   [placeholder]="ls.l('AddressPlaceholder')"
                                    [(ngModel)]="bankCard.billingAddress"
                                    class="dx-texteditor-input"
                                    [disabled]="!paymentAuthorizationRequired" />
                             <input *ngIf="googleAutoComplete" type="text"
                                    name="Address"
-                                   [placeholder]="l('AddressPlaceholder')"
+                                   [placeholder]="ls.l('AddressPlaceholder')"
                                    [(ngModel)]="bankCard.billingAddress"
                                    class="dx-texteditor-input"
-                                   [options]="option"
+                                   [options]="options"
                                    [disabled]="!paymentAuthorizationRequired"
                                    (postal_code)='bankCard.billingZip=$event'
                                    (setAddress)="onAddressChanged($event)"
@@ -125,35 +125,37 @@
                             <dx-text-box name="city"
                                          [disabled]="!paymentAuthorizationRequired"
                                          maxLength="50"
-                                         [placeholder]="l('City')"
+                                         [placeholder]="ls.l('City')"
                                          [(value)]="bankCard.billingCity">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="l('CityRequired')"></dxi-validation-rule>
+                                                         [message]="ls.l('CityRequired')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                         </div>
                         <div class="col-sm-3">
-                            <dx-select-box [dataSource]="states"
+                            <dx-select-box [acceptCustomValue]="true"
+                                           [dataSource]="getCountryStates() | async"
                                            displayExpr="code"
-                                           valueExpr="code"
-                                           name="billingStateCode"
+                                           valueExpr="name"
+                                           name="billingStateName"
+                                           placeholder="''"
                                            [disabled]="!paymentAuthorizationRequired"
                                            [searchEnabled]="true"
-                                           [(value)]="bankCard.billingStateCode"
-                                           fieldTemplate="field">
+                                           [(value)]="bankCard.billingState"
+                                           fieldTemplate="field"
+                                           (onCustomItemCreating)="onCustomStateCreate($event)">
                                 <div *dxTemplate="let data of 'field'">
                                     <div class="custom-item">
                                         <dx-text-box class="state"
-                                                     [value]="data?.code"
-                                                     placeholder="State"
-                                                     [readOnly]="true">
+                                                     [value]="data?.name"
+                                                     placeholder="State">
                                         </dx-text-box>
                                     </div>
                                 </div>
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="l('StateRequired')"></dxi-validation-rule>
+                                                         [message]="ls.l('StateRequired')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-select-box>
                         </div>
@@ -162,14 +164,14 @@
                                          class="with-icon zipCode"
                                          [disabled]="!paymentAuthorizationRequired"
                                          maxLength="5"
-                                         [placeholder]="l('Zipcode')"
-                                         [maskInvalidMessage]="l('ZipcodeFormatError')"
+                                         [placeholder]="ls.l('Zipcode')"
+                                         [maskInvalidMessage]="ls.l('ZipcodeFormatError')"
                                          [(value)]="bankCard.billingZip"
                                          (onFocusIn)="inputStatusesService.focusInput($event)"
                                          (onFocusOut)="inputStatusesService.blurInput($event)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="l('ZipIsRequired')"></dxi-validation-rule>
+                                                         [message]="ls.l('ZipIsRequired')"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                         </div>
@@ -182,18 +184,18 @@
                 <dx-check-box id="discloseMyEmail"
                               [disabled]="!paymentAuthorizationRequired"
                               [value]="false"
-                              [text]="l('AgreeToUpdate')"
+                              [text]="ls.l('AgreeToUpdate')"
                               validationMessageMode="auto">
                     <dx-validator>
                         <dxi-validation-rule type="required"
-                                             [message]="l('AgreeToUpdateError')"></dxi-validation-rule>
+                                             [message]="ls.l('AgreeToUpdateError')"></dxi-validation-rule>
                     </dx-validator>
                 </dx-check-box>
             </div>
             <div class="col">
                 <div class="agreements">
-                    {{l("ByContinueIAgree")}} <a (click)="openConditionsDialog(conditions.Terms)" [title]="l('TermsOfService')">{{l("TermsOfService")}}</a>
-                    {{l("And")}} <a (click)="openConditionsDialog(conditions.Policies)" [title]="l('PrivacyPolicy')">{{l("PrivacyPolicy")}}</a>
+                    {{ls.l("ByContinueIAgree")}} <a (click)="openConditionsDialog(conditions.Terms)" [title]="ls.l('TermsOfService')">{{ls.l("TermsOfService")}}</a>
+                    {{ls.l("And")}} <a (click)="openConditionsDialog(conditions.Policies)" [title]="ls.l('PrivacyPolicy')">{{ls.l("PrivacyPolicy")}}</a>
                 </div>
             </div>
         </div>

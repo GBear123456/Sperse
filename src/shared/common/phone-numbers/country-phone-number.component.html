@@ -4,6 +4,7 @@
         placeholder=""
         [(ngModel)]="phoneNumber"
         [required]="required"
+        [disabled]="disabled"
         defaultCountry="us"
         #intPhoneNumberModel="ngModel"
         (onFocusIn)="focusIn()"

@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     Component,
     ChangeDetectionStrategy,
@@ -8,8 +9,12 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { AccountConnectors } from '@shared/AppEnums';
+
+/** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+
+/** Application imports */
+import { AccountConnectors } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
@@ -61,15 +66,17 @@ export class AccountConnectorDialogComponent implements OnInit {
             /** Decrease dialog sized to 0 (like hide) and open quovo iframe dialog instead,
              * setTimeout to avoid changed after check error */
             this.dialogRef.updateSize('0', '0');
-        }
+        } else if (connector == AccountConnectors.XeroOAuth2)
+            this.closeDialog();
         this.selectedConnector = connector;
     }
 
-    closeDialog(e) {
+    closeDialog(e?) {
         this.dialogRef.close(e);
     }
 
     complete() {
         this.onComplete.emit();
+        this.closeDialog();
     }
 }

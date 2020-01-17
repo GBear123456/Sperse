@@ -68,18 +68,20 @@ export class SMSDialogComponent {
             /** Clear select box widget value */
             this.phoneNumber = '';
         }
-        if (this.validationGroup.instance.validate().isValid && this.countryPhoneNumber.isValid()) {
-            this.loadingService.startLoading(this.validationGroup.instance.element());
-            this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({
-                contactId: this.data.contact.id,
-                message: this.smsText,
-                phoneNumber: this.phoneNumber
-            })).pipe(
-                finalize(() => this.loadingService.finishLoading(this.validationGroup.instance.element()))
-            ).subscribe(
-                () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
-            );
-        }
+        setTimeout(() => {
+            if (this.validationGroup.instance.validate().isValid && this.countryPhoneNumber.isValid()) {
+                this.loadingService.startLoading(this.validationGroup.instance.element());
+                this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({
+                    contactId: this.data.contact.id,
+                    message: this.smsText,
+                    phoneNumber: this.phoneNumber
+                })).pipe(
+                    finalize(() => this.loadingService.finishLoading(this.validationGroup.instance.element()))
+                ).subscribe(
+                    () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
+                );
+            }
+        });
     }
 
     phoneNumberClick(e) {

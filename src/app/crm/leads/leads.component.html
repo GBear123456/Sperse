@@ -97,7 +97,7 @@
                         <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="StateId" [caption]="l('Contact.State')"></dxi-column>
+                        <dxi-column dataField="State" [caption]="l('State')"></dxi-column>
                         <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
                         <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
                             <dxi-column dataField="BankCode"
@@ -148,6 +148,7 @@
                     [pipelinePurposeId]="pipelinePurposeId"
                     [filterModelStages]="filterModelStages"
                     [(selectedEntities)]="selectedLeads"
+                    dateField="LeadDate"
                     [contactGroupId]="contactGroupId.value"
                     [moveDisabled]="manageDisabled"
                     (onEntityStageChanged)="onLeadStageChanged($event)"

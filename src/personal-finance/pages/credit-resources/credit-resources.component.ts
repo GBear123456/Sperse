@@ -1,6 +1,6 @@
-import {Component, OnInit, Injector} from '@angular/core';
-import {appModuleAnimation} from '@shared/animations/routerTransition';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { Component } from '@angular/core';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-credit-resources',
@@ -8,13 +8,8 @@ import {AppComponentBase} from '@shared/common/app-component-base';
     styleUrls: ['./credit-resources.component.less'],
     animations: [appModuleAnimation()]
 })
-export class CreditResourcesComponent extends AppComponentBase implements OnInit {
+export class CreditResourcesComponent {
 
-    constructor(injector: Injector) {
-        super(injector);
-    }
-
-    ngOnInit() {
-    }
+    constructor(public ls: AppLocalizationService) {}
 
 }

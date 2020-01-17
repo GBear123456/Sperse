@@ -360,7 +360,6 @@
                                        (country)="updateCountryInfo($event, i)"
                                        (street_number)="address['streetNumber']=$event"
                                        (street)="address['streetAddress']=$event"
-                                       (city)="address['city']=$event"
                                        (postal_code)="address['zip']=$event"
                                        (setAddress)="onAddressChanged($event, i)"
                                        angularGooglePlace/>
@@ -377,15 +376,17 @@
                                     (onValueChanged)="checkAddressControls(i)">
                                 </dx-text-box>
                                 <dx-select-box
-                                    [dataSource]="states[address.country]"
+                                    [acceptCustomValue]="true"
+                                    [dataSource]="getCountryStates(address.countryCode) | async"
                                     displayExpr="name"
                                     valueExpr="code"
                                     name="state"
                                     [placeholder]="ls.l('State')"
                                     [width]="'270px'"
                                     [searchEnabled]="true"
-                                    [(value)]="address['stateCode']"
-                                    (onValueChanged)="checkAddressControls(i)">
+                                    [(value)]="address['stateName']"
+                                    (onValueChanged)="checkAddressControls(i)"
+                                    (onCustomItemCreating)="onCustomStateCreate($event, i)">
                                 </dx-select-box>
                             </div>
                             <div class="field addr padding-right" style="padding-bottom: 10px;">
@@ -410,7 +411,7 @@
                                 </dx-select-box>
                             </div>
                         </div>
-                        <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}">
+                        <div class="add-new-button" [ngClass]="{ disabled: !addButtonVisible['addresses'] }">
                             <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>

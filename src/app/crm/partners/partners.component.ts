@@ -130,6 +130,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private readonly dataSourceURI = 'Partner';
     private readonly groupDataSourceURI = 'PartnerSlice';
+    private readonly dateField = 'ContactDate';
     private filters: FilterModel[];
     private rootComponent: any;
     private subRouteParams: any;
@@ -222,7 +223,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'year',
                 name: 'year',
@@ -230,14 +231,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'quarter',
                 showTotals: false,
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'month',
                 showTotals: false
@@ -287,7 +288,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             return this.crmService.loadSliceChartData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                this.chartComponent.summaryBy.value
+                this.chartComponent.summaryBy.value,
+                this.dateField
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
                 this.totalCount = this.chartInfoItems[0].value;
@@ -320,7 +322,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
-            mapArea
+            mapArea,
+            this.dateField
         )),
         publishReplay(),
         refCount(),
@@ -535,7 +538,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         component: FilterCalendarComponent,
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
-                        field: 'ContactDate',
+                        field: this.dateField,
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
                         options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),

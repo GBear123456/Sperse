@@ -2,15 +2,21 @@
     <button (click)="closeDialog($event)" class="close"></button>
     <button *ngIf="selectedConnector && showBackButton" (click)="selectedConnector = undefined" class="back"></button>
 
-    <account-connector-chooser [hidden]="selectedConnector"
-                               [disabledConnectors]="data?.disabledConnectors"
-                               (onConnectorChosen)="openConnector($event)">
+    <account-connector-chooser [hidden]="selectedConnector && selectedConnector != accountConnectors.Plaid"
+        [disabledConnectors]="data?.disabledConnectors"
+        (onConnectorChosen)="openConnector($event)">
     </account-connector-chooser>
 
+    <ng-template [ngIf]="selectedConnector === accountConnectors.Plaid">
+        <plaid-login
+            (onComplete)="complete()"
+            (onClose)="closeDialog($event)">
+        </plaid-login>
+    </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.Quovo">
         <quovo-login [loadingContainerElement]="data?.loadingContainerElement"
-                     [accountId]="data?.config?.accountId"
-                     (onClose)="closeDialog($event)">
+            [accountId]="data?.config?.accountId"
+            (onClose)="closeDialog($event)">
         </quovo-login>
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.Xero">
@@ -22,5 +28,8 @@
             (onClose)="closeDialog($event)"
             (onComplete)="complete()" #xeroLogin>
         </xero-login>
+    </ng-template>
+    <ng-template [ngIf]="selectedConnector === accountConnectors.XeroOAuth2">
+        <xero-oauth2-login></xero-oauth2-login>
     </ng-template>
 </mat-dialog-content>

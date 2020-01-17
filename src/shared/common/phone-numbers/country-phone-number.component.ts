@@ -11,6 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
     @Input() required = true;
+    @Input() disabled = false;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
@@ -43,8 +44,27 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
         }
     }
 
+    ngOnInit() {
+        if (!this.phoneNumber)
+            this.phoneNumber = AppConsts.defaultCountryCode;
+        this.onInitialized.emit(this);
+    }
+
+    ngAfterViewInit() {
+        this.intPhoneNumber.registerOnChange((value) => {
+            this.phoneNumberChange.emit(this.value = value);
+            this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);
+        });
+        if (this.phoneNumber !== AppConsts.defaultCountryCode) {
+            setTimeout(() => {
+                this.intPhoneNumber.writeValue(this.phoneNumber);
+                this.intPhoneNumber.updateValue();
+            });
+        }
+    }
+
     isValid() {
-        return this.isEmpty() || this.model.valid;
+        return this.disabled || this.isEmpty() || this.model.valid;
     }
 
     isEmpty() {
