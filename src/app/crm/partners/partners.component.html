@@ -131,6 +131,8 @@
                         </div>
                     </div>
                     <dxi-column dataField="ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                    <dxi-column dataField="Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | date: formatting.dateTime : userTimezone}}
                     </div>

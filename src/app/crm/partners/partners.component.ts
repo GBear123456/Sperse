@@ -830,7 +830,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: () => {
+                                    action: (options) => {
                                         if (this.showPivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.option(
                                                 'export.fileName',
@@ -838,7 +838,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                             );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.showDataGrid) {
-                                            this.exportToXLS.bind(this);
+                                            this.exportToXLS(options);
                                         }
                                     },
                                     text: this.l('Export to Excel'),

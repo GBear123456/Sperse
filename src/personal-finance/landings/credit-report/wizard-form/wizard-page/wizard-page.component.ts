@@ -269,7 +269,7 @@ export class CreditWizardPageComponent implements OnInit {
         this.model.address.streetAddress = paymentInfo.bankCard.billingAddress;
         this.model.address.city = paymentInfo.bankCard.billingCity;
         this.model.address.stateId = paymentInfo.bankCard.billingStateCode;
-        this.model.address.state = paymentInfo.bankCard.billingState;
+        this.model.address.stateName = paymentInfo.bankCard.billingState;
         this.model.address.countryId = paymentInfo.bankCard.billingCountryCode;
         this.model.address.zip = paymentInfo.bankCard.billingZip;
     }
@@ -278,7 +278,7 @@ export class CreditWizardPageComponent implements OnInit {
         let number = this.angularGooglePlaceService.street_number(event.address_components);
         let street = this.googlePlaceService.getStreet(event.address_components);
         this.model.address.stateId = this.googlePlaceService.getStateCode(event.address_components);
-        this.model.address.state = this.googlePlaceService.getStateName(event.address_components);
+        this.model.address.stateName = this.googlePlaceService.getStateName(event.address_components);
         this.model.address.city = this.googlePlaceService.getCity(event.address_components);
         this.model.address.streetAddress = this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
         const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
