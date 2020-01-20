@@ -21973,7 +21973,7 @@ export class PaymentServiceProxy {
      * @contactId (optional) 
      * @return Success
      */
-    getPayments(contactId: number | null | undefined): Observable<MonthlyPaymentInfo[]> {
+    getPayments(contactId: number | null | undefined): Observable<GetPaymentsDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Payment/GetPayments?";
         if (contactId !== undefined)
             url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
@@ -21995,14 +21995,14 @@ export class PaymentServiceProxy {
                 try {
                     return this.processGetPayments(<any>response_);
                 } catch (e) {
-                    return <Observable<MonthlyPaymentInfo[]>><any>_observableThrow(e);
+                    return <Observable<GetPaymentsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<MonthlyPaymentInfo[]>><any>_observableThrow(response_);
+                return <Observable<GetPaymentsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPayments(response: HttpResponseBase): Observable<MonthlyPaymentInfo[]> {
+    protected processGetPayments(response: HttpResponseBase): Observable<GetPaymentsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22013,11 +22013,7 @@ export class PaymentServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(MonthlyPaymentInfo.fromJS(item));
-            }
+            result200 = resultData200 ? GetPaymentsDto.fromJS(resultData200) : new GetPaymentsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -22025,7 +22021,7 @@ export class PaymentServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<MonthlyPaymentInfo[]>(<any>null);
+        return _observableOf<GetPaymentsDto>(<any>null);
     }
 
     /**
@@ -61031,6 +61027,58 @@ export interface IMonthlyPaymentInfo {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
+}
+
+export class GetPaymentsDto implements IGetPaymentsDto {
+    lastPaymentAmount!: number | undefined;
+    lastPaymentDate!: moment.Moment | undefined;
+    payments!: MonthlyPaymentInfo[] | undefined;
+
+    constructor(data?: IGetPaymentsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lastPaymentAmount = data["lastPaymentAmount"];
+            this.lastPaymentDate = data["lastPaymentDate"] ? moment(data["lastPaymentDate"].toString()) : <any>undefined;
+            if (data["payments"] && data["payments"].constructor === Array) {
+                this.payments = [];
+                for (let item of data["payments"])
+                    this.payments.push(MonthlyPaymentInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetPaymentsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPaymentsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastPaymentAmount"] = this.lastPaymentAmount;
+        data["lastPaymentDate"] = this.lastPaymentDate ? this.lastPaymentDate.toISOString() : <any>undefined;
+        if (this.payments && this.payments.constructor === Array) {
+            data["payments"] = [];
+            for (let item of this.payments)
+                data["payments"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetPaymentsDto {
+    lastPaymentAmount: number | undefined;
+    lastPaymentDate: moment.Moment | undefined;
+    payments: MonthlyPaymentInfo[] | undefined;
 }
 
 export enum CustomerAccountingType {

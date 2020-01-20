@@ -78,10 +78,12 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                     return (!refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments
                         ? of(this.paymentServiceProxy['data'][contactId].payments)
                         : this.paymentServiceProxy.getPayments(contactId).pipe(
-                            tap(payments => {
-                                this.paymentServiceProxy['data'][contactId].payments = payments;
-                                this.setLastPaymentInfo(payments);
-                            })
+                            tap(paymentInfo => {
+                                this.paymentServiceProxy['data'][contactId].payments = paymentInfo.payments;
+                                this.lastPaymentAmount = paymentInfo.lastPaymentAmount;
+                                this.lastPaymentDate = paymentInfo.lastPaymentDate && paymentInfo.lastPaymentDate.utc().format('MMM D');
+                            }),
+                            map(paymentInfo => paymentInfo.payments)
                         )).pipe(finalize(() => {abp.ui.clearBusy(this.paymentsContainer.nativeElement); }));
                 }
             ),
@@ -114,16 +116,6 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                 this._refresh.next(true);
             }
         });
-    }
-
-    setLastPaymentInfo(payments) {
-        let lastPayment = payments && _.sortBy(payments, (payment) => {
-            return payment.startDate;
-        }).reverse()[0];
-        if (lastPayment) {
-            this.lastPaymentAmount = lastPayment.amount;
-            this.lastPaymentDate = lastPayment.startDate.utc().format('MMM D');
-        }
     }
 
     formatDate(date: moment.Moment) {
