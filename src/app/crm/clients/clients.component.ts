@@ -7,10 +7,11 @@ import {
     ViewChild
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
+
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import 'devextreme/data/odata/store';
+import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
 import {
@@ -28,6 +29,7 @@ import {
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
+
 /** Application imports */
 import { AppService } from '@app/app.service';
 import {
@@ -121,6 +123,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
+    private readonly totalDataSourceURI: string = 'Customer/$count';
     private readonly groupDataSourceURI: string = 'CustomerSlice';
     private readonly dateField = 'ContactDate';
     private filters: FilterModel[];
@@ -407,6 +410,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             }
         };
+        this.totalDataSource = new DataSource({
+            paginate: false,
+            store: new ODataStore({
+                url: this.getODataUrl(this.totalDataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: (request) => {
+                    this.totalCount = null;
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                onLoaded: (count: any) => {
+                    this.totalCount = count;
+                }
+            })
+        });
+        this.totalDataSource.load();
         this.searchValue = '';
         this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
@@ -477,7 +496,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onContentReady(event) {
         this.setGridDataLoaded();
-        this.totalCount = this.totalRowCount;
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -983,6 +1001,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     initDataSource() {
         if (this.showDataGrid) {
+            this.totalDataSource.load();
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1036,12 +1055,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     processFilterInternal() {
         if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
             || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
-            this.processODataFilter(
+            const filterQuery = this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom
             );
+            if (this.showDataGrid) {
+                this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                this.totalDataSource.load();
+            }
         }
     }
 

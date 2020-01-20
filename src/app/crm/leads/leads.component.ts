@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, combineLatest, of, merge } from 'rxjs';
@@ -449,13 +450,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
-                deserializeDates: false,
-                paginate: true
+                deserializeDates: false
             }
         };
         this.totalDataSource = new DataSource({
-            store: {
-                type: 'odata',
+            paginate: false,
+            store: new ODataStore({
                 url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
@@ -464,10 +464,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
-                onLoaded: (count: number) => {
+                onLoaded: (count: any) => {
                     this.totalCount = count;
                 }
-            }
+            })
         });
         this.searchValue = '';
         if (this.userManagementService.checkBankCodeFeature()) {
