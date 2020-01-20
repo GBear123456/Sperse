@@ -3,7 +3,6 @@ import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy } from '@a
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
-import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import capitalize from 'underscore.string/capitalize';
@@ -34,6 +33,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { TitleService } from '@shared/common/title/title.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
@@ -215,7 +215,7 @@ export abstract class AppComponentBase implements OnDestroy {
         }
     }
 
-    getODataUrl(uri: string, filter?: Object, instanceData = null) {
+    getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null) {
         const searchParam = this.getQuickSearchParam();
         const params = searchParam && [searchParam];
         return this.oDataService.getODataUrl(uri, filter, instanceData, params);
