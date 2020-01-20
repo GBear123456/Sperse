@@ -48,7 +48,7 @@ export class AppPreBootstrap {
     }
 
     private static processRegularBootstrap(queryStringObj, callback) {
-        if (queryStringObj.hasOwnProperty('tenantId'))
+        if (queryStringObj.hasOwnProperty('tenantId') && !abp.session.userId)
             abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
 
         AppPreBootstrap.getUserConfiguration(callback).subscribe();
@@ -94,11 +94,10 @@ export class AppPreBootstrap {
 
     private static impersonatedAuthenticate(queryStringObj: any, router: Router, callback: Function): JQueryPromise<any> {
         abp.auth.clearToken();
-        abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
 
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         let requestHeaders = {
-            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+            'Abp.TenantId': queryStringObj.tenantId
         };
 
         if (cookieLangValue) {
@@ -141,11 +140,9 @@ export class AppPreBootstrap {
     }
 
     private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: (sessionCallback?) => void, router: Router): JQueryPromise<any> {
-        abp.multiTenancy.setTenantIdCookie(tenantId);
-
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         let requestHeaders = {
-            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+            'Abp.TenantId': tenantId
         };
 
         if (cookieLangValue) {
