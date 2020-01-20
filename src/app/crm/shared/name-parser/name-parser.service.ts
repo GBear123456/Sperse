@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PersonInfoDto } from '@shared/service-proxies/service-proxies';
 
-import * as parseFullName  from 'parse-full-name';
+import * as parseFullName from 'parse-full-name';
 
 @Injectable()
 export class NameParserService {

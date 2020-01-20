@@ -125,7 +125,7 @@ body.overflow-hidden.modal-open,
     width: calc(100% + 35px);
     position: relative;
     top: -15px;
-    left: -22px;
+    left: -17px;
     padding: 8px 17px;
 }
 .tooltip-item.inflows::before,
