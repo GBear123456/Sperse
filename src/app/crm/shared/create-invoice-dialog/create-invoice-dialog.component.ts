@@ -14,6 +14,7 @@ import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -21,6 +22,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import {
+    PersonInfoDto,
     InvoiceServiceProxy,
     InvoiceAddressInput,
     CreateInvoiceInput,
@@ -130,6 +132,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     shippingAddresses = [];
 
     constructor(
+        private nameParser: NameParserService,
         private oDataService: ODataService,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
@@ -685,9 +688,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     showEditAddressDialog(event, field) {
-        let address = this.selectedContact.address,
-            customerNameParts = (this.customer || '').split(' '),
-            dialogData: any = this[field] || {
+        let person = new PersonInfoDto(),
+            address = this.selectedContact.address;
+        this.nameParser.parseIntoPerson(this.customer, person);
+        let dialogData: any = this[field] || {
                 countryId: address.countryCode,
                 stateId: address.stateId,
                 stateName: address.stateName,
@@ -696,8 +700,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 zip: address.zip,
                 address1: address.streetAddress,
                 address2: undefined,
-                firstName: customerNameParts.shift(),
-                lastName: customerNameParts.shift(),
+                firstName: person.firstName,
+                lastName: person.lastName,
                 company: undefined,
                 email: this.selectedContact.email,
                 phone: undefined
