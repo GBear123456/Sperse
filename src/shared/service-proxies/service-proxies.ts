@@ -36177,7 +36177,6 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     email!: string | undefined;
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
     zip!: string | undefined;
@@ -36208,7 +36207,6 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.email = data["email"];
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
             this.zip = data["zip"];
@@ -36239,7 +36237,6 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["email"] = this.email;
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
@@ -36263,7 +36260,6 @@ export interface ICreateBusinessEntityDto {
     email: string | undefined;
     alternativeEmail: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
     zip: string | undefined;
@@ -36287,7 +36283,6 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     email!: string | undefined;
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
     zip!: string | undefined;
@@ -36320,7 +36315,6 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.email = data["email"];
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
             this.zip = data["zip"];
@@ -36353,7 +36347,6 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["email"] = this.email;
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
@@ -36379,7 +36372,6 @@ export interface IUpdateBusinessEntityDto {
     email: string | undefined;
     alternativeEmail: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
     zip: string | undefined;
@@ -43857,7 +43849,7 @@ export class AddressInfo implements IAddressInfo {
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
+    countryName!: string | undefined;
     usageTypeId!: string | undefined;
     startDate!: moment.Moment | undefined;
     ownershipTypeId!: string | undefined;
@@ -43880,7 +43872,7 @@ export class AddressInfo implements IAddressInfo {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
+            this.countryName = data["countryName"];
             this.usageTypeId = data["usageTypeId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.ownershipTypeId = data["ownershipTypeId"];
@@ -43903,7 +43895,7 @@ export class AddressInfo implements IAddressInfo {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
+        data["countryName"] = this.countryName;
         data["usageTypeId"] = this.usageTypeId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["ownershipTypeId"] = this.ownershipTypeId;
@@ -43919,7 +43911,7 @@ export interface IAddressInfo {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
+    countryName: string | undefined;
     usageTypeId: string | undefined;
     startDate: moment.Moment | undefined;
     ownershipTypeId: string | undefined;
@@ -59108,10 +59100,10 @@ export class ImportAddressInput implements IImportAddressInput {
     addressLine2!: string | undefined;
     city!: string | undefined;
     stateName!: string | undefined;
-    stateCode!: string | undefined;
-    zipCode!: string | undefined;
+    stateId!: string | undefined;
+    zip!: string | undefined;
     countryName!: string | undefined;
-    countryCode!: string | undefined;
+    countryId!: string | undefined;
 
     constructor(data?: IImportAddressInput) {
         if (data) {
@@ -59128,10 +59120,10 @@ export class ImportAddressInput implements IImportAddressInput {
             this.addressLine2 = data["addressLine2"];
             this.city = data["city"];
             this.stateName = data["stateName"];
-            this.stateCode = data["stateCode"];
-            this.zipCode = data["zipCode"];
+            this.stateId = data["stateId"];
+            this.zip = data["zip"];
             this.countryName = data["countryName"];
-            this.countryCode = data["countryCode"];
+            this.countryId = data["countryId"];
         }
     }
 
@@ -59148,10 +59140,10 @@ export class ImportAddressInput implements IImportAddressInput {
         data["addressLine2"] = this.addressLine2;
         data["city"] = this.city;
         data["stateName"] = this.stateName;
-        data["stateCode"] = this.stateCode;
-        data["zipCode"] = this.zipCode;
+        data["stateId"] = this.stateId;
+        data["zip"] = this.zip;
         data["countryName"] = this.countryName;
-        data["countryCode"] = this.countryCode;
+        data["countryId"] = this.countryId;
         return data; 
     }
 }
@@ -59161,10 +59153,10 @@ export interface IImportAddressInput {
     addressLine2: string | undefined;
     city: string | undefined;
     stateName: string | undefined;
-    stateCode: string | undefined;
-    zipCode: string | undefined;
+    stateId: string | undefined;
+    zip: string | undefined;
     countryName: string | undefined;
-    countryCode: string | undefined;
+    countryId: string | undefined;
 }
 
 export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
@@ -63300,7 +63292,6 @@ export class MemberAddressDto implements IMemberAddressDto {
     stateId!: string | undefined;
     stateName!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
 
     constructor(data?: IMemberAddressDto) {
         if (data) {
@@ -63319,7 +63310,6 @@ export class MemberAddressDto implements IMemberAddressDto {
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
         }
     }
 
@@ -63338,7 +63328,6 @@ export class MemberAddressDto implements IMemberAddressDto {
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
         return data; 
     }
 }
@@ -63350,7 +63339,6 @@ export interface IMemberAddressDto {
     stateId: string | undefined;
     stateName: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
 }
 
 export class UTMParameterInfo implements IUTMParameterInfo {
