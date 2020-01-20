@@ -122,9 +122,8 @@ export class LoginService {
             });
     }
 
-    sendPasswordResetCode(finallyCallback?: () => void, autoDetectTenancy: boolean = true): void {
-        finallyCallback = finallyCallback || (() => { });
-
+    sendPasswordResetCode(finallyCallback = () => {}, autoDetectTenancy: boolean = true): void {
+        abp.auth.clearToken();
         this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
         this.accountService
             .sendPasswordResetCode(this.resetPasswordModel)

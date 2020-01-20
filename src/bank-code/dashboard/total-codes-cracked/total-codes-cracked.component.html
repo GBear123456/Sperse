@@ -1,13 +1,16 @@
 <h5 class="card-title">{{ls.l('BankCode_AtaGlance')}}</h5>
 <div class="row">
-    <div class="col-md-6 p-md-5">
-        <chart [type]="type" [data]="data" [options]="options">
+    <div class="col-md-6 p-md-5" *ngIf="total">
+        <chart *ngIf="values" [type]="type" [data]="data" [options]="options">
             <canvas width="300" height="300"></canvas>
         </chart>
         <p class="card-text-footer glance mt-4">{{ls.l('BankCode_TotalCodeCracked')}}</p>
     </div>
-    <div class="col-md-6 p-md-5">
-        <img class="level-img" src="./assets/common/images/bank-code/codebreaker-8.png" alt="Codebreaker">
+    <div class="col-md-{{ total ? '6' : '12' }} p-md-5 }}">
+        <ng-container >
+            <img *ngIf="level !== null && level !== undefined"
+                 class="level-img" src="./assets/common/images/bank-code/badges/L{{level === 0 ? 1 : level}}-{{ level === 0 ? '0' : '1'}}.png" alt="Codebreaker">
+        </ng-container>
         <p class="card-text-footer glance mt-4">{{ls.l('BankCode_CurrentBadgeLvl')}}</p>
     </div>
 </div>

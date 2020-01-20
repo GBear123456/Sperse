@@ -272,8 +272,8 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 name: this.ls.l('Offers_Filter_ResidentState'),
                 selected$: this.offersService.state$,
                 values$: this.store$.pipe(
-                    select(StatesStoreSelectors.getState, { countryCode: 'US' }),
-                    filter(states => states && states.length),
+                    select(StatesStoreSelectors.getCountryStates, { countryCode: 'US' }),
+                    filter(states => !!(states && states.length)),
                     map(states => [ { name: 'All USA', value: 'all' } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
                 ),
                 onChange: (e: MatSelectChange) => {

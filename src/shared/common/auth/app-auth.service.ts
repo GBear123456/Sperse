@@ -43,7 +43,7 @@ export class AppAuthService implements OnDestroy {
                     authData.twoFactorRememberClientToken,
                     authData.returnUrl
                 );
-                document.cookie = authDataKey + '=; domain=' +
+                document.cookie = authDataKey + '=; path=/; domain=' +
                     location.origin.split('.').slice(-2).join('.');
 
                 return true;

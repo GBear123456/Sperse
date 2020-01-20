@@ -7,10 +7,11 @@ import {
     ViewChild
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
+
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import 'devextreme/data/odata/store';
+import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
 import {
@@ -28,6 +29,7 @@ import {
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
+
 /** Application imports */
 import { AppService } from '@app/app.service';
 import {
@@ -121,7 +123,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
+    private readonly totalDataSourceURI: string = 'Customer/$count';
     private readonly groupDataSourceURI: string = 'CustomerSlice';
+    private readonly dateField = 'ContactDate';
     private filters: FilterModel[];
     private rootComponent: any;
     private subRouteParams: any;
@@ -225,7 +229,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'year',
                 name: 'year',
@@ -233,14 +237,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'quarter',
                 showTotals: false,
             },
             {
                 area: 'column',
-                dataField: 'ContactDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'month',
                 showTotals: false
@@ -315,7 +319,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
-            mapArea
+            mapArea,
+            this.dateField
         )),
         publishReplay(),
         refCount(),
@@ -330,7 +335,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return this.crmService.loadSliceChartData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                this.chartComponent.summaryBy.value
+                this.chartComponent.summaryBy.value,
+                this.dateField
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
                 this.totalCount = this.chartInfoItems[0].value;
@@ -404,6 +410,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             }
         };
+        this.totalDataSource = new DataSource({
+            paginate: false,
+            store: new ODataStore({
+                url: this.getODataUrl(this.totalDataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: (request) => {
+                    this.totalCount = null;
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                onLoaded: (count: any) => {
+                    this.totalCount = count;
+                }
+            })
+        });
+        this.totalDataSource.load();
         this.searchValue = '';
         this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
@@ -474,7 +496,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onContentReady(event) {
         this.setGridDataLoaded();
-        this.totalCount = this.totalRowCount;
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -559,7 +580,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         component: FilterCalendarComponent,
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
-                        field: 'ContactDate',
+                        field: this.dateField,
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
                         options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
@@ -823,7 +844,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     visible: this.showChart || this.showMap
                                 },
                                 {
-                                    action: () => {
+                                    action: (options) => {
                                         if (this.dataLayoutType.value === DataLayoutType.PivotGrid) {
                                             this.pivotGridComponent.pivotGrid.instance.option(
                                                 'export.fileName',
@@ -831,7 +852,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             );
                                             this.pivotGridComponent.pivotGrid.instance.exportToExcel();
                                         } else if (this.dataLayoutType.value === DataLayoutType.DataGrid) {
-                                            this.exportToXLS.bind(this);
+                                            this.exportToXLS(options);
                                         }
                                     },
                                     text: this.l('Export to Excel'),
@@ -980,6 +1001,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     initDataSource() {
         if (this.showDataGrid) {
+            this.totalDataSource.load();
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1033,12 +1055,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     processFilterInternal() {
         if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
             || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
-            this.processODataFilter(
+            const filterQuery = this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom
             );
+            if (this.showDataGrid) {
+                this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                this.totalDataSource.load();
+            }
         }
     }
 

@@ -2,12 +2,10 @@
     <div class="counter-1 col-lg-6 mb-md-5 mb-lg-0">
         <h6 class="card-title">{{ls.l('BankCode_MyTotalCracked')}}</h6>
         <div class="numbers">
-            <div class="incremental-counter" id="counter-1" data-value="22205">
-                <div class="num">2</div>
-                <div class="num">2</div>
-                <div class="num">2</div>
-                <div class="num">0</div>
-                <div class="num">5</div>
+            <div *ngIf="totalCrackedCodesNumber" class="incremental-counter" id="counter-1">
+                <div class="num" *ngFor="let number of range(0, totalCrackedCodesNumber.length); let i = index">
+                    {{ totalCrackedCodesNumber[i] }}
+                </div>
             </div>
         </div>
         <div class="circular-graph-wrapper">
@@ -29,11 +27,11 @@
         <div class="numbers">
             <div class="incremental-counter" id="counter-2" data-value="132718">
                 <div class="num">1</div>
-                <div class="num">3</div>
                 <div class="num">2</div>
-                <div class="num">7</div>
-                <div class="num">1</div>
-                <div class="num">8</div>
+                <div class="num">9</div>
+                <div class="num">4</div>
+                <div class="num">9</div>
+                <div class="num">4</div>
             </div>
         </div>
         <div class="circular-graph-wrapper">

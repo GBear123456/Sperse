@@ -14,6 +14,7 @@ import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -21,6 +22,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import {
+    PersonInfoDto,
     InvoiceServiceProxy,
     InvoiceAddressInput,
     CreateInvoiceInput,
@@ -130,6 +132,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     shippingAddresses = [];
 
     constructor(
+        private nameParser: NameParserService,
         private oDataService: ODataService,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
@@ -184,7 +187,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
         if (invoice && invoice.InvoiceId) {
             this.modalDialog.startLoading();
-            if (!this.data.addNew) {
+            if (this.data.addNew)
+                this.status = InvoiceStatus.Draft;
+            else {
                 this.invoiceId = invoice.InvoiceId;
                 this.invoiceNo = invoice.InvoiceNumber;
                 this.status = invoice.InvoiceStatus;
@@ -281,9 +286,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     saveOptionsInit() {
         let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name);
         this.selectedOption = this.saveContextMenuItems[
-            this.cacheService.exists(cacheKey)
-                ? this.cacheService.get(cacheKey)
-                : this.data.saveAsDraft ? this.SAVE_OPTION_DRAFT : this.SAVE_OPTION_DEFAULT
+            this.data.saveAsDraft
+                ? this.SAVE_OPTION_DRAFT : this.cacheService.exists(cacheKey)
+                ? this.cacheService.get(cacheKey) : this.SAVE_OPTION_DEFAULT
         ];
         this.selectedOption.selected = true;
         this.buttons[0].title = this.selectedOption.text;
@@ -560,15 +565,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     selectContact(event) {
-        this.selectedContact = event.selectedItem;
-        this.contactId = event.selectedItem && event.selectedItem.id;
-        if (this.orderId && !this.data.invoice) {
-            this.orderId = undefined;
-            this.orderNumber = undefined;
+        let contactId = event.selectedItem && event.selectedItem.id;
+        if (contactId != this.contactId) {
+            this.contactId = contactId;
+            this.selectedContact = event.selectedItem;
+            if (this.orderId && !this.data.invoice) {
+                this.orderId = undefined;
+                this.orderNumber = undefined;
+            }
+            this.orderDropdown.initOrderDataSource();
+            this.initContactAddresses(this.contactId);
+            this.changeDetectorRef.detectChanges();
         }
-        this.orderDropdown.initOrderDataSource();
-        this.initContactAddresses(this.contactId);
-        this.changeDetectorRef.detectChanges();
     }
 
     clearClient() {
@@ -625,7 +633,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    addNewLine(data) {
+    addNewLine() {
         this.lines.push({});
         this.changeDetectorRef.detectChanges();
     }
@@ -680,24 +688,26 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     showEditAddressDialog(event, field) {
-        let address = this.selectedContact.address,
-            customerNameParts = (this.customer || '').split(' '),
-            dialogData: any = this[field] || {
-                contactId: this.contactId,
+        let person = new PersonInfoDto(),
+            address = this.selectedContact.address;
+        this.nameParser.parseIntoPerson(this.customer, person);
+        let dialogData: any = this[field] || {
                 countryId: address.countryCode,
-                stateId: undefined,
+                stateId: address.stateId,
+                stateName: address.stateName,
                 country: address.country,
-                state: address.state,
                 city: address.city,
                 zip: address.zip,
                 address1: address.streetAddress,
                 address2: undefined,
-                firstName: customerNameParts.shift(),
-                lastName: customerNameParts.shift(),
+                firstName: person.firstName,
+                lastName: person.lastName,
                 company: undefined,
                 email: this.selectedContact.email,
                 phone: undefined
             };
+        dialogData['viewMode'] = this.disabledForUpdate;
+        dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         this.dialog.open(InvoiceAddressDialog, {
             id: field,
             data: dialogData,

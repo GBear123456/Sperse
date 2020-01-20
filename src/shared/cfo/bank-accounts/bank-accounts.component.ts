@@ -82,7 +82,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
                 config: {
                     accountId: syncAccount.syncTypeId === SyncTypeIds.Quovo ? syncAccount.syncRef : syncAccount.syncAccountId,
                 },
-                operationType: 'update'
+                operationType: 'update',
+                instanceType: this.instanceType,
+                instanceId: this.instanceId
             }
         }};
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig);

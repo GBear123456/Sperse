@@ -15,8 +15,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
+import { Observable, Subscription } from 'rxjs';
 import { finalize, filter } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
 
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -42,7 +42,7 @@ import {
     ContactServiceProxy, CreateOrUpdateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
-    PersonInfoDto, CreateContactLinkInput, TrackingInfo
+    PersonInfoDto, CreateContactLinkInput, TrackingInfo, CountryStateDto
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
@@ -64,8 +64,9 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { SourceContactListComponent } from '@app/crm/contacts/source-contact-list/source-contact-list.component';
+import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -74,7 +75,7 @@ import { SourceContactListComponent } from '@app/crm/contacts/source-contact-lis
         '../../../shared/common/toolbar/toolbar.component.less',
         'create-client-dialog.component.less'
     ],
-    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, GooglePlaceHelper, ToolbarService ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, GooglePlaceService, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
@@ -125,7 +126,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     phoneTypes: any = [];
     emailTypes: any = [];
     linkTypes: any = [];
-    states: any = [];
     countries: any;
     googleAutoComplete: boolean;
     photoOriginalData: string;
@@ -186,6 +186,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         private pipelineService: PipelineService,
         private dialogService: DialogService,
         private angularGooglePlaceService: AngularGooglePlaceService,
+        private googlePlaceService: GooglePlaceService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -193,6 +194,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         private dialogRef: MatDialogRef<CreateClientDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
+        private statesService: StatesService,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -243,6 +245,12 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     getCountryCode(name) {
         let country = this.countries && this.countries.find(country => country.name === name);
         return country && country['code'];
+    }
+
+    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode })
+        );
     }
 
     private createEntity(): void {
@@ -399,7 +407,10 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: address.stateCode,
+                    stateId: address.stateCode && address.stateCode.length <= 3 && address.stateCode !== address.stateName
+                        ? address.stateCode
+                        : null,
+                    stateName: address.stateName,
                     zip: address.zip,
                     countryId: this.getCountryCode(address.country),
                     isActive: true,
@@ -532,13 +543,29 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         return event.element.getElementsByTagName('input')[0].value;
     }
 
-    onAddressChanged(event, i) {
+    onAddressChanged(event, i: number) {
         this.checkAddressControls(i);
         let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.angularGooglePlaceService.street(event.address_components);
-        this.contacts.addresses[i].stateCode = GooglePlaceHelper.getStateCode(event.address_components);
+        let street = this.googlePlaceService.getStreet(event.address_components);
+        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
+        const stateCode = this.googlePlaceService.getStateCode(event.address_components);
+        const stateName = this.googlePlaceService.getStateName(event.address_components);
+        this.statesService.updateState(countryCode, stateCode, stateName);
+        this.contacts.addresses[i].stateCode = stateCode;
+        this.contacts.addresses[i].stateName = stateName;
         this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
+        this.contacts.addresses[i].city = this.googlePlaceService.getCity(event.address_components);
         this.changeDetectorRef.detectChanges();
+    }
+
+    onCustomStateCreate(e, i: number) {
+        this.contacts.addresses[i].stateCode = null;
+        this.contacts.addresses[i].stateName = e.text;
+        this.statesService.updateState(this.contacts.addresses[i].countryCode, e.text, e.text);
+        e.customItem = {
+            code: e.text,
+            name: e.text
+        };
     }
 
     updateCountryInfo(countryName: string, i) {
@@ -550,8 +577,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     countriesStateLoad(): void {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries))
-        .subscribe(result => {
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
             this.countries = result;
         });
     }
@@ -565,17 +591,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.addressTypes = types;
             this.changeDetectorRef.detectChanges();
         });
-    }
-
-    loadStatesDataSource(country: { name: string, code: string }) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country.code));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: country.code }))
-            .subscribe(result => {
-                setTimeout(() => {
-                    this.states[country.name] = result;
-                    this.changeDetectorRef.detectChanges();
-                });
-            });
     }
 
     phoneTypesLoad() {
@@ -618,11 +633,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.checkAddressControls(index);
         let country = this.countries && this.countries.find(country => country.name === event.value);
         if (country) {
-            this.loadStatesDataSource(country);
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country.code));
         }
     }
 
-    checkAddressControls(index) {
+    checkAddressControls(index: number) {
         clearTimeout(this.checkValidTimeout);
         this.checkValidTimeout = setTimeout(() => {
             let field = 'addresses';

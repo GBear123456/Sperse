@@ -47,7 +47,7 @@
                               (onCellClick)="onVisitorCellClick($event)"
                               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                     <dxi-column [caption]="l('Name')" [calculateDisplayValue]="getVisitorFullName" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column dataField="StateCode" [caption]="l('State')" [width]="60" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="State" [caption]="l('State')" [width]="160" calculateSortValue="StateCode" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="Date" [caption]="l('Created')" [calculateDisplayValue]="getCreatedDate" cssClass="clipboard-holder"></dxi-column>

@@ -79,7 +79,9 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
                     connector: AccountConnectors.Xero,
                     config: { isSyncBankAccountsEnabled: false },
                     overwriteCurrentCategoryTree: this.override,
-                    showBackButton: showBackButton
+                    showBackButton: showBackButton,
+                    instanceType: this.instanceType,
+                    instanceId: this.instanceId
                 }
             }
         };

@@ -38,6 +38,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() editDialogPosition: { x?: number, y?: number };
     @Input() closeAfterEdit = false;
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
+    @HostBinding('class.active') @Input() active = true;
     @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;

@@ -93,7 +93,6 @@
                                  [(value)]="user.phoneNumber"
                                  [maskInvalidMessage]="ls.l('PhoneValidationError')"
                                  [mask]="masks.phone"
-                                 [isValid]="true"
                                  (onFocusIn)="focusInput($event)"
                                  (onFocusOut)="phoneComponentFocusOut($event)"
                                  (onInitialized)="phoneComponentInitialized($event)">

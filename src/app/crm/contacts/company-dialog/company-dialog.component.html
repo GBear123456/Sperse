@@ -39,7 +39,7 @@
                                 name="companySize"
                                 displayExpr="name"
                                 valueExpr="id"
-                                placeholder="{{ls.l('Select')}}"
+                                [placeholder]="ls.l('Select')"
                                 [dataSource]="companySizes"
                                 [(value)]="company.sizeId">
                             </dx-select-box>
@@ -68,7 +68,7 @@
                                 name="country"
                                 [dataSource]="countries$ | async"
                                 [(value)]="company.formedCountryId"
-                                (onValueChanged)="loadStates($event._value)">
+                                (onValueChanged)="loadStates($event.value)">
                             </dx-select-box>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                                 name="state"
                                 displayExpr="name"
                                 valueExpr="code"
-                                placeholder="{{ls.l('Select')}}"
+                                [placeholder]="ls.l('Select')"
                                 [dataSource]="states$ | async"
                                 [(value)]="company.formedStateId">
                             </dx-select-box>
@@ -112,10 +112,10 @@
                         <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
                         <dx-text-box name="affiliateCode"
                                      [disabled]="!manageAllowed"
-                                     (onInput)="onInput($event, 50)"
                                      [inputAttr]="{ id: 'affiliateCode' }"
                                      [valueChangeEvent]="'focusout'"
-                                     [(value)]="company.affiliateCode">
+                                     [(value)]="company.affiliateCode"
+                                     (onInput)="onInput($event, 50)">
                             <dx-validator>
                                 <dxi-validation-rule type="pattern" [pattern]="affiliateRegex" message="{{ls.l('InvalidAffiliateCode')}}."></dxi-validation-rule>
                             </dx-validator>
@@ -131,7 +131,7 @@
                             [height]="'140px'"
                             [(value)]="company.description">
                         </dx-text-area>
-                        <span class="{{company.description && 'clear-contact' || 'hidden'}}" (click)="company.description = ''"><i class="minus-icon"></i></span>
+                        <span [ngClass]="company.description && 'clear-contact' || 'hidden'" (click)="company.description = ''"><i class="minus-icon"></i></span>
                     </div>
                 </div>
                 <div class="right col-md-5">
@@ -214,7 +214,7 @@
                             [height]="'140px'"
                             [(value)]="company.notes">
                         </dx-text-area>
-                        <span class="{{company.notes && 'clear-contact' || 'hidden'}}" (click)="company.notes = ''"><i class="minus-icon"></i></span>
+                        <span [ngClass]="company.notes && 'clear-contact' || 'hidden'" (click)="company.notes = ''"><i class="minus-icon"></i></span>
                     </div>
                 </div>
             </div>

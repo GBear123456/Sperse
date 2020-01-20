@@ -13,12 +13,18 @@
                     <div *ngFor="let column of layoutColumns" class="col-md-6">
                         <div *ngFor="let section of column.sections" class="section">
                             <i *ngIf="section.image" class="icons {{section.image}}"></i>
-                            <h3 *ngIf="section.name" class="lab">{{l('LeadInfoSection_' + section.name)}}</h3>
+                            <h3 *ngIf="section.name" class="lab">{{ls.l('LeadInfoSection_' + section.name)}}</h3>
                             <div *ngFor="let item of section.items" class="section-item">
-                                <div *ngIf="!item.hideLabel" class="item-edit-label">{{l(capitalize(item?.name || item))}}:</div>
+                                <div *ngIf="!item.hideLabel" class="item-edit-label">{{ls.l(capitalize(item?.name || item))}}:</div>
                                 <ng-container [ngSwitch]="item?.name">
                                     <ng-container *ngSwitchCase="'partnerSource'">
-                                        <a id="contactSourceLink" class="clipboard-holder" [class.selected]="sourceContactName" [class.disabled]="!isCGManageAllowed" (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? l('SelectAnItem') : '')}}<i class="save-to-clipboard" [hidden]="!sourceContactName" (click)="saveToClipboard($event, sourceContactName)"></i></a>
+                                        <a id="contactSourceLink"
+                                           class="clipboard-holder"
+                                           [class.selected]="sourceContactName"
+                                           [class.disabled]="!isCGManageAllowed"
+                                           (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? ls.l('SelectAnItem') : '')}}
+                                            <i class="save-to-clipboard" [hidden]="!sourceContactName" (click)="saveToClipboard($event, sourceContactName)"></i>
+                                        </a>
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
                                         <div *ngIf="getPropValue(item.name) as value" [hidden]="isEditAllowed && !item.readonly" (click)="showApplicationAllowed && item.action && item.action()" [ngClass]="{'item-link': showApplicationAllowed && item.action, 'clipboard-holder': true}">{{value}}<i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i></div>

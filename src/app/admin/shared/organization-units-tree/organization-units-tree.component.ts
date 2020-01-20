@@ -22,9 +22,7 @@ export interface IOrganizationUnitsTreeComponentData {
 })
 export class OrganizationUnitsTreeComponent implements AfterViewInit {
     @Input() set data(data: IOrganizationUnitsTreeComponentData) {
-        if (data && (ArrayHelper.dataChanged(this.allOrganizationUnits, data.allOrganizationUnits)
-            || ArrayHelper.dataChanged(this.selectedOrganizationUnits, data.selectedOrganizationUnits)
-        )) {
+        if (data) {
             this.allOrganizationUnits = data.allOrganizationUnits;
             this.selectedOrganizationUnits = data.selectedOrganizationUnits;
             this.refreshTree();

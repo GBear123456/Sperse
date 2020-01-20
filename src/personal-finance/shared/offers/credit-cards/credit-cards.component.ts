@@ -1,4 +1,4 @@
-/** Application imports */
+/** Core imports */
 import {
     Component,
     ElementRef,
@@ -15,8 +15,9 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Observable, combineLatest } from 'rxjs';
 import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
+import * as moment from 'moment';
 
-/** Core imports */
+/** Application imports */
 import {
     OfferDto,
     OfferServiceProxy,
@@ -58,15 +59,16 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
     ).pipe(
         map(([params, queryParams]) => ({...params, ...queryParams}))
     );
+    currentYear: number = moment().year();
 
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private offerServiceProxy: OfferServiceProxy,
         private offersService: OffersService,
-        public ls: AppLocalizationService,
         private lifecycleSubjectService: LifecycleSubjectsService,
         private renderer: Renderer2,
+        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {

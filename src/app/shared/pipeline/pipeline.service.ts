@@ -230,6 +230,8 @@ export class PipelineService {
         else
             this.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).subscribe(
                 (pipeline) => {
+                    toStage.isLoading = false;
+                    fromStage.isLoading = false;
                     this.dialog.open(LeadCompleteDialogComponent, {
                         data: {
                             stages: pipeline.stages
@@ -266,7 +268,9 @@ export class PipelineService {
     cancelLead(fromStage: Stage, toStage: Stage, entity, complete) {
         if (entity.data)
             this.cancelLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
-        else
+        else {
+            toStage.isLoading = false;
+            fromStage.isLoading = false;
             this.dialog.open(EntityCancelDialogComponent, {
                 data: {
                     showReasonField: true
@@ -279,6 +283,7 @@ export class PipelineService {
                     complete && complete(true);
                 }
             });
+        }
     }
 
     private cancelLeadInternal(entity, data, complete) {
@@ -328,7 +333,9 @@ export class PipelineService {
     cancelOrder(fromStage: Stage, toStage: Stage, entity, complete) {
         if (entity.data)
             this.cancelOrderInternal(entity, {...entity.data, fromStage, toStage}, complete);
-        else
+        else {
+            toStage.isLoading = false;
+            fromStage.isLoading = false;
             this.dialog.open(EntityCancelDialogComponent, {
                 data: {}
             }).afterClosed().subscribe(data => {
@@ -339,6 +346,7 @@ export class PipelineService {
                     complete && complete(true);
                 }
             });
+        }
     }
 
     private cancelOrderInternal(entity, data, complete) {

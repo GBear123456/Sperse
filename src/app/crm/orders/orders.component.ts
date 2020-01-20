@@ -12,6 +12,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { pluck, filter } from 'rxjs/operators';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -116,6 +117,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         };
 
         invoicesService.settings$.subscribe(res => this.currency = res.currency);
+        this._activatedRoute.queryParams.pipe(
+            filter(() => this.componentIsActivated),
+            pluck('refresh'),
+            filter(Boolean)
+        ).subscribe(() => this.invalidate());
 
         this.initToolbarConfig();
     }

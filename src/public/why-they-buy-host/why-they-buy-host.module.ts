@@ -9,11 +9,13 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { WhyTheyBuyHostComponent } from './why-they-buy-host.component';
 import { WhyTheyBuyHostRoutingModule } from './why-they-buy-host-routing.module';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
         CommonModule,
         WhyTheyBuyHostRoutingModule,
+        LoadingSpinnerModule,
         NgxExtendedPdfViewerModule
     ],
     exports: [],

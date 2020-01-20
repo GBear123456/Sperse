@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector: 'products',

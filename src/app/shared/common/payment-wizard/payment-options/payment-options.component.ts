@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, EventEmitter, Output, Injector, Inp
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -65,7 +65,7 @@ export class PaymentOptionsComponent extends AppComponentBase {
 
     private paymentMethodsConfig = {
         [PaymentMethods.BankTransfer]: {
-            successStatus: (res: RequestPaymentResult) => this.l('pendingBankTransferIntentRecorded'),
+            successStatus: () => this.l('pendingBankTransferIntentRecorded'),
             successStatusText: (res: RequestPaymentResult) => this.l('pendingBankTransferReference', res.transactionId),
             showBack: false,
             skipRefreshAfterClose: true,

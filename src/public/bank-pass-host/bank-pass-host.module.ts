@@ -25,6 +25,7 @@ import { AccessCodeInstructionsModule } from '@shared/common/access-code-instruc
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { MemberSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
@@ -57,7 +58,7 @@ import { MemberSettingsServiceProxy } from '@shared/service-proxies/service-prox
         })
     ],
     exports: [],
-    declarations: [ BankPassHostComponent ],
+    declarations: [ AppComponent, BankPassHostComponent ],
     providers: [
         LifecycleSubjectsService,
         ProductsService,

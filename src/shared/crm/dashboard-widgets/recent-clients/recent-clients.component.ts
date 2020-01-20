@@ -34,14 +34,14 @@ export class RecentClientsComponent implements OnInit {
             message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
-            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, true)
+            dataSource: this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
-            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, false)
+            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount)
         }
     ];
 

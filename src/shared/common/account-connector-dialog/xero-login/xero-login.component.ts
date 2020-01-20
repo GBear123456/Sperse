@@ -79,7 +79,8 @@ export class XeroLoginComponent {
                 typeId: SyncTypeIds.Xero,
                 consumerKey: this.consumerKey,
                 consumerSecret: this.consumerSecret,
-                isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled
+                isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled,
+                publicToken: null
             })
         )
             .pipe(

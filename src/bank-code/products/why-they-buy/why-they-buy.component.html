@@ -1,4 +1,5 @@
 <section class="iframe">
+    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
     <ngx-extended-pdf-viewer
         *ngIf="hasSubscription$ | async; else noSubscription"
         [src]="bookSrc"
@@ -15,8 +16,6 @@
         [useBrowserLocale]="true">
     </ngx-extended-pdf-viewer>
     <ng-template #noSubscription>
-        <ng-container *ngIf="environmentLink$ | async as environmentLink">
-            <iframe [src]="environmentLink" frameborder="0"></iframe>
-        </ng-container>
+        <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
     </ng-template>
 </section>

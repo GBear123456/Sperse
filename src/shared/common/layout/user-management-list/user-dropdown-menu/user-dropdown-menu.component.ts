@@ -39,6 +39,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'user-dropdown-menu',
@@ -65,6 +66,13 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         ? this.bankCodeService.getBackgroundColorByLetter(this.bankCode[0] as BankCodeLetter)
         : '#000';
     accessCode$ = this.profileService.accessCode$;
+    accessCodeValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateCode,
+            message: this.ls.l('AccessCodeIsNotValid')
+        }
+    ];
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
     showAccessCode$: Observable<boolean> = this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
         ? zip(
