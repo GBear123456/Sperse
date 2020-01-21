@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, Injector, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
@@ -15,13 +15,19 @@ import {
 } from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
 import * as moment from 'moment';
-import * as _ from 'underscore';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
-import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ContactServiceProxy,
+    MonthlyPaymentInfo,
+    PaymentMethodInfo,
+    PaymentInfoType,
+    PaymentServiceProxy,
+    InvoiceSettings
+} from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'payment-information',
@@ -29,7 +35,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     styleUrls: ['./payment-information.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentInformationComponent extends AppComponentBase implements OnInit {
+export class PaymentInformationComponent implements OnInit {
     @ViewChild('paymentsContainer') paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer') paymentMethodsContainer: ElementRef;
     warningMessage$: Observable<string>;
@@ -46,20 +52,20 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     refresh: Observable<boolean> = this._refresh.asObservable();
     groupId$: Observable<number>;
     constructor(
-        injector: Injector,
         private invoicesService: InvoicesService,
         private paymentServiceProxy: PaymentServiceProxy,
         private contactService: ContactServiceProxy,
-        private _contactsService: ContactsService
+        private contactsService: ContactsService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         invoicesService.settings$.pipe(first()).subscribe(
-            res => this.amountCurrency = res.currency);
+            (settings: InvoiceSettings) => this.amountCurrency = settings.currency
+        );
     }
 
     ngOnInit() {
         this.balanceAmount$ = of(0);
-        this.groupId$ = this._contactsService.contactInfo$.pipe(
+        this.groupId$ = this.contactsService.contactInfo$.pipe(
             map(contactInfo => contactInfo.id),
             distinctUntilChanged()
         );
@@ -75,10 +81,12 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
             switchMap(
                 (refresh: boolean) => {
                     const contactId = this.contactService['data'].contactInfo.id;
-                    return (!refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments
+                    return (!refresh && this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][contactId]
+                            && this.paymentServiceProxy['data'][contactId].payments
                         ? of(this.paymentServiceProxy['data'][contactId].payments)
                         : this.paymentServiceProxy.getPayments(contactId).pipe(
                             tap(paymentInfo => {
+                                this.createPaymentsCache(this.contactService['data'].contactInfo.id);
                                 this.paymentServiceProxy['data'][contactId].payments = paymentInfo.payments;
                                 this.lastPaymentAmount = paymentInfo.lastPaymentAmount;
                                 this.lastPaymentDate = paymentInfo.lastPaymentDate && paymentInfo.lastPaymentDate.utc().format('MMM D');
@@ -96,22 +104,26 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
             this.paymentsDisplayLimit$
         ).pipe(
             switchMap(([payments, limit]) => {
-                return of(limit !== null ? payments.slice(0, limit) : payments);
+                return of(limit !== null && payments ? payments.slice(0, limit) : payments);
             })
         );
 
         this.paymentMethods$ = this.refresh.pipe(
             switchMap((refresh: boolean) => {
                 const contactId = this.contactService['data'].contactInfo.id;
-                return !refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
-                    of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
-                    this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
-                        tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
+                return !refresh && this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][contactId]
+                       && this.paymentServiceProxy['data'][contactId].paymentMethods
+                    ? of(this.paymentServiceProxy['data'][contactId].paymentMethods)
+                    : this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
+                        tap(paymentMethods => {
+                            this.createPaymentsCache(this.contactService['data'].contactInfo.id);
+                            this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods;
+                        })
                     );
             })
         );
 
-        this._contactsService.invalidateSubscribe((area) => {
+        this.contactsService.invalidateSubscribe((area) => {
             if (area == 'payment-information') {
                 this._refresh.next(true);
             }
@@ -120,6 +132,14 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
 
     formatDate(date: moment.Moment) {
         return date.utc().format('MMM D, YYYY');
+    }
+
+    private createPaymentsCache(contactId: number) {
+        if (!this.paymentServiceProxy['data']) {
+            this.paymentServiceProxy['data'] = {
+                [contactId]: { payments: null, paymentMethods: null }
+            };
+        }
     }
 
     updateCard() {}
