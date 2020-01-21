@@ -32,7 +32,7 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   (onInitialized)="onInitialized($event)"
-                                  (onContentReady)="onContentReady($event)"
+                                  (onContentReady)="onContentReady()"
                                   (onCellClick)="editUser($event)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
