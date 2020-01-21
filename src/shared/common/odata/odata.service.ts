@@ -1,9 +1,14 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import buildQuery from 'odata-query';
+import * as dxAjax from 'devextreme/core/utils/ajax';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataSearchStrategy } from '@shared/AppEnums';
-import buildQuery from 'odata-query';
-import * as dxAjax from 'devextreme/core/utils/ajax';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 
@@ -14,12 +19,11 @@ export class ODataService {
     private _dxRequestPool = {};
     private pivotGridInitialBeforeSend;
     constructor() {
-        /** @todo check */
-        // dxAjax.setStrategy((options) => {
-        //     options.responseType = 'application/json';
-        //     let key = (options.url.match(/odata\/(\w+)[\?|$]/) || []).pop() + (options.headers.context || '');
-        //     return (this._dxRequestPool[key] = dxAjax.sendRequest(options));
-        // });
+        dxAjax.setStrategy((options) => {
+            options.responseType = 'application/json';
+            let key = (options.url.match(/odata\/(\w+)[\?|$]/) || []).pop() + (options.headers.context || '');
+            return (this._dxRequestPool[key] = dxAjax.sendRequest(options));
+        });
     }
 
     loadDataSource(dataSource, uri, url?) {
