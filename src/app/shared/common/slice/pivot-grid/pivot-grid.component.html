@@ -6,10 +6,7 @@
                [visible]="!isLoading"
                rowHeaderLayout="tree"
                [allowSortingBySummary]="true"
-               [ngClass]="{
-                   'filter-opened': filtersService.filterFixed$ | async,
-                   'field-panel-hidden': !showFieldPanel
-               }"
+               [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
                (onContentReady)="onContentReady($event)"
                (onContextMenuPreparing)="prepareContextMenu($event)">
