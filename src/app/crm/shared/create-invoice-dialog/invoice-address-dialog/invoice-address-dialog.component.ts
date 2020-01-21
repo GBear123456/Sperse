@@ -73,7 +73,7 @@ export class InvoiceAddressDialog {
     contactDetailsLoad() {
         this.contactProxy.getContactDetails(this.data.contactId).subscribe((data: ContactDetailsDto) => {
             this.contactDetails = data;
-            this.organizations = data.orgRelations.map((rel: PersonOrgRelationShortInfo) => {
+            this.organizations = data.orgRelations && data.orgRelations.map((rel: PersonOrgRelationShortInfo) => {
                 return rel.organization;
             });
             this.phones = data.phones.map(item => item.phoneNumber);
@@ -139,7 +139,7 @@ export class InvoiceAddressDialog {
         };
     }
 
-    onSave(event) {
+    onSave() {
         this.data.address1 = this.address;
         if (this.validator.validate().isValid && this.validateAddress(this.data))
             this.dialogRef.close(true);

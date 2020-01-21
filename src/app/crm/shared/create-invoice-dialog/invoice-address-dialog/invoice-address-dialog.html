@@ -1,4 +1,4 @@
-<h2 mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('Update Address')}}</h2>
+<h2 *ngIf="!data.viewMode" mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('Update Address')}}</h2>
 <dx-scroll-view showScrollbar="always">
     <mat-dialog-content>
         <dx-validation-group (onInitialized)="initValidationGroup($event)">
@@ -7,7 +7,7 @@
                 <dx-select-box
                     name="company"
                     maxLength="50"
-                    [placeholder]="ls.l('EditValuePlaceholder')"
+                    [placeholder]="!data.viewMode ? ls.l('EditValuePlaceholder') : ''"
                     displayExpr="name"
                     valueExpr="name"
                     [(value)]="data.company"
@@ -41,7 +41,7 @@
                 <dx-select-box
                     name="email"
                     maxLength="50"
-                    [placeholder]="ls.l('EditValuePlaceholder')"
+                    [placeholder]="!data.viewMode ? ls.l('EditValuePlaceholder') : ''"
                     displayExpr="emailAddress"
                     valueExpr="emailAddress"
                     [(value)]="data.email"
@@ -171,7 +171,7 @@
                     [disabled]="data.viewMode"
                     [(value)]="data.city">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('City'))}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('City'))"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
             </div>
@@ -190,5 +190,5 @@
 </dx-scroll-view>
 <mat-dialog-actions *ngIf="!data.viewMode">
     <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ls.l('Update')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave()">{{ls.l('Update')}}</button>
 </mat-dialog-actions>

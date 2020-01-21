@@ -76,8 +76,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private readonly SAVE_OPTION_DRAFT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
-    private validationError: string;
-
     invoiceNo;
     orderId: number;
     invoiceId: number;
@@ -124,8 +122,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ];
 
     invoiceUnits = Object.keys(InvoiceLineUnit);
-    ordersDataSource;
-
     billingAddresses = [];
     shippingAddresses = [];
 
