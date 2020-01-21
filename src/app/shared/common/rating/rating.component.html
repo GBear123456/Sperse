@@ -8,7 +8,7 @@
                 <div class="actions-wrapper" [hidden]="hideButtons">
                     <div class="edit-actions" [hidden]="bulkUpdateMode && !selectedKeys?.length">
                         <span class="filter-clear" [class.disabled]="!allowManage" (click)="clear()">{{ls.l('Clear')}}</span>
-                        <span class="filter-apply" [class.disabled]="!allowManage" (click)="apply()" >{{ls.l('Apply')}}</span>
+                        <span class="filter-apply" [class.disabled]="!allowManage" (click)="apply()">{{ls.l('Apply')}}</span>
                     </div>
                     <div class="dx-link dx-link-filter" *ngIf="filterModel" [ngClass]="{'filtered': filtered}" (click)="applyFilter($event)"></div>
                 </div>

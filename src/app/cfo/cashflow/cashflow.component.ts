@@ -6,6 +6,7 @@ import { DOCUMENT, CurrencyPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionsSubject, select, Store } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
+import DevExpress from 'devextreme/bundles/dx.all';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import config from 'devextreme/core/config';
@@ -2331,7 +2332,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let spanChart = this.document.createElement('div');
                 spanChart.className = 'chart';
                 e.cellElement.appendChild(spanChart);
-                let chartOptions = {
+                let chartOptions: DevExpress.viz.dxSparklineOptions = {
                     dataSource: chartData,
                     type: 'area',
                     argumentField: 'year',
@@ -3535,7 +3536,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: '/assets/common/icons/fx.svg',
+            icon: '/assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class' : 'function-button'}
         });
@@ -4455,13 +4456,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: '/assets/common/icons/fx.svg',
+            icon: '/assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class': 'function-button' }
         });
 
         this.saveButton = new Button(wrapperSaveButton, {
-            iconSrc: './assets/common/icons/check.svg',
+            icon: './assets/common/icons/check.svg',
             onClick: this.updateForecastCell.bind(this, e),
             elementAttr: { 'class': 'save-forecast-button' }
         });

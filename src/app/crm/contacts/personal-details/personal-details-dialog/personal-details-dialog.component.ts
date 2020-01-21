@@ -54,9 +54,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
     constructor(
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
-        private contactsService: ContactsService,
         private contactProxy: ContactServiceProxy,
         private elementRef: ElementRef,
+        public contactsService: ContactsService,
         public ls: AppLocalizationService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any

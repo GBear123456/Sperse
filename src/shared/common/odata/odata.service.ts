@@ -1,9 +1,14 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import buildQuery from 'odata-query';
+import * as dxAjax from 'devextreme/core/utils/ajax';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataSearchStrategy } from '@shared/AppEnums';
-import buildQuery from 'odata-query';
-import * as dxAjax from 'devextreme/core/utils/ajax';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 

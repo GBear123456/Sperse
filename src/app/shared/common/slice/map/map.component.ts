@@ -35,7 +35,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnChanges {
-    @Input() data: MapData = {};
+    @Input() data: MapData;
     @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
     @Input() infoItems: InfoItem[];
     @Input() width: InfoItem[];

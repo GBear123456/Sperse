@@ -10,8 +10,8 @@ import {
 import { DecimalPipe } from '@angular/common';
 
 /** Third party imports */
-import { combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Observable, combineLatest, of } from 'rxjs';
+import { catchError, finalize, switchMap, takeUntil, tap, map } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -35,7 +35,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 })
 export class ClientsByRegionComponent implements OnInit, OnDestroy {
     @ViewChild(MapComponent) mapComponent: MapComponent;
-    data: MapData = {};
+    data$: Observable<MapData>;
     pipe: any = new DecimalPipe('en-US');
     palette: string[] = this.layoutService.getMapPalette();
 
@@ -51,31 +51,27 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        combineLatest(
+        this.data$ = combineLatest(
             this.dashboardWidgetsService.period$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([period]: [PeriodModel]) => {
-                return this.dashboardServiceProxy.getContactsByRegion(period && period.from, period && period.to).pipe(
-                    catchError(() => of([])),
-                    finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-                );
+            switchMap(([period]: [PeriodModel]) => this.dashboardServiceProxy.getContactsByRegion(period && period.from, period && period.to).pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+            )),
+            map((contactsByRegion: GetContactsByRegionOutput[]) => {
+                let data = {};
+                contactsByRegion.forEach((val: GetContactsByRegionOutput) => {
+                    data[val.stateId] = {
+                        name: val.stateId || 'Other',
+                        total: val.count
+                    };
+                });
+                return data;
             })
-        ).subscribe((contactsByRegion: GetContactsByRegionOutput[]) => {
-            this.data = {};
-            contactsByRegion.forEach((val: GetContactsByRegionOutput) => {
-                this.data[val.stateId] = {
-                    name: val.stateId || 'Other',
-                    total: val.count
-                };
-            });
-            if (this.mapComponent.vectorMapComponent.instance['_layerCollection']) {
-                this.mapComponent.vectorMapComponent.instance.getLayerByName('areas').getDataSource().reload();
-                this.changeDetectorRef.detectChanges();
-            }
-        });
+        );
     }
 
     ngOnDestroy() {
