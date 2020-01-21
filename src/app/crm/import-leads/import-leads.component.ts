@@ -77,7 +77,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_DATE_FOUNDED = 'businessInfo_dateFounded';
-    private readonly BUSINESS_EMPLOYMENY_START_DATE = 'businessInfo_employmentStartDate';
+    private readonly BUSINESS_EMPLOYMENT_START_DATE = 'businessInfo_employmentStartDate';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_companyFullAddress_addressline2';
@@ -151,11 +151,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.COMPANY_NAME_FIELD
     ];
 
+    private readonly FIELDS_DATE_TIME = [
+        this.DATE_CREATED
+    ];
+
     private readonly FIELDS_DATE = [
-        this.DATE_CREATED,
         this.PERSONAL_DOB,
         this.BUSINESS_DATE_FOUNDED,
-        this.BUSINESS_EMPLOYMENY_START_DATE
+        this.BUSINESS_EMPLOYMENT_START_DATE
     ];
 
     private readonly FIELDS_EMAIL = [
@@ -322,6 +325,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
         this.FIELDS_PHONE.forEach(field => {
             this.fieldsConfig[field] = { cellTemplate: 'phoneCell' };
+        });
+
+        this.FIELDS_DATE_TIME.forEach(field => {
+            this.fieldsConfig[field] = { cellTemplate: 'datetimeCell' };
         });
 
         this.FIELDS_DATE.forEach(field => {
@@ -625,7 +632,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
         } else if (this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
             return this.parseCurrency(field, sourceValue, reviewDataSource);
-        } else if (this.FIELDS_DATE.indexOf(field.mappedField) >= 0) {
+        } else if (this.FIELDS_DATE_TIME.indexOf(field.mappedField) >= 0) {
             if (moment(sourceValue).toJSON())
                 reviewDataSource[field.mappedField] =
                     DateHelper.removeTimezoneOffset(new Date(sourceValue), true);
@@ -633,6 +640,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 reviewDataSource[field.mappedField] = undefined;
                 return true;
             }
+        } else if (this.FIELDS_DATE.indexOf(field.mappedField) >= 0) {
+            if (moment(sourceValue).toJSON())
+                reviewDataSource[field.mappedField] =
+                    DateHelper.removeTimezoneOffset(new Date(sourceValue));
         } else if (this.BOOLEAN_FIELDS.indexOf(field.mappedField) >= 0) {
             return this.normalizeBooleanValue(field, sourceValue, reviewDataSource);
         }
