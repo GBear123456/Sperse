@@ -8,23 +8,23 @@
 <div class="main">
     <div class="balance">
         <div class="balanceAmount">
-            <h4>{{ l('Balance') }}</h4>
+            <h4>{{ ls.l('Balance') }}</h4>
             {{ balanceAmount$ | async | currency:amountCurrency:'symbol': '1.2-2' }}
         </div>
         <ul class="balanceInfo">
             <li>
                 <img src="./assets/common/icons/automatic-payments.svg">
-                {{ l('AutomaticPayments') }}
+                {{ ls.l('AutomaticPayments') }}
             </li>
             <li *ngIf="lastPaymentAmount">
                 <img src="./assets/common/icons/last-payment.svg">
-                {{ l('LastPayment', lastPaymentDate, '', lastPaymentAmount | currency:amountCurrency:'symbol': '1.2-2') }}
+                {{ ls.l('LastPayment', lastPaymentDate, '', lastPaymentAmount | currency:amountCurrency:'symbol': '1.2-2') }}
             </li>
         </ul>
     </div>
     <div class="details">
         <div class="transactions" #paymentsContainer>
-            <h3>{{ l('Transactions') }}</h3>
+            <h3>{{ ls.l('Transactions') }}</h3>
             <dx-scroll-view [height]="paymentsScrollHeight()" [showScrollbar]="'never'">
                 <div *ngIf="(dispayedPayments$ | async) as displayedPayments;">
                     <ul>
@@ -33,15 +33,15 @@
                             <span class="amount">{{ payment.amount | currency:amountCurrency:'symbol': '1.2-2' }}</span>
                         </li>
                     </ul>
-                    <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="addNewPaymentMethod()" (click)="viewAllTransactions()">{{ l('ViewAllTransactions') }}</button>
+                    <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="addNewPaymentMethod()" (click)="viewAllTransactions()">{{ ls.l('ViewAllTransactions') }}</button>
                     <app-no-data *ngIf="displayedPayments && !displayedPayments.length"></app-no-data>
                 </div>
             </dx-scroll-view>
         </div>
         <div class="paymentMethods" #paymentMethodsContainer>
             <div class="title">
-                <h3>{{ l('PaymentMethods') }}</h3>
-                <button class="addNewPaymentMethod" *ngIf="false">+{{ l('AddNew') }}</button>
+                <h3>{{ ls.l('PaymentMethods') }}</h3>
+                <button class="addNewPaymentMethod" *ngIf="false">+{{ ls.l('AddNew') }}</button>
             </div>
             <dx-scroll-view [height]="paymentMethodsScrollHeight()" [showScrollbar]="'never'"  *ngIf="(paymentMethods$ | async) as paymentMethods">
                 <ul class="paymentMethodsList">
@@ -53,7 +53,7 @@
                                 </div>
                                 <div>
                                     <p class="paymentName">{{ paymentMethod.bankCardInfo.cardNumber }}</p>
-                                    <p class="paymentExpiration">{{ l('Expires') + ' ' + paymentMethod.bankCardInfo.expirationMonth + '/' + paymentMethod.bankCardInfo.expirationYear }}</p>
+                                    <p class="paymentExpiration">{{ ls.l('Expires') + ' ' + paymentMethod.bankCardInfo.expirationMonth + '/' + paymentMethod.bankCardInfo.expirationYear }}</p>
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="paymentMethodsTypes.PayPal">
@@ -61,11 +61,11 @@
                                     <img [src]="'./assets/common/images/payments/card-logo/paypal.svg'">
                                 </div>
                                 <div>
-                                    <p class="paymentName">{{ l('PayPal') }}</p>
+                                    <p class="paymentName">{{ ls.l('PayPal') }}</p>
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="paymentMethodsTypes.ACH">
-                                <div [ngClass]="{'active': paymentMethod.active}" class="achPaymentMethodIcon paymentMethodIcon">{{ l('eCheck') }}</div>
+                                <div [ngClass]="{'active': paymentMethod.active}" class="achPaymentMethodIcon paymentMethodIcon">{{ ls.l('eCheck') }}</div>
                                 <div>
                                     <p class="paymentName">{{ paymentMethod.achCustomerInfo.firstName + ' ' + paymentMethod.achCustomerInfo.lastName }}</p>
                                 </div>
@@ -73,7 +73,7 @@
                         </div>
                         <div class="issue" *ngIf="paymentMethod?.issues">
                             <img src="./assets/common/icons/red-warning-icon.svg">
-                            {{ paymentMethod.issues.length + ' ' + l('Issue') }}
+                            {{ paymentMethod.issues.length + ' ' + ls.l('Issue') }}
                         </div>
                         <div class="actions" *ngIf="false">
                             <button (click)="editPaymentMethod()"><img src="./assets/common/icons/edit-pencil-icon.svg"></button>
