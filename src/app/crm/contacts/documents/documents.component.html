@@ -15,7 +15,6 @@
                     [pager]="defaultGridPagerConfig"
                     [noDataText]="noDataText"
                     (onCellClick)="onCellClick($event)"
-                    (onInitialized)="onDataGridInit($event)"
                     (onContentReady)="onContentReady()"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                     (onToolbarPreparing)="onToolbarPreparing($event)">

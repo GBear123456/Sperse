@@ -15,11 +15,11 @@ export class DocumentsService {
     ) {}
     downloadDocument(documentId: string) {
         if (this.documentsUrls[documentId])
-            window.open(this.documentsUrls[documentId], '_self');
+            window.open(this.documentsUrls[documentId], '_blank');
         else {
             this.getDocumentUrlInfoObservable(documentId).subscribe((urlInfo) => {
                 this.documentsUrls[documentId] = urlInfo.url;
-                window.open(urlInfo.url, '_self');
+                window.open(urlInfo.url, '_blank');
             });
         }
     }
