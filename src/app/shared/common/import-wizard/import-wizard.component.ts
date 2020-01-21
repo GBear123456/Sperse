@@ -81,7 +81,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'phone',
         'revenue',
         'countryName',
-        'countryCode',
+        'countryId',
         'stateId'
     ];
     private similarFieldsIndex: any = {};
@@ -748,7 +748,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
         else if (key == 'countryName')
             return value.trim().length > 3;
-        else if (key == 'countryCode')
+        else if (key == 'countryId')
             return value.trim().length == 2;
         else if (key == 'stateId')
             return value.trim().length >= 2 &&

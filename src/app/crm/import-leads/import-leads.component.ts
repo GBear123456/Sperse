@@ -69,9 +69,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS_CITY = 'personalInfo_fullAddress_city';
     private readonly PERSONAL_FULL_ADDRESS_STATE_NAME = 'personalInfo_fullAddress_stateName';
     private readonly PERSONAL_FULL_ADDRESS_STATE_CODE = 'personalInfo_fullAddress_stateId';
-    private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zipCode';
+    private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zip';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
-    private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryCode';
+    private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryId';
     private readonly PERSONAL_IS_ACTIVE_MILITARY_DUTY = 'personalInfo_isActiveMilitaryDuty';
     private readonly PERSONAL_IS_US_CITIZEN = 'personalInfo_isUSCitizen';
     private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
@@ -84,18 +84,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME = 'businessInfo_companyFullAddress_stateName';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE = 'businessInfo_companyFullAddress_stateId';
-    private readonly BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE = 'businessInfo_companyFullAddress_zipCode';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE = 'businessInfo_companyFullAddress_zip';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME = 'businessInfo_companyFullAddress_countryName';
-    private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_companyFullAddress_countryCode';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_companyFullAddress_countryId';
     private readonly BUSINESS_WORK_FULL_ADDRESS = 'businessInfo_workFullAddress';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STREET = 'businessInfo_workFullAddress_street';
     private readonly BUSINESS_WORK_FULL_ADDRESS_ADDRESSLINE2 = 'businessInfo_workFullAddress_addressline2';
     private readonly BUSINESS_WORK_FULL_ADDRESS_CITY = 'businessInfo_workFullAddress_city';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_NAME = 'businessInfo_workFullAddress_stateName';
     private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_CODE = 'businessInfo_workFullAddress_stateId';
-    private readonly BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE = 'businessInfo_workFullAddress_zipCode';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE = 'businessInfo_workFullAddress_zip';
     private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME = 'businessInfo_workFullAddress_countryName';
-    private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_workFullAddress_countryCode';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_workFullAddress_countryId';
     private readonly BUSINESS_ANNUAL_REVENUE = 'businessInfo_annualRevenue';
     private readonly PERSONAL_MOBILE_PHONE = 'personalInfo_mobilePhone';
     private readonly PERSONAL_HOME_PHONE = 'personalInfo_homePhone';
@@ -384,12 +384,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let parsed = addressParser.parseLocation(fullAddress);
 
         if (parsed) {
-            this.setFieldIfDefined(AppConsts.defaultCountry, field.mappedField + '_countryCode', dataSource);
+            this.setFieldIfDefined(AppConsts.defaultCountry, field.mappedField + '_countryId', dataSource);
             this.setFieldIfDefined(parsed.state, field.mappedField +
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateId'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
             const zipCode = parsed.plus4 ? parsed.zip + '-' + parsed.plus4 : parsed.zip;
-            this.setFieldIfDefined(zipCode, field.mappedField + '_zipCode', dataSource);
+            this.setFieldIfDefined(zipCode, field.mappedField + '_zip', dataSource);
             this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street,
                 parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
                     field.mappedField + '_street', dataSource);
