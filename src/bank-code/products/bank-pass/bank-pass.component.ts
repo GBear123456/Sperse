@@ -1,6 +1,5 @@
 /** Core imports */
 import {
-    AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
@@ -20,7 +19,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -37,6 +36,7 @@ import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
+import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available-bank-codes.interface';
 
 @Component({
     selector: 'bank-pass',
@@ -45,7 +45,7 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
     providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
+export class BankPassComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
     dataIsLoading = true;
@@ -123,42 +123,12 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
     bankCodeBadges = this.bankCodeService.bankCodeBadges;
-    bankCodeLevel: number;
-    availableBankCodes$: Observable<{[bankCode: string]: number}> = this.bankCodeService.getAvailableBankCodes();
-    availableBankCodes: {[bankCode: string]: number};
-    bankCodeGroups = [
-        [
-            'BANK',
-            'BAKN',
-            'BNAK',
-            'BNKA',
-            'BKNA',
-            'BKAN'
-        ],
-        [
-            'ABNK',
-            'ABKN',
-            'ANBK',
-            'ANKB',
-            'AKNB',
-            'AKBN'
-        ],
-        [
-            'NABK',
-            'NAKB',
-            'NBAK',
-            'NBKA',
-            'NKBA',
-            'NKAB'
-        ],
-        [
-            'KANB',
-            'KABN',
-            'KNAB',
-            'KNBA',
-            'KBNA',
-            'KBAN'
-        ]
+    availableBankCodes$: Observable<AvailableBankCodes> = this.bankCodeService.getAvailableBankCodes();
+    bankCodeGroups: string[][] = [
+        [ 'BANK', 'BAKN', 'BNAK', 'BNKA', 'BKNA', 'BKAN' ],
+        [ 'ABNK', 'ABKN', 'ANBK', 'ANKB', 'AKNB', 'AKBN' ],
+        [ 'NABK', 'NAKB', 'NBAK', 'NBKA', 'NKBA', 'NKAB' ],
+        [ 'KANB', 'KABN', 'KNAB', 'KNBA', 'KBNA', 'KBAN' ]
     ];
 
     constructor(
@@ -178,24 +148,20 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.hasSubscription$
-            .pipe(
-                takeUntil(this.lifecycleSubjectService.destroy$),
-                filter(Boolean)
-            )
-            .subscribe(() => {
-                this.hasOverflowClass = this.document.body.classList.contains('overflow-hidden');
-                if (this.hasOverflowClass) {
-                    this.renderer.removeClass(this.document.body, 'overflow-hidden');
-                }
-            });
-        this.availableBankCodes$.subscribe((availableBankCodes) => {
-            this.availableBankCodes = availableBankCodes;
-            this.changeDetectorRef.detectChanges();
+        this.hasSubscription$.pipe(
+            takeUntil(this.lifecycleSubjectService.destroy$),
+            filter(Boolean)
+        ).subscribe(() => {
+            this.hasOverflowClass = this.document.body.classList.contains('overflow-hidden');
+            if (this.hasOverflowClass) {
+                this.renderer.removeClass(this.document.body, 'overflow-hidden');
+            }
         });
-        this.bankCodeService.bankCodeLevel$.subscribe((bankCodeLevel: number) => {
-            this.bankCodeLevel = bankCodeLevel;
-        });
+    }
+
+    onIframeLoad() {
+        this.dataIsLoading = false;
+        this.changeDetectorRef.detectChanges();
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
@@ -233,8 +199,16 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
         );
     }
 
-    isBankCodeActive(bankCode: string): boolean {
-        return !!(this.availableBankCodes && this.availableBankCodes[bankCode]);
+    isBankCodeActive(bankCode: string): Observable<boolean> {
+        return this.availableBankCodes$.pipe(
+            map((availableBankCodes: AvailableBankCodes) => !!(availableBankCodes && availableBankCodes[bankCode]))
+        );
+    }
+
+    getBadgeImageName(index: number): Observable<string> {
+        return this.bankCodeService.bankCodeLevel$.pipe(
+            map((bankCodeLevel: number) => (index + 1) + '-' + ((index + 1) <= bankCodeLevel ? '1' : '0'))
+        );
     }
 
     ngOnDestroy() {
@@ -242,12 +216,5 @@ export class BankPassComponent implements OnInit, AfterViewInit, OnDestroy {
             this.renderer.addClass(this.document.body, 'overflow-hidden');
         }
         this.lifecycleSubjectService.destroy.next(null);
-    }
-
-    ngAfterViewInit() {
-        this.document.querySelector('iframe').addEventListener('load', () => {
-            this.dataIsLoading = false;
-            this.changeDetectorRef.detectChanges();
-        });
     }
 }
