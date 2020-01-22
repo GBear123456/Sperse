@@ -16,6 +16,8 @@
         [useBrowserLocale]="true">
     </ngx-extended-pdf-viewer>
     <ng-template #noSubscription>
-        <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
+        <ng-container *ngIf="environmentLink$ | async as environmentLink">
+            <iframe [src]="environmentLink" frameborder="0" (load)="onIframeLoad($event)"></iframe>
+        </ng-container>
     </ng-template>
 </section>

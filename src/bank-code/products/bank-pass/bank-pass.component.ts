@@ -159,9 +159,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         });
     }
 
-    onIframeLoad() {
-        this.dataIsLoading = false;
-        this.changeDetectorRef.detectChanges();
+    onIframeLoad(e) {
+        if (e.target.src !== '') {
+            this.dataIsLoading = false;
+        }
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
