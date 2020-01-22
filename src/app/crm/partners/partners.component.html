@@ -114,7 +114,7 @@
                     <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                     <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column dataField="StateId" [caption]="l('Contact.State')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                     <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
                         <dxi-column dataField="BankCode"
                                     cellTemplate="bankCodeCell"
@@ -131,6 +131,8 @@
                         </div>
                     </div>
                     <dxi-column dataField="ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                    <dxi-column dataField="Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | date: formatting.dateTime : userTimezone}}
                     </div>
@@ -141,7 +143,7 @@
                         <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                     </div>
 
-                    <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                    <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxo-paging [pageSize]="20"></dxo-paging>
                     <dxo-group-panel [visible]="true"></dxo-group-panel>

@@ -73,7 +73,7 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
             .subscribe(() => {
@@ -93,7 +93,7 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType: any = SyncTypeIds.Quovo, syncAccountIds = []) {
+    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
         const method: Observable<any> = this.cfoService.isForUser && syncType == SyncTypeIds.Quovo
             ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
             : (
@@ -109,7 +109,7 @@ export class SynchProgressService {
                     this.cfoService.instanceId,
                     forcedSync,
                     newOnly,
-                    syncType === 'all' ? undefined : syncType
+                    syncType
                 )
             );
 
@@ -119,18 +119,18 @@ export class SynchProgressService {
         }));
     }
 
-    private runGetStatus() {
+    public runGetStatus() {
         if (!this.cfoService.hasTransactions) {
             this.cfoService.instanceChangeProcess(true).subscribe();
         }
     }
 
-    private runSynchProgress(): Observable<SyncProgressOutput | boolean> {
+    public runSynchProgress(): Observable<SyncProgressOutput | boolean> {
         if (this.cfoService.isForUser)
             return of(false);
 
         this.appHttpConfiguration.avoidErrorHandling = true;
-        const syncProgress = this.syncServiceProxy.getSyncProgress(
+        const syncProgress$ = this.syncServiceProxy.getSyncProgress(
             InstanceType[this.cfoService.instanceType],
             this.cfoService.instanceId
         ).pipe(
@@ -142,8 +142,8 @@ export class SynchProgressService {
             publishReplay(),
             refCount()
         );
-        this.getSyncProgressSubscription = syncProgress.subscribe();
-        return syncProgress;
+        this.getSyncProgressSubscription = syncProgress$.subscribe();
+        return syncProgress$;
     }
 
     private subscribeToProgress() {

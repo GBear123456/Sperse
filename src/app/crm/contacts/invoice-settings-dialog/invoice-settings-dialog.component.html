@@ -40,7 +40,8 @@
                 </dx-text-area>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_AttachPDF')"
-                    [(value)]="settings.attachPDF">
+                    [disabled]="true"
+                    [value]="false">
                 </dx-check-box>
             </div>
         </div>

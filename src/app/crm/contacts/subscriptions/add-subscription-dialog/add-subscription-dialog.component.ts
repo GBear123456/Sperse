@@ -19,6 +19,7 @@ import { map } from 'rxjs/operators';
 /** Application imports */
 import {
     InvoiceSettings,
+    LayoutType,
     OrderSubscriptionServiceProxy,
     SubscriptionInput,
     UpdateOrderSubscriptionInput
@@ -47,7 +48,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
     private slider: any;
-    isBankCodeLayout: boolean = this.userManagementService.checkBankCodeFeature();
+    isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     bankCodeServiceTypes = values(BankCodeServiceType);
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,

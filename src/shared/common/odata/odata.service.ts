@@ -1,10 +1,16 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import buildQuery from 'odata-query';
+import * as dxAjax from 'devextreme/core/utils/ajax';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataSearchStrategy } from '@shared/AppEnums';
-import buildQuery from 'odata-query';
-import * as dxAjax from 'devextreme/core/utils/ajax';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Injectable({
     providedIn: 'root'
@@ -36,7 +42,7 @@ export class ODataService {
         return promise;
     }
 
-    getODataUrl(uri: String, filter?: Object, instanceData = null, params?: { name: string, value: string }[]) {
+    getODataUrl(uri: String, filter?: Object, instanceData: InstanceModel = null, params?: { name: string, value: string }[]) {
         let url = AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
         if (instanceData) {
             url += (url.indexOf('?') == -1 ? '?' : '&');

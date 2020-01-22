@@ -121,7 +121,8 @@
                             <dx-check-box [value]="!!entity.selected"></dx-check-box>
                         </div>
                         <div class="days-ago">
-                            <img src="./assets/common/icons/clock-circle.svg" class="img-responsive"><span *ngIf="entity?.CreationTime">{{ entity?.CreationTime | timeAgo }}</span>
+                            <img src="./assets/common/icons/clock-circle.svg" class="img-responsive">
+                            <span *ngIf="dateField && entity[dateField]">{{ entity[dateField] | timeAgo }}</span>
                             <span *ngIf="entity?.StartDate">{{ getDateWithTimezone(entity?.StartDate) | date : 'M/d, H:mm' }} - {{ getDateWithTimezone(entity?.EndDate) | date : 'M/d, H:mm' }}</span>
                         </div>
                         <div class="text-right pipeline-photo-wrap">

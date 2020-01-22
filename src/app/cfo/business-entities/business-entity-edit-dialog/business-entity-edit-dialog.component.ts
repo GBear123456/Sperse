@@ -5,7 +5,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, 
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, first, map, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -17,26 +17,37 @@ import {
     CreateBusinessEntityDto,
     UpdateBusinessEntityDto,
     BusinessEntityInfoDto,
-    BusinessEntityDto
+    BusinessEntityDto,
+    CountryStateDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { GooglePlaceHelper } from '@shared/helpers/GooglePlaceHelper';
+import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
+import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'business-entity-edit-dialog.component.less' ],
-    providers: [ BusinessEntityServiceProxy, GooglePlaceHelper ],
+    providers: [ BusinessEntityServiceProxy, GooglePlaceService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
-    businessEntities$: Observable<BusinessEntityDto[]>;
+    businessEntities$: Observable<BusinessEntityDto[]> = this.businessEntityService.getBusinessEntities(this.cfoService.instanceType as any, this.cfoService.instanceId).pipe(
+        map((businessEntities: BusinessEntityDto[]) => {
+            if (!this.isNew)
+                businessEntities = businessEntities.map(item => {
+                    item['disabled'] = (item.id === this.data.id)
+                        || this.checkParentForbidden(businessEntities, item);
+                    return item;
+                });
+            return businessEntities;
+        })
+    );
     types: any;
-    states: any;
     countries: any;
     masks = AppConsts.masks;
     maxDate = new Date();
@@ -44,8 +55,8 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     dateFormat = AppConsts.formatting.dateMoment;
     googleAutoComplete = Boolean(window['google']);
     address = {
-        state: null,
-        country: null,
+        countryCode: null,
+        countryName: null,
         address: null
     };
     isNew = false;
@@ -66,12 +77,13 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     ];
 
     constructor(
-        private _businessEntityService: BusinessEntityServiceProxy,
-        private _notifyService: NotifyService,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _cfoService: CFOService,
+        private businessEntityService: BusinessEntityServiceProxy,
+        private notifyService: NotifyService,
+        private changeDetectorRef: ChangeDetectorRef,
+        private cfoService: CFOService,
         private store$: Store<RootStore.State>,
-        private googlePlaceHelper: GooglePlaceHelper,
+        private googlePlaceService: GooglePlaceService,
+        private statesService: StatesService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
@@ -80,18 +92,16 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.businessEntitiesLoad();
         this.countriesStateLoad();
         this.loadTypes();
         if (this.isNew) {
             this.businessEntity.isDefault = false;
         } else {
             this.modalDialog.startLoading();
-            this._businessEntityService.get(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id)
+            this.businessEntityService.get(this.cfoService.instanceType as any, this.cfoService.instanceId, this.data.id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe(result => {
                     this.businessEntity = result;
-
                     Object.keys(this.businessEntity).forEach(key => {
                         let component = this[key + 'Component'];
                         if (component) {
@@ -101,35 +111,22 @@ export class BusinessEntityEditDialogComponent implements OnInit {
 
                     if (this.businessEntity) {
                         let country = _.findWhere(this.countries, { code: this.businessEntity.countryId });
-                        this.address['country'] = country && country.name;
-                        this.onCountryChange({ value: this.address['country'] });
+                        this.address['countryCode'] = this.businessEntity.countryId;
+                        this.address['countryName'] = country && country.name;
+                        this.onCountryChange({ value: this.address['countryName'] });
 
                         if (this.googleAutoComplete) {
                             this.address['address'] = [
-                                this.businessEntity.address,
+                                this.businessEntity.streetAddress,
                                 this.businessEntity.city,
                                 this.businessEntity.stateId,
                                 this.businessEntity.countryId
-                            ].filter(val => val).join(', ');
+                            ].filter(Boolean).join(', ');
                         }
                     }
-                    this._changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
                 });
         }
-    }
-
-    businessEntitiesLoad() {
-        this.businessEntities$ = this._businessEntityService.getBusinessEntities(this._cfoService.instanceType as any, this._cfoService.instanceId).pipe(
-            map((businessEntities: BusinessEntityDto[]) => {
-                if (!this.isNew)
-                    businessEntities = businessEntities.map(item => {
-                        item['disabled'] = (item.id === this.data.id)
-                            || this.checkParentForbidden(businessEntities, item);
-                        return item;
-                    });
-                return businessEntities;
-            })
-        );
     }
 
     checkParentForbidden(entities: BusinessEntityDto[], item: BusinessEntityDto) {
@@ -144,10 +141,10 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     loadTypes() {
-        this._businessEntityService.getTypes(this._cfoService.instanceType as any, this._cfoService.instanceId)
+        this.businessEntityService.getTypes(this.cfoService.instanceType as any, this.cfoService.instanceId)
             .subscribe(result => {
                 this.types = result;
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
     }
 
@@ -158,7 +155,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
             if (this.address['country']) {
                 this.onCountryChange({ value: this.address['country'] });
             }
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -166,16 +163,6 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         let countryCode = this.getCountryCode(event.value);
         if (countryCode) {
             this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-            this.store$.pipe(select(StatesStoreSelectors.getState, {
-                countryCode: countryCode
-            })).subscribe(result => {
-                this.states = result;
-                if (this.businessEntity.stateId && !this.address['state']) {
-                    let state = _.findWhere(this.states, { code: this.businessEntity.stateId });
-                    this.address['state'] = state && state.name;
-                }
-                this._changeDetectorRef.detectChanges();
-            });
         }
     }
 
@@ -186,40 +173,77 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         }
     }
 
-    getStateCode(name) {
-        let state = _.findWhere(this.states, { name: name });
-        return state && state.code;
-    }
-
     onKeyUp($event, propName) {
-        let value = $event.element.getElementsByTagName('input')[0].value;
-        this.businessEntity[propName] = value;
+        this.businessEntity[propName] = $event.element.getElementsByTagName('input')[0].value;
     }
 
     validate() {
         if (!this.businessEntity.name) {
-            return this._notifyService.error(this.ls.l('BusinessEntity_NameIsRequired'));
+            return this.notifyService.error(this.ls.l('BusinessEntity_NameIsRequired'));
         }
 
         return true;
     }
 
+    getCountryStates(): Observable<CountryStateDto[]> {
+        return this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.address.countryCode }),
+            tap((states: CountryStateDto[]) => {
+                if (states && states.length && !this.businessEntity.stateName && this.businessEntity.stateId) {
+                    const state = states.find((state: CountryStateDto) => state.code === this.businessEntity.stateId);
+                    this.businessEntity.stateName = state.name;
+                }
+            }),
+            map((states: CountryStateDto[]) => states || [])
+        );
+    }
+
+    clearState() {
+        this.businessEntity.stateId = null;
+        this.businessEntity.stateName = null;
+    }
+
+    stateChanged(e) {
+        this.store$.pipe(
+            select(StatesStoreSelectors.getStateCodeFromStateName, {
+                countryCode: this.address.countryCode,
+                stateName: e.value
+            }),
+            first()
+        ).subscribe((stateCode: string) => {
+            this.businessEntity.stateId = stateCode;
+        });
+    }
+
+    onCustomStateCreate(e) {
+        this.businessEntity.stateId = null;
+        this.businessEntity.stateName = e.text;
+        this.statesService.updateState(this.address.countryCode, e.text, e.text);
+        e.customItem = {
+            code: e.text,
+            name: e.text
+        };
+    }
+
     save() {
         if (this.validate()) {
             this.modalDialog.startLoading();
-            this.businessEntity.countryId = this.getCountryCode(this.address.country);
-            this.businessEntity.stateId = this.getStateCode(this.address.state);
+            this.businessEntity.countryId = this.getCountryCode(this.address.countryName);
+            this.businessEntity.stateId = this.businessEntity.stateId && this.businessEntity.stateId.length <= 3
+                && this.businessEntity.stateId !== this.businessEntity.stateName
+                ? this.businessEntity.stateId
+                : null;
 
             if (this.googleAutoComplete) {
-                this.businessEntity.address = [
+                this.businessEntity.streetAddress = [
                     this.address['streetNumber'],
                     this.address['street']
                 ].filter(val => val).join(' ');
             }
 
             const request$: Observable<any> = this.isNew
-                ? this._businessEntityService.createBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
-                : this._businessEntityService.updateBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity));
+                ? this.businessEntityService.createBusinessEntity(this.cfoService.instanceType as any, this.cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
+                : this.businessEntityService.updateBusinessEntity(this.cfoService.instanceType as any, this.cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity));
             request$.pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe(() => {
                     this.modalDialog.close(true, { update: true });
@@ -252,16 +276,17 @@ export class BusinessEntityEditDialogComponent implements OnInit {
             component.option('value', '');
         }
         this.businessEntity[propName] = null;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     emptyAddress() {
         this.address['address'] = null;
         this.emptyValue('city');
         this.emptyValue('zip');
-        this.emptyAddressValue('country');
-        this.emptyAddressValue('state');
-        this._changeDetectorRef.detectChanges();
+        this.emptyAddressValue('countryName');
+        this.emptyAddressValue('countryCode');
+        this.clearState();
+        this.changeDetectorRef.detectChanges();
     }
 
     emptyAddressValue(propName) {
@@ -270,12 +295,19 @@ export class BusinessEntityEditDialogComponent implements OnInit {
 
     updateCountryInfo(countryName: string) {
         countryName == 'United States' ?
-            this.address.country = AppConsts.defaultCountryName :
-            this.address.country = countryName;
-        this._changeDetectorRef.detectChanges();
+            this.address.countryName = AppConsts.defaultCountryName :
+            this.address.countryName = countryName;
+        this.changeDetectorRef.detectChanges();
     }
 
     onAddressChanged(event) {
-        this.address.state = this.googlePlaceHelper.getState(event.address_components);
+        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
+        const stateCode = this.googlePlaceService.getStateCode(event.address_components);
+        const stateName = this.googlePlaceService.getStateName(event.address_components);
+        this.statesService.updateState(countryCode, stateCode, stateName);
+        this.businessEntity.stateId = stateCode;
+        this.businessEntity.stateName = stateName;
+        this.address.countryCode = countryCode;
+        this.businessEntity.city = this.googlePlaceService.getCity(event.address_components);
     }
 }

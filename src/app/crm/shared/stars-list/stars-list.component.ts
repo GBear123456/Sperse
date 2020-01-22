@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
@@ -7,20 +7,23 @@ import * as _ from 'underscore';
 import { Store } from '@ngrx/store';
 
 /** Application imports */
-import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppPermissions } from '@shared/AppPermissions';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ContactStarsServiceProxy, MarkContactInput, MarkContactsInput } from '@shared/service-proxies/service-proxies';
 import { AppStore, StarsStoreSelectors } from '@app/store';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
 
 @Component({
   selector: 'crm-stars-list',
   templateUrl: './stars-list.component.html',
   styleUrls: ['./stars-list.component.less'],
-  providers: [ContactStarsServiceProxy]
+  providers: [ ContactStarsServiceProxy ]
 })
-export class StarsListComponent extends AppComponentBase implements OnInit {
+export class StarsListComponent implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
@@ -39,29 +42,30 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     listComponent: any;
     tooltipVisible = false;
+    getStarColorByType = StarsHelper.getStarColorByType;
 
     constructor(
-        injector: Injector,
-        public dashboardWidgetsService: DashboardWidgetsService,
-        private _filtersService: FiltersService,
-        private _starsService: ContactStarsServiceProxy,
-        private store$: Store<AppStore.State>
-    ) {
-        super(injector);
-    }
+        private filtersService: FiltersService,
+        private starsService: ContactStarsServiceProxy,
+        private store$: Store<AppStore.State>,
+        private messageService: MessageService,
+        private notifyService: NotifyService,
+        private permissionCheckerService: PermissionCheckerService,
+        public ls: AppLocalizationService
+    ) {}
 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined) {
+    apply(selectedKeys?) {
         if (this.listComponent) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
-                    this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                    this.messageService.confirm(
+                        this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process();
@@ -78,20 +82,20 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     process() {
         if (this.bulkUpdateMode)
-            this._starsService.markContacts(MarkContactsInput.fromJS({
+            this.starsService.markContacts(MarkContactsInput.fromJS({
                 contactIds: this.selectedKeys,
                 starId: this.selectedItemKey
             })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
             })).subscribe((result) => {
-                this.notify.success(this.l('CustomersMarked'));
+                this.notifyService.success(this.ls.l('CustomersMarked'));
             });
         else
-            this._starsService.markContact(MarkContactInput.fromJS({
+            this.starsService.markContact(MarkContactInput.fromJS({
                 contactId: this.selectedKeys[0],
                 starId: this.selectedItemKey
             })).subscribe((result) => {
-                this.notify.success(this.l('CustomersMarked'));
+                this.notifyService.success(this.ls.l('CustomersMarked'));
             });
     }
 
@@ -136,7 +140,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
 
-        this._filtersService.change(this.filterModel);
+        this.filtersService.change(this.filterModel);
     }
 
     onContentReady($event) {
@@ -159,7 +163,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
+        return this.permissionCheckerService.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
+            (!this.bulkUpdateMode || this.permissionCheckerService.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

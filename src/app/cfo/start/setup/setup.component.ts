@@ -1,5 +1,15 @@
 /** Core imports */
-import { AfterViewInit, Component, OnInit, Injector, OnDestroy, Output, EventEmitter } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    OnInit,
+    Injector,
+    OnDestroy,
+    Output,
+    EventEmitter,
+    ElementRef,
+    ViewChild
+} from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -19,6 +29,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
     animations: [appModuleAnimation()]
 })
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
+    @ViewChild('cashflowSetup') cashflowSetup: ElementRef;
     @Output() onOpenIntro: EventEmitter<boolean> = new EventEmitter<boolean>();
     private rootComponent: any;
     isDisabled = !this.isInstanceAdmin;
@@ -56,7 +67,11 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
             data: { loadingContainerElement: this.setupContainerElement }
         }};
 
-        this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(() => {
+        const accountConnectorDialog = this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
+        accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
+            this.startLoading(false, this.cashflowSetup.nativeElement);
+        });
+        accountConnectorDialog.afterClosed().subscribe(() => {
             this.isDisabled = !this.isInstanceAdmin;
         });
     }
@@ -68,7 +83,10 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         if (this._cfoService.instanceId == null)
             this.instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).pipe(
                 switchMap(() => this._cfoService.instanceChangeProcess()),
-                catchError(() => of(this.isDisabled = !this.isInstanceAdmin))
+                catchError(() => {
+                    this.dialog.closeAll();
+                    return of(this.isDisabled = !this.isInstanceAdmin);
+                })
             ).subscribe();
     }
 

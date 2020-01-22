@@ -10,9 +10,11 @@ import { filter, pluck } from 'rxjs/operators';
 import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-modal.component';
 import { UploadPhotoDialogComponent } from 'app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import {
-    LinkedUserDto, ProfileServiceProxy,
     LayoutType,
-    UpdateProfilePictureInput, UserLinkServiceProxy
+    LinkedUserDto,
+    ProfileServiceProxy,
+    UpdateProfilePictureInput,
+    UserLinkServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal/linked-accounts-modal.component';
 import { StringHelper } from 'shared/helpers/StringHelper';
@@ -287,13 +289,15 @@ export class UserManagementService {
     }
 
     checkLendSpaceLayout(): boolean {
-        let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == LayoutType.LendSpace);
+        return this.isLayout(LayoutType.LendSpace);
     }
 
     checkAdvicePeriodLayout(): boolean {
-        let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == LayoutType.AdvicePeriod);
+        return this.isLayout(LayoutType.AdvicePeriod);
+    }
+
+    isLayout(layoutType: LayoutType) {
+        return this.appSession.tenant && this.appSession.tenant.customLayoutType === layoutType;
     }
 
     checkBankCodeFeature(): boolean {

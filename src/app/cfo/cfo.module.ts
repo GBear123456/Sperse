@@ -17,7 +17,7 @@ import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
-import { DxTemplateModule } from 'devextreme-angular/core/template';
+import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';

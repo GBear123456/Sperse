@@ -41,6 +41,18 @@ input.form-control {
     padding: 12px 8px;
 }
 
+.dx-dropdowneditor-button {
+    min-width: 0;
+}
+
+.dx-texteditor-buttons-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    height: 100%;
+}
+
 .dx-placeholder,
 .dx-radiobutton .dx-item-content {
     font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
@@ -124,6 +136,18 @@ input.form-control {
     }
 }
 
+.dx-overlay-wrapper {
+    .dx-overlay-content {
+        &::before {
+            display: inline;
+        }
+    }
+}
+
+.dx-list-item-icon-container {
+    display: none;
+}
+
 .with-custom-loader {
     .dx-loadpanel-content {
         .dx-loadpanel-content-wrapper {
@@ -179,8 +203,13 @@ input.form-control {
 
 .dxc-tooltip {
     z-index: 1;
-    svg path {
-        transform: translate(0, 0) !important;
-        filter: none !important;
-    }
+    /** @todo check on mac according to SC-2912 */
+    //svg path {
+    //    transform: translate(0, 0) !important;
+    //    filter: none !important;
+    //}
+}
+
+.dx-tabs.dx-tabs-stretched {
+    table-layout: fixed;
 }

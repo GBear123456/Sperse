@@ -35,7 +35,7 @@
                 margin-left: auto;
             }
         }
-        dx-select-box {
+        .dx-selectbox {
             margin: 23px 10px;
             &, input {
                 background: transparent;
@@ -207,16 +207,20 @@
                     position: relative;
                     font-size: 12px;
                     color: #aaa;
-                    i.edit, i.remove {
+                    padding-right: 30px;
+                    i.edit, i.remove, img {
                         position: absolute;
                         cursor: pointer;
                         color: #00aeef;
-                        right: -10px;
+                        right: 18px;
                         top: 0;
+                    }
+                    img {
+                        right: 6px;
                     }
                     i.remove {
                         color: red;
-                        right: -30px;
+                        right: 5px;
                     }
                 }
                 & > a {
@@ -319,7 +323,7 @@
                     }
                 }
             }
-            dx-text-box, dx-text-area, dx-select-box {
+            dx-text-box, dx-text-area, .dx-selectbox {
                 &.dx-state-focused {
                     .dx-placeholder {
                         top: -30px;
@@ -449,7 +453,7 @@
             }
             tr:nth-child(odd) td { 
                 background: rgba(243, 247, 250, 0.7);
-                ::ng-deep dx-text-box, ::ng-deep dx-select-box {
+                ::ng-deep dx-text-box, ::ng-deep .dx-selectbox {
                     &, input {
                         background: transparent;
                     }

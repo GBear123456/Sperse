@@ -14,64 +14,64 @@
         <wizard-step>
             <wizard-step-tab></wizard-step-tab>
             <img src="assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
-            <h2 class="step-title">{{l('TellUsAboutYourself')}}</h2>
+            <h2 class="step-title">{{ls.l('TellUsAboutYourself')}}</h2>
             <div class="form">
                 <form id="memberInfo">
                     <dx-validation-group>
                         <div class="row">
                             <div class="dx-fieldset col-md-6">
                                 <div class="dx-field">
-                                    <div class="dx-field-label">{{l('WhatIsYourFullName')}}</div>
+                                    <div class="dx-field-label">{{ls.l('WhatIsYourFullName')}}</div>
                                     <div class="firstName">
                                         <dx-text-box name="firstName"
-                                                     placeholder="{{l('FirstName')}}"
+                                                     [placeholder]="ls.l('FirstName')"
                                                      [(value)]="model.name"
                                                      (keydown)="validateName($event)">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required"
-                                                                     message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-text-box>
                                     </div>
                                     <div class="lastName">
                                         <dx-text-box name="lastName"
-                                                     placeholder="{{l('LastName')}}"
+                                                     [placeholder]="ls.l('LastName')"
                                                      [(value)]="model.surname"
                                                      (keydown)="validateName($event)">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required"
-                                                                     message="{{l('SurnameIsRequired')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('SurnameIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-text-box>
                                     </div>
                                 </div>
                                 <div class="dx-field email">
-                                    <div class="dx-field-label">{{l('YourEmailAddress')}}</div>
+                                    <div class="dx-field-label">{{ls.l('YourEmailAddress')}}</div>
                                     <div class="dx-field-value">
                                         <dx-text-box name="email"
-                                                     placeholder="{{l('Email')}}"
+                                                     [placeholder]="ls.l('Email')"
                                                      [(value)]="model.email"
                                                      [readOnly]="isExistingUser">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required"
-                                                                     message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('EmailIsRequired')}}."></dxi-validation-rule>
                                                 <dxi-validation-rule type="pattern" [pattern]="emailRegEx"
-                                                                     message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-text-box>
                                     </div>
                                 </div>
                                 <div class="dx-field">
-                                    <div class="dx-field-label">{{l('YourPhone')}}</div>
+                                    <div class="dx-field-label">{{ls.l('YourPhone')}}</div>
                                     <div class="dx-field-value">
                                         <dx-text-box name="phone"
-                                                     placeholder="{{l('Phone')}}"
-                                                     maskInvalidMessage="{{l('PhoneValidationError')}}."
+                                                     [placeholder]="ls.l('Phone')"
+                                                     maskInvalidMessage="{{ls.l('PhoneValidationError')}}."
                                                      [(value)]="model.phone"
                                                      (onFocusOut)="inputStatusesService.blurInput($event)"
                                                      (onFocusIn)="inputStatusesService.focusInput($event)">
                                             <dx-validator>
-                                                <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="required" message="{{ls.l('PhoneIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-text-box>
                                     </div>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="dx-fieldset col-md-6">
                                 <div class="dx-field">
-                                    <div class="dx-field-label">{{l('WhatIsYourGender')}}</div>
+                                    <div class="dx-field-label">{{ls.l('WhatIsYourGender')}}</div>
                                     <div class="dx-field-value">
                                         <dx-radio-group [dataSource]="gender"
                                                         displayExpr="text"
@@ -88,15 +88,15 @@
                                                         name="gender"
                                                         [(value)]="model.gender">
                                             <dx-validator>
-                                                <dxi-validation-rule type="required" message="{{l('GenderIsRequired')}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="required" message="{{ls.l('GenderIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-radio-group>
                                     </div>
                                 </div>
                                 <div class="dx-field">
-                                    <div class="dx-field-label">{{l('DateOfBirth')}}</div>
+                                    <div class="dx-field-label">{{ls.l('DateOfBirth')}}</div>
                                     <div class="dx-field-value">
-                                        <dx-date-box invalidDateMessage="{{l('InvalidDateOfBirth')}}"
+                                        <dx-date-box [invalidDateMessage]="ls.l('InvalidDateOfBirth')"
                                                      name="dob"
                                                      type="date"
                                                      placeholder="mm/dd/yyyy"
@@ -107,11 +107,11 @@
                                                      (onFocusIn)="focusDateBirth($event)">
                                             <dx-validator>
                                                 <dxi-validation-rule type="required"
-                                                                     message="{{l('DateOfBirthIsRequired')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('DateOfBirthIsRequired')}}."></dxi-validation-rule>
                                                 <dxi-validation-rule type="range" [max]="minAge"
-                                                                     message="{{l('DateOfBirth18YearsError')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('DateOfBirth18YearsError')}}."></dxi-validation-rule>
                                                 <dxi-validation-rule type="range" [min]="maxAge"
-                                                                     message="{{l('DateOfBirth99YearsError')}}."></dxi-validation-rule>
+                                                                     message="{{ls.l('DateOfBirth99YearsError')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-date-box>
                                     </div>
@@ -120,19 +120,19 @@
                                     <div class="dx-field-label">SSN</div>
                                     <div class="dx-field-value">
                                         <dx-text-box name="ssn"
-                                                     placeholder="{{l('SSN')}}"
-                                                     maskInvalidMessage="{{l('SSNFormatError')}}"
+                                                     [placeholder]="ls.l('SSN')"
+                                                     [maskInvalidMessage]="ls.l('SSNFormatError')"
                                                      [(value)]="model.ssn"
                                                      (onFocusIn)="inputStatusesService.focusInput($event)"
                                                      (onFocusOut)="inputStatusesService.blurInput($event)">
                                             <dx-validator>
-                                                <dxi-validation-rule type="required" message="{{l('SSNIsRequired')}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="required" message="{{ls.l('SSNIsRequired')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-text-box>
                                     </div>
                                 </div>
                                 <div class="dx-field custom-radio-2-btn">
-                                    <div class="dx-field-label">{{l('AreYouUsCitizen')}}</div>
+                                    <div class="dx-field-label">{{ls.l('AreYouUsCitizen')}}</div>
                                     <div class="dx-field-value">
                                         <dx-radio-group [dataSource]="radioGroupCitizen"
                                                         displayExpr="text"
@@ -147,7 +147,7 @@
                         </div>
                         <dx-validation-summary class="summary"></dx-validation-summary>
                         <dx-button class="button"
-                                   text="{{l('Next')}}"
+                                   [text]="ls.l('Next')"
                                    icon="assets/landing/right-arrow.svg"
                                    type="submit"
                                    rtlEnabled="true"
@@ -170,10 +170,10 @@
                     </ng-container>
                 </div>
                 <button class="button btn-back" (click)="previousStep()" type="button">
-                    <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                    <img src="assets/landing/left-arrow-icon.svg" [alt]="ls.l('Back')">{{ls.l("Back")}}
                 </button>
                 <dx-button class="button"
-                           [text]="l('Next')"
+                           [text]="ls.l('Next')"
                            icon="assets/landing/right-arrow.svg"
                            [rtlEnabled]="true"
                            [disabled]="checkButtonDisabled('billingInfo')"
@@ -184,7 +184,7 @@
         <wizard-step>
             <wizard-step-tab></wizard-step-tab>
             <img src="assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
-            <h2 class="step-title">{{l('AddressInfo')}}</h2>
+            <h2 class="step-title">{{ls.l('AddressInfo')}}</h2>
             <div class="form">
                 <form id="addressInfo">
                     <dx-validation-group name="addressValidationGroup">
@@ -193,19 +193,18 @@
                                 <div class="col-sm-12 with-icon fullAddress">
                                     <input *ngIf="!googleAutoComplete" type="text"
                                            name="Address"
-                                           placeholder="{{l('AddressPlaceholder')}}"
+                                           [placeholder]="ls.l('AddressPlaceholder')"
                                            [(ngModel)]="model.address.streetAddress"
                                            class="dx-texteditor-input" />
                                     <input *ngIf="googleAutoComplete" type="text"
                                            name="Address"
-                                           placeholder="{{l('AddressPlaceholder')}}"
+                                           [placeholder]="ls.l('AddressPlaceholder')"
                                            [(ngModel)]="model.address.streetAddress"
                                            class="dx-texteditor-input"
-                                           [options]="option"
+                                           [options]="options"
                                            (country)="updateCountryInfo($event)"
                                            (street_number)='street_number=$event'
                                            (street)='street_name=$event'
-                                           (city)='model.address.city=$event'
                                            (postal_code)='model.address.zip=$event'
                                            (setAddress)="onAddressChanged($event)"
                                            angularGooglePlace />
@@ -215,11 +214,11 @@
                                 <div class="col-sm-5">
                                     <dx-text-box name="city"
                                                  maxLength="50"
-                                                 placeholder="{{l('City')}}"
+                                                 [placeholder]="ls.l('City')"
                                                  [(value)]="model.address.city">
                                         <dx-validator>
                                             <dxi-validation-rule type="required"
-                                                                 message="{{l('CityRequired')}}"></dxi-validation-rule>
+                                                                 [message]="ls.l('CityRequired')"></dxi-validation-rule>
                                         </dx-validator>
                                     </dx-text-box>
                                 </div>
@@ -242,7 +241,8 @@
                                         </div>
                                         <dx-validator>
                                             <dxi-validation-rule type="required"
-                                                                 message="{{l('StateRequired')}}"></dxi-validation-rule>
+                                                                 [message]="ls.l('StateRequired')">
+                                            </dxi-validation-rule>
                                         </dx-validator>
                                     </dx-select-box>
                                 </div>
@@ -250,13 +250,14 @@
                                     <dx-text-box name="zipCode"
                                                  class="with-icon zipCode"
                                                  maxLength="5"
-                                                 placeholder="{{l('Zipcode')}}"
+                                                 [placeholder]="ls.l('Zipcode')"
                                                  [(value)]="model.address.zip"
                                                  (onFocusIn)="inputStatusesService.focusInput($event)"
                                                  (onFocusOut)="inputStatusesService.blurInput($event)">
                                         <dx-validator>
                                             <dxi-validation-rule type="required"
-                                                                 message="{{l('ZipIsRequired')}}"></dxi-validation-rule>
+                                                                 [message]="ls.l('ZipIsRequired')">
+                                            </dxi-validation-rule>
                                         </dx-validator>
                                     </dx-text-box>
                                 </div>
@@ -264,10 +265,10 @@
                         </div>
                         <dx-validation-summary class="summary"></dx-validation-summary>
                         <button class="button btn-back" (click)="previousStep()" type="button">
-                            <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                            <img src="assets/landing/left-arrow-icon.svg" [alt]="ls.l('Back')">{{ls.l("Back")}}
                         </button>
                         <dx-button class="button"
-                                   text="{{l('Next')}}"
+                                   [text]="ls.l('Next')"
                                    icon="assets/landing/right-arrow.svg"
                                    [rtlEnabled]="true"
                                    [disabled]="checkButtonDisabled('addressInfo')"
@@ -289,7 +290,7 @@
                         <div class="layout-checkbox">
                             <label class="t-checkbox">
                                 <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe" id="rememberMe" />
-                                {{l("RememberMe")}}
+                                {{ls.l("RememberMe")}}
                                 <span></span>
                             </label>
                         </div>
@@ -304,13 +305,13 @@
                 <div class="form-group row">
                     <label for="password" class="col-sm-2">Choose your account password</label>
                     <div class="col-sm-5">
-                        <input type="{{showPassword ? 'text' : 'password'}}" class="form-control" #passwordInput="ngModel" name="passwordInput" [(ngModel)]="model.password" (ngModelChange)="UpdatePasswordStrength($event)"
+                        <input [type]="showPassword ? 'text' : 'password'" class="form-control" #passwordInput="ngModel" name="passwordInput" [(ngModel)]="model.password" (ngModelChange)="UpdatePasswordStrength($event)"
                                [requireDigit]="passwordComplexitySetting.requireDigit" [requireLowercase]="passwordComplexitySetting.requireLowercase"
                                [requireUppercase]="passwordComplexitySetting.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
                                [requiredLength]="passwordComplexitySetting.requiredLength"
                                required>
-                        <a class="toggle-password" (click)="toggleShowPassword($event)">{{l('ShowPassword')}}</a>
-                        <span class="password-strength pull-right">Password strenght: <span class="{{passwordComplexityWord}}">{{l(passwordComplexityWord)}}</span></span>
+                        <a class="toggle-password" (click)="toggleShowPassword($event)">{{ls.l('ShowPassword')}}</a>
+                        <span class="password-strength pull-right">Password strength: <span class="{{passwordComplexityWord}}">{{ls.l(passwordComplexityWord)}}</span></span>
                     </div>
                     <div class="col-sm-5 info-card">
                         <p>
@@ -319,28 +320,28 @@
                         </p>
                         <ul *ngIf="!passwordInput.valid && !passwordInput.pristine" class="fa-ul help-block password-Complexity-Block">
                             <li [hidden]="!passwordComplexitySetting.requireDigit" [ngClass]="checkPasswordRule(passwordInput, 'requireDigit')">
-                                {{l("PasswordComplexity_RequireDigit_Hint")}}
+                                {{ls.l("PasswordComplexity_RequireDigit_Hint")}}
                             </li>
                             <li [hidden]="!passwordComplexitySetting.requireLowercase" [ngClass]="checkPasswordRule(passwordInput, 'requireLowercase')">
-                                {{l("PasswordComplexity_RequireLowercase_Hint")}}
+                                {{ls.l("PasswordComplexity_RequireLowercase_Hint")}}
                             </li>
                             <li [hidden]="!passwordComplexitySetting.requireUppercase" [ngClass]="checkPasswordRule(passwordInput, 'requireUppercase')">
-                                {{l("PasswordComplexity_RequireUppercase_Hint")}}
+                                {{ls.l("PasswordComplexity_RequireUppercase_Hint")}}
                             </li>
                             <li [hidden]="!passwordComplexitySetting.requireNonAlphanumeric" [ngClass]="checkPasswordRule(passwordInput, 'requireNonAlphanumeric')">
-                                {{l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}
+                                {{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}
                             </li>
                             <li [ngClass]="checkPasswordRule(passwordInput, 'requiredLength')">
-                                {{l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}
+                                {{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}
                             </li>
                         </ul>
                     </div>
                 </div>
                 <button class="button btn-back" (click)="previousStep()" type="button">
-                    <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                    <img src="assets/landing/left-arrow-icon.svg" alt="{{ls.l('Back')}}">{{ls.l("Back")}}
                 </button>
                 <button class="button" type="submit" [disabled]="!registerMember.valid || registrationInProgress">
-                    {{l("Next")}} <img src="assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon">
+                    {{ls.l("Next")}} <img src="assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon">
                 </button>
             </form>
         </wizard-step>

@@ -65,7 +65,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
         private appService: AppService,
         private filtersService: FiltersService,
         private userServiceProxy: UserServiceProxy,
@@ -74,7 +73,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         private permissionService: PermissionServiceProxy,
         private roleService: RoleServiceProxy,
         private itemDetailsService: ItemDetailsService,
-        public impersonationService: ImpersonationService
+        public impersonationService: ImpersonationService,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.actionMenuItems = [
@@ -583,6 +583,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             .subscribe(params => {
                 if (params['refresh'])
                     this.invalidate();
+                if (params['filterText'] && AppConsts.regexPatterns.email.test(params['filterText']))
+                    this.searchValue = params['filterText'];
             });
     }
 
@@ -592,7 +594,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    onContentReady(event) {
+    onContentReady() {
         this.setGridDataLoaded();
     }
 

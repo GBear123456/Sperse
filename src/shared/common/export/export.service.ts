@@ -23,7 +23,8 @@ export class ExportService {
 
     getFileName(dataGrid?, name?: string, prefix?: string): string {
         name = name || dataGrid && dataGrid.export.fileName || '';
-        return (prefix ? prefix : '') + capitalize(location.href.split('/').pop()) + '_' +
+        let itemsName = capitalize(location.href.split('/').pop().split('?').shift());
+        return (prefix ? prefix : '') + itemsName.replace('Leads', 'Contacts') + '_' +
             (!name || name == 'DataGrid' ? '' : name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
 

@@ -83,8 +83,8 @@ export class LendSpaceSignupComponent extends AppComponentBase {
         if (this.isAgreeWithTerms && this.isAgreedToRecieveCalls)
             this.loginService.externalAuthenticate(provider);
         else {
-            this.agreeWithTermsCheckBox.validator.instance.validate();
-            this.agreeToRecieveCallsCheckBox.validator.instance.validate();
+            this.agreeWithTermsCheckBox['validator'].instance.validate();
+            this.agreeToRecieveCallsCheckBox['validator'].instance.validate();
         }
     }
 }

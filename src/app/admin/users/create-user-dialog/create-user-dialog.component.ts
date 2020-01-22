@@ -196,7 +196,7 @@ export class CreateUserDialogComponent implements OnInit {
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
-    private afterSave(userId): void {
+    private afterSave(): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
@@ -258,7 +258,7 @@ export class CreateUserDialogComponent implements OnInit {
                 this.modalDialog.finishLoading();
                 this.changeDetectorRef.detectChanges();
             }))
-            .subscribe(() => this.afterSave(this.user.id));
+            .subscribe(() => this.afterSave());
     }
 
     validateEmailAddress(value): boolean {
@@ -292,11 +292,11 @@ export class CreateUserDialogComponent implements OnInit {
             this.title = '';
             this.modalDialog.clear();
             this.setRandomPassword = false;
-            this.sendActivationEmail = false;
+            this.sendActivationEmail = true;
             this.user = new UserEditDto();
-            this.user.shouldChangePasswordOnNextLogin = false;
-            this.user.isActive = false;
-            this.user.isLockoutEnabled = false;
+            this.user.shouldChangePasswordOnNextLogin = true;
+            this.user.isActive = true;
+            this.user.isLockoutEnabled = true;
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
@@ -310,10 +310,8 @@ export class CreateUserDialogComponent implements OnInit {
                     selectedOrganizationUnits: [this.orgUnits[0].code]
                 };
 
-            setTimeout(() => {
-                this.setComponentToValid(this.phoneNumber.instance);
-                this.changeDetectorRef.detectChanges();
-            });
+            setTimeout(() => this.setComponentToValid(this.phoneNumber.instance), 800);
+            setTimeout(() => this.changeDetectorRef.detectChanges());
         };
 
         if (forced)
@@ -376,7 +374,7 @@ export class CreateUserDialogComponent implements OnInit {
     }
 
     phoneComponentInitialized(event) {
-        setTimeout(() => this.setComponentToValid(event.component), 500);
+        setTimeout(() => this.setComponentToValid(event.component), 800);
     }
 
     phoneComponentFocusOut(event) {

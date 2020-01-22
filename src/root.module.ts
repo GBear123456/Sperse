@@ -38,6 +38,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { TitleService } from '@shared/common/title/title.service';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { StatesService } from '@root/store/states-store/states.service';
 
 export function errorHandlerFactory(
     bugsnagService: BugsnagService
@@ -189,6 +190,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppHttpInterceptor,
         LoadingService,
         TitleService,
+        StatesService,
         FullScreenService,
         {
             provide: CacheStorageAbstract,

@@ -38,6 +38,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
 
 @Component({
     selector: 'totals-by-source',
@@ -72,7 +73,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             argumentField: 'key',
             valueField: 'count',
             getColor: (item) => {
-                return this.dashboardWidgetsService.getStarColorByType(this.rawData[item.index].colorType);
+                return StarsHelper.getStarColorByType(this.rawData[item.index].colorType);
             }
         },
         {

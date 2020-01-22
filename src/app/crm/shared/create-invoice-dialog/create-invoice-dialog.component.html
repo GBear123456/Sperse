@@ -80,7 +80,15 @@
                         </div>
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
-                    <div class="selected-contact-info" *ngIf="selectedBillingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i><i class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
+                    <div class="selected-contact-info" *ngIf="selectedBillingAddress">
+                        <img *ngIf="disabledForUpdate; else billingEditButtons"
+                             class="preview"
+                             src='./assets/common/icons/preview.svg'
+                             (click)="showEditAddressDialog($event, 'selectedBillingAddress')">
+                        <ng-template #billingEditButtons>
+                            <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
+                            <i class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
+                        </ng-template>
                         {{ selectedBillingAddress?.company }}<br *ngIf="selectedBillingAddress?.company">
                         {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
@@ -108,7 +116,15 @@
                         </div>
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
-                    <div class="selected-contact-info" *ngIf="selectedShippingAddress"><i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i><i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
+                    <div class="selected-contact-info" *ngIf="selectedShippingAddress">
+                        <img *ngIf="disabledForUpdate; else shippingEditButtons"
+                             class="preview"
+                             src='./assets/common/icons/preview.svg'
+                             (click)="showEditAddressDialog($event, 'selectedShippingAddress')">
+                        <ng-template #shippingEditButtons>
+                            <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
+                            <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
+                        </ng-template>
                         {{ selectedShippingAddress?.company }}<br *ngIf="selectedShippingAddress?.company">
                         {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
                         {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
@@ -193,7 +209,7 @@
                                 </dx-validator>
                             </dx-text-box>
                             <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
-                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine(cellData)">{{ls.l('+ Add new line')}}</span>
+                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine()">{{ls.l('+ Add new line')}}</span>
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">

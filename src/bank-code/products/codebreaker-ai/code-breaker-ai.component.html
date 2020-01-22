@@ -6,4 +6,5 @@
     <ng-template #noSubscription>
         <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
     </ng-template>
+    <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
 </section>

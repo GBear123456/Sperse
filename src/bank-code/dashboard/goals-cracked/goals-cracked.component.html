@@ -1,16 +1,15 @@
 <h5 class="card-title">{{ls.l('BankCode_CodeCrackedAtAGlance')}}</h5>
-
-<div class="bar-info row" *ngFor="let item of goalProgress">
-    <div class="col-4">{{item.name}}</div>
-    <div class="col-4 text-center font-weight-bold">{{item.progress}}%</div>
-    <div class="col-4 text-secondary text-right">2 of 3</div>
+<div class="bar-info row" *ngFor="let item of goalTypes">
+    <div class="col-4">{{ item.text + ' ' + ls.l('goal') }}</div>
+    <div class="col-4 text-center font-weight-bold">{{ bankCodeService.getPercentString(item.currentNumber$, item.number) | async }}</div>
+    <div class="col-4 text-secondary text-right">{{ item.currentNumber$ | async }} of {{ item.number }}</div>
     <div class="col-12 bar bar-red">
         <dx-progress-bar width="100%"
-                         [class]="item.class"
+                         [class]="item.name + '-goal'"
                          height="12"
                          [min]="0"
                          [max]="100"
-                         [value]="item.progress"
+                         [value]="bankCodeService.getPercent(item.currentNumber$, item.number) | async"
                          [showStatus]="false">
         </dx-progress-bar>
     </div>

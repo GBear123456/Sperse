@@ -1,29 +1,39 @@
 /** Core imports */
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /** Third party imports  */
-import { map } from '@node_modules/rxjs/internal/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { Observable } from '@node_modules/rxjs';
+import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'access-code-instructions',
     templateUrl: 'access-code-instructions.component.html',
     styleUrls: ['./access-code-instructions.component.less'],
-    providers: [ ClipboardService ]
+    providers: [ ClipboardService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccessCodeInstructionsComponent {
     accessCode$: Observable<string> = this.profileService.accessCode$;
     trackingLink$: Observable<string> = this.accessCode$.pipe(
-        map((accessCode: string) => 'https://www.CrackMyCode.com/?ref=' + accessCode)
+        map((accessCode: string) => {
+            return (environment.releaseStage === 'production'
+                ? 'https://www.MyBankCode.com/'
+                : 'https://bankpass.bankcode.com/') + accessCode;
+        })
     );
     affiliateLink$: Observable<string> = this.accessCode$.pipe(
-        map((accessCode: string) => 'https://www.CodebreakerTech.com/?ref=' + accessCode)
+        map((accessCode: string) => {
+            return (environment.releaseStage === 'production'
+                ? 'https://www.CodebreakerTech.com'
+                : 'https://wp.bankcode.pro') + '/?ref=' + accessCode;
+        })
     );
     constructor(
         private profileService: ProfileService,

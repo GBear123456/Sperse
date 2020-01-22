@@ -1,33 +1,33 @@
-import {Component, OnInit} from '@angular/core';
-import {AppLocalizationService} from '@app/shared/common/localization/app-localization.service';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 
 @Component({
     selector: 'bank-code-total-codes-cracked',
     templateUrl: './total-codes-cracked.component.html',
     styleUrls: ['./total-codes-cracked.component.less']
 })
-export class TotalCodesCrackedComponent implements OnInit {
+export class TotalCodesCrackedComponent implements OnChanges {
+    @Input() level: number;
+    @Input() values: number[];
+    @Input() total: number;
     type = 'pie';
     data = {
         labels: [
-            'Red',
-            'Orange',
-            'Yellow',
-            'Blue'
+            this.bankCodeService.bankCodeConfig[BankCodeLetter.B].definition,
+            this.bankCodeService.bankCodeConfig[BankCodeLetter.A].definition,
+            this.bankCodeService.bankCodeConfig[BankCodeLetter.N].definition,
+            this.bankCodeService.bankCodeConfig[BankCodeLetter.K].definition,
         ],
         datasets: [
             {
-                data: [
-                    5,
-                    10,
-                    4,
-                    6,
-                ],
+                data: [],
                 backgroundColor: [
-                    '#104779',
-                    '#f09e1f',
-                    '#1b6634',
-                    '#ac1f22',
+                    this.bankCodeService.bankCodeConfig[BankCodeLetter.B].background,
+                    this.bankCodeService.bankCodeConfig[BankCodeLetter.A].background,
+                    this.bankCodeService.bankCodeConfig[BankCodeLetter.N].background,
+                    this.bankCodeService.bankCodeConfig[BankCodeLetter.K].background
                 ],
                 label: 'Dataset 1',
                 borderWidth: '12px',
@@ -49,10 +49,15 @@ export class TotalCodesCrackedComponent implements OnInit {
         }
     };
 
-    constructor(public ls: AppLocalizationService) {
-    }
+    constructor(
+        private bankCodeService: BankCodeService,
+        public ls: AppLocalizationService
+    ) {}
 
-    ngOnInit() {
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes && changes.values) {
+            this.data.datasets[0].data = changes.values.currentValue;
+        }
     }
 
 }

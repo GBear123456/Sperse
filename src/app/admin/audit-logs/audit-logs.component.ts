@@ -153,6 +153,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             load: (loadOptions) => {
                 this.isDataLoaded = false;
                 return this.auditLogService.getAuditLogs(
+                    this.searchValue,
                     this.filtersValues.date.startDate,
                     this.filtersValues.date.endDate,
                     this.filtersValues.userId,
@@ -220,7 +221,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Logs by action').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('logs').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -298,6 +299,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     exportToExcelAuditLogs(): void {
         this.auditLogService.getAuditLogsToExcel(
+            this.searchValue,
             this.filtersValues.date.startDate,
             this.filtersValues.date.endDate,
             this.filtersValues.userId,

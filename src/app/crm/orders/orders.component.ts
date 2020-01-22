@@ -12,6 +12,8 @@ import {
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { pluck, filter, finalize } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -39,11 +41,12 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
-    providers: [ PipelineService ]
+    providers: [ PipelineService, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -64,6 +67,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     set selectedOrders(orders) {
         this._selectedOrders = orders;
         this.selectedOrderKeys = orders.map((item) => item.Id);
+        this.initToolbarConfig();
     }
 
     manageDisabled = true;
@@ -89,6 +93,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private orderProxy: OrderServiceProxy,
         private invoicesService: InvoicesService,
         private contactsService: ContactsService,
         private filtersService: FiltersService,
@@ -116,6 +121,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         };
 
         invoicesService.settings$.subscribe(res => this.currency = res.currency);
+        this._activatedRoute.queryParams.pipe(
+            filter(() => this.componentIsActivated),
+            pluck('refresh'),
+            filter(Boolean)
+        ).subscribe(() => this.invalidate());
 
         this.initToolbarConfig();
     }
@@ -389,12 +399,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             attr: {
                                 'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
                             }
-                        },
-                        {
-                            name: 'delete',
-                            disabled: this.manageDisabled
                         }
                     ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [{
+                        name: 'delete',
+                        disabled: this.manageDisabled || !this.selectedOrderKeys.length,
+                        action: this.deleteOrders.bind(this)
+                    }]
                 },
                 {
                     location: 'after',
@@ -635,6 +650,30 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     updateTotalCount(totalCount: number) {
         this.totalCount = totalCount;
+    }
+
+    deleteOrders() {
+        this.message.confirm(
+            this.l('OrdersDeleteWarningMessage'),
+            isConfirmed => {
+                if (isConfirmed)
+                    this.deleteOrdersInternal();
+            }
+        );
+    }
+
+    private deleteOrdersInternal() {
+        this.startLoading();
+        forkJoin.apply(this, this.selectedOrderKeys.map(
+            this.orderProxy.delete.bind(this.orderProxy))).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(() => {
+                this.invalidate();
+                this.dataGrid.instance.deselectAll();
+                this.notify.success(this.l('SuccessfullyDeleted'));
+                this.filterChanged = true;
+            }
+        );
     }
 
     deactivate() {

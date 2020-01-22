@@ -158,19 +158,23 @@
                     {{cellData.value | titleCase}}
                 </div>
 
-                <div *dxTemplate="let cellData of 'phoneCell'" [ngClass]="{invalid: !checkFieldValid('phone', cellData)}">
-                    {{cellData.value | phone}}
+                <div *dxTemplate="let cellData of 'phoneCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
+                    {{cellData.value | phone: getPhoneDefaultCountry(cellData) }}
                 </div>
 
-                <div *dxTemplate="let cellData of 'revenueCell'" [ngClass]="{invalid: !checkFieldValid('revenue', cellData)}">
+                <div *dxTemplate="let cellData of 'revenueCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
                     {{cellData.value | currency}}
                 </div>
 
-                <div *dxTemplate="let cellData of 'emailCell'" [ngClass]="{invalid: !checkFieldValid('email', cellData)}">
-                    {{cellData.value}}
+                <div *dxTemplate="let cellData of 'datetimeCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
+                    {{cellData.value | date : formatting.dateTime : userTimezone}}
                 </div>
 
-                <div *dxTemplate="let cellData of 'urlCell'" [ngClass]="{invalid: !checkFieldValid('url', cellData)}">
+                <div *dxTemplate="let cellData of 'dateCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
+                    {{cellData.value | date : formatting.date}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'commonCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
                     {{cellData.value}}
                 </div>
             </dx-data-grid>

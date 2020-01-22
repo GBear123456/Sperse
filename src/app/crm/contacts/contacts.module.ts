@@ -122,7 +122,6 @@ import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { PersonalDetailsDialogComponent } from './personal-details/personal-details-dialog/personal-details-dialog.component';
-import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
@@ -239,7 +238,6 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         VgBufferingModule,
         NgxMaskModule.forRoot(),
         ItemDetailsLayoutModule,
-        CRMDashboardWidgetsModule,
         BankCodeLettersModule,
         CKEditorModule,
         OrderDropdownModule,

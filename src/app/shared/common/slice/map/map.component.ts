@@ -35,7 +35,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnChanges {
-    @Input() data: MapData = {};
+    @Input() data: MapData;
     @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
     @Input() infoItems: InfoItem[];
     @Input() width: InfoItem[];
@@ -43,7 +43,7 @@ export class MapComponent implements OnChanges {
     @Input() dataIsLoading;
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
-    @Input() contactGroupText = false;
+    @Input() contactGroupText = '';
     @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
     @HostBinding('style.height') get componentHeight() {
         return this.height + 'px';
@@ -83,11 +83,11 @@ export class MapComponent implements OnChanges {
     customizeTooltip = (arg) => {
         let stateData = this.data[arg.attribute('postal')];
         let total = stateData && stateData.total;
-        let totalMarkupString = total ? '<div id="nominal"><b>' + total + '</b> ' + this.contactGroupText + '</div>' : '<div>' + this.ls.l('CRMDashboard_NoData') + '</div>';
-        let node = '<div #gdp>' + '<h5>' + arg.attribute('name') + '</h5>' + totalMarkupString + '</div>';
-        return {
-            html: node
-        };
+        let totalMarkupString = total
+            ? `<div id="nominal"><b>${total}</b> ${total === 1 ? this.contactGroupText.slice(0, -1) : this.contactGroupText}</div>`
+            : `<div>${this.ls.l('CRMDashboard_NoData')}</div>`;
+        let node = `<div #gdp><h5>${arg.attribute('name')}</h5>${totalMarkupString}</div>`;
+        return { html: node };
     }
 
     customizeLayers = (elements) => {

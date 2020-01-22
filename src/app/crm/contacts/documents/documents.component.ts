@@ -297,10 +297,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             });
     }
 
-    onDataGridInit(e) {
-        this.startLoading(e.component.element());
-    }
-
     startLoading(element = null) {
         super.startLoading(false, element || this.dataGrid.instance.element());
     }

@@ -125,8 +125,8 @@ export class SignupFormComponent implements OnInit, OnDestroy {
         if (this.isAgreeWithTerms && this.isAgreedToReceiveCalls)
             this.loginService.externalAuthenticate(provider);
         else {
-            this.agreeWithTermsCheckBox.validator.instance.validate();
-            this.agreeToReceiveCallsCheckBox.validator.instance.validate();
+            this.agreeWithTermsCheckBox['validator'].instance.validate();
+            this.agreeToReceiveCallsCheckBox['validator'].instance.validate();
         }
     }
 
