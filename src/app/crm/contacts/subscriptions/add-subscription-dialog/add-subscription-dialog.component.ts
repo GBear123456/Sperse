@@ -61,7 +61,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 endDate: this.data.endDate,
                 amount: this.data.amount
             })
-        ]
+        ],
+        updateThirdParty: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
@@ -109,8 +110,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
 
     saveSubscription() {
         if (this.validationGroup.instance.validate().isValid) {
-            const subscription = new UpdateOrderSubscriptionInput(this.subscription);
-            subscription.subscriptions.forEach((subscription: SubscriptionInput) => {
+            const subscriptionInput = new UpdateOrderSubscriptionInput(this.subscription);
+            subscriptionInput.updateThirdParty = false;
+            subscriptionInput.subscriptions.forEach((subscription: SubscriptionInput) => {
                 if (subscription.endDate) {
                     subscription.endDate = DateHelper.removeTimezoneOffset(
                         new Date(subscription.endDate),
@@ -118,8 +120,11 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                         'from'
                     );
                 }
+                if (this.isBankCodeLayout && subscription.name === BankCodeServiceType.BANKVault) {
+                    subscriptionInput.updateThirdParty = true;
+                }
             });
-            this.orderSubscriptionService.update(subscription).subscribe(() => {
+            this.orderSubscriptionService.update(subscriptionInput).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.contactsService.invalidate('subscriptions');
                 this.dialogRef.close();

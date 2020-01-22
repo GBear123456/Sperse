@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -51,7 +51,6 @@ export class SubscriptionsComponent implements OnInit {
     userTimezone = DateHelper.getUserTimezone();
 
     constructor(
-        injector: Injector,
         private invoicesService: InvoicesService,
         private contactService: ContactServiceProxy,
         private contactsService: ContactsService,

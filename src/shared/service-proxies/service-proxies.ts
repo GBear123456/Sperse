@@ -67049,6 +67049,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     orderNumber!: string | undefined;
     systemType!: string;
     subscriptions!: SubscriptionInput[];
+    updateThirdParty!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -67072,6 +67073,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
                 for (let item of data["subscriptions"])
                     this.subscriptions.push(SubscriptionInput.fromJS(item));
             }
+            this.updateThirdParty = data["updateThirdParty"];
         }
     }
 
@@ -67092,6 +67094,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             for (let item of this.subscriptions)
                 data["subscriptions"].push(item.toJSON());
         }
+        data["updateThirdParty"] = this.updateThirdParty;
         return data; 
     }
 }
@@ -67101,6 +67104,7 @@ export interface IUpdateOrderSubscriptionInput {
     orderNumber: string | undefined;
     systemType: string;
     subscriptions: SubscriptionInput[];
+    updateThirdParty: boolean | undefined;
 }
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
