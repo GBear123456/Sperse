@@ -26,7 +26,8 @@
       "@node_modules/*": [ "../node_modules/*" ],
       "@angular/*": [ "../node_modules/@angular/*" ],
       "moment": [ "../node_modules/moment/moment.js" ],
-      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ]
+      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ],
+      "sax": [ "./node_modules/sax/lib/sax.js" ]
     }
   },
   "angularCompilerOptions": {
