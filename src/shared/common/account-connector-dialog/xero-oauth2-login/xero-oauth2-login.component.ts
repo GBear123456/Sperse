@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 /** Third party imports */
 import { filter, first } from 'rxjs/operators';
@@ -15,6 +15,8 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
     template: ``
 })
 export class XeroOauth2LoginComponent implements OnInit {
+    @Output() onComplete: EventEmitter<number> = new EventEmitter();
+
     constructor(
         private syncServiceProxy: SyncServiceProxy,
         private syncProgressService: SynchProgressService,
@@ -53,6 +55,7 @@ export class XeroOauth2LoginComponent implements OnInit {
             let interval = setInterval(() => {
                 if (setupAccountWindow.closed) {
                     clearInterval(interval);
+                    this.onComplete.emit();
                 }
             }, 2000);
         });

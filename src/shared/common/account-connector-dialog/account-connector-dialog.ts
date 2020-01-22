@@ -67,7 +67,8 @@ export class AccountConnectorDialogComponent implements OnInit {
              * setTimeout to avoid changed after check error */
             this.dialogRef.updateSize('0', '0');
         } else if (connector == AccountConnectors.XeroOAuth2)
-            this.closeDialog();
+            this.dialogRef.updateSize('0', '0');
+
         this.selectedConnector = connector;
     }
 
