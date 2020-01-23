@@ -35,7 +35,10 @@ export class PaymentInfoComponent {
     countryCode = 'US';
     conditions = ConditionsType;
     public options = {
-        types: ['address']
+        types: ['address'],
+        componentRestrictions: {
+            country: [ 'US', 'CA' ]
+        }
     };
 
     constructor(
