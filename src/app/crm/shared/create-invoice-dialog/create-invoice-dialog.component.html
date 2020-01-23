@@ -98,7 +98,7 @@
                         {{ selectedBillingAddress?.countryId == 'US' ? '' : selectedBillingAddress?.countryId }}
                     </div>
                 </div>
-                <div class="ship-to">
+                <div class="ship-to" [hidden]="!invoiceSettings.showShippingAddress">
                     <label class="bold-label">{{ls.l('Invoice_ShipTo')}}</label>
                     <dx-select-box #shippingAddress
                         name="shippingAddress"
