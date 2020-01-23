@@ -34,7 +34,8 @@ import {
     InvoiceInfo,
     InvoiceLineUnit,
     InvoiceSettings,
-    GetNewInvoiceInfoOutput
+    GetNewInvoiceInfoOutput,
+    ContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -134,6 +135,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     constructor(
         private nameParser: NameParserService,
         private oDataService: ODataService,
+        private contactProxy: ContactServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
         private customerProxy: CustomerServiceProxy,
@@ -491,7 +493,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     customerLookupRequest(phrase = '', callback?) {
-        this.customerProxy.getAllByPhrase(phrase, 10).subscribe(res => {
+        this.contactProxy.getAllCustomersAndPartnersByPhrase(phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.customer) {
                 this.customers = res;
                 callback && callback(res);
