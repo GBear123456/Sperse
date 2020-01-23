@@ -742,7 +742,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 value, this.getFieldCountryCode(data, field));
             if (isValid)
                 data[field] = this.phoneFormat.transform(
-                    value, this.getFieldDefaultCountry(data, field)).replace(/\s/g, '');
+                    value, this.getFieldDefaultCountry(data, field)).replace(/[^\d+]/g, '');
             return isValid;
         } else if (key == 'revenue')
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
