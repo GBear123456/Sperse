@@ -1,11 +1,11 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
@@ -13,7 +13,6 @@ import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ContactServiceProxy, ContactInfoDto, UpdateContactAffiliateCodeInput } from '@shared/service-proxies/service-proxies';
-import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppConsts } from '@shared/AppConsts';
