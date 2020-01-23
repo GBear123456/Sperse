@@ -128,7 +128,7 @@ export class EditAddressDialog {
         if (this.validator.validate().isValid && this.validateAddress(this.data)) {
             if (this.data.country)
                 this.data.countryId = _.findWhere(this.countries, { name: this.data.country })['code'];
-            this.data.stateId = this.data.stateId && this.data.stateId.length <= 3 ? this.data.stateId : null;
+            this.data.stateId = this.statesService.getAdjustedStateCode(this.data.stateId, this.data.stateName);
             this.dialogRef.close(true);
         }
     }

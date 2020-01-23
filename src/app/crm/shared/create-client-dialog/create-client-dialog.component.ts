@@ -94,7 +94,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     emailsComponent: any;
     phonesComponent: any;
-    linksComponent: any;
 
     private lookupTimeout;
     private checkValidTimeout;
@@ -407,9 +406,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: address.stateCode && address.stateCode.length <= 3 && address.stateCode !== address.stateName
-                        ? address.stateCode
-                        : null,
+                    stateId: this.statesService.getAdjustedStateCode(address.stateCode, address.stateName),
                     stateName: address.stateName,
                     zip: address.zip,
                     countryId: this.getCountryCode(address.country),

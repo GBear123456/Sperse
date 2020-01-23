@@ -17,4 +17,9 @@ export class StatesService {
             })
         }));
     }
+
+    getAdjustedStateCode(stateCode: string, stateName): string {
+        return stateCode && stateCode.length <= 3 && stateCode !== stateName ? stateCode : null;
+    }
+
 }
