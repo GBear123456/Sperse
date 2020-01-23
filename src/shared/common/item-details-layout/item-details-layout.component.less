@@ -31,7 +31,7 @@
         box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
     }
 
-    mat-sidenav {
+    ::ng-deep mat-sidenav {
         width: 288px;
         padding-bottom: 120px;
         overflow-y: hidden;
@@ -39,6 +39,10 @@
         .mat-tab-nav-bar {
             border: none;
             padding-top: 12px;
+        }
+
+        .mat-drawer-inner-container {
+            overflow: hidden;
         }
     }
 
@@ -128,7 +132,7 @@
         letter-spacing: 0.6px;
         opacity: 1;
         height: 45px;
-        width: 100%;
+        width: auto;
     }
 
     .mat-tab-link.active {
