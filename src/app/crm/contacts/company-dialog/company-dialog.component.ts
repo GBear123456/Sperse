@@ -40,7 +40,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
 export class CompanyDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;

@@ -118,7 +118,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;

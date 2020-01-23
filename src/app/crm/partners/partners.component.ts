@@ -106,7 +106,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;

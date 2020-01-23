@@ -48,7 +48,7 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateUserDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;
 

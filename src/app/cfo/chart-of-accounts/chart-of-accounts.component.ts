@@ -32,7 +32,7 @@ class UploadCategoryModel {
     animations: [ appModuleAnimation() ]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
+    @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     override = false;
 

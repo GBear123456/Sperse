@@ -25,8 +25,8 @@ export class AdDirective {
     styleUrls: ['./filter.manager.component.less'],
     selector: 'filter'
 })
-export class FilterManagerComponent extends AppComponentBase {
-    @ViewChild(AdDirective) adHost: AdDirective;
+export class FilterManagerComponent {
+    @ViewChild(AdDirective, { static: true }) adHost: AdDirective;
 
     private _config: FilterModel;
     @Input()
@@ -37,17 +37,14 @@ export class FilterManagerComponent extends AppComponentBase {
     @Output() onApply = new EventEmitter();
 
     constructor(
-        injector: Injector,
-        private _componentFactoryResolver: ComponentFactoryResolver
-    ) {
-        super(injector);
-    }
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {}
 
     private loadComponent(filter: FilterModel) {
         this.adHost.viewContainerRef.clear();
 
         let componentRef = <FilterComponent>this.adHost.viewContainerRef.createComponent(
-            this._componentFactoryResolver.resolveComponentFactory(filter.component)
+            this.componentFactoryResolver.resolveComponentFactory(filter.component)
         ).instance;
 
         componentRef.options = filter.options || {};

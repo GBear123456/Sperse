@@ -37,7 +37,7 @@ import { Category } from '@app/cfo/transactions/categorization/category.model';
     }
 })
 export class CategorizationComponent extends CFOComponentBase implements OnInit, AfterViewInit {
-    @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent, { static: true }) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterSelected: EventEmitter<Category[]> = new EventEmitter();

@@ -84,7 +84,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
