@@ -12,6 +12,7 @@ import { ClipboardService } from 'ngx-clipboard';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
@@ -164,13 +165,13 @@ export class PersonalDetailsComponent implements OnDestroy {
             this.person[field] = value;
             this._personContactService.updatePersonInfo(new UpdatePersonInfoInput({
                 id: this.person.contactId,
-                dob: this.person.dob,
+                dob: this.getDateWithoutTime(this.person.dob),
                 ssn: this.accessConfidentialData ? this.person.ssn : undefined,
                 bankCode: this.person.bankCode,
                 timeZone: this.person.timeZone,
                 maritalStatus: MaritalStatus[this.person.maritalStatus],
-                marriageDate: this.person.marriageDate,
-                divorceDate: this.person.divorceDate,
+                marriageDate: this.getDateWithoutTime(this.person.marriageDate),
+                divorceDate: this.getDateWithoutTime(this.person.divorceDate),
                 gender: Gender[this.person.gender],
                 isUSCitizen: this.person.isUSCitizen,
                 citizenship: this.person.citizenship,
@@ -188,6 +189,10 @@ export class PersonalDetailsComponent implements OnDestroy {
                 this._changeDetector.markForCheck();
             });
         }
+    }
+
+    getDateWithoutTime(value) {
+        return value ? DateHelper.removeTimezoneOffset(new Date(value), false, 'from') : value;
     }
 
     allowDigitsOnly(event, exceptions = []) {
