@@ -7390,6 +7390,68 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getAllCustomersAndPartnersByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllCustomersAndPartnersByPhrase?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllCustomersAndPartnersByPhrase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllCustomersAndPartnersByPhrase(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllCustomersAndPartnersByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityContactInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityContactInfo[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -36282,7 +36344,6 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     email!: string | undefined;
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
     zip!: string | undefined;
@@ -36313,7 +36374,6 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.email = data["email"];
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
             this.zip = data["zip"];
@@ -36344,7 +36404,6 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["email"] = this.email;
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
@@ -36368,7 +36427,6 @@ export interface ICreateBusinessEntityDto {
     email: string | undefined;
     alternativeEmail: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
     zip: string | undefined;
@@ -36392,7 +36450,6 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     email!: string | undefined;
     alternativeEmail!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
     zip!: string | undefined;
@@ -36425,7 +36482,6 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.email = data["email"];
             this.alternativeEmail = data["alternativeEmail"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
             this.zip = data["zip"];
@@ -36458,7 +36514,6 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["email"] = this.email;
         data["alternativeEmail"] = this.alternativeEmail;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
@@ -36484,7 +36539,6 @@ export interface IUpdateBusinessEntityDto {
     email: string | undefined;
     alternativeEmail: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
     zip: string | undefined;
@@ -42357,12 +42411,12 @@ export interface IContactPhotoInfo {
 }
 
 export class ContactShortInfo implements IContactShortInfo {
+    id!: number | undefined;
+    fullName!: string | undefined;
     photo!: ContactPhotoInfo | undefined;
     ratingId!: number | undefined;
     groupId!: string | undefined;
     statusId!: string | undefined;
-    id!: number | undefined;
-    fullName!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
     constructor(data?: IContactShortInfo) {
@@ -42376,12 +42430,12 @@ export class ContactShortInfo implements IContactShortInfo {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             this.ratingId = data["ratingId"];
             this.groupId = data["groupId"];
             this.statusId = data["statusId"];
-            this.id = data["id"];
-            this.fullName = data["fullName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
     }
@@ -42395,24 +42449,24 @@ export class ContactShortInfo implements IContactShortInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["ratingId"] = this.ratingId;
         data["groupId"] = this.groupId;
         data["statusId"] = this.statusId;
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface IContactShortInfo {
+    id: number | undefined;
+    fullName: string | undefined;
     photo: ContactPhotoInfo | undefined;
     ratingId: number | undefined;
     groupId: string | undefined;
     statusId: string | undefined;
-    id: number | undefined;
-    fullName: string | undefined;
     creationTime: moment.Moment | undefined;
 }
 
@@ -42861,7 +42915,6 @@ export interface ITrackingInfo {
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
-    personAffiliateCode!: string | undefined;
     matchExisting!: boolean | undefined;
     contactId!: number | undefined;
     contactXRef!: string | undefined;
@@ -42887,6 +42940,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     photo!: ContactPhotoInput | undefined;
     sourceContactId!: number | undefined;
     sourceOrganizationUnitId!: number | undefined;
+    personAffiliateCode!: string | undefined;
     title!: string | undefined;
     tags!: ContactTagInput[] | undefined;
     lists!: ContactListInput[] | undefined;
@@ -42915,7 +42969,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 
     init(data?: any) {
         if (data) {
-            this.personAffiliateCode = data["personAffiliateCode"];
             this.matchExisting = data["matchExisting"];
             this.contactId = data["contactId"];
             this.contactXRef = data["contactXRef"];
@@ -42961,6 +43014,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.sourceContactId = data["sourceContactId"];
             this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+            this.personAffiliateCode = data["personAffiliateCode"];
             this.title = data["title"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
@@ -42997,7 +43051,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["personAffiliateCode"] = this.personAffiliateCode;
         data["matchExisting"] = this.matchExisting;
         data["contactId"] = this.contactId;
         data["contactXRef"] = this.contactXRef;
@@ -43043,6 +43096,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["sourceContactId"] = this.sourceContactId;
         data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        data["personAffiliateCode"] = this.personAffiliateCode;
         data["title"] = this.title;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
@@ -43072,7 +43126,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 }
 
 export interface ICreateOrUpdateContactInput {
-    personAffiliateCode: string | undefined;
     matchExisting: boolean | undefined;
     contactId: number | undefined;
     contactXRef: string | undefined;
@@ -43098,6 +43151,7 @@ export interface ICreateOrUpdateContactInput {
     photo: ContactPhotoInput | undefined;
     sourceContactId: number | undefined;
     sourceOrganizationUnitId: number | undefined;
+    personAffiliateCode: string | undefined;
     title: string | undefined;
     tags: ContactTagInput[] | undefined;
     lists: ContactListInput[] | undefined;
@@ -43282,6 +43336,110 @@ export interface ISourceContactInfo {
     companyName: string | undefined;
     personName: string | undefined;
     jobTitle: string | undefined;
+}
+
+export class ContactAddressInfo implements IContactAddressInfo {
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    countryCode!: string | undefined;
+    zip!: string | undefined;
+
+    constructor(data?: IContactAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.countryCode = data["countryCode"];
+            this.zip = data["zip"];
+        }
+    }
+
+    static fromJS(data: any): ContactAddressInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["countryCode"] = this.countryCode;
+        data["zip"] = this.zip;
+        return data; 
+    }
+}
+
+export interface IContactAddressInfo {
+    streetAddress: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    countryCode: string | undefined;
+    zip: string | undefined;
+}
+
+export class EntityContactInfo implements IEntityContactInfo {
+    id!: number | undefined;
+    name!: string | undefined;
+    email!: string | undefined;
+    address!: ContactAddressInfo | undefined;
+    isActive!: boolean | undefined;
+
+    constructor(data?: IEntityContactInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.email = data["email"];
+            this.address = data["address"] ? ContactAddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): EntityContactInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new EntityContactInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["email"] = this.email;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IEntityContactInfo {
+    id: number | undefined;
+    name: string | undefined;
+    email: string | undefined;
+    address: ContactAddressInfo | undefined;
+    isActive: boolean | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
@@ -43962,7 +44120,7 @@ export class AddressInfo implements IAddressInfo {
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
+    countryName!: string | undefined;
     usageTypeId!: string | undefined;
     startDate!: moment.Moment | undefined;
     ownershipTypeId!: string | undefined;
@@ -43985,7 +44143,7 @@ export class AddressInfo implements IAddressInfo {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
+            this.countryName = data["countryName"];
             this.usageTypeId = data["usageTypeId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.ownershipTypeId = data["ownershipTypeId"];
@@ -44008,7 +44166,7 @@ export class AddressInfo implements IAddressInfo {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
+        data["countryName"] = this.countryName;
         data["usageTypeId"] = this.usageTypeId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["ownershipTypeId"] = this.ownershipTypeId;
@@ -44024,7 +44182,7 @@ export interface IAddressInfo {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
+    countryName: string | undefined;
     usageTypeId: string | undefined;
     startDate: moment.Moment | undefined;
     ownershipTypeId: string | undefined;
@@ -47825,110 +47983,6 @@ export interface ICurrencyInfo {
     symbol: string | undefined;
 }
 
-export class ContactAddressInfo implements IContactAddressInfo {
-    streetAddress!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    countryCode!: string | undefined;
-    zip!: string | undefined;
-
-    constructor(data?: IContactAddressInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.countryCode = data["countryCode"];
-            this.zip = data["zip"];
-        }
-    }
-
-    static fromJS(data: any): ContactAddressInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactAddressInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["countryCode"] = this.countryCode;
-        data["zip"] = this.zip;
-        return data; 
-    }
-}
-
-export interface IContactAddressInfo {
-    streetAddress: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    countryCode: string | undefined;
-    zip: string | undefined;
-}
-
-export class EntityContactInfo implements IEntityContactInfo {
-    id!: number | undefined;
-    name!: string | undefined;
-    email!: string | undefined;
-    address!: ContactAddressInfo | undefined;
-    isActive!: boolean | undefined;
-
-    constructor(data?: IEntityContactInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.email = data["email"];
-            this.address = data["address"] ? ContactAddressInfo.fromJS(data["address"]) : <any>undefined;
-            this.isActive = data["isActive"];
-        }
-    }
-
-    static fromJS(data: any): EntityContactInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new EntityContactInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["email"] = this.email;
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["isActive"] = this.isActive;
-        return data; 
-    }
-}
-
-export interface IEntityContactInfo {
-    id: number | undefined;
-    name: string | undefined;
-    email: string | undefined;
-    address: ContactAddressInfo | undefined;
-    isActive: boolean | undefined;
-}
-
 export class AccountTotals implements IAccountTotals {
     bankAccountCount!: number | undefined;
     totalNetWorth!: number | undefined;
@@ -51324,10 +51378,10 @@ export class ImportAddressInput implements IImportAddressInput {
     addressLine2!: string | undefined;
     city!: string | undefined;
     stateName!: string | undefined;
-    stateCode!: string | undefined;
-    zipCode!: string | undefined;
+    stateId!: string | undefined;
+    zip!: string | undefined;
     countryName!: string | undefined;
-    countryCode!: string | undefined;
+    countryId!: string | undefined;
 
     constructor(data?: IImportAddressInput) {
         if (data) {
@@ -51344,10 +51398,10 @@ export class ImportAddressInput implements IImportAddressInput {
             this.addressLine2 = data["addressLine2"];
             this.city = data["city"];
             this.stateName = data["stateName"];
-            this.stateCode = data["stateCode"];
-            this.zipCode = data["zipCode"];
+            this.stateId = data["stateId"];
+            this.zip = data["zip"];
             this.countryName = data["countryName"];
-            this.countryCode = data["countryCode"];
+            this.countryId = data["countryId"];
         }
     }
 
@@ -51364,10 +51418,10 @@ export class ImportAddressInput implements IImportAddressInput {
         data["addressLine2"] = this.addressLine2;
         data["city"] = this.city;
         data["stateName"] = this.stateName;
-        data["stateCode"] = this.stateCode;
-        data["zipCode"] = this.zipCode;
+        data["stateId"] = this.stateId;
+        data["zip"] = this.zip;
         data["countryName"] = this.countryName;
-        data["countryCode"] = this.countryCode;
+        data["countryId"] = this.countryId;
         return data; 
     }
 }
@@ -51377,10 +51431,10 @@ export interface IImportAddressInput {
     addressLine2: string | undefined;
     city: string | undefined;
     stateName: string | undefined;
-    stateCode: string | undefined;
-    zipCode: string | undefined;
+    stateId: string | undefined;
+    zip: string | undefined;
     countryName: string | undefined;
-    countryCode: string | undefined;
+    countryId: string | undefined;
 }
 
 export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
@@ -53392,6 +53446,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     attachPDF!: boolean | undefined;
     defaultNote!: string | undefined;
     currency!: Currency | undefined;
+    showShippingAddress!: boolean | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -53411,6 +53466,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.attachPDF = data["attachPDF"];
             this.defaultNote = data["defaultNote"];
             this.currency = data["currency"];
+            this.showShippingAddress = data["showShippingAddress"];
         }
     }
 
@@ -53430,6 +53486,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["attachPDF"] = this.attachPDF;
         data["defaultNote"] = this.defaultNote;
         data["currency"] = this.currency;
+        data["showShippingAddress"] = this.showShippingAddress;
         return data; 
     }
 }
@@ -53442,6 +53499,7 @@ export interface IInvoiceSettings {
     attachPDF: boolean | undefined;
     defaultNote: string | undefined;
     currency: Currency | undefined;
+    showShippingAddress: boolean | undefined;
 }
 
 export class Attachment implements IAttachment {
@@ -54496,6 +54554,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     photo!: ContactPhotoInput | undefined;
     sourceContactId!: number | undefined;
     sourceOrganizationUnitId!: number | undefined;
+    personAffiliateCode!: string | undefined;
     title!: string | undefined;
     tags!: ContactTagInput[] | undefined;
     lists!: ContactListInput[] | undefined;
@@ -54568,6 +54627,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.sourceContactId = data["sourceContactId"];
             this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+            this.personAffiliateCode = data["personAffiliateCode"];
             this.title = data["title"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
@@ -54648,6 +54708,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["sourceContactId"] = this.sourceContactId;
         data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        data["personAffiliateCode"] = this.personAffiliateCode;
         data["title"] = this.title;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
@@ -54701,6 +54762,7 @@ export interface ICreateOrUpdateLeadInput {
     photo: ContactPhotoInput | undefined;
     sourceContactId: number | undefined;
     sourceOrganizationUnitId: number | undefined;
+    personAffiliateCode: string | undefined;
     title: string | undefined;
     tags: ContactTagInput[] | undefined;
     lists: ContactListInput[] | undefined;
@@ -55535,7 +55597,6 @@ export class MemberAddressDto implements IMemberAddressDto {
     stateId!: string | undefined;
     stateName!: string | undefined;
     countryId!: string | undefined;
-    country!: string | undefined;
 
     constructor(data?: IMemberAddressDto) {
         if (data) {
@@ -55554,7 +55615,6 @@ export class MemberAddressDto implements IMemberAddressDto {
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
             this.countryId = data["countryId"];
-            this.country = data["country"];
         }
     }
 
@@ -55573,7 +55633,6 @@ export class MemberAddressDto implements IMemberAddressDto {
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
         data["countryId"] = this.countryId;
-        data["country"] = this.country;
         return data; 
     }
 }
@@ -55585,7 +55644,6 @@ export interface IMemberAddressDto {
     stateId: string | undefined;
     stateName: string | undefined;
     countryId: string | undefined;
-    country: string | undefined;
 }
 
 export class UTMParameterInfo implements IUTMParameterInfo {
@@ -59308,6 +59366,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     orderNumber!: string | undefined;
     systemType!: string;
     subscriptions!: SubscriptionInput[];
+    updateThirdParty!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -59331,6 +59390,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
                 for (let item of data["subscriptions"])
                     this.subscriptions.push(SubscriptionInput.fromJS(item));
             }
+            this.updateThirdParty = data["updateThirdParty"];
         }
     }
 
@@ -59351,6 +59411,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             for (let item of this.subscriptions)
                 data["subscriptions"].push(item.toJSON());
         }
+        data["updateThirdParty"] = this.updateThirdParty;
         return data; 
     }
 }
@@ -59360,6 +59421,7 @@ export interface IUpdateOrderSubscriptionInput {
     orderNumber: string | undefined;
     systemType: string;
     subscriptions: SubscriptionInput[];
+    updateThirdParty: boolean | undefined;
 }
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {

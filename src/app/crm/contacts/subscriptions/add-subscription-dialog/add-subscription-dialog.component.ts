@@ -54,6 +54,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         contactId: this.data.contactId,
         orderNumber: this.data.orderNumber,
         systemType: this.data.systemType || (this.isBankCodeLayout ? 'BANKCODE' : undefined),
+        updateThirdParty: null,
         subscriptions: [
             new SubscriptionInput({
                 name: this.data.name,
