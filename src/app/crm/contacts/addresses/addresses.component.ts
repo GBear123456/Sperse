@@ -310,9 +310,7 @@ export class AddressesComponent implements OnInit {
                             usageTypeId: address.usageTypeId,
                             countryId: countryId,
                             stateName: this.stateCode,
-                            stateId: this.stateName.length <= 3 && this.stateName !== this.stateCode
-                                ? this.stateCode
-                                : this.stateName
+                            stateId: this.statesService.getAdjustedStateCode(this.stateCode, this.stateName)
                         });
                         this.clearInplaceData();
                     }
