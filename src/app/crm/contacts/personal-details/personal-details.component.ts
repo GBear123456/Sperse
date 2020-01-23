@@ -1,11 +1,12 @@
 /** Core imports */
-import { Component, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
@@ -17,12 +18,22 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PersonContactServiceProxy, UpdatePersonInfoInput, MaritalStatus, Gender, PersonContactInfoDto,
-    DictionaryServiceProxy, PersonInfoDto, TimeOfDay, TimingServiceProxy } from 'shared/service-proxies/service-proxies';
+import {
+    DictionaryServiceProxy,
+    Gender,
+    MaritalStatus,
+    PersonContactInfoDto,
+    PersonContactServiceProxy,
+    PersonInfoDto,
+    TimeOfDay,
+    TimingServiceProxy,
+    UpdatePersonInfoInput
+} from 'shared/service-proxies/service-proxies';
 import { PersonalDetailsDialogComponent } from './personal-details-dialog/personal-details-dialog.component';
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
+import { InplaceSelectBox } from '@app/shared/common/inplace-select-box/inplace-select-box.interface';
 
 @Component({
     templateUrl: './personal-details.component.html',
@@ -35,63 +46,61 @@ export class PersonalDetailsComponent implements OnDestroy {
     isEditAllowed = false;
     startCase = startCase;
     personContactInfo: PersonContactInfoDto;
-    interests$ = this._dictionaryProxy.getInterests();
-    accessConfidentialData = this._permission.isGranted(AppPermissions.CRMAccessConfidentialData);
+    interests$ = this.dictionaryProxy.getInterests();
+    accessConfidentialData = this.permission.isGranted(AppPermissions.CRMAccessConfidentialData);
 
     columns = [
         [
-            { name: 'citizenship',          type: 'select'                                              },
-            { name: 'timeZone',             type: 'select'                                              },
-            { name: 'dob',                  type: 'date'                                                },
-            { name: 'drivingLicense',       type: 'string', confidential: true                          },
-            { name: 'drivingLicenseState',  type: 'select'                                              },
-            { name: 'experience',           type: 'string', multiline:    true                          },
-            { name: 'gender',               type: 'select'                                              },
-            { name: 'interests',            type: 'list',   multiline:    true, source: this.interests$ },
+            { name: 'citizenship', type: 'select' },
+            { name: 'timeZone', type: 'select' },
+            { name: 'dob', type: 'date' },
+            { name: 'drivingLicense', type: 'string' , confidential: true },
+            { name: 'drivingLicenseState', type: 'select' },
+            { name: 'experience', type: 'string' , multiline: true },
+            { name: 'gender', type: 'select' },
+            { name: 'interests', type: 'list', multiline: true, source: this.interests$ },
         ], [
-            { name: 'isActiveMilitaryDuty', type: 'bool'                                                },
-            { name: 'isUSCitizen',          type: 'bool'                                                },
-            { name: 'maritalStatus',        type: 'select'                                              },
-            { name: 'marriageDate',         type: 'date'                                                },
-            { name: 'divorceDate',          type: 'date'                                                },
-            { name: 'profileSummary',       type: 'string', multiline:    true                          },
-            { name: 'preferredToD',         type: 'select'                                              },
-            { name: 'ssn',                  type: 'string', confidential: true                          }
+            { name: 'isActiveMilitaryDuty', type: 'bool' },
+            { name: 'isUSCitizen', type: 'bool' },
+            { name: 'maritalStatus', type: 'select' },
+            { name: 'marriageDate', type: 'date' },
+            { name: 'divorceDate', type: 'date' },
+            { name: 'profileSummary', type: 'string' , multiline: true },
+            { name: 'preferredToD', type: 'select' },
+            { name: 'ssn', type: 'string', confidential: true }
         ]
     ];
 
     selectList = {
         timeZone: [],
-        citizenship: this._asyncPipe.transform(this._store$.pipe(
+        citizenship: this.asyncPipe.transform(this.store$.pipe(
             select(CountriesStoreSelectors.getCountries),
             map(countries => this.getSelectListFromObject(countries))
         )),
-        drivingLicenseState: this._asyncPipe.transform(this._store$.pipe(
-            select(StatesStoreSelectors.getCountryStates, { countryCode: AppConsts.defaultCountry }),
-            map(states => this.getSelectListFromObject(states))
-        )),
+        drivingLicenseState: this.getStates(this.person && this.person.citizenship),
         gender: this.getGenderList(),
         maritalStatus: this.getMaritalStatusList(),
         preferredToD: this.getPreferredToD()
     };
 
     constructor(
-        public dialog: MatDialog,
-        public ls: AppLocalizationService,
         private notifyService: NotifyService,
-        private _store$: Store<RootStore.State>,
-        private _timingService: TimingServiceProxy,
+        private store$: Store<RootStore.State>,
+        private timingService: TimingServiceProxy,
         private contactsService: ContactsService,
-        private _changeDetector: ChangeDetectorRef,
-        private _permission: AppPermissionService,
-        private _personContactService: PersonContactServiceProxy,
-        private _dictionaryProxy: DictionaryServiceProxy,
+        private changeDetector: ChangeDetectorRef,
+        private permission: AppPermissionService,
+        private personContactService: PersonContactServiceProxy,
+        private dictionaryProxy: DictionaryServiceProxy,
         private clipboardService: ClipboardService,
-        private _asyncPipe: AsyncPipe
+        private asyncPipe: AsyncPipe,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService
     ) {
         this.contactsService.contactInfoSubscribe((contactInfo) => {
             this.personContactInfo = contactInfo.personContactInfo;
             this.person = contactInfo.personContactInfo.person;
+            this.selectList.drivingLicenseState = this.getStates(this.person && this.person.citizenship);
             this.isEditAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             setTimeout(() => this.contactsService.toolbarUpdate({
                 optionButton: {
@@ -99,16 +108,29 @@ export class PersonalDetailsComponent implements OnDestroy {
                     action: this.showPersonalDetailsDialog.bind(this)
                 }
             }));
-            this._changeDetector.markForCheck();
+            this.changeDetector.markForCheck();
         }, this.constructor.name);
 
-        this._timingService.getTimezones(AppTimezoneScope.Application).subscribe((res) => {
+        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res) => {
             this.selectList.timeZone = res.items.map(item => ({id: item.value, name: item.name}));
-            this._changeDetector.markForCheck();
+            this.changeDetector.markForCheck();
         });
 
-        this._store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this._store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountry));
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.loadStates();
+    }
+
+    getStates(countryId = AppConsts.defaultCountry): any {
+        return this.asyncPipe.transform(this.store$.pipe(
+            select(StatesStoreSelectors.getCountryStates, {
+                countryCode: countryId || AppConsts.defaultCountry
+            }),
+            map(states => this.getSelectListFromObject(states))
+        ));
+    }
+
+    private loadStates(countryId = AppConsts.defaultCountry) {
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
     }
 
     getInputData(field): InplaceEditModel {
@@ -124,7 +146,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         };
     }
 
-    getSelectData(field) {
+    getSelectData(field): InplaceSelectBox {
         return {
             name: field,
             options: this.selectList[field],
@@ -154,15 +176,21 @@ export class PersonalDetailsComponent implements OnDestroy {
         return items.map(item => ({id: item, name: this.ls.l(item)}));
     }
 
-    getSelectListFromObject(collection) {
+    getSelectListFromObject(collection): Observable<{id: string, name: string}> {
         return (collection || []).map(item => ({id: item.code, name: item.name}));
     }
 
-    updateValue(value, field) {
+    updateValue(value: string, field: string) {
         let initialValue = this.person[field];
         if (initialValue != value) {
             this.person[field] = value;
-            this._personContactService.updatePersonInfo(new UpdatePersonInfoInput({
+            /** If field is citizenship - then load its states, changed select list and clear the value */
+            if (field === 'citizenship') {
+                this.loadStates(value);
+                this.selectList.drivingLicenseState = this.getStates(this.person && this.person.citizenship);
+                this.person.drivingLicenseState = null;
+            }
+            this.personContactService.updatePersonInfo(new UpdatePersonInfoInput({
                 id: this.person.contactId,
                 dob: this.person.dob,
                 ssn: this.accessConfidentialData ? this.person.ssn : undefined,
@@ -181,11 +209,11 @@ export class PersonalDetailsComponent implements OnDestroy {
                 drivingLicenseState: this.person.drivingLicenseState,
                 isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
                 interests: this.person.interests
-            })).subscribe(() => {
-                this.notifyService.success(this.ls.l('SavedSuccessfully'));
-            }, () => {
+            })).subscribe(
+            () => this.notifyService.success(this.ls.l('SavedSuccessfully')),
+            () => {
                 this.person[field] = initialValue;
-                this._changeDetector.markForCheck();
+                this.changeDetector.markForCheck();
             });
         }
     }

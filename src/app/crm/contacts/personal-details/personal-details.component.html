@@ -7,17 +7,17 @@
                     <div *ngIf="!isEditAllowed || (field.confidential && !accessConfidentialData)" class="item-value">{{person[field.name]}}</div>
                     <ng-container *ngIf="isEditAllowed && (!field.confidential || accessConfidentialData)">
                         <div [ngSwitch]="field.type" class="item-value {{field.multiline ? 'multiline' : ''}}">
-                            <inplace-edit *ngSwitchCase="'string'" 
+                            <inplace-edit *ngSwitchCase="'string'"
                                 [isOptional]="true"
                                 [mask]="field.name == 'ssn' ? '000-00-0000': ''"
                                 [maxLength]="20"
-                                [data]="getInputData(field.name)" 
-                                [multiline]="field.multiline" 
+                                [data]="getInputData(field.name)"
+                                [multiline]="field.multiline"
                                 (valueChanged)="updateValue($event, field.name)">
                             </inplace-edit>
                             <inplace-select *ngSwitchCase="'select'"
                                 width="260px"
-                                [data]="getSelectData(field.name)" 
+                                [data]="getSelectData(field.name)"
                                 (valueChanged)="updateValue($event, field.name)">
                             </inplace-select>
                             <dx-date-box *ngSwitchCase="'date'"
