@@ -42417,7 +42417,6 @@ export class ContactShortInfo implements IContactShortInfo {
     ratingId!: number | undefined;
     groupId!: string | undefined;
     statusId!: string | undefined;
-    creationTime!: moment.Moment | undefined;
 
     constructor(data?: IContactShortInfo) {
         if (data) {
@@ -42436,7 +42435,6 @@ export class ContactShortInfo implements IContactShortInfo {
             this.ratingId = data["ratingId"];
             this.groupId = data["groupId"];
             this.statusId = data["statusId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
     }
 
@@ -42455,7 +42453,6 @@ export class ContactShortInfo implements IContactShortInfo {
         data["ratingId"] = this.ratingId;
         data["groupId"] = this.groupId;
         data["statusId"] = this.statusId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -42467,7 +42464,6 @@ export interface IContactShortInfo {
     ratingId: number | undefined;
     groupId: string | undefined;
     statusId: string | undefined;
-    creationTime: moment.Moment | undefined;
 }
 
 export class CreateContactEmailInput implements ICreateContactEmailInput {
@@ -52688,6 +52684,10 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
     company!: string | undefined;
     email!: string | undefined;
     phone!: string | undefined;
+    lastBillingDate!: moment.Moment | undefined;
+    lastShippingDate!: moment.Moment | undefined;
+    contactAddressId!: number | undefined;
+    usageTypeId!: string | undefined;
 
     constructor(data?: IInvoiceAddressInfo) {
         if (data) {
@@ -52712,6 +52712,10 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
             this.company = data["company"];
             this.email = data["email"];
             this.phone = data["phone"];
+            this.lastBillingDate = data["lastBillingDate"] ? moment(data["lastBillingDate"].toString()) : <any>undefined;
+            this.lastShippingDate = data["lastShippingDate"] ? moment(data["lastShippingDate"].toString()) : <any>undefined;
+            this.contactAddressId = data["contactAddressId"];
+            this.usageTypeId = data["usageTypeId"];
         }
     }
 
@@ -52736,6 +52740,10 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
         data["company"] = this.company;
         data["email"] = this.email;
         data["phone"] = this.phone;
+        data["lastBillingDate"] = this.lastBillingDate ? this.lastBillingDate.toISOString() : <any>undefined;
+        data["lastShippingDate"] = this.lastShippingDate ? this.lastShippingDate.toISOString() : <any>undefined;
+        data["contactAddressId"] = this.contactAddressId;
+        data["usageTypeId"] = this.usageTypeId;
         return data; 
     }
 }
@@ -52753,6 +52761,10 @@ export interface IInvoiceAddressInfo {
     company: string | undefined;
     email: string | undefined;
     phone: string | undefined;
+    lastBillingDate: moment.Moment | undefined;
+    lastShippingDate: moment.Moment | undefined;
+    contactAddressId: number | undefined;
+    usageTypeId: string | undefined;
 }
 
 export enum InvoiceLineUnit {
