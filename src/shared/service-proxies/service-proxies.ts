@@ -7394,8 +7394,8 @@ export class ContactServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getAllCustomersAndPartnersByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllCustomersAndPartnersByPhrase?";
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
@@ -7412,11 +7412,11 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllCustomersAndPartnersByPhrase(response_);
+            return this.processGetAllByPhrase(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAllCustomersAndPartnersByPhrase(<any>response_);
+                    return this.processGetAllByPhrase(<any>response_);
                 } catch (e) {
                     return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
                 }
@@ -7425,7 +7425,7 @@ export class ContactServiceProxy {
         }));
     }
 
-    protected processGetAllCustomersAndPartnersByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
+    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
