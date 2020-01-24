@@ -25,18 +25,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
             routerUrl: 'bank-vault'
         },
         {
-            namePrefix: this.ls.l('BankCode_Bank'),
-            name: this.ls.l('BankCode_Trainer'),
+            name: this.ls.l('BankCode_CertifiedTrainer'),
             routerUrl: 'bank-trainer'
         },
         {
-            namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Affiliate'),
             routerUrl: 'bank-affiliate'
         },
         {
-            namePrefix: this.ls.l('Why'),
-            name: this.ls.l('They Buy'),
+            name: this.ls.l('Why They Buy'),
             routerUrl: 'why-they-buy'
         }
         /*
