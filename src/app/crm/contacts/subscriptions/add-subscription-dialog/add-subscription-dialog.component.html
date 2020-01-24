@@ -34,7 +34,8 @@
                 <dx-select-box *ngIf="isBankCodeLayout; else textBox"
                                [inputAttr]="{ id: 'code' }"
                                [items]="bankCodeServiceTypes"
-                               [(value)]="subscription.code">
+                               [(value)]="subscription.code"
+                               (onValueChanged)="onServiceTypeChanged($event)">
                 </dx-select-box>
                 <ng-template #textBox>
                     <dx-text-box name="code"
@@ -48,7 +49,7 @@
             </div>
             <div class="field">
                 <label for="name">{{ls.l('Name')}}</label>
-                <dx-text-box name="name"
+                <dx-text-box name="name" #nameComponent
                              [inputAttr]="{ id: 'name' }"
                              [(value)]="subscription.name">
                     <dx-validator>

@@ -27,6 +27,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -47,6 +48,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
+    @ViewChild('nameComponent') nameComponent: DxTextBoxComponent;
     private slider: any;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     bankCodeServiceTypes = values(BankCodeServiceType);
@@ -142,8 +144,14 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
+    onServiceTypeChanged(event) {
+        if (event.value) {
+            this.nameComponent.instance.option('value', event.value);
+            this.subscription['name'] = event.value;
+        }
+    }
+
     removeSubscriptionFields(index) {
         this.subscription.subscriptions.splice(index, 1);
     }
-
 }

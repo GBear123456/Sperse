@@ -1,6 +1,6 @@
 <h6>{{ ls.l('AccessCodeInstructionsTitle') }}:</h6>
 <div class="description">
-    <p [innerHTML]="ls.l('ClaimYourCustomAccessCode', '<b style=text-transform: uppercase;>' + ls.l('BankCode_Bank') + '</b>' + ls.l('BankCode_Pass'))"></p>
+    <p [innerHTML]="ls.l('ClaimYourCustomAccessCode', '<b>' + ls.l('BankCode_Bank').toUpperCase() + '</b>' + ls.l('BankCode_Pass').toUpperCase())"></p>
     <p>{{ ls.l('YourUniqueAccessCode') }}.</p>
     <ng-container *ngIf="accessCode$ | async">
         <p>{{ ls.l('UseTrackingLinks') }}:</p>
