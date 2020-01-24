@@ -1,5 +1,5 @@
 export enum BankCodeServiceType {
-    BANKAffiliate = ' Affiliate',
+    BANKAffiliate = 'Affiliate',
     BANKPass = 'BANKPASS',
     BANKVault = 'BANKVAULT',
     BANKTrainer = 'Certified Trainer',
