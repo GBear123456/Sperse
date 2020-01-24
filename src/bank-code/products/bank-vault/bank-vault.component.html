@@ -2,7 +2,7 @@
     <loading-spinner *ngIf="dataIsLoading"></loading-spinner>
     <iframe [src]="accessLink$ | async"
             *ngIf="hasSubscription$ | async; else noSubscription"
-            frameborder="0">
+            frameborder="0" (load)="onIframeLoad($event)">
     </iframe>
     <ng-template #noSubscription>
         <ng-container *ngIf="environmentLink$ | async as environmentLink">
