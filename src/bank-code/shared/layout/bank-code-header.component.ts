@@ -83,12 +83,12 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     {
                         namePrefix: this.ls.l('BankCode_Bank'),
                         name: this.ls.l('BankCode_Pass'),
-                        routerUrl: 'products/bank-pass'
+                        routerUrl: 'products/bankpass'
                     },
                     {
                         namePrefix: this.ls.l('BankCode_Bank'),
                         name: this.ls.l('BankCode_Vault'),
-                        routerUrl: 'products/bank-vault'
+                        routerUrl: 'products/bankvault'
                     },
                     {
                         name: this.ls.l('BankCode_CertifiedTrainer'),
