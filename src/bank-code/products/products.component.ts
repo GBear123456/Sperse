@@ -17,12 +17,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
         {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Pass'),
-            routerUrl: 'bank-pass'
+            routerUrl: 'bankpass'
         },
         {
             namePrefix: this.ls.l('BankCode_Bank'),
             name: this.ls.l('BankCode_Vault'),
-            routerUrl: 'bank-vault'
+            routerUrl: 'bankvault'
         },
         {
             name: this.ls.l('BankCode_CertifiedTrainer'),

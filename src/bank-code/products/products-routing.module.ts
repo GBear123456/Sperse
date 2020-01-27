@@ -30,11 +30,11 @@ import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-t
                         component: CodeBreakerAiComponent
                     },
                     {
-                        path: 'bank-pass',
+                        path: 'bankpass',
                         component: BankPassComponent
                     },
                     {
-                        path: 'bank-vault',
+                        path: 'bankvault',
                         component: BankVaultComponent
                     },
                     {
