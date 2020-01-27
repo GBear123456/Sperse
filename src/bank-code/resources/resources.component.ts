@@ -142,7 +142,7 @@ export class ResourcesComponent {
                                 img: './assets/common/images/bank-code/thumbnails/social-media-ads/Read_The_Digital_Book.png'
                             },
                             {
-                                title: 'What\'s Your BANK Code',
+                                title: 'What\'s Your BANKCODE',
                                 fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Art_Graphics/Social+Media+Ads/What\'s+your+BANK+code.zip',
                                 img: './assets/common/images/bank-code/thumbnails/social-media-ads/What_Your_BANK_Code.png'
                             },
