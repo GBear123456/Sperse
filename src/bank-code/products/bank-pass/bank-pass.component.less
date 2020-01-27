@@ -403,6 +403,10 @@
             @media (max-width: 1360px) {
                 position: static;
             }
+            
+            @media all and (max-width: 1200px) {
+                width: 200px;
+            }
         }
 
         .my-access-code {
@@ -416,6 +420,10 @@
             & > span {
                 margin-right: 5px;
                 white-space: nowrap;
+                
+                @media all and (max-width: 1200px) {
+                    display: none;
+                }
             }
             /deep/ inplace-edit {
                 font-family: @text-font;
@@ -432,6 +440,10 @@
                     position: absolute;
                     right: -60px;
                 }
+    
+                dx-button {
+                    background: transparent;
+                }
 
                 @media (max-width: 767px) {
                     max-width: 125px;
@@ -440,19 +452,26 @@
                     }
                 }
             }
+            
             @media (min-width: 768px) {
-                padding-right: 26px;
+                padding: 1px 26px;
+                border: 1px solid #dadee1;
+                border-radius: 20px;
             }
         }
-
-        @media (max-width: 1200px) {
+        
+        @media (max-width: 768px) {
             justify-content: flex-end;
             flex-direction: column-reverse;
-            top: 0;
+            margin-top: 15px;
             align-items: flex-end;
             .search,
             .access-code {
                 margin: 5px;
+            }
+            
+            .my-access-code span {
+                display: inherit;
             }
         }
 
@@ -494,6 +513,12 @@
             font-weight: 900;
             letter-spacing: 0.56px;
             color: #7a7979;
+            
+            @media all and (max-width: 1200px) {
+                font-size: 15px;
+                min-width: 0;
+            }
+            
             &.mat-tab-label-active {
                 color: #000;
             }
