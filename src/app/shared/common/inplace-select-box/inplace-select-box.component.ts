@@ -9,6 +9,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class InplaceSelectBoxComponent extends AppComponentBase {
     @Input() data: any = {};
     @Input() width = 'auto';
+    @Input() height = 'auto';
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();

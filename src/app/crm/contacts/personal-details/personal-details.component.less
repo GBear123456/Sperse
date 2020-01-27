@@ -1,6 +1,7 @@
 :host{
     /deep/ .dx-scrollview-content {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
     }
 
@@ -11,21 +12,66 @@
         padding: 30px 15px;
         margin: 0 20px;
 
+        &:nth-child(3), &:nth-child(4) {
+            width: 1080px;
+            .item > div {
+                width: 100%;
+            }
+        }
+
         .item {
             display: flex;
             margin: 0 0 1em;
             width: 100%;
+        
+            &.head {
+                margin: 0;
+            }
+
+            h3 {
+                width: 100%;
+                position: relative;
+                font-family: Montserrat;
+                text-transform: uppercase;
+                font-size: 14px;
+                font-weight: 600;
+                font-stretch: normal;
+                font-style: normal;
+                line-height: 1.71;
+                letter-spacing: 0.56px;
+                color: #202b35;
+                &:before {
+                    display: inline-block;
+                    vertical-align: middle;
+                    position: absolute;
+                    left: -28px;
+                }
+                &.blog:before {
+                    content: url(../../../../assets/common/icons/blog.svg);
+                }
+                &.profile:before {
+                    content: url(../../../../assets/common/icons/profile.svg);
+                }
+                &.social:before {
+                    content: url(../../../../assets/common/icons/social.svg);
+                }
+            }
 
             .item-value {
                 width: 260px;
-                height: 35px;
+                height: 36px;
                 display: inline-block;
                 &.multiline {
                     height: auto!important;
                 }
             }
 
-            .item-edit-label {
+            &:not(.bool) .item-edit-label, 
+            &.string .item-value, &.list .item-value {
+                border-bottom: 1px solid rgba(218, 222, 225, 0.7);
+            }
+
+            .item-edit-label {                
                 display: inline-block;
                 min-width: 200px;
                 font-size: 13px;
@@ -33,6 +79,14 @@
                 line-height: 35px;
                 letter-spacing: 0.7px;
                 color: #677380;        
+            }
+
+            /deep/ inplace-edit {
+                .dx-widget {
+                    input, textarea {
+                        border-bottom: 0px!important;
+                    }
+                }
             }
 
             /deep/ .dx-placeholder:before {
@@ -46,6 +100,7 @@
             /deep/ .dx-widget {
                 input {
                     font-weight: 400;
+                    border-bottom: 1px solid rgba(218, 222, 225, 0.7);
                     color: rgba(0, 0, 0, 0.87);
                     font-size: 14px;
                 }
@@ -57,6 +112,7 @@
                 }
                 input {
                     padding: 8px;
+                    padding-bottom: 9px!important;
                 }
             }
           
@@ -73,7 +129,7 @@
                     line-height: 1.67;
                     letter-spacing: 0.3px;
                     text-align: left;
-                    border-bottom: 0px;
+                    border-bottom: 0px!important;
                     padding-right: 35px;
                 }
                 .dx-placeholder {
