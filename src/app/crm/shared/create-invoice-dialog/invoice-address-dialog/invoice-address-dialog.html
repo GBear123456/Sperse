@@ -57,10 +57,11 @@
             </div>
             <div class="phone-container">
                 <label>{{ls.l('Phone')}}</label>
-                <country-phone-number id="togglePhone"
-                    [(phoneNumber)]="data.phone"
+                <country-phone-number #phoneComponent id="togglePhone"
+                    [phoneNumber]="data.phone"
                     [disabled]="data.viewMode"
-                    [required]="true">
+                    [required]="false"
+                    (phoneNumberChange)="onPhoneNumberChange($event, phoneComponent)">
                 </country-phone-number>
                 <dx-tooltip #phoneTooltip
                     width="200px"                    
@@ -72,7 +73,7 @@
                     <div *dxTemplate="let data of 'content'">
                         <dx-list 
                             [dataSource]="phones"
-                            (onItemClick)="selectPhoneNumber($event, phoneTooltip)">
+                            (onItemClick)="selectPhoneNumber($event, phoneTooltip, phoneComponent)">
                         </dx-list>
                     </div>
                 </dx-tooltip>
@@ -190,5 +191,5 @@
 </dx-scroll-view>
 <mat-dialog-actions *ngIf="!data.viewMode">
     <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button mat-button class="button-layout button-primary" (click)="onSave()">{{ls.l('Update')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave(phoneComponent)">{{ls.l('Update')}}</button>
 </mat-dialog-actions>

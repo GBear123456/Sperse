@@ -125,6 +125,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceUnits = Object.keys(InvoiceLineUnit);
     billingAddresses = [];
     shippingAddresses = [];
+    filterBoolean = Boolean;
 
     constructor(
         private oDataService: ODataService,

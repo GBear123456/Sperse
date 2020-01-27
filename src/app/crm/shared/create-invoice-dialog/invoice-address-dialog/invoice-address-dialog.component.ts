@@ -139,9 +139,12 @@ export class InvoiceAddressDialog {
         };
     }
 
-    onSave() {
+    onSave(phoneComponent) {
         this.data.address1 = this.address;
-        if (this.validator.validate().isValid && this.validateAddress(this.data))
+        if (this.validator.validate().isValid &&
+            this.validateAddress(this.data) &&
+            phoneComponent.isValid()
+        )
             this.dialogRef.close(true);
     }
 
@@ -193,9 +196,11 @@ export class InvoiceAddressDialog {
             return event.customItem = {[field]: event.text};
     }
 
-    selectPhoneNumber(event, component) {
+    selectPhoneNumber(event, tooltipComponent, phoneComponent) {
         this.data.phone = event.itemData;
-        component.instance.hide();
+        tooltipComponent.instance.hide();
+        phoneComponent.intPhoneNumber.writeValue(event.itemData);
+        phoneComponent.intPhoneNumber.updateValue();
     }
 
     onAddressSelected(event, component) {
@@ -208,5 +213,9 @@ export class InvoiceAddressDialog {
         this.data.address1 = address.streetAddress;
         setTimeout(() => this.checkCountryByName(false));
         component.instance.hide();
+    }
+
+    onPhoneNumberChange(phone, elm) {
+        this.data.phone = phone == elm.getCountryCode() ? undefined : phone;
     }
 }
