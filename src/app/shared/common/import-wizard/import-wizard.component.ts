@@ -10,7 +10,7 @@ import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
@@ -144,7 +144,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         });
 
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries), first())
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries), filter(Boolean), first())
             .subscribe(countries => this.countries = countries);
     }
 
