@@ -122,7 +122,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                         'from'
                     );
                 }
-                if (this.isBankCodeLayout && subscription.name === BankCodeServiceType.BANKVault) {
+                if (this.isBankCodeLayout && subscription.code === BankCodeServiceType.BANKVault) {
                     subscriptionInput.updateThirdParty = true;
                 }
             });
