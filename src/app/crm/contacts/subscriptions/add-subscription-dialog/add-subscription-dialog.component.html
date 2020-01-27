@@ -35,7 +35,7 @@
                                [inputAttr]="{ id: 'code' }"
                                [items]="bankCodeServiceTypes"
                                [(value)]="subscription.code"
-                               (onValueChanged)="onServiceTypeChanged($event)">
+                               (onValueChanged)="onServiceTypeChanged($event, subscription)">
                 </dx-select-box>
                 <ng-template #textBox>
                     <dx-text-box name="code"

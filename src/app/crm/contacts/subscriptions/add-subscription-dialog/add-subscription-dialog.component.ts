@@ -1,7 +1,6 @@
 /** Core imports */
 import {
     AfterViewInit,
-    ChangeDetectionStrategy,
     Component,
     ElementRef,
     Inject,
@@ -27,7 +26,6 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -42,13 +40,11 @@ import { DateHelper } from '@shared/helpers/DateHelper';
         '../../../../../shared/common/styles/close-button.less',
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    ]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
-    @ViewChild('nameComponent') nameComponent: DxTextBoxComponent;
     private slider: any;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     bankCodeServiceTypes = values(BankCodeServiceType);
@@ -144,11 +140,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
-    onServiceTypeChanged(event) {
-        if (event.value) {
-            this.nameComponent.instance.option('value', event.value);
-            this.subscription['name'] = event.value;
-        }
+    onServiceTypeChanged(event, sub) {
+        if (event.value)
+            sub['name'] = event.value;
     }
 
     removeSubscriptionFields(index) {
