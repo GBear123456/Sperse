@@ -71,7 +71,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         {
             sections: [
                 {
-                    name: '',
+                    name: 'Status',
+                    icon: 'c-info',
                     items: [
                         { name: 'stage', readonly: true },
                         { name: 'amount', readonly: true },
@@ -79,12 +80,16 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                         { name: 'modificationDate', readonly: true }
                     ]
                 },
+/*
                 {
                     name: 'LeadSource',
+                    icon: 'goal',
                     items: [ { name: 'sourceCode' } ]
                 },
+*/
                 {
                     name: 'TrackingInfo',
+                    icon: 'single-content',
                     items: [
                         { name: 'applicantId', readonly: true, action: this.showApplications.bind(this) },
                         { name: 'applicationId', readonly: true, action: this.showApplications.bind(this) },
@@ -103,6 +108,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             sections: [
                 {
                     name: 'Campaign',
+                    icon: 'c-info',
                     items: [
                         { name: 'campaignCode' },
                         { name: 'affiliateCode' },
@@ -111,11 +117,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     ]
                 },
                 {
-                    name: 'Comments',
-                    items: [ { name: 'comments', hideLabel: true } ]
-                },
-                {
                     name: 'CustomFields',
+                    icon: 'single-content',
                     items: [
                         { name: 'customField1', readonly: true },
                         { name: 'customField2', readonly: true },
@@ -123,6 +126,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                         { name: 'customField4', readonly: true },
                         { name: 'customField5', readonly: true }
                     ]
+                }
+            ]
+        }, {
+            sections: [
+                {
+                    name: 'Comments',
+                    icon: 'f-chat',
+                    items: [ { name: 'comments', hideLabel: true } ]
                 }
             ]
         }
