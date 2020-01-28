@@ -110,13 +110,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             .subscribe(() => this.syncFailed = true);
         this.syncProgressService.hasFailedAccounts$.pipe(takeUntil(this.deactivate$))
             .subscribe(hasFailedAccounts => this.hasFailedAccounts = hasFailedAccounts);
-        this.syncProgressService.syncCompleted$.pipe(takeUntil(this.destroy$)).subscribe(completed => {
+        this.syncProgressService.syncCompleted$.pipe(takeUntil(this.deactivate$)).subscribe(completed => {
             this.completed = completed;
             if (this.completed) {
                 this.onComplete.emit();
             }
         });
-
         this.syncProgressService.syncCompletedDistinct$.pipe(takeUntil(this.deactivate$)).subscribe(() => {
             this.notify.info(this.l('SynchronizationFinished'));
         });
@@ -129,6 +128,5 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     deactivate() {
         super.deactivate();
-        this.syncProgressService.cancelRequests();
     }
 }
