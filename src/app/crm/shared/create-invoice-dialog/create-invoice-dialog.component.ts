@@ -102,6 +102,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     contactId: number;
     customers = [];
     products = [];
+    descriptions = [];
     lastProductPhrase: string;
     date = DateHelper.addTimezoneOffset(new Date(), true);
     dueDate;
@@ -527,9 +528,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     productsLookupRequest(phrase = '', callback?) {
         this.invoiceProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.products = res;
-                callback && callback(res);
+                this.descriptions = (this.products = res).map(item => item.description);
                 this.changeDetectorRef.markForCheck();
+                callback && callback(res);
             }
         });
     }
@@ -599,11 +600,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     selectProduct(event, cellData) {
-        let product = event.selectedItem;
-        cellData.data.description = product.description;
-        cellData.data.unitId = product.unitId;
-        cellData.data.rate = product.rate;
-        this.changeDetectorRef.detectChanges();
+        this.products.some(item => {
+            if (item.description == event.selectedItem) {
+                cellData.data.description = item.description;
+                cellData.data.unitId = item.unitId;
+                cellData.data.rate = item.rate;
+                this.changeDetectorRef.detectChanges();
+                return true;
+            }
+        });
     }
 
     selectContact(event) {
