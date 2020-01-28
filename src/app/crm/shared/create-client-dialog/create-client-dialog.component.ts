@@ -302,6 +302,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
             .subscribe(result => {
                 dataObj.id = result.contactId;
+                dataObj.leadId = result.leadId;
                 this.afterSave(dataObj);
             });
     }
