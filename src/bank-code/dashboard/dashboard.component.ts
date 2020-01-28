@@ -4,11 +4,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
+import values from 'lodash/values';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
-import values from 'lodash/values';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'dashboard',
@@ -44,8 +46,10 @@ export class DashboardComponent {
             }));
         })
     );
+    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
 
     constructor(
+        private profileService: ProfileService,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService
     ) {}
