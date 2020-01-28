@@ -135,7 +135,7 @@ export class CFOService extends CFOServiceBase {
                || this.permission.isGranted(AppPermissions.CFOMainInstanceAccessAccessAllDepartments);
     }
 
-    checkMemberAccessPermission(userInstancePermission, mainInstanceAccessible = false) {
+    checkMemberAccessPermission(userInstancePermission?, mainInstanceAccessible = false) {
         if (this.instanceId)
             return this.permission.isGranted(AppPermissions.CFOMembersAdministrationAllMemberInstancesAdmin);
 

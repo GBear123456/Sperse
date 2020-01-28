@@ -76,6 +76,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
+import { InstanceUsersComponent } from './instance-users/instance-users.component';
 import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
@@ -134,7 +135,8 @@ let COMPONENTS = [
     ReportsComponent,
     GenerateReportDialogComponent,
     SendNotificationDialogComponent,
-    CalendarButtonComponent
+    CalendarButtonComponent,
+    InstanceUsersComponent
 ];
 
 @NgModule({

@@ -12,6 +12,7 @@ import { RulesComponent } from './rules/rules.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
+import { InstanceUsersComponent } from './instance-users/instance-users.component';
 import { StatementsComponent } from './statements/statements.component';
 import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
 import { ReportsComponent } from './reports/reports.component';
@@ -67,6 +68,7 @@ import { ReportsComponent } from './reports/reports.component';
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
                     { path: 'permissions', component: PermissionsComponent, data: { permission: '' } },
                     { path: 'statements', component: StatementsComponent, data: { permission: '', reuse: true } },
+                    { path: 'users', component: InstanceUsersComponent, data: { permission: '', reuse: true } },
                     {
                         path: 'reports',
                         component: ReportsComponent,

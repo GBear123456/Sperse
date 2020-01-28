@@ -1,0 +1,48 @@
+<div>
+    <app-headline [names]="[ l('Users') ]"
+                  [showReloadButton]="true"
+                  [showToggleToolbarButton]="true"
+                  (onReload)="reload()">
+        <synch-progress class="synch-progress" (onComplete)="refresh.next()"></synch-progress>
+    </app-headline>
+    <setup-steps SelectedStepIndex="5"></setup-steps>
+    <div class="main-wrapper">
+        <dx-data-grid id="gridContainer"
+                      [columnAutoWidth]="true"
+                      [hoverStateEnabled]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [pager]="defaultGridPagerConfig"
+                      [dataSource]="dataSource"
+                      [masterDetail]="{ enabled: false, template: 'detail' }"
+                      (onRowClick)="expandColapseRow($event)"
+                      (onRowPrepared)="onRowPrepared($event)">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+
+            <dxi-column dataField="firstName"
+                        [caption]="l('FirstName')"
+                        cssClass="clipboard-holder">
+            </dxi-column>
+            <dxi-column dataField="lastName"
+                        cssClass="clipboard-holder"
+                        [caption]="l('LastName')">
+            </dxi-column>
+            <dxi-column dataField="emailAddress"
+                        cssClass="clipboard-holder"
+                        [caption]="l('Email')">
+            </dxi-column>
+            <dxi-column dataField="phoneNumber"
+                        cssClass="clipboard-holder"
+                        [caption]="l('Phone')">
+            </dxi-column>
+            <dxi-column dataField="creationTime"
+                        cssClass="clipboard-holder"
+                        [caption]="l('CreationTime')">
+            </dxi-column>
+
+        </dx-data-grid>
+    </div>
+</div>
