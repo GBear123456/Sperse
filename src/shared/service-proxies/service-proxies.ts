@@ -15177,6 +15177,122 @@ export class InstanceServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    addUser(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: AddUserInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/AddUser?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddUser(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAddUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    removeUser(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, userId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/RemoveUser?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRemoveUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRemoveUser(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRemoveUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @userId (optional) 
      * @return Success
      */
@@ -17147,8 +17263,8 @@ export class LeadServiceProxy {
      * @customerId (optional) 
      * @return Success
      */
-    getLast(customerId: number | null | undefined): Observable<LeadInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLast?";
+    getLastLeadInfo(customerId: number | null | undefined): Observable<LeadInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLastLeadInfo?";
         if (customerId !== undefined)
             url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -17163,11 +17279,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLast(response_);
+            return this.processGetLastLeadInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetLast(<any>response_);
+                    return this.processGetLastLeadInfo(<any>response_);
                 } catch (e) {
                     return <Observable<LeadInfoDto>><any>_observableThrow(e);
                 }
@@ -17176,7 +17292,7 @@ export class LeadServiceProxy {
         }));
     }
 
-    protected processGetLast(response: HttpResponseBase): Observable<LeadInfoDto> {
+    protected processGetLastLeadInfo(response: HttpResponseBase): Observable<LeadInfoDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -48969,6 +49085,7 @@ export class OrderSubscription implements IOrderSubscription {
     previousOrderSubscriptionId!: number | undefined;
     lastExpiryNotificationDate!: moment.Moment | undefined;
     cancelationReason!: string | undefined;
+    updateThirdPartyRequired!: boolean | undefined;
     order!: Order | undefined;
     status!: SubscriptionStatus | undefined;
     previousOrderSubscription!: OrderSubscription | undefined;
@@ -49013,6 +49130,7 @@ export class OrderSubscription implements IOrderSubscription {
             this.previousOrderSubscriptionId = data["previousOrderSubscriptionId"];
             this.lastExpiryNotificationDate = data["lastExpiryNotificationDate"] ? moment(data["lastExpiryNotificationDate"].toString()) : <any>undefined;
             this.cancelationReason = data["cancelationReason"];
+            this.updateThirdPartyRequired = data["updateThirdPartyRequired"];
             this.order = data["order"] ? Order.fromJS(data["order"]) : <any>undefined;
             this.status = data["status"] ? SubscriptionStatus.fromJS(data["status"]) : <any>undefined;
             this.previousOrderSubscription = data["previousOrderSubscription"] ? OrderSubscription.fromJS(data["previousOrderSubscription"]) : <any>undefined;
@@ -49061,6 +49179,7 @@ export class OrderSubscription implements IOrderSubscription {
         data["previousOrderSubscriptionId"] = this.previousOrderSubscriptionId;
         data["lastExpiryNotificationDate"] = this.lastExpiryNotificationDate ? this.lastExpiryNotificationDate.toISOString() : <any>undefined;
         data["cancelationReason"] = this.cancelationReason;
+        data["updateThirdPartyRequired"] = this.updateThirdPartyRequired;
         data["order"] = this.order ? this.order.toJSON() : <any>undefined;
         data["status"] = this.status ? this.status.toJSON() : <any>undefined;
         data["previousOrderSubscription"] = this.previousOrderSubscription ? this.previousOrderSubscription.toJSON() : <any>undefined;
@@ -49102,6 +49221,7 @@ export interface IOrderSubscription {
     previousOrderSubscriptionId: number | undefined;
     lastExpiryNotificationDate: moment.Moment | undefined;
     cancelationReason: string | undefined;
+    updateThirdPartyRequired: boolean | undefined;
     order: Order | undefined;
     status: SubscriptionStatus | undefined;
     previousOrderSubscription: OrderSubscription | undefined;
@@ -60354,6 +60474,46 @@ export class RegisterMemberOutput implements IRegisterMemberOutput {
 export interface IRegisterMemberOutput {
     userId: number | undefined;
     alreadyInitialized: boolean | undefined;
+}
+
+export class AddUserInput implements IAddUserInput {
+    userId!: number;
+    sendInvitationEmail!: boolean | undefined;
+
+    constructor(data?: IAddUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.sendInvitationEmail = data["sendInvitationEmail"];
+        }
+    }
+
+    static fromJS(data: any): AddUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["sendInvitationEmail"] = this.sendInvitationEmail;
+        return data; 
+    }
+}
+
+export interface IAddUserInput {
+    userId: number;
+    sendInvitationEmail: boolean | undefined;
 }
 
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
