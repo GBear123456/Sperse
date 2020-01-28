@@ -198,16 +198,26 @@
                         <dxi-column width="30" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'description'">
-                            <dx-text-box                                
+                            <dx-select-box
+                                name="customer"
                                 width="300px"
                                 height="32px"
-                                [placeholder]="ls.lr('Invoice_EnterDescription')"
+                                displayExpr="description"
                                 [showClearButton]="true"
-                                [(value)]="cellData.data.description">
+                                [placeholder]="ls.lr('Invoice_EnterDescription')"
+                                [acceptCustomValue]="true"
+                                [(value)]="cellData.data.description"
+                                [dataSource]="products"
+                                [searchEnabled]="true"
+                                [searchTimeout]="0"
+                                (onFocusIn)="onFieldFocus($event)"
+                                (onInput)="productLookupItems($event)"
+                                (onSelectionChanged)="selectProduct($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
-                            </dx-text-box>
+                            </dx-select-box>
+
                             <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
                                 <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine()">{{ls.l('+ Add new line')}}</span>
                             </div>

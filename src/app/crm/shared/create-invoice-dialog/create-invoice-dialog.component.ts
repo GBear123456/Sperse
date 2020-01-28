@@ -101,7 +101,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     customer: any;
     contactId: number;
     customers = [];
-
+    products = [];
+    lastProductPhrase: string;
     date = DateHelper.addTimezoneOffset(new Date(), true);
     dueDate;
 
@@ -158,6 +159,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.productsLookupRequest();
         this.customerLookupRequest();
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
@@ -522,6 +524,36 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }, 500);
     }
 
+    productsLookupRequest(phrase = '', callback?) {
+        this.invoiceProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+            if (!phrase || phrase == this.lastProductPhrase) {
+                this.products = res;
+                callback && callback(res);
+                this.changeDetectorRef.markForCheck();
+            }
+        });
+    }
+
+    productLookupItems($event) {
+        this.lastProductPhrase = $event.event.target.value;
+        if (this.products.length)
+            this.products = [];
+
+        $event.component.option('opened', true);
+        $event.component.option('noDataText', this.ls.l('LookingForItems'));
+
+        clearTimeout(this.lookupTimeout);
+        this.lookupTimeout = setTimeout(() => {
+            $event.component.option('opened', true);
+            $event.component.option('noDataText', this.ls.l('LookingForItems'));
+
+            this.productsLookupRequest(this.lastProductPhrase, res => {
+                if (!res['length'])
+                    $event.component.option('noDataText', this.ls.l('NoItemsFound'));
+            });
+        }, 500);
+    }
+
     resetFullDialog(forced = true) {
         let resetInternal = () => {
             this.invoiceNo = this.invoiceInfo.nextInvoiceNumber;
@@ -563,6 +595,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.total =
                 this.balance = this.total + total;
         });
+        this.changeDetectorRef.detectChanges();
+    }
+
+    selectProduct(event, cellData) {
+        let product = event.selectedItem;
+        cellData.data.description = product.description;
+        cellData.data.unitId = product.unitId;
+        cellData.data.rate = product.rate;
         this.changeDetectorRef.detectChanges();
     }
 
