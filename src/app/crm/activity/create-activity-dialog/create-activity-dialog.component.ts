@@ -213,7 +213,7 @@ export class CreateActivityDialogComponent implements OnInit {
     initToolbarConfig() {
         this.toolbarConfig = [
             {
-                location: 'after', items: [
+                location: 'before', items: [
                     {
                         text: '',
                         name: 'select-box',
