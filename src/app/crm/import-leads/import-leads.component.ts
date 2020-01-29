@@ -53,6 +53,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private readonly MAX_REQUEST_SIZE = 55;
 
+    private readonly USER_PASSWORD = 'userPassword';
     private readonly DATE_CREATED = 'dateCreated';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
@@ -218,6 +219,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     fullAddress: ImportAddressInput;
 
     userId: any;
+    sendWelcomeEmail = false;
+    emailInvitation = false;
     isUserSelected = true;
     isRatingSelected = true;
     isListsSelected = false;
@@ -512,6 +515,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ? this.selectedPartnerTypeName
                 : undefined,
             ignoreInvalidValues: data.importAll,
+            sendWelcomeEmail: this.sendWelcomeEmail,
             fields: data.fields
         });
         result.items = [];
@@ -803,9 +807,34 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         }
                     }
                 ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        text: '',
+                        name: 'check-box',
+                        widget: 'dxCheckBox',
+                        options: {
+                            width: '200px',
+                            disabled: !this.emailInvitation,
+                            text: this.l('Send user invitation'),
+                            onValueChanged: event => this.sendWelcomeEmail = event.value
+                        }
+                    }
+                ]
             }
         ];
         this.appService.updateToolbar(null);
+    }
+
+    onMappingChanged(event) {
+        let selected = event.selectedRowsData.some(item => item.mappedField == this.USER_PASSWORD);
+        if (this.emailInvitation != selected) {
+            this.emailInvitation = selected;
+            this.initToolbarConfig();
+        }
     }
 
     clearToolbarSelectedItems() {
