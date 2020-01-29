@@ -55,16 +55,16 @@ import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-
             outerStrokeGradient: false,
             outerStrokeWidth: 7,
             innerStrokeWidth: 7,
-            animateTitle: true,
-            animationDuration: 500,
             showUnits: false,
             showBackground: false,
-            clockwise: false,
             titleFontSize: '18',
             subtitleFontSize: '12.3',
             titleFontWeight: '700',
             subtitleFontWeight: '700',
-            startFromZero: false
+            startFromZero: false,
+            animation: false,
+            animateTitle: false,
+            animationDuration: 0
         })
     ],
     providers: [ MemberSubscriptionServiceProxy ]

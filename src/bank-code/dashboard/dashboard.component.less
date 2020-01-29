@@ -196,27 +196,38 @@
             margin-bottom: 15px;
         }
 
-        .incremental-counter .num {
-            display: inline-block;
-            background: #04335d;
-            color: #fff;
-            font-size: 52px;
-            margin: 0 3px;
-            font-family: 'AvianoSans-Bla', sans-serif !important;
-            font-weight: normal;
-            width: 71px;
-            height: 68px;
-            line-height: 68px;
+        .incremental-counter {
+            .num {
+                display: inline-block;
+                background: #04335d;
+                color: #fff;
+                font-size: 52px;
+                margin: 0 3px;
+                font-family: 'AvianoSans-Bla', sans-serif !important;
+                font-weight: normal;
+                width: 71px;
+                height: 68px;
+                line-height: 68px;
 
-            @media all and (max-width: 560px) {
-                font-size: 18px;
-                padding: 6px 12px;
+                @media all and (max-width: 560px) {
+                    font-size: 18px;
+                    padding: 6px 12px;
+                }
+
             }
-
+            .comma {
+                color: #fff;
+                position: relative;
+                bottom: -18px;
+                font-size: 40px;
+            }
         }
 
         .incremental-counter {
-            text-align: center
+            text-align: center;
+            justify-content: center;
+            display: flex;
+            align-items: flex-end;
         }
 
         .circular-graph-wrapper {

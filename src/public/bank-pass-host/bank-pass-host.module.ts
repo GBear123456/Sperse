@@ -43,18 +43,19 @@ import { AppComponent } from './app.component';
         InplaceEditModule,
         NgCircleProgressModule.forRoot({
             // defaults config
-            'radius': 32,
-            'space': -5,
-            'outerStrokeGradient': false,
-            'outerStrokeWidth': 5,
-            'innerStrokeWidth': 5,
-            'animateTitle': true,
-            'animationDuration': 500,
-            'showUnits': false,
-            'showBackground': false,
-            'clockwise': false,
-            'titleFontSize': '13',
-            'startFromZero': false
+            radius: 32,
+            space: -5,
+            outerStrokeGradient: false,
+            outerStrokeWidth: 5,
+            innerStrokeWidth: 5,
+            animation: false,
+            animateTitle: false,
+            animationDuration: 0,
+            showUnits: false,
+            showBackground: false,
+            clockwise: false,
+            titleFontSize: '13',
+            startFromZero: false
         })
     ],
     exports: [],
