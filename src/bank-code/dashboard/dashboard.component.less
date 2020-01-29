@@ -29,10 +29,16 @@
         }
 
         .card-header {
-            border-bottom: solid 1px #ebecec;
-            background-color: #f8f8f8;
+            background-color: #ac1f22;
+            color: #fff;
             text-align: center;
             padding: 16px 0;
+        }
+
+        ::ng-deep bank-code-announcements {
+            .card-header {
+                background-color: #104779;
+            }
         }
 
         .card-header h2 {
@@ -43,7 +49,7 @@
         }
 
         .card-header h2 img {
-            width: 14px;
+            width: 20px;
             margin-right: 10px;
         }
 
@@ -57,8 +63,8 @@
             font-weight: bold;
             font-size: 16px;
             position: relative;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 30px;
         }
 
         .card-body h5:after {
@@ -88,6 +94,7 @@
             letter-spacing: -0.26px;
             color: #959494;
             text-align: center;
+            margin-bottom: 13px !important;
 
             &.glance {
                 font-family: 'AvianoSans-Reg', sans-serif !important;
@@ -96,27 +103,35 @@
         }
 
         .card-title {
-            font-family: 'AvianoSans-Bol', sans-serif !important;
             font-size: 22px !important;
-            font-weight: normal !important;
+            font-weight: 700 !important;
             text-transform: uppercase;
+            letter-spacing: -0.44px;
+            font-family: 'AvianoSans-Reg', sans-serif !important;
+            line-height: normal;
         }
 
         .btn-default {
             border: 1px solid #ac1f22;
-            text-transform: uppercase;
-            font-size: 14px;
+            text-transform: uppercase !important;
+            font-size: 17px !important;
             color: #ac1f22;
             border-radius: 0 !important;
-            font-weight: bold;
             line-height: 42px;
             padding: 0 20px;
-            transition: .3s;
+            transition: 0.3s;
+            letter-spacing: 0.53px;
+            font-weight: 700 !important;
+            font-family: 'AvianoSans-Bla', sans-serif !important;
 
             &:hover {
                 background: #ac1f22;
                 color: #fff;
             }
+        }
+
+        .charts .card-header {
+            background-color: #f09e1f;
         }
 
         .charts .card-text-footer {
@@ -170,7 +185,7 @@
         }
 
         .counters, .counters .card {
-            background: #b12e30
+            background: #104779;
         }
 
         .counters h6 {
@@ -181,7 +196,7 @@
 
         .incremental-counter .num {
             display: inline-block;
-            background: #991719;
+            background: #04335d;
             color: #fff;
             font-size: 34px;
             padding: 0 15px;
@@ -226,7 +241,7 @@
         .circular-progress {
             height: 60px;
             display: inline-block;
-            width: 80px;
+            width: 115px;
         }
 
         .circular-progress > svg {
@@ -239,7 +254,7 @@
             font-size: 12px;
             line-height: 1;
         }
-        
+
         .level-img {
             width: 100%;
             max-width: 175px;
@@ -292,7 +307,7 @@
             }
 
             .counters .card-body {
-                padding: 2rem .0rem
+                padding: 40px 30px;
             }
 
             .circular-graphs {

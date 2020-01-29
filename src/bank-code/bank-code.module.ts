@@ -50,11 +50,11 @@ import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-
 
         NgCircleProgressModule.forRoot({
             // defaults config
-            'radius': 32,
-            'space': -5,
+            'radius': 40,
+            'space': -7,
             'outerStrokeGradient': false,
-            'outerStrokeWidth': 5,
-            'innerStrokeWidth': 5,
+            'outerStrokeWidth': 7,
+            'innerStrokeWidth': 7,
             'animateTitle': true,
             'animationDuration': 500,
             'showUnits': false,
