@@ -25,7 +25,7 @@ export class ActivityAssignedUsersStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<assignedUsersActions.LoadRequestAction>(assignedUsersActions.ActionTypes.LOAD_REQUEST),
-        filter(() => this.permissionCheckerService.isGranted(AppPermissions.CRMEventsManageAssignments) ||
+        filter(() => this.permissionCheckerService.isGranted(AppPermissions.CRMManageEventsAssignments) ||
                              this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers)),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {

@@ -13,7 +13,7 @@ export class SliceConfig {
         [ 'Contacts', AppPermissions.CRMCustomers, 'icon-globe', '/app/slice/leads' ],
         [ 'Clients', AppPermissions.CRMCustomers, 'icon-globe', '/app/slice/clients' ],
         [ 'Partners', AppPermissions.CRMPartners, 'icon-globe', '/app/slice/partners' ],
-        [ 'Tasks', AppPermissions.CRMEvents, 'icon-globe', '/app/crm/activity' ],
+        [ 'Tasks', '', 'icon-globe', '/app/crm/activity' ],
         [ 'Orders', AppPermissions.CRMOrders, 'icon-globe', '/app/crm/orders' ],
         [ 'Reports', '', '', '' ],
         [ 'Products', '', '', '' ]
