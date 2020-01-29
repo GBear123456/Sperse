@@ -19,7 +19,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
-import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
 import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
@@ -197,13 +196,14 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             this.dataIsloading = true;
             this.contactsService.contactInfoSubscribe(
             (contactInfo) => this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
-                .pipe(finalize(() => {
-                    this.dataIsloading = false;
-                    this.loadingService.finishLoading();
-                }))
-                .subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput)),
-                    this.constructor.name
-                );
+                .pipe(
+                    finalize(() => {
+                        this.dataIsloading = false;
+                        this.loadingService.finishLoading();
+                    })
+                ).subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput)),
+                this.constructor.name
+            );
         }
     }
 
