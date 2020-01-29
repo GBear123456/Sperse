@@ -65,6 +65,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() onMappingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     uploadFile: FormGroup;
@@ -652,6 +653,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         });
 
         $event.component.deselectRows(rowIdsToDeselect);
+        this.onMappingChanged.emit($event);
     }
 
     onLookupFieldsContentReady($event, cell) {

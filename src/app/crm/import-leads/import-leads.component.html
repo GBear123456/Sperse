@@ -10,6 +10,7 @@
         [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
         [validateFieldsMapping]="validateFieldsMapping"
         [toolbarConfig]="toolbarConfig"
+        (onMappingChanged)="onMappingChanged($event)"
         (onSelectionChanged)="onStepChanged($event)"
         (onComplete)="complete($event)"
         (onCancel)="cancel()">
