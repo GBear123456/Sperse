@@ -22,7 +22,7 @@
                                     <ng-container *ngSwitchDefault>
                                         <div *ngIf="!isEditAllowed || item.readonly" (click)="showApplicationAllowed && item.action && item.action()" class="item-value" [ngClass]="{'item-link': showApplicationAllowed && item.action}">{{getPropValue(item.name)}}</div>
                                         <ng-container *ngIf="isEditAllowed && !item.readonly">
-                                            <div [ngSwitch]="item?.data ? 'select' : 'text'">
+                                            <div [ngSwitch]="item?.data ? 'select' : 'text'" [ngStyle]="{'margin-right': item?.data ? '0' : '50px'}">
                                                 <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
                                                 <inplace-select *ngSwitchCase="'select'" [data]="item.data" (valueChanged)="item.onChange($event)" ></inplace-select>
                                             </div>
@@ -42,7 +42,7 @@
                         <h3 class="lab">{{upperCase(group)}}</h3>
                         <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
                             <div class="item-edit-label">{{startCase(field)}}:</div>
-                            <div>{{formatFieldValue(application[group][field])}}</div>
+                            <div class="item-value">{{formatFieldValue(field, application[group][field])}}</div>
                         </div>
                     </div>
                 </div>
