@@ -50,18 +50,21 @@ import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-
 
         NgCircleProgressModule.forRoot({
             // defaults config
-            'radius': 40,
-            'space': -7,
-            'outerStrokeGradient': false,
-            'outerStrokeWidth': 7,
-            'innerStrokeWidth': 7,
-            'animateTitle': true,
-            'animationDuration': 500,
-            'showUnits': false,
-            'showBackground': false,
-            'clockwise': false,
-            'titleFontSize': '13',
-            'startFromZero': false
+            radius: 40,
+            space: -7,
+            outerStrokeGradient: false,
+            outerStrokeWidth: 7,
+            innerStrokeWidth: 7,
+            animateTitle: true,
+            animationDuration: 500,
+            showUnits: false,
+            showBackground: false,
+            clockwise: false,
+            titleFontSize: '18',
+            subtitleFontSize: '12.3',
+            titleFontWeight: '700',
+            subtitleFontWeight: '700',
+            startFromZero: false
         })
     ],
     providers: [ MemberSubscriptionServiceProxy ]

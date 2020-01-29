@@ -25,7 +25,7 @@
         }
 
         .card-body {
-            padding: 2rem 1.7rem
+            padding: 40px 30px
         }
 
         .card-header {
@@ -70,7 +70,7 @@
         .card-body h5:after {
             content: ' ';
             width: 50px;
-            height: 3px;
+            height: 4px;
             background: #ac1f22;
             position: absolute;
             bottom: 0;
@@ -103,10 +103,10 @@
         }
 
         .card-title {
-            font-size: 22px !important;
+            font-size: 20px !important;
             font-weight: 700 !important;
             text-transform: uppercase;
-            letter-spacing: -0.44px;
+            letter-spacing: -0.4px;
             font-family: 'AvianoSans-Reg', sans-serif !important;
             line-height: normal;
         }
@@ -139,13 +139,14 @@
         }
 
         .charts h5 {
-            padding-bottom: 8px;
+            padding-bottom: 16px;
         }
 
         .bar-info {
             font-size: 14px;
             font-family: 'IBM Plex Sans', sans-serif !important;
-            margin-bottom: 30px;
+            margin-bottom: 14px;
+            font-weight: 500;
 
             .font-weight-bold {
                 font-size: 16px;
@@ -155,6 +156,7 @@
                 font-size: 13px;
                 letter-spacing: -0.3px;
                 color: #7a7979 !important;
+                font-weight: 400;
             }
         }
 
@@ -191,18 +193,20 @@
         .counters h6 {
             text-align: center;
             color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .incremental-counter .num {
             display: inline-block;
             background: #04335d;
             color: #fff;
-            font-size: 34px;
-            padding: 0 15px;
+            font-size: 52px;
             margin: 0 3px;
             font-family: 'AvianoSans-Bla', sans-serif !important;
             font-weight: normal;
+            width: 71px;
+            height: 68px;
+            line-height: 68px;
 
             @media all and (max-width: 560px) {
                 font-size: 18px;
@@ -220,7 +224,7 @@
         }
 
         .circular-graphs {
-            padding: 20px 15px 10px 15px;
+            padding: 34px 15px 25px 15px;
             background: #fff;
             display: inline-block;
             position: relative;
@@ -239,7 +243,6 @@
         }
 
         .circular-progress {
-            height: 60px;
             display: inline-block;
             width: 115px;
         }
@@ -256,8 +259,7 @@
         }
 
         .level-img {
-            width: 100%;
-            max-width: 175px;
+            width: 200px;
             display: block;
             margin: 0 auto;
         }
@@ -307,7 +309,7 @@
             }
 
             .counters .card-body {
-                padding: 40px 30px;
+                padding: 2rem .0rem;
             }
 
             .circular-graphs {
@@ -368,5 +370,9 @@
     .dx-trackbar-container {
         height: 12px;
         border-radius: 0;
+    }
+
+    .dx-progressbar-wrapper {
+        vertical-align: top;
     }
 }
