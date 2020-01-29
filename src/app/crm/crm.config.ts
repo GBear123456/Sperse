@@ -14,7 +14,7 @@ export class CrmConfig {
         [ 'Clients', AppPermissions.CRMCustomers, 'icon-globe', '/app/crm/clients' ],
         [ 'Partners', AppPermissions.CRMPartners, 'icon-globe', '/app/crm/partners' ],
         [ 'Orders', AppPermissions.CRMOrders, 'icon-globe', '/app/crm/orders' ],
-        [ 'Tasks', AppPermissions.CRMEvents, 'icon-globe', '/app/crm/activity' ],
+        [ 'Tasks', '', 'icon-globe', '/app/crm/activity' ],
         [ 'Reports', '', '', '' ],
         [ 'Products', '', '', '' ]
     ];

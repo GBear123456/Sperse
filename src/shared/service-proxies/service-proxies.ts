@@ -64207,7 +64207,7 @@ export interface ISubscriptionShortInfoOutput {
 
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
     subscriptions!: SubscriptionShortInfoOutput[] | undefined;
-    secureId!: string | undefined;
+    userKey!: string | undefined;
 
     constructor(data?: IGetMemberInfoOutput) {
         if (data) {
@@ -64225,7 +64225,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                 for (let item of data["subscriptions"])
                     this.subscriptions.push(SubscriptionShortInfoOutput.fromJS(item));
             }
-            this.secureId = data["secureId"];
+            this.userKey = data["userKey"];
         }
     }
 
@@ -64243,14 +64243,14 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
             for (let item of this.subscriptions)
                 data["subscriptions"].push(item.toJSON());
         }
-        data["secureId"] = this.secureId;
+        data["userKey"] = this.userKey;
         return data; 
     }
 }
 
 export interface IGetMemberInfoOutput {
     subscriptions: SubscriptionShortInfoOutput[] | undefined;
-    secureId: string | undefined;
+    userKey: string | undefined;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {

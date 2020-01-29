@@ -3,9 +3,41 @@
         height: 100%;    
     }
 
+    h3 {
+        position: relative;
+        font-family: Montserrat;
+        font-size: 14px;
+        font-weight: 600;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.71;
+        letter-spacing: 0.56px;
+        color: #202b35;
+    }
+
+    .item-edit-label {
+        display: inline-block;
+        min-width: 150px;
+        font-size: 13px;
+        font-weight: normal;
+        line-height: 35px;
+        letter-spacing: 0.7px;
+        color: #677380;        
+    }
+
+    .item-value {
+        font-family: Montserrat;
+        font-size: 15px;
+        font-weight: 500;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 35px;
+        letter-spacing: 0.3px;
+        color: #424c56;
+    }
+
     .lead-info {
         margin: 0 0 30px 40px;
-        justify-content: center;        
         & > div {
             min-width: 280px;
             max-width: 500px;
@@ -19,15 +51,6 @@
             }
         }
         h3 {
-            position: relative;
-            font-family: Montserrat;
-            font-size: 14px;
-            font-weight: 600;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 1.71;
-            letter-spacing: 0.56px;
-            color: #202b35;
             &:before {
                 display: inline-block;
                 vertical-align: middle;
@@ -47,27 +70,6 @@
                 content: url(../../../../assets/common/icons/goal.svg);
             }
         }
-    }
-
-    .item-edit-label {
-        display: inline-block;
-        min-width: 150px;
-        font-size: 13px;
-        font-weight: normal;
-        line-height: 35px;
-        letter-spacing: 0.7px;
-        color: #677380;        
-    }
-
-    .item-value {
-        font-family: Montserrat;
-        font-size: 15px;
-        font-weight: 500;
-        font-stretch: normal;
-        font-style: normal;
-        line-height: 1.67;
-        letter-spacing: 0.3px;
-        color: #424c56;
     }
 
     .section {
@@ -102,6 +104,7 @@
     }
 
     .app-container {
+        padding: 0 40px;
         column-count: 2;
         column-gap: 1em;
         .app-group {
