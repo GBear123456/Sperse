@@ -2,6 +2,7 @@
     left: 60px;
     position: relative;
     display: block;
+    height: calc(100vh - 100px);
 
     /deep/ header {
         height: 82px;
@@ -74,13 +75,7 @@
 
     mat-sidenav-container {
         width: calc(~"100% - 60px");
-        width: -o-calc(~"100% - 60px");
-        width: -webkit-calc(~"100% - 60px");
-        width: -moz-calc(~"100% - 60px");
-        height: calc(~"100vh - 215px");
-        height: -o-calc(~"100vh - 215px"); /* opera */
-        height: -webkit-calc(~"100vh - 215px"); /* google, safari */
-        height: -moz-calc(~"100vh - 215px"); /* firefox */
+        height: calc(~"100vh - 256px");
     }
 
     /deep/ .mat-tab-links {

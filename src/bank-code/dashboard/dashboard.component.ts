@@ -4,11 +4,11 @@ import { Component } from '@angular/core';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
+import values from 'lodash/values';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
-import values from 'lodash/values';
 
 @Component({
     selector: 'dashboard',
