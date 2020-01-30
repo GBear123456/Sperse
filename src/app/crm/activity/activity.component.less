@@ -111,9 +111,6 @@
         .dx-scheduler-appointment {
             border-radius: 7px;
         }
-        .dx-scheduler-work-space-month .dx-scheduler-date-table-cell div {
-
-        }
         .dx-scheduler-date-time-indicator {
             height: 2px!important;
             background-color: #00aeef!important;
@@ -135,5 +132,12 @@
                 }
             }
         }
+    }
+}
+
+::ng-deep .dx-scheduler-appointment-tooltip-buttons {
+    display: flex;
+    .dx-button:first-child {
+        margin-right: 10px;
     }
 }
