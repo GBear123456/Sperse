@@ -1,6 +1,6 @@
 /** Core imoports */
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 
 /** Third party imports */
 import { DragulaModule } from 'ng2-dragula';
@@ -30,7 +30,8 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
         BankCodeLettersComponent
     ],
     providers: [
-        BankCodeService
+        BankCodeService,
+        DecimalPipe
     ],
     entryComponents: [
         BankCodeLettersEditorDialogComponent

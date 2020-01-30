@@ -82,7 +82,7 @@
                     <div class="goals">
                         <div *ngFor="let goal of goalTypes" class="goal">
                             <div class="text">{{ goal.text + ' ' + ls.l('Goal') }}</div>
-                            <div class="number">{{ goal.number }}</div>
+                            <div class="number">{{ goal.number | number }}</div>
                             <circle-progress [percent]="bankCodeService.getPercent(goal.currentNumber$, goal.number) | async"
                                              [outerStrokeColor]="goal.outerColor"
                                              [innerStrokeColor]="goal.innerColor"
