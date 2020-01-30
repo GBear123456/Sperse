@@ -15,7 +15,10 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 @Component({
     selector: 'dashboard',
     templateUrl: 'dashboard.component.html',
-    styleUrls: ['./dashboard.component.less'],
+    styleUrls: [
+        '../../assets/fonts/fonts-activ-grotesk.css',
+        './dashboard.component.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
