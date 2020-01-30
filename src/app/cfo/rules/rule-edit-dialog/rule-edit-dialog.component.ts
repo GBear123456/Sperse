@@ -30,7 +30,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 export class RuleDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     showSelectedTransactions = false;
     minAmount: number;
     maxAmount: number;

@@ -35,7 +35,7 @@ import { StatesService } from '@root/store/states-store/states.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     businessEntities$: Observable<BusinessEntityDto[]> = this.businessEntityService.getBusinessEntities(this.cfoService.instanceType as any, this.cfoService.instanceId).pipe(
         map((businessEntities: BusinessEntityDto[]) => {
             if (!this.isNew)

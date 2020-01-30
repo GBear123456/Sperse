@@ -40,7 +40,7 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MySettingsModalComponent implements AfterViewChecked, OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();

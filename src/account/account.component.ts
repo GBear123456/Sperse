@@ -23,7 +23,7 @@ export class AdLayoutHostDirective {
     encapsulation: ViewEncapsulation.None
 })
 export class AccountComponent implements OnInit {
-    @ViewChild(AdLayoutHostDirective) adLayoutHost: AdLayoutHostDirective;
+    @ViewChild(AdLayoutHostDirective, { static: true }) adLayoutHost: AdLayoutHostDirective;
 
     constructor(
         private appSession: AppSessionService,

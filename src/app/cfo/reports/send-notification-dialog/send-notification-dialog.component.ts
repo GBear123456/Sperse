@@ -29,7 +29,7 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ ReportsServiceProxy ]
 })
 export class SendNotificationDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
     title = this.ls.l('Reports_SendNotification');
     notificationToEmail: string;

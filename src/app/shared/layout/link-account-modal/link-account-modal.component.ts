@@ -19,7 +19,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LinkAccountModalComponent implements AfterViewInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('linkAccountForm') linkAccountForm;
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     linkUser: LinkToUserInput = new LinkToUserInput();

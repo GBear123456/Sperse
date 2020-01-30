@@ -33,7 +33,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionDetailInfoComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
 
     TRANSACTION_ACCOUNTING_TYPE_KEY: any;
     TRANSACTION_CATEGORY_ID: number;

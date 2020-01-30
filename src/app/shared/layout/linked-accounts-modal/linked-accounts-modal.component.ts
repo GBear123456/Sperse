@@ -30,7 +30,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     providers: [ PrimengTableHelper ]
 })
 export class LinkedAccountsModalComponent {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
     @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();

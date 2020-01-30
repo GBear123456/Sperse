@@ -26,7 +26,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationSettingsModalComponent implements OnInit  {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     settings: GetNotificationSettingsOutput;
     buttons: IDialogButton[] = [
         {

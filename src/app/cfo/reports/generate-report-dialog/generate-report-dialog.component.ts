@@ -42,7 +42,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
 
     title = this.ls.l('SelectBusinessEntity');

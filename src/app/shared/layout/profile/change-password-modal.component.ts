@@ -19,7 +19,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     providers: [ DialogService ]
 })
 export class ChangePasswordModalComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('currentPasswordInput') currentPasswordInput: ElementRef;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     currentPassword = '';
