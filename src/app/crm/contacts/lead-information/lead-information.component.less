@@ -13,16 +13,36 @@
         line-height: 1.71;
         letter-spacing: 0.56px;
         color: #202b35;
+        &:before {
+            display: inline-block;
+            vertical-align: middle;
+            position: absolute;
+            left: -28px;
+        }
+        &.f-chat:before {
+            content: url(../../../../assets/common/icons/f-chat.svg);
+        }
+        &.c-info:before {
+            content: url(../../../../assets/common/icons/c-info.svg);
+        }
+        &.single-content:before {
+            content: url(../../../../assets/common/icons/single-content.svg);
+        }
+        &.goal:before {
+            content: url(../../../../assets/common/icons/goal.svg);
+        }
     }
 
     .item-edit-label {
         display: inline-block;
         min-width: 150px;
-        font-size: 13px;
-        font-weight: normal;
         line-height: 35px;
-        letter-spacing: 0.7px;
-        color: #677380;        
+        font-size: 14px;
+        font-weight: normal;
+        font-stretch: normal;
+        font-style: normal;
+        letter-spacing: 0.2px;
+        color: #677380;
     }
 
     .item-value {
@@ -48,26 +68,6 @@
                 .section-item > div {
                     width: 90%;
                 }
-            }
-        }
-        h3 {
-            &:before {
-                display: inline-block;
-                vertical-align: middle;
-                position: absolute;
-                left: -28px;
-            }
-            &.f-chat:before {
-                content: url(../../../../assets/common/icons/f-chat.svg);
-            }
-            &.c-info:before {
-                content: url(../../../../assets/common/icons/c-info.svg);
-            }
-            &.single-content:before {
-                content: url(../../../../assets/common/icons/single-content.svg);
-            }
-            &.goal:before {
-                content: url(../../../../assets/common/icons/goal.svg);
             }
         }
     }

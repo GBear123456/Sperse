@@ -78,7 +78,8 @@ export class AppConsts {
         dateMoment: 'MM/DD/YYYY',
         monthDay: 'MMM d',
         inboxDate: 'MMM d, yyyy hh:mm a',
-        fieldDateTime: 'MMM d, YYYY HH:mm'
+        fieldDateTime: 'MMM DD, YYYY HH:mm',
+        fieldDate: 'MMM DD, YYYY'
     };
 
     static readonly otherLinkTypeId = '-';

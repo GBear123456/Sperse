@@ -39,7 +39,7 @@
             <dx-scroll-view showScrollbar="onHover" *ngIf="application">
                 <div *ngIf="selectedTabIndex" class="app-container">
                     <div *ngFor="let group of getObjectKeys(application)" class="app-group">
-                        <h3 class="lab">{{upperCase(group)}}</h3>
+                        <h3 class="lab {{upperCase(group) == 'TRACKING INFORMATION' ? 'single-content': 'c-info'}}">{{upperCase(group)}}</h3>
                         <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
                             <div class="item-edit-label">{{startCase(field)}}:</div>
                             <div class="item-value">{{formatFieldValue(field, application[group][field])}}</div>

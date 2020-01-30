@@ -265,9 +265,12 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     }
 
     formatFieldValue(field, value) {
-        if (value instanceof moment)
-            return value.format(this.formatting.fieldDateTime);
-        else if (field == 'amount')
+        if (value instanceof moment) {
+            if (field == 'doB')
+                return value.utc().format(this.formatting.fieldDate);
+            else
+                return value.format(this.formatting.fieldDateTime);
+        } else if (field == 'amount')
             return this.currencyPipe.transform(value, this.invoiceSettings.currency);
         else
             return value;
