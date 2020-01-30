@@ -59363,6 +59363,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
     customFields!: ImportCustomFieldsInput | undefined;
+    rating!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -59410,6 +59411,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             }
             this.affiliateCode = data["affiliateCode"];
             this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
+            this.rating = data["rating"];
         }
     }
 
@@ -59457,6 +59459,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         }
         data["affiliateCode"] = this.affiliateCode;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
+        data["rating"] = this.rating;
         return data; 
     }
 }
@@ -59493,6 +59496,7 @@ export interface IImportPersonalInput {
     interests: string[] | undefined;
     affiliateCode: string | undefined;
     customFields: ImportCustomFieldsInput | undefined;
+    rating: string | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
