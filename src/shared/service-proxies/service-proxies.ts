@@ -15307,6 +15307,122 @@ export class InstanceServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    addUser(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: AddUserInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/AddUser?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddUser(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAddUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    removeUser(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, userId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/RemoveUser?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRemoveUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRemoveUser(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRemoveUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @userId (optional) 
      * @return Success
      */
@@ -17342,8 +17458,8 @@ export class LeadServiceProxy {
      * @customerId (optional) 
      * @return Success
      */
-    getLast(customerId: number | null | undefined): Observable<LeadInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLast?";
+    getLastLeadInfo(customerId: number | null | undefined): Observable<LeadInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLastLeadInfo?";
         if (customerId !== undefined)
             url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -17358,11 +17474,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLast(response_);
+            return this.processGetLastLeadInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetLast(<any>response_);
+                    return this.processGetLastLeadInfo(<any>response_);
                 } catch (e) {
                     return <Observable<LeadInfoDto>><any>_observableThrow(e);
                 }
@@ -17371,7 +17487,7 @@ export class LeadServiceProxy {
         }));
     }
 
-    protected processGetLast(response: HttpResponseBase): Observable<LeadInfoDto> {
+    protected processGetLastLeadInfo(response: HttpResponseBase): Observable<LeadInfoDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -43079,7 +43195,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
-    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
         if (data) {
@@ -43161,7 +43276,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
-            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -43243,7 +43357,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -43290,7 +43403,6 @@ export interface ICreateOrUpdateContactInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
-    litePhoneValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput {
@@ -51644,6 +51756,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
     customFields!: ImportCustomFieldsInput | undefined;
+    rating!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -51691,6 +51804,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             }
             this.affiliateCode = data["affiliateCode"];
             this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
+            this.rating = data["rating"];
         }
     }
 
@@ -51738,6 +51852,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         }
         data["affiliateCode"] = this.affiliateCode;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
+        data["rating"] = this.rating;
         return data; 
     }
 }
@@ -51774,6 +51889,7 @@ export interface IImportPersonalInput {
     interests: string[] | undefined;
     affiliateCode: string | undefined;
     customFields: ImportCustomFieldsInput | undefined;
+    rating: string | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -52153,6 +52269,7 @@ export class ImportInput implements IImportInput {
     fileSize!: number;
     fileContent!: string;
     ignoreInvalidValues!: boolean | undefined;
+    sendWelcomeEmail!: boolean | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -52195,6 +52312,7 @@ export class ImportInput implements IImportInput {
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
+            this.sendWelcomeEmail = data["sendWelcomeEmail"];
         }
     }
 
@@ -52237,6 +52355,7 @@ export class ImportInput implements IImportInput {
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
+        data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         return data; 
     }
 }
@@ -52256,6 +52375,7 @@ export interface IImportInput {
     fileSize: number;
     fileContent: string;
     ignoreInvalidValues: boolean | undefined;
+    sendWelcomeEmail: boolean | undefined;
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
@@ -52815,6 +52935,46 @@ export interface IGetUsersInfoDto {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     creationTime: moment.Moment | undefined;
+}
+
+export class AddUserInput implements IAddUserInput {
+    userId!: number;
+    sendInvitationEmail!: boolean | undefined;
+
+    constructor(data?: IAddUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.sendInvitationEmail = data["sendInvitationEmail"];
+        }
+    }
+
+    static fromJS(data: any): AddUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["sendInvitationEmail"] = this.sendInvitationEmail;
+        return data; 
+    }
+}
+
+export interface IAddUserInput {
+    userId: number;
+    sendInvitationEmail: boolean | undefined;
 }
 
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
@@ -54821,7 +54981,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
-    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
@@ -54902,7 +55061,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
-            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -54983,7 +55141,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -55029,7 +55186,6 @@ export interface ICreateOrUpdateLeadInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
-    litePhoneValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
@@ -56609,7 +56765,7 @@ export interface ISubscriptionShortInfoOutput {
 
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
     subscriptions!: SubscriptionShortInfoOutput[] | undefined;
-    secureId!: string | undefined;
+    userKey!: string | undefined;
 
     constructor(data?: IGetMemberInfoOutput) {
         if (data) {
@@ -56627,7 +56783,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                 for (let item of data["subscriptions"])
                     this.subscriptions.push(SubscriptionShortInfoOutput.fromJS(item));
             }
-            this.secureId = data["secureId"];
+            this.userKey = data["userKey"];
         }
     }
 
@@ -56645,14 +56801,14 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
             for (let item of this.subscriptions)
                 data["subscriptions"].push(item.toJSON());
         }
-        data["secureId"] = this.secureId;
+        data["userKey"] = this.userKey;
         return data; 
     }
 }
 
 export interface IGetMemberInfoOutput {
     subscriptions: SubscriptionShortInfoOutput[] | undefined;
-    secureId: string | undefined;
+    userKey: string | undefined;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
