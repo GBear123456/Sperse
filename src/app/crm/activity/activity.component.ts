@@ -626,6 +626,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 newDate.setDate(newDate.getDate() + (direction * 7));
                 break;
             case 'month':
+                newDate.setDate(1);
                 newDate.setMonth(newDate.getMonth() + direction);
                 break;
         }
