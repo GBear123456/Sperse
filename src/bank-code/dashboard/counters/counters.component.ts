@@ -36,4 +36,9 @@ export class CountersComponent implements OnChanges {
         }
     }
 
+    showComma(i: number): boolean {
+        const numberReverseIndex = this.totalCrackedCodesNumber.length - i;
+        return i !== 0 && numberReverseIndex !== this.totalCrackedCodesNumber.length && numberReverseIndex % 3 === 0;
+    }
+
 }

@@ -210,18 +210,18 @@
     .road-tracker {
         padding-top: 10px;
         padding-bottom: 28px;
-        
+
         h2 {
             margin-bottom: 25px;
         }
-        
+
         .settings {
             //display: flex;
             align-items: flex-end;
             justify-content: center;
             margin-bottom: 10px;
             display: none;
-            
+
             & > div {
                 margin-right: 20.5px;
             }
@@ -292,7 +292,7 @@
                     text-align: center;
                     color: #7a7979;
                     margin-bottom: 12px;
-                    
+
                     @media all and (max-width: 767px) {
                         font-size: 12px;
                         margin-top: 12px;
@@ -308,7 +308,7 @@
                     color: #000000;
                     margin-bottom: 14px;
                 }
-    
+
                 @media all and (max-width: 560px) {
                     width: 48%;
                 }
@@ -337,7 +337,11 @@
         width: calc(100% - 438px);
         justify-content: flex-end;
         z-index: 1;
-        
+
+        @media all and (max-width: 1200px) {
+            top: 40px;
+        }
+
         .search {
             width: 263px;
             position: absolute;
@@ -403,6 +407,10 @@
             @media (max-width: 1360px) {
                 position: static;
             }
+
+            @media all and (max-width: 1200px) {
+                width: 200px;
+            }
         }
 
         .my-access-code {
@@ -416,6 +424,10 @@
             & > span {
                 margin-right: 5px;
                 white-space: nowrap;
+
+                @media all and (max-width: 1200px) {
+                    display: none;
+                }
             }
             /deep/ inplace-edit {
                 font-family: @text-font;
@@ -433,26 +445,37 @@
                     right: -60px;
                 }
 
+                dx-button {
+                    background: transparent;
+                }
+
                 @media (max-width: 767px) {
                     max-width: 125px;
-                    .button-exit {
+
+                    /*.button-exit {
                         display: none;
-                    }
+                    }*/
                 }
             }
+
             @media (min-width: 768px) {
-                padding-right: 26px;
+                padding: 2px 26px;
+                border-radius: 20px;
             }
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 767px) {
             justify-content: flex-end;
             flex-direction: column-reverse;
-            top: 0;
+            margin-top: 15px;
             align-items: flex-end;
             .search,
             .access-code {
                 margin: 5px;
+            }
+
+            .my-access-code span {
+                display: inherit;
             }
         }
 
@@ -471,6 +494,7 @@
 
     #gridContainer {
         height: calc(~"100vh - 146px");
+        overflow: hidden;
 
         @media all and (max-width:  800px) {
             height: calc(~"100vh - 160px");
@@ -494,6 +518,12 @@
             font-weight: 900;
             letter-spacing: 0.56px;
             color: #7a7979;
+
+            @media all and (max-width: 1200px) {
+                font-size: 15px;
+                min-width: 0;
+            }
+
             &.mat-tab-label-active {
                 color: #000;
             }

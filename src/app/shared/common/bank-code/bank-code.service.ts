@@ -26,7 +26,9 @@ export class BankCodeService {
     bankCodeLevel$: Observable<number> = this.bankCodeClientsCount$.pipe(
         map((currentBankCodeClientsCount: number) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
             return currentBankCodeClientsCount <= bankCodeBadgeCount;
-        }))
+        })),
+        publishReplay(),
+        refCount()
     );
     goalTypes: GoalType[] = [
         {
@@ -166,7 +168,9 @@ export class BankCodeService {
                     availableBankCodes[bankCodeGroup.key] = bankCodeGroup.count;
                 });
                 return availableBankCodes;
-            })
+            }),
+            publishReplay(),
+            refCount()
         );
     }
 

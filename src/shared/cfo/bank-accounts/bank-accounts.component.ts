@@ -78,7 +78,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
 
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
             data: {
-                connector: syncAccount.syncTypeId === SyncTypeIds.Quovo ? AccountConnectors.Quovo : AccountConnectors.Xero,
+                connector: syncAccount.syncTypeId === SyncTypeIds.Quovo ? AccountConnectors.Quovo : AccountConnectors.XeroOAuth2,
                 config: {
                     accountId: syncAccount.syncTypeId === SyncTypeIds.Quovo ? syncAccount.syncRef : syncAccount.syncAccountId,
                 },

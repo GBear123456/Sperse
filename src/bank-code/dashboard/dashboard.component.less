@@ -25,14 +25,20 @@
         }
 
         .card-body {
-            padding: 2rem 1.7rem
+            padding: 40px 30px
         }
 
         .card-header {
-            border-bottom: solid 1px #ebecec;
-            background-color: #f8f8f8;
+            background-color: #ac1f22;
+            color: #fff;
             text-align: center;
             padding: 16px 0;
+        }
+
+        ::ng-deep bank-code-announcements {
+            .card-header {
+                background-color: #104779;
+            }
         }
 
         .card-header h2 {
@@ -43,7 +49,7 @@
         }
 
         .card-header h2 img {
-            width: 14px;
+            width: 20px;
             margin-right: 10px;
         }
 
@@ -57,14 +63,14 @@
             font-weight: bold;
             font-size: 16px;
             position: relative;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 30px;
         }
 
         .card-body h5:after {
             content: ' ';
             width: 50px;
-            height: 3px;
+            height: 4px;
             background: #ac1f22;
             position: absolute;
             bottom: 0;
@@ -73,21 +79,23 @@
 
         .card-body .card-text {
             text-align: center;
-            font-family: 'IBM Plex Sans', sans-serif !important;
+            font-family: 'AktivGroteskW01-Regular', sans-serif !important;
             font-size: 15px;
             font-weight: normal;
             line-height: 1.53;
             letter-spacing: -0.3px;
             color: #000000;
+            opacity: 0.7;
         }
 
         .card-body .card-text-footer {
-            font-family: 'IBM Plex Sans', sans-serif !important;
+            font-family: 'AktivGroteskW01-Regular', sans-serif !important;
             font-size: 13px;
             line-height: 1.77;
             letter-spacing: -0.26px;
             color: #959494;
             text-align: center;
+            margin-bottom: 13px !important;
 
             &.glance {
                 font-family: 'AvianoSans-Reg', sans-serif !important;
@@ -96,22 +104,26 @@
         }
 
         .card-title {
-            font-family: 'AvianoSans-Bol', sans-serif !important;
-            font-size: 22px !important;
-            font-weight: normal !important;
+            font-size: 20px !important;
+            font-weight: 700 !important;
             text-transform: uppercase;
+            letter-spacing: -0.4px;
+            font-family: 'AvianoSans-Reg', sans-serif !important;
+            line-height: normal;
         }
 
         .btn-default {
             border: 1px solid #ac1f22;
-            text-transform: uppercase;
-            font-size: 14px;
+            text-transform: uppercase !important;
+            font-size: 17px !important;
             color: #ac1f22;
             border-radius: 0 !important;
-            font-weight: bold;
             line-height: 42px;
             padding: 0 20px;
-            transition: .3s;
+            transition: 0.3s;
+            letter-spacing: 0.53px;
+            font-weight: 700 !important;
+            font-family: 'AvianoSans-Bla', sans-serif !important;
 
             &:hover {
                 background: #ac1f22;
@@ -119,27 +131,38 @@
             }
         }
 
+        .charts .card-header {
+            background-color: #f09e1f;
+        }
+
         .charts .card-text-footer {
             color: #7a7979;
         }
 
         .charts h5 {
-            padding-bottom: 8px;
+            padding-bottom: 16px;
         }
 
         .bar-info {
             font-size: 14px;
-            font-family: 'IBM Plex Sans', sans-serif !important;
-            margin-bottom: 30px;
+            margin-bottom: 14px;
+            font-weight: 500;
+
+            & > div {
+                font-family: 'AktivGroteskW01-Regular', sans-serif !important;
+                color: #000;
+            }
 
             .font-weight-bold {
                 font-size: 16px;
+                font-family: 'AktivGroteskW01-Bold', sans-serif !important;
             }
 
             .text-secondary {
                 font-size: 13px;
                 letter-spacing: -0.3px;
                 color: #7a7979 !important;
+                font-weight: 400;
             }
         }
 
@@ -170,34 +193,47 @@
         }
 
         .counters, .counters .card {
-            background: #b12e30
+            background: #104779;
         }
 
         .counters h6 {
             text-align: center;
             color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 10px;
-        }
-
-        .incremental-counter .num {
-            display: inline-block;
-            background: #991719;
-            color: #fff;
-            font-size: 34px;
-            padding: 0 15px;
-            margin: 0 3px;
-            font-family: 'AvianoSans-Bla', sans-serif !important;
-            font-weight: normal;
-
-            @media all and (max-width: 560px) {
-                font-size: 18px;
-                padding: 6px 12px;
-            }
-
+            margin-bottom: 15px;
         }
 
         .incremental-counter {
-            text-align: center
+            .num {
+                display: inline-block;
+                background: #04335d;
+                color: #fff;
+                font-size: 52px;
+                margin: 0 3px;
+                font-family: 'AvianoSans-Bla', sans-serif !important;
+                font-weight: normal;
+                width: 71px;
+                height: 68px;
+                line-height: 68px;
+
+                @media all and (max-width: 560px) {
+                    font-size: 18px;
+                    padding: 6px 12px;
+                }
+
+            }
+            .comma {
+                color: #fff;
+                position: relative;
+                bottom: -18px;
+                font-size: 40px;
+            }
+        }
+
+        .incremental-counter {
+            text-align: center;
+            justify-content: center;
+            display: flex;
+            align-items: flex-end;
         }
 
         .circular-graph-wrapper {
@@ -205,7 +241,7 @@
         }
 
         .circular-graphs {
-            padding: 20px 15px 10px 15px;
+            padding: 34px 15px 25px 15px;
             background: #fff;
             display: inline-block;
             position: relative;
@@ -224,9 +260,8 @@
         }
 
         .circular-progress {
-            height: 60px;
             display: inline-block;
-            width: 80px;
+            width: 115px;
         }
 
         .circular-progress > svg {
@@ -239,10 +274,9 @@
             font-size: 12px;
             line-height: 1;
         }
-        
+
         .level-img {
-            width: 100%;
-            max-width: 175px;
+            width: 200px;
             display: block;
             margin: 0 auto;
         }
@@ -292,7 +326,7 @@
             }
 
             .counters .card-body {
-                padding: 2rem .0rem
+                padding: 2rem .0rem;
             }
 
             .circular-graphs {
@@ -353,5 +387,9 @@
     .dx-trackbar-container {
         height: 12px;
         border-radius: 0;
+    }
+
+    .dx-progressbar-wrapper {
+        vertical-align: top;
     }
 }

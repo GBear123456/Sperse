@@ -10,14 +10,14 @@ import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
-import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { RootStore } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
@@ -65,6 +65,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() onMappingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     uploadFile: FormGroup;
@@ -81,8 +82,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'phone',
         'revenue',
         'countryName',
-        'countryCode',
-        'stateCode'
+        'countryId',
+        'stateId'
     ];
     private similarFieldsIndex: any = {};
     private countries: CountryDto[];
@@ -144,7 +145,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         });
 
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries), first())
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries), filter(Boolean), first())
             .subscribe(countries => this.countries = countries);
     }
 
@@ -652,6 +653,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         });
 
         $event.component.deselectRows(rowIdsToDeselect);
+        this.onMappingChanged.emit($event);
     }
 
     onLookupFieldsContentReady($event, cell) {
@@ -742,15 +744,15 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 value, this.getFieldCountryCode(data, field));
             if (isValid)
                 data[field] = this.phoneFormat.transform(
-                    value, this.getFieldDefaultCountry(data, field)).replace(/\s/g, '');
+                    value, this.getFieldDefaultCountry(data, field)).replace(/[^\d+]/g, '');
             return isValid;
         } else if (key == 'revenue')
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
         else if (key == 'countryName')
             return value.trim().length > 3;
-        else if (key == 'countryCode')
+        else if (key == 'countryId')
             return value.trim().length == 2;
-        else if (key == 'stateCode')
+        else if (key == 'stateId')
             return value.trim().length >= 2 &&
                 value.trim().length <= 3;
         else

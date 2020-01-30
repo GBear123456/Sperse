@@ -33,7 +33,7 @@ export class ProfileService {
             refCount()
         );
     secureId$: Observable<string> = this.bankCodeMemberInfo$.pipe(
-        map((bankCodeMemberInfo: GetMemberInfoOutput) => bankCodeMemberInfo.secureId),
+        map((bankCodeMemberInfo: GetMemberInfoOutput) => bankCodeMemberInfo.userKey),
         distinctUntilChanged()
     );
     private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);

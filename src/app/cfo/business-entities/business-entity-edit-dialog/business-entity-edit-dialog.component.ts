@@ -229,11 +229,10 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         if (this.validate()) {
             this.modalDialog.startLoading();
             this.businessEntity.countryId = this.getCountryCode(this.address.countryName);
-            this.businessEntity.stateId = this.businessEntity.stateId && this.businessEntity.stateId.length <= 3
-                && this.businessEntity.stateId !== this.businessEntity.stateName
-                ? this.businessEntity.stateId
-                : null;
-
+            this.businessEntity.stateId = this.statesService.getAdjustedStateCode(
+                this.businessEntity.stateId,
+                this.businessEntity.stateName
+            );
             if (this.googleAutoComplete) {
                 this.businessEntity.streetAddress = [
                     this.address['streetNumber'],

@@ -3,9 +3,12 @@
         <h6 class="card-title">{{ls.l('BankCode_MyTotalCracked')}}</h6>
         <div class="numbers">
             <div *ngIf="totalCrackedCodesNumber" class="incremental-counter" id="counter-1">
-                <div class="num" *ngFor="let number of range(0, totalCrackedCodesNumber.length); let i = index">
-                    {{ totalCrackedCodesNumber[i] }}
-                </div>
+                <ng-container *ngFor="let number of range(totalCrackedCodesNumber.length); let i = index">
+                    <div *ngIf="showComma(i)" class="comma">,</div>
+                    <div class="num">
+                        {{ totalCrackedCodesNumber[i] }}
+                    </div>
+                </ng-container>
             </div>
         </div>
         <div class="circular-graph-wrapper">
@@ -16,8 +19,10 @@
                         [outerStrokeColor]="item.outerColor"
                         [innerStrokeColor]="item.innerColor"
                         [title]="item.title"
-                        [subtitle]="item.subtitle"
-                    ></circle-progress>
+                        [titleColor]="item.outerColor"
+                        [subtitleColor]="item.outerColor"
+                        [subtitle]="item.subtitle">
+                    </circle-progress>
                 </div>
             </div>
         </div>
@@ -29,6 +34,7 @@
                 <div class="num">1</div>
                 <div class="num">2</div>
                 <div class="num">9</div>
+                <div class="comma">,</div>
                 <div class="num">4</div>
                 <div class="num">9</div>
                 <div class="num">4</div>
@@ -41,9 +47,11 @@
                         [percent]="item.percent"
                         [outerStrokeColor]="item.outerColor"
                         [innerStrokeColor]="item.innerColor"
+                        [titleColor]="item.outerColor"
+                        [subtitleColor]="item.outerColor"
                         [title]="item.title"
-                        [subtitle]="item.subtitle"
-                    ></circle-progress>
+                        [subtitle]="item.subtitle">
+                    </circle-progress>
                 </div>
             </div>
         </div>

@@ -52,23 +52,29 @@ export class PersonalDetailsComponent implements OnDestroy {
 
     columns = [
         [
-            { name: 'citizenship', type: 'select' },
-            { name: 'timeZone', type: 'select' },
-            { name: 'dob', type: 'date' },
-            { name: 'drivingLicense', type: 'string' , confidential: true },
-            { name: 'drivingLicenseState', type: 'select' },
-            { name: 'experience', type: 'string' , multiline: true },
-            { name: 'gender', type: 'select' },
-            { name: 'interests', type: 'list', multiline: true, source: this.interests$ },
+            { name: 'General',              type: 'head',   icon:         'profile'                     },
+            { name: 'gender',               type: 'select'                                              },
+            { name: 'citizenship',          type: 'select'                                              },
+            { name: 'timeZone',             type: 'select'                                              },
+            { name: 'dob',                  type: 'date'                                                },
+            { name: 'preferredToD',         type: 'select'                                              },
+            { name: 'drivingLicense',       type: 'string', confidential: true                          },
+            { name: 'drivingLicenseState',  type: 'select'                                              }
         ], [
-            { name: 'isActiveMilitaryDuty', type: 'bool' },
-            { name: 'isUSCitizen', type: 'bool' },
-            { name: 'maritalStatus', type: 'select' },
-            { name: 'marriageDate', type: 'date' },
-            { name: 'divorceDate', type: 'date' },
-            { name: 'profileSummary', type: 'string' , multiline: true },
-            { name: 'preferredToD', type: 'select' },
-            { name: 'ssn', type: 'string', confidential: true }
+            { name: 'Social Info',          type: 'head',   icon:         'social'                      },
+            { name: 'isActiveMilitaryDuty', type: 'bool'                                                },
+            { name: 'isUSCitizen',          type: 'bool'                                                },
+            { name: 'maritalStatus',        type: 'select'                                              },
+            { name: 'marriageDate',         type: 'date'                                                },
+            { name: 'divorceDate',          type: 'date'                                                },
+            { name: 'ssn',                  type: 'string', confidential: true                          },
+            { name: 'interests',            type: 'list',   multiline:    true, source: this.interests$ }
+        ], [
+            { name: 'Experience',           type: 'head',   icon:         'blog'                        },
+            { name: 'experience',           type: 'string', multiline:    true                          }
+        ],[
+            { name: 'Profile Summary',      type: 'head',   icon:         'blog'                        },
+            { name: 'profileSummary',       type: 'string', multiline:    true                          }
         ]
     ];
 

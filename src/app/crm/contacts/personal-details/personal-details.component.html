@@ -2,8 +2,9 @@
     <mat-tab label="General">
         <dx-scroll-view showScrollbar="onHover" *ngIf="person">
             <div class="container" *ngFor="let column of columns">
-                <div *ngFor="let field of column" class="item">
-                    <div class="item-edit-label">{{startCase(field.name)}}:</div>
+                <div *ngFor="let field of column" class="item {{field.type}}">
+                    <h3 *ngIf="field.type == 'head'" class="{{field.icon}}">{{ls.l(field.name)}}</h3>
+                    <div *ngIf="field.type != 'head' && column.length > 2" class="item-edit-label">{{ls.l(startCase(field.name))}}:</div>
                     <div *ngIf="!isEditAllowed || (field.confidential && !accessConfidentialData)" class="item-value">{{person[field.name]}}</div>
                     <ng-container *ngIf="isEditAllowed && (!field.confidential || accessConfidentialData)">
                         <div [ngSwitch]="field.type" class="item-value {{field.multiline ? 'multiline' : ''}}">
@@ -17,12 +18,13 @@
                             </inplace-edit>
                             <inplace-select *ngSwitchCase="'select'"
                                 width="260px"
-                                [data]="getSelectData(field.name)"
+                                height="36px"
+                                [data]="getSelectData(field.name)" 
                                 (valueChanged)="updateValue($event, field.name)">
                             </inplace-select>
                             <dx-date-box *ngSwitchCase="'date'"
                                 width="260px"
-                                [placeholder]="ls.l('Date')"
+                                [placeholder]="ls.l('Select') + '...'"
                                 [value]="person[field.name]"
                                 (onKeyDown)="allowDigitsOnly($event, ['/'])"
                                 (onValueChanged)="updateValue($event.value, field.name)">

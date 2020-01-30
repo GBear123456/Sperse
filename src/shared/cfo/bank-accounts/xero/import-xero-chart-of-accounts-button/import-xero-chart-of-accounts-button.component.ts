@@ -40,7 +40,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
     importChartOfAccount(): void {
         abp.ui.setBusy();
 
-        this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, SyncTypeIds.Xero)
+        this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, SyncTypeIds.XeroOAuth2)
             .subscribe(result => {
                 if (result.length == 0) {
                     this.newConnect();
@@ -58,7 +58,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
                         if (chooseAccountResult) {
                             abp.ui.setBusy();
                             if (chooseAccountResult === -1) {
-                                this.newConnect(false);
+                                this.newConnect();
                             } else {
                                 this.syncCategoryTree(chooseAccountResult);
                             }
@@ -68,20 +68,14 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
             });
     }
 
-    newConnect(showBackButton = true) {
+    newConnect() {
         abp.ui.clearBusy();
         if (!this.createAccountAvailable)
             return;
         const dialogConfig = {
-            ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
-                    connector: AccountConnectors.Xero,
-                    config: { isSyncBankAccountsEnabled: false },
-                    overwriteCurrentCategoryTree: this.override,
-                    showBackButton: showBackButton,
-                    instanceType: this.instanceType,
-                    instanceId: this.instanceId
+                    connector: AccountConnectors.XeroOAuth2,
                 }
             }
         };

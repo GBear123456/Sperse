@@ -39,7 +39,7 @@
                                         <div>
                                             <bank-code-letters *ngFor="let bankCode of bankCodeGroups[i]"
                                                                [bankCode]="bankCode"
-                                                               [active]="isBankCodeActive(bankCode)">
+                                                               [active]="isBankCodeActive(bankCode) | async">
                                             </bank-code-letters>
                                         </div>
                                     </div>
@@ -52,8 +52,10 @@
                         <div class="collect-badges">
                             <h6>{{ ls.l('CollectAllBadges') }}</h6>
                             <div class="badges">
-                                <img *ngFor="let bankCodeBadge of bankCodeBadges; let i = index"
-                                     src="./assets/common/images/bank-code/badges/L{{i + 1}}-{{ (i + 1) <= bankCodeLevel ? '1' : '0' }}.png">
+                                <ng-container  *ngFor="let bankCodeBadge of bankCodeBadges; let i = index">
+                                    <img *ngIf="getBadgeImageName(i) | async as badgeImageName"
+                                         src="./assets/common/images/bank-code/badges/L{{ badgeImageName }}.png">
+                                </ng-container>
                             </div>
                         </div>
                     </div>
@@ -88,9 +90,6 @@
                                              [radius]="42"
                                              [titleFontWeight]="900"
                                              [titleColor]="goal.innerColor"
-                                             [animation]="false"
-                                             [animateTitle]="false"
-                                             [animationDuration]="0"
                                              titleFontSize="23px"
                                              subtitleFontSize="12px"
                                              [subtitleFontWeight]="700"
@@ -101,7 +100,7 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab [label]="ls.l('Leads').toUpperCase()">
+            <mat-tab [label]="ls.l('My Contacts').toUpperCase()">
                 <div *ngIf="currentTabIndex == 1 || gridInitialized">
                     <div class="grid" [hidden]="totalCount <= 0">
                         <dx-data-grid id="gridContainer"
@@ -130,13 +129,15 @@
                                 </div>
                             </div>
                             <dxi-column dataField="Id" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="150"></dxi-column>
-                            <dxi-column dataField="Email" [caption]="ls.l('Email')" [width]="160"></dxi-column>
-                            <dxi-column dataField="Phone" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                            <dxi-column dataField="CountryId" [caption]="ls.l('CountryCode')"></dxi-column>
-                            <dxi-column dataField="State" [caption]="ls.l('State')"></dxi-column>
-                            <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')" [width]="105"></dxi-column>
-                            <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="230"></dxi-column>
+                            <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"
+                                        [width]="110"></dxi-column>
+                            <dxi-column dataField="Email" [caption]="ls.l('Email')"></dxi-column>
+                            <dxi-column dataField="Phone" [caption]="ls.l('Phone')"
+                                        cellTemplate="phoneCell" cssClass="tabular" [width]="160"></dxi-column>
+                            <dxi-column dataField="CountryId" [caption]="ls.l('State')"
+                                        cellTemplate="location" [width]="150"></dxi-column>
+                            <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
@@ -145,6 +146,9 @@
                             </div>
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                            </div>
+                            <div *dxTemplate="let data of 'location'">
+                                {{data.data.CountryId}} {{data.data.State}}
                             </div>
                             <dxo-sorting mode="none"></dxo-sorting>
                         </dx-data-grid>
@@ -158,8 +162,8 @@
         </mat-tab-group>
     </section>
     <ng-template #noSubscription>
-        <div class="iframe">
-            <iframe [src]="environmentLink$ | async" frameborder="0"></iframe>
+        <div *ngIf="environmentLink$ | async as environmentLink" class="iframe">
+            <iframe [src]="environmentLink" frameborder="0" (load)="onIframeLoad($event)"></iframe>
         </div>
     </ng-template>
     <loading-spinner *ngIf="dataIsLoading"></loading-spinner>

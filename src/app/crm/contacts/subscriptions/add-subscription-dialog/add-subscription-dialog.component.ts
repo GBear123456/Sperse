@@ -1,7 +1,6 @@
 /** Core imports */
 import {
     AfterViewInit,
-    ChangeDetectionStrategy,
     Component,
     ElementRef,
     Inject,
@@ -41,8 +40,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
         '../../../../../shared/common/styles/close-button.less',
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    ]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
@@ -54,7 +52,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         contactId: this.data.contactId,
         orderNumber: this.data.orderNumber,
         systemType: this.data.systemType || (this.isBankCodeLayout ? 'BANKCODE' : undefined),
-        updateThirdParty: null,
         subscriptions: [
             new SubscriptionInput({
                 name: this.data.name,
@@ -62,7 +59,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 endDate: this.data.endDate,
                 amount: this.data.amount
             })
-        ]
+        ],
+        updateThirdParty: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
@@ -110,8 +108,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
 
     saveSubscription() {
         if (this.validationGroup.instance.validate().isValid) {
-            const subscription = new UpdateOrderSubscriptionInput(this.subscription);
-            subscription.subscriptions.forEach((subscription: SubscriptionInput) => {
+            const subscriptionInput = new UpdateOrderSubscriptionInput(this.subscription);
+            subscriptionInput.updateThirdParty = false;
+            subscriptionInput.subscriptions.forEach((subscription: SubscriptionInput) => {
                 if (subscription.endDate) {
                     subscription.endDate = DateHelper.removeTimezoneOffset(
                         new Date(subscription.endDate),
@@ -119,8 +118,11 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                         'from'
                     );
                 }
+                if (this.isBankCodeLayout && subscription.code === BankCodeServiceType.BANKVault) {
+                    subscriptionInput.updateThirdParty = true;
+                }
             });
-            this.orderSubscriptionService.update(subscription).subscribe(() => {
+            this.orderSubscriptionService.update(subscriptionInput).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.contactsService.invalidate('subscriptions');
                 this.dialogRef.close();
@@ -138,8 +140,12 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
+    onServiceTypeChanged(event, sub) {
+        if (event.value)
+            sub['name'] = event.value;
+    }
+
     removeSubscriptionFields(index) {
         this.subscription.subscriptions.splice(index, 1);
     }
-
 }

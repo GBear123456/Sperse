@@ -10,6 +10,7 @@ import { InplaceSelectBox } from '@app/shared/common/inplace-select-box/inplace-
 export class InplaceSelectBoxComponent {
     @Input() data: InplaceSelectBox;
     @Input() width = 'auto';
+    @Input() height = 'auto';
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
 
     updateValue(event) {
