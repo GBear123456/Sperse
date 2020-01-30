@@ -1,7 +1,6 @@
 /** Core imports */
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
-import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -18,7 +17,7 @@ import { ProductsService } from '@root/bank-code/products/products.service';
     styleUrls: ['./code-breaker-ai.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CodeBreakerAiComponent implements AfterViewInit {
+export class CodeBreakerAiComponent {
     dataIsLoading = true;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
         tap(() => setTimeout(() => {
@@ -30,14 +29,12 @@ export class CodeBreakerAiComponent implements AfterViewInit {
     constructor(
         private profileService: ProfileService,
         private productsService: ProductsService,
-        private changeDetectorRef: ChangeDetectorRef,
-        @Inject(DOCUMENT) private document: any
+        private changeDetectorRef: ChangeDetectorRef
     ) {}
 
-    ngAfterViewInit() {
-        this.document.querySelector('iframe').addEventListener('load', () => {
+    onIframeLoad(e) {
+        if (e.target.src !== '') {
             this.dataIsLoading = false;
-            this.changeDetectorRef.detectChanges();
-        });
+        }
     }
 }

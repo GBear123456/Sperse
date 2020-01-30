@@ -1,7 +1,7 @@
 export enum BankCodeServiceType {
-    WTBeBook = 'WTBeBook',
-    BANKPass = 'BANKPass',
-    BANKAffiliate = 'BANKAffiliate',
-    BANKVault = 'BANKVault',
-    BANKTrainer = 'BANKTrainer'
+    BANKAffiliate = 'Affiliate',
+    BANKPass = 'BANKPASS',
+    BANKVault = 'BANKVAULT',
+    BANKTrainer = 'Certified Trainer',
+    WTBeBook = 'WTB eBook'
 }

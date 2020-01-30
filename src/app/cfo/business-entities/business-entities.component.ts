@@ -134,8 +134,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     locationColumn_calculateCellValue(rowData) {
         let values = [];
-        if (rowData.StateId) {
-            values.push(rowData.StateId);
+        const state = rowData.State || rowData.StateId;
+        if (state) {
+            values.push(state);
         }
         if (rowData.CountryId) {
             values.push(rowData.CountryId);

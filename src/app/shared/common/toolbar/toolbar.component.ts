@@ -1,6 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, HostBinding,
-    OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -33,10 +32,8 @@ export class ToolBarComponent implements OnDestroy {
     public items = [];
     public options = {};
     private subscription: any;
-    private repaintTimeout: any;
 
     constructor(
-        injector: Injector,
         filtersService: FiltersService,
         private ls: AppLocalizationService
     ) {
@@ -410,13 +407,6 @@ export class ToolBarComponent implements OnDestroy {
                 });
             });
         this.items = items;
-        this.repaint();
-    }
-
-    repaint() {
-        clearTimeout(this.repaintTimeout);
-        this.repaintTimeout = setTimeout(() =>
-            this.toolbarComponent.instance.repaint(), 500);
     }
 
     updateToolbarItemAttribute(itemName: string, property: string, value: any) {

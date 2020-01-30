@@ -25,7 +25,7 @@ export class AccessCodeInstructionsComponent {
         map((accessCode: string) => {
             return (environment.releaseStage === 'production'
                 ? 'https://www.MyBankCode.com/'
-                : 'https://bankpass.bankcode.com/') + accessCode;
+                : 'https://bankpass.bankcode.pro/') + accessCode;
         })
     );
     affiliateLink$: Observable<string> = this.accessCode$.pipe(

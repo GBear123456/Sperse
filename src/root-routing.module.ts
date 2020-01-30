@@ -106,7 +106,7 @@ const routes: Routes = [
                 data: { localizationSource: 'Platform' }
             },
             {
-                path: 'shared/bank-pass',
+                path: 'shared/bankpass',
                 loadChildren: 'public/bank-pass-host/bank-pass-host.module#BankPassHostModule',
                 data: { localizationSource: 'Platform' }
             },

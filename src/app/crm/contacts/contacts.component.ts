@@ -526,7 +526,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             let leadId = leadInfo.id,
                 leadInfo$ = leadId && !lastLeadCallback
                     ? this.leadService.getLeadInfo(leadId)
-                    : this.leadService.getLast(contactInfo.id);
+                    : this.leadService.getLastLeadInfo(contactInfo.id);
 
             leadInfo$.pipe(finalize(() => {
                 this.finishLoading(true);

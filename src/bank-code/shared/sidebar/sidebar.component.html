@@ -2,9 +2,9 @@
 <ul>
     <li *ngFor="let item of items">
         <a [routerLink]="item.routerUrl"
-           routerLinkActive="active"
-           [routerLinkActiveOptions]="{exact:true}">
-            <span *ngIf="item.namePrefix">{{ item.namePrefix }}</span> {{ item.name }}
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact:true}">
+            <span *ngIf="item.namePrefix">{{ item.namePrefix }}</span>{{ item.name }}
         </a>
     </li>
 </ul>

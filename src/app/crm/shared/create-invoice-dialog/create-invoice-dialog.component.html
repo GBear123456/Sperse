@@ -91,7 +91,7 @@
                         </ng-template>
                         {{ selectedBillingAddress?.company }}<br *ngIf="selectedBillingAddress?.company">
                         {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
-                        {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
+                        {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].filter(filterBoolean).join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
                         {{ selectedBillingAddress?.address1 }}<br *ngIf="selectedBillingAddress?.address1">
                         {{ selectedBillingAddress?.city }}<br *ngIf="selectedBillingAddress?.city">
                         {{ selectedBillingAddress?.stateId }} {{ selectedBillingAddress?.zip }}<br *ngIf="selectedBillingAddress?.stateId || selectedBillingAddress?.zip">
@@ -127,7 +127,7 @@
                         </ng-template>
                         {{ selectedShippingAddress?.company }}<br *ngIf="selectedShippingAddress?.company">
                         {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
-                        {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
+                        {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].filter(filterBoolean).join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
                         {{ selectedShippingAddress?.address1 }}<br *ngIf="selectedShippingAddress?.address1">
                         {{ selectedShippingAddress?.city }}<br *ngIf="selectedShippingAddress?.city">
                         {{ selectedShippingAddress?.stateId }} {{ selectedShippingAddress?.zip }}<br *ngIf="selectedShippingAddress?.stateId || selectedShippingAddress?.zip">

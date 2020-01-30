@@ -39,8 +39,8 @@
                             <i class="fa fa-search show-details" (click)="openAuditLogDetailModal(record.data)"></i>
                         </ng-container>
                         <ng-container *dxTemplate="let record of 'statusTemplate'">
-                            <i *ngIf="record.exception" class="fa fa-warning" style="color: red;"></i>
-                            <i *ngIf="!record.exception" class="fa fa-check-circle" style="color: #37d749;"></i>
+                            <i *ngIf="record.data.exception" class="fa fa-warning" style="color: red;"></i>
+                            <i *ngIf="!record.data.exception" class="fa fa-check-circle" style="color: #37d749;"></i>
                         </ng-container>
                         <ng-container *dxTemplate="let browser of 'browserInfoTemplate'">
                             <div class="truncated clipboard-holder fixed-right" title="{{browser.value}}">

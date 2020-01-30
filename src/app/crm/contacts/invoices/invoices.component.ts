@@ -236,7 +236,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 return this.clientService.showInvoiceEmailDialog(
                     this.actionRecordData.InvoiceId, data);
             })
-        ).subscribe(data => this.updateStatus(InvoiceStatus.Sent));
+        ).subscribe(() => this.updateStatus(InvoiceStatus.Sent));
     }
 
     onMenuItemClick(action) {

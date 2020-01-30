@@ -22,7 +22,7 @@
                    routerLinkActive="active"
                    [routerLinkActiveOptions]="{exact:true}"
                    #simlink>
-                    {{ls.l(sublink.name)}}
+                    <span *ngIf="sublink.namePrefix">{{ls.l(sublink.namePrefix)}}</span>{{ls.l(sublink.name)}}
                 </a>
             </li>
         </ul>
@@ -52,7 +52,7 @@
             <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
                 <li *ngFor="let sublink of item.sublinks" [hidden]="sublink.hidden">
                     <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-                        {{ls.l(sublink.name)}}
+                        <span *ngIf="sublink.namePrefix">{{ls.l(sublink.namePrefix)}}</span>{{ls.l(sublink.name)}}
                     </a>
                 </li>
             </ul>

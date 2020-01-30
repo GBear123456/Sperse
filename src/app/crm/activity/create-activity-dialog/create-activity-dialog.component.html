@@ -32,7 +32,7 @@
                                   [(selectedItemKey)]="data.appointment.AssignedUserIds"
                                   [hideButtons]="true"
                                   [selectedKeys]="[data.appointment.AssignedUserIds]"
-                                  [permissionKey]="permissions.CRMEventsManageAssignments"
+                                  [permissionKey]="permissions.CRMManageEventsAssignments"
                                   (onSelectionChanged)="onUserAssignmentChanged($event)"
                                   [assignedUsersSelector]="assignedUsersSelector">
         </crm-user-assignment-list>

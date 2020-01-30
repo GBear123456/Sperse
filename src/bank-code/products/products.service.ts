@@ -20,10 +20,10 @@ export class ProductsService {
 
     private getLink(route: string, secureId: string) {
         return this.sanitizer.bypassSecurityTrustResourceUrl({
-            development: 'https://wp.bankcode.pro/' + route + '?WPSecureID=' + secureId,
-            production: 'https://codebreakertech.com/' + route + '?WPSecureID=' + secureId,
-            staging: 'https://wp.bankcode.pro/' + route + '?WPSecureID=' + secureId,
-            beta: 'https://wp.bankcode.pro/' + route + '?WPSecureID=' + secureId
+            development: 'https://wp.bankcode.pro/' + route + '/?WPSecureID=' + secureId,
+            production: 'https://codebreakertech.com/' + route + '/?WPSecureID=' + secureId,
+            staging: 'https://wp.bankcode.pro/' + route + '/?WPSecureID=' + secureId,
+            beta: 'https://wp.bankcode.pro/' + route + '/?WPSecureID=' + secureId
         }[environment.releaseStage]);
     }
 

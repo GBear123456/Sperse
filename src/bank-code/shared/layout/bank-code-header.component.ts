@@ -81,19 +81,21 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                         routerUrl: 'products/codebreaker-ai'
                     },
                     {
-                        name: this.ls.l('BankCode_BankPass'),
-                        routerUrl: 'products/bank-pass'
+                        namePrefix: this.ls.l('BankCode_Bank'),
+                        name: this.ls.l('BankCode_Pass'),
+                        routerUrl: 'products/bankpass'
                     },
                     {
-                        name: this.ls.l('BankCode_BankVault'),
-                        routerUrl: 'products/bank-vault'
+                        namePrefix: this.ls.l('BankCode_Bank'),
+                        name: this.ls.l('BankCode_Vault'),
+                        routerUrl: 'products/bankvault'
                     },
                     {
-                        name: this.ls.l('BankCode_BankTrainer'),
+                        name: this.ls.l('BankCode_CertifiedTrainer'),
                         routerUrl: 'products/bank-trainer'
                     },
                     {
-                        name: this.ls.l('BankCode_BankAffiliate'),
+                        name: this.ls.l('BankCode_Affiliate'),
                         routerUrl: 'products/bank-affiliate'
                     },
                     {

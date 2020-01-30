@@ -348,8 +348,7 @@ export class AppService extends AppServiceBase {
 
     updateToolbar(config) {
         clearTimeout(this.setToolbarTimeout);
-        this.setToolbarTimeout = setTimeout(
-            () => this.toolbarConfig = config, 500);
+        this.setToolbarTimeout = setTimeout(() => this.toolbarConfig = config);
     }
 
     setContactInfoVisibility(value: boolean) {

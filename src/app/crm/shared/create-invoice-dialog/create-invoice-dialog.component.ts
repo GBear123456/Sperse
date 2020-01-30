@@ -50,6 +50,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
+import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -78,8 +79,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private readonly SAVE_OPTION_DEFAULT = 0;
     private readonly SAVE_OPTION_DRAFT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
-
-    private validationError: string;
 
     invoiceNo;
     orderId: number;
@@ -129,10 +128,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ];
 
     invoiceUnits = Object.keys(InvoiceLineUnit);
-    ordersDataSource;
-
     billingAddresses = [];
     shippingAddresses = [];
+    filterBoolean = Boolean;
 
     constructor(
         private nameParser: NameParserService,
@@ -149,6 +147,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private permission: AppPermissionService,
         private contactsService: ContactsService,
+        private statesService: StatesService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -329,8 +328,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
         data.description = this.description;
         data.billingAddress = this.selectedBillingAddress &&
             new InvoiceAddressInput(this.selectedBillingAddress);
+        if (data.billingAddress) {
+            data.billingAddress.stateId = data.billingAddress && this.statesService.getAdjustedStateCode(
+                data.billingAddress.stateId,
+                data.billingAddress.stateName
+            );
+        }
         data.shippingAddress = this.selectedShippingAddress &&
             new InvoiceAddressInput(this.selectedShippingAddress);
+        if (data.shippingAddress) {
+            data.shippingAddress.stateId = data.shippingAddress && this.statesService.getAdjustedStateCode(
+                data.shippingAddress.stateId,
+                data.shippingAddress.stateName
+            );
+        }
         data.note = this.notes;
     }
 
