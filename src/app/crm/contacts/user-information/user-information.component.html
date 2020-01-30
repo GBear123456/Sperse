@@ -20,9 +20,7 @@
                         itemTemplate="emailItemTemplate">
                         <div *dxTemplate="let item of 'emailTemplate'">
                             <div class="email-wrapper">
-                                <dx-text-box
-                                    [value]="item?.emailAddress">
-                                </dx-text-box>
+                                <dx-text-box [value]="item?.emailAddress"></dx-text-box>
                             </div>
                         </div>
                         <div *dxTemplate="let item of 'emailItemTemplate'">

@@ -664,16 +664,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     private deleteOrdersInternal() {
         this.startLoading();
-        forkJoin.apply(this, this.selectedOrderKeys.map(
-            this.orderProxy.delete.bind(this.orderProxy))).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe(() => {
-                this.invalidate();
-                this.dataGrid.instance.deselectAll();
-                this.notify.success(this.l('SuccessfullyDeleted'));
-                this.filterChanged = true;
-            }
-        );
+        forkJoin(this.selectedOrderKeys.map(
+            this.orderProxy.delete.bind(this.orderProxy)
+        )).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.invalidate();
+            this.dataGrid.instance.deselectAll();
+            this.notify.success(this.l('SuccessfullyDeleted'));
+            this.filterChanged = true;
+        });
     }
 
     deactivate() {
