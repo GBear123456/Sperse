@@ -33985,7 +33985,7 @@ export class UserInfoDto implements IUserInfoDto {
     id!: number | undefined;
     name!: string | undefined;
     isActive!: boolean | undefined;
-    profileThumbnailId!: string | undefined;
+    photoPublicId!: string | undefined;
 
     constructor(data?: IUserInfoDto) {
         if (data) {
@@ -34001,7 +34001,7 @@ export class UserInfoDto implements IUserInfoDto {
             this.id = data["id"];
             this.name = data["name"];
             this.isActive = data["isActive"];
-            this.profileThumbnailId = data["profileThumbnailId"];
+            this.photoPublicId = data["photoPublicId"];
         }
     }
 
@@ -34017,7 +34017,7 @@ export class UserInfoDto implements IUserInfoDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isActive"] = this.isActive;
-        data["profileThumbnailId"] = this.profileThumbnailId;
+        data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
 }
@@ -34026,7 +34026,7 @@ export interface IUserInfoDto {
     id: number | undefined;
     name: string | undefined;
     isActive: boolean | undefined;
-    profileThumbnailId: string | undefined;
+    photoPublicId: string | undefined;
 }
 
 export class ApiKeyInfo implements IApiKeyInfo {
@@ -42905,7 +42905,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
-    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
         if (data) {
@@ -42987,7 +42986,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
-            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -43069,7 +43067,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -43116,7 +43113,6 @@ export interface ICreateOrUpdateContactInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
-    litePhoneValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput {
@@ -59876,7 +59872,7 @@ export class ImportInput implements IImportInput {
     fileSize!: number;
     fileContent!: string;
     ignoreInvalidValues!: boolean | undefined;
-    litePhoneValidation!: boolean | undefined;
+    sendWelcomeEmail!: boolean | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -59919,7 +59915,7 @@ export class ImportInput implements IImportInput {
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
-            this.litePhoneValidation = data["litePhoneValidation"];
+            this.sendWelcomeEmail = data["sendWelcomeEmail"];
         }
     }
 
@@ -59962,7 +59958,7 @@ export class ImportInput implements IImportInput {
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
-        data["litePhoneValidation"] = this.litePhoneValidation;
+        data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         return data; 
     }
 }
@@ -59982,7 +59978,7 @@ export interface IImportInput {
     fileSize: number;
     fileContent: string;
     ignoreInvalidValues: boolean | undefined;
-    litePhoneValidation: boolean | undefined;
+    sendWelcomeEmail: boolean | undefined;
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
@@ -60091,7 +60087,6 @@ export class ImportContactInput implements IImportContactInput {
     partnerTypeName!: string | undefined;
     ignoreInvalidValues!: boolean | undefined;
     overrideLists!: boolean | undefined;
-    litePhoneValidation!: boolean | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
     userPassword!: string | undefined;
@@ -60153,7 +60148,6 @@ export class ImportContactInput implements IImportContactInput {
             this.partnerTypeName = data["partnerTypeName"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
-            this.litePhoneValidation = data["litePhoneValidation"];
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
             this.userPassword = data["userPassword"];
@@ -60212,7 +60206,6 @@ export class ImportContactInput implements IImportContactInput {
         data["partnerTypeName"] = this.partnerTypeName;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["overrideLists"] = this.overrideLists;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
         data["userPassword"] = this.userPassword;
@@ -60256,7 +60249,6 @@ export interface IImportContactInput {
     partnerTypeName: string | undefined;
     ignoreInvalidValues: boolean | undefined;
     overrideLists: boolean | undefined;
-    litePhoneValidation: boolean | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
     userPassword: string | undefined;
@@ -62437,7 +62429,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
-    litePhoneValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
@@ -62517,7 +62508,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
-            this.litePhoneValidation = data["litePhoneValidation"];
         }
     }
 
@@ -62597,7 +62587,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
-        data["litePhoneValidation"] = this.litePhoneValidation;
         return data; 
     }
 }
@@ -62642,7 +62631,6 @@ export interface ICreateOrUpdateLeadInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
-    litePhoneValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
