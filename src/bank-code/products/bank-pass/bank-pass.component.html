@@ -129,14 +129,14 @@
                                 </div>
                             </div>
                             <dxi-column dataField="Id" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="250"></dxi-column>
+                            <dxi-column dataField="Name" [caption]="ls.l('Name')" [width]="230"></dxi-column>
                             <dxi-column dataField="BankCode" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"
                                         [width]="110"></dxi-column>
                             <dxi-column dataField="Email" [caption]="ls.l('Email')"></dxi-column>
                             <dxi-column dataField="Phone" [caption]="ls.l('Phone')"
                                         cellTemplate="phoneCell" cssClass="tabular" [width]="160"></dxi-column>
                             <dxi-column dataField="CountryId" [caption]="ls.l('State')"
-                                        cellTemplate="location" [width]="160"></dxi-column>
+                                        cellTemplate="location" [width]="150"></dxi-column>
                             <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
