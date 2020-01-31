@@ -48,7 +48,7 @@ import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/pre
 import { CacheService } from '@node_modules/ng2-cache-service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';

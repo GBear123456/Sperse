@@ -2,7 +2,7 @@
 import { Component, Input } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { filter, map, withLatestFrom } from 'rxjs/operators';
 import lowerFirst from 'lodash/lowerFirst';

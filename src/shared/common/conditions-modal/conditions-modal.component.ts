@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, OnInit, Inject, ElementRef, ViewChi
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, from } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import printJS from 'print-js';

@@ -2,7 +2,7 @@
 import { Component, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';

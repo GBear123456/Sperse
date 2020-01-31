@@ -5,7 +5,7 @@ import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppService } from '@app/app.service';

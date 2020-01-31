@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { ActionsSubject, Store, select } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
 import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { AppStore, TagsStoreActions, TagsStoreSelectors } from '@app/store';
@@ -15,6 +16,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagContactsInput } from '@shared/service-proxies/service-proxies';
+import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permission-checker.service';
 
 @Component({
   selector: 'crm-tags-list',
@@ -22,7 +27,7 @@ import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagConta
   styleUrls: ['./tags-list.component.less'],
   providers: [ ContactTagsServiceProxy ]
 })
-export class TagsListComponent extends AppComponentBase implements OnInit {
+export class TagsListComponent implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: number[];
     @Input() targetSelector = '[aria-label="Tags"]';
@@ -49,15 +54,16 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     tooltipVisible = false;
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
-        private _filterService: FiltersService,
-        private _tagsService: ContactTagsServiceProxy,
+        private filterService: FiltersService,
+        private tagsService: ContactTagsServiceProxy,
         private store$: Store<AppStore.State>,
-        private actions$: ActionsSubject
-    ) {
-        super(injector);
-    }
+        private actions$: ActionsSubject,
+        private messageService: MessageService,
+        private notifyService: NotifyService,
+        private permissionChecker: PermissionCheckerService,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService
+    ) {}
 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible) {
@@ -72,8 +78,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
-                    this.message.confirm(
-                        this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation',
+                    this.messageService.confirm(
+                        this.ls.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation',
                             this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
@@ -95,19 +101,19 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         let tags = this.selectedItems;
         if (this.bulkUpdateMode) {
             if (isRemove)
-                this._tagsService.untagContacts(UntagContactsInput.fromJS({
+                this.tagsService.untagContacts(UntagContactsInput.fromJS({
                     contactIds: contactIds,
                     tagIds: this.selectedTags
                 })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('TagsUnassigned'));
+                })).subscribe(() => {
+                    this.notifyService.success(this.ls.l('TagsUnassigned'));
                 });
             else {
                 this.store$.dispatch(new TagsStoreActions.AddTag({
                     contactIds: contactIds,
                     tags: tags,
-                    successMessage: this.l('TagsAssigned'),
+                    successMessage: this.ls.l('TagsAssigned'),
                     serviceMethodName: 'tagContacts'
                 }));
 
@@ -121,7 +127,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             this.store$.dispatch(new TagsStoreActions.AddTag({
                 contactIds: [contactIds[0]],
                 tags: tags,
-                successMessage: this.l('CustomerTagsUpdated'),
+                successMessage: this.ls.l('CustomerTagsUpdated'),
                 serviceMethodName: 'updateContactTags'
             }));
     }
@@ -156,7 +162,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     addActionButton(name, container: HTMLElement, callback) {
         let buttonElement = document.createElement('a');
-        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.innerText = this.ls.l(capitalize(name));
         buttonElement.className = 'dx-link dx-link-' + name;
         buttonElement.addEventListener('click', callback);
         container.appendChild(buttonElement);
@@ -192,7 +198,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                         $event.cellElement.parentElement.classList.add('filtered');
                     }
 
-                    this._filterService.change(this.filterModel);
+                    this.filterService.change(this.filterModel);
                 });
         }
     }
@@ -203,7 +209,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             this.clearFiltersHighlight();
             this.filterModel.items.element.value = [];
         }
-        this._filterService.change(this.filterModel);
+        this.filterService.change(this.filterModel);
     }
 
     onRowRemoving($event) {
@@ -367,8 +373,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManageListsAndTags) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
+        return this.permissionChecker.isGranted(AppPermissions.CRMCustomersManageListsAndTags) &&
+            (!this.bulkUpdateMode || this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates));
     }
 
 }

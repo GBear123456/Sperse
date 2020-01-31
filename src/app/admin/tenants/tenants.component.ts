@@ -3,7 +3,7 @@ import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter, takeUntil, pluck } from 'rxjs/operators';

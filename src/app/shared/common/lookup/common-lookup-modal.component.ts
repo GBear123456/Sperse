@@ -11,7 +11,7 @@ import {
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import extend from 'lodash/extend';
 

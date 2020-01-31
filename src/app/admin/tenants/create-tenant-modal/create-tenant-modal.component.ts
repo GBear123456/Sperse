@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 

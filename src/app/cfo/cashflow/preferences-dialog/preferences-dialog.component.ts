@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 

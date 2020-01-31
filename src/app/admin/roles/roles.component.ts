@@ -2,7 +2,7 @@
 import { Component,  Injector, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import values from 'lodash/values';

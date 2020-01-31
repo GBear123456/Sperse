@@ -4,14 +4,14 @@
             <dx-check-box
                 width="430px"
                 [(value)]="requireInstructionEnabled"
-                [text]="l('SendPaymentByWireTransfer')">
+                [text]="ls.l('SendPaymentByWireTransfer')">
             </dx-check-box>
-            <p>{{l('PleaseSendWireInstructions')}}</p>
+            <p>{{ls.l('PleaseSendWireInstructions')}}</p>
         </div>
     </div>
 </div>
 <payment-options-footer
-    [submitButtonText]="l('RequestWireInstructions')"
+    [submitButtonText]="ls.l('RequestWireInstructions')"
     [submitButtonDisabled]="!requireInstructionEnabled"
     (onSubmit)="submit()">
 </payment-options-footer>

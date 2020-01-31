@@ -13,7 +13,7 @@ import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, Subject, of, merge } from 'rxjs';
 import {
     debounceTime,

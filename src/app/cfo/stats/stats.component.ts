@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup } from 'devextreme/viz/export';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';

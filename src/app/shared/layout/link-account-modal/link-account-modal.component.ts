@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
