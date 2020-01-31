@@ -328,7 +328,7 @@ export class AddressesComponent implements OnInit {
         return [
             address.streetAddress,
             address.city,
-            address.stateId,
+            address.stateName || address.stateId,
             address.zip,
             address.country
         ].join(',');
