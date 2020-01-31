@@ -738,7 +738,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             this.invalidRowKeys[key] = [field];
     }
 
-    checkFieldValid(key, data, field) {
+    checkFieldValid(key, data, field): boolean {
         let value = data[field];
         if (key == 'phone') {
             let isValid = this.phoneNumberService.isPhoneNumberValid(
@@ -752,10 +752,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         else if (key == 'countryName')
             return value.trim().length > 3;
         else if (key == 'countryId')
-            return value.trim().length == 2;
+            return !!_.findWhere(this.countries, {code: value.trim()});
         else if (key == 'stateId')
-            return value.trim().length >= 2 &&
-                value.trim().length <= 3;
+            return value.trim().length >= 2 && value.trim().length <= 3;
         else if (key == 'rating')
             return !isNaN(value) && value >= 1 && value <= 10;
         else
