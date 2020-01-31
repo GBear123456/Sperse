@@ -2,7 +2,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 /** Third party imports */
-import { filter, first } from 'rxjs/operators';
+import { filter, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { GetSetupAccountsLinkOutput, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -34,19 +34,22 @@ export class XeroOauth2LoginComponent implements OnInit {
     }
 
     getSetupAccountLink() {
-        this.syncServiceProxy.getSetupAccountsLink(
-            <any>this.cfoService.instanceType,
-            this.cfoService.instanceId,
-            SyncTypeIds.XeroOAuth2,
-            null,
-            null
+        this.cfoService.statusActive$.pipe(
+            filter(Boolean),
+            first(),
+            switchMap(() => this.syncServiceProxy.getSetupAccountsLink(
+                <any>this.cfoService.instanceType,
+                this.cfoService.instanceId,
+                SyncTypeIds.XeroOAuth2,
+                null,
+                null
+            ))
         ).subscribe((result: GetSetupAccountsLinkOutput) => {
             const setupAccountWindow = window.open(
                 result.setupAccountsLink,
                 '_blank',
                 `location=yes,height=680,width=640,scrollbars=yes,status=yes,left=${(window.innerWidth / 2) - 320},top=${(window.innerHeight / 2) - 340}`
             );
-
             let interval = setInterval(() => {
                 if (setupAccountWindow.closed) {
                     if (!this.cfoService.hasTransactions) {
