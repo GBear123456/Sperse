@@ -34279,7 +34279,7 @@ export class UserInfoDto implements IUserInfoDto {
     id!: number | undefined;
     name!: string | undefined;
     isActive!: boolean | undefined;
-    profileThumbnailId!: string | undefined;
+    photoPublicId!: string | undefined;
 
     constructor(data?: IUserInfoDto) {
         if (data) {
@@ -34295,7 +34295,7 @@ export class UserInfoDto implements IUserInfoDto {
             this.id = data["id"];
             this.name = data["name"];
             this.isActive = data["isActive"];
-            this.profileThumbnailId = data["profileThumbnailId"];
+            this.photoPublicId = data["photoPublicId"];
         }
     }
 
@@ -34311,7 +34311,7 @@ export class UserInfoDto implements IUserInfoDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isActive"] = this.isActive;
-        data["profileThumbnailId"] = this.profileThumbnailId;
+        data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
 }
@@ -34320,7 +34320,7 @@ export interface IUserInfoDto {
     id: number | undefined;
     name: string | undefined;
     isActive: boolean | undefined;
-    profileThumbnailId: string | undefined;
+    photoPublicId: string | undefined;
 }
 
 export class ApiKeyInfo implements IApiKeyInfo {

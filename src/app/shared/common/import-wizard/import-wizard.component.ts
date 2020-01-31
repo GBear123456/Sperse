@@ -83,7 +83,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'revenue',
         'countryName',
         'countryId',
-        'stateId'
+        'stateId',
+        'rating'
     ];
     private similarFieldsIndex: any = {};
     private countries: CountryDto[];
@@ -755,6 +756,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         else if (key == 'stateId')
             return value.trim().length >= 2 &&
                 value.trim().length <= 3;
+        else if (key == 'rating')
+            return !isNaN(value) && value >= 1 && value <= 10;
         else
             return !value || AppConsts.regexPatterns[key].test(value);
     }
@@ -772,7 +775,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     getFieldCountryCode(data, field) {
         let country = this.phoneRelatedCountryFields[field];
         if (country) {
-            if (country.code && data[country.code])
+            if (country.code && data[country.code] && _.findWhere(this.countries, {code: data[country.code]}))
                 return data[country.code];
             if (country.name && data[country.name])
                 return this.getCountryCodeByCountryName(data[country.name]);

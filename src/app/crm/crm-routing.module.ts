@@ -24,7 +24,7 @@ import { AppPermissions } from '@shared/AppPermissions';
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
-                    { path: 'activity', component: ActivityComponent, data: { reuse: true } }
+                    { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } }
                 ]
             }
         ])

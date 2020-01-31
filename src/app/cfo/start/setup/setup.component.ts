@@ -79,17 +79,15 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     onStart(): void {
         this.isDisabled = true;
         this.startLoading(false, this.setupContainerElement);
-        if (this._cfoService.instanceId == null) {
+        this.addAccount();
+        if (this._cfoService.instanceId == null)
             this.instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).pipe(
                 switchMap(() => this._cfoService.instanceChangeProcess()),
                 catchError(() => {
                     this.dialog.closeAll();
                     return of(this.isDisabled = !this.isInstanceAdmin);
                 })
-            ).subscribe(() => this.addAccount());
-        } else {
-            this.addAccount();
-        }
+            ).subscribe();
     }
 
     ngOnDestroy() {
