@@ -38,7 +38,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() showConfirmation = true;
     @Input() updateConfirmationTitle: string;
     @Input() updateConfirmationMessage: string;
-    @Input() hideButtons = false;
+    @Input() hideButtons = true;
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
     @Input() pageLoadMode = 'nextButton';

@@ -6,9 +6,9 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title" [hidden]="!showTitle">{{title}}</span>
-                <!--<div *ngIf="selectedKeys.length" [hidden]="hideButtons">-->
-                <!--<span class="filter-apply" [class.disabled]="!checkPermissions() || !staticList.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
-            </div>-->
+                <div [hidden]="hideButtons">
+                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !staticList.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
+                </div>
             </div>
             <div class="custom-search" *ngIf="customSearchEnabled">
                 <div class="dx-field">
