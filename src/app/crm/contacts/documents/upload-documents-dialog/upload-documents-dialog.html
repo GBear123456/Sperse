@@ -2,13 +2,15 @@
 <mat-dialog-content>
     <div class="drop-down" *ngIf="!totalCount">
         <ngx-file-drop (onFileDrop)="fileDropped($event)">
-            <img src="./assets/common/icons/upload-file.svg">
-            <p>{{ls.l('DragAndDrop')}}</p>
-            <p style="color: #677380;">{{ls.l('or')}}</p>
-            <p class="alter-text">
-                <input id="custom-input" type="file" (change)="fileChangeListener($event)" multiple>
-                <a href="javascript:void(0);">{{ls.l('SelectFileFrom')}}</a>
-            </p>
+            <ng-template ngx-file-drop-content-tmp>
+                <img src="./assets/common/icons/upload-file.svg">
+                <p>{{ls.l('DragAndDrop')}}</p>
+                <p style="color: #677380;">{{ls.l('or')}}</p>
+                <p class="alter-text">
+                    <input id="custom-input" type="file" (change)="fileChangeListener($event)" multiple>
+                    <a href="javascript:void(0);">{{ls.l('SelectFileFrom')}}</a>
+                </p>
+            </ng-template>
         </ngx-file-drop>
     </div>
     <div class="uploading" *ngIf="totalCount > 0">

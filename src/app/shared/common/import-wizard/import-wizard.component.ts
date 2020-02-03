@@ -37,7 +37,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     public static readonly FieldSeparator = '_';
     public static readonly FieldLocalizationPrefix = 'Import';
 
-    @ViewChild(MatHorizontalStepper, { static: true }) stepper: MatHorizontalStepper;
+    @ViewChild(MatHorizontalStepper, { static: false }) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid', { static: true }) mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid', { static: true }) reviewGrid: DxDataGridComponent;
     @ViewChild(DxProgressBarComponent, { static: true }) reviewProgress: DxProgressBarComponent;
@@ -464,8 +464,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         reader.readAsText(file);
     }
 
-    fileDropped(event) {
-        this.files = event.files;
+    fileDropped(files: NgxFileDropEntry[]) {
+        this.files = files;
         if (this.files.length) {
             let file = this.files[0];
 
@@ -574,11 +574,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return !index || !record[fieldIndex];
         });
         return this.fileData.data[notEmptyIndex][fieldIndex];
-    }
-
-    fileSelected($event) {
-        if ($event.target.files.length)
-            this.fileDropped({ files: $event.target.files });
     }
 
     downloadFromURL() {

@@ -1,9 +1,9 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FileSystemFileEntry } from 'ngx-file-drop';
+import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -26,7 +26,7 @@ export class UploadDocumentsDialogComponent implements OnInit, AfterViewInit {
     uploadedCount = 0;
     totalCount    = 0;
 
-    constructor(injector: Injector,
+    constructor(
         private clientService: ContactsService,
         private documentService: DocumentServiceProxy,
         private elementRef: ElementRef,
@@ -71,12 +71,12 @@ export class UploadDocumentsDialogComponent implements OnInit, AfterViewInit {
         this.uploadFiles($event.target.files);
     }
 
-    fileDropped($event) {
+    fileDropped(dropedFiles: NgxFileDropEntry[]) {
         let files = [];
-        $event.files.forEach((item) => {
+        dropedFiles.forEach((item) => {
             (item.fileEntry as FileSystemFileEntry).file((file: File) => {
                 files.push(file);
-                if ($event.files.length == files.length)
+                if (dropedFiles.length == files.length)
                     this.uploadFiles(files);
             });
         });

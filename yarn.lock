@@ -3560,7 +3560,7 @@ devexpress-gantt@0.0.27:
   version "0.0.27"
   resolved "https://registry.yarnpkg.com/devexpress-gantt/-/devexpress-gantt-0.0.27.tgz#30e945cdd927603f39c2460f55b19b57fc16c72e"
 
-devextreme@^19.2.6:
+devextreme@^19.2.5:
   version "19.2.6"
   resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-19.2.6.tgz#c8f4752d407dc05441da4e5772c5556db895f806"
   dependencies:

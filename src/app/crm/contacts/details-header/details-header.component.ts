@@ -60,7 +60,7 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
     providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
-    @ViewChild(DxContextMenuComponent, { static: true }) addContextComponent: DxContextMenuComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) addContextComponent: DxContextMenuComponent;
 
     @Input()
     public set data(data: ContactInfoDto) {

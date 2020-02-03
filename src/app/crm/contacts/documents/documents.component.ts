@@ -46,7 +46,6 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './documents.component.html',
