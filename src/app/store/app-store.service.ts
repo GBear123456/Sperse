@@ -1,4 +1,11 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import { filter } from 'rxjs/operators';
+
+/** Application imports */
 import {
     ContactAssignedUsersStoreActions,
     ContactAssignedUsersStoreSelectors,
@@ -9,10 +16,8 @@ import {
     TagsStoreActions,
     OrganizationTypeStoreActions
 } from '@app/store/index';
-import { Store, select } from '@ngrx/store';
 import { AppStore } from './index';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
-import { filter } from 'rxjs/operators';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -38,12 +43,26 @@ export class AppStoreService {
     }
 
     loadUserDictionaries() {
-        /** @todo check permissions */
-        this.store$.dispatch(new PartnerTypesStoreActions.LoadRequestAction(false));
-        this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
-        this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
-        this.store$.dispatch(new TagsStoreActions.LoadRequestAction(false));
-        this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
-        this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
+        const isAllowed: boolean = (
+            this.permission.isGranted(AppPermissions.CRM)
+            || this.permission.isGranted(AppPermissions.Administration)
+        )
+        && (
+            this.permission.isGranted(AppPermissions.CRMCustomers)
+            || this.permission.isGranted(AppPermissions.CRMPartners)
+            || this.permission.isGranted(AppPermissions.CRMInvestors)
+            || this.permission.isGranted(AppPermissions.CRMVendors)
+            || this.permission.isGranted(AppPermissions.CRMEmployees)
+            || this.permission.isGranted(AppPermissions.AdministrationUsers)
+        );
+
+        if (isAllowed) {
+            this.store$.dispatch(new PartnerTypesStoreActions.LoadRequestAction(false));
+            this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
+            this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
+            this.store$.dispatch(new TagsStoreActions.LoadRequestAction(false));
+            this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
+            this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
+        }
     }
 }

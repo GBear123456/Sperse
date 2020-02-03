@@ -142,7 +142,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         private appStoreService: AppStoreService,
         private customerService: CustomerServiceProxy,
         private itemDetailsService: ItemDetailsService,
-        private contactServiceProxy: ContactServiceProxy,
         public contactsService: ContactsService
     ) {
         super(injector);

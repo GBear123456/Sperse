@@ -6,7 +6,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, map, startWith, withLatestFrom, finalize, exhaustMap, mergeMap } from 'rxjs/operators';
+import { catchError, map, withLatestFrom, finalize, exhaustMap, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -16,28 +16,29 @@ import {
 import * as tagsActions from './actions';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
-import { AppConsts } from '@shared/AppConsts';
 import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class TagsStoreEffects {
-    constructor(private _tagsService: ContactTagsServiceProxy,
-                private _dictionaryService: DictionaryServiceProxy,
-                private actions$: Actions,
-                private store$: Store<State>,
-                private notifyService: NotifyService) {}
+    constructor(
+        private tagsService: ContactTagsServiceProxy,
+        private dictionaryService: DictionaryServiceProxy,
+        private actions$: Actions,
+        private store$: Store<State>,
+        private notifyService: NotifyService
+    ) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<tagsActions.LoadRequestAction>(tagsActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
-        exhaustMap(([action, loadedTime]) => {
+        exhaustMap(([, loadedTime]) => {
 
             if (StoreHelper.dataLoadingIsNotNeeded(loadedTime)) {
                 return empty();
             }
 
-            return this._dictionaryService.getTags()
+            return this.dictionaryService.getTags()
                 .pipe(
                     map((tags: ContactTagInfoDto[]) => {
                         return new tagsActions.LoadSuccessAction(tags);
@@ -56,12 +57,12 @@ export class TagsStoreEffects {
         mergeMap(payload => {
             let request: Observable<any>;
             if (payload.serviceMethodName === 'tagContacts') {
-                request = this._tagsService[payload.serviceMethodName ](TagContactsInput.fromJS({
+                request = this.tagsService[payload.serviceMethodName ](TagContactsInput.fromJS({
                              contactIds: payload.contactIds,
                              tags: payload.tags
                           }));
             } else if (payload.serviceMethodName === 'updateContactTags') {
-                request = this._tagsService.updateContactTags(UpdateContactTagsInput.fromJS({
+                request = this.tagsService.updateContactTags(UpdateContactTagsInput.fromJS({
                              contactId: payload.contactIds[0],
                              tags: payload.tags
                           }));
@@ -87,7 +88,7 @@ export class TagsStoreEffects {
         ofType<tagsActions.RenameTag>(tagsActions.ActionTypes.RENAME_TAG),
         map(action => action.payload),
         mergeMap(payload => {
-            return this._tagsService.rename(UpdateContactTagInput.fromJS({
+            return this.tagsService.rename(UpdateContactTagInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(
@@ -110,7 +111,7 @@ export class TagsStoreEffects {
         ofType<tagsActions.RemoveTag>(tagsActions.ActionTypes.REMOVE_TAG),
         map(action => action.payload),
         mergeMap(payload => {
-            return this._tagsService.delete(payload.id, payload.moveToTagId, payload.deleteAllReferences).pipe(
+            return this.tagsService.delete(payload.id, payload.moveToTagId, payload.deleteAllReferences).pipe(
                 finalize(() => {
                     /** Reload data from server */
                     this.store$.dispatch(new tagsActions.LoadRequestAction(true));
