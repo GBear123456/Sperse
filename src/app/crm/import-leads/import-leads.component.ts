@@ -264,7 +264,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     sendWelcomeEmail = false;
     emailInvitation = false;
     isUserSelected = true;
-    isRatingSelected = true;
     isListsSelected = false;
     isTagsSelected = false;
     isStarSelected = false;
@@ -272,7 +271,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     selectedClientKeys: any = [];
     selectedStageId: number;
     selectedPartnerTypeName: string;
-    defaultRating = 5;
+    ratingValue;
     stages = [];
     partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
@@ -559,7 +558,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
-            ratingId: this.ratingComponent.ratingValue || this.defaultRating,
+            ratingId: this.ratingValue,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
             partnerTypeName: this.importType === ImportTypeInput.Partner
@@ -756,8 +755,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     onRatingChanged(event) {
-        if (this.isRatingSelected = !!event.value)
-            this.defaultRating = event.value;
+        this.ratingValue = event.value;
         this.initToolbarConfig();
     }
 
@@ -847,7 +845,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         action: () => this.ratingComponent.toggle(),
                         disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         attr: {
-                            'filter-selected': this.isRatingSelected
+                            'filter-selected': !!this.ratingValue
                         }
                     },
                     {
@@ -904,7 +902,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();
-        this.ratingComponent.ratingValue = this.defaultRating;
+        this.ratingValue = undefined;
         this.appService.updateToolbar(null);
     }
 
