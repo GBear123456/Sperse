@@ -28,8 +28,8 @@ import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/countr
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SMSDialogComponent {
-    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
-    @ViewChild(CountryPhoneNumberComponent) countryPhoneNumber: CountryPhoneNumberComponent;
+    @ViewChild(DxValidationGroupComponent, { static: true }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(CountryPhoneNumberComponent, { static: true }) countryPhoneNumber: CountryPhoneNumberComponent;
     phoneNumber: string;
     phones: string[];
     smsText = '';

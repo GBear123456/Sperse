@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy, UpdateOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 export interface IOrganizationUnitOnEdit {
     id?: number;
@@ -16,8 +17,8 @@ export interface IOrganizationUnitOnEdit {
 })
 export class CreateOrEditUnitModalComponent extends AppComponentBase {
 
-    @ViewChild('createOrEditModal') modal: ModalDirective;
-    @ViewChild('organizationUnitDisplayName') organizationUnitDisplayNameInput: ElementRef;
+    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
+    @ViewChild('organizationUnitDisplayName', { static: true }) organizationUnitDisplayNameInput: ElementRef;
 
     @Output() unitCreated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
     @Output() unitUpdated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();

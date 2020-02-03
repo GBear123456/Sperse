@@ -17,6 +17,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     id: number;
@@ -36,8 +37,8 @@ export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
 export class OrganizationTreeComponent implements AfterViewInit {
 
     @Output() ouSelected = new EventEmitter<IBasicOrganizationUnitInfo>();
-    @ViewChild('tree') tree: ElementRef;
-    @ViewChild('createOrEditOrganizationUnitModal') createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
+    @ViewChild('tree', { static: true }) tree: ElementRef;
+    @ViewChild('createOrEditOrganizationUnitModal', { static: true }) createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
 
     private _$tree: JQuery;
     private _updatingNode: any;

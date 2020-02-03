@@ -17,6 +17,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { CfoIntroComponent } from '@app/cfo/shared/cfo-intro/cfo-intro.component';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-dashboard-host]'
@@ -32,7 +33,7 @@ export class AdDashboardHostDirective {
     animations: [appModuleAnimation()]
 })
 export class StartComponent extends CFOComponentBase implements AfterViewInit, OnDestroy, OnInit {
-    @ViewChild(AdDashboardHostDirective) adHostDirective: AdDashboardHostDirective;
+    @ViewChild(AdDashboardHostDirective, { static: true }) adHostDirective: AdDashboardHostDirective;
     private hostComponent: any;
     private hostClass: any = this._cfoService.hasStaticInstance || this.instanceId
         ? PortalDashboardComponent

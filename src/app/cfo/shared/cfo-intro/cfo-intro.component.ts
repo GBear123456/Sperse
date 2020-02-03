@@ -15,6 +15,7 @@ import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-user
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-cfo-intro',
@@ -28,8 +29,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
-    @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
-    @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
+    @ViewChild(QuestionnaireComponent, { static: true }) questionnaire: QuestionnaireComponent;
+    @ViewChild(ImportUsersStepComponent, { static: true }) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CfoIntroComponent, any>;
     readonly identifier = 'CFO-Instance-Setup';
     readonly moduleType = ModuleType.CFO;

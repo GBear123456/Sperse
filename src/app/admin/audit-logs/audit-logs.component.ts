@@ -28,6 +28,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FiltersService } from '@shared/filters/filters.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -36,7 +37,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
     animations: [appModuleAnimation()]
 })
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private filtersValues = {
         date: {

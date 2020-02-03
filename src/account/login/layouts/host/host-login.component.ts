@@ -17,6 +17,7 @@ import { ExternalLoginProvider, LoginService } from '../../login.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../auto-login/auto-login.component';
 
 @Component({
     templateUrl: './host-login.component.html',
@@ -26,7 +27,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [accountModuleAnimation()]
 })
 export class HostLoginComponent implements OnInit {
-    @ViewChild('loginForm') loginForm;
+    @ViewChild('loginForm', { static: true }) loginForm;
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;

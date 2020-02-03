@@ -9,8 +9,8 @@ import { finalize } from 'rxjs/operators';
     templateUrl: './sms-verification-modal.component.html'
 })
 export class SmsVerificationModalComponent extends AppComponentBase {
-    @ViewChild('nameInput') nameInput: ElementRef;
-    @ViewChild('smsVerificationModal') modal: ModalDirective;
+    @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
+    @ViewChild('smsVerificationModal', { static: true }) modal: ModalDirective;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

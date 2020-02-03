@@ -19,6 +19,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'editTextModal',
@@ -26,7 +27,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditTextModalComponent {
-    @ViewChild('targetValueInput') targetValueInput: ElementRef;
+    @ViewChild('targetValueInput', { static: true }) targetValueInput: ElementRef;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

@@ -51,6 +51,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'details-header',
@@ -59,7 +60,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
     providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
-    @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
+    @ViewChild(DxContextMenuComponent, { static: true }) addContextComponent: DxContextMenuComponent;
 
     @Input()
     public set data(data: ContactInfoDto) {

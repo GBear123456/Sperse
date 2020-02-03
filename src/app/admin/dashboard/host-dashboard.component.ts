@@ -30,6 +30,7 @@ import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -47,7 +48,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HostDashboardComponent implements OnInit {
-    @ViewChild('DashboardDateRangePicker') dateRangePickerElement: ElementRef;
+    @ViewChild('DashboardDateRangePicker', { static: true }) dateRangePickerElement: ElementRef;
     selectedDateRange: BehaviorSubject<CalendarValuesModel>;
     selectedDateRange$: Observable<CalendarValuesModel>;
     calendarOptions = { allowFutureDates: true };

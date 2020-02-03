@@ -11,6 +11,7 @@ import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-toolbar',
@@ -19,7 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolBarComponent implements OnDestroy {
-    @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
+    @ViewChild(DxToolbarComponent, { static: true }) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     @Input() compact = false;
     private _config: ToolbarGroupModel[];

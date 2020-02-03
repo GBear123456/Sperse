@@ -20,13 +20,14 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './notes.component.html',
     styleUrls: ['./notes.component.less']
 })
 export class NotesComponent extends AppComponentBase implements OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     public data: {
         contactInfo: ContactInfoDto

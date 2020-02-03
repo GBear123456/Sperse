@@ -4,6 +4,7 @@ import { TenantSslCertificateServiceProxy, AddTenantSslCertificateInput } from '
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxFileUploaderComponent } from 'devextreme-angular/ui/file-uploader';
 import { finalize } from 'rxjs/operators';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'uploadSSLCertificateModal',
@@ -12,8 +13,8 @@ import { finalize } from 'rxjs/operators';
     providers: [ TenantSslCertificateServiceProxy ]
 })
 export class UploadSSLCertificateModalComponent extends AppComponentBase {
-    @ViewChild('createOrEditModal') modal: ModalDirective;
-    @ViewChild('uploader') uploader: DxFileUploaderComponent;
+    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
+    @ViewChild('uploader', { static: true }) uploader: DxFileUploaderComponent;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

@@ -22,6 +22,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { ClassificationServiceProxy, ApplyToTransactionsOption, InstanceType } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -30,7 +31,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     providers: [ ClassificationServiceProxy ]
 })
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent, { static: true }) treeList: DxTreeListComponent;
 
     private lastRemovedItemID: number;
     private rootComponent: any;

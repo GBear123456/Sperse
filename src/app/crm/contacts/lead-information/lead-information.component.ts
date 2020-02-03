@@ -32,6 +32,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'lead-information',
@@ -40,8 +41,8 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService, CurrencyPipe ]
 })
 export class LeadInformationComponent implements OnInit, OnDestroy {
-    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
-    @ViewChild('loaderWrapper') loaderWrapper: ElementRef;
+    @ViewChild(SourceContactListComponent, { static: true }) sourceComponent: SourceContactListComponent;
+    @ViewChild('loaderWrapper', { static: true }) loaderWrapper: ElementRef;
     data: {
         contactInfo: ContactInfoDto,
         leadInfo: LeadInfoDto

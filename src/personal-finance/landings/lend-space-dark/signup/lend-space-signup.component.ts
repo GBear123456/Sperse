@@ -24,8 +24,8 @@ import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceSignupComponent extends AppComponentBase {
-    @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
-    @ViewChild('agreeToRecieveCallsCheckBox') agreeToRecieveCallsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeWithTermsCheckBox', { static: true }) agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToRecieveCallsCheckBox', { static: true }) agreeToRecieveCallsCheckBox: DxCheckBoxComponent;
 
     patterns = {
         namePattern: AppConsts.regexPatterns.name,

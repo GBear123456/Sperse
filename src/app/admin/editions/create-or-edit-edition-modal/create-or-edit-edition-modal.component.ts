@@ -32,6 +32,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'createOrEditEditionModal',
@@ -43,11 +44,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
-    @ViewChild('editionNameInput') editionNameInput: ElementRef;
-    @ViewChild('monthlyPriceInput') monthlyPriceInput: DxNumberBoxComponent;
-    @ViewChild('annualPriceInput') annualPriceInput: DxNumberBoxComponent;
+    @ViewChild('editionNameInput', { static: true }) editionNameInput: ElementRef;
+    @ViewChild('monthlyPriceInput', { static: true }) monthlyPriceInput: DxNumberBoxComponent;
+    @ViewChild('annualPriceInput', { static: true }) annualPriceInput: DxNumberBoxComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
+    @ViewChild(FeatureTreeComponent, { static: true }) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;

@@ -17,6 +17,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'permission-tree',
@@ -24,7 +25,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./permission-tree.component.less']
 })
 export class PermissionTreeComponent implements OnInit, OnDestroy {
-    @ViewChild(DxTreeViewComponent) permissionsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent, { static: true }) permissionsTree: DxTreeViewComponent;
 
     public data: any;
     public permissionsDataSource: DataSource;

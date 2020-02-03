@@ -27,10 +27,10 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     providers: [ DatePipe ]
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('offerStatsGrid') offerStatsGrid: DxDataGridComponent;
-    @ViewChild('visitorsGrid') visitorsGrid: DxDataGridComponent;
-    @ViewChild(SetupStepsComponent) setupStepsComponent: SetupStepsComponent;
-    @ViewChild('rightSection') rightSection: ElementRef;
+    @ViewChild('offerStatsGrid', { static: true }) offerStatsGrid: DxDataGridComponent;
+    @ViewChild('visitorsGrid', { static: true }) visitorsGrid: DxDataGridComponent;
+    @ViewChild(SetupStepsComponent, { static: true }) setupStepsComponent: SetupStepsComponent;
+    @ViewChild('rightSection', { static: true }) rightSection: ElementRef;
 
     private rootComponent: any;
     private _refresh: Subject<null> = new Subject<null>();

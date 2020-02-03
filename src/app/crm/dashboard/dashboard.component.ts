@@ -37,6 +37,7 @@ import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -46,10 +47,10 @@ import { AppPermissions } from '@shared/AppPermissions';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
-    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
-    @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
+    @ViewChild(ClientsByRegionComponent, { static: true }) clientsByRegion: ClientsByRegionComponent;
+    @ViewChild(RecentClientsComponent, { static: true }) recentClientsComponent: RecentClientsComponent;
+    @ViewChild(TotalsBySourceComponent, { static: true }) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(PeriodComponent, { static: true }) periodComponent: PeriodComponent;
     private rootComponent: any;
     public headlineButtons: HeadlineButton[] = [
         {

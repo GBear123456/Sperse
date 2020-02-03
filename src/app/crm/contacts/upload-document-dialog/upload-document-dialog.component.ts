@@ -6,6 +6,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentTypesListComponent } from '../document-types-list/document-types-list.component';
 import { DocumentTypeServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'upload-document-dialog',
@@ -14,7 +15,7 @@ import { DocumentTypeServiceProxy } from '@shared/service-proxies/service-proxie
   providers: [DocumentTypeServiceProxy]
 })
 export class UploadDocumentDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    @ViewChild(DocumentTypesListComponent) documentTypesListComponent: DocumentTypesListComponent;
+    @ViewChild(DocumentTypesListComponent, { static: true }) documentTypesListComponent: DocumentTypesListComponent;
 
     public documentTypes = [];
     public file: File;

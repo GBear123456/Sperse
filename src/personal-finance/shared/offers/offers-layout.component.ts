@@ -101,10 +101,10 @@ enum CreditCardCategory {
     providers: [ CurrencyPipe, NumberAbbrPipe ]
 })
 export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('offersList') offersListRef: ElementRef;
-    @ViewChild('filtersSideBar') filtersSideBar: ElementRef;
-    @ViewChild('sortingSelect') sortingSelect: MatSelect;
-    @ViewChild('filterScroll') filterScroll: DxScrollViewComponent;
+    @ViewChild('offersList', { static: true }) offersListRef: ElementRef;
+    @ViewChild('filtersSideBar', { static: true }) filtersSideBar: ElementRef;
+    @ViewChild('sortingSelect', { static: true }) sortingSelect: MatSelect;
+    @ViewChild('filterScroll', { static: true }) filterScroll: DxScrollViewComponent;
     offers$: Observable<any>;
     displayedOffers$: Observable<any>;
 

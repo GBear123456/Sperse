@@ -18,6 +18,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'system-settings',
@@ -28,10 +29,10 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
 export class SystemSettingsComponent implements OnInit {
-    @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
-    @ViewChild('addOrEditSSLBindingModal') addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
-    @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
-    @ViewChild('uploadSSLCertificateModal') uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
+    @ViewChild('customDomainsGrid', { static: true }) customDomainsGrid: DxDataGridComponent;
+    @ViewChild('addOrEditSSLBindingModal', { static: true }) addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
+    @ViewChild('sslGrid', { static: true }) sslGrid: DxDataGridComponent;
+    @ViewChild('uploadSSLCertificateModal', { static: true }) uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
     public sslGridDataSource: any;
     public sslBindingsDataSource: any;
 

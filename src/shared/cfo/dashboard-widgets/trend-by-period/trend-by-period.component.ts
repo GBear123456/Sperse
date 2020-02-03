@@ -63,6 +63,7 @@ import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-t
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { CacheService } from '@node_modules/ng2-cache-service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -72,7 +73,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+    @ViewChild(DxChartComponent, { static: true }) chartComponent: DxChartComponent;
     bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     trendData$: Observable<Array<BankAccountDailyStatDto>>;
     trendData: Array<BankAccountDailyStatDto>;

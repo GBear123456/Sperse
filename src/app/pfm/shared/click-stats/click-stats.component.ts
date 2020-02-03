@@ -14,6 +14,7 @@ import zipObject from 'lodash/zipObject';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'pfm-click-stats',
@@ -24,7 +25,7 @@ import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClickStatsComponent extends AppComponentBase implements OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     @Output() onStatsClick: EventEmitter<any> = new EventEmitter<any>();
     @Input() refresh$: Observable<null>;

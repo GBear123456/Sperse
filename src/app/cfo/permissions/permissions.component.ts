@@ -24,6 +24,7 @@ import {
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-permissions',
@@ -32,7 +33,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ BankAccountsServiceProxy, SecurityManagementServiceProxy, UserServiceProxy ]
 })
 export class PermissionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     users: UserListDto[] = [];
     showenUsersIds: number[] = [];

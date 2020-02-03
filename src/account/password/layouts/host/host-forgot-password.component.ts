@@ -4,13 +4,14 @@ import { SendPasswordResetCodeInput } from '@shared/service-proxies/service-prox
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AdAutoLoginHostDirective } from '../../../auto-login/auto-login.component';
 
 @Component({
     templateUrl: './host-forgot-password.component.html',
     animations: [accountModuleAnimation()]
 })
 export class HostForgotPasswordComponent extends AppComponentBase {
-    @ViewChild('forgotPassForm') form;
+    @ViewChild('forgotPassForm', { static: true }) form;
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
     saving = false;
     emailRegex = AppConsts.regexPatterns.email;

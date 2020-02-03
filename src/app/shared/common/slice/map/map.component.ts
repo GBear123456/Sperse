@@ -26,6 +26,7 @@ import { ExportService } from '@shared/common/export/export.service';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'slice-map',
@@ -44,7 +45,7 @@ export class MapComponent implements OnChanges {
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
     @Input() contactGroupText = '';
-    @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
+    @ViewChild(DxVectorMapComponent, { static: true }) vectorMapComponent: DxVectorMapComponent;
     @HostBinding('style.height') get componentHeight() {
         return this.height + 'px';
     }

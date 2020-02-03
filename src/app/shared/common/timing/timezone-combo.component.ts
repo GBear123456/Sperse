@@ -15,6 +15,7 @@ import {
     NameValueDto,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'timezone-combo',
@@ -27,7 +28,7 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeZoneComboComponent implements OnInit {
-    @ViewChild('TimeZoneCombobox') timeZoneComboboxElement: ElementRef;
+    @ViewChild('TimeZoneCombobox', { static: true }) timeZoneComboboxElement: ElementRef;
     @Input() selectedTimeZone: string = undefined;
     @Input() defaultTimezoneScope: SettingScopes;
     @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();

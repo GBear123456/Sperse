@@ -3,6 +3,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { DxRadioGroupComponent } from 'devextreme-angular/ui/radio-group';
 
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'delete-and-reassign-dialog',
@@ -10,7 +11,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
   styleUrls: ['delete-and-reassign-dialog.component.less']
 })
 export class DeleteAndReassignDialogComponent extends ConfirmDialogComponent implements OnInit {
-    @ViewChild(DxRadioGroupComponent) itemsList: DxRadioGroupComponent;
+    @ViewChild(DxRadioGroupComponent, { static: true }) itemsList: DxRadioGroupComponent;
 
     constructor(
         injector: Injector

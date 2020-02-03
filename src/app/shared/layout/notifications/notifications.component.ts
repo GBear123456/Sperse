@@ -13,6 +13,7 @@ import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-p
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './notifications.component.html',
@@ -23,8 +24,8 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('dataTable') dataTable: Table;
-    @ViewChild('paginator') paginator: Paginator;
+    @ViewChild('dataTable', { static: true }) dataTable: Table;
+    @ViewChild('paginator', { static: true }) paginator: Paginator;
     notifications: IFormattedUserNotification[] = [];
     unreadNotificationCount = 0;
     readStateFilter = 'ALL';

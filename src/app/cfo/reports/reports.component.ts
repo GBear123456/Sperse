@@ -29,6 +29,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -37,9 +38,9 @@ import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
-    @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent, { static: true }) actionMenu: ActionMenuComponent;
+    @ViewChild(ImageViewerComponent, { static: true }) imageViewer: ImageViewerComponent;
 
     headlineButtons: HeadlineButton[] = [
         {

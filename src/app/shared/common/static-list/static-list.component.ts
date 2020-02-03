@@ -19,9 +19,9 @@ import { AppPermissions } from '@shared/AppPermissions';
   styleUrls: ['./static-list.component.less']
 })
 export class StaticListComponent extends AppComponentBase {
-    @ViewChild('staticList') dxList: DxListComponent;
-    @ViewChild('customSearch') dxSearch: DxTextBoxComponent;
-    @ViewChild(DxTooltipComponent) dxTooltip: DxTooltipComponent;
+    @ViewChild('staticList', { static: true }) dxList: DxListComponent;
+    @ViewChild('customSearch', { static: true }) dxSearch: DxTextBoxComponent;
+    @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();

@@ -14,15 +14,16 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { InstanceServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './instance-users.component.html',
     styleUrls: ['./instance-users.component.less']
 })
 export class InstanceUsersComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
-    @ViewChild('userAssignList') userAssignList: StaticListComponent;
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('userAssignList', { static: true }) userAssignList: StaticListComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     currentUserId = abp.session.userId;
     formatting = AppConsts.formatting;

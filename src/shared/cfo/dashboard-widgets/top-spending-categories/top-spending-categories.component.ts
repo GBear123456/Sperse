@@ -25,6 +25,7 @@ import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/da
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'top-spending-categories',
@@ -33,7 +34,7 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
     providers: [ CurrencyPipe, DashboardServiceProxy, LifecycleSubjectsService ]
 })
 export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent) pieChart: DxPieChartComponent;
+    @ViewChild(DxPieChartComponent, { static: true }) pieChart: DxPieChartComponent;
     @HostBinding('class.fullpage') @Input() fullpage = false;
 
     period$: Observable<DailyStatsPeriodModel> = this.dashboardService.dailyStatsPeriod$;

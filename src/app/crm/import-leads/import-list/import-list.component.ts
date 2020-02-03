@@ -15,6 +15,7 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from '../import-leads.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './import-list.component.html',
@@ -23,7 +24,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     providers: [ FileSizePipe ]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     private rootComponent: any;
     private readonly dataSourceURI = 'Import';

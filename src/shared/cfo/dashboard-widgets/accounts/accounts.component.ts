@@ -30,8 +30,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     providers: [ DashboardServiceProxy, LifecycleSubjectsService ]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
-    @ViewChild('networth') networth: ElementRef;
-    @ViewChild('dailyStats') dailyStats: ElementRef;
+    @ViewChild('networth', { static: true }) networth: ElementRef;
+    @ViewChild('dailyStats', { static: true }) dailyStats: ElementRef;
     @Output() onTotalAccountsMouseEnter: EventEmitter<any> = new EventEmitter();
     accountsData$: Observable<AccountTotals>;
     dailyStatsToggleValues: any[] = [

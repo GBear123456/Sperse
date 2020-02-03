@@ -8,6 +8,7 @@ import * as moment from 'moment-timezone';
 /** Application imports */
 import { SyncDatePickerService } from './sync-date-picker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'sync-date-picker',
@@ -15,7 +16,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
   styleUrls: ['./sync-date-picker.component.less']
 })
 export class SyncDatePickerComponent {
-    @ViewChild(DxDateBoxComponent) dateBox: DxDateBoxComponent;
+    @ViewChild(DxDateBoxComponent, { static: true }) dateBox: DxDateBoxComponent;
     maxDate = moment();
     @HostListener('click') onClick() {
         this.dateBox.instance.open();

@@ -13,6 +13,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, Currency } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -21,7 +22,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
-    @ViewChild(EmailTemplateDialogComponent) modalDialog: EmailTemplateDialogComponent;
+    @ViewChild(EmailTemplateDialogComponent, { static: true }) modalDialog: EmailTemplateDialogComponent;
     settings = new InvoiceSettings();
     currencies = Object.keys(Currency).map(item => {
         return {

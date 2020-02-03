@@ -15,6 +15,7 @@ import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -30,7 +31,7 @@ export class AdHeaderHostDirective {
     providers: [ LifecycleSubjectsService ]
 })
 export class BankCodeHeaderComponent implements OnInit, OnDestroy {
-    @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
+    @ViewChild(AdHeaderHostDirective, { static: true }) adHeaderHost: AdHeaderHostDirective;
 
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;

@@ -36,6 +36,7 @@ import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-loo
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -43,7 +44,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     animations: [ appModuleAnimation() ]
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     private editions: any = [];
     private filters: FilterModel[];

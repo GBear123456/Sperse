@@ -17,6 +17,7 @@ import { LendSpaceForgotPasswordComponent } from './layouts/lend-space/lend-spac
 import { AdvicePeriodForgotPasswordComponent } from './layouts/advice-period/advice-period-forgot-password.component';
 import { BankCodeForgotPasswordComponent } from './layouts/bank-code/bank-code-forgot-password.component';
 import { HostForgotPasswordComponent } from '@root/account/password/layouts/host/host-forgot-password.component';
+import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-forgot-password-host]'
@@ -30,7 +31,7 @@ export class AdForgotPasswordHostDirective {
     animations: [accountModuleAnimation()]
 })
 export class ForgotPasswordComponent extends AppComponentBase implements OnInit {
-    @ViewChild(AdForgotPasswordHostDirective) adForgotPasswordHost: AdForgotPasswordHostDirective;
+    @ViewChild(AdForgotPasswordHostDirective, { static: true }) adForgotPasswordHost: AdForgotPasswordHostDirective;
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
 
     saving = false;

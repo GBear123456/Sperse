@@ -28,6 +28,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'payment-information',
@@ -37,7 +38,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class PaymentInformationComponent implements OnInit {
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
-    @ViewChild('paymentMethodsContainer') paymentMethodsContainer: ElementRef;
+    @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
     warningMessage$: Observable<string>;
     lastPaymentDate: string;
     lastPaymentAmount: number;

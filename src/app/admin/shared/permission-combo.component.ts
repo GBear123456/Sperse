@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FlatPermissionWithLevelDto, PermissionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'permission-combo',
@@ -16,7 +17,7 @@ import { FlatPermissionWithLevelDto, PermissionServiceProxy } from '@shared/serv
 })
 export class PermissionComboComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
-    @ViewChild('PermissionCombobox') permissionComboboxElement: ElementRef;
+    @ViewChild('PermissionCombobox', { static: true }) permissionComboboxElement: ElementRef;
 
     permissions: FlatPermissionWithLevelDto[] = [];
 

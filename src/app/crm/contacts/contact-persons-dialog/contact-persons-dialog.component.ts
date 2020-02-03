@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component, Inject, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'contact-persons-dialog',
@@ -11,8 +9,8 @@ import { finalize } from 'rxjs/operators';
     styleUrls: ['./contact-persons-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactPersonsDialogComponent extends AppComponentBase {
-    @ViewChild(ContactListDialogComponent) contactList: ContactListDialogComponent;
+export class ContactPersonsDialogComponent extends AppComponentBase implements OnInit {
+    @ViewChild(ContactListDialogComponent, { static: true }) contactList: ContactListDialogComponent;
 
     constructor(
         injector: Injector,

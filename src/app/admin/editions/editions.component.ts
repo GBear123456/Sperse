@@ -16,6 +16,7 @@ import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-moda
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -24,7 +25,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     public actionMenuItems: any = [
         {
             text: this.l('Edit'),

@@ -25,6 +25,7 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'clients-by-region',
@@ -34,7 +35,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsByRegionComponent implements OnInit, OnDestroy {
-    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(MapComponent, { static: true }) mapComponent: MapComponent;
     data$: Observable<MapData>;
     pipe: any = new DecimalPipe('en-US');
     palette: string[] = this.layoutService.getMapPalette();

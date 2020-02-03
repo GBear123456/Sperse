@@ -11,6 +11,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { DOCUMENT } from '@angular/common';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'credit-monitoring',
@@ -18,7 +19,7 @@ import { DOCUMENT } from '@angular/common';
     styleUrls: ['./credit-monitoring.component.less']
 })
 export class CreditMonitoringComponent implements OnInit {
-    @ViewChild('content') contentElementRef: ElementRef;
+    @ViewChild('content', { static: true }) contentElementRef: ElementRef;
     offers$: Observable<OfferDto[]>;
     features = [
         {

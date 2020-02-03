@@ -15,6 +15,7 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -24,7 +25,7 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @Input() showSyncAccountButton = false;
-    @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
+    @ViewChild('accountProgressTooltip', { static: true }) accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     @Output() onSyncStarted = new EventEmitter();
     createAccountAvailable: boolean;

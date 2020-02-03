@@ -26,6 +26,7 @@ import {
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -34,7 +35,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     providers: [ CurrencyPipe, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     private readonly dataSourceURI = 'Order';
     private formatting = AppConsts.formatting;
     currency: string;

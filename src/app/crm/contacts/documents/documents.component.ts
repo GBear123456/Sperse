@@ -46,6 +46,7 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -53,11 +54,11 @@ import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.
     providers: [ FileSizePipe, PrinterService ]
 })
 export class DocumentsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
-    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
-    @ViewChild('xmlContainer') xmlContainerElementRef: ElementRef;
-    @ViewChild('documentViewContainer') documentViewContainerElementRef: ElementRef;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(ImageViewerComponent, { static: true }) imageViewer: ImageViewerComponent;
+    @ViewChild(ActionMenuComponent, { static: true }) actionMenu: ActionMenuComponent;
+    @ViewChild('xmlContainer', { static: true }) xmlContainerElementRef: ElementRef;
+    @ViewChild('documentViewContainer', { static: true }) documentViewContainerElementRef: ElementRef;
     private _frameHolderElementRef: HTMLElement;
     @ViewChildren('frameHolder') set frameHolderElements(elements: QueryList<ElementRef>) {
         this._frameHolderElementRef = elements.first && elements.first.nativeElement;

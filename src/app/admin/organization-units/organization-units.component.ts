@@ -4,6 +4,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { OrganizationTreeComponent } from './organization-tree/organization-tree.component';
 import { OrganizationUnitMembersComponent } from './organization-unit-members/organization-unit-members.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './organization-units.component.html',
@@ -11,8 +12,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [appModuleAnimation()]
 })
 export class OrganizationUnitsComponent implements OnInit, OnDestroy {
-    @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
-    @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
+    @ViewChild('ouMembers', { static: true }) ouMembers: OrganizationUnitMembersComponent;
+    @ViewChild('ouTree', { static: true }) ouTree: OrganizationTreeComponent;
 
     constructor(
         public ls: AppLocalizationService,

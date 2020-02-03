@@ -31,6 +31,7 @@ import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog
 import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 class PhoneNumber {
     id: any;
@@ -43,8 +44,8 @@ class PhoneNumber {
     providers: [ PhoneFormatPipe ]
 })
 export class NoteAddDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
-    @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
+    @ViewChild('followUpDateBox', { static: true }) followUpDateBox: DxDateBoxComponent;
+    @ViewChild('currentDateBox', { static: true }) currentDateBox: DxDateBoxComponent;
 
     private slider: any;
     private _contactInfo: ContactInfoDto;

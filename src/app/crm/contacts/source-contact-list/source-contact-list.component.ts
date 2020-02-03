@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'source-contact-list',
@@ -17,7 +18,7 @@ import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
   providers: [ ContactServiceProxy ]
 })
 export class SourceContactListComponent {
-    @ViewChild(StaticListComponent) sourceComponent: StaticListComponent;
+    @ViewChild(StaticListComponent, { static: true }) sourceComponent: StaticListComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onDataLoaded: EventEmitter<any> = new EventEmitter();
     @Input() targetSelector = '#PartnersSource';

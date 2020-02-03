@@ -3,6 +3,7 @@ import { CreditReportServiceProxy, AccountInfoDto, CreditReportDto } from '@shar
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import * as moment from 'moment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-accounts',
@@ -10,7 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent implements AfterViewInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     @Input() creditReport: CreditReportDto;
     selectionChangedRaised: boolean;
     creditReportId: any;

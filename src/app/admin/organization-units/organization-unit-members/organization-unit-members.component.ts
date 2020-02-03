@@ -13,6 +13,7 @@ import { MessageService } from '@abp/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'organization-unit-members',
@@ -23,9 +24,9 @@ export class OrganizationUnitMembersComponent {
     @Output() memberRemoved = new EventEmitter<IUserWithOrganizationUnit>();
     @Output() membersAdded = new EventEmitter<IUsersWithOrganizationUnit>();
 
-    @ViewChild('addMemberModal') addMemberModal: AddMemberModalComponent;
-    @ViewChild('dataTable') dataTable: Table;
-    @ViewChild('paginator') paginator: Paginator;
+    @ViewChild('addMemberModal', { static: true }) addMemberModal: AddMemberModalComponent;
+    @ViewChild('dataTable', { static: true }) dataTable: Table;
+    @ViewChild('paginator', { static: true }) paginator: Paginator;
 
     public permissions = AppPermissions;
     private _organizationUnit: IBasicOrganizationUnitInfo = null;

@@ -6,6 +6,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { finalize } from 'rxjs/operators';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'addOrEditSSLBindingModal',
@@ -15,7 +16,7 @@ import { finalize } from 'rxjs/operators';
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
 export class AddOrEditSSLBindingModal extends AppComponentBase {
-    @ViewChild('createOrEditModal') modal: ModalDirective;
+    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
     @Input() hostTypes: any;
     @Input() orgUnits: any;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();

@@ -18,6 +18,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './languages.component.html',
@@ -25,8 +26,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     animations: [appModuleAnimation()]
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(DxTooltipComponent) tooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxTooltipComponent, { static: true }) tooltip: DxTooltipComponent;
     dataSource: DataSource;
     public actionMenuItems: any;
     public actionRecord: any;

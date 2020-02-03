@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountServiceProxy, IsTenantAvailableInput, IsTenantAvailableOutput } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
+import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Component({
     selector: 'tenantChangeModal',
@@ -11,8 +12,8 @@ import { finalize } from 'rxjs/operators';
 })
 export class TenantChangeModalComponent extends AppComponentBase {
 
-    @ViewChild('tenantChangeModal') modal: ModalDirective;
-    @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
+    @ViewChild('tenantChangeModal', { static: true }) modal: ModalDirective;
+    @ViewChild('tenancyNameInput', { static: true }) tenancyNameInput: ElementRef;
 
     tenancyName = '';
     active = false;

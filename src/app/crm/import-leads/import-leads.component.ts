@@ -34,6 +34,7 @@ import {
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -42,14 +43,14 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
-    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
-    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild(ImportWizardComponent, { static: true }) wizard: ImportWizardComponent;
+    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
+    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
 
     private readonly MAX_REQUEST_SIZE = 55;
 

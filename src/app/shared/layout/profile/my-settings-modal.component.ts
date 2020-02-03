@@ -41,8 +41,8 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
 })
 export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('nameInput') nameInput: ElementRef;
-    @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
+    @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
+    @ViewChild('smsVerificationModal', { static: true }) smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     public isGoogleAuthenticatorEnabled = false;

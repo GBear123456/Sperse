@@ -31,6 +31,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',
@@ -41,9 +42,9 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ DepartmentsServiceProxy, ReportsServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent, { static: true }) treeList: DxTreeListComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
+    @ViewChild('notificationToEmailTextBox', { static: true }) notificationToEmailTextBox: DxTextBoxComponent;
 
     title = this.ls.l('SelectBusinessEntity');
     initButtons: IDialogButton[] = [

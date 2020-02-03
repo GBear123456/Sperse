@@ -15,6 +15,7 @@ import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-gro
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-wizard-centr-modal',
@@ -23,8 +24,8 @@ import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WizardCenterModalComponent {
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
-    @ViewChild('lastValidationGroup') lastValidationGroup: DxValidationGroupComponent;
+    @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
+    @ViewChild('lastValidationGroup', { static: true }) lastValidationGroup: DxValidationGroupComponent;
     dialogRef: MatDialogRef<WizardCenterModalComponent, any>;
 
     constructor(

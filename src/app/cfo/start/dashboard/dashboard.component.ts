@@ -17,6 +17,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { Period } from '@app/shared/common/period/period.enum';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'dashboard',
@@ -25,11 +26,11 @@ import { Period } from '@app/shared/common/period/period.enum';
     animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
-    @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
-    @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
-    @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(AccountsComponent, { static: true }) accountsComponent: AccountsComponent;
+    @ViewChild(CategorizationStatusComponent, { static: true }) categorizationStatusComponent: CategorizationStatusComponent;
+    @ViewChild(TotalsByPeriodComponent, { static: true }) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent, { static: true }) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
     accessAllDepartments = this._cfoService.accessAllDepartments;

@@ -20,6 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'modal-dialog',
@@ -33,7 +34,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     }
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild('titleComponent') titleComponent: DxTextBoxComponent;
+    @ViewChild('titleComponent', { static: true }) titleComponent: DxTextBoxComponent;
 
     @Input() title: string;
     @Input() editTitle = false;

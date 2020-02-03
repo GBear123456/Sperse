@@ -18,6 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LayoutType, MyFinancesServiceProxy } from '../service-proxies/service-proxies';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
+import { AdAutoLoginHostDirective } from '../../account/auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -33,8 +34,8 @@ export class AdHeaderHostDirective {
     providers: [MyFinancesServiceProxy]
 })
 export class PersonalFinanceHeaderComponent {
-    @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
-    @ViewChild(RegisterComponent) registerComponent: RegisterComponent;
+    @ViewChild(AdHeaderHostDirective, { static: true }) adHeaderHost: AdHeaderHostDirective;
+    @ViewChild(RegisterComponent, { static: true }) registerComponent: RegisterComponent;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
     @HostBinding('class.yellow') yellowTheme =
         environment.LENDSPACE_HEADER_THEME == 'yellow';

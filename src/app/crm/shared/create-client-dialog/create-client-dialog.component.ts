@@ -80,14 +80,14 @@ import { StatesService } from '@root/store/states-store/states.service';
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
-    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
+    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
+    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
-    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(SourceContactListComponent, { static: true }) sourceComponent: SourceContactListComponent;
+    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();

@@ -9,6 +9,7 @@ import kebabCase from 'lodash/kebabCase';
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-pfm-intro',
@@ -21,7 +22,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [ appModuleAnimation() ]
 })
 export class PfmIntroComponent {
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
+    @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
     readonly bankNames: string[] = [
         'PNC',
         'Fidelity',

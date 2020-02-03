@@ -4,6 +4,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 
 import DataSource from 'devextreme/data/data_source';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 
 @Component({
@@ -12,7 +13,7 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['key-phrases.component.less']
 })
 export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
-    @ViewChild(DxTreeListComponent) keyPhrasesList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent, { static: true }) keyPhrasesList: DxTreeListComponent;
     @Input() width: string;
     @Input() height: string;
     @Output() filterByKey: EventEmitter<any> = new EventEmitter();

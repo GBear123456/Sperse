@@ -23,6 +23,7 @@ import { ActivityServiceProxy, ActivityType } from '@shared/service-proxies/serv
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -31,8 +32,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     providers: [ ActivityServiceProxy ]
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
-    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(DxSchedulerComponent, { static: true }) schedulerComponent: DxSchedulerComponent;
+    @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
     schedulerHeight$: Observable<number> = this.appService.toolbarIsHidden$.pipe(map((hidden: boolean) => {
         return hidden ? window.innerHeight - 150 : window.innerHeight - 210;
     }));

@@ -43,6 +43,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     'selector': 'app-stats',
@@ -51,9 +52,9 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('linearChart') private linearChart: DxChartComponent;
-    @ViewChild('barChart') private barChart: DxChartComponent;
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('linearChart', { static: true }) private linearChart: DxChartComponent;
+    @ViewChild('barChart', { static: true }) private barChart: DxChartComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(SetupStepComponent, { static: true }) setupStepComponent: SetupStepComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];

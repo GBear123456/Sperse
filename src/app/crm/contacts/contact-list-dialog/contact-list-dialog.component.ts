@@ -16,7 +16,7 @@ export class ContactListDialogComponent {
     manageAllowed = false;
     photoType;
 
-    @ContentChild(TemplateRef)
+    @ContentChild(TemplateRef, { static: true })
     @Input() contactLayoutTemplate: TemplateRef<any>;
 
     constructor(

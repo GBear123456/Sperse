@@ -21,6 +21,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'pfm-offer-visitors',
@@ -28,7 +29,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
     styleUrls: ['./visitors.component.less']
 })
 export class VisitorsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     @Input() dateFrom: moment;
     @Input() dateTo: moment;

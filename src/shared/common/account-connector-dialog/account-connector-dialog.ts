@@ -33,8 +33,8 @@ export class AccountConnectorDialogComponent implements OnInit {
         id: 'account-connector-dialog',
         panelClass: ['account-connector-dialog']
     };
-    @ViewChild(QuovoLoginComponent) quovoLogin: QuovoLoginComponent;
-    @ViewChild(XeroLoginComponent) xeroLogin: XeroLoginComponent;
+    @ViewChild(QuovoLoginComponent, { static: true }) quovoLogin: QuovoLoginComponent;
+    @ViewChild(XeroLoginComponent, { static: true }) xeroLogin: XeroLoginComponent;
     @Output() onComplete: EventEmitter<null> = new EventEmitter<null>();
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;

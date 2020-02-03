@@ -44,13 +44,13 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     providers: [ OfferServiceProxy, OfferManagementServiceProxy ]
 })
 export class OffersComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(DxContextMenuComponent) pullContextComponent: DxContextMenuComponent;
-    @ViewChild('categoriesComponent') categoriesComponent: StaticListComponent;
-    @ViewChild('flagsComponent') flagsComponent: StaticListComponent;
-    @ViewChild('attributesComponent') attributesComponent: StaticListComponent;
-    @ViewChild('statusesComponent') statusesComponent: StaticListComponent;
-    @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxContextMenuComponent, { static: true }) pullContextComponent: DxContextMenuComponent;
+    @ViewChild('categoriesComponent', { static: true }) categoriesComponent: StaticListComponent;
+    @ViewChild('flagsComponent', { static: true }) flagsComponent: StaticListComponent;
+    @ViewChild('attributesComponent', { static: true }) attributesComponent: StaticListComponent;
+    @ViewChild('statusesComponent', { static: true }) statusesComponent: StaticListComponent;
+    @ViewChild(AppRatingComponent, { static: true }) ratingComponent: AppRatingComponent;
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;

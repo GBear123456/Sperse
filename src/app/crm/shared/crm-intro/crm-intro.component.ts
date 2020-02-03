@@ -28,8 +28,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class CrmIntroComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
-    @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
-    @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
+    @ViewChild(QuestionnaireComponent, { static: true }) questionnaire: QuestionnaireComponent;
+    @ViewChild(ImportUsersStepComponent, { static: true }) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     readonly identifier = 'CRM-Setup';
     readonly moduleType = ModuleType.CRM;

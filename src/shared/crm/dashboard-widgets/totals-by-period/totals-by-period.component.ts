@@ -54,6 +54,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { Period } from '@app/shared/common/period/period.enum';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'totals-by-period',
@@ -63,7 +64,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck, OnInit, OnDestroy {
-    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+    @ViewChild(DxChartComponent, { static: true }) chartComponent: DxChartComponent;
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;

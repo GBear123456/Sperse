@@ -27,6 +27,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'createOrEditRoleModal',
@@ -34,8 +35,8 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('roleNameInput') roleNameInput: ElementRef;
-    @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
+    @ViewChild('roleNameInput', { static: true }) roleNameInput: ElementRef;
+    @ViewChild('permissionTree', { static: true }) permissionTree: PermissionTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;

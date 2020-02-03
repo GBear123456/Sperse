@@ -127,6 +127,7 @@ import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -176,10 +177,10 @@ export class CellOptions {
     ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
-    @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
-    @ViewChild(OperationsComponent) operations: OperationsComponent;
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxPivotGridComponent, { static: true }) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) cashFlowGrid: DxDataGridComponent;
+    @ViewChild(OperationsComponent, { static: true }) operations: OperationsComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
     transactionId: any;
     selectedBankAccountsIds;
 

@@ -35,6 +35,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
@@ -49,8 +50,8 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 })
 export class CreateUserDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
-    @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;
+    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild('phoneNumber', { static: true }) phoneNumber: DxTextBoxComponent;
 
     user = new UserEditDto();
     roles: UserRoleDto[];

@@ -40,6 +40,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -53,11 +54,11 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('privacyInput') privacyInput: ElementRef;
-    @ViewChild('tosInput') tosInput: ElementRef;
-    @ViewChild('logoInput') logoInput: ElementRef;
-    @ViewChild('cssInput') cssInput: ElementRef;
-    @ViewChild('faviconInput') faviconInput: ElementRef;
+    @ViewChild('privacyInput', { static: true }) privacyInput: ElementRef;
+    @ViewChild('tosInput', { static: true }) tosInput: ElementRef;
+    @ViewChild('logoInput', { static: true }) logoInput: ElementRef;
+    @ViewChild('cssInput', { static: true }) cssInput: ElementRef;
+    @ViewChild('faviconInput', { static: true }) faviconInput: ElementRef;
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;

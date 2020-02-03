@@ -49,9 +49,9 @@ import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
     providers: [ PipelineService, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
-    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
+    @ViewChild(StaticListComponent, { static: true }) stagesComponent: StaticListComponent;
     items: any;
     showPipeline = true;
     pipelineDataSource: any;

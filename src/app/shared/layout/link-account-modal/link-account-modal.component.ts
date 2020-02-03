@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'linkAccountModal',
@@ -20,8 +21,8 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class LinkAccountModalComponent implements AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('linkAccountForm') linkAccountForm;
-    @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
+    @ViewChild('linkAccountForm', { static: true }) linkAccountForm;
+    @ViewChild('tenancyNameInput', { static: true }) tenancyNameInput: ElementRef;
     linkUser: LinkToUserInput = new LinkToUserInput();
     buttons: IDialogButton[];
 

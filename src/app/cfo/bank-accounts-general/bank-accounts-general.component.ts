@@ -17,6 +17,7 @@ import { SyncAccountServiceProxy, InstanceType } from '@shared/service-proxies/s
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'bank-accounts',
@@ -25,7 +26,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     providers: [ BankAccountsGeneralService, SyncAccountServiceProxy, LifecycleSubjectsService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit {
-    @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) syncComponent: SynchProgressComponent;
 
     headlineConfig: any;
     private rootComponent: any;

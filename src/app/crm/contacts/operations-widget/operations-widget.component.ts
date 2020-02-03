@@ -22,6 +22,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'operations-widget',
@@ -29,15 +30,15 @@ import { CrmService } from '@app/crm/crm.service';
     styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent extends AppComponentBase implements OnChanges {
-    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
-    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    @ViewChild('statusesList') statusComponent: StaticListComponent;
-    @ViewChild(ToolBarComponent) toolbarComponent: ToolBarComponent;
+    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: true }) listsComponent: TagsListComponent;
+    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
+    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
+    @ViewChild('statusesList', { static: true }) statusComponent: StaticListComponent;
+    @ViewChild(ToolBarComponent, { static: true }) toolbarComponent: ToolBarComponent;
 
     /*** @todo add localization service */
 

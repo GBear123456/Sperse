@@ -17,6 +17,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
     UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'email-template-dialog',
@@ -27,7 +28,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 })
 export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent, { static: true }) templateComponent: DxSelectBoxComponent;
 
     ckEditor: any;
     showCC = false;

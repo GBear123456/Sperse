@@ -95,6 +95,7 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -110,16 +111,16 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
-    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent, { static: true }) statusComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent, { static: true }) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(MapComponent, { static: true }) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';

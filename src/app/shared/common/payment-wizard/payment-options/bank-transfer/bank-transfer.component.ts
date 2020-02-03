@@ -12,6 +12,7 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { BankTransferSettingsDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '../../../localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'bank-transfer',
@@ -23,7 +24,7 @@ export class BankTransferComponent implements OnChanges {
     @Input() titleText = this.ls.l('BankTransferTitleText');
     @Input() bankTransferSettings: BankTransferSettingsDto;
     @Output() onSubmit: EventEmitter<null> = new EventEmitter<null>();
-    @ViewChild('bankTransferSettingsContainer') bankTransferSettingsContainer: ElementRef;
+    @ViewChild('bankTransferSettingsContainer', { static: true }) bankTransferSettingsContainer: ElementRef;
 
     requireInstructionEnabled = false;
 

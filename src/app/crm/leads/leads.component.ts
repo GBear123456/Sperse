@@ -98,17 +98,17 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
-    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
-    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent, { static: true }) stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent, { static: true }) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(MapComponent, { static: true }) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private _selectedLeads: any;

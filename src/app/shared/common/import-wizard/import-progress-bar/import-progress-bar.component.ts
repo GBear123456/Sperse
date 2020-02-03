@@ -8,6 +8,7 @@ import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportWizardService } from '../import-wizard.service';
+import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'import-progress-bar',
@@ -15,7 +16,7 @@ import { ImportWizardService } from '../import-wizard.service';
     styleUrls: ['import-progress-bar.component.less']
 })
 export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxProgressBarComponent) progressComponent: DxProgressBarComponent;
+    @ViewChild(DxProgressBarComponent, { static: true }) progressComponent: DxProgressBarComponent;
     @Input() summaryTooltip = true;
     importStatuses = ImportStatus;
     progress = 100;

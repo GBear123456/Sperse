@@ -33,6 +33,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ModulesEditionsSelectComponent } from '../modules-edtions-select.component.ts/modules-editions-select.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
@@ -46,9 +47,9 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTenantModalComponent implements OnInit {
-    @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
+    @ViewChild('tenancyNameInput', { static: true }) tenancyNameInput: ElementRef;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(ModulesEditionsSelectComponent, { static: true }) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     setRandomPassword = true;

@@ -37,6 +37,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available-bank-codes.interface';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'bank-pass',
@@ -46,8 +47,8 @@ import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(MatTabGroup, { static: true }) matTabGroup: MatTabGroup;
     dataIsLoading = true;
     gridInitialized = false;
     totalCount: number;

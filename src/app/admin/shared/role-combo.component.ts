@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { RoleListDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'role-combo',
@@ -17,7 +18,7 @@ import { RoleListDto, RoleServiceProxy } from '@shared/service-proxies/service-p
 })
 export class RoleComboComponent extends AppComponentBase implements OnInit {
 
-    @ViewChild('RoleCombobox') roleComboboxElement: ElementRef;
+    @ViewChild('RoleCombobox', { static: true }) roleComboboxElement: ElementRef;
 
     roles: RoleListDto[] = [];
 

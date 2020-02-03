@@ -52,6 +52,7 @@ import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-va
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -59,8 +60,8 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
     providers: [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, LifecycleSubjectsService ]
 })
 export class StatementsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
 
     private bankAccountCount = '';
     private filters: FilterModel[] = [];

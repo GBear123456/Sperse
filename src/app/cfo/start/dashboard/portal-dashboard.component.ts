@@ -17,6 +17,7 @@ import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.servic
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/top-spending-categories/top-spending-categories.component';
 import { Period } from '@app/shared/common/period/period.enum';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'portal-dashboard',
@@ -25,11 +26,11 @@ import { Period } from '@app/shared/common/period/period.enum';
     animations: [appModuleAnimation()]
 })
 export class PortalDashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
-    @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
-    @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
-    @ViewChild(TopSpendingCategoriesComponent) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(AccountsComponent, { static: true }) accountsComponent: AccountsComponent;
+    @ViewChild(TotalsByPeriodComponent, { static: true }) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent, { static: true }) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(TopSpendingCategoriesComponent, { static: true }) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
     linksTo: any = [

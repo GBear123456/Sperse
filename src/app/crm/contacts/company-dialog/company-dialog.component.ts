@@ -31,6 +31,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'company-dialog',
@@ -41,8 +42,8 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class CompanyDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
-    @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
+    @ViewChild(DxDateBoxComponent, { static: true }) calendarComponent: DxDateBoxComponent;
+    @ViewChild(DxSelectBoxComponent, { static: true }) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;
     countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewCh
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'expand-button',
@@ -10,7 +11,7 @@ import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExpandButtonComponent {
-    @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent, { static: true }) selectBox: DxSelectBoxComponent;
     @Input() items: IExpandItem[];
     @Output() onExpand: EventEmitter<string> = new EventEmitter<string>();
     constructor(

@@ -21,6 +21,7 @@ import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxi
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'upload-photo-dialog',
@@ -29,8 +30,8 @@ import { NotifyService } from '@abp/notify/notify.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadPhotoDialogComponent implements AfterViewInit {
-    @ViewChild('cropper') cropper: ImageCropperComponent;
-    @ViewChild('fileUrlInput') fileUrlInput: ElementRef;
+    @ViewChild('cropper', { static: true }) cropper: ImageCropperComponent;
+    @ViewChild('fileUrlInput', { static: true }) fileUrlInput: ElementRef;
 
     imageData: any = {};
     cropperSettings: CropperSettings;

@@ -41,8 +41,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     providers: [ ApplicationServiceProxy, GooglePlaceService, MemberServiceProxy, LoginService ]
 })
 export class CreditWizardPageComponent implements OnInit {
-    @ViewChild(WizardComponent) mWizard: WizardComponent;
-    @ViewChild(PaymentInfoComponent) paymentInfo: PaymentInfoComponent;
+    @ViewChild(WizardComponent, { static: true }) mWizard: WizardComponent;
+    @ViewChild(PaymentInfoComponent, { static: true }) paymentInfo: PaymentInfoComponent;
 
     private readonly WIZARD_MEMBER_INFO_STEP_INDEX = 0;
     private readonly WIZARD_PAYMENT_STEP_INDEX = 1;

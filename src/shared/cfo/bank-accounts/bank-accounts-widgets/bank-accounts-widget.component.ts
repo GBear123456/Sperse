@@ -39,6 +39,7 @@ import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interf
 import { SyncTypeIds } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -47,7 +48,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
-    @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef, static: true }) header: ElementRef;
     @Input() showSyncDate = false;
     @Input() saveChangesInCache = true;

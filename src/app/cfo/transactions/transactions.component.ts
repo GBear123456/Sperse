@@ -68,6 +68,7 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { Period } from '@app/shared/common/period/period.enum';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -77,9 +78,9 @@ import { Period } from '@app/shared/common/period/period.enum';
     providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy, LifecycleSubjectsService ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
-    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
+    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;

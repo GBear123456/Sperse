@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AccountServiceProxy } from '@shared/service-proxies/service-proxies';
 import { TenantChangeModalComponent } from './tenant-change-modal.component';
+import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Component({
     selector: 'tenant-change',
@@ -14,7 +15,7 @@ import { TenantChangeModalComponent } from './tenant-change-modal.component';
 })
 export class TenantChangeComponent extends AppComponentBase implements OnInit {
 
-    @ViewChild('tenantChangeModal') tenantChangeModal: TenantChangeModalComponent;
+    @ViewChild('tenantChangeModal', { static: true }) tenantChangeModal: TenantChangeModalComponent;
 
     tenancyName: string;
     name: string;

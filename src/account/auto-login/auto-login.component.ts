@@ -26,7 +26,7 @@ export class AdAutoLoginHostDirective {
     ]
 })
 export class AutoLoginComponent implements OnInit {
-    @ViewChild(AdAutoLoginHostDirective) adLoginHost: AdAutoLoginHostDirective;
+    @ViewChild(AdAutoLoginHostDirective, { static: true }) adLoginHost: AdAutoLoginHostDirective;
 
     constructor(
         injector: Injector,

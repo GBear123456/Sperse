@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitte
 import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'country-phone-number',
@@ -18,7 +19,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Output() onKeyUp = new EventEmitter();
 
     @ViewChild(PhoneNumberComponent, { static: true }) intPhoneNumber;
-    @ViewChild('intPhoneNumberModel') model;
+    @ViewChild('intPhoneNumberModel', { static: true }) model;
 
     value = '';
     focused = false;

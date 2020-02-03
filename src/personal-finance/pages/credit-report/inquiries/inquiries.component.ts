@@ -2,6 +2,7 @@ import { Component, OnInit, Input,  ViewChild } from '@angular/core';
 import { CreditReportDto, InquiryDto } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-inquiries',
@@ -10,13 +11,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class InquiriesComponent implements OnInit {
     @Input() creditReport: CreditReportDto;
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     inquiriesDataSource: InquiryData[] = [];
 
     constructor(
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.creditReport.bureauReports.forEach(

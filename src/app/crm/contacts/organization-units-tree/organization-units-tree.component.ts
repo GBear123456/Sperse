@@ -18,6 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'oranization-units-tree',
@@ -25,7 +26,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     styleUrls: ['./organization-units-tree.component.less']
 })
 export class OrganizationUnitsTreeComponent implements OnDestroy {
-    @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent, { static: true }) organizationUnitsTree: DxTreeViewComponent;
 
     @Input() selectionMode = 'multiple';
 

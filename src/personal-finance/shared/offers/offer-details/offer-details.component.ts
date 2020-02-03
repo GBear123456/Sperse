@@ -51,10 +51,10 @@ import { CreditScoreInterface } from '@root/personal-finance/shared/offers/inter
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferDetailsComponent implements OnInit, OnDestroy {
-    @ViewChild('availableCards') availableCardsRef: ElementRef;
-    @ViewChild('creditCardsList') creditCardsListRef: ElementRef;
-    @ViewChild('detailsContainer') detailsContainerRef: ElementRef;
-    @ViewChild('offersList') offersListRef: ElementRef;
+    @ViewChild('availableCards', { static: true }) availableCardsRef: ElementRef;
+    @ViewChild('creditCardsList', { static: true }) creditCardsListRef: ElementRef;
+    @ViewChild('detailsContainer', { static: true }) detailsContainerRef: ElementRef;
+    @ViewChild('offersList', { static: true }) offersListRef: ElementRef;
     creditCards$: Observable<OfferDto[]>;
     cardsAmount: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);

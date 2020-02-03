@@ -36,6 +36,7 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
 import { FeatureTreeComponent } from '@admin/shared/feature-tree.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { MessageService } from '@abp/message/message.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'editTenantModal',
@@ -46,10 +47,10 @@ import { MessageService } from '@abp/message/message.service';
 })
 export class EditTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('nameInput') nameInput: ElementRef;
-    @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
-    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
-    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
+    @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
+    @ViewChild('SubscriptionEndDateUtc', { static: true }) subscriptionEndDateUtc: ElementRef;
+    @ViewChild(ModulesEditionsSelectComponent, { static: true }) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(FeatureTreeComponent, { static: true }) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;

@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'changePasswordModal',
@@ -20,7 +21,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class ChangePasswordModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('currentPasswordInput') currentPasswordInput: ElementRef;
+    @ViewChild('currentPasswordInput', { static: true }) currentPasswordInput: ElementRef;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     currentPassword = '';
     password = '';

@@ -29,6 +29,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'user-information',
@@ -37,9 +38,9 @@ import { NotifyService } from '@abp/notify/notify.service';
     providers: [ PhoneFormatPipe ]
 })
 export class UserInformationComponent implements OnInit, OnDestroy {
-    @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
-    @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
-    @ViewChild('inviteValidationGroup') inviteValidationComponent: DxValidationGroupComponent;
+    @ViewChild('emailAddress', { static: true }) emailAddressComponent: DxSelectBoxComponent;
+    @ViewChild('phoneNumber', { static: true }) phoneNumberComponent: DxSelectBoxComponent;
+    @ViewChild('inviteValidationGroup', { static: true }) inviteValidationComponent: DxValidationGroupComponent;
     data: any;
 
     readonly GENERAL_TAB_INDEX        = 0;

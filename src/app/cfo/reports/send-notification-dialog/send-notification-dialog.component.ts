@@ -18,6 +18,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'send-notification-dialog',
@@ -30,7 +31,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class SendNotificationDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
+    @ViewChild('notificationToEmailTextBox', { static: true }) notificationToEmailTextBox: DxTextBoxComponent;
     title = this.ls.l('Reports_SendNotification');
     notificationToEmail: string;
     sendReportInAttachments = false;

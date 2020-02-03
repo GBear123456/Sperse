@@ -18,13 +18,14 @@ import {
 import { LoginService } from 'account/login/login.service';
 import { ResetPasswordModel } from '../../reset-password.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../auto-login/auto-login.component';
 
 @Component({
     templateUrl: './host-reset-password.component.html',
     animations: [ accountModuleAnimation() ]
 })
 export class HostResetPasswordComponent implements OnInit {
-    @ViewChild('resetPassForm') form;
+    @ViewChild('resetPassForm', { static: true }) form;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;

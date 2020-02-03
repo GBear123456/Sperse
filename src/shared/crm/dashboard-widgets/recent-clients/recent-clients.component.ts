@@ -15,6 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'recent-clients',
@@ -24,7 +25,7 @@ import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-c
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecentClientsComponent implements OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;

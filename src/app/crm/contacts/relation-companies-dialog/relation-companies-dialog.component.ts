@@ -7,6 +7,7 @@ import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-
 import { ContactsService } from '../contacts.service';
 
 import * as _ from 'underscore';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'relation-companies-dialog',
@@ -15,7 +16,7 @@ import * as _ from 'underscore';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RelationCompaniesDialogComponent extends AppComponentBase implements OnInit {
-    @ViewChild(ContactListDialogComponent) contactList: ContactListDialogComponent;
+    @ViewChild(ContactListDialogComponent, { static: true }) contactList: ContactListDialogComponent;
     manageAllowed = false;
 
     constructor(

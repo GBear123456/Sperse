@@ -62,17 +62,17 @@ import { StatesService } from '@root/store/states-store/states.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
-    @ViewChild(DxValidationGroupComponent) linesValidationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent, { static: true }) linesValidationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
-    @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
-    @ViewChild('billingAddress') billingAddressComponent: DxSelectBoxComponent;
-    @ViewChild('shippingAddress') shippingAddressComponent: DxSelectBoxComponent;
-    @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
-    @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
-    @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
-    @ViewChild('contact') contactComponent: DxSelectBoxComponent;
-    @ViewChild(OrderDropdownComponent) orderDropdown: OrderDropdownComponent;
+    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) linesComponent: DxDataGridComponent;
+    @ViewChild('billingAddress', { static: true }) billingAddressComponent: DxSelectBoxComponent;
+    @ViewChild('shippingAddress', { static: true }) shippingAddressComponent: DxSelectBoxComponent;
+    @ViewChild('dueDateComponent', { static: true }) dueDateComponent: DxDateBoxComponent;
+    @ViewChild('dateComponent', { static: true }) dateComponent: DxDateBoxComponent;
+    @ViewChild('invoice', { static: true }) invoiceNoComponent: DxTextBoxComponent;
+    @ViewChild('contact', { static: true }) contactComponent: DxSelectBoxComponent;
+    @ViewChild(OrderDropdownComponent, { static: true }) orderDropdown: OrderDropdownComponent;
 
     private lookupTimeout;
 

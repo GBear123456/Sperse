@@ -6,6 +6,7 @@ import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
+import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'slice-pivot-grid',
@@ -21,7 +22,7 @@ export class PivotGridComponent {
     @Input() storageKey: string;
     @Input() height = 'auto';
     @Input() isLoading = true;
-    @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxPivotGridComponent, { static: true }) pivotGrid: DxPivotGridComponent;
     showFieldPanel = false;
     summaryDisplayModes: any[] = [
         { text: 'None', value: 'none' },

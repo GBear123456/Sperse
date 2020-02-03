@@ -34,6 +34,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { HistoryListDialogComponent } from '../orders/history-list-dialog/history-list-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -42,8 +43,8 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ InvoiceServiceProxy ]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxTooltipComponent, { static: true }) actionsTooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     private actionRecordData;
     private settings = new InvoiceSettings();

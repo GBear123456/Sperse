@@ -3,6 +3,7 @@ import { CreditReportServiceProxy, CreditReportDto } from '@shared/service-proxi
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import * as moment from 'moment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-credit-history',
@@ -10,7 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./credit-history.component.less']
 })
 export class CreditHistoryComponent implements OnInit {
-    @ViewChild(DxChartComponent) chart: DxChartComponent;
+    @ViewChild(DxChartComponent, { static: true }) chart: DxChartComponent;
     @Input() creditReport: CreditReportDto;
     public scoreHistory: ScoreHistory[];
     bureauColors = {

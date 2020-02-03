@@ -32,6 +32,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -46,15 +47,15 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 })
 export class CreateActivityDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    @ViewChild('leadsList') leadsList: StaticListComponent;
-    @ViewChild('clientsList') clientsList: StaticListComponent;
-    @ViewChild('ordersList') ordersList: StaticListComponent;
-    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
-    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild('startDateRef') startDateComponent: DxDateBoxComponent;
-    @ViewChild('endDateRef') endDateComponent: DxDateBoxComponent;
+    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
+    @ViewChild('leadsList', { static: true }) leadsList: StaticListComponent;
+    @ViewChild('clientsList', { static: true }) clientsList: StaticListComponent;
+    @ViewChild('ordersList', { static: true }) ordersList: StaticListComponent;
+    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
+    @ViewChild('startDateRef', { static: true }) startDateComponent: DxDateBoxComponent;
+    @ViewChild('endDateRef', { static: true }) endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private readonly SAVE_OPTION_DEFAULT = 1;

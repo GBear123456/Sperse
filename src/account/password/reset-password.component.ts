@@ -24,6 +24,7 @@ import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space
 import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advice-period-reset-password.component';
 import { BankCodeResetPasswordComponent } from './layouts/bank-code/bank-code-reset-password.component';
 import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
+import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-reset-password-host]'
@@ -40,7 +41,7 @@ export class AdResetPasswordHostDirective {
     ],
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
-    @ViewChild(AdResetPasswordHostDirective) adResetPasswordHost: AdResetPasswordHostDirective;
+    @ViewChild(AdResetPasswordHostDirective, { static: true }) adResetPasswordHost: AdResetPasswordHostDirective;
 
     @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.customLayoutType === LayoutType.LendSpace;
     model: ResetPasswordModel = new ResetPasswordModel();

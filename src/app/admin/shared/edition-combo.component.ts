@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ComboboxItemDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'edition-combo',
@@ -15,7 +16,7 @@ import { ComboboxItemDto, EditionServiceProxy } from '@shared/service-proxies/se
 })
 export class EditionComboComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
-    @ViewChild('EditionCombobox') editionComboboxElement: ElementRef;
+    @ViewChild('EditionCombobox', { static: true }) editionComboboxElement: ElementRef;
 
     editions: ComboboxItemDto[] = [];
 

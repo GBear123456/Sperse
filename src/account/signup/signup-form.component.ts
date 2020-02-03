@@ -17,6 +17,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { ConditionsType } from '@shared/AppEnums';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Component({
     selector: 'signup-form',
@@ -28,9 +29,9 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignupFormComponent implements OnInit, OnDestroy {
-    @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
-    @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
-    @ViewChild('zipValidator') zipValidator: DxValidatorComponent;
+    @ViewChild('agreeWithTermsCheckBox', { static: true }) agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToReceiveCallsCheckBox', { static: true }) agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
+    @ViewChild('zipValidator', { static: true }) zipValidator: DxValidatorComponent;
     showZipMask = true;
     defaultCountryCode: string;
     selectedCountryCode: string;
