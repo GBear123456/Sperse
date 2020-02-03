@@ -64,6 +64,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_suffix';
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
     private readonly PERSONAL_DOB = 'personalInfo_doB';
+    private readonly PERSONAL_PHONE1 = 'personalInfo_phone1';
+    private readonly PERSONAL_PHONE2 = 'personalInfo_phone2';
     private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
     private readonly PERSONAL_FULL_ADDRESS_STREET = 'personalInfo_fullAddress_street';
     private readonly PERSONAL_FULL_ADDRESS_ADDRESSLINE2 = 'personalInfo_fullAddress_addressline2';
@@ -73,6 +75,24 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zip';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
     private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryId';
+    private readonly PERSONAL_FULL_ADDRESS2 = 'personalInfo_fullAddress2';
+    private readonly PERSONAL_FULL_ADDRESS2_STREET = 'personalInfo_fullAddress2_street';
+    private readonly PERSONAL_FULL_ADDRESS2_ADDRESSLINE2 = 'personalInfo_fullAddress2_addressline2';
+    private readonly PERSONAL_FULL_ADDRESS2_CITY = 'personalInfo_fullAddress2_city';
+    private readonly PERSONAL_FULL_ADDRESS2_STATE_NAME = 'personalInfo_fullAddress2_stateName';
+    private readonly PERSONAL_FULL_ADDRESS2_STATE_CODE = 'personalInfo_fullAddress2_stateId';
+    private readonly PERSONAL_FULL_ADDRESS2_ZIP_CODE = 'personalInfo_fullAddress2_zip';
+    private readonly PERSONAL_FULL_ADDRESS2_COUNTRY_NAME = 'personalInfo_fullAddress2_countryName';
+    private readonly PERSONAL_FULL_ADDRESS2_COUNTRY_CODE = 'personalInfo_fullAddress2_countryId';
+    private readonly PERSONAL_FULL_ADDRESS3 = 'personalInfo_fullAddress3';
+    private readonly PERSONAL_FULL_ADDRESS3_STREET = 'personalInfo_fullAddress3_street';
+    private readonly PERSONAL_FULL_ADDRESS3_ADDRESSLINE2 = 'personalInfo_fullAddress3_addressline2';
+    private readonly PERSONAL_FULL_ADDRESS3_CITY = 'personalInfo_fullAddress3_city';
+    private readonly PERSONAL_FULL_ADDRESS3_STATE_NAME = 'personalInfo_fullAddress3_stateName';
+    private readonly PERSONAL_FULL_ADDRESS3_STATE_CODE = 'personalInfo_fullAddress3_stateId';
+    private readonly PERSONAL_FULL_ADDRESS3_ZIP_CODE = 'personalInfo_fullAddress3_zip';
+    private readonly PERSONAL_FULL_ADDRESS3_COUNTRY_NAME = 'personalInfo_fullAddress3_countryName';
+    private readonly PERSONAL_FULL_ADDRESS3_COUNTRY_CODE = 'personalInfo_fullAddress3_countryId';
     private readonly PERSONAL_IS_ACTIVE_MILITARY_DUTY = 'personalInfo_isActiveMilitaryDuty';
     private readonly PERSONAL_IS_US_CITIZEN = 'personalInfo_isUSCitizen';
     private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
@@ -123,6 +143,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.NAME_PREFIX_FIELD,
         this.NAME_SUFFIX_FIELD,
         this.PERSONAL_FULL_ADDRESS_CITY,
+        this.PERSONAL_FULL_ADDRESS2_CITY,
+        this.PERSONAL_FULL_ADDRESS3_CITY,
         this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
         this.BUSINESS_WORK_FULL_ADDRESS_CITY
     ];
@@ -134,6 +156,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly FIELDS_PHONE = [
+        this.PERSONAL_PHONE1,
+        this.PERSONAL_PHONE2,
         this.PERSONAL_MOBILE_PHONE,
         this.PERSONAL_HOME_PHONE,
         this.BUSINESS_COMPANY_PHONE,
@@ -180,6 +204,22 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_FULL_ADDRESS_ZIP_CODE,
         this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
         this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE,
+        this.PERSONAL_FULL_ADDRESS2_STREET,
+        this.PERSONAL_FULL_ADDRESS2_ADDRESSLINE2,
+        this.PERSONAL_FULL_ADDRESS2_CITY,
+        this.PERSONAL_FULL_ADDRESS2_STATE_NAME,
+        this.PERSONAL_FULL_ADDRESS2_STATE_CODE,
+        this.PERSONAL_FULL_ADDRESS2_ZIP_CODE,
+        this.PERSONAL_FULL_ADDRESS2_COUNTRY_NAME,
+        this.PERSONAL_FULL_ADDRESS2_COUNTRY_CODE,
+        this.PERSONAL_FULL_ADDRESS3_STREET,
+        this.PERSONAL_FULL_ADDRESS3_ADDRESSLINE2,
+        this.PERSONAL_FULL_ADDRESS3_CITY,
+        this.PERSONAL_FULL_ADDRESS3_STATE_NAME,
+        this.PERSONAL_FULL_ADDRESS3_STATE_CODE,
+        this.PERSONAL_FULL_ADDRESS3_ZIP_CODE,
+        this.PERSONAL_FULL_ADDRESS3_COUNTRY_NAME,
+        this.PERSONAL_FULL_ADDRESS3_COUNTRY_CODE,
         this.BUSINESS_COMPANY_FULL_ADDRESS_STREET,
         this.BUSINESS_COMPANY_FULL_ADDRESS_ADDRESSLINE2,
         this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
@@ -239,6 +279,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         personalInfo: ImportPersonalInput.fromJS({}),
         fullName: ImportFullName.fromJS({}),
         fullAddress: ImportAddressInput.fromJS({}),
+        fullAddress2: ImportAddressInput.fromJS({}),
+        fullAddress3: ImportAddressInput.fromJS({}),
         businessInfo: ImportBusinessInput.fromJS({}),
         companyFullAddress: ImportAddressInput.fromJS({}),
         workFullAddress: ImportAddressInput.fromJS({}),
@@ -248,8 +290,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     readonly countryFields = {
         personal: {
-            name: this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
-            code: this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE
+            name: [this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME, this.PERSONAL_FULL_ADDRESS2_COUNTRY_NAME, this.PERSONAL_FULL_ADDRESS3_COUNTRY_NAME],
+            code: [this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS2_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS3_COUNTRY_CODE]
         },
         company: {
             name: this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME,
@@ -262,8 +304,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     };
 
     readonly phoneRelatedCountryFields = {
-        [this.PERSONAL_MOBILE_PHONE]: this.countryFields.personal,
+        [this.PERSONAL_PHONE1]: this.countryFields.personal,
+        [this.PERSONAL_PHONE2]: this.countryFields.personal,
         [this.PERSONAL_HOME_PHONE]: this.countryFields.personal,
+        [this.PERSONAL_MOBILE_PHONE]: this.countryFields.personal,
         [this.BUSINESS_COMPANY_PHONE]: this.countryFields.company,
         [this.BUSINESS_WORK_PHONE_1]: this.countryFields.work,
         [this.BUSINESS_WORK_PHONE_2]: this.countryFields.work,
@@ -274,7 +318,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         [this.FIRST_NAME_FIELD + ':' + this.LAST_NAME_FIELD],
         [this.PERSONAL_EMAIL1, this.PERSONAL_EMAIL2, this.PERSONAL_EMAIL3, this.BUSINESS_COMPANY_EMAIL, this.BUSINESS_WORK_EMAIL1, this.BUSINESS_WORK_EMAIL2, this.BUSINESS_WORK_EMAIL3],
         [this.PERSONAL_MOBILE_PHONE, this.PERSONAL_HOME_PHONE, this.BUSINESS_COMPANY_PHONE, this.BUSINESS_WORK_PHONE_1, this.BUSINESS_WORK_PHONE_2],
-        [this.PERSONAL_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_COMPANY_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_WORK_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD]
+        [this.PERSONAL_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_COMPANY_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_WORK_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD],
+        [this.PERSONAL_FULL_ADDRESS2 + ':' + this.LAST_NAME_FIELD, this.BUSINESS_COMPANY_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_WORK_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD],
+        [this.PERSONAL_FULL_ADDRESS3 + ':' + this.LAST_NAME_FIELD, this.BUSINESS_COMPANY_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_WORK_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD]
     ];
 
     private rootComponent: any;
@@ -353,7 +399,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
         this.FIELDS_CAPTIONS.forEach(field => {
             let caption = this.l(ImportWizardComponent.getFieldLocalizationName(field));
-            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0) {
+            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0 &&
+                field.indexOf(this.PERSONAL_FULL_ADDRESS2) < 0 &&
+                field.indexOf(this.PERSONAL_FULL_ADDRESS3) < 0
+            ) {
                 let parts = field.split(ImportWizardComponent.FieldSeparator);
                 parts.pop();
                 caption = this.l(ImportWizardComponent.getFieldLocalizationName(
@@ -625,10 +674,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         if (field.mappedField == this.FULL_NAME_FIELD) {
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
         } else if (field.mappedField == this.PERSONAL_FULL_ADDRESS
+            || field.mappedField == this.PERSONAL_FULL_ADDRESS2
+            || field.mappedField == this.PERSONAL_FULL_ADDRESS3
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS) {
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
         } else if (field.mappedField === this.PERSONAL_FULL_ADDRESS_ZIP_CODE
+            || field.mappedField === this.PERSONAL_FULL_ADDRESS2_ZIP_CODE
+            || field.mappedField === this.PERSONAL_FULL_ADDRESS3_ZIP_CODE
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE) {
             return this.parseZipCode(field, sourceValue, reviewDataSource);
