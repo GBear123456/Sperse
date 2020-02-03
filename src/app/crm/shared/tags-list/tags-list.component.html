@@ -23,7 +23,7 @@
                 [noDataText]="ls.l('AddNewTag')"
                 [showColumnLines]="false"
                 [showColumnHeaders]="false"
-                [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
+                [searchPanel]="{visible: true, placeholder: ls.l('Search'), width: 260}"
                 [selection]="{allowSelectAll: false, mode: (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'multiple' }"
                 [selectedRowKeys]="selectedTags"
                 [(dataSource)]="list"
