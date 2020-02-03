@@ -32,6 +32,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -113,6 +114,7 @@ export class CreateActivityDialogComponent implements OnInit {
         private messageService: MessageService,
         private dialogRef: MatDialogRef<CreateActivityDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
+        private permissionChecker: PermissionCheckerService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -234,6 +236,7 @@ export class CreateActivityDialogComponent implements OnInit {
                     {
                         name: 'assign',
                         action: this.toggleUserAssignmen.bind(this),
+                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments),
                         options: {
                             accessKey: 'UserAssign'
                         },
