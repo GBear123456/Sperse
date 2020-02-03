@@ -95,6 +95,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS3_COUNTRY_CODE = 'personalInfo_fullAddress3_countryId';
     private readonly PERSONAL_IS_ACTIVE_MILITARY_DUTY = 'personalInfo_isActiveMilitaryDuty';
     private readonly PERSONAL_IS_US_CITIZEN = 'personalInfo_isUSCitizen';
+    private readonly PERSONAL_IS_ACTIVE = 'personalInfo_isActive';
     private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_DATE_FOUNDED = 'businessInfo_dateFounded';
@@ -152,7 +153,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BOOLEAN_FIELDS = [
         this.BUSINESS_IS_EMPLOYED,
         this.PERSONAL_IS_US_CITIZEN,
-        this.PERSONAL_IS_ACTIVE_MILITARY_DUTY
+        this.PERSONAL_IS_ACTIVE_MILITARY_DUTY,
+        this.PERSONAL_IS_ACTIVE
     ];
 
     private readonly FIELDS_PHONE = [
