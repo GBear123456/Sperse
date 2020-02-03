@@ -1,15 +1,23 @@
 /** Core imports */
-import { Directive, Component, Injector, ViewContainerRef,
-    ComponentFactoryResolver, ViewChild, Type, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ComponentFactoryResolver,
+    Directive,
+    OnInit,
+    Type,
+    ViewChild,
+    ViewContainerRef
+} from '@angular/core';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLoginComponent } from './layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './layouts/lend-space/lend-space-login.component';
 import { AdvicePeriodLoginComponent } from './layouts/advice-period/advice-period-login.component';
 import { BankCodeLoginComponent } from './layouts/bank-code/bank-code-login.component';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { TitleService } from '../../shared/common/title/title.service';
 
 @Directive({
     selector: '[ad-login-host]'
@@ -20,25 +28,21 @@ export class AdLoginHostDirective {
 
 @Component({
     templateUrl: './login.component.html',
-    styleUrls: [
-        './login.component.less'
-    ]
+    styleUrls: [ './login.component.less' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent extends AppComponentBase implements OnInit {
-    @ViewChild(AdLoginHostDirective) adLoginHost: AdLoginHostDirective;
+export class LoginComponent implements OnInit {
+    @ViewChild(AdLoginHostDirective, { static: true }) adLoginHost: AdLoginHostDirective;
 
     constructor(
-        injector: Injector,
-        private _appSession: AppSessionService,
-        private _componentFactoryResolver: ComponentFactoryResolver
-    ) {
-        super(injector);
-    }
+        private appSession: AppSessionService,
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private titleService: TitleService
+    ) {}
 
     ngOnInit(): void {
-        this.setTitle('Login');
-
-        this.loadLayoutComponent(this.getLayoutComponent(this._appSession.tenant));
+        this.titleService.setTitle('Login');
+        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
     }
 
     private getLayoutComponent(tenant) {
@@ -56,7 +60,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     private loadLayoutComponent(component: Type<HostLoginComponent>) {
         this.adLoginHost.viewContainerRef.createComponent(
-            this._componentFactoryResolver.resolveComponentFactory(component)
+            this.componentFactoryResolver.resolveComponentFactory(component)
         );
     }
 }
