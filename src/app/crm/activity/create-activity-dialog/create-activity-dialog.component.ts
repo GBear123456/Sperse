@@ -45,7 +45,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateActivityDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild('leadsList') leadsList: StaticListComponent;
     @ViewChild('clientsList') clientsList: StaticListComponent;

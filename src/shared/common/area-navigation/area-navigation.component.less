@@ -268,7 +268,7 @@
     }
 }
 
-/deep/ body.lend-space .pfm-app {
+::ng-deep body.lend-space .pfm-app {
     .area-navigation li {
         span.dropdown-mark {
             border: solid #fff !important;
@@ -311,7 +311,7 @@
     }
 }
 
-/deep/ body.bank-code {
+::ng-deep body.bank-code {
     .area-navigation li {
         padding: 0 10px !important;
 
@@ -355,13 +355,13 @@
 }
 
 :host-context(body.pfm) {
-    /deep/ .right-actions {
+    ::ng-deep .right-actions {
         a.member-login {
             display: block!important;
         }
     }
 
-    /deep/ .app-responsive-menu {
+    ::ng-deep .app-responsive-menu {
         li {
             a {
                 &.member-login {

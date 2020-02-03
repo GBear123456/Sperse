@@ -2,7 +2,7 @@
 import { Component, OnInit, Injector, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { first, mapTo, skip, switchMap } from 'rxjs/operators';

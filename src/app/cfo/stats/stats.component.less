@@ -28,7 +28,7 @@
         position: relative;
         height: calc(100% + 62px);
 
-        /deep/ .dxc-labels {
+        ::ng-deep .dxc-labels {
             rect {
                 rx: 5
             }
@@ -38,7 +38,7 @@
             }
         }
 
-        /deep/ .dxc-arg-elements {
+        ::ng-deep .dxc-arg-elements {
             text {
                 letter-spacing: 0.2px;
             }
@@ -204,7 +204,7 @@
             }
         }
 
-        /deep/ setup-steps {
+        ::ng-deep setup-steps {
             .img-leftSideBarMonthlyTrendCharts {
                 background-image: url("../../../assets/common/icons/trend.svg");
             }
@@ -219,7 +219,7 @@
         }
     }
 
-    /deep/ .dx-gallery.dx-widget[accesskey='statsForecastSwitcher'] {
+    ::ng-deep .dx-gallery.dx-widget[accesskey='statsForecastSwitcher'] {
         border: 1px solid #ddd;
         vertical-align: middle;
         border-radius: 4px;
@@ -246,7 +246,7 @@
         }
     }
 
-    /deep/ .dx-scrollable-content {
+    ::ng-deep .dx-scrollable-content {
         height: 100%;
 
         .dx-scrollview-content {
@@ -259,7 +259,7 @@
 }
 
 // filter by periods
-/deep/ .dx-popup-content {
+::ng-deep .dx-popup-content {
     white-space: normal !important;
 }
 .report-period-tooltip-container {
@@ -307,7 +307,7 @@
         }
     }
 
-    /deep/ .dx-slider-bar {
+    ::ng-deep .dx-slider-bar {
         height: 2px;
 
         .dx-slider-handle {

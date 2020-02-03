@@ -14,7 +14,7 @@
     }
 
     // section
-    /deep/ .step-item {
+    ::ng-deep .step-item {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -450,7 +450,7 @@
         }
     }
 
-    /deep/ mat-horizontal-stepper {
+    ::ng-deep mat-horizontal-stepper {
         .mat-horizontal-stepper-header-container {
             position: absolute;
             width: 400px;
@@ -723,6 +723,6 @@ li.akk {
     }
 }
 
-/deep/ .cdk-overlay-backdrop.cfo-intro + .cdk-global-overlay-wrapper {
+::ng-deep .cdk-overlay-backdrop.cfo-intro + .cdk-global-overlay-wrapper {
     background: rgba(0, 0, 0, .7);
 }

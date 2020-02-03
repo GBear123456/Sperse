@@ -201,7 +201,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     ]
                 ),
-                selected$: this.creditScore$.pipe(map((creditScore: CreditScoreRating) => {
+                selected$: this.creditScore$.pipe(map((creditScore: number) => {
                     return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (e: MatSelectChange) => {
@@ -318,7 +318,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                         value: CreditScoreRating.NotSure
                     }
                 ]),
-                selected$: this.creditScore$.pipe(map((creditScore: CreditScoreRating) => {
+                selected$: this.creditScore$.pipe(map((creditScore: number) => {
                     return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (creditScore: CreditScoreItem) => {

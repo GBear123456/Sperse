@@ -42,19 +42,19 @@
     }
     .phone-container {
         max-width: 340px;
-        /deep/ .wrapper {
+        ::ng-deep .wrapper {
             width: 240px!important;
         }
         label {
             height: 47px!important;
         }
     }
-    /deep/ .dx-texteditor-container {
+    ::ng-deep .dx-texteditor-container {
         width: 240px;
     }
     dx-select-box, dx-text-box, dx-number-box {
         display: inline-block;
-        /deep/ input {
+        ::ng-deep input {
             height: 48px;
         }
     }
@@ -65,12 +65,12 @@
         min-height: 160px;
     }
     .type-item-wrapper {
-        /deep/ input {
+        ::ng-deep input {
             padding-left: 40px;
             background-repeat: no-repeat;
             background-position: 10px 15px;
         }
-        /deep/ input[value=""] {
+        ::ng-deep input[value=""] {
             background-image: none!important;
         }
     }
@@ -80,7 +80,7 @@
     }
 }
 
-/deep/ .address-template {
+::ng-deep .address-template {
     position: relative;
     i {
         top: 7px;

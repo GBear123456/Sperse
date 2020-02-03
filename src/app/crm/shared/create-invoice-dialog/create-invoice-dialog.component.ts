@@ -63,7 +63,7 @@ import { StatesService } from '@root/store/states-store/states.service';
 })
 export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(DxValidationGroupComponent) linesValidationGroup: DxValidationGroupComponent;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
     @ViewChild('billingAddress') billingAddressComponent: DxSelectBoxComponent;

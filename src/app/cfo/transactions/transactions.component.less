@@ -1,4 +1,4 @@
-/deep/ .dx-editor-container {
+::ng-deep .dx-editor-container {
     &.dx-datagrid-filter-range-start,
     &.dx-datagrid-filter-range-end {
         input {
@@ -38,7 +38,7 @@
     categorization {
         display: block;
 
-        /deep/ .tree-header app-toolbar .dx-toolbar[compact="true"] {
+        ::ng-deep .tree-header app-toolbar .dx-toolbar[compact="true"] {
             .dx-toolbar-button {
                 padding: 0 5px !important;
             }
@@ -131,7 +131,7 @@
 
         .transactions {
             transition: 1s;
-            /deep/ dx-data-grid {
+            ::ng-deep dx-data-grid {
                 tr.dx-selection {
                     cursor: grab;
                 }
@@ -238,7 +238,7 @@
             }
         }
 
-        /deep/ #gridContainer .dx-datagrid-rowsview {
+        ::ng-deep #gridContainer .dx-datagrid-rowsview {
             .description-column {
                 width: 330px !important;
             }
@@ -263,7 +263,7 @@
         margin-left: 10px;
     }
 
-    /deep/ #gridContainer {
+    ::ng-deep #gridContainer {
         .dx-datagrid-header-panel {
             .dx-toolbar-items-container {
                 .dx-toolbar-before{
@@ -418,7 +418,7 @@
     }
 }
 
-/deep/ [custaccesskey="search-container"] {
+::ng-deep [custaccesskey="search-container"] {
     &[filter-selected="true"] {
         border: 0;
 

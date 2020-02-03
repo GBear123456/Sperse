@@ -96,7 +96,7 @@ export class UserNotificationHelper {
         });
 
         //Desktop notification
-        Push.create('Platform', {
+        Push['create']('Platform', {
             body: this.format(userNotification).text,
             icon: './assets/common/images/app-logo-small.png',
             timeout: 6000,

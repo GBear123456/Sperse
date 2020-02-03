@@ -30,7 +30,7 @@ import { GetApplicationDetailsOutput } from '@shared/service-proxies/service-pro
 })
 export class WizardRightSideComponent implements OnDestroy {
     private static readonly tabsNumber = 6;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     private tabHeader: HTMLElement;
     @ViewChildren(MatTabGroup) set matTabGroup(elements: QueryList<MatTabGroup>) {
         if (elements.first && elements.first._elementRef) {

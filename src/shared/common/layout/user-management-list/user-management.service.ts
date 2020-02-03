@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { filter, pluck } from 'rxjs/operators';
 

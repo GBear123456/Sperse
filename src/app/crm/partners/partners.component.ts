@@ -106,7 +106,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
@@ -319,7 +319,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             first(),
             mapTo(data)
         )),
-        switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
+        switchMap(([filter, mapArea, refresh]: [any, MapArea, null]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,

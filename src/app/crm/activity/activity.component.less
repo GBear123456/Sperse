@@ -79,7 +79,7 @@
     &.fullscreen {
         top: 0px !important;
 
-        /deep/ dx-scheduler {
+        ::ng-deep dx-scheduler {
             height: calc(~"100vh - 60px") !important;
         }
     }
@@ -90,7 +90,7 @@
         margin-left: 0;
         flex-grow: 0;
     }
-    /deep/ dx-scheduler {
+    ::ng-deep dx-scheduler {
         .dx-scheduler-header {
             display: none;
         }

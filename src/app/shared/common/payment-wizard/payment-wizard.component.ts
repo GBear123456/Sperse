@@ -6,7 +6,6 @@ import {
     OnInit,
     ViewChild,
     ViewEncapsulation,
-    Injector,
     Inject,
     ElementRef
 } from '@angular/core';
@@ -23,9 +22,11 @@ import { PackageOptions } from '@app/shared/common/payment-wizard/models/package
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from 'shared/common/app-component-base';
 import { StatusInfo } from './models/status-info';
 import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permission-checker.service';
+import { AppLocalizationService } from '../localization/app-localization.service';
+import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
 
 @Component({
     selector: 'payment-wizard',
@@ -35,7 +36,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ PaymentService, PackageServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentWizardComponent extends AppComponentBase implements OnInit {
+export class PaymentWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
     plan$: Observable<PackageOptions> = this.paymentService.plan$;
@@ -48,16 +49,16 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     trackingCode: string;
 
     constructor(
-        private injector: Injector,
         private appService: AppService,
         private dialogRef: MatDialogRef<PaymentWizardComponent>,
         private paymentService: PaymentService,
         private tenantSubscriptionService: TenantSubscriptionServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
+        private permissionChecker: PermissionCheckerService,
+        private messageService: MessageService,
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {
-        super(injector);
-    }
+    ) {}
 
     ngOnInit() {
         if (this.subscriptionIsLocked) {
@@ -66,10 +67,10 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     }
 
     moveToPaymentOptionsStep() {
-        if (this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
+        if (this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
             this.stepper.next();
         else
-            this.message.info(this.l('SubscriptionManagementPermissionRequired'));
+            this.messageService.info(this.ls.l('SubscriptionManagementPermissionRequired'));
     }
 
     changePlan(e) {

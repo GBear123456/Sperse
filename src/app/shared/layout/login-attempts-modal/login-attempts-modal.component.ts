@@ -25,7 +25,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginAttemptsModalComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     userLoginAttempts: UserLoginAttemptDto[];
     profileThumbnailId: string;
 

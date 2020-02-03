@@ -122,7 +122,7 @@
         }
     }
 
-    /deep/ .function-button {
+    ::ng-deep .function-button {
         border: 0;
         display: table-row-group;
         background: #fff;
@@ -136,7 +136,7 @@
         }
     }
 
-    /deep/ .save-forecast-button {
+    ::ng-deep .save-forecast-button {
         border: 0;
         background: transparent;
         .dx-button-content {
@@ -146,7 +146,7 @@
         }
     }
 
-    /deep/ .calculator-number-box {
+    ::ng-deep .calculator-number-box {
         // padding: 0 !important;
         .dx-numberbox {
             float: left;
@@ -161,12 +161,12 @@
         position: relative;
     }
 
-    /deep/ .filter-text {
+    ::ng-deep .filter-text {
         color: #fff;
         background-color: #337ab7;
     }
 
-    /deep/ .cashflow .dx-pivotgrid {
+    ::ng-deep .cashflow .dx-pivotgrid {
         overflow: visible;
 
         .dx-filter-header {
@@ -1019,7 +1019,7 @@
         }
     }
 
-    /deep/ .dx-dropdowneditor[accesskey="cashflowGroupby"] {
+    ::ng-deep .dx-dropdowneditor[accesskey="cashflowGroupby"] {
 
         &.dx-dropdowneditor-field-clickable {
             max-width: none;
@@ -1086,13 +1086,13 @@
         }
     }
 
-    /deep/ [class*='chart'] {
+    ::ng-deep [class*='chart'] {
         width: 64px;
         height: 18px;
         float: right;
     }
     // fix float fo ff
-    /deep/ .dx-pivotgrid-vertical-headers {
+    ::ng-deep .dx-pivotgrid-vertical-headers {
         table {
             width: 100% !important;
         }
@@ -1152,7 +1152,7 @@
                 align-items: center;
                 justify-content: space-between;
 
-                /deep/ .dx-tabs {
+                ::ng-deep .dx-tabs {
                     border: none;
                     .dx-tab {
                         border: none;
@@ -1169,7 +1169,7 @@
                     .dx-button {
                         border: 0;
                         padding: 0;
-                        /deep/ .dx-button-text {
+                        ::ng-deep .dx-button-text {
                             text-decoration: underline;
                         }
                     }
@@ -1193,9 +1193,9 @@
             }
         }
 
-        /deep/ #cashflowGridContainer {
+        ::ng-deep #cashflowGridContainer {
             height: calc(~'100% - 43px');
-            /deep/.dx-highlight-outline {
+            ::ng-deep.dx-highlight-outline {
                 padding: 0;
             }
             .dx-datagrid-headers {
@@ -1527,7 +1527,7 @@
             }
         }
 
-        /deep/ .headline-title .header-names {
+        ::ng-deep .headline-title .header-names {
             @media (max-width: 1400px) {
                 max-width: 400px;
             }
@@ -1544,7 +1544,7 @@
                 height: calc(~'100vh - 255px');
             }
 
-            /deep/ .dx-scrollable-content {
+            ::ng-deep .dx-scrollable-content {
                 transform: none !important;
             }
         }
@@ -1564,7 +1564,7 @@
         width: 100%;
         z-index: 1;
 
-        /deep/ dx-toolbar {
+        ::ng-deep dx-toolbar {
             padding: 11px 0 9px 0;
 
             .dx-toolbar-items-container {
@@ -1682,7 +1682,7 @@
         }
     }
 
-    /deep/ .modifying-box {
+    ::ng-deep .modifying-box {
         max-width: 170px;
         background: transparent;
         float: left;
@@ -1714,7 +1714,7 @@
     }
 }
 
-/deep/ .dx-overlay-content {
+::ng-deep .dx-overlay-content {
     min-width: 100px;
 }
 
@@ -1761,7 +1761,7 @@
     opacity: 0;
 }
 
-/deep/ .toolbar-hidden {
+::ng-deep .toolbar-hidden {
     .cashflow {
         .cashflow-scroll {
             height: calc(~'100vh - 150px') !important;

@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { BankTransferSettingsDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '../../../localization/app-localization.service';
 
 @Component({
     selector: 'bank-transfer',
@@ -18,8 +19,8 @@ import { BankTransferSettingsDto } from '@shared/service-proxies/service-proxies
     styleUrls: ['./bank-transfer.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankTransferComponent extends AppComponentBase implements OnChanges {
-    @Input() titleText = this.l('BankTransferTitleText');
+export class BankTransferComponent implements OnChanges {
+    @Input() titleText = this.ls.l('BankTransferTitleText');
     @Input() bankTransferSettings: BankTransferSettingsDto;
     @Output() onSubmit: EventEmitter<null> = new EventEmitter<null>();
     @ViewChild('bankTransferSettingsContainer') bankTransferSettingsContainer: ElementRef;
@@ -27,10 +28,8 @@ export class BankTransferComponent extends AppComponentBase implements OnChanges
     requireInstructionEnabled = false;
 
     constructor(
-        injector: Injector
-    ) {
-        super(injector);
-    }
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.bankTransferSettings) {

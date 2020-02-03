@@ -21,13 +21,13 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 @Injectable()
 export class BankCodeService {
     bankCodeBadges: number[] = [ 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000 ];
-    bankCodeClientsCount$: Observable<number> = this.getClientsBankCodesTotalCount().pipe(
+    bankCodeClientsCount$: Observable<string> = this.getClientsBankCodesTotalCount().pipe(
         startWith(0),
         map((count: string) => this.decimalPipe.transform(count))
     );
     bankCodeLevel$: Observable<number> = this.bankCodeClientsCount$.pipe(
-        map((currentBankCodeClientsCount: number) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
-            return currentBankCodeClientsCount <= bankCodeBadgeCount;
+        map((currentBankCodeClientsCount: string) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
+            return +currentBankCodeClientsCount <= bankCodeBadgeCount;
         })),
         publishReplay(),
         refCount()
@@ -157,9 +157,9 @@ export class BankCodeService {
         );
     }
 
-    getClientsBankCodesTotalCount(filters = []): Observable<number> {
+    getClientsBankCodesTotalCount(filters = []): Observable<string> {
         return this.getClientsBankCodesData(filters).pipe(
-            map((result: any) => result && result.totalCount)
+            map((result: any) => result && result.totalCount && result.totalCount.toString())
         );
     }
 
@@ -177,7 +177,7 @@ export class BankCodeService {
         );
     }
 
-    getBankCodesNumber(time?: BankCodeTime): Observable<number> {
+    getBankCodesNumber(time?: BankCodeTime): Observable<string> {
         let filter;
         if (time) {
             filter = this.getFilterFromTime(time);

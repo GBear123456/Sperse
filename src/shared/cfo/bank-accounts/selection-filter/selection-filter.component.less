@@ -15,7 +15,7 @@
         }
     }
 
-    /deep/ .selectionList {
+    ::ng-deep .selectionList {
         .tag-value,
         .dx-placeholder {
             font-size: 17px;
@@ -53,6 +53,9 @@
                     }
                 }
             }
+            .dx-texteditor-input {
+                display: none;
+            }
         }
 
         .dx-placeholder,
@@ -83,7 +86,7 @@
     }
 }
 
-/deep/ .dx-item-content {
+::ng-deep .dx-item-content {
     .selection-list-item {
         display: flex;
         justify-content: space-between;

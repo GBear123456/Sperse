@@ -11,7 +11,7 @@
             z-index: 1;
             height: calc(100vh - 210px);
             width: 100%;
-            /deep/ dx-data-grid#gridContainer {
+            ::ng-deep dx-data-grid#gridContainer {
                 .dx-toolbar-before {
                     width: 100px !important;
                     padding: 15px !important;
@@ -28,7 +28,7 @@
     &.fullscreen .reportView {
         width: 100%;
         border: solid 1px green;
-        /deep/ app-image-viewer {
+        ::ng-deep app-image-viewer {
             #imageViewer {
                 height: 100%;
                 border: solid 1px red;
@@ -50,7 +50,7 @@
         width: 100%;
     }
 
-    /deep/ app-image-viewer {
+    ::ng-deep app-image-viewer {
         #imageViewer {
             height: calc(~"100vh - 220px");
             margin-top: 0;
@@ -63,7 +63,7 @@
         }
     }
 
-    /deep/ .dx-datagrid {
+    ::ng-deep .dx-datagrid {
         .dx-header-filter {
             display: none!important;
         }
@@ -77,14 +77,14 @@
         }
     }
 
-    /deep/ app-toolbar {
+    ::ng-deep app-toolbar {
         .dx-item.dx-toolbar-item.dx-toolbar-label {
             max-width: unset!important;
         }
     }
 }
 
-/deep/ .file-name {
+::ng-deep .file-name {
     width: 90%;
     padding-left: 15px;
     font-weight: 500;

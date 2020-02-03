@@ -46,7 +46,7 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     @ViewChild('editionNameInput') editionNameInput: ElementRef;
     @ViewChild('monthlyPriceInput') monthlyPriceInput: DxNumberBoxComponent;
     @ViewChild('annualPriceInput') annualPriceInput: DxNumberBoxComponent;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

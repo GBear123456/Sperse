@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup } from 'devextreme/viz/export';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
@@ -54,7 +54,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
-    @ViewChild(SetupStepComponent) setupStepComponent: SetupStepComponent;
+    @ViewChild(SetupStepComponent, { static: true }) setupStepComponent: SetupStepComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
@@ -224,7 +224,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
-            switchMap(([currencyId, forecastModelId, requestFilter]: [string, number, StatsFilter]) => {
+            switchMap(([currencyId, forecastModelId, requestFilter, refresh]: [string, number, StatsFilter, null]) => {
                 return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,

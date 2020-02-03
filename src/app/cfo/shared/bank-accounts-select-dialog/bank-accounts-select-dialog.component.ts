@@ -2,7 +2,7 @@
 import { Component, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -19,7 +19,7 @@ import { IBankAccountsSelectDialogData } from '@app/cfo/shared/bank-accounts-sel
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
 export class BankAccountsSelectDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     tooltipVisible: boolean;
     businessEntities = [];

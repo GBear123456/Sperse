@@ -46,8 +46,8 @@ export class BankCodeComponent extends AppComponentBase implements OnInit, OnDes
         this.renderer.addClass(this.document.body, 'member-area');
         this._router.events.pipe(
             takeUntil(this.destroy$),
-            filter((event: Event) => event instanceof NavigationEnd)
-        ).subscribe((event: Event) => {
+            filter(event => event instanceof NavigationEnd)
+        ).subscribe(() => {
             scrollTo(0, 0);
         });
     }

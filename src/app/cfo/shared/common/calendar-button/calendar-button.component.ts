@@ -2,7 +2,7 @@
 import { Component, Input } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { filter, map, withLatestFrom } from 'rxjs/operators';
 import lowerFirst from 'lodash/lowerFirst';
@@ -50,7 +50,7 @@ export class CalendarButtonComponent {
                 }
             }).afterClosed().pipe(
                 filter(Boolean)
-            ).subscribe((dateRange) => {
+            ).subscribe((dateRange: any) => {
                 this.cfoPreferencesService.dateRange.next({
                     from: { value: dateRange.dateFrom },
                     to: { value: dateRange.dateTo },

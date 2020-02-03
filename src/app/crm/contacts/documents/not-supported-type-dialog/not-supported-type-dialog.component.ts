@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({

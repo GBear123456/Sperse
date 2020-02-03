@@ -1,4 +1,4 @@
-/deep/ .hide {
+::ng-deep .hide {
     display: none;
 }
 
@@ -31,7 +31,7 @@
             background: transparent;
         }
 
-        /deep/ dx-text-box[name="title"] {
+        ::ng-deep dx-text-box[name="title"] {
             width: 440px;
             height: 100%;
             border: none;
@@ -87,7 +87,7 @@
         height: 100%;
     }
 
-    /deep/ mat-dialog-content {
+    ::ng-deep mat-dialog-content {
         height: 100%;
         overflow: hidden;
         max-height: calc(~"100% - 82px");
@@ -95,7 +95,7 @@
         padding: 0;
     }
 
-    /deep/ mat-dialog-actions {
+    ::ng-deep mat-dialog-actions {
         height: 100%;
         margin: 0;
 
@@ -143,11 +143,11 @@
         }
     }
 
-    /deep/ .tab-content {
+    ::ng-deep.tab-content {
         padding: 15px;
     }
 
-    /deep/ .dx-checkbox {
+    ::ng-deep .dx-checkbox {
         margin: 5px 0;
 
         .dx-checkbox-icon {

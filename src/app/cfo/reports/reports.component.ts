@@ -2,7 +2,7 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
@@ -432,7 +432,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         if (!this.openReportMode)
                             setTimeout(() => this.showReportFullscreen(), 300);
                         this.openReportMode = true;
-                        this.previewContent = StringHelper.getBase64(reader.result);
+                        this.previewContent = StringHelper.getBase64(reader.result as string);
                         this.changeDetector.markForCheck();
                     });
                     reader.readAsDataURL(blob);

@@ -88,31 +88,31 @@ const routes: Routes = [
         children: [
             {
                 path: 'account',
-                loadChildren: 'account/account.module#AccountModule', //Lazy load account module
+                loadChildren: () => import('account/account.module').then(m => m.AccountModule), //Lazy load account module
             },
             {
                 path: 'personal-finance',
-                loadChildren: 'personal-finance/personal-finance.module#PersonalFinanceModule', //Lazy load account module
+                loadChildren: () => import('personal-finance/personal-finance.module').then(m => m.PersonalFinanceModule), //Lazy load account module
                 data: { feature: 'PFM', localizationSource: 'PFM' }
             },
             {
                 path: 'code-breaker',
-                loadChildren: 'bank-code/bank-code.module#BankCodeModule', //Lazy load bank code module
+                loadChildren: () => import('bank-code/bank-code.module').then(m => m.BankCodeModule), //Lazy load bank code module
                 data: { localizationSource: 'Platform' }
             },
             {
                 path: 'app',
-                loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
+                loadChildren: () => import('app/app.module').then(m => m.AppModule), //Lazy load desktop module
                 data: { localizationSource: 'Platform' }
             },
             {
                 path: 'shared/bankpass',
-                loadChildren: 'public/bank-pass-host/bank-pass-host.module#BankPassHostModule',
+                loadChildren: () => import('public/bank-pass-host/bank-pass-host.module').then(m => m.BankPassHostModule),
                 data: { localizationSource: 'Platform' }
             },
             {
                 path: 'shared/why-they-buy',
-                loadChildren: 'public/why-they-buy-host/why-they-buy-host.module#WhyTheyBuyHostModule',
+                loadChildren: () => import('public/why-they-buy-host/why-they-buy-host.module').then(m => m.WhyTheyBuyHostModule),
                 data: { localizationSource: 'Platform' }
             }
         ]
@@ -120,7 +120,7 @@ const routes: Routes = [
     {
         path: '**',
         canActivateChild: [ LocalizationResolver ],
-        loadChildren: 'shared/not-found/not-found.module#NotFoundModule',
+        loadChildren: () => import('shared/not-found/not-found.module').then(m => m.NotFoundModule),
     }
 ];
 

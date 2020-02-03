@@ -48,7 +48,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
-    @ViewChild('header', { read: ElementRef }) header: ElementRef;
+    @ViewChild('header', { read: ElementRef, static: true }) header: ElementRef;
     @Input() showSyncDate = false;
     @Input() saveChangesInCache = true;
     @Input() showAdvancedColumns = true;

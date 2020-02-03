@@ -20,7 +20,7 @@ import {
     GetApplicationDetailsOutput,
     IncomeType,
     LoanReason,
-    NameValueDtoListResultDto,
+    NameValueDto,
     OfferProviderType,
     OfferServiceProxy,
     PayFrequency,
@@ -68,14 +68,14 @@ export class OffersWizardService {
         bodyUrl: this.domain + '/documents/policy.html',
         downloadDisabled: true
     };
-    timeZones$: Observable<NameValueDtoListResultDto[]>;
+    timeZones$: Observable<NameValueDto[]>;
     applicationDetails$: Observable<GetApplicationDetailsOutput> = this.offersServiceProxy.getApplicationDetails().pipe(publishReplay(), refCount());
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
     countryCode = 'US';
     states$: Observable<CountryStateDto[]> = this.store$.pipe(
         select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }),
         filter(Boolean)
-    );
+    ) as Observable<CountryStateDto[]>;
 
     constructor(
         public ls: AppLocalizationService,

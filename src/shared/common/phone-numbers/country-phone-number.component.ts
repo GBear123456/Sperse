@@ -17,7 +17,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Output() onInitialized = new EventEmitter();
     @Output() onKeyUp = new EventEmitter();
 
-    @ViewChild(PhoneNumberComponent) intPhoneNumber;
+    @ViewChild(PhoneNumberComponent, { static: true }) intPhoneNumber;
     @ViewChild('intPhoneNumberModel') model;
 
     value = '';

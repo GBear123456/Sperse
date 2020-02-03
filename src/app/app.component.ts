@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     @HostListener('document:mozfullscreenchange', ['$event'])
     @HostListener('document:fullscreenchange', ['$event'])
     onWebkitFullscreenChange() {
-        this.isFullscreenMode = document['fullScreen'] || document['mozFullScreen'] || document.webkitIsFullScreen;
+        this.isFullscreenMode = document['fullScreen'] || document['mozFullScreen'] || document['webkitIsFullScreen'];
         this.fullScreenService.isFullScreenMode.next(this.isFullscreenMode);
     }
 

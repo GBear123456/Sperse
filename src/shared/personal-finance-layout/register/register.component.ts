@@ -5,9 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, of, timer } from 'rxjs';
-import { delayWhen, first, filter, switchMap, tap } from 'rxjs/operators';
+import { delayWhen, first, filter, switchMap } from 'rxjs/operators';
 import swal from 'sweetalert';
 import cloneDeep from 'lodash/cloneDeep';
 

@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -33,7 +33,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     templateUrl: './create-or-edit-role-modal.component.html'
 })
 export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('roleNameInput') roleNameInput: ElementRef;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();

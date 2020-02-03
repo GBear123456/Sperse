@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "declaration": false,
+    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [ "es6", "dom" ],
@@ -25,11 +26,15 @@
       "@node_modules/*": [ "../node_modules/*" ],
       "@angular/*": [ "../node_modules/@angular/*" ],
       "moment": [ "../node_modules/moment/moment.js" ],
-      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ]
+      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ],
+      "sax": [ "./node_modules/sax/lib/sax.js" ]
     }
   },
+  "angularCompilerOptions": {
+    "enableIvy": false
+  },
   "include": [
-      "./**/*",
+      "./*",
       "./node_modules/ngx-international-phone-number/src/"
   ],
   "exclude": [

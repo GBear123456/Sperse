@@ -93,7 +93,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public validImageExtensions: String[] = ['jpeg', 'jpg', 'png', 'pdf', 'bmp', 'gif'];
     public viewerToolbarConfig: any = [];
     public parsedCsv: any;
-    archiveFiles$: Observable<{ name: string, data: Date }[]>;
+    archiveFiles$: Observable<any[]>;
     manageAllowed = false;
 
     constructor(injector: Injector,
@@ -458,7 +458,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                 let reader = new FileReader();
                                 reader.addEventListener('loadend', () => {
                                     this.openDocumentMode = true;
-                                    let content = StringHelper.getBase64(reader.result);
+                                    let content = StringHelper.getBase64(reader.result as string);
                                     this.previewContent = (
                                         viewerType === DocumentViewerType.TEXT
                                         || viewerType === DocumentViewerType.XML
@@ -667,14 +667,12 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this._documentService.updateType(UpdateTypeInput.fromJS({
             documentId: data.id,
             typeId: documentTypeId
-        })).subscribe((response) => {
-            if (!response) {
-                this.clickedCellKey = undefined;
-                data.typeId = documentTypeId;
-                data.typeName = documentTypeId ?
-                    this.documentTypes.find(item => item.id == documentTypeId).name :
-                    undefined;
-            }
+        })).subscribe(() => {
+            this.clickedCellKey = undefined;
+            data.typeId = documentTypeId;
+            data.typeName = documentTypeId ?
+                this.documentTypes.find(item => item.id == documentTypeId).name :
+                undefined;
         });
     }
 

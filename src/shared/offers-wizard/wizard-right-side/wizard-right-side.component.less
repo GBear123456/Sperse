@@ -1,6 +1,6 @@
 @mainFont: inherit;
 
-/deep/ .wizard-right mat-dialog-container {
+::ng-deep .wizard-right mat-dialog-container {
     background: #E7E7E7 url(../../../assets/images/hero.jpg) bottom 0 left 0 no-repeat;
     padding-bottom: 0;
     position: relative;
@@ -14,7 +14,7 @@
     }
 }
 
-/deep/ .scroll-zone {
+::ng-deep .scroll-zone {
     max-height: 400px;
     height: auto;
     overflow: auto;
@@ -49,7 +49,7 @@
         margin: 15px 0;
     }
     
-    /deep/ .step-item {
+    ::ng-deep .step-item {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -104,13 +104,13 @@
         }
     }
     
-    /deep/ .mat-dialog-content {
+    ::ng-deep .mat-dialog-content {
         height: 100%;
         min-height: 100%;
         position: relative;
     }
     
-    /deep/ .dx-field {
+    ::ng-deep .dx-field {
         align-items: center;
         width: 100%;
         
@@ -167,7 +167,7 @@
         }
     }
     
-    /deep/ .dx-radiobutton-checked {
+    ::ng-deep .dx-radiobutton-checked {
         .dx-radiobutton-icon {
             &::before {
                 background-color: transparent;
@@ -179,11 +179,11 @@
         }
     }
     
-    /deep/ .dx-state-focused {
+    ::ng-deep .dx-state-focused {
         border-color: #f0d500;
     }
     
-    /deep/ .mat-tab-group {
+    ::ng-deep .mat-tab-group {
         .mat-tab-header {
             border-bottom-color: rgba(255, 255, 255, .8);
             
@@ -238,7 +238,7 @@
         }
     }
     
-    /deep/ dx-validation-group {
+    ::ng-deep dx-validation-group {
         height: 100%;
         display: flex;
         flex-direction: column;

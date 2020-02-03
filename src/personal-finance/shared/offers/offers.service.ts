@@ -177,7 +177,7 @@ export class OffersService {
 
     static getCategoryFromRoute(route: ActivatedRoute): Observable<CampaignCategory> {
         return route.url.pipe(
-            map((urlSegment: UrlSegment) => OffersService.routeToCategoryMapping[urlSegment[0].path] || CampaignCategory[upperFirst(camelCase(urlSegment[0].path))])
+            map((urlSegment: UrlSegment[]) => OffersService.routeToCategoryMapping[urlSegment[0].path] || CampaignCategory[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 

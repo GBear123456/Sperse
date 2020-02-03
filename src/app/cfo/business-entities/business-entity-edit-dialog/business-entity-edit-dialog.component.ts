@@ -35,7 +35,7 @@ import { StatesService } from '@root/store/states-store/states.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     businessEntities$: Observable<BusinessEntityDto[]> = this.businessEntityService.getBusinessEntities(this.cfoService.instanceType as any, this.cfoService.instanceId).pipe(
         map((businessEntities: BusinessEntityDto[]) => {
             if (!this.isNew)
@@ -240,7 +240,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                 ].filter(val => val).join(' ');
             }
 
-            const request$ = this.isNew
+            const request$: Observable<any> = this.isNew
                 ? this.businessEntityService.createBusinessEntity(this.cfoService.instanceType as any, this.cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
                 : this.businessEntityService.updateBusinessEntity(this.cfoService.instanceType as any, this.cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity));
             request$.pipe(finalize(() => this.modalDialog.finishLoading()))

@@ -35,6 +35,7 @@ import {
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StatesService } from '@root/store/states-store/states.service';
+import { AddressUsageTypeDto } from '../../../../shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'addresses',
@@ -92,7 +93,7 @@ export class AddressesComponent implements OnInit {
     ngOnInit() {
         this.loadAddressTypes();
         this.getAddressTypes()
-            .subscribe(types => {
+            .subscribe((types: AddressUsageTypeDto[]) => {
                 types.map((type) => {
                     if (type['isCompany'] == this.isCompany)
                         this.types[type.id] = type.name;

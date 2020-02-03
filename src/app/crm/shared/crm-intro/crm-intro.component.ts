@@ -27,7 +27,7 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [RoleServiceProxy, UserServiceProxy]
 })
 export class CrmIntroComponent extends AppComponentBase implements OnInit {
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
+    @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
     @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;

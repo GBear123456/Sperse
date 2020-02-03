@@ -37,7 +37,7 @@ import { Category } from '@app/cfo/transactions/categorization/category.model';
     }
 })
 export class CategorizationComponent extends CFOComponentBase implements OnInit, AfterViewInit {
-    @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent, { static: true }) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterSelected: EventEmitter<Category[]> = new EventEmitter();
@@ -438,8 +438,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             filteredRowsKeys.forEach(filteredRowKey => {
                 let rowIndex = this.categoryList.instance.getRowIndexByKey(filteredRowKey);
                 if (rowIndex !== -1) {
-                    let row = this.categoryList.instance.getRowElement(rowIndex);
-                    if (row && row[0]) row[0].classList.add('filtered-category');
+                    let row = this.categoryList.instance.getRowElement(rowIndex) || [];
+                    if (row[0]) row[0].classList.add('filtered-category');
                 }
             });
         }

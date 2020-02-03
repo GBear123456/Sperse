@@ -68,9 +68,9 @@ export class TenantsService {
                 })
             )),
             toArray(),
-            map((items: SubscribableEditionComboboxItemDto[]) => items.sort((itemA, itemB) => {
+            map((items: SubscribableEditionComboboxItemDto[][]) => items.sort((itemA, itemB) => {
                 return itemA[1].moduleId === ModuleType.CFO_Partner ? 1 : (itemB[1].moduleId === ModuleType.CFO_Partner ? -1 : 0);
-            }))
+            }) as SubscribableEditionComboboxItemDto[][])
         );
     }
 

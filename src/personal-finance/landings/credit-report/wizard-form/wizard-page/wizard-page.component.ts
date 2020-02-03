@@ -181,7 +181,7 @@ export class CreditWizardPageComponent implements OnInit {
 
     checkButtonDisabled(formId) {
         return !this.states ||
-            !Array.prototype.slice.call(top[formId].elements)
+            !Array.prototype.slice.call(top[formId]['elements'])
                 .every(function (input) {
                     return (input.type != 'text') || (Boolean(input.value)
                         && !input.getAttribute('aria-invalid'));

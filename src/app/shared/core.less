@@ -445,7 +445,7 @@ button {
         }
 
         .dx-column-lines {
-            /deep/ * {
+            ::ng-deep * {
                 font-size: 13px;
                 color: #686f76;
                 font-weight: 600;
@@ -1024,8 +1024,10 @@ dx-data-grid[accessKey="detailGrid"] {
                 content: '' !important;
                 width: 10px !important;
                 height: 10px !important;
-                left: 11px;
-                top: 11px;
+                margin-left: 11x;
+                margin-top: 11x;
+                top: 0;
+                left: 0;
                 background-color: #00aeef;
             }
         }

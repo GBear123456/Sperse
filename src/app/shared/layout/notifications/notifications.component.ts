@@ -22,7 +22,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationsComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
     notifications: IFormattedUserNotification[] = [];

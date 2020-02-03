@@ -99,7 +99,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
@@ -107,7 +107,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
     @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ChartComponent) chartComponent: ChartComponent;
+    @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
@@ -384,7 +384,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             first(),
             mapTo(data)
         )),
-        switchMap(([contactGroupId, filter, mapArea]: [ContactGroup, any, MapArea]) => this.mapService.loadSliceMapData(
+        switchMap(([contactGroupId, filter, mapArea, refresh]: [ContactGroup, any, MapArea, null]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,

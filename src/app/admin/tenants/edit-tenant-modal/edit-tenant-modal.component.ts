@@ -45,7 +45,7 @@ import { MessageService } from '@abp/message/message.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditTenantModalComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
     @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;

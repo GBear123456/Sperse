@@ -79,12 +79,12 @@ import { StatesService } from '@root/store/states-store/states.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;

@@ -23,7 +23,7 @@
         cursor: move;
     }
 
-    /deep/ .dx-texteditor-container {
+    ::ng-deep .dx-texteditor-container {
         width: 270px;
     }
 
@@ -31,7 +31,7 @@
     dx-text-box,
     dx-number-box {
         display: inline-block;
-        /deep/ input {
+        ::ng-deep input {
             height: 48px;
         }
     }
@@ -66,25 +66,25 @@
             left: 8px;
             z-index: 1;
         }
-        /deep/ input {
+        ::ng-deep input {
             padding-left: 40px;
             background-repeat: no-repeat;
             background-position: 10px 15px;
         }
-        /deep/ input[value=""] {
+        ::ng-deep input[value=""] {
             background-image: none !important;
         }
     }
 
     .url {
-        /deep/ input {
+        ::ng-deep input {
             background-position: 10px 10px;
             background-size: 25px 25px;
         }
     }
 
     .emailAddress {
-        /deep/ input {
+        ::ng-deep input {
             background-image: url("../../../../assets/common/icons/email.svg");
             background-position: 10px 17px;
         }
@@ -92,19 +92,19 @@
 
     .phoneNumber {
         &.type-H, &.type-P {
-            /deep/ input {
+            ::ng-deep input {
                 background-image: url("../../../../assets/common/icons/phone.svg");
             }
         }
 
         &.type-W {
-            /deep/ input {
+            ::ng-deep input {
                 background-image: url("../../../../assets/common/icons/phone-work.svg");
             }
         }
 
         &.type-M {
-            /deep/ input {
+            ::ng-deep input {
                 background-image: url("../../../../assets/common/icons/phone-mobile.svg");
             }
         }
@@ -117,11 +117,11 @@
     }
 
     country-phone-number {
-        /deep/ .wrapper {
+        ::ng-deep .wrapper {
             width: 270px;
         }
 
-        /deep/ div.input-group {
+        ::ng-deep div.input-group {
             height: 100%;
 
             input {

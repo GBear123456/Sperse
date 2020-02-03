@@ -1,4 +1,4 @@
-/deep/ .hide {
+::ng-deep .hide {
     display: none;
 }
 :host {
@@ -53,17 +53,17 @@
                 color: #686f76;
             }
             &.phone {
-                /deep/ .dx-widget {
+                ::ng-deep .dx-widget {
                     display: inline-block;
                 }
             }
-            /deep/ .dx-widget {
+            ::ng-deep .dx-widget {
                 &:not(.dx-state-focused) .dx-placeholder {
                     font-weight: 400;
                     font-size: 16px;
                 }
             }
-            /deep/ input, /deep/ textarea {
+            ::ng-deep input, ::ng-deep textarea {
                 font-size: 15px;
                 font-weight: 300;
                 font-style: normal;
@@ -75,7 +75,7 @@
                 display: flex;
                 padding-right: 60px;
                 position: relative;
-                /deep/ input {
+                ::ng-deep input {
                     border: none!important;
                     font-size: 18px;
                     font-weight: 600;

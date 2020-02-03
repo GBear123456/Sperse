@@ -1,6 +1,6 @@
 :host {
     display: block;
-    /deep/ .dx-widget {
+    ::ng-deep .dx-widget {
         &:not(.dx-state-focused) {
             .dx-placeholder {
                 font-size: 16px;
@@ -15,7 +15,7 @@
     }
     .dx-validationgroup {
         display: block;
-        /deep/ .dx-selectbox {
+        ::ng-deep .dx-selectbox {
             width: 100%;
             .dx-texteditor-input {
                 border-bottom: none;
@@ -23,7 +23,7 @@
         }
     }
 
-    /deep/ .mat-dialog-header {
+    ::ng-deep .mat-dialog-header {
         dx-text-box[name="title"] input {
             font-weight: 600 !important;
             letter-spacing: normal !important;
@@ -38,7 +38,7 @@
         }
     }
 
-    /deep/ .mat-dialog-content {
+    ::ng-deep .mat-dialog-content {
         padding: 20px 20px 35px 70px;
         overflow: visible;
     }
@@ -80,7 +80,7 @@
         margin-top: 20px;
         position: relative;
         align-items: flex-start;
-        /deep/ .dx-textarea {
+        ::ng-deep .dx-textarea {
             width: 100%;
             .dx-texteditor-input {
                 border-bottom: none;
@@ -101,11 +101,11 @@
         }
     }
 
-    /deep/ .dx-textbox .dx-dropdowneditor-input-wrapper {
+    ::ng-deep .dx-textbox .dx-dropdowneditor-input-wrapper {
         overflow: visible;
     }
 
-    /deep/ country-phone-number {
+    ::ng-deep country-phone-number {
         position: absolute;
         bottom: 0;
         .wrapper {

@@ -36,7 +36,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentInformationComponent implements OnInit {
-    @ViewChild('paymentsContainer') paymentsContainer: ElementRef;
+    @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer') paymentMethodsContainer: ElementRef;
     warningMessage$: Observable<string>;
     lastPaymentDate: string;

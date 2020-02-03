@@ -27,7 +27,7 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [UserServiceProxy]
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
+    @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
     @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CfoIntroComponent, any>;

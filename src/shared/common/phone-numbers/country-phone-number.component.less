@@ -3,13 +3,13 @@
         display: inline-block;
         width: 70%;
         &:not(.valid) {
-            /deep/ input {
+            ::ng-deep input {
                 color: #d9534f !important;
             }
         }
     }
 
-    /deep/ div.input-group {
+    ::ng-deep div.input-group {
         border-bottom: 1px solid #dfdfdf;
         input {
             border: none;
@@ -17,7 +17,7 @@
         }
     }
 
-    /deep/ .ng-invalid.ng-touched {
+    ::ng-deep .ng-invalid.ng-touched {
         .input-group:after {
             pointer-events: none;
             font-weight: bold;
@@ -37,7 +37,7 @@
         }
     }
 
-    /deep/ input.form-control:focus {
+    ::ng-deep input.form-control:focus {
         border-color: #dfdfdf;
     }
 
@@ -64,7 +64,7 @@
         word-wrap: break-word;
     }
 
-    /deep/ international-phone-number {
+    ::ng-deep international-phone-number {
         .btn.focus, .btn:focus {
             box-shadow: none;
         }

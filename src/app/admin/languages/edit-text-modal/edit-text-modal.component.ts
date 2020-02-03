@@ -27,7 +27,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class EditTextModalComponent {
     @ViewChild('targetValueInput') targetValueInput: ElementRef;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     model: UpdateLanguageTextInput = new UpdateLanguageTextInput(this.data);

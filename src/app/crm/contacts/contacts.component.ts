@@ -126,7 +126,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }
     ];
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-    public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean));
+    public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
 
     constructor(
         injector: Injector,

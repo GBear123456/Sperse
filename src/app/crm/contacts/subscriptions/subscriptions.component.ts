@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { map, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 

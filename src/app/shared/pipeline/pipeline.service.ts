@@ -94,7 +94,7 @@ export class PipelineService {
                 contactGroupId: contactGroupId
             })),
             filter(Boolean),
-            map(pipelineDefinition => {
+            map((pipelineDefinition: PipelineDto) => {
                 this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
                 pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
                     (stage) => {
@@ -102,7 +102,7 @@ export class PipelineService {
                     });
                 return pipelineDefinition;
             })
-        );
+        ) as Observable<PipelineDto>;
     }
 
     getStages(pipelinePurposeId: string): StageDto[] {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ConditionsType } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 

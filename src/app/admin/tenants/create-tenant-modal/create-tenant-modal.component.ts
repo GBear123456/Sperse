@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -47,7 +47,7 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
 })
 export class CreateTenantModalComponent implements OnInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

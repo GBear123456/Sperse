@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
@@ -25,7 +25,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreferencesDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     GeneralScope = GeneralScope;
     model: CashFlowGridSettingsDto;
     active = false;

@@ -14,7 +14,7 @@ import { RouteGuard } from '@shared/common/auth/route-guard';
                 children: [
                     {
                         path: 'cfo/:instance',
-                        loadChildren: 'mobile/cfo/cfo.module#CfoModule', //Lazy load cfo *module
+                        loadChildren: () => import('mobile/cfo/cfo.module').then(m => m.CfoModule), //Lazy load cfo *module
                         data: { preload: true }
                     }
                 ]

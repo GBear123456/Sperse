@@ -42,7 +42,7 @@ export class UploadSSLCertificateModalComponent extends AppComponentBase {
         let reader = new FileReader();
 
         reader.onloadend = e => {
-            this.model.base64EncodedCertificate = btoa(reader.result);
+            this.model.base64EncodedCertificate = btoa(reader.result as string);
 
             this._sslService.addTenantSslCertificate(this.model)
                 .pipe(finalize(() => { this.saving = false; }))

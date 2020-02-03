@@ -5,6 +5,7 @@ import * as ngCommon from '@angular/common';
 /** Third party imports */
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
@@ -13,7 +14,8 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
-import { NgxMaskModule } from 'ngx-mask';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { NgxMaskModule, MaskPipe } from 'ngx-mask';
 
 /** Application imports */
 import { WizardPersonalInfoStepComponent } from './offer-wizard-steps/wizard-personal-info-step/wizard-personal-info-step.component';
@@ -27,10 +29,7 @@ import { WizardLoanInfoStepComponent } from './offer-wizard-steps/wizard-loan-in
 import { WizardRightSideComponent } from './wizard-right-side/wizard-right-side.component';
 import { WizardCenterModalComponent } from './wizard-center-modal/wizard-center-modal.component';
 import { CommonModule } from '@shared/common/common.module';
-import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
-import { MatTabsModule } from '@angular/material';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
-import { MaskPipe } from '@node_modules/ngx-mask';
 
 @NgModule({
     imports: [

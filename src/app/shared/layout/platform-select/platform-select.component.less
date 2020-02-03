@@ -1,7 +1,7 @@
 @pfm-color: linear-gradient(221deg, #48d8bd, #129064);
 @api-color: linear-gradient(221deg, #91f7c8, #0cab2a);
 
-/deep/ platform-select, .module-select-item {
+::ng-deep platform-select, .module-select-item {
     &.admin input {
         background-image: linear-gradient(221deg, #cae4cf, #538da9);
     }
@@ -87,11 +87,11 @@
     }
 }
 
-/deep/ .dx-popup-content[id] {
+::ng-deep .dx-popup-content[id] {
     padding: 0!important;
 }
 
-/deep/ .module-description {
+::ng-deep .module-description {
     width: 480px;
     padding: 0 24px 0 24px;
     h3 {
@@ -149,7 +149,7 @@
     }
 }
 
-/deep/ .dx-list[accesskey="module-select-list"] {
+::ng-deep .dx-list[accesskey="module-select-list"] {
     .dx-list-item {
         padding-left: 13px;
         border: none !important;
@@ -192,7 +192,7 @@
         margin: 0 10px 0 10px;
     }
 
-    /deep/ .dx-texteditor {
+    ::ng-deep .dx-texteditor {
         .dx-texteditor-container {
             .dx-dropdowneditor-icon {
                 dispaly: none;
@@ -226,7 +226,7 @@
     }
 }
 
-/deep/ .platform-select-wrapper {
+::ng-deep .platform-select-wrapper {
     display: flex;
     flex-wrap: wrap;
     flex-flow: column;

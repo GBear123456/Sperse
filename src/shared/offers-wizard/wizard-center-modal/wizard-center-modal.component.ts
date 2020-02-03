@@ -9,7 +9,7 @@ import {
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatHorizontalStepper } from '@angular/material';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 import { DxValidationGroupComponent } from 'devextreme-angular/ui/validation-group';
 
 /** Application imports */
