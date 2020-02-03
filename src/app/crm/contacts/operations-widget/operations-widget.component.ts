@@ -2,7 +2,7 @@
 import { Component, Injector, Input, Output, ViewChild, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 
 /** Third party imports */
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -22,7 +22,6 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'operations-widget',
@@ -30,15 +29,15 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
     styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent extends AppComponentBase implements OnChanges {
-    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: true }) listsComponent: TagsListComponent;
-    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
-    @ViewChild('statusesList', { static: true }) statusComponent: StaticListComponent;
-    @ViewChild(ToolBarComponent, { static: true }) toolbarComponent: ToolBarComponent;
+    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: false }) listsComponent: TagsListComponent;
+    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
+    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
+    @ViewChild('statusesList', { static: false }) statusComponent: StaticListComponent;
+    @ViewChild(ToolBarComponent, { static: false }) toolbarComponent: ToolBarComponent;
 
     /*** @todo add localization service */
 
