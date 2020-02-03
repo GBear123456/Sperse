@@ -1333,9 +1333,9 @@ angular-cc-library@^1.2.4:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/angular-cc-library/-/angular-cc-library-1.2.5.tgz#c3b4966b22f6ad8fa4fc02a4c5cb01b4c3095ec5"
 
-angular-google-place@^0.0.3:
+angular-google-place@lujakob/angular-google-place-package:
   version "0.0.3"
-  resolved "https://registry.yarnpkg.com/angular-google-place/-/angular-google-place-0.0.3.tgz#8afa64d11d1b1bf047bf9326bf113d1fe4ccf17d"
+  resolved "https://codeload.github.com/lujakob/angular-google-place-package/tar.gz/261b7c477094f7626ce4be581d7153c9b249e4f3"
 
 angular-ide-loader@^0.9.12:
   version "0.9.13"
