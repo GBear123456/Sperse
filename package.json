@@ -59,7 +59,7 @@
     "abp-ng2-module": "3.2.2",
     "abp-web-resources": "^3.8.1",
     "angular-cc-library": "^1.2.4",
-    "angular-google-place": "lujakob/angular-google-place-package",
+    "angular-google-place": "^0.0.3",
     "angular-svg-round-progressbar": "^3.0.1",
     "angular2-chartjs": "^0.5.1",
     "angular2-counto": "^1.2.5",
