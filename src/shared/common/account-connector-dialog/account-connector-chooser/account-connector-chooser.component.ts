@@ -3,14 +3,13 @@ import {
     ChangeDetectionStrategy,
     Output,
     EventEmitter,
-    Injector,
     Input,
     OnInit
 } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountConnector } from '@shared/common/account-connector-dialog/models/account-connector.model';
 import { AccountConnectors } from '@shared/AppEnums';
 import { MatDialogRef } from '@angular/material/dialog';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'account-connector-chooser',
@@ -18,7 +17,7 @@ import { MatDialogRef } from '@angular/material/dialog';
     templateUrl: './account-connector-chooser.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccountConnectorChooserComponent extends AppComponentBase implements OnInit {
+export class AccountConnectorChooserComponent implements OnInit {
     @Input() disabledConnectors: AccountConnectors[];
     @Output() onConnectorChosen: EventEmitter<AccountConnectors> = new EventEmitter<AccountConnectors>();
     selectedConnector: AccountConnector;
@@ -26,39 +25,37 @@ export class AccountConnectorChooserComponent extends AppComponentBase implement
     xeroConnector = {
         name: AccountConnectors.Xero,
         iconName: 'xero-connector',
-        title: this.l('XeroConnectorTitle'),
-        description: this.l('XeroConnectorDescription'),
+        title: this.ls.l('XeroConnectorTitle'),
+        description: this.ls.l('XeroConnectorDescription'),
         disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Xero))
     };
     constructor(
-        injector: Injector,
-        private dialogRef: MatDialogRef<AccountConnectorChooserComponent>
-    ) {
-        super(injector);
-    }
+        private dialogRef: MatDialogRef<AccountConnectorChooserComponent>,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
         this.connectors = [
             {
                 name: AccountConnectors.Quovo,
                 iconName: 'quovo-connector',
-                title: this.l('QuovoConnectorTitle'),
-                description: this.l('QuovoConnectorDescription'),
+                title: this.ls.l('QuovoConnectorTitle'),
+                description: this.ls.l('QuovoConnectorDescription'),
                 disabled: true
             },
             {
                 name: AccountConnectors.Plaid,
                 iconName: 'quovo-connector',
-                title: this.l('QuovoConnectorTitle'),
-                description: this.l('QuovoConnectorDescription'),
+                title: this.ls.l('QuovoConnectorTitle'),
+                description: this.ls.l('QuovoConnectorDescription'),
                 disabled: false
                 // disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
             },
             {
                 name: AccountConnectors.XeroOAuth2,
                 iconName: 'xero-connector',
-                title: this.l('XeroConnectorTitle'),
-                description: this.l('XeroConnectorDescription'),
+                title: this.ls.l('XeroConnectorTitle'),
+                description: this.ls.l('XeroConnectorDescription'),
                 disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.XeroOAuth2))
             }
         ];

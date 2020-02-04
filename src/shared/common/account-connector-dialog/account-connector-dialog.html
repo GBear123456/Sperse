@@ -9,7 +9,7 @@
 
     <ng-template [ngIf]="selectedConnector === accountConnectors.Plaid">
         <plaid-login
-            (onComplete)="complete()"
+            (onComplete)="complete(true)"
             (onClose)="closeDialog($event)">
         </plaid-login>
     </ng-template>
