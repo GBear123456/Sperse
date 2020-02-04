@@ -21,7 +21,6 @@ import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxi
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'upload-photo-dialog',
@@ -30,11 +29,11 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadPhotoDialogComponent implements AfterViewInit {
-    @ViewChild('cropper', { static: true }) cropper: ImageCropperComponent;
+    @ViewChild('cropper', { static: false }) cropper: ImageCropperComponent;
     @ViewChild('fileUrlInput', { static: true }) fileUrlInput: ElementRef;
 
     imageData: any = {};
-    cropperSettings: CropperSettings;
+    cropperSettings: CropperSettings = this.getCropperSetting();
     croppedWidth: number;
     croppedHeight: number;
     fileUrlFormControl = new FormControl('', [
@@ -52,9 +51,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any,
-    ) {
-        this.cropperSettings = this.getCropperSetting();
-    }
+    ) {}
 
     ngAfterViewInit() {
         if (this.data.source) {
