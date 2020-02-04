@@ -774,11 +774,20 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     getFieldCountryCode(data, field) {
         let country = this.phoneRelatedCountryFields[field];
         if (country) {
-            if (country.code && data[country.code] && _.findWhere(this.countries, {code: data[country.code]}))
-                return data[country.code];
-            if (country.name && data[country.name])
-                return this.getCountryCodeByCountryName(data[country.name]);
+            let contryFieldValue = this.getCheckFieldRefValue(data, country.code);
+            if (contryFieldValue && _.findWhere(this.countries, {code: contryFieldValue}))
+                return contryFieldValue;
+            contryFieldValue = this.getCheckFieldRefValue(data, country.name);
+            if (contryFieldValue)
+                return this.getCountryCodeByCountryName(contryFieldValue);
         }
+    }
+
+    getCheckFieldRefValue(data, ref) {
+        if (ref instanceof Array) {
+            return data[_.find(ref, val => data[val])];
+        } else
+            return ref && data[ref];
     }
 
     getCountryCodeByCountryName(name) {

@@ -126,11 +126,11 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     name: 'CustomFields',
                     icon: 'single-content',
                     items: [
-                        { name: 'customField1', readonly: true },
-                        { name: 'customField2', readonly: true },
-                        { name: 'customField3', readonly: true },
-                        { name: 'customField4', readonly: true },
-                        { name: 'customField5', readonly: true }
+                        { name: 'customField1', lname: 'Request_CustomField1', readonly: true },
+                        { name: 'customField2', lname: 'Request_CustomField2', readonly: true },
+                        { name: 'customField3', lname: 'Request_CustomField3', readonly: true },
+                        { name: 'customField4', lname: 'Request_CustomField4', readonly: true },
+                        { name: 'customField5', lname: 'Request_CustomField5', readonly: true }
                     ]
                 }
             ]
@@ -280,12 +280,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     formatFieldValue(field, value) {
         if (value instanceof moment) {
-            if (field == 'doB')
+            if (['doB', 'payNextDate', 'payAfterNextDate'].indexOf(field) >= 0)
                 return value.utc().format(this.formatting.fieldDate);
             else
                 return value.format(this.formatting.fieldDateTime);
-        } else if (field == 'amount')
+        } else if (field == 'netMonthlyIncome' || field.toLowerCase().indexOf('amount') >= 0)
             return this.currencyPipe.transform(value, this.invoiceSettings.currency);
+        else if (field == 'ssn')
+            return [value.slice(0, 3), value.slice(3, 5), value.slice(5, 9)].filter(Boolean).join('-');
         else
             return value;
     }
