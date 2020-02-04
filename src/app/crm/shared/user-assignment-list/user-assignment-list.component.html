@@ -4,10 +4,10 @@
     <div *dxTemplate="let data of 'content'">
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
-                <span class="title">{{l('AssignTo')}}</span>
+                <span class="title">{{ls.l('AssignTo')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!(isRelatedUser || checkPermissions())" (click)="clear()">{{l('Clear')}}</span>
-                    <span class="filter-apply"[class.disabled]="!(isRelatedUser || checkPermissions()) || !userslist.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!(isRelatedUser || checkPermissions())" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply"[class.disabled]="!(isRelatedUser || checkPermissions()) || !userslist.selectedItems?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <dx-list #userslist
@@ -28,7 +28,7 @@
                             <img [src]="profileService.getContactPhotoUrl(data.photoPublicId, true)" alt="Person Photo">
                             <span class="item-name">{{data.name}}<span *ngIf="!data.isActive"> (inactive)</span></span>
                         </div>
-                        <a *ngIf="filterModel" class="dx-link dx-link-filter" [title]="l('Filter')" (click)="applyFilter($event, data)"></a>
+                        <a *ngIf="filterModel" class="dx-link dx-link-filter" [title]="ls.l('Filter')" (click)="applyFilter($event, data)"></a>
                     </div>
                 </div>
             </dx-list>

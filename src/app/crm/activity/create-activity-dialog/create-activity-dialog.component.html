@@ -29,9 +29,10 @@
         </app-static-list>
         <crm-user-assignment-list [multiSelection]="true"
                                   [targetSelector]="'[accesskey=\'UserAssign\']'"
+                                  [proxyService]="activityProxy"
                                   [(selectedItemKey)]="data.appointment.AssignedUserIds"
                                   [hideButtons]="true"
-                                  [selectedKeys]="[data.appointment.AssignedUserIds]"
+                                  [selectedKeys]="[data.appointment.Id]"
                                   [permissionKey]="permissions.CRMManageEventsAssignments"
                                   (onSelectionChanged)="onUserAssignmentChanged($event)"
                                   [assignedUsersSelector]="assignedUsersSelector">
