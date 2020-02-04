@@ -93,6 +93,10 @@ export class ToolBarComponent implements OnDestroy {
                 hint: this.ls.l('Back'),
                 icon: this.getImgURI('back-arrow')
             },
+            add: {
+                text: this.ls.l('Add'),
+                icon: this.getImgURI('assign-icon')
+            },
             assign: {
                 text: this.ls.l('Assign'),
                 icon: this.getImgURI('assign-icon')

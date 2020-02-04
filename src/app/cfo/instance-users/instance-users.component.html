@@ -1,21 +1,3 @@
-<app-static-list #userAssignList
-    [width]="'330px'"
-    [title]="l('Users')"
-    [hideButtons]="false"
-    [showConfirmation]="false"
-    [selectionMode]="'multiple'"
-    [showConfirmation]="false"
-    [highlightSelected]="true"
-    [searchEnabled]="true"
-    [selectedItems]="[currentUserId]"
-    [customSearchEnabled]="true"
-    [convertNameStartCase]="false"
-    [targetSelector]="'[aria-label=Assign]'"
-    (onItemSelected)="onItemSelected($event)"
-    (onListFiltered)="onSourceFiltered($event)"
-    (onOptionChanged)="onOptionChanged($event)"
-    [list]="contacts">
-</app-static-list>
 <app-headline [names]="[ l('Users') ]"
               [showReloadButton]="true"
               [showToggleToolbarButton]="true"
@@ -30,8 +12,7 @@
                   [loadPanel]="{ enabled: false }"
                   [pager]="defaultGridPagerConfig"
                   [dataSource]="dataSource"
-                  [masterDetail]="{ enabled: false, template: 'detail' }"
-                  (onRowClick)="expandColapseRow($event)">
+                  (onSelectionChanged)="initToolbarConfig()">
         <dxo-selection selectAllMode="page"
                        showCheckBoxesMode="always"
                        mode="multiple">

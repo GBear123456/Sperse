@@ -875,7 +875,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: '200px',
                             value: this.sendWelcomeEmail,
                             disabled: !this.emailInvitation,
-                            text: this.l('Send user invitation'),
+                            text: this.l('SendUserInvitation'),
                             onValueChanged: event => {
                                 this.sendWelcomeEmail = event.value;
                                 this.initToolbarConfig();

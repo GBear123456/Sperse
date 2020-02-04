@@ -7,7 +7,7 @@
             <div class="actions clearfix">
                 <span class="title" [hidden]="!showTitle">{{title}}</span>
                 <div [hidden]="hideButtons">
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !staticList.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
+                    <span class="filter-apply" [hidden]="!selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>
             <div class="custom-search" *ngIf="customSearchEnabled">
@@ -38,7 +38,7 @@
                      [accessKey]="accessKey"
                      [height]="listHeight"
                      [selectedItemKeys]="selectedKeys"
-                     [selectedItems]="selectedItems"
+                     [(selectedItems)]="selectedItems"
                      [pageLoadMode]="pageLoadMode"
                      (onContentReady)="onContentReady($event)"
                      (onInitialized)="onInitialized($event)"

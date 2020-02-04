@@ -62,6 +62,7 @@ import { RulesComponent } from './rules/rules.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
 import { RuleDeleteDialogComponent } from './rules/rule-delete-dialog/rule-delete-dialog.component';
+import { AddInstanceUserDialogComponent } from './instance-users/add-instance-user-dialog/add-instance-user-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 import { BusinessEntityEditDialogComponent } from './business-entities/business-entity-edit-dialog/business-entity-edit-dialog.component';
@@ -135,6 +136,7 @@ let COMPONENTS = [
     ReportsComponent,
     GenerateReportDialogComponent,
     SendNotificationDialogComponent,
+    AddInstanceUserDialogComponent,
     CalendarButtonComponent,
     InstanceUsersComponent
 ];
@@ -207,6 +209,7 @@ let COMPONENTS = [
         BankAccountsSelectDialogComponent,
         GenerateReportDialogComponent,
         SendNotificationDialogComponent,
+        AddInstanceUserDialogComponent,
         PortalDashboardComponent,
         DashboardComponent
     ],
