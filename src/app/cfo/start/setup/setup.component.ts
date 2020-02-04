@@ -74,8 +74,10 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         }};
 
         const accountConnectorDialog = this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
-        accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
-            this.startLoading(false, this.cashflowSetup.nativeElement);
+        accountConnectorDialog.componentInstance.onComplete.subscribe((startLoading: boolean) => {
+            if (startLoading) {
+                this.startLoading(false, this.cashflowSetup.nativeElement);
+            }
         });
         accountConnectorDialog.afterClosed().subscribe(() => {
             this.isDisabled = !this.isInstanceAdmin;
