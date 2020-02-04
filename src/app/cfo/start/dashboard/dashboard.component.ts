@@ -26,9 +26,9 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
     animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(AccountsComponent, { static: true }) accountsComponent: AccountsComponent;
-    @ViewChild(CategorizationStatusComponent, { static: true }) categorizationStatusComponent: CategorizationStatusComponent;
-    @ViewChild(TotalsByPeriodComponent, { static: true }) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(AccountsComponent, { static: false }) accountsComponent: AccountsComponent;
+    @ViewChild(CategorizationStatusComponent, { static: false }) categorizationStatusComponent: CategorizationStatusComponent;
+    @ViewChild(TotalsByPeriodComponent, { static: false }) totalsByPeriodComponent: TotalsByPeriodComponent;
     @ViewChild(TrendByPeriodComponent, { static: false }) trendByPeriodComponent: TrendByPeriodComponent;
     @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
 
