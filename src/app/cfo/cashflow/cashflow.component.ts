@@ -177,19 +177,16 @@ export class CellOptions {
     ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxPivotGridComponent, { static: true }) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxPivotGridComponent, { static: false }) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent, { static: true }) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent, { static: true }) operations: OperationsComponent;
-    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     transactionId: any;
     selectedBankAccountsIds;
 
     allowChangingForecast: boolean;
     disableAddForecastButton = true;
     private noRefreshedAfterSync: boolean;
-
-    /** Config of header */
-    headlineConfig: any;
 
     /** The main data for cashflow table */
     stubsCashflowDataForEmptyCategories: TransactionStatsDto[];
@@ -247,8 +244,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Paths that should be clicked in onContentReady */
     private fieldPathsToClick = [];
-
-    private currencyId = 'USD';
 
     /** @todo create model */
     private userPreferencesHandlers = {

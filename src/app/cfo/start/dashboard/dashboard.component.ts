@@ -29,13 +29,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     @ViewChild(AccountsComponent, { static: true }) accountsComponent: AccountsComponent;
     @ViewChild(CategorizationStatusComponent, { static: true }) categorizationStatusComponent: CategorizationStatusComponent;
     @ViewChild(TotalsByPeriodComponent, { static: true }) totalsByPeriodComponent: TotalsByPeriodComponent;
-    @ViewChild(TrendByPeriodComponent, { static: true }) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent, { static: false }) trendByPeriodComponent: TrendByPeriodComponent;
     @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
     accessAllDepartments = this._cfoService.accessAllDepartments;
-
-    headlineConfig;
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
         {name: 'View_Transaction_Details', route: '../transactions'},
