@@ -118,6 +118,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
             message: this.ls.l('AccessCodeIsNotValid')
         }
     ];
+
     goalTypes: GoalType[] = this.bankCodeService.goalTypes;
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];
@@ -163,6 +164,12 @@ export class BankPassComponent implements OnInit, OnDestroy {
         if (e.target.src !== '') {
             this.dataIsLoading = false;
         }
+    }
+
+    getSubTitle(goal): Observable<string> {
+        return goal.currentNumber$.pipe(map((value: number) => {
+            return String(value || 0);
+        }));
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
