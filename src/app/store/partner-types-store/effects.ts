@@ -48,7 +48,7 @@ export class PartnerTypesStoreEffects {
         filter(() => this.permissionCheckerService.isGranted(AppPermissions.CRMPartners) ||
                               this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers)),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
-        exhaustMap(([action, loadedTime]) => {
+        exhaustMap(([, loadedTime]) => {
 
             if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
@@ -72,14 +72,14 @@ export class PartnerTypesStoreEffects {
         map(action => action.payload),
         mergeMap(payload => {
             let partnerProxy = this.injector.get(PartnerServiceProxy);
-            return (payload.partnerIds.length > 1 ? 
+            return (payload.partnerIds.length > 1 ?
                 partnerProxy.bulkUpdateType(new BulkUpdatePartnerTypeInput({
                     partnerIds: payload.partnerIds,
                     typeName: payload.typeName
                 })) :
                 partnerProxy.updateType(new UpdatePartnerTypeInput({
                     partnerId: payload.partnerIds[0],
-                    typeName: payload.typeName                    
+                    typeName: payload.typeName
                 }))
             ).pipe(
                 map(() => {
