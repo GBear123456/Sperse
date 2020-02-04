@@ -94,7 +94,7 @@
                                              subtitleFontSize="12px"
                                              [subtitleFontWeight]="700"
                                              [subtitleColor]="goal.innerColor"
-                                             [subtitle]="goal.currentNumber$ | async">
+                                             [subtitle]="getSubTitle(goal) | async">
                             </circle-progress>
                         </div>
                     </div>

@@ -51763,6 +51763,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     profileSummary!: string | undefined;
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
+    isActive!: boolean | undefined;
     customFields!: ImportCustomFieldsInput | undefined;
     rating!: string | undefined;
 
@@ -51819,6 +51820,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                     this.interests.push(item);
             }
             this.affiliateCode = data["affiliateCode"];
+            this.isActive = data["isActive"];
             this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
             this.rating = data["rating"];
         }
@@ -51875,6 +51877,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                 data["interests"].push(item);
         }
         data["affiliateCode"] = this.affiliateCode;
+        data["isActive"] = this.isActive;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         data["rating"] = this.rating;
         return data; 
@@ -51920,6 +51923,7 @@ export interface IImportPersonalInput {
     profileSummary: string | undefined;
     interests: string[] | undefined;
     affiliateCode: string | undefined;
+    isActive: boolean | undefined;
     customFields: ImportCustomFieldsInput | undefined;
     rating: string | undefined;
 }
