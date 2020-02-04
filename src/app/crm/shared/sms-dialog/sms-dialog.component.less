@@ -93,11 +93,26 @@
                 color: #677380;
             }
         }
-        .number-of-symbols {
+        .footer-wrapper {
+            display: flex;
+            justify-content: space-between;
             position: absolute;
             left: 0;
             bottom: -30px;
-            color: gray;
+            width: 100%;
+            padding: 0 10px;
+            .number-of-symbols {
+                color: gray;
+            }
+            a {
+                &:before {
+                    width: 20px;
+                    content: url(../../../../assets/common/icons/single-content-blue.svg);
+                    display: inline-block;    
+                    vertical-align: text-top;
+                }
+                color: #00aeef;
+            }
         }
     }
 

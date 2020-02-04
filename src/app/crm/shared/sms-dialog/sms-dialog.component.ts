@@ -84,6 +84,15 @@ export class SMSDialogComponent {
         });
     }
 
+    insertTag(event, container, tooltip) {
+        let tag = '#' + event.itemData + '#',
+            value = container.instance.option('value'),
+            textarea = container.instance.element().getElementsByTagName('textarea')[0];
+        container.instance.option('value', !textarea || isNaN(textarea.selectionStart) ? value + tag :
+            textarea.value.slice(0, textarea.selectionStart) + tag + textarea.value.slice(textarea.selectionStart));
+        tooltip.instance.option('visible', false);
+    }
+
     phoneNumberClick(e) {
         e.stopPropagation();
     }

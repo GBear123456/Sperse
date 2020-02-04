@@ -1,8 +1,25 @@
 <modal-dialog [title]="ls.l('NewSms')"
-              [buttons]="buttons"
-              [editTitle]="false"
-              [isTitleValid]="true"
-              [titleClearButton]="false">
+    [buttons]="buttons"
+    [editTitle]="false"
+    [isTitleValid]="true"
+    [titleClearButton]="false">
+    <dx-tooltip #tags
+        width="200px"
+        height="150px"
+        target="#insertTag"
+        [disabled]="false"        
+        showEvent="dxhoverstart">
+        <div *dxTemplate="let data of 'content'">
+            <dx-list 
+                [dataSource]="['LegalName', 'ClientFirstName', 'ClientLastName']"              
+                (onItemClick)="insertTag($event, textArea, tags)">
+                <div *dxTemplate="let item of 'item'">
+                    <span>{{ls.l(item)}}</span>
+                </div>
+            </dx-list>
+        </div>
+    </dx-tooltip>
+
     <dx-validation-group>
         <div class="field">
             <label class="to">{{ ls.l('To') }}</label>
@@ -34,7 +51,7 @@
         </div>
         <div class="text-area field">
             <label class="message">{{ ls.l('Message') }}</label>
-            <dx-text-area
+            <dx-text-area #textArea
                 height="200px"
                 [placeholder]="ls.l('TypeYourMessage')"
                 valueChangeEvent="keyup"
@@ -44,7 +61,9 @@
                     <dxi-validation-rule type="required" [message]="ls.l('MessageIsRequired')"></dxi-validation-rule>
                 </dx-validator>
             </dx-text-area>
-            <div class="number-of-symbols">{{ (smsMaxLength - smsText.length) + ' ' + ls.l('CharactersLeft') }}</div>
+            <div class="footer-wrapper">
+                <div class="number-of-symbols">{{ (smsMaxLength - smsText.length) + ' ' + ls.l('CharactersLeft') }}</div><a id="insertTag" (mouseover)="tags.instance.option('visible', true)">{{ls.l('InsertTag')}}</a>
+            </div>
         </div>
     </dx-validation-group>
 </modal-dialog>
