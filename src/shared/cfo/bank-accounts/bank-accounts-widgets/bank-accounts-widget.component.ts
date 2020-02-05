@@ -184,7 +184,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     refresh() {
         this.isDataLoaded = false;
         this.bankAccountsService.load(false)
-            .subscribe();
+            .subscribe(() => {
+                this.isDataLoaded = true;
+            });
     }
 
     changeSorting(sorting: ISortItem) {
