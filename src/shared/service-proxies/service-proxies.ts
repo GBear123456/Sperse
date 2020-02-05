@@ -75745,6 +75745,7 @@ export class UserListDto implements IUserListDto {
     surname!: string | undefined;
     userName!: string | undefined;
     emailAddress!: string | undefined;
+    userKey!: string | undefined;
     phoneNumber!: string | undefined;
     profileThumbnailId!: string | undefined;
     isEmailConfirmed!: boolean | undefined;
@@ -75769,6 +75770,7 @@ export class UserListDto implements IUserListDto {
             this.surname = data["surname"];
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
+            this.userKey = data["userKey"];
             this.phoneNumber = data["phoneNumber"];
             this.profileThumbnailId = data["profileThumbnailId"];
             this.isEmailConfirmed = data["isEmailConfirmed"];
@@ -75797,6 +75799,7 @@ export class UserListDto implements IUserListDto {
         data["surname"] = this.surname;
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
+        data["userKey"] = this.userKey;
         data["phoneNumber"] = this.phoneNumber;
         data["profileThumbnailId"] = this.profileThumbnailId;
         data["isEmailConfirmed"] = this.isEmailConfirmed;
@@ -75818,6 +75821,7 @@ export interface IUserListDto {
     surname: string | undefined;
     userName: string | undefined;
     emailAddress: string | undefined;
+    userKey: string | undefined;
     phoneNumber: string | undefined;
     profileThumbnailId: string | undefined;
     isEmailConfirmed: boolean | undefined;
