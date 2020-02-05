@@ -195,19 +195,16 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
-            if (Object.keys(this.invalidRowKeys).length) {
-                let dialogData = { importAll: true };
-                this.dialog.open(ConfirmImportDialog, {
-                    data: dialogData
-                }).afterClosed().subscribe(result => {
-                    if (result) {
-                        let records = this.reviewGrid.instance.getSelectedRowsData();
-                        records = records.length && records || this.reviewDataSource;
-                        this.complete(records, dialogData.importAll);
-                    }
-                });
-            } else
-                this.complete();
+            let dialogData = { importAll: true };
+            this.dialog.open(ConfirmImportDialog, {
+                data: dialogData
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    let records = this.reviewGrid.instance.getSelectedRowsData();
+                    records = records.length && records || this.reviewDataSource;
+                    this.complete(records, dialogData.importAll);
+                }
+            });
         }
     }
 
