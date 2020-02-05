@@ -87,13 +87,13 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'rating'
     ];
     private similarFieldsIndex: any = {};
-    private countries: CountryDto[];
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
     readonly REVIEW_STEP_INDEX = 2;
     readonly FINISH_STEP_INDEX = 3;
 
+    countries: CountryDto[];
     selectedStepIndex = 0;
     showSteper = true;
     loadProgress = 0;
@@ -278,7 +278,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     if (index) {
                         if (row.length == columnCount) {
                             let data = {};
-                            mappedFields.forEach((field) => {
+                            mappedFields.sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)).forEach((field) => {
                                 let value = (row[columnsIndex[field.sourceField]] || '').trim();
                                 if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
