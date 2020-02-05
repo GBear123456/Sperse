@@ -33,8 +33,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     private rootComponent: any;
     accessAllDepartments = this._cfoService.accessAllDepartments;
-
-    headlineConfig;
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
         {name: 'View_Transaction_Details', route: '../transactions'},

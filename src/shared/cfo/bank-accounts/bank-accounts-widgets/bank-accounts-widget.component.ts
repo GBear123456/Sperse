@@ -165,6 +165,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             .pipe(takeUntil(this.destroy$))
             .subscribe((syncAccounts: SyncAccountBankDto[]) => {
                 this.dataSource = syncAccounts;
+                if (this.dataSource && !this.dataSource.length) {
+                    this.cfoService.instanceChangeProcess(true).subscribe();
+                }
             });
 
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
@@ -485,6 +488,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(() => {
                 this.notify.info(this.l('SuccessfullyDeleted'));
+                this.bankAccountsService.load(false).subscribe();
             });
     }
 
