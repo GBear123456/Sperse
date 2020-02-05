@@ -28,6 +28,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     public actionMenuItems: any = [
         {
             text: this.l('Edit'),
+            class: 'edit',
             visible: this.permission.isGranted(AppPermissions.EditionsEdit),
             action: () => {
                 this.openCreateOrEditDialog(this.actionRecord.id);
@@ -35,6 +36,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             text: this.l('Delete'),
+            class: 'delete',
             visible: this.permission.isGranted(AppPermissions.EditionsDelete),
             action: () => {
                 this.deleteEdition(this.actionRecord);
