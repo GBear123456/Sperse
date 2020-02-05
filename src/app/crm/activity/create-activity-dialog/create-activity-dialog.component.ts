@@ -104,7 +104,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     constructor(
         private cacheService: CacheService,
-        private activityProxy: ActivityServiceProxy,
         private dialogService: DialogService,
         private cacheHelper: CacheHelper,
         private appSession: AppSessionService,
@@ -113,6 +112,7 @@ export class CreateActivityDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<CreateActivityDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private permissionChecker: PermissionCheckerService,
+        public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
