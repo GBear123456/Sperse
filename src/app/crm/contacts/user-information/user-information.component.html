@@ -2,11 +2,11 @@
     <dx-scroll-view showScrollbar="onHover">
         <dx-validation-group #inviteValidationGroup>
             <div class="row">
-                <div class="invite-user-info col-md-6">
-                    <dx-select-box #emailAddress
+                <div class="invite-user-info col-md-6" *ngIf="emails || phones">
+                    <dx-select-box #emailAddress 
                         width="300px"
-                        placeholder="Email Address"
                         name="emailAddress"
+                        [placeholder]="ls.l('EmailAddress')"
                         [disabled]="!isInviteAllowed"
                         [showClearButton]="true"
                         [acceptCustomValue]="true"
@@ -37,8 +37,8 @@
                     </dx-select-box>
                     <dx-select-box #phoneNumber
                         width="300px"
-                        placeholder="Phone Number"
                         name="phoneNumber"
+                        [placeholder]="ls.l('PhoneNumber')"
                         [disabled]="!isInviteAllowed"
                         [showClearButton]="true"
                         [acceptCustomValue]="true"
