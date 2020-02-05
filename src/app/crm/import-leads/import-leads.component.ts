@@ -897,6 +897,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     clearToolbarSelectedItems() {
+        this.sendWelcomeEmail = false;
         this.selectedStageId = null;
         this.selectedPartnerTypeName = null;
         this.starsListComponent.selectedItemKey = undefined;
