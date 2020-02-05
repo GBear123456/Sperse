@@ -72,6 +72,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
+                class: 'edit',
                 visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesEdit)  && this.appService.isHostTenant,
                 action: () => {
                     this.openCreateOrEditLanguageModal(this.actionRecord.id);
@@ -79,6 +80,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('ChangeTexts'),
+                class: 'change-texts',
                 visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeTexts),
                 action: () => {
                     this.changeTexts(this.actionRecord);
@@ -86,6 +88,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('SetAsDefaultLanguage'),
+                class: 'set-as-default-language',
                 visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeTexts),
                 action: () => {
                     this.setAsDefaultLanguage(this.actionRecord);
@@ -93,6 +96,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
+                class: 'delete',
                 visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesDelete)  && this.appService.isHostTenant,
                 action: () => {
                     this.deleteLanguage(this.actionRecord);

@@ -28,12 +28,6 @@ export class XeroOauth2LoginComponent implements OnInit {
     ngOnInit() {
         this.loadingService.startLoading();
         this.getSetupAccountLink();
-        this.cfoService.initialized$.pipe(
-            filter(Boolean),
-            first()
-        ).subscribe(() => {
-            this.syncProgressService.startSynchronization(true, true);
-        });
     }
 
     getSetupAccountLink() {
@@ -59,7 +53,9 @@ export class XeroOauth2LoginComponent implements OnInit {
                 let interval = setInterval(() => {
                     if (setupAccountWindow.closed) {
                         if (!this.cfoService.hasTransactions) {
-                            this.cfoService.instanceChangeProcess(true).subscribe();
+                            this.cfoService.instanceChangeProcess(true).subscribe(() => {
+                                this.syncProgressService.startSynchronization(true, true);
+                            });
                         }
                         clearInterval(interval);
                         this.onComplete.emit();

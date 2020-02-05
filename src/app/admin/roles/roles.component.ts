@@ -68,12 +68,14 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted(AppPermissions.AdministrationRolesEdit),
+                class: 'edit',
                 action: () => {
                     this.openCreateOrEditRoleModal(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Delete'),
+                class: 'delete',
                 visible: this.permission.isGranted(AppPermissions.AdministrationRolesDelete),
                 action: () => {
                     this.deleteRole(this.actionRecord);
