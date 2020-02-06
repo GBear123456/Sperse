@@ -87,13 +87,13 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'rating'
     ];
     private similarFieldsIndex: any = {};
-    private countries: CountryDto[];
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
     readonly REVIEW_STEP_INDEX = 2;
     readonly FINISH_STEP_INDEX = 3;
 
+    countries: CountryDto[];
     selectedStepIndex = 0;
     showSteper = true;
     loadProgress = 0;
@@ -195,19 +195,16 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
-            if (Object.keys(this.invalidRowKeys).length) {
-                let dialogData = { importAll: true };
-                this.dialog.open(ConfirmImportDialog, {
-                    data: dialogData
-                }).afterClosed().subscribe(result => {
-                    if (result) {
-                        let records = this.reviewGrid.instance.getSelectedRowsData();
-                        records = records.length && records || this.reviewDataSource;
-                        this.complete(records, dialogData.importAll);
-                    }
-                });
-            } else
-                this.complete();
+            let dialogData = { importAll: true };
+            this.dialog.open(ConfirmImportDialog, {
+                data: dialogData
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    let records = this.reviewGrid.instance.getSelectedRowsData();
+                    records = records.length && records || this.reviewDataSource;
+                    this.complete(records, dialogData.importAll);
+                }
+            });
         }
     }
 
@@ -278,7 +275,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     if (index) {
                         if (row.length == columnCount) {
                             let data = {};
-                            mappedFields.forEach((field) => {
+                            mappedFields.sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)).forEach((field) => {
                                 let value = (row[columnsIndex[field.sourceField]] || '').trim();
                                 if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
