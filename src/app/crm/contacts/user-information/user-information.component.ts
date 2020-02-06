@@ -62,8 +62,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     roles: any = [];
     partnerRoles: AppRoles[] = [ AppRoles.CRMPartner, AppRoles.CFOPartner ];
     checkedByDefaultRoles: AppRoles[];
-    emails: any = [];
-    phones: any = [];
+    emails: any;
+    phones: any;
     contactInfoData: any;
     inviteData = CreateUserForContactInput.fromJS({
         contactId: undefined,
@@ -182,8 +182,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     getPhonesAndEmails() {
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
         if (contactInfo) {
-            this.phones = contactInfo.details.phones.filter(item => item.isActive );
-            this.emails = contactInfo.details.emails.filter(item => item.isActive );
+            this.phones = contactInfo.details.phones.filter(item => item.isActive);
+            this.emails = contactInfo.details.emails.filter(item => item.isActive);
         }
         this.loadData();
     }

@@ -671,6 +671,32 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importLeadsService.setupImportCheck();
     }
 
+    checkZipUSCountryFields(field, data, zipField, countryCodeField, countryNameField): boolean {
+        if (field.mappedField === zipField) {
+            if (data[countryCodeField])
+                return data[countryCodeField] == AppConsts.defaultCountry;
+            else if (data[countryNameField]) {
+                let country = _.findWhere(this.wizard.countries, {name: data[countryNameField].trim()});
+                return !country || country.code == AppConsts.defaultCountry;
+            } else
+                return true;
+        }
+        return false;
+    }
+
+    checkZipFormatingAllowed(field, data): boolean {
+        return this.checkZipUSCountryFields(field, data, this.PERSONAL_FULL_ADDRESS_ZIP_CODE,
+                this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.PERSONAL_FULL_ADDRESS2_ZIP_CODE,
+                this.PERSONAL_FULL_ADDRESS2_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS2_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.PERSONAL_FULL_ADDRESS3_ZIP_CODE,
+                this.PERSONAL_FULL_ADDRESS3_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS3_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE,
+                this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE, this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE,
+                this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE, this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME);
+    }
+
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
         if (field.mappedField == this.FULL_NAME_FIELD) {
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
@@ -680,11 +706,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS) {
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
-        } else if (field.mappedField === this.PERSONAL_FULL_ADDRESS_ZIP_CODE
-            || field.mappedField === this.PERSONAL_FULL_ADDRESS2_ZIP_CODE
-            || field.mappedField === this.PERSONAL_FULL_ADDRESS3_ZIP_CODE
-            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE
-            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE) {
+        } else if (this.checkZipFormatingAllowed(field, reviewDataSource)) {
             return this.parseZipCode(field, sourceValue, reviewDataSource);
         } else if (this.FIELDS_PHONE.indexOf(field.mappedField) >= 0) {
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
