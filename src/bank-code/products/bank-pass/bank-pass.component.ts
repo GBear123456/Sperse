@@ -192,7 +192,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
             this.matTabGroup.selectedIndex = 1;
         }
         this.searchValue = e.value;
-        this.dataGrid.instance.getDataSource().load();
+        this.dataGrid.instance.refresh();
     }
 
     accessCodeChanged(accessCode: string) {
