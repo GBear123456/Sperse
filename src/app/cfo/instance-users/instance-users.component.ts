@@ -95,7 +95,9 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     showAddInstanceUserDialog() {
         this.dialog.open(AddInstanceUserDialogComponent, {
             maxWidth: '430px',
-            data: {}
+            data: {
+                exceptUserIds: this.dataGrid.instance.getVisibleRows().map(item => item.data.userId)
+            }
         }).afterClosed().subscribe(result => {
             if (result && result.userId) {
                 this.startLoading();
