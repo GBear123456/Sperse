@@ -46,7 +46,7 @@ export class SMSDialogComponent {
             action: this.save.bind(this)
         }
     ];
-    tags: Record<Tags, string> = {
+    tags: Record<string, string> = {
         [Tags.LegalName]: "",
         [Tags.ClientFirstName]: "",
         [Tags.ClientLastName]: ""
