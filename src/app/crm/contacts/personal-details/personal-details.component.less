@@ -28,6 +28,30 @@
             &.head {
                 margin: 0;
             }
+          
+            &.bool {
+                width: 49%;
+                display: inline-block;
+                white-space: nowrap;
+            }
+
+            &.list {
+                position: relative;
+                flex-direction: column;
+                .item-edit-label {
+                    width: 100%;
+                    border-bottom: none!important;
+                }
+                .item-value {
+                    width: 100%;
+                    max-width: 460px;
+                    height: 100px!important;
+                }
+                i.save-to-clipboard {
+                    position: absolute;
+                    right: 0px;
+                }
+            }
 
             h3 {
                 width: 100%;
