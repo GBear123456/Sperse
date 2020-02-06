@@ -1,7 +1,8 @@
 /** Core imports */
-import { Component, Inject, ElementRef } from '@angular/core';
+import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
@@ -15,6 +16,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['add-instance-user-dialog.less']
 })
 export class AddInstanceUserDialogComponent {
+    @ViewChild(DxSelectBoxComponent) userComponent: DxSelectBoxComponent;
     userId: number;
     contacts: any = [];
     sendInvitationEmail = false;
@@ -63,12 +65,19 @@ export class AddInstanceUserDialogComponent {
 
     lookupFocusIn($event) {
         $event.component.option('opened', Boolean(this.contacts.length));
+        if (!this.contacts.length)
+            this.contactLookupRequest('', () => {
+                this.userComponent.instance.option('value', '');
+            });
     }
 
     onSave() {
-        this.dialogRef.close({
-            userId: this.userId,
-            sendInvitationEmail: this.sendInvitationEmail
-        });
+        if (this.userId)
+            this.dialogRef.close({
+                userId: this.userId,
+                sendInvitationEmail: this.sendInvitationEmail
+            });
+        else
+            this.userComponent.instance.option('isValid', false);
     }
 }

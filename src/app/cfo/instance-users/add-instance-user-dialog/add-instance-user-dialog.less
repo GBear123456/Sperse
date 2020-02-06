@@ -3,11 +3,14 @@
     max-width: 400px;
     padding: 20px;
 
-    /deep/ dx-check-box {
+    ::ng-deep dx-check-box {
         padding: 20px 0;
+        .dx-checkbox-text {
+            white-space: nowrap;
+        }
     }
 
-    /deep/ .dx-selectbox {
+    ::ng-deep .dx-selectbox {
         display: inline-block;
         input {
             height: 48px;
