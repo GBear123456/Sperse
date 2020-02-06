@@ -86,6 +86,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'stateId',
         'rating'
     ];
+    private excludeCCValidation = ['UK'];
     private similarFieldsIndex: any = {};
 
     readonly UPLOAD_STEP_INDEX = 0;
@@ -736,7 +737,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     checkFieldValid(key, data, field): boolean {
-        let value = data[field];
+        let value = data[field].trim();
         if (key == 'phone') {
             let isValid = this.phoneNumberService.isPhoneNumberValid(
                 value, this.getFieldCountryCode(data, field));
@@ -749,9 +750,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         else if (key == 'countryName')
             return value.trim().length > 3;
         else if (key == 'countryId')
-            return !!_.findWhere(this.countries, {code: value.trim()});
+            return this.excludeCCValidation.indexOf(value) >= 0
+                || !!_.findWhere(this.countries, {code: value});
         else if (key == 'stateId')
-            return value.trim().length >= 2 && value.trim().length <= 3;
+            return value.length >= 2 && value.length <= 3;
         else if (key == 'rating')
             return !isNaN(value) && value >= 1 && value <= 10;
         else
