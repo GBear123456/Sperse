@@ -11,7 +11,7 @@
         showEvent="dxhoverstart">
         <div *dxTemplate="let data of 'content'">
             <dx-list 
-                [dataSource]="['LegalName', 'ClientFirstName', 'ClientLastName']"              
+                [dataSource]="tagNames"
                 (onItemClick)="insertTag($event, textArea, tags)">
                 <div *dxTemplate="let item of 'item'">
                     <span>{{ls.l(item)}}</span>

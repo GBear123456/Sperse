@@ -20,6 +20,9 @@ import {
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
+import { Tags } from './sms-tags.enums';
+import { AppSessionService } from '@root/shared/common/session/app-session.service';
+import { AppConsts } from '@root/shared/AppConsts';
 
 @Component({
     templateUrl: 'sms-dialog.component.html',
@@ -43,6 +46,13 @@ export class SMSDialogComponent {
             action: this.save.bind(this)
         }
     ];
+    tags: Record<Tags, string> = {
+        [Tags.LegalName]: "",
+        [Tags.ClientFirstName]: "",
+        [Tags.ClientLastName]: ""
+    };
+
+    tagNames = Object.keys(this.tags).map(x => Tags[x]);
 
     constructor(
         private contactCommunicationServiceProxy: ContactCommunicationServiceProxy,
@@ -52,6 +62,7 @@ export class SMSDialogComponent {
         private notifyService: NotifyService,
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService,
+        appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         let person: PersonContactInfoDto = data.contact.personContactInfo,
@@ -61,6 +72,10 @@ export class SMSDialogComponent {
             .map((item: ContactPhoneDto) => item.phoneNumber);
         if (primary)
             this.phoneNumber = primary.phoneNumber;
+
+        this.tags[Tags.LegalName] = appSession.tenant ? appSession.tenant.name : AppConsts.defaultTenantName;
+        this.tags[Tags.ClientFirstName] = person.person.firstName;
+        this.tags[Tags.ClientLastName] = person.person.lastName;
     }
 
     save() {
@@ -85,8 +100,9 @@ export class SMSDialogComponent {
     }
 
     insertTag(event, container, tooltip) {
-        let tag = '#' + event.itemData + '#',
-            value = container.instance.option('value'),
+        let tag = this.tags[Tags[event.itemData]];
+
+        let value = container.instance.option('value'),
             textarea = container.instance.element().getElementsByTagName('textarea')[0];
         container.instance.option('value', !textarea || isNaN(textarea.selectionStart) ? value + tag :
             textarea.value.slice(0, textarea.selectionStart) + tag + textarea.value.slice(textarea.selectionStart));
