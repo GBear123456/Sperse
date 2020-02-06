@@ -1,5 +1,5 @@
 export enum Tags {
-    LegalName,
-    ClientFirstName,
-    ClientLastName
+    LegalName = 'LegalName',
+    ClientFirstName = 'ClientFirstName',
+    ClientLastName = 'ClientLastName'
 }
