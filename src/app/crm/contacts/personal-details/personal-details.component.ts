@@ -54,27 +54,27 @@ export class PersonalDetailsComponent implements OnDestroy {
         [
             { name: 'General',              type: 'head',   icon:         'profile'                     },
             { name: 'gender',               type: 'select'                                              },
-            { name: 'citizenship',          type: 'select'                                              },
-            { name: 'timeZone',             type: 'select'                                              },
             { name: 'dob',                  type: 'date'                                                },
+            { name: 'timeZone',             type: 'select'                                              },
             { name: 'preferredToD',         type: 'select'                                              },
-            { name: 'drivingLicense',       type: 'string', confidential: true                          },
-            { name: 'drivingLicenseState',  type: 'select'                                              }
+            { name: 'interests',            type: 'list',   source: this.interests$                     }
         ], [
-            { name: 'Social Info',          type: 'head',   icon:         'social'                      },
-            { name: 'isActiveMilitaryDuty', type: 'bool'                                                },
-            { name: 'isUSCitizen',          type: 'bool'                                                },
+            { name: 'Personal Info',        type: 'head',   icon:         'social'                      },
             { name: 'maritalStatus',        type: 'select'                                              },
             { name: 'marriageDate',         type: 'date'                                                },
-            { name: 'divorceDate',          type: 'date'                                                },
+            { name: 'divorceDate',          type: 'date',   isVisible: () => this.person.marriageDate   },
+            { name: 'drivingLicense',       type: 'string', confidential: true                          },
+            { name: 'drivingLicenseState',  type: 'select'                                              },
             { name: 'ssn',                  type: 'string', confidential: true                          },
-            { name: 'interests',            type: 'list',   multiline:    true, source: this.interests$ }
+            { name: 'citizenship',          type: 'select'                                              },
+            { name: 'isUSCitizen',          type: 'bool'                                                },
+            { name: 'isActiveMilitaryDuty', type: 'bool'                                                }
+        ], [
+            { name: 'Profile Summary',      type: 'head',   icon:         'blog'                        },
+            { name: 'profileSummary',       type: 'string', multiline:    true                          }
         ], [
             { name: 'Experience',           type: 'head',   icon:         'blog'                        },
             { name: 'experience',           type: 'string', multiline:    true                          }
-        ],[
-            { name: 'Profile Summary',      type: 'head',   icon:         'blog'                        },
-            { name: 'profileSummary',       type: 'string', multiline:    true                          }
         ]
     ];
 

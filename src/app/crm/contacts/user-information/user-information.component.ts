@@ -181,7 +181,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
     getPhonesAndEmails() {
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
-        if (contactInfo) {
+        if (contactInfo && (!this.phones || !this.emails)) {
             this.phones = contactInfo.details.phones.filter(item => item.isActive);
             this.emails = contactInfo.details.emails.filter(item => item.isActive);
         }
