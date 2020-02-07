@@ -53,7 +53,6 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AppFeatures } from '@shared/AppFeatures';
 import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
@@ -143,7 +142,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         private appStoreService: AppStoreService,
         private customerService: CustomerServiceProxy,
         private itemDetailsService: ItemDetailsService,
-        private contactServiceProxy: ContactServiceProxy,
         public contactsService: ContactsService
     ) {
         super(injector);
