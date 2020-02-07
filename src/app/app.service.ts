@@ -316,7 +316,7 @@ export class AppService extends AppServiceBase {
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
 
-    hasRecurringBilling(module) {
+    hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {
         return module && module.hasRecurringBilling && (moment(module.endDate).add(
             AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }

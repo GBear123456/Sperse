@@ -1,15 +1,15 @@
 <div class="left-menu">
-    <p class="title"><a routerLink="headerLink">{{l('CRMDashboardMenu_Header')}}</a></p>
+    <p class="title">{{ls.l('CRMDashboardMenu_Header')}}</p>
     <ul class="wrapper">
         <ng-template ngFor let-item [ngForOf]="items" let-i="index">
             <li class="item {{item.disabled && 'disabled'}}" *ngIf="!item.hidden">
                 <div class="img {{'img-' + item.caption}}"></div>
-                <span class="link {{item.showPlus ? 'add-button': ''}}" (click)="onClick($event, item)">{{l('CRMDashboardMenu_' + item.caption)}}</span>
+                <span class="link {{item.showPlus ? 'add-button': ''}}" (click)="onClick($event, item)">{{ls.l('CRMDashboardMenu_' + item.caption)}}</span>
             </li>
         </ng-template>
         <li class="item steps-progress-item">
             <div class="img img-IntroductionTour"></div>
-            <span class="link intro-link" (click)="openIntro.emit()">{{l('Introduction Tour')}}</span>
+            <span class="link intro-link" (click)="openIntro.emit()">{{ls.l('Introduction Tour')}}</span>
         </li>
     </ul>
 </div>
