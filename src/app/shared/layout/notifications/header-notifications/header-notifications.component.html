@@ -9,20 +9,7 @@
     <div class="m-dropdown__inner">
         <div class="m-dropdown__header" style="background: linear-gradient(to right, #43383b 60%, gray); box-shadow: inset 2px 5px 12px 2px #43383b;">
             <div class="row">
-                <div *ngIf="subscriptionStatusBarVisible()" class="subscription-info">
-                    <div class="details">
-                        <div class="vertical-align">
-                            <span class="title">{{subscriptionInfoTitle}}</span>
-                            <br />
-                            <span>{{subscriptionInfoText}}</span>
-                        </div>
-                    </div>
-                    <div class="upgrade-button" (click)="openPaymentWizardDialog($event)">
-                        <div class="">{{ls.l("Upgrade").toUpperCase()}}</div>
-                        <div class="">{{ls.l("Today")}}</div>
-                    </div>
-                </div>
-                <div *ngIf="!subscriptionStatusBarVisible()" class="user-info">
+                <div *ngIf="!subscriptionStatusBarVisible(); else subscriptionStatusBar" class="user-info">
                     <div class="m-card-user m-card-user--skin-dark">
                         <div class="m-card-user__details">
                             <span class="tenantName">
@@ -37,6 +24,21 @@
                         </div>
                     </div>
                 </div>
+                <ng-template #subscriptionStatusBar>
+                    <div class="subscription-info">
+                        <div class="details">
+                            <div class="vertical-align">
+                                <span class="title">{{subscriptionInfoTitle}}</span>
+                                <br />
+                                <span>{{subscriptionInfoText}}</span>
+                            </div>
+                        </div>
+                        <div class="upgrade-button" (click)="openPaymentWizardDialog($event)">
+                            <div class="">{{ls.l("Upgrade").toUpperCase()}}</div>
+                            <div class="">{{ls.l("Today")}}</div>
+                        </div>
+                    </div>
+                </ng-template>
             </div>
         </div>
         <div class="m-dropdown__body">
