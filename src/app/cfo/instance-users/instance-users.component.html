@@ -35,13 +35,13 @@
                     cellTemplate="phoneCell"
                     [caption]="l('Phone')">
         </dxi-column>
-        <dxi-column dataField="creationTime"
+        <dxi-column dataField="startDate"
                     cellTemplate="dateCell"
-                    [caption]="l('CreationTime')">
+                    [caption]="l('Date')">
         </dxi-column>
 
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{cellData.value | date: formatting.dateTime : userTimezone }}
+            {{cellData.value | date: formatting.date : userTimezone }}
         </div>
         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
             {{cellData.value | phone}}

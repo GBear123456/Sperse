@@ -75,7 +75,7 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     initToolbarConfig() {
         this.appService.updateToolbar([
             {
-                location: 'before',
+                location: 'after',
                 locateInMenu: 'auto',
                 items: [
                     {
