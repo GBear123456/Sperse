@@ -37,6 +37,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available-bank-codes.interface';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
     selector: 'bank-pass',
@@ -116,6 +117,16 @@ export class BankPassComponent implements OnInit, OnDestroy {
             type: 'pattern',
             pattern: AppConsts.regexPatterns.affiliateCode,
             message: this.ls.l('AccessCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            min: 4,
+            message: this.ls.l('MinLengthIs', 4)
+        },
+        {
+            type: 'stringLength',
+            max: 30,
+            message: this.ls.l('MaxLengthIs', 30)
         }
     ];
 
@@ -131,6 +142,12 @@ export class BankPassComponent implements OnInit, OnDestroy {
         [ 'NABK', 'NAKB', 'NBAK', 'NBKA', 'NKBA', 'NKAB' ],
         [ 'KANB', 'KABN', 'KNAB', 'KNBA', 'KBNA', 'KBAN' ]
     ];
+    showAi$: Observable<boolean> = this.route.queryParamMap.pipe(
+        map((paramsMap: ParamMap) => {
+            const showAi = paramsMap.get('show-ai');
+            return showAi && showAi === 'true';
+        })
+    );
 
     constructor(
         private oDataService: ODataService,
@@ -141,6 +158,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private lifecycleSubjectService: LifecycleSubjectsService,
         private memberSettingsService: MemberSettingsServiceProxy,
         private httpClient: HttpClient,
+        private route: ActivatedRoute,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
@@ -174,6 +192,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         this.currentTabIndex = tabChangeEvent.index;
+        if (this.currentTabIndex === 2) {
+            this.dataIsLoading = true;
+        }
     }
 
     getQuickSearchParam() {
