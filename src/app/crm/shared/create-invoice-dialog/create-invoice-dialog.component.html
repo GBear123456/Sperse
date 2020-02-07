@@ -211,7 +211,7 @@
                                 [searchTimeout]="0"
                                 (onFocusIn)="onFieldFocus($event)"
                                 (onInput)="productLookupItems($event)"
-                                (onSelectionChanged)="selectProduct($event, cellData)">
+                                (onValueChanged)="selectProduct($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>

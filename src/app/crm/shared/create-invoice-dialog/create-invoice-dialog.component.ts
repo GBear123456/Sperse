@@ -612,8 +612,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectProduct(event, cellData) {
         this.products.some(item => {
-            if (item.description == event.selectedItem) {
-                cellData.data.description = item.description;
+            if (item.description == event.value) {
                 cellData.data.unitId = item.unitId;
                 cellData.data.rate = item.rate;
                 this.changeDetectorRef.detectChanges();
