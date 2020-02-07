@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, first, map } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -84,7 +84,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             select(CountriesStoreSelectors.getCountries),
             map(countries => this.getSelectListFromObject(countries))
         )),
-        drivingLicenseState: this.getStates(this.person && this.person.citizenship),
+        drivingLicenseState: [],
         gender: this.getGenderList(),
         maritalStatus: this.getMaritalStatusList(),
         preferredToD: this.getPreferredToD()
@@ -104,10 +104,11 @@ export class PersonalDetailsComponent implements OnDestroy {
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
+        this.getStates(this.person && this.person.citizenship);
         this.contactsService.contactInfoSubscribe((contactInfo) => {
             this.personContactInfo = contactInfo.personContactInfo;
             this.person = contactInfo.personContactInfo.person;
-            this.selectList.drivingLicenseState = this.getStates(this.person && this.person.citizenship);
+            this.getStates(this.person && this.person.citizenship);
             this.isEditAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             setTimeout(() => this.contactsService.toolbarUpdate({
                 optionButton: {
@@ -128,12 +129,16 @@ export class PersonalDetailsComponent implements OnDestroy {
     }
 
     getStates(countryId = AppConsts.defaultCountry): any {
-        return this.asyncPipe.transform(this.store$.pipe(
+        this.store$.pipe(
             select(StatesStoreSelectors.getCountryStates, {
                 countryCode: countryId || AppConsts.defaultCountry
             }),
+            filter(Boolean),
+            first(),
             map(states => this.getSelectListFromObject(states))
-        ));
+        ).subscribe((states: any) => {
+            this.selectList.drivingLicenseState = states;
+        });
     }
 
     private loadStates(countryId = AppConsts.defaultCountry) {
@@ -194,7 +199,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             /** If field is citizenship - then load its states, changed select list and clear the value */
             if (field === 'citizenship') {
                 this.loadStates(value);
-                this.selectList.drivingLicenseState = this.getStates(this.person && this.person.citizenship);
+                this.getStates(this.person && this.person.citizenship);
                 this.person.drivingLicenseState = null;
             }
             this.personContactService.updatePersonInfo(new UpdatePersonInfoInput({
