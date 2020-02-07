@@ -71,6 +71,16 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
             type: 'pattern',
             pattern: AppConsts.regexPatterns.affiliateCode,
             message: this.ls.l('AccessCodeIsNotValid')
+        },
+        {
+            type: 'stringLength',
+            min: 4,
+            message: this.ls.l('MinLengthIs', 4)
+        },
+        {
+            type: 'stringLength',
+            max: 30,
+            message: this.ls.l('MaxLengthIs', 30)
         }
     ];
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();

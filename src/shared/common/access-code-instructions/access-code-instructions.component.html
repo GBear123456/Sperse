@@ -11,12 +11,5 @@
                 <img src="./assets/common/icons/copy.svg" (click)="copy(trackingLink)"/>
             </div>
         </div>
-        <div>
-            <p>{{ ls.l('AffiliateLink') }}:</p>
-            <div class="link" *ngIf="affiliateLink$ | async as affiliateLink">
-                <a [href]="affiliateLink" target="_blank">{{affiliateLink}}</a>
-                <img src="./assets/common/icons/copy.svg" (click)="copy(affiliateLink)"/>
-            </div>
-        </div>
     </ng-container>
 </div>
