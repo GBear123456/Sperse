@@ -23,7 +23,6 @@ import { ActivityServiceProxy, ActivityType } from '@shared/service-proxies/serv
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './activity.component.html',
