@@ -31,13 +31,11 @@ export class AccessCodeInstructionsComponent {
             return (
                 trackingLink
                 ? trackingLink
-                : (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
-                    ? (environment.releaseStage === 'production'
-                        ? 'https://www.MyBankCode.com'
-                        : 'https://bankpass.bankcode.pro')
-                    : (environment.releaseStage === 'production'
+                : (environment.releaseStage === 'production'
+                    ? (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
                         ? 'https://sf.crackmycode.com'
-                        : 'https://bankpass.bankcode.pro')
+                        : 'https://www.MyBankCode.com')
+                    : 'https://bankpass.bankcode.pro'
                 )
             ) + '/' + accessCode;
         })
