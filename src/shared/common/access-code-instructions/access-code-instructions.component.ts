@@ -1,5 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 /** Third party imports  */
 import { Observable } from 'rxjs';
@@ -29,11 +30,16 @@ export class AccessCodeInstructionsComponent {
         map(([accessCode, trackingLink]: [string, string]) => {
             return (
                 trackingLink
-                ? trackingLink + '/'
-                : (environment.releaseStage === 'production'
-                    ? 'https://www.MyBankCode.com/'
-                    : 'https://bankpass.bankcode.pro/')
-            ) + accessCode;
+                ? trackingLink
+                : (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
+                    ? (environment.releaseStage === 'production'
+                        ? 'https://www.MyBankCode.com'
+                        : 'https://bankpass.bankcode.pro')
+                    : (environment.releaseStage === 'production'
+                        ? 'https://sf.crackmycode.com'
+                        : 'https://bankpass.bankcode.pro')
+                )
+            ) + '/' + accessCode;
         })
     );
 
@@ -42,6 +48,7 @@ export class AccessCodeInstructionsComponent {
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
         private router: ActivatedRoute,
+        private title: Title,
         public ls: AppLocalizationService
     ) {}
 
