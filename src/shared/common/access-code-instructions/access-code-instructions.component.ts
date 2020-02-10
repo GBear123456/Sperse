@@ -1,9 +1,11 @@
 /** Core imports */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 /** Third party imports  */
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -22,23 +24,31 @@ import { environment } from '@root/environments/environment';
 export class AccessCodeInstructionsComponent {
     accessCode$: Observable<string> = this.profileService.accessCode$;
     trackingLink$: Observable<string> = this.accessCode$.pipe(
-        map((accessCode: string) => {
-            return (environment.releaseStage === 'production'
-                ? 'https://www.MyBankCode.com/'
-                : 'https://bankpass.bankcode.pro/') + accessCode;
+        withLatestFrom(this.router.queryParamMap.pipe(
+            map((paramMap: ParamMap) => paramMap.get('tracking-link'))
+        )),
+        map(([accessCode, trackingLink]: [string, string]) => {
+            return (
+                trackingLink
+                ? trackingLink
+                : (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
+                    ? (environment.releaseStage === 'production'
+                        ? 'https://www.MyBankCode.com'
+                        : 'https://bankpass.bankcode.pro')
+                    : (environment.releaseStage === 'production'
+                        ? 'https://sf.crackmycode.com'
+                        : 'https://bankpass.bankcode.pro')
+                )
+            ) + '/' + accessCode;
         })
     );
-    affiliateLink$: Observable<string> = this.accessCode$.pipe(
-        map((accessCode: string) => {
-            return (environment.releaseStage === 'production'
-                ? 'https://www.CodebreakerTech.com'
-                : 'https://wp.bankcode.pro') + '/?ref=' + accessCode;
-        })
-    );
+
     constructor(
         private profileService: ProfileService,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
+        private router: ActivatedRoute,
+        private title: Title,
         public ls: AppLocalizationService
     ) {}
 
