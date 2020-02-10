@@ -76,7 +76,8 @@
                         [(value)]="selectedBillingAddress"
                         [dataSource]="billingAddresses">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
-                            {{ cellData.display }}
+                            <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
+                            <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
@@ -112,7 +113,8 @@
                         [(value)]="selectedShippingAddress"
                         [dataSource]="shippingAddresses">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
-                            {{ cellData.display }}
+                            <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
+                            <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
