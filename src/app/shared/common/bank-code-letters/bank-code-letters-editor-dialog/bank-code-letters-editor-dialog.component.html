@@ -1,7 +1,8 @@
 <mat-dialog-content>
-    <ul [dragula]="dragDropName"
-        [(dragulaModel)]="bankCodeDefinitions">
-        <li *ngFor="let bankCodeDefinition of bankCodeDefinitions"
+    <ul class="boundary" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" >
+        <li cdkDrag
+            cdkDragBoundary=".boundary"
+            *ngFor="let bankCodeDefinition of bankCodeDefinitions"
             [ngStyle]="bankCodeService.getColorsByLetter(bankCodeDefinition.letter)"
             [attr.definitionLetter]="bankCodeDefinition.name[0]">
             <span class="first-letter">{{ bankCodeDefinition.name[0] }}</span>{{ bankCodeDefinition.name.slice(1) }}

@@ -7,16 +7,13 @@ import {
     Inject,
     ElementRef,
     ChangeDetectorRef,
-    OnDestroy,
-    OnInit,
     AfterViewInit
 } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { finalize } from 'rxjs/operators';
-import { DragulaService } from 'ng2-dragula';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -38,18 +35,16 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
     providers: [ MemberSettingsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankCodeLettersEditorDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
     bankCode: string;
     personId: number = this.data.personId;
-    dragDropSubscription: Subscription = new Subscription();
     bankCodeDefinitions: BankCodeDefinition[] = [
         { letter: BankCodeLetter.B, name: this.ls.l('Blueprint') },
         { letter: BankCodeLetter.A, name: this.ls.l('Action') },
         { letter: BankCodeLetter.N, name: this.ls.l('Nurturing') },
         { letter: BankCodeLetter.K, name: this.ls.l('Knowledge') }
     ];
-    dragDropName = 'bankCodeDefinitions';
     bankCodeIsEmpty: boolean;
 
     constructor(
@@ -57,7 +52,6 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, AfterViewIn
         private loadingService: LoadingService,
         private personContactServiceProxy: PersonContactServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
-        private dragulaService: DragulaService,
         private memberSettingsService: MemberSettingsServiceProxy,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
@@ -68,22 +62,17 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, AfterViewIn
         this.resortDefinitions();
     }
 
-    ngOnInit() {
-        this.dragDropSubscription.add(this.dragulaService.drop.subscribe((dropObject) => {
-            const name = dropObject[1].getAttribute('definitionLetter');
-            const el = dropObject[1];
-            const newIndex = Array.prototype.indexOf.call(dropObject[2].children, el);
-            this.changeBankCode(name, newIndex);
-        }));
-        this.dragDropSubscription.add(this.dragulaService.setOptions(this.dragDropName, {
-            direction: 'horizontal'
-        }));
-    }
-
     ngAfterViewInit() {
         this.elementRef.nativeElement.closest(
             '.cdk-overlay-container'
         ).style.zIndex = 1001;
+    }
+
+    drop(e: CdkDragDrop<BankCodeDefinition[]>) {
+        if (e.currentIndex !== e.previousIndex) {
+            moveItemInArray(this.bankCodeDefinitions, e.previousIndex, e.currentIndex);
+            this.changeBankCode(this.bankCode[e.previousIndex] as BankCodeLetter, e.currentIndex);
+        }
     }
 
     changeBankCode(bankCodeDefinitionLetter: BankCodeLetter, i: number) {
@@ -135,11 +124,6 @@ export class BankCodeLettersEditorDialogComponent implements OnInit, AfterViewIn
         arr.splice(fromIndex, 1);
         arr.splice(toIndex, 0, element);
         return arr;
-    }
-
-    ngOnDestroy() {
-        this.dragDropSubscription.unsubscribe();
-        this.dragulaService.destroy(this.dragDropName);
     }
 
 }

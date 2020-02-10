@@ -6,6 +6,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { DragulaModule } from 'ng2-dragula';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 /** Application imports */
 import { BankCodeLetterComponent } from '@app/shared/common/bank-code-letters/bank-code-letter/bank-code-letter.component';
@@ -18,7 +19,8 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
         CommonModule,
         DxTooltipModule,
         MatDialogModule,
-        DragulaModule
+        DragulaModule,
+        DragDropModule
     ],
     declarations: [
         BankCodeLettersComponent,
