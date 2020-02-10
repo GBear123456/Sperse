@@ -4,7 +4,6 @@ import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
 /** Third party imports */
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';

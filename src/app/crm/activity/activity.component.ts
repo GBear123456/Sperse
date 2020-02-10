@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 /** Application imports */
-import { AppStore, ActivityAssignedUsersStoreActions } from '@app/store';
+import { ActivityAssignedUsersStoreActions, AppStore } from '@app/store';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -28,7 +28,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ActivityServiceProxy ]
+    providers: [ ActivityServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent, { static: true }) schedulerComponent: DxSchedulerComponent;
@@ -401,7 +402,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     onContentReady() {
-        setTimeout(() => this.finishLoading(), 2000);
+        setTimeout(() => this.finishLoading());
     }
 
     onAppointmentFormCreated(event) {
@@ -537,10 +538,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     deleteAppointment(appointment) {
         this.schedulerComponent.instance.deleteAppointment(appointment);
-    }
-
-    onAppointmentDeleted() {
-        this.schedulerComponent.instance.hideAppointmentTooltip();
     }
 
     getDateWithTimezone(value) {
