@@ -567,7 +567,7 @@ button {
                 display: inline-block;
                 position: relative;
                 width: 18px;
-                color: #ffffff;
+                color: transparent;
 
                 &::before {
                     content: '';
@@ -763,6 +763,7 @@ dx-data-grid[accessKey="detailGrid"] {
                 align-items: center;
                 &:before {
                     margin-right: 10px;
+                    min-width: 17px
                 }
 
                 &.edit:before {
@@ -773,6 +774,33 @@ dx-data-grid[accessKey="detailGrid"] {
                 &.login:before {
                     content: url("../../assets/common/icons/login.svg");
                     height: 15px;
+                }
+
+                &.delete:before {
+                    content: url("../../assets/common/icons/delete-icon.svg");
+                    height: 18px;
+                }
+
+                &.download:before {
+                    content: url("../../assets/common/icons/download-icon.svg");
+                    height: 16px;
+                }
+
+                &.unlock:before {
+                    content: url("../../assets/common/images/bank-code/lock.svg");
+                    height: 14px;
+                }
+
+                &.change-texts:before {
+                    content: url("../../assets/common/icons/language.png");
+                }
+
+                &.set-as-default-language:before {
+                    content: url("../../assets/common/icons/global.png");
+                }
+                &.send-notification:before {
+                    content: url("../../assets/landing/notification-icon.svg");
+                    height: 26px;
                 }
             }
         }

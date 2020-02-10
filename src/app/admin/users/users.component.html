@@ -28,7 +28,7 @@
                                   [allowColumnResizing]="true"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
-                                  [loadPanel]="{ enabled: false }"                                  
+                                  [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   (onInitialized)="onInitialized($event)"
@@ -64,6 +64,7 @@
                         <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="userKey" [caption]="l('UserKey')"></dxi-column>
                         <dxi-column dataField="isActive" [caption]="l('Active')"></dxi-column>
                         <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>

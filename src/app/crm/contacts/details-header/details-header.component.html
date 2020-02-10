@@ -39,7 +39,6 @@
         </div>
         <ng-template #companyInfo>
             <div class="company-details" [ngClass]="{ 'with-company-logo': data?.organizationContactInfo?.primaryPhoto }">
-                <div class="delimiter"></div>
                 <div class="info-icon" (click)="showCompanyDialog($event)">
                     <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
                     <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>

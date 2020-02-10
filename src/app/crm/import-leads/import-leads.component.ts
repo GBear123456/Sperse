@@ -96,6 +96,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_FULL_ADDRESS3_COUNTRY_CODE = 'personalInfo_fullAddress3_countryId';
     private readonly PERSONAL_IS_ACTIVE_MILITARY_DUTY = 'personalInfo_isActiveMilitaryDuty';
     private readonly PERSONAL_IS_US_CITIZEN = 'personalInfo_isUSCitizen';
+    private readonly PERSONAL_IS_ACTIVE = 'personalInfo_isActive';
     private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_DATE_FOUNDED = 'businessInfo_dateFounded';
@@ -153,7 +154,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BOOLEAN_FIELDS = [
         this.BUSINESS_IS_EMPLOYED,
         this.PERSONAL_IS_US_CITIZEN,
-        this.PERSONAL_IS_ACTIVE_MILITARY_DUTY
+        this.PERSONAL_IS_ACTIVE_MILITARY_DUTY,
+        this.PERSONAL_IS_ACTIVE
     ];
 
     private readonly FIELDS_PHONE = [
@@ -263,7 +265,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     sendWelcomeEmail = false;
     emailInvitation = false;
     isUserSelected = true;
-    isRatingSelected = true;
     isListsSelected = false;
     isTagsSelected = false;
     isStarSelected = false;
@@ -271,7 +272,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     selectedClientKeys: any = [];
     selectedStageId: number;
     selectedPartnerTypeName: string;
-    defaultRating = 5;
+    ratingValue;
     stages = [];
     partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
@@ -560,7 +561,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
-            ratingId: this.ratingComponent.ratingValue || this.defaultRating,
+            ratingId: this.ratingValue,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
             partnerTypeName: this.importType === ImportTypeInput.Partner
@@ -671,6 +672,32 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importLeadsService.setupImportCheck();
     }
 
+    checkZipUSCountryFields(field, data, zipField, countryCodeField, countryNameField): boolean {
+        if (field.mappedField === zipField) {
+            if (data[countryCodeField])
+                return data[countryCodeField] == AppConsts.defaultCountry;
+            else if (data[countryNameField]) {
+                let country = _.findWhere(this.wizard.countries, {name: data[countryNameField].trim()});
+                return !country || country.code == AppConsts.defaultCountry;
+            } else
+                return true;
+        }
+        return false;
+    }
+
+    checkZipFormatingAllowed(field, data): boolean {
+        return this.checkZipUSCountryFields(field, data, this.PERSONAL_FULL_ADDRESS_ZIP_CODE,
+                this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.PERSONAL_FULL_ADDRESS2_ZIP_CODE,
+                this.PERSONAL_FULL_ADDRESS2_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS2_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.PERSONAL_FULL_ADDRESS3_ZIP_CODE,
+                this.PERSONAL_FULL_ADDRESS3_COUNTRY_CODE, this.PERSONAL_FULL_ADDRESS3_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE,
+                this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE, this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME)
+            || this.checkZipUSCountryFields(field, data, this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE,
+                this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE, this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME);
+    }
+
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
         if (field.mappedField == this.FULL_NAME_FIELD) {
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
@@ -680,11 +707,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS) {
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
-        } else if (field.mappedField === this.PERSONAL_FULL_ADDRESS_ZIP_CODE
-            || field.mappedField === this.PERSONAL_FULL_ADDRESS2_ZIP_CODE
-            || field.mappedField === this.PERSONAL_FULL_ADDRESS3_ZIP_CODE
-            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE
-            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE) {
+        } else if (this.checkZipFormatingAllowed(field, reviewDataSource)) {
             return this.parseZipCode(field, sourceValue, reviewDataSource);
         } else if (this.FIELDS_PHONE.indexOf(field.mappedField) >= 0) {
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
@@ -757,8 +780,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     onRatingChanged(event) {
-        if (this.isRatingSelected = !!event.value)
-            this.defaultRating = event.value;
+        this.ratingValue = event.value;
         this.initToolbarConfig();
     }
 
@@ -848,7 +870,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         action: () => this.ratingComponent.toggle(),
                         disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         attr: {
-                            'filter-selected': this.isRatingSelected
+                            'filter-selected': !!this.ratingValue
                         }
                     },
                     {
@@ -876,7 +898,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: '200px',
                             value: this.sendWelcomeEmail,
                             disabled: !this.emailInvitation,
-                            text: this.l('Send user invitation'),
+                            text: this.l('SendUserInvitation'),
                             onValueChanged: event => {
                                 this.sendWelcomeEmail = event.value;
                                 this.initToolbarConfig();
@@ -898,6 +920,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     clearToolbarSelectedItems() {
+        this.sendWelcomeEmail = false;
         this.selectedStageId = null;
         this.selectedPartnerTypeName = null;
         this.starsListComponent.selectedItemKey = undefined;
@@ -905,7 +928,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();
-        this.ratingComponent.ratingValue = this.defaultRating;
+        this.ratingValue = undefined;
         this.appService.updateToolbar(null);
     }
 

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { Store } from '@ngrx/store';
@@ -9,20 +9,23 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppStore } from '@app/store';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AssignUserInput, AssignUserForEachInput } from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
+import { MessageService } from '@abp/message/message.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'crm-user-assignment-list',
     templateUrl: './user-assignment-list.component.html',
     styleUrls: ['./user-assignment-list.component.less']
 })
-export class UserAssignmentComponent extends AppComponentBase {
+export class UserAssignmentComponent {
     @Input() multiSelection = false;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
@@ -50,15 +53,17 @@ export class UserAssignmentComponent extends AppComponentBase {
     listComponent: any;
     tooltipVisible = false;
     isRelatedUser = false;
-    noPhotoUrl = AppConsts.imageUrls.noPhoto;
 
     constructor(
-        injector: Injector,
         private appStoreService: AppStoreService,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
+        private messageService: MessageService,
+        private permissionService: PermissionCheckerService,
+        private notifyService: NotifyService,
+        public profileService: ProfileService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
     }
 
@@ -96,8 +101,8 @@ export class UserAssignmentComponent extends AppComponentBase {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
-                    this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                    this.messageService.confirm(
+                        this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process();
@@ -123,7 +128,7 @@ export class UserAssignmentComponent extends AppComponentBase {
                 })).pipe(finalize(() => {
                     this.listComponent.unselectAll();
                 })).subscribe(() => {
-                    this.notify.success(this.l('UserAssigned'));
+                    this.notifyService.success(this.ls.l('UserAssigned'));
                 });
             else
                 this.proxyService.assignUser(AssignUserInput.fromJS({
@@ -131,7 +136,7 @@ export class UserAssignmentComponent extends AppComponentBase {
                     userId: this.selectedItemKey
                 })).subscribe(() => {
                     this.moveSelectedItemsToTop();
-                    this.notify.success(this.l('UserAssigned'));
+                    this.notifyService.success(this.ls.l('UserAssigned'));
                 });
         }
     }
@@ -222,7 +227,7 @@ export class UserAssignmentComponent extends AppComponentBase {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(this.permissionKey) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
+        return this.permissionService.isGranted(this.permissionKey) &&
+            (!this.bulkUpdateMode || this.permissionService.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

@@ -22,6 +22,7 @@ export class StaticListComponent extends AppComponentBase {
     @ViewChild('staticList', { static: true }) dxList: DxListComponent;
     @ViewChild('customSearch', { static: true }) dxSearch: DxTextBoxComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
+    @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();
@@ -83,9 +84,8 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     apply() {
-        if (this.listComponent && this.selectedItems && this.selectedItems.length) {
-            this.changeItems();
-        }
+        if (this.selectedItems && this.selectedItems.length)
+            this.onApply.emit(this.selectedItems);
         this.tooltipVisible = false;
     }
 

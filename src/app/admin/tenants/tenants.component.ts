@@ -51,6 +51,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     public actionMenuItems: any = [
         {
             text: this.l('LoginAsThisTenant'),
+            class: 'login',
             visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
             action: () => {
                 this.showUserImpersonateLookUpModal(this.actionRecord);
@@ -59,12 +60,14 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         {
             text: this.l('LoginAsAdmin'),
             visible: this.permission.isGranted(AppPermissions.TenantsImpersonation),
+            class: 'login',
             action: () => {
                 this.impersonateAsAdmin(this.actionRecord);
             }
         },
         {
             text: this.l('Edit'),
+            class: 'edit',
             visible: this.permission.isGranted(AppPermissions.TenantsEdit),
             action: () => {
                 this.openEditDialog(this.actionRecord.id);
@@ -72,6 +75,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         },
         {
             text: this.l('Delete'),
+            class: 'delete',
             visible: this.permission.isGranted(AppPermissions.TenantsDelete),
             action: () => {
                 this.deleteTenant(this.actionRecord);
@@ -79,6 +83,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         },
         {
             text: this.l('Unlock'),
+            class: 'unlock',
             action: () => {
                 this.unlockUser(this.actionRecord);
             }

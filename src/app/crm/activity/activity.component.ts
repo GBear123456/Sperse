@@ -247,8 +247,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' + this.l('Tasks').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
+                            onValueChanged: () => {
+                                this.searchValueChange();
                             }
                         }
                     }
@@ -397,11 +397,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         !this.showPipeline && this.repaintDataGrid(100);
     }
 
-    searchValueChange(e) {
+    searchValueChange() {
         this.initToolbarConfig();
     }
 
-    onContentReady($event) {
+    onContentReady() {
         setTimeout(() => this.finishLoading(), 2000);
     }
 

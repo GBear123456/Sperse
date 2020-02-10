@@ -19,6 +19,7 @@
             cursor: pointer;
             display: block;
             background-color: #FFF;
+
             &:after, &:before {
                 position: absolute;
                 top: 0;
@@ -28,9 +29,11 @@
                 width: 2px;
                 background-color: #202b35;
             }
+
             &:before {
                 transform: rotate(45deg);
             }
+
             &:after {
                 transform: rotate(-45deg);
             }
@@ -39,6 +42,7 @@
 
     .drop-down {
         width: 100%;
+
         h1 {
             text-align: center;
             font-weight: 300;
@@ -48,7 +52,7 @@
         }
         ::ng-deep .ngx-file-drop__drop-zone {
             width: 350px;
-            height: calc(~"100vh - 260px");
+            height: calc(~"100vh - 170px");
             border: 1px dashed #00aeef;
             background-color: #F5FCFE;
             border-radius: 5px;
@@ -85,7 +89,7 @@
 
         .wrapper {
             display: flex;
-            height: calc(~"100vh - 260px");
+            height: calc(~"100vh - 170px");
             justify-content: baseline;
             flex-flow: column;
             align-items: center;

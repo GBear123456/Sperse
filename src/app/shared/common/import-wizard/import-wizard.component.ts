@@ -86,14 +86,15 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'stateId',
         'rating'
     ];
+    private excludeCCValidation = ['UK'];
     private similarFieldsIndex: any = {};
-    private countries: CountryDto[];
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
     readonly REVIEW_STEP_INDEX = 2;
     readonly FINISH_STEP_INDEX = 3;
 
+    countries: CountryDto[];
     selectedStepIndex = 0;
     showSteper = true;
     loadProgress = 0;
@@ -195,19 +196,16 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
-            if (Object.keys(this.invalidRowKeys).length) {
-                let dialogData = { importAll: true };
-                this.dialog.open(ConfirmImportDialog, {
-                    data: dialogData
-                }).afterClosed().subscribe(result => {
-                    if (result) {
-                        let records = this.reviewGrid.instance.getSelectedRowsData();
-                        records = records.length && records || this.reviewDataSource;
-                        this.complete(records, dialogData.importAll);
-                    }
-                });
-            } else
-                this.complete();
+            let dialogData = { importAll: true };
+            this.dialog.open(ConfirmImportDialog, {
+                data: dialogData
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    let records = this.reviewGrid.instance.getSelectedRowsData();
+                    records = records.length && records || this.reviewDataSource;
+                    this.complete(records, dialogData.importAll);
+                }
+            });
         }
     }
 
@@ -278,7 +276,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     if (index) {
                         if (row.length == columnCount) {
                             let data = {};
-                            mappedFields.forEach((field) => {
+                            mappedFields.sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)).forEach((field) => {
                                 let value = (row[columnsIndex[field.sourceField]] || '').trim();
                                 if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
@@ -734,7 +732,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     checkFieldValid(key, data, field): boolean {
-        let value = data[field];
+        let value = data[field].trim();
         if (key == 'phone') {
             let isValid = this.phoneNumberService.isPhoneNumberValid(
                 value, this.getFieldCountryCode(data, field));
@@ -747,9 +745,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         else if (key == 'countryName')
             return value.trim().length > 3;
         else if (key == 'countryId')
-            return !!_.findWhere(this.countries, {code: value.trim()});
+            return this.excludeCCValidation.indexOf(value) >= 0
+                || !!_.findWhere(this.countries, {code: value});
         else if (key == 'stateId')
-            return value.trim().length >= 2 && value.trim().length <= 3;
+            return value.length >= 2 && value.length <= 3;
         else if (key == 'rating')
             return !isNaN(value) && value >= 1 && value <= 10;
         else

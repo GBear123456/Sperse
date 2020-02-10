@@ -76,15 +76,18 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     actionMenuItems: any = [
         {
             text: this.l('Download'),
+            class: 'download',
             action: this.downloadReport.bind(this)
         },
         {
             text: this.l('Reports_SendNotification'),
+            class: 'send-notification',
             action: this.openSendNotificationDialog.bind(this),
             visible: !this._cfoService.isMainInstanceType
         },
         {
             text: this.l('Delete'),
+            class: 'delete',
             action: this.deleteReport.bind(this)
         }
     ];

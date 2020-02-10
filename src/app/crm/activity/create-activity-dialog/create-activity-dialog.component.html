@@ -29,9 +29,10 @@
         </app-static-list>
         <crm-user-assignment-list [multiSelection]="true"
                                   [targetSelector]="'[accesskey=\'UserAssign\']'"
+                                  [proxyService]="activityProxy"
                                   [(selectedItemKey)]="data.appointment.AssignedUserIds"
                                   [hideButtons]="true"
-                                  [selectedKeys]="[data.appointment.AssignedUserIds]"
+                                  [selectedKeys]="[data.appointment.Id]"
                                   [permissionKey]="permissions.CRMManageEventsAssignments"
                                   (onSelectionChanged)="onUserAssignmentChanged($event)"
                                   [assignedUsersSelector]="assignedUsersSelector">
@@ -65,19 +66,6 @@
                          (onListFiltered)="onListFiltered($event)"
                          [list]="clients">
         </app-static-list>
-        <!--<app-static-list #ordersList-->
-                         <!--[width]="'330px'"-->
-                         <!--[height]="440"-->
-                         <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
-                         <!--[title]="ls.l('Orders')"-->
-                         <!--[showConfirmation]="false"-->
-                         <!--[highlightSelected]="true"-->
-                         <!--[selectedKeys]="[data.appointment.OrderId]"-->
-                         <!--[searchEnabled]="true"-->
-                         <!--(onItemSelected)="onOrderSelected($event)"-->
-                         <!--(onListFiltered)="onListFiltered($event)"-->
-                         <!--[list]="orders">-->
-        <!--</app-static-list>-->
 
         <app-static-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
                         (onSelectionChanged)="onStarsChanged($event)" [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"></app-static-list>

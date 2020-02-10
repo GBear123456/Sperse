@@ -1,6 +1,6 @@
 <div class="header">
-    <h1>{{ l('ConnectFinancialData') }}</h1>
-    <h3>{{ l('ConnectFinancialDataInTwoWays') }}</h3>
+    <h1>{{ ls.l('ConnectFinancialData') }}</h1>
+    <h3>{{ ls.l('ConnectFinancialDataInTwoWays') }}</h3>
 </div>
 <ul class="connectors">
     <li *ngFor="let connector of connectors" (click)="selectConnector(connector, true)" [ngClass]="{
@@ -19,5 +19,5 @@
 
 <div class="footer">
 <!--    <div class="sync-date-picker"><span>{{l('SynchronizeYourData')}}</span><sync-date-picker></sync-date-picker></div>-->
-    <button (click)="next()" [disabled]="!selectedConnector">{{ l('Next') }}</button>
+    <button (click)="next()" [disabled]="!selectedConnector">{{ ls.l('Next') }}</button>
 </div>

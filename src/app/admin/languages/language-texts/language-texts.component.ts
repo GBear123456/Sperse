@@ -31,7 +31,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     private rootComponent: any;
     dataSource: DataSource;
-    public actionMenuItems: any;
     public actionRecord: any;
     sourceNames = abp.localization.sources.filter(source => source.type === 'MultiTenantLocalizationSource').map(value => value.name);
     languages: abp.localization.ILanguageInfo[] = abp.localization.languages;

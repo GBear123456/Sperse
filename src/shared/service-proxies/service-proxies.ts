@@ -7392,14 +7392,20 @@ export class ContactServiceProxy {
     /**
      * @searchPhrase (optional) 
      * @topCount (optional) 
+     * @hasUserAccount (optional) 
+     * @exceptUserIds (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (hasUserAccount !== undefined)
+            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
+        if (exceptUserIds !== undefined)
+            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10962,14 +10968,20 @@ export class CustomerServiceProxy {
     /**
      * @searchPhrase (optional) 
      * @topCount (optional) 
+     * @hasUserAccount (optional) 
+     * @exceptUserIds (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customer/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (hasUserAccount !== undefined)
+            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
+        if (exceptUserIds !== undefined)
+            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -17775,14 +17787,20 @@ export class LeadServiceProxy {
     /**
      * @searchPhrase (optional) 
      * @topCount (optional) 
+     * @hasUserAccount (optional) 
+     * @exceptUserIds (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (hasUserAccount !== undefined)
+            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
+        if (exceptUserIds !== undefined)
+            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -20644,14 +20662,20 @@ export class OrderServiceProxy {
     /**
      * @searchPhrase (optional) 
      * @topCount (optional) 
+     * @hasUserAccount (optional) 
+     * @exceptUserIds (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (hasUserAccount !== undefined)
+            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
+        if (exceptUserIds !== undefined)
+            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -22082,14 +22106,20 @@ export class PartnerServiceProxy {
     /**
      * @searchPhrase (optional) 
      * @topCount (optional) 
+     * @hasUserAccount (optional) 
+     * @exceptUserIds (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (hasUserAccount !== undefined)
+            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
+        if (exceptUserIds !== undefined)
+            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -43629,6 +43659,7 @@ export class EntityContactInfo implements IEntityContactInfo {
     id!: number | undefined;
     name!: string | undefined;
     email!: string | undefined;
+    userId!: number | undefined;
     address!: ContactAddressInfo | undefined;
     isActive!: boolean | undefined;
 
@@ -43646,6 +43677,7 @@ export class EntityContactInfo implements IEntityContactInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.email = data["email"];
+            this.userId = data["userId"];
             this.address = data["address"] ? ContactAddressInfo.fromJS(data["address"]) : <any>undefined;
             this.isActive = data["isActive"];
         }
@@ -43663,6 +43695,7 @@ export class EntityContactInfo implements IEntityContactInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["email"] = this.email;
+        data["userId"] = this.userId;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["isActive"] = this.isActive;
         return data; 
@@ -43673,6 +43706,7 @@ export interface IEntityContactInfo {
     id: number | undefined;
     name: string | undefined;
     email: string | undefined;
+    userId: number | undefined;
     address: ContactAddressInfo | undefined;
     isActive: boolean | undefined;
 }
@@ -51763,6 +51797,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     profileSummary!: string | undefined;
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
+    isActive!: boolean | undefined;
     customFields!: ImportCustomFieldsInput | undefined;
     rating!: string | undefined;
 
@@ -51819,6 +51854,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                     this.interests.push(item);
             }
             this.affiliateCode = data["affiliateCode"];
+            this.isActive = data["isActive"];
             this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
             this.rating = data["rating"];
         }
@@ -51875,6 +51911,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
                 data["interests"].push(item);
         }
         data["affiliateCode"] = this.affiliateCode;
+        data["isActive"] = this.isActive;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         data["rating"] = this.rating;
         return data; 
@@ -51920,6 +51957,7 @@ export interface IImportPersonalInput {
     profileSummary: string | undefined;
     interests: string[] | undefined;
     affiliateCode: string | undefined;
+    isActive: boolean | undefined;
     customFields: ImportCustomFieldsInput | undefined;
     rating: string | undefined;
 }
@@ -52916,7 +52954,7 @@ export class GetUsersInfoDto implements IGetUsersInfoDto {
     lastName!: string | undefined;
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
-    creationTime!: moment.Moment | undefined;
+    startDate!: moment.Moment | undefined;
 
     constructor(data?: IGetUsersInfoDto) {
         if (data) {
@@ -52935,7 +52973,7 @@ export class GetUsersInfoDto implements IGetUsersInfoDto {
             this.lastName = data["lastName"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
         }
     }
 
@@ -52954,7 +52992,7 @@ export class GetUsersInfoDto implements IGetUsersInfoDto {
         data["lastName"] = this.lastName;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -52966,7 +53004,7 @@ export interface IGetUsersInfoDto {
     lastName: string | undefined;
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
-    creationTime: moment.Moment | undefined;
+    startDate: moment.Moment | undefined;
 }
 
 export class AddUserInput implements IAddUserInput {
@@ -68518,6 +68556,7 @@ export class UserListDto implements IUserListDto {
     surname!: string | undefined;
     userName!: string | undefined;
     emailAddress!: string | undefined;
+    userKey!: string | undefined;
     phoneNumber!: string | undefined;
     profileThumbnailId!: string | undefined;
     isEmailConfirmed!: boolean | undefined;
@@ -68542,6 +68581,7 @@ export class UserListDto implements IUserListDto {
             this.surname = data["surname"];
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
+            this.userKey = data["userKey"];
             this.phoneNumber = data["phoneNumber"];
             this.profileThumbnailId = data["profileThumbnailId"];
             this.isEmailConfirmed = data["isEmailConfirmed"];
@@ -68570,6 +68610,7 @@ export class UserListDto implements IUserListDto {
         data["surname"] = this.surname;
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
+        data["userKey"] = this.userKey;
         data["phoneNumber"] = this.phoneNumber;
         data["profileThumbnailId"] = this.profileThumbnailId;
         data["isEmailConfirmed"] = this.isEmailConfirmed;
@@ -68591,6 +68632,7 @@ export interface IUserListDto {
     surname: string | undefined;
     userName: string | undefined;
     emailAddress: string | undefined;
+    userKey: string | undefined;
     phoneNumber: string | undefined;
     profileThumbnailId: string | undefined;
     isEmailConfirmed: boolean | undefined;

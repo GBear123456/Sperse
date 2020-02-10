@@ -1,12 +1,14 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Injector, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -14,16 +16,16 @@ import { AppPermissions } from '@shared/AppPermissions';
     selector: 'left-menu',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardMenuComponent extends AppComponentBase {
+export class DashboardMenuComponent {
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     items = [];
     constructor(
-        injector: Injector,
-        public appService: AppService
+        private permission: PermissionCheckerService,
+        private router: Router,
+        public appService: AppService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-
         this.items = [
             {
                 caption: 'ManageClients',
@@ -50,7 +52,7 @@ export class DashboardMenuComponent extends AppComponentBase {
         ];
     }
 
-    onClick(event, elem, i) {
+    onClick(event, elem) {
         if (elem.caption === 'PaymentWizard') {
             this.openPaymentWizard.emit();
             return;
@@ -60,10 +62,10 @@ export class DashboardMenuComponent extends AppComponentBase {
             return;
 
         if (event.clientX < 260)
-            elem.component && this._router.navigate(
+            elem.component && this.router.navigate(
                 ['/app/crm' + elem.component]);
         else if (event.target.classList.contains('add-button'))
-            this._router.navigate(['/app/crm' + elem.component],
+            this.router.navigate(['/app/crm' + elem.component],
                 {queryParams: {action: 'addNew'}});
     }
 }

@@ -35,7 +35,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     };
     @ViewChild(QuovoLoginComponent, { static: true }) quovoLogin: QuovoLoginComponent;
     @ViewChild(XeroLoginComponent, { static: true }) xeroLogin: XeroLoginComponent;
-    @Output() onComplete: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onComplete: EventEmitter<boolean> = new EventEmitter<boolean>();
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
     showBackButton = true;
@@ -62,13 +62,11 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     openConnector(connector: AccountConnectors) {
-        if (connector === AccountConnectors.Quovo) {
+        if (connector === AccountConnectors.Quovo || connector == AccountConnectors.XeroOAuth2) {
             /** Decrease dialog sized to 0 (like hide) and open quovo iframe dialog instead,
              * setTimeout to avoid changed after check error */
             this.dialogRef.updateSize('0', '0');
-        } else if (connector == AccountConnectors.XeroOAuth2)
-            this.dialogRef.updateSize('0', '0');
-
+        }
         this.selectedConnector = connector;
     }
 
@@ -76,8 +74,8 @@ export class AccountConnectorDialogComponent implements OnInit {
         this.dialogRef.close(e);
     }
 
-    complete() {
-        this.onComplete.emit();
+    complete(startLoading = false) {
+        this.onComplete.emit(startLoading);
         this.closeDialog();
     }
 }

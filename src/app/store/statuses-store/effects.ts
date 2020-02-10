@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, exhaustMap, map, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as statusesActions from './actions';
@@ -25,7 +25,7 @@ export class StatusesStoreEffects {
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<statusesActions.LoadRequestAction>(statusesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
-        exhaustMap(([action, loadedTime]) => {
+        exhaustMap(([, loadedTime]) => {
 
             if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();

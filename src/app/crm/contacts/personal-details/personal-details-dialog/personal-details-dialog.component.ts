@@ -45,8 +45,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
         },
         {
             type: 'stringLength',
-            max: 50,
-            message: this.ls.l('MaxLengthIs', 50)
+            min: 4,
+            message: this.ls.l('MinLengthIs', 4)
+        },
+        {
+            type: 'stringLength',
+            max: 30,
+            message: this.ls.l('MaxLengthIs', 30)
         }
     ];
 

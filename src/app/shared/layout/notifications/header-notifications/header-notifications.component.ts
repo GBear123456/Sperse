@@ -165,7 +165,7 @@ export class HeaderNotificationsComponent implements OnInit {
 
     subscriptionStatusBarVisible(): boolean {
         const moduleSubscription = this.appService.getModuleSubscription();
-        return this.appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable;
+        return this.appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable && !this.appService.hasRecurringBilling(moduleSubscription);
     }
 
     hideDropDown() {

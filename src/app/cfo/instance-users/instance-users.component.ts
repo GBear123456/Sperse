@@ -2,6 +2,7 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize } from 'rxjs/operators';
@@ -11,8 +12,9 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
+import { AddInstanceUserDialogComponent } from './add-instance-user-dialog/add-instance-user-dialog.component';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-import { InstanceServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, AddUserInput } from '@shared/service-proxies/service-proxies';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
@@ -34,8 +36,8 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     constructor(
         private injector: Injector,
         private appService: AppService,
-        private instanceProxy: InstanceServiceProxy,
-        private contactProxy: ContactServiceProxy
+        private dialog: MatDialog,
+        private instanceProxy: InstanceServiceProxy
     ) {
         super(injector);
 
@@ -44,8 +46,9 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
             load: (loadOptions) => {
                 this.startLoading();
                 this.isDataLoaded = false;
-                return this.instanceProxy.getUsers(this.instanceType, this.instanceId
-                ).pipe(finalize(() => this.finishLoading())).toPromise().then(response => {                    
+                return this.instanceProxy.getUsers(this.instanceType, this.instanceId).pipe(
+                    finalize(() => this.finishLoading())
+                ).toPromise().then(response => {
                     return {
                         data: response,
                         totalCount: response.length
@@ -56,7 +59,7 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     }
 
     ngOnInit(): void {
-        this.activate();        
+        this.activate();
     }
 
     ngAfterViewInit(): void {
@@ -73,77 +76,50 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     initToolbarConfig() {
         this.appService.updateToolbar([
             {
-                location: 'before',
+                location: 'after',
                 locateInMenu: 'auto',
                 items: [
                     {
-                        name: 'assign',
-                        action: event => {
-                            if (!this.contacts.length)
-                                this.contactLookupRequest();
-                            this.userAssignList.toggle();
-                        }
-                        //disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
+                        name: 'add',
+                        action: this.showAddInstanceUserDialog.bind(this)
                     },
                     {
                         name: 'delete',
-                        action: Function
+                        disabled: this.dataGrid.instance && this.dataGrid.instance.getSelectedRowKeys().length != 1,
+                        action: this.deleteSelectUser.bind(this)
                     }
                 ]
             }
         ]);
     }
 
-    expandColapseRow(e) {
-        if (!e.data.sourceData) return;
-
-        if (e.isExpanded) {
-            e.component.collapseRow(e.key);
-        } else {
-            e.component.expandRow(e.key);
-        }
-    }
-
-    onItemSelected(event) {
-console.log('onItemSelected', event);
-    }
-
-    onSourceFiltered(event) {
-console.log('onSourceFiltered', event);
-    }
-
-    onOptionChanged(event) {
-console.log('onOptionChanged', event);
-    }
-
-    contactLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10).subscribe(res => {
-            if (!phrase || phrase == this.lastSearch) {
-                this.contacts = res;
-                this.userAssignList.dxList.instance.repaint();
-                callback && callback(res);
+    showAddInstanceUserDialog() {
+        this.dialog.open(AddInstanceUserDialogComponent, {
+            maxWidth: '430px',
+            data: {
+                exceptUserIds: this.dataGrid.instance.getVisibleRows().map(item => item.data.userId)
+            }
+        }).afterClosed().subscribe(result => {
+            if (result && result.userId) {
+                this.startLoading();
+                this.instanceProxy.addUser(this.instanceType, this.instanceId, new AddUserInput(result)).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.invalidate();
+                    this.notify.info(this.l('SavedSuccessfully'));
+                });
             }
         });
     }
 
-    customerLookupItems($event) {
-        let search = $event.event.target.value;
-        if (this.contacts.length)
-            this.contacts = [];
-
-        $event.component.option('opened', true);
-        $event.component.option('noDataText', this.l('LookingForItems'));
-
-        clearTimeout(this.lookupTimeout);
-        this.lookupTimeout = setTimeout(() => {
-            $event.component.option('opened', true);
-            $event.component.option('noDataText', this.l('LookingForItems'));
-
-            this.contactLookupRequest(search, res => {
-                if (!res['length'])
-                    $event.component.option('noDataText', this.l('NoItemsFound'));
-            });
-        }, 500);
+    deleteSelectUser() {
+        this.startLoading();
+        this.instanceProxy.removeUser(this.instanceType, this.instanceId, this.dataGrid.instance.getSelectedRowKeys()[0]).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.invalidate();
+            this.notify.info(this.l('SuccessfullyDeleted'));
+        });
     }
 
     ngOnDestroy() {

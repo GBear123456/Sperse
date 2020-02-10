@@ -32,6 +32,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
@@ -50,7 +51,6 @@ export class CreateActivityDialogComponent implements OnInit {
     @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
     @ViewChild('leadsList', { static: true }) leadsList: StaticListComponent;
     @ViewChild('clientsList', { static: true }) clientsList: StaticListComponent;
-    @ViewChild('ordersList', { static: true }) ordersList: StaticListComponent;
     @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
     @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
@@ -69,7 +69,6 @@ export class CreateActivityDialogComponent implements OnInit {
     stages: any[] = [];
 
     leads: any = [];
-    orders: any = [];
     clients: any = [];
 
     saveButtonId = 'saveActivityOptions';
@@ -106,7 +105,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     constructor(
         private cacheService: CacheService,
-        private activityProxy: ActivityServiceProxy,
         private dialogService: DialogService,
         private cacheHelper: CacheHelper,
         private appSession: AppSessionService,
@@ -114,6 +112,8 @@ export class CreateActivityDialogComponent implements OnInit {
         private messageService: MessageService,
         private dialogRef: MatDialogRef<CreateActivityDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
+        private permissionChecker: PermissionCheckerService,
+        public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -187,14 +187,15 @@ export class CreateActivityDialogComponent implements OnInit {
 
     loadResourcesData() {
         this.modalDialog.startLoading();
-        Promise.all([
-            this.lookup('Leads').then(res => this.leads = res),
-            this.lookup('Orders').then(res => this.orders = res),
-            this.lookup('Clients').then(res => this.clients = res)
-        ]).then(
-            () => this.modalDialog.finishLoading(),
-            () => this.modalDialog.finishLoading()
-        );
+        if (this.permissionChecker.isGranted(AppPermissions.CRMCustomers)) {
+            Promise.all([
+                this.lookup('Leads').then(res => this.leads = res),
+                this.lookup('Clients').then(res => this.clients = res)
+            ]).then(
+                () => this.modalDialog.finishLoading(),
+                () => this.modalDialog.finishLoading()
+            );
+        }
         this.initToolbarConfig();
     }
 
@@ -235,6 +236,7 @@ export class CreateActivityDialogComponent implements OnInit {
                     {
                         name: 'assign',
                         action: this.toggleUserAssignmen.bind(this),
+                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments),
                         options: {
                             accessKey: 'UserAssign'
                         },
@@ -256,6 +258,7 @@ export class CreateActivityDialogComponent implements OnInit {
                     {
                         name: 'lead',
                         action: this.toggleLeadList.bind(this),
+                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMCustomers),
                         options: {
                             text: this.ls.l('Lead'),
                             accessKey: 'LeadsList'
@@ -267,6 +270,7 @@ export class CreateActivityDialogComponent implements OnInit {
                     {
                         name: 'client',
                         action: this.toggleClientLists.bind(this),
+                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMCustomers),
                         options: {
                             text: this.ls.l('Client'),
                             accessKey: 'ClientsList'
@@ -275,14 +279,6 @@ export class CreateActivityDialogComponent implements OnInit {
                             'filter-selected': this.isClientSelected
                         }
                     },
-                    // {
-                    //     name: 'order',
-                    //     action: this.toggleOrderList.bind(this),
-                    //     options: {
-                    //         text: this.ls.l('Order'),
-                    //         accessKey: 'OrdersList'
-                    //     }
-                    // },
                     {
                         name: 'star',
                         disabled: true,
@@ -463,9 +459,6 @@ export class CreateActivityDialogComponent implements OnInit {
                         break;
                     case 'Clients':
                         this.clients = res;
-                        break;
-                    case 'Orders':
-                        this.orders = res;
                         break;
                 }
             });

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, EventEmitter, Output, ViewChild,
+import { Component, Input, EventEmitter, Output, ViewChild,
     ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
@@ -37,7 +37,6 @@ export class SourceContactListComponent {
     private lookupSubscription: any;
 
     constructor(
-        injector: Injector,
         public ls: AppLocalizationService,
         private changeDetectorRef: ChangeDetectorRef,
         private contactProxy: ContactServiceProxy

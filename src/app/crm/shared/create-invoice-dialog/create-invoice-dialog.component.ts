@@ -507,7 +507,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     customerLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10).subscribe(res => {
+        this.contactProxy.getAllByPhrase(phrase, 10, undefined, undefined).subscribe(res => {
             if (!phrase || phrase == this.customer) {
                 this.customers = res;
                 callback && callback(res);
@@ -612,8 +612,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectProduct(event, cellData) {
         this.products.some(item => {
-            if (item.description == event.selectedItem) {
-                cellData.data.description = item.description;
+            if (item.description == event.value) {
                 cellData.data.unitId = item.unitId;
                 cellData.data.rate = item.rate;
                 this.changeDetectorRef.detectChanges();

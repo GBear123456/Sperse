@@ -1,6 +1,6 @@
 <div class="bank-pass">
     <section *ngIf="hasSubscription$ | async; else noSubscription">
-        <div class="header">
+        <div class="header" [ngClass]="{ 'show-ai': showAi$ | async }">
             <div class="search">
                 <dx-text-box [placeholder]="ls.l('Search')"
                              [value]="searchValue"
@@ -106,7 +106,7 @@
                         <dx-data-grid id="gridContainer"
                                       class="limitedPagerTotal"
                                       accessKey="narrowHeaderPanel"
-                                      [noDataText]="''"
+                                      noDataText=""
                                       [dataSource]="dataSource"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
@@ -158,6 +158,11 @@
                                  [showLink]="false">
                     </app-no-data>
                 </div>
+            </mat-tab>
+            <mat-tab *ngIf="showAi$ | async" [label]="ls.l('BankCode_CodebreakerAI')">
+                <iframe id="theFrame" src="https://v5.bankcode.pro"
+                        frameborder="0" (load)="onIframeLoad($event)">
+                </iframe>
             </mat-tab>
         </mat-tab-group>
     </section>

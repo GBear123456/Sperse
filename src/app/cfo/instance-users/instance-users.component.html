@@ -1,21 +1,3 @@
-<app-static-list #userAssignList
-    [width]="'330px'"
-    [title]="l('Users')"
-    [hideButtons]="false"
-    [showConfirmation]="false"
-    [selectionMode]="'multiple'"
-    [showConfirmation]="false"
-    [highlightSelected]="true"
-    [searchEnabled]="true"
-    [selectedItems]="[currentUserId]"
-    [customSearchEnabled]="true"
-    [convertNameStartCase]="false"
-    [targetSelector]="'[aria-label=Assign]'"
-    (onItemSelected)="onItemSelected($event)"
-    (onListFiltered)="onSourceFiltered($event)"
-    (onOptionChanged)="onOptionChanged($event)"
-    [list]="contacts">
-</app-static-list>
 <app-headline [names]="[ l('Users') ]"
               [showReloadButton]="true"
               [showToggleToolbarButton]="true"
@@ -30,8 +12,7 @@
                   [loadPanel]="{ enabled: false }"
                   [pager]="defaultGridPagerConfig"
                   [dataSource]="dataSource"
-                  [masterDetail]="{ enabled: false, template: 'detail' }"
-                  (onRowClick)="expandColapseRow($event)">
+                  (onSelectionChanged)="initToolbarConfig()">
         <dxo-selection selectAllMode="page"
                        showCheckBoxesMode="always"
                        mode="multiple">
@@ -54,13 +35,13 @@
                     cellTemplate="phoneCell"
                     [caption]="l('Phone')">
         </dxi-column>
-        <dxi-column dataField="creationTime"
+        <dxi-column dataField="startDate"
                     cellTemplate="dateCell"
-                    [caption]="l('CreationTime')">
+                    [caption]="l('Date')">
         </dxi-column>
 
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{cellData.value | date: formatting.dateTime : userTimezone }}
+            {{cellData.value | date: formatting.date : userTimezone }}
         </div>
         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
             {{cellData.value | phone}}

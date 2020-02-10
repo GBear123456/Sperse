@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -28,10 +29,11 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
 
     constructor(
         injector: Injector,
-        private _quovoService: QuovoService,
-        private _synchProgress: SynchProgressService,
-        private _bankAccountsGeneralService: BankAccountsGeneralService,
+        private quovoService: QuovoService,
+        private synchProgress: SynchProgressService,
+        private bankAccountsGeneralService: BankAccountsGeneralService,
         private dialog: MatDialog,
+        private route: ActivatedRoute,
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
@@ -39,25 +41,32 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this.subscribeToObservables();
     }
 
+    ngOnInit() {
+        this.activate();
+        this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
+        this.quovoService.quovoSynced$.subscribe(() => {
+            this.bankAccountsService.load();
+        });
+        /** Redirect user to the start page if instance isn't initialized */
+        this._cfoService.initialized$.pipe(
+            filter((initialized: boolean) => !initialized),
+            takeUntil(this.deactivate$)
+        ).subscribe(() => {
+            this._router.navigate(['../start'], { relativeTo: this.route.parent } );
+        });
+    }
+
     subscribeToObservables() {
-        this.syncCompletedSubscription = this._synchProgress.syncCompleted$.pipe(
+        this.syncCompletedSubscription = this.synchProgress.syncCompleted$.pipe(
             takeUntil(this.deactivate$),
             filter(completed => !!completed)
         ).subscribe(() => {
             this.refresh();
         });
-        this.refreshSubscription = this._bankAccountsGeneralService.refresh$.pipe(takeUntil(this.deactivate$))
+        this.refreshSubscription = this.bankAccountsGeneralService.refresh$.pipe(takeUntil(this.deactivate$))
             .subscribe( () => {
                 this.refresh();
             });
-    }
-
-    ngOnInit() {
-        this.activate();
-        this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
-        this._quovoService.quovoSynced$.subscribe(() => {
-            this.bankAccountsService.load();
-        });
     }
 
     refresh() {
@@ -91,7 +100,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     bankAccountDataChanged() {
-        this._synchProgress.refreshSyncComponent();
+        this.synchProgress.refreshSyncComponent();
     }
 
     activate() {

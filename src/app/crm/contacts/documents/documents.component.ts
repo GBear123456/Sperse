@@ -123,14 +123,17 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
+                class: 'edit',
                 action: this.editDocument.bind(this)
             },
             {
                 text: this.l('Download'),
+                class: 'download',
                 action: this.downloadDocumentFromActionsMenu.bind(this)
             },
             {
                 text: this.l('Delete'),
+                class: 'delete',
                 action: this.deleteDocument.bind(this),
                 disabled: !this.manageAllowed
             }

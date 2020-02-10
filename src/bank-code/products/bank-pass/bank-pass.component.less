@@ -334,9 +334,13 @@
         top: 32px;
         right: 39px;
         align-items: center;
-        width: calc(100% - 438px);
+        width: calc(100% - 461px);
         justify-content: flex-end;
         z-index: 1;
+
+        &.show-ai {
+            width: calc(100% - 688px);
+        }
 
         @media all and (max-width: 1200px) {
             top: 40px;
@@ -518,6 +522,7 @@
             font-weight: 900;
             letter-spacing: 0.56px;
             color: #7a7979;
+            text-transform: uppercase;
 
             @media all and (max-width: 1200px) {
                 font-size: 15px;

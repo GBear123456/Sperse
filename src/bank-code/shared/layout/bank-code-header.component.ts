@@ -59,15 +59,17 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             });
         if (this.appSession.user) {
             zip(
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
+                this.showResourcesLink(),
                 this.getBCRMLink(),
-                this.showResourcesLink()
-            ).subscribe(([bcrmLink, showResourcesLink]: [string, boolean]) => {
-                this.memberAreaLinks = this.getMemberAreaLinks(showResourcesLink, bcrmLink);
+            ).subscribe(([showTrainerLink, showAffiliateLink, showResourcesLink, bcrmLink]: [boolean, boolean, boolean, string]) => {
+                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showResourcesLink, bcrmLink);
             });
         }
     }
 
-    private getMemberAreaLinks(showResourcesLink?: boolean, bcrmLink?: string) {
+    private getMemberAreaLinks(showTrainerLink?: boolean, showAffiliateLink?: boolean, showResourcesLink?: boolean, bcrmLink?: string) {
         return [
             {
                 name: this.ls.l('Home'),
@@ -93,11 +95,13 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                     },
                     {
                         name: this.ls.l('BankCode_CertifiedTrainer'),
-                        routerUrl: 'products/bank-trainer'
+                        routerUrl: 'products/bank-trainer',
+                        hidden: !showTrainerLink
                     },
                     {
                         name: this.ls.l('BankCode_Affiliate'),
-                        routerUrl: 'products/bank-affiliate'
+                        routerUrl: 'products/bank-affiliate',
+                        hidden: !showAffiliateLink
                     },
                     {
                         name: this.ls.l('Why They Buy'),
@@ -136,7 +140,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
         ).pipe(
             map((subcriptions: boolean[]) => {
-                return subcriptions.some(Boolean) ? '../app/crm' : './products/bank-pass';
+                return subcriptions.some(Boolean) ? '../app/crm' : './products/bankpass';
             })
         );
     }

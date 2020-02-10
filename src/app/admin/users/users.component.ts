@@ -82,12 +82,14 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             {
                 text: this.l('LoginAsThisUser'),
                 visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+                class: 'login',
                 action: () => {
                     this.impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
                 }
             },
             {
                 text: this.l('Edit'),
+                class: 'edit',
                 visible: this.permission.isGranted(AppPermissions.AdministrationUsersEdit),
                 action: () => {
                     this.openUserDetails(this.actionRecord.id);
@@ -95,6 +97,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Unlock'),
+                class: 'unlock',
                 visible: this.permission.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles),
                 action: () => {
                     this.unlockUser(this.actionRecord);
@@ -102,6 +105,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
+                class: 'delete',
                 visible: this.permission.isGranted(AppPermissions.AdministrationUsersDelete),
                 action: () => {
                     this.deleteUser(this.actionRecord);
