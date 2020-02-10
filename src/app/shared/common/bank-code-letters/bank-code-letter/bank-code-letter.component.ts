@@ -16,11 +16,18 @@ export class BankCodeLetterComponent {
     @Input() active = true;
     @Output() onClick: EventEmitter<null> = new EventEmitter<null>();
     letters = BankCodeLetter;
+    showTooltip = false;
 
     constructor(private bankCodeService: BankCodeService) {}
 
     click(e) {
         this.onClick.emit(e);
+    }
+
+    toggleTooltip() {
+        if (this.showDescriptionOnHover) {
+            this.showTooltip = !this.showTooltip;
+        }
     }
 
     getColorsByLetter(letter) {
