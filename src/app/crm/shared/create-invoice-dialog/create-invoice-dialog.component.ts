@@ -12,6 +12,8 @@ import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { finalize, first, switchMap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
+import clone from 'lodash/clone';
+import * as moment from 'moment';
 
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -35,7 +37,8 @@ import {
     InvoiceLineUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
-    ContactServiceProxy
+    ContactServiceProxy,
+    InvoiceAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -54,7 +57,11 @@ import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
-    styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
+    styleUrls: [
+        '../../../shared/common/styles/form.less',
+        '../../contacts/addresses/addresses.styles.less',
+        'create-invoice-dialog.component.less'
+    ],
     providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy ],
     host: {
         '(click)': 'closeAddressDialogs()'
@@ -128,8 +135,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ];
 
     invoiceUnits = Object.keys(InvoiceLineUnit);
-    billingAddresses = [];
-    shippingAddresses = [];
+    billingAddresses: InvoiceAddressInfo[] = [];
+    shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
 
     constructor(
@@ -495,15 +502,37 @@ export class CreateInvoiceDialogComponent implements OnInit {
     initContactAddresses(contactId: number) {
         if (contactId)
             this.invoiceProxy.getInvoiceAddresses(contactId).subscribe(res => {
-                this.shippingAddresses =
-                this.billingAddresses = res.map(address => {
+                let addresses: InvoiceAddressInfo[] = res.map(address => {
                     let fullName = [address.firstName, address.lastName].filter(Boolean).join(' ');
                     address['display'] = [address.company, fullName, address.address1, address.address2,
                         address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
                     return address;
                 });
+                this.shippingAddresses = this.sortAddresses(clone(addresses), 'S');
+                this.billingAddresses = this.sortAddresses(clone(addresses), 'B');
                 this.changeDetectorRef.markForCheck();
             });
+    }
+
+    private sortAddresses(addresses: InvoiceAddressInfo[], usageTypeId: 'B' | 'S') {
+        const dateProperty = usageTypeId === 'B' ? 'lastBillingDate' : 'lastShippingDate';
+        return addresses.sort((addressA: InvoiceAddressInfo, addressB: InvoiceAddressInfo) => {
+            let result = 0;
+            if (addressA[dateProperty] && addressB[dateProperty]) {
+                result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) ? -1 : 1;
+            } else if (addressA[dateProperty] && !addressB[dateProperty]) {
+                result = -1;
+            } else if (addressB[dateProperty] && !addressA[dateProperty]) {
+                result = 1;
+            } else if (addressA.usageTypeId === usageTypeId && addressB.usageTypeId !== usageTypeId) {
+                result = -1;
+            } else if (addressA.usageTypeId !== usageTypeId && addressB.usageTypeId === usageTypeId) {
+                result = 1;
+            } else {
+                result = addressA.contactAddressId > addressB.contactAddressId ? -1 : 1;
+            }
+            return result;
+        });
     }
 
     customerLookupRequest(phrase = '', callback?) {
