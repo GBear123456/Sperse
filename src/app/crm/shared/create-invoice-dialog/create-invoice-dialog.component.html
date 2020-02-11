@@ -74,7 +74,8 @@
                         [visible]="contactId && !selectedBillingAddress"
                         [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedBillingAddress"
-                        [dataSource]="billingAddresses">
+                        [dataSource]="billingAddresses"
+                        (onValueChanged)="onAddressChanged($event, 'selectedBillingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
                             <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
@@ -111,7 +112,8 @@
                         [visible]="contactId && !selectedShippingAddress"
                         [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedShippingAddress"
-                        [dataSource]="shippingAddresses">
+                        [dataSource]="shippingAddresses"
+                        (onValueChanged)="onAddressChanged($event, 'selectedShippingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
                             <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>

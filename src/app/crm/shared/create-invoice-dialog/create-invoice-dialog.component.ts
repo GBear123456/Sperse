@@ -514,12 +514,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
+    onAddressChanged(e, field: string) {
+        if (e.value && !e.value.lastBillingDate && !e.value.lastShippingDate) {
+            this.showEditAddressDialog(e.event, field);
+        }
+    }
+
     private sortAddresses(addresses: InvoiceAddressInfo[], usageTypeId: 'B' | 'S') {
         const dateProperty = usageTypeId === 'B' ? 'lastBillingDate' : 'lastShippingDate';
         return addresses.sort((addressA: InvoiceAddressInfo, addressB: InvoiceAddressInfo) => {
             let result = 0;
             if (addressA[dateProperty] && addressB[dateProperty]) {
-                result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) ? -1 : 1;
+                result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) > 0 ? -1 : 1;
             } else if (addressA[dateProperty] && !addressB[dateProperty]) {
                 result = -1;
             } else if (addressB[dateProperty] && !addressA[dateProperty]) {
@@ -778,20 +784,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             address = this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
         let dialogData: any = this[field] || {
-                countryId: address.countryCode,
-                stateId: address.stateId,
-                stateName: address.stateName,
-                country: address.country,
-                city: address.city,
-                zip: address.zip,
-                address1: address.streetAddress,
-                address2: undefined,
-                firstName: person.firstName,
-                lastName: person.lastName,
-                company: undefined,
-                email: this.selectedContact.email,
-                phone: undefined
-            };
+            countryId: address.countryCode,
+            stateId: address.stateId,
+            stateName: address.stateName,
+            country: address.country,
+            city: address.city,
+            zip: address.zip,
+            address1: address.streetAddress,
+            address2: undefined,
+            firstName: person.firstName,
+            lastName: person.lastName,
+            company: undefined,
+            email: this.selectedContact.email,
+            phone: undefined
+        };
         dialogData['viewMode'] = this.disabledForUpdate;
         dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         this.dialog.open(InvoiceAddressDialog, {
