@@ -31,7 +31,7 @@ export function statesReducer(state: State = initialState, action): State {
                 };
             }
             const countryStates = state.entities[action.payload.countryCode].items;
-            if (!countryStates.find((countryState: CountryStateDto) => countryState.code === action.payload.state.code)) {
+            if (!action.payload.state.code || !countryStates.find((countryState: CountryStateDto) => countryState.code === action.payload.state.code)) {
                 countryStates.push(action.payload.state);
             }
             return {

@@ -218,9 +218,9 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     onCustomStateCreate(e) {
         this.businessEntity.stateId = null;
         this.businessEntity.stateName = e.text;
-        this.statesService.updateState(this.address.countryCode, e.text, e.text);
+        this.statesService.updateState(this.address.countryCode, null, e.text);
         e.customItem = {
-            code: e.text,
+            code: null,
             name: e.text
         };
     }

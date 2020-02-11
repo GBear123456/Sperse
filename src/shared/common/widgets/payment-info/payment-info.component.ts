@@ -74,9 +74,9 @@ export class PaymentInfoComponent {
     onCustomStateCreate(e) {
         this.bankCard.billingStateCode = null;
         this.bankCard.billingState = e.text;
-        this.statesService.updateState(this.bankCard.billingCountryCode, e.text, e.text);
+        this.statesService.updateState(this.bankCard.billingCountryCode, null, e.text);
         e.customItem = {
-            code: e.text,
+            code: null,
             name: e.text
         };
     }
