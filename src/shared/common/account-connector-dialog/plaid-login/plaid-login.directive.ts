@@ -41,7 +41,7 @@ export class PlaidLoginDirective {
                 key: res.key,
                 product: res.product,
                 webhook: res.webhook,
-                linkCustomizationName: 'app'
+                linkCustomizationName: 'app',
                 onExit: (err, metadata) => {
                     this.onClose.emit();
                 },
