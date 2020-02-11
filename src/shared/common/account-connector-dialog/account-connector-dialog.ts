@@ -60,11 +60,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     openConnector(connector: AccountConnectors) {
-        if (connector === AccountConnectors.Quovo || connector == AccountConnectors.XeroOAuth2) {
-            /** Decrease dialog sized to 0 (like hide) and open quovo iframe dialog instead,
-             * setTimeout to avoid changed after check error */
-            this.dialogRef.updateSize('0', '0');
-        }
+        this.dialogRef.updateSize('0', '0');
         this.selectedConnector = connector;
     }
 
