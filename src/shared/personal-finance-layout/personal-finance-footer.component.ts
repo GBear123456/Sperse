@@ -5,6 +5,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutType } from '../service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: 'personal-finance-footer.component.html',
@@ -19,7 +20,8 @@ export class PersonalFinanceFooterComponent {
     conditions = ConditionsType;
     constructor(
         private dialog: MatDialog,
-        private feature: FeatureCheckerService
+        private feature: FeatureCheckerService,
+        private appSession: AppSessionService
     ) {
         this.hasPfmAppFeature = this.feature.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
         this.showDefaultFooter = this.isMemberArea() && !this.hasPfmAppFeature;
