@@ -94,18 +94,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 },
 */
                 {
-                    name: 'TrackingInfo',
+                    name: 'CustomFields',
                     icon: 'single-content',
                     items: [
-                        { name: 'applicantId', readonly: true, action: this.showApplications.bind(this) },
-                        { name: 'applicationId', readonly: true, action: this.showApplications.bind(this) },
-                        { name: 'clickId', readonly: true },
-                        { name: 'siteId', readonly: true },
-                        { name: 'siteUrl', readonly: true },
-                        { name: 'refererUrl', readonly: true },
-                        { name: 'entryUrl', readonly: true },
-                        { name: 'clientIp', readonly: true },
-                        { name: 'userAgent', readonly: true },
+                        { name: 'customField1', lname: 'Request_CustomField1', readonly: true },
+                        { name: 'customField2', lname: 'Request_CustomField2', readonly: true },
+                        { name: 'customField3', lname: 'Request_CustomField3', readonly: true },
+                        { name: 'customField4', lname: 'Request_CustomField4', readonly: true },
+                        { name: 'customField5', lname: 'Request_CustomField5', readonly: true }
                     ]
                 }
             ]
@@ -123,14 +119,18 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     ]
                 },
                 {
-                    name: 'CustomFields',
+                    name: 'TrackingInfo',
                     icon: 'single-content',
                     items: [
-                        { name: 'customField1', lname: 'Request_CustomField1', readonly: true },
-                        { name: 'customField2', lname: 'Request_CustomField2', readonly: true },
-                        { name: 'customField3', lname: 'Request_CustomField3', readonly: true },
-                        { name: 'customField4', lname: 'Request_CustomField4', readonly: true },
-                        { name: 'customField5', lname: 'Request_CustomField5', readonly: true }
+                        { name: 'applicantId', readonly: true, action: this.showApplications.bind(this) },
+                        { name: 'applicationId', readonly: true, action: this.showApplications.bind(this) },
+                        { name: 'clickId', readonly: true },
+                        { name: 'siteId', readonly: true },
+                        { name: 'siteUrl', readonly: true, wide: true },
+                        { name: 'refererUrl', readonly: true, wide: true },
+                        { name: 'entryUrl', readonly: true, wide: true },
+                        { name: 'clientIp', readonly: true },
+                        { name: 'userAgent', readonly: true, wide: true },
                     ]
                 }
             ]
