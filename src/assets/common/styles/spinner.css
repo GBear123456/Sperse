@@ -24,6 +24,7 @@
     width: 60px !important;
     height: 60px !important;
     animation: donut-spin 1.2s linear infinite;
+    z-index: 1000 !important;
 }
 
 .spinner div {

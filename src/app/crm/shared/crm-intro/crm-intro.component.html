@@ -4,7 +4,7 @@
         <mat-step>
             <div class="video step-item">
                 <div class="header">
-                    <span>{{l('CRM')}} - {{l('Product_Video_Introduction')}}</span>
+                    <span>{{ls.l('CRM')}} - {{ls.l('Product_Video_Introduction')}}</span>
                 </div>
                 <div class="main">
                     <div class="video-wrapper">
@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button (click)="goToStep(1)" class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button (click)="goToStep(1)" class="btn btn-layout">{{ls.l('Back')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -30,13 +30,13 @@
                          ./assets/common/images/intro/logo-light@3x.png 3x"
                          alt="CRM logo"
                          class="crm-intro-logo">
-                    <span>{{l('Introduction_Tour')}}</span>
+                    <span>{{ls.l('Introduction_Tour')}}</span>
                 </div>
                 <div class="main">
                     <div class="two-cols">
                         <div class="text">
-                            <h2>{{l('CRM')}}</h2>
-                            <p>{{l('CRM_description')}}</p>
+                            <h2>{{ls.l('CRM')}}</h2>
+                            <p>{{ls.l('CRM_description')}}</p>
                         </div>
                         <div class="img">
                             <img src="./assets/common/images/intro/first-step-mockups.png"
@@ -48,19 +48,19 @@
                     </div>
 
                     <div class="know-customers">
-                        <p class="know-customers--text">{{l('Know_Your')}} {{l('CRM_Customers')}}</p>
+                        <p class="know-customers--text">{{ls.l('Know_Your')}} {{ls.l('CRM_Customers')}}</p>
                         <ul class="know-customers--list w-100">
-                            <li class="know-customers--item prospect">{{l('prospect')}}</li>
-                            <li class="know-customers--item new">{{l('new')}}</li>
-                            <li class="know-customers--item won">{{l('won')}}</li>
+                            <li class="know-customers--item prospect">{{ls.l('prospect')}}</li>
+                            <li class="know-customers--item new">{{ls.l('new')}}</li>
+                            <li class="know-customers--item won">{{ls.l('won')}}</li>
                         </ul>
                     </div>
                 </div>
                 <div class="footer">
                     <a (click)="goToStep(0)">
-                        <img src="./assets/common/images/crm-intro/button-play.svg" alt="play"> {{l('Play_Video')}}
+                        <img src="./assets/common/images/crm-intro/button-play.svg" alt="play"> {{ls.l('Play_Video')}}
                     </a>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -73,37 +73,37 @@
                          ./assets/common/images/intro/logo-light@3x.png 3x"
                          alt="CRM logo"
                          class="crm-intro-logo">
-                    <!--<span>{{l('Key_Features')}}</span>-->
+                    <!--<span>{{ls.l('Key_Features')}}</span>-->
                 </div>
                 <div class="main">
-                    <h2>{{l('Key_Features')}}</h2>
+                    <h2>{{ls.l('Key_Features')}}</h2>
                     <ul class="treka">
                         <li>
-                            <img src="./assets/common/images/intro/icons/drag-n-drop.svg">{{l('Key_Features_1')}}
+                            <img src="./assets/common/images/intro/icons/drag-n-drop.svg">{{ls.l('Key_Features_1')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/document-manager.svg">{{l('Key_Features_2')}}
+                            <img src="./assets/common/images/intro/icons/document-manager.svg">{{ls.l('Key_Features_2')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/team-assignment-2.svg">{{l('Key_Features_3')}}
+                            <img src="./assets/common/images/intro/icons/team-assignment-2.svg">{{ls.l('Key_Features_3')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/dashboard.svg">{{l('Key_Features_4')}}
+                            <img src="./assets/common/images/intro/icons/dashboard.svg">{{ls.l('Key_Features_4')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/import.svg">{{l('Key_Features_5')}}
+                            <img src="./assets/common/images/intro/icons/import.svg">{{ls.l('Key_Features_5')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/browser.svg">{{l('Key_Features_6')}}
+                            <img src="./assets/common/images/intro/icons/browser.svg">{{ls.l('Key_Features_6')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/team-assignment.svg">{{l('Key_Features_7')}}
+                            <img src="./assets/common/images/intro/icons/team-assignment.svg">{{ls.l('Key_Features_7')}}
                         </li>
                     </ul>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -116,38 +116,38 @@
                          ./assets/common/images/intro/logo-light@3x.png 3x"
                          alt="CRM logo"
                          class="crm-intro-logo">
-                    <!--<span>{{l('Key_Features')}}: {{l('Pro_Edition')}}</span>-->
+                    <!--<span>{{ls.l('Key_Features')}}: {{ls.l('Pro_Edition')}}</span>-->
                 </div>
                 <div class="main">
-                    <small>{{l('Coming soon')}}</small>
-                    <h2>{{l('Key_Features')}}: {{l('Pro_Edition')}}</h2>
+                    <small>{{ls.l('Coming soon')}}</small>
+                    <h2>{{ls.l('Key_Features')}}: {{ls.l('Pro_Edition')}}</h2>
                     <ul class="treka">
                         <li>
-                            <img src="./assets/common/images/intro/icons/drag-n-drop-2.svg">{{l('Key_Features_Pro_1')}}
+                            <img src="./assets/common/images/intro/icons/drag-n-drop-2.svg">{{ls.l('Key_Features_Pro_1')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/document-manager-2.svg">{{l('Key_Features_Pro_2')}}
+                            <img src="./assets/common/images/intro/icons/document-manager-2.svg">{{ls.l('Key_Features_Pro_2')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/team-assignment-3.svg">{{l('Key_Features_Pro_3')}}
+                            <img src="./assets/common/images/intro/icons/team-assignment-3.svg">{{ls.l('Key_Features_Pro_3')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/browser-2.svg">{{l('Key_Features_Pro_4')}}
+                            <img src="./assets/common/images/intro/icons/browser-2.svg">{{ls.l('Key_Features_Pro_4')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/email.svg">{{l('Key_Features_Pro_5')}}
+                            <img src="./assets/common/images/intro/icons/email.svg">{{ls.l('Key_Features_Pro_5')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/phone-call.svg">{{l('Key_Features_Pro_6')}}
+                            <img src="./assets/common/images/intro/icons/phone-call.svg">{{ls.l('Key_Features_Pro_6')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/intro/icons/mobile-app.svg">{{l('Key_Features_Pro_7')}}
+                            <img src="./assets/common/images/intro/icons/mobile-app.svg">{{ls.l('Key_Features_Pro_7')}}
                         </li>
                     </ul>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -155,24 +155,24 @@
             <div class="third-step step-item">
                 <div class="step-bg"></div>
                 <div class="main flex-column">
-                    <h2 class="title">{{l('Drag_Drop_Step_Title')}}</h2>
+                    <h2 class="title">{{ls.l('Drag_Drop_Step_Title')}}</h2>
                     <div class="two-cols">
                         <div class="img">
                             <img src="./assets/common/images/intro/pipeline-image.png"
                                  srcset="./assets/common/images/intro/pipeline-image@2x.png 2x,
                                  ./assets/common/images/intro/pipeline-image@3x.png 3x"
-                                 alt="{{l('Pipeline_Manager')}}"
+                                 alt="{{ls.l('Pipeline_Manager')}}"
                                  class="img-fluid">
                         </div>
                         <div class="content">
-                            <h2>{{l('Drag_Drop_Step_Accent_Text')}}</h2>
-                            <p>{{l('Drag_Drop_Step_Text')}}</p>
+                            <h2>{{ls.l('Drag_Drop_Step_Accent_Text')}}</h2>
+                            <p>{{ls.l('Drag_Drop_Step_Text')}}</p>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -180,34 +180,34 @@
             <div class="forth-step step-item">
                 <div class="step-bg"></div>
                 <div class="main flex-column">
-                    <h2 class="title">{{l('Collaborative_Document_Managment')}}</h2>
+                    <h2 class="title">{{ls.l('Collaborative_Document_Managment')}}</h2>
                     <div class="two-cols">
                         <div class="img">
                             <img src="./assets/common/images/intro/document-manager.png"
                                  srcset="./assets/common/images/intro/document-manager@2x.png 2x,
                                  ./assets/common/images/intro/document-manager@3x.png 3x"
-                                 alt="{{l('Documents_Page')}}"
+                                 alt="{{ls.l('Documents_Page')}}"
                                  class="documents-page img-fluid">
                         </div>
                         <div class="content">
-                            <p>{{l('Collaborative_Document_Managment_Description')}}</p>
+                            <p>{{ls.l('Collaborative_Document_Managment_Description')}}</p>
                             <!--<ul class="documents-management-list">-->
-                                <!--<li>{{l('Upload_Customer_Files')}}</li>-->
-                                <!--<li>{{l('Secure_Cloud_Data_Storage')}}</li>-->
-                                <!--<li>{{l('Permission_Based_Sharing')}}</li>-->
-                                <!--<li>{{l('Fast_Feature_Rich_Viewer')}}</li>-->
-                                <!--<li>{{l('Collaborative_Editing_ESignatures')}}</li>-->
-                                <!--<li>{{l('Data_Security_and_Compliance')}}</li>-->
+                                <!--<li>{{ls.l('Upload_Customer_Files')}}</li>-->
+                                <!--<li>{{ls.l('Secure_Cloud_Data_Storage')}}</li>-->
+                                <!--<li>{{ls.l('Permission_Based_Sharing')}}</li>-->
+                                <!--<li>{{ls.l('Fast_Feature_Rich_Viewer')}}</li>-->
+                                <!--<li>{{ls.l('Collaborative_Editing_ESignatures')}}</li>-->
+                                <!--<li>{{ls.l('Data_Security_and_Compliance')}}</li>-->
                             <!--</ul>-->
                             <img src="./assets/common/images/intro/extensions.svg"
-                                 alt="{{l('Documents_Types')}}"
+                                 [alt]="ls.l('Documents_Types')"
                                  class="documents-types img-fluid">
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -215,26 +215,26 @@
             <div class="fifth-step step-item">
                 <div class="step-bg"></div>
                 <div class="main flex-column">
-                    <h2 class="title">{{l('Intelligent_Data_Import_Export_Wizard')}}</h2>
+                    <h2 class="title">{{ls.l('Intelligent_Data_Import_Export_Wizard')}}</h2>
                     <div class="two-cols">
                         <div class="img">
                             <img src="./assets/common/images/intro/import-export.png"
                                  srcset="./assets/common/images/intro/import-export@2x.png 2x,
                                  ./assets/common/images/intro/import-export@3x.png 3x"
-                                 alt="{{l('Intelligent_Data_Import_Export_Wizard')}}"
+                                 alt="{{ls.l('Intelligent_Data_Import_Export_Wizard')}}"
                                  class="img-fluid">
                         </div>
                         <div class="content">
-                            <h2>{{l('Import_Wizard')}}</h2>
-                            <p>{{l('Import_Wizard_Description')}}</p>
-                            <h2>{{l('Export_Tools')}}</h2>
-                            <p>{{l('Export_Tools_Description')}}</p>
+                            <h2>{{ls.l('Import_Wizard')}}</h2>
+                            <p>{{ls.l('Import_Wizard_Description')}}</p>
+                            <h2>{{ls.l('Export_Tools')}}</h2>
+                            <p>{{ls.l('Export_Tools_Description')}}</p>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -242,24 +242,24 @@
             <div class="sixth-step step-item">
                 <div class="step-bg"></div>
                 <div class="main flex-column">
-                    <h2 class="title">{{l('Browser_Extension')}}</h2>
+                    <h2 class="title">{{ls.l('Browser_Extension')}}</h2>
                     <div class="two-cols">
                         <div class="img">
                             <img src="./assets/common/images/intro/browser-ext.png"
                                  srcset="./assets/common/images/intro/browser-ext@2x.png 2x,
                                  ./assets/common/images/intro/browser-ext@3x.png 3x"
-                                 alt="{{l('Browser Extention')}}"
+                                 alt="{{ls.l('Browser Extention')}}"
                                  class="img-fluid">
                         </div>
                         <div class="content">
-                            <!--<h2>{{l('Lorem ipsum dolor sit amet')}}</h2>-->
-                            <p>{{l('Browser_Extension_Description')}}</p>
+                            <!--<h2>{{ls.l('Lorem ipsum dolor sit amet')}}</h2>-->
+                            <p>{{ls.l('Browser_Extension_Description')}}</p>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -267,26 +267,26 @@
             <div class="zapier step-item">
                 <div class="step-bg"></div>
                 <div class="main flex-column">
-                    <h2 class="title">{{l('Zap_Custom_Integration')}}</h2>
+                    <h2 class="title">{{ls.l('Zap_Custom_Integration')}}</h2>
                     <div class="two-cols">
                         <div class="img">
                             <img src="./assets/common/images/intro/zapier-app.png"
                                  srcset="./assets/common/images/intro/zapier-app@2x.png 2x,
                                      ./assets/common/images/intro/zapier-app@3x.png 3x"
-                                 alt="{{l('Zapier')}}"
+                                 [alt]="ls.l('Zapier')"
                                  class="img-fluid">
                         </div>
                         <div class="content">
-                            <h2>{{l('Zapier_Integration')}}</h2>
-                            <p>{{l('Zapier_Integration_Description')}}</p>
-                            <h2>{{l('Custom_Integration')}}</h2>
-                            <p>{{l('Custom_Integration_Description')}}</p>
+                            <h2>{{ls.l('Zapier_Integration')}}</h2>
+                            <p>{{ls.l('Zapier_Integration_Description')}}</p>
+                            <h2>{{ls.l('Custom_Integration')}}</h2>
+                            <p>{{ls.l('Custom_Integration_Description')}}</p>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
-                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -294,26 +294,26 @@
             <!--<div class="tasks step-item">-->
                 <!--<div class="step-bg"></div>-->
                 <!--<div class="main flex-column">-->
-                    <!--<h2 class="title">{{l('Tasks_Title')}}</h2>-->
+                    <!--<h2 class="title">{{ls.l('Tasks_Title')}}</h2>-->
                     <!--<div class="two-cols">-->
                         <!--<div class="img">-->
                             <!--<img src="./assets/common/images/intro/tasks.png"-->
                                  <!--srcset="./assets/common/images/intro/tasks@2x.png 2x,-->
                                      <!--./assets/common/images/intro/tasks@3x.png 3x"-->
-                                 <!--alt="{{l('Tasks')}}"-->
+                                 <!--alt="{{ls.l('Tasks')}}"-->
                                  <!--class="img-fluid">-->
                         <!--</div>-->
                         <!--<div class="content">-->
-                            <!--<h2>{{l('Lorem ipsum')}}</h2>-->
-                            <!--<p>{{l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor')}}</p>-->
-                            <!--<h2>{{l('Lorem ipsum')}}</h2>-->
-                            <!--<p>{{l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor')}}</p>-->
+                            <!--<h2>{{ls.l('Lorem ipsum')}}</h2>-->
+                            <!--<p>{{ls.l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor')}}</p>-->
+                            <!--<h2>{{ls.l('Lorem ipsum')}}</h2>-->
+                            <!--<p>{{ls.l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor')}}</p>-->
                         <!--</div>-->
                     <!--</div>-->
                 <!--</div>-->
                 <!--<div class="footer">-->
-                    <!--<button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>-->
-                    <!--<button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>-->
+                    <!--<button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>-->
+                    <!--<button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>-->
                 <!--</div>-->
             <!--</div>-->
         <!--</mat-step>-->
@@ -321,24 +321,24 @@
             <!--<div class="dashboards step-item">-->
                 <!--<div class="step-bg"></div>-->
                 <!--<div class="main flex-column">-->
-                    <!--<h2 class="title">{{l('Dashboard_Title')}}</h2>-->
+                    <!--<h2 class="title">{{ls.l('Dashboard_Title')}}</h2>-->
                     <!--<div class="two-cols">-->
                         <!--<div class="img">-->
                             <!--<img src="./assets/common/images/intro/dashboards.png"-->
                                  <!--srcset="./assets/common/images/intro/dashboards@2x.png 2x,-->
                                      <!--./assets/common/images/intro/dashboards@3x.png 3x"-->
-                                 <!--alt="{{l('Dashboards')}}"-->
+                                 <!--alt="{{ls.l('Dashboards')}}"-->
                                  <!--class="img-fluid">-->
                         <!--</div>-->
                         <!--<div class="content">-->
-                            <!--<h2>{{l('Lorem ipsum')}}</h2>-->
-                            <!--<p>{{l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt')}}</p>-->
+                            <!--<h2>{{ls.l('Lorem ipsum')}}</h2>-->
+                            <!--<p>{{ls.l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt')}}</p>-->
                         <!--</div>-->
                     <!--</div>-->
                 <!--</div>-->
                 <!--<div class="footer">-->
-                    <!--<button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>-->
-                    <!--<button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>-->
+                    <!--<button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>-->
+                    <!--<button mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>-->
                 <!--</div>-->
             <!--</div>-->
         <!--</mat-step>-->
@@ -358,13 +358,13 @@
                     </app-questionnaire>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{ls.l('Back')}}</button>
 
                     <button *ngIf="!showImportUsersStep || maxAvailableUserCount <= 0" class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
                         {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
                     </button>
 
-                    <button *ngIf="showImportUsersStep && maxAvailableUserCount > 0" mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button *ngIf="showImportUsersStep && maxAvailableUserCount > 0" mat-button matStepperNext class="btn btn-layout">{{ls.l('Next')}}</button>
                 </div>
             </div>
         </mat-step>

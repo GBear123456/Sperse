@@ -1,12 +1,11 @@
 /** Core imports */
-import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -15,6 +14,10 @@ import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-user
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-crm-intro',
@@ -23,10 +26,10 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../../../../shared/common/styles/close-button.less',
         './crm-intro.component.less'
     ],
-    animations: [appModuleAnimation()],
-    providers: [RoleServiceProxy, UserServiceProxy]
+    animations: [ appModuleAnimation() ],
+    providers: [ RoleServiceProxy, UserServiceProxy ]
 })
-export class CrmIntroComponent extends AppComponentBase implements OnInit {
+export class CrmIntroComponent implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
@@ -40,10 +43,14 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private userService: UserServiceProxy,
+        private permission: PermissionCheckerService,
+        private feature: FeatureCheckerService,
+        private loadingService: LoadingService,
+        private elementRef: ElementRef,
         public appService: AppService,
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        super(injector);
         this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
 
@@ -64,12 +71,15 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
             if (!this.importUsersStepComponent.validationResult)
                 return;
 
-            this.startLoading(true);
+            this.loadingService.startLoading(this.elementRef.nativeElement);
             this.importUsersStepComponent.submitInviteUsers()
-                .subscribe(() => this.questionnaire.submitQuestionnaire(), () => this.finishLoading(true));
+                .subscribe(
+                   () => this.questionnaire.submitQuestionnaire(this.elementRef.nativeElement),
+                   () => this.loadingService.finishLoading(this.elementRef.nativeElement)
+                );
         } else {
-            this.startLoading(true);
-            this.questionnaire.submitQuestionnaire();
+            this.loadingService.startLoading(this.elementRef.nativeElement);
+            this.questionnaire.submitQuestionnaire(this.elementRef.nativeElement);
         }
     }
 
