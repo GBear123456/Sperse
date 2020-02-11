@@ -3,7 +3,6 @@ import { CreditReportServiceProxy, CreditReportDto } from '@shared/service-proxi
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import * as moment from 'moment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-credit-history',

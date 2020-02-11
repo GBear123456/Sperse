@@ -36,7 +36,6 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
 import { FeatureTreeComponent } from '@admin/shared/feature-tree.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { MessageService } from '@abp/message/message.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'editTenantModal',

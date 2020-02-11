@@ -1,12 +1,14 @@
-import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+/** Core imports */
+import { Component, Inject, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+
+/** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+/** Application imports */
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentTypesListComponent } from '../document-types-list/document-types-list.component';
 import { DocumentTypeServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
 
 @Component({
   selector: 'upload-document-dialog',
@@ -14,20 +16,18 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
   styleUrls: ['upload-document-dialog.less'],
   providers: [DocumentTypeServiceProxy]
 })
-export class UploadDocumentDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class UploadDocumentDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DocumentTypesListComponent, { static: true }) documentTypesListComponent: DocumentTypesListComponent;
 
     public documentTypes = [];
     public file: File;
 
     constructor(
-        injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        private documentTypeService: DocumentTypeServiceProxy,
         public dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
-        private documentTypeService: DocumentTypeServiceProxy
-    ) {
-        super(injector);
-    }
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any,
+    ) {}
 
     fileChangeListener($event) {
         this.file = $event.target.files[0];

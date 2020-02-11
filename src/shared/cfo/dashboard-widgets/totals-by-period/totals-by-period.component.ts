@@ -43,7 +43,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TotalDataModel } from '@shared/cfo/dashboard-widgets/totals-by-period/total-data.model';
 import { Period } from '@app/shared/common/period/period.enum';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-totals-by-period',

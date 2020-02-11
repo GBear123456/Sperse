@@ -1,10 +1,15 @@
-import { Component, ViewChild, Injector, Output, EventEmitter } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { TenantSslCertificateServiceProxy, AddTenantSslCertificateInput } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
+/** Core imports */
+import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
+
+/** Third party imports */
 import { DxFileUploaderComponent } from 'devextreme-angular/ui/file-uploader';
+import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
+
+/** Application imports */
+import { TenantSslCertificateServiceProxy, AddTenantSslCertificateInput } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 
 @Component({
     selector: 'uploadSSLCertificateModal',
@@ -12,7 +17,7 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
     styleUrls: ['upload-ssl-cert-modal.component.less'],
     providers: [ TenantSslCertificateServiceProxy ]
 })
-export class UploadSSLCertificateModalComponent extends AppComponentBase {
+export class UploadSSLCertificateModalComponent {
     @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
     @ViewChild('uploader', { static: true }) uploader: DxFileUploaderComponent;
 
@@ -23,11 +28,10 @@ export class UploadSSLCertificateModalComponent extends AppComponentBase {
 
     model: AddTenantSslCertificateInput = new AddTenantSslCertificateInput();
     constructor(
-        injector: Injector,
-        private _sslService: TenantSslCertificateServiceProxy
-    ) {
-        super(injector);
-    }
+        private sslService: TenantSslCertificateServiceProxy,
+        private notify: NotifyService,
+        public ls: AppLocalizationService
+    ) {}
 
     show(): void {
         this.model = new AddTenantSslCertificateInput();
@@ -42,13 +46,13 @@ export class UploadSSLCertificateModalComponent extends AppComponentBase {
         let file = this.uploader.value[0];
         let reader = new FileReader();
 
-        reader.onloadend = e => {
+        reader.onloadend = () => {
             this.model.base64EncodedCertificate = btoa(reader.result as string);
 
-            this._sslService.addTenantSslCertificate(this.model)
+            this.sslService.addTenantSslCertificate(this.model)
                 .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(result => {
-                    this.notify.info(this.l('SavedSuccessfully'));
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.close();
                     this.modalSave.emit(null);
                 });

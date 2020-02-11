@@ -13,7 +13,6 @@ import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-p
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './notifications.component.html',

@@ -35,7 +35,6 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',

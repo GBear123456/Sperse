@@ -18,7 +18,6 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'system-settings',

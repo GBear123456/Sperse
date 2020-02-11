@@ -32,7 +32,6 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'lead-information',

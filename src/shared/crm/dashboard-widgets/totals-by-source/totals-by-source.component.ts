@@ -39,7 +39,6 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'totals-by-source',

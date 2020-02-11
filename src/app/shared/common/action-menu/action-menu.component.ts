@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Output, Input, ViewChild } from '@angular/core';
-import { DxTooltipComponent } from '@root/node_modules/devextreme-angular/ui/tooltip';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 
 @Component({
     selector: 'action-menu',

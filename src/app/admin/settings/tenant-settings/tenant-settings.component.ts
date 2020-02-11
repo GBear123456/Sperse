@@ -40,7 +40,6 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './tenant-settings.component.html',

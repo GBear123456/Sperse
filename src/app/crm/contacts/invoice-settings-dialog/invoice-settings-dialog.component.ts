@@ -13,7 +13,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, Currency } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',

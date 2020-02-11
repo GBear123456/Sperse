@@ -21,7 +21,6 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'setup',

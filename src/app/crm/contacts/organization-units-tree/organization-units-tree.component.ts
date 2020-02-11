@@ -18,7 +18,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'oranization-units-tree',

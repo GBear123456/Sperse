@@ -11,7 +11,6 @@ import * as _ from 'underscore';
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'complete-lead-dialog',

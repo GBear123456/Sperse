@@ -9,7 +9,6 @@ import { finalize } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'source-contact-list',

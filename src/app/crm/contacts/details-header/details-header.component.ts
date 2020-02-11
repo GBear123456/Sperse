@@ -51,7 +51,6 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'details-header',

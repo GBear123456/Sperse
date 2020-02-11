@@ -11,7 +11,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'business-entities-chooser',

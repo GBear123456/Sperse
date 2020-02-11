@@ -17,7 +17,6 @@ import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.servic
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/top-spending-categories/top-spending-categories.component';
 import { Period } from '@app/shared/common/period/period.enum';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'portal-dashboard',

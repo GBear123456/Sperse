@@ -1,9 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { CreateOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy, UpdateOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+
+/** Third party imports */
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
+
+/** Application imports */
+import { CreateOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy, UpdateOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
 
 export interface IOrganizationUnitOnEdit {
     id?: number;
@@ -15,7 +20,7 @@ export interface IOrganizationUnitOnEdit {
     selector: 'createOrEditOrganizationUnitModal',
     templateUrl: './create-or-edit-unit-modal.component.html'
 })
-export class CreateOrEditUnitModalComponent extends AppComponentBase {
+export class CreateOrEditUnitModalComponent {
 
     @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
     @ViewChild('organizationUnitDisplayName', { static: true }) organizationUnitDisplayNameInput: ElementRef;
@@ -29,12 +34,11 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
     organizationUnit: IOrganizationUnitOnEdit = {};
 
     constructor(
-        injector: Injector,
-        private _organizationUnitService: OrganizationUnitServiceProxy,
-        private _changeDetector: ChangeDetectorRef
-    ) {
-        super(injector);
-    }
+        private organizationUnitService: OrganizationUnitServiceProxy,
+        private changeDetector: ChangeDetectorRef,
+        private notify: NotifyService,
+        public ls: AppLocalizationService
+    ) {}
 
     onShown(): void {
         $(this.organizationUnitDisplayNameInput.nativeElement).focus();
@@ -44,7 +48,7 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
         this.organizationUnit = organizationUnit;
         this.active = true;
         this.modal.show();
-        this._changeDetector.detectChanges();
+        this.changeDetector.detectChanges();
     }
 
     save(): void {
@@ -61,11 +65,11 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
         createInput.displayName = this.organizationUnit.displayName;
 
         this.saving = true;
-        this._organizationUnitService
+        this.organizationUnitService
             .createOrganizationUnit(createInput)
             .pipe(finalize(() => this.saving = false))
             .subscribe((result: OrganizationUnitDto) => {
-                this.notify.info(this.l('SavedSuccessfully'));
+                this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.unitCreated.emit(result);
             });
@@ -77,11 +81,11 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
         updateInput.displayName = this.organizationUnit.displayName;
 
         this.saving = true;
-        this._organizationUnitService
+        this.organizationUnitService
             .updateOrganizationUnit(updateInput)
             .pipe(finalize(() => this.saving = false))
             .subscribe((result: OrganizationUnitDto) => {
-                this.notify.info(this.l('SavedSuccessfully'));
+                this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.unitUpdated.emit(result);
             });

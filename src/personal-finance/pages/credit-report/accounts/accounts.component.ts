@@ -3,7 +3,6 @@ import { CreditReportServiceProxy, AccountInfoDto, CreditReportDto } from '@shar
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import * as moment from 'moment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-accounts',

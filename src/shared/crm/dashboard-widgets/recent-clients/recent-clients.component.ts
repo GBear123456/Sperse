@@ -15,7 +15,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'recent-clients',

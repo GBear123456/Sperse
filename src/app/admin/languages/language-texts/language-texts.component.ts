@@ -19,7 +19,6 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './language-texts.component.html',

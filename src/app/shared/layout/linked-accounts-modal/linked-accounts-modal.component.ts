@@ -18,7 +18,6 @@ import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'linkedAccountsModal',

@@ -16,7 +16,6 @@ import { AppService } from '@app/app.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './top-bar.component.html',

@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Input, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'date-range-picker',

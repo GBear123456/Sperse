@@ -1,7 +1,13 @@
+/** Core imports */
 import { Component, ElementRef, OnInit, Inject, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { finalize, switchMap } from 'rxjs/operators';
+
+/** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { Observable } from '@node_modules/rxjs';
-import { finalize, switchMap } from '@node_modules/rxjs/internal/operators';
 import {
     CampaignCategory,
     GetMemberInfoResponse,
@@ -10,8 +16,6 @@ import {
     GetAllInput
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { DOCUMENT } from '@angular/common';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'credit-monitoring',

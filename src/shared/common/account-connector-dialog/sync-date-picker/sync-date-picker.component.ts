@@ -8,7 +8,6 @@ import * as moment from 'moment-timezone';
 /** Application imports */
 import { SyncDatePickerService } from './sync-date-picker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'sync-date-picker',

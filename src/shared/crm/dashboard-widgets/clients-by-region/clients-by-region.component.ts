@@ -25,7 +25,6 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'clients-by-region',

@@ -31,6 +31,7 @@ import {
     refCount
 } from 'rxjs/operators';
 import color from 'color';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -61,9 +62,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.model';
 import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
 import { AbpSessionService } from '@abp/session/abp-session.service';
-import { CacheService } from '@node_modules/ng2-cache-service';
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-trend-by-period',

@@ -29,7 +29,6 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'user-information',

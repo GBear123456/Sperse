@@ -11,7 +11,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ContactRatingsServiceProxy, RateContactInput, RateContactsInput } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
   selector: 'crm-rating',

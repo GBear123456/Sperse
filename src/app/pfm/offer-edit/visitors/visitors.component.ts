@@ -21,7 +21,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'pfm-offer-visitors',

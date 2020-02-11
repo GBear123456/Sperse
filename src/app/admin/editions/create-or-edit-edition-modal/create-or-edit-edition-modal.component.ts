@@ -25,14 +25,14 @@ import {
     CreateOrUpdateEditionDto,
     EditionEditDto,
     EditionServiceProxy,
-    GetEditionEditOutput, SubscribableEditionComboboxItemDtoListResultDto
+    GetEditionEditOutput,
+    SubscribableEditionComboboxItemDtoListResultDto
 } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeComponent } from '../../shared/feature-tree.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'createOrEditEditionModal',

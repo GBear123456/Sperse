@@ -2,10 +2,7 @@ import { Component, Injector, OnInit, ViewChild, Input, Output, EventEmitter } f
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
-
 import DataSource from 'devextreme/data/data_source';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
-
 
 @Component({
     selector: 'key-phrases',

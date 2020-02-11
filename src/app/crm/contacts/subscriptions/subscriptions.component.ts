@@ -29,7 +29,6 @@ import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'subscriptions',

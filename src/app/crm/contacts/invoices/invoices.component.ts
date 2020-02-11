@@ -34,7 +34,6 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { HistoryListDialogComponent } from '../orders/history-list-dialog/history-list-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './invoices.component.html',

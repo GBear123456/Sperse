@@ -18,7 +18,6 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'send-notification-dialog',

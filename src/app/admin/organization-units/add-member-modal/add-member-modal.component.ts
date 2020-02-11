@@ -13,7 +13,6 @@ import { IUsersWithOrganizationUnit } from '../users-with-organization-unit';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'addMemberModal',

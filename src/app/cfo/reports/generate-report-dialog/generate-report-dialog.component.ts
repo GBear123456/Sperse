@@ -31,7 +31,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',

@@ -20,7 +20,6 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'rule-dialog',

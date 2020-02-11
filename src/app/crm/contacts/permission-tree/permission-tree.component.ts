@@ -17,7 +17,6 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'permission-tree',

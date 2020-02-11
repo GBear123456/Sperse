@@ -39,7 +39,6 @@ import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interf
 import { SyncTypeIds } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'bank-accounts-widget',

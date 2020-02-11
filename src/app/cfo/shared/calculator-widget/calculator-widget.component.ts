@@ -1,7 +1,6 @@
 import { Component, ElementRef, ViewChild, Injector, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CalculatorService } from './calculator-widget.service';
 import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'calculator-widget',

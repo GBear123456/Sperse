@@ -31,7 +31,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CustomItemOfOfferCollection } from '@root/personal-finance/shared/offers/credit-cards/custom-item-of-offer-collection.enum';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'pfm-credit-cards-home',

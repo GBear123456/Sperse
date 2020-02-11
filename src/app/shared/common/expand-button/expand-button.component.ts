@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewCh
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'expand-button',

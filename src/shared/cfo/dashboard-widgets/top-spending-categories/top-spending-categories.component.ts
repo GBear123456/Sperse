@@ -25,7 +25,6 @@ import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/da
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'top-spending-categories',

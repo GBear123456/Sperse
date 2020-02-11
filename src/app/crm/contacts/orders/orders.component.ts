@@ -17,16 +17,10 @@ import { first } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterModel } from '@shared/filters/models/filter.model';
-import {
-    ContactServiceProxy,
-    OrderServiceProxy,
-    SetAmountInfo
-} from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './orders.component.html',

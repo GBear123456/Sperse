@@ -33,7 +33,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',

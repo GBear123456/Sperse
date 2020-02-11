@@ -1,12 +1,17 @@
-import { Component, ViewChild, Injector, Input, Output, EventEmitter, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+/** Core imports */
+import { Component, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+
+/** Third party imports */
 import { ModalDirective } from 'ngx-bootstrap';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import {
     TenantHostServiceProxy, AddSslBindingInput, TenantSslCertificateServiceProxy,
     TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingInput
 } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { finalize } from 'rxjs/operators';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'addOrEditSSLBindingModal',
@@ -15,7 +20,7 @@ import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-lo
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
-export class AddOrEditSSLBindingModal extends AppComponentBase {
+export class AddOrEditSSLBindingModal {
     @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
     @Input() hostTypes: any;
     @Input() orgUnits: any;
@@ -23,21 +28,18 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
 
     active = false;
     saving = false;
-
     model: any;
-
     sslCertificates: TenantSslCertificateInfo[];
     editing = false;
     titleText: string;
 
     constructor(
-        injector: Injector,
         private changeDetection: ChangeDetectorRef,
-        private _tenantHostService: TenantHostServiceProxy,
-        private _tenantSslCertificateService: TenantSslCertificateServiceProxy
-    ) {
-        super(injector);
-    }
+        private tenantHostService: TenantHostServiceProxy,
+        private tenantSslCertificateService: TenantSslCertificateServiceProxy,
+        private notify: NotifyService,
+        public ls: AppLocalizationService
+    ) {}
 
     show(data: TenantSslBindingInfo): void {
         this.model = {
@@ -54,11 +56,11 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
             this.model.tenantHostType = data.hostType;
             this.model.isActive = data.isActive;
             this.model.organizationUnitId = data.organizationUnitId;
-            this.titleText = this.l('EditSSLBinding');
+            this.titleText = this.ls.l('EditSSLBinding');
         } else
-            this.titleText = this.l('AddSSLBinding');
+            this.titleText = this.ls.l('AddSSLBinding');
 
-        this._tenantSslCertificateService.getTenantSslCertificates()
+        this.tenantSslCertificateService.getTenantSslCertificates()
             .subscribe(result => {
                 this.sslCertificates = result;
 
@@ -80,13 +82,13 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
         this.saving = true;
 
         if (this.editing) {
-            this._tenantHostService.updateSslBinding(new UpdateSslBindingInput(this.model))
+            this.tenantHostService.updateSslBinding(new UpdateSslBindingInput(this.model))
                 .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(result => {
                     this.closeSuccess();
             });
         } else {
-            this._tenantHostService.addSslBinding(new AddSslBindingInput(this.model))
+            this.tenantHostService.addSslBinding(new AddSslBindingInput(this.model))
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe(result => {
                 this.closeSuccess();
@@ -102,7 +104,7 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
     }
 
     closeSuccess(): void {
-        this.notify.info(this.l('SavedSuccessfully'));
+        this.notify.info(this.ls.l('SavedSuccessfully'));
         this.close();
         this.modalSave.emit(null);
     }

@@ -17,7 +17,6 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
     UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'email-template-dialog',

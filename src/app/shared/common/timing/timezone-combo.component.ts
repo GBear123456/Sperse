@@ -15,7 +15,6 @@ import {
     NameValueDto,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'timezone-combo',

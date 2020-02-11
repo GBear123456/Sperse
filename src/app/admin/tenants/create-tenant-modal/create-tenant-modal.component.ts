@@ -33,7 +33,6 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ModulesEditionsSelectComponent } from '../modules-edtions-select.component.ts/modules-editions-select.component';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({

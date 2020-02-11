@@ -13,7 +13,6 @@ import { MessageService } from '@abp/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'organization-unit-members',

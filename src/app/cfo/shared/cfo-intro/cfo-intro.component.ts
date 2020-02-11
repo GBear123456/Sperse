@@ -15,7 +15,6 @@ import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-user
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-import { AdAutoLoginHostDirective } from '../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-cfo-intro',
