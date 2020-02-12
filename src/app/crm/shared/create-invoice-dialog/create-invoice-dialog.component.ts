@@ -581,7 +581,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    productLookupItems($event) {
+    productLookupItems($event, cellData) {
         this.lastProductPhrase = $event.event.target.value;
         if (this.products.length)
             this.products = [];
@@ -595,6 +595,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
             this.productsLookupRequest(this.lastProductPhrase, res => {
+                cellData.data.description = this.lastProductPhrase;
                 if (!res['length'])
                     $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
