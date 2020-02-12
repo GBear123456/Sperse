@@ -340,6 +340,18 @@
 
         &.show-ai {
             width: calc(100% - 688px);
+            @media (max-width: 992px) {
+                justify-content: flex-end;
+                flex-direction: column-reverse;
+                margin-top: 15px;
+                position: static;
+                align-items: flex-end;
+                padding: 0 39px;
+                width: 100%;
+                ~ .mat-tab-group.mat-primary {
+                    padding-top: 10px;
+                }
+            }
         }
 
         @media all and (max-width: 1200px) {
@@ -348,6 +360,7 @@
 
         .search {
             width: 263px;
+            min-width: 140px;
             position: absolute;
             left: 0;
             right: 320px;
@@ -446,7 +459,7 @@
                     bottom: initial;
                     left: initial;
                     position: absolute;
-                    right: -60px;
+                    right: -55px;
                 }
 
                 dx-button {
@@ -472,7 +485,9 @@
             justify-content: flex-end;
             flex-direction: column-reverse;
             margin-top: 15px;
-            align-items: flex-end;
+            position: static;
+            align-items: center !important;
+            width: 100%;
             .search,
             .access-code {
                 margin: 5px;
@@ -481,12 +496,6 @@
             .my-access-code span {
                 display: inherit;
             }
-        }
-
-        @media (max-width: 767px) {
-            position: static;
-            align-items: center;
-            width: 100%;
         }
 
         @media (min-width: 1200px) {
