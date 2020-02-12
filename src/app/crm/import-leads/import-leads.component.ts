@@ -29,7 +29,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportCustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy, GetImportStatusOutput
+    ImportSubscriptionInput, ImportCustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
+    GetImportStatusOutput
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -135,6 +136,16 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
     private readonly PERSONAL_AFFILIATE_CODE = 'personalInfo_affiliateCode';
+    private readonly SUBSCRIPTION1_AMOUNT = 'Subscription1_amount';
+    private readonly SUBSCRIPTION2_AMOUNT = 'Subscription2_amount';
+    private readonly SUBSCRIPTION3_AMOUNT = 'Subscription3_amount';
+    private readonly SUBSCRIPTION4_AMOUNT = 'Subscription4_amount';
+    private readonly SUBSCRIPTION5_AMOUNT = 'Subscription5_amount';
+    private readonly SUBSCRIPTION1_END_DATE = 'Subscription1_endDate';
+    private readonly SUBSCRIPTION2_END_DATE = 'Subscription2_endDate';
+    private readonly SUBSCRIPTION3_END_DATE = 'Subscription3_endDate';
+    private readonly SUBSCRIPTION4_END_DATE = 'Subscription4_endDate';
+    private readonly SUBSCRIPTION5_END_DATE = 'Subscription5_endDate';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -150,7 +161,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_WORK_FULL_ADDRESS_CITY
     ];
 
-    private readonly BOOLEAN_FIELDS = [
+    private readonly FIELDS_BOOLEAN = [
         this.BUSINESS_IS_EMPLOYED,
         this.PERSONAL_IS_US_CITIZEN,
         this.PERSONAL_IS_ACTIVE_MILITARY_DUTY,
@@ -178,6 +189,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.COMPANY_NAME_FIELD
     ];
 
+    private readonly FIELDS_AMOUNT = [
+        this.BUSINESS_ANNUAL_REVENUE,
+        this.SUBSCRIPTION1_AMOUNT,
+        this.SUBSCRIPTION2_AMOUNT,
+        this.SUBSCRIPTION3_AMOUNT,
+        this.SUBSCRIPTION4_AMOUNT,
+        this.SUBSCRIPTION5_AMOUNT
+    ];
+
     private readonly FIELDS_DATE_TIME = [
         this.DATE_CREATED
     ];
@@ -185,7 +205,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly FIELDS_DATE = [
         this.PERSONAL_DOB,
         this.BUSINESS_DATE_FOUNDED,
-        this.BUSINESS_EMPLOYMENT_START_DATE
+        this.BUSINESS_EMPLOYMENT_START_DATE,
+        this.SUBSCRIPTION1_END_DATE,
+        this.SUBSCRIPTION2_END_DATE,
+        this.SUBSCRIPTION3_END_DATE,
+        this.SUBSCRIPTION4_END_DATE,
+        this.SUBSCRIPTION5_END_DATE
     ];
 
     private readonly FIELDS_EMAIL = [
@@ -287,6 +312,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         workFullAddress: ImportAddressInput.fromJS({}),
         customFields: ImportCustomFieldsInput.fromJS({}),
         requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
+        Subscription1: ImportSubscriptionInput.fromJS({}),
+        Subscription2: ImportSubscriptionInput.fromJS({}),
+        Subscription3: ImportSubscriptionInput.fromJS({}),
+        Subscription4: ImportSubscriptionInput.fromJS({}),
+        Subscription5: ImportSubscriptionInput.fromJS({})
     };
 
     readonly countryFields = {
@@ -385,7 +415,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.fieldsConfig[field] = { cellTemplate: 'dateCell' };
         });
 
-        this.BOOLEAN_FIELDS.forEach(field => {
+        this.FIELDS_BOOLEAN.forEach(field => {
             this.fieldsConfig[field] = { dataType: 'boolean' };
         });
 
@@ -708,7 +738,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.parseZipCode(field, sourceValue, reviewDataSource);
         } else if (this.FIELDS_PHONE.indexOf(field.mappedField) >= 0) {
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
-        } else if (this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
+        } else if (this.FIELDS_AMOUNT.indexOf(field.mappedField) >= 0) {
             return this.parseCurrency(field, sourceValue, reviewDataSource);
         } else if (this.FIELDS_DATE_TIME.indexOf(field.mappedField) >= 0) {
             if (moment(sourceValue).toJSON())
@@ -722,7 +752,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             if (moment(sourceValue).toJSON())
                 reviewDataSource[field.mappedField] =
                     DateHelper.removeTimezoneOffset(new Date(sourceValue));
-        } else if (this.BOOLEAN_FIELDS.indexOf(field.mappedField) >= 0) {
+        } else if (this.FIELDS_BOOLEAN.indexOf(field.mappedField) >= 0) {
             return this.normalizeBooleanValue(field, sourceValue, reviewDataSource);
         }
         return false;
