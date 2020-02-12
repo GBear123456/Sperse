@@ -13,7 +13,7 @@ import {
 
 /** Third party imports */
 import { Observable, of, zip } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
