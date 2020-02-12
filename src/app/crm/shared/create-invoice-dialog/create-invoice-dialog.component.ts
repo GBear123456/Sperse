@@ -515,7 +515,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     onAddressChanged(e, field: string) {
-        if (e.value && !e.value.lastBillingDate && !e.value.lastShippingDate) {
+        if (e.event && e.value && !e.value.lastBillingDate && !e.value.lastShippingDate) {
             this.showEditAddressDialog(e.event, field);
         }
     }
@@ -816,7 +816,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this[field] = new InvoiceAddressInput(dialogData);
             this.changeDetectorRef.detectChanges();
         });
-        event.stopPropagation();
-        event.preventDefault();
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
 }

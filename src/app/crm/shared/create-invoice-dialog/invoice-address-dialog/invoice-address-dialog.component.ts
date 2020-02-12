@@ -99,16 +99,17 @@ export class InvoiceAddressDialog {
 
     checkCountryByName(forcedChange = true) {
         let country = this.data.country && this.data.country.trim();
-        if (country = country && _.findWhere(this.countries, {name: country}))
+        if (country = country && _.findWhere(this.countries, { name: country }))
             this.data.countryId = country['code'];
         if ((country || forcedChange) && this.data.countryId)
-            this.onCountryChange({value: this.data.countryId});
+            this.onCountryChange({ value: this.data.countryId });
     }
 
     onCountryChange(event) {
         const countryCode = event.value;
         if (countryCode) {
             this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+            this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
         }
     }
 
