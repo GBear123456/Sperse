@@ -58,7 +58,7 @@ export class SourceContactListComponent {
                         sufix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
                         addition: person ?
                             [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :
-                            this.ls.l('Company')
+                            (item.companyName ? this.ls.l('Company') : '')
                     };
                 }));
                 this.changeDetectorRef.detectChanges();
