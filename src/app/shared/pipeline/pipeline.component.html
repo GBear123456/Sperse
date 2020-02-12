@@ -1,16 +1,20 @@
 <div class="pipeline-wrapper">
     <div *ngFor="let stage of stages; let i = index;"
          class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}"
-        [ngStyle]="{ flexGrow: stage.width * 3, flexBasis: 'calc(100% / ' + stages.length + ')' }"
+        [ngStyle]="{
+            flexGrow: stage.width * 3,
+            flexBasis: 'calc(100% / ' + (stages.length - stage.width) + ')',
+            width: 'calc(100% / ' + stages.length + ')'
+        }"
         [ngClass]="stageWidths[stage.width].toLowerCase()">
         <div class="column-title"
              [title]="stage.name"
              [hidden]="loading"
              [ngStyle]="{
-                width: columnItems.offsetWidth + 'px',
-                backgroundColor: stage.color,
-                borderLeftColor: stage.color,
-                borderRightColor: stage.color
+                 width: columnItems.offsetWidth + 'px',
+                 backgroundColor: stage.color,
+                 borderLeftColor: stage.color,
+                 borderRightColor: stage.color
              }">
             <span class="stageName">{{stage.name}}</span>
             <div *ngIf="stage?.total">
