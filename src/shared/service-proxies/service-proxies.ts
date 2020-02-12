@@ -13712,6 +13712,121 @@ export class EmailTemplateServiceProxy {
 }
 
 @Injectable()
+export class EventSubscriptionServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    create(body: CreateEventSubscriptionInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/EventSubscription/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/EventSubscription/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ExternalServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -49330,7 +49445,7 @@ export class ContactPhone implements IContactPhone {
     tenantId!: number | undefined;
     contactId!: number | undefined;
     usageTypeId!: string | undefined;
-    phoneNumber!: string | undefined;
+    phoneNumber!: string;
     phoneExtension!: string | undefined;
     isActive!: boolean | undefined;
     confirmationDate!: moment.Moment | undefined;
@@ -49430,7 +49545,7 @@ export interface IContactPhone {
     tenantId: number | undefined;
     contactId: number | undefined;
     usageTypeId: string | undefined;
-    phoneNumber: string | undefined;
+    phoneNumber: string;
     phoneExtension: string | undefined;
     isActive: boolean | undefined;
     confirmationDate: moment.Moment | undefined;
@@ -57883,6 +57998,46 @@ export interface IUpdateEmailTemplateRequest {
     body: string;
 }
 
+export class CreateEventSubscriptionInput implements ICreateEventSubscriptionInput {
+    target_url!: string;
+    event!: string;
+
+    constructor(data?: ICreateEventSubscriptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.target_url = data["target_url"];
+            this.event = data["event"];
+        }
+    }
+
+    static fromJS(data: any): CreateEventSubscriptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateEventSubscriptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["target_url"] = this.target_url;
+        data["event"] = this.event;
+        return data; 
+    }
+}
+
+export interface ICreateEventSubscriptionInput {
+    target_url: string;
+    event: string;
+}
+
 export enum DimentionName {
     Action = "Action", 
     Blueprint = "Blueprint", 
@@ -59695,6 +59850,58 @@ export interface IImportBusinessInput {
     affiliateCode: string | undefined;
 }
 
+export class ImportSubscriptionInput implements IImportSubscriptionInput {
+    systemType!: string | undefined;
+    code!: string | undefined;
+    name!: string | undefined;
+    endDate!: moment.Moment | undefined;
+    amount!: number | undefined;
+
+    constructor(data?: IImportSubscriptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.systemType = data["systemType"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ImportSubscriptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportSubscriptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["systemType"] = this.systemType;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IImportSubscriptionInput {
+    systemType: string | undefined;
+    code: string | undefined;
+    name: string | undefined;
+    endDate: moment.Moment | undefined;
+    amount: number | undefined;
+}
+
 export class ImportItemInput implements IImportItemInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
@@ -59725,6 +59932,11 @@ export class ImportItemInput implements IImportItemInput {
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
     requestCustomInfo!: ImportCustomFieldsInput | undefined;
+    subscription1!: ImportSubscriptionInput | undefined;
+    subscription2!: ImportSubscriptionInput | undefined;
+    subscription3!: ImportSubscriptionInput | undefined;
+    subscription4!: ImportSubscriptionInput | undefined;
+    subscription5!: ImportSubscriptionInput | undefined;
 
     constructor(data?: IImportItemInput) {
         if (data) {
@@ -59766,6 +59978,11 @@ export class ImportItemInput implements IImportItemInput {
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
             this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
+            this.subscription1 = data["subscription1"] ? ImportSubscriptionInput.fromJS(data["subscription1"]) : <any>undefined;
+            this.subscription2 = data["subscription2"] ? ImportSubscriptionInput.fromJS(data["subscription2"]) : <any>undefined;
+            this.subscription3 = data["subscription3"] ? ImportSubscriptionInput.fromJS(data["subscription3"]) : <any>undefined;
+            this.subscription4 = data["subscription4"] ? ImportSubscriptionInput.fromJS(data["subscription4"]) : <any>undefined;
+            this.subscription5 = data["subscription5"] ? ImportSubscriptionInput.fromJS(data["subscription5"]) : <any>undefined;
         }
     }
 
@@ -59807,6 +60024,11 @@ export class ImportItemInput implements IImportItemInput {
         data["utmAdGroup"] = this.utmAdGroup;
         data["utmName"] = this.utmName;
         data["requestCustomInfo"] = this.requestCustomInfo ? this.requestCustomInfo.toJSON() : <any>undefined;
+        data["subscription1"] = this.subscription1 ? this.subscription1.toJSON() : <any>undefined;
+        data["subscription2"] = this.subscription2 ? this.subscription2.toJSON() : <any>undefined;
+        data["subscription3"] = this.subscription3 ? this.subscription3.toJSON() : <any>undefined;
+        data["subscription4"] = this.subscription4 ? this.subscription4.toJSON() : <any>undefined;
+        data["subscription5"] = this.subscription5 ? this.subscription5.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -59841,6 +60063,11 @@ export interface IImportItemInput {
     utmAdGroup: string | undefined;
     utmName: string | undefined;
     requestCustomInfo: ImportCustomFieldsInput | undefined;
+    subscription1: ImportSubscriptionInput | undefined;
+    subscription2: ImportSubscriptionInput | undefined;
+    subscription3: ImportSubscriptionInput | undefined;
+    subscription4: ImportSubscriptionInput | undefined;
+    subscription5: ImportSubscriptionInput | undefined;
 }
 
 export class ImportFieldInfoDto implements IImportFieldInfoDto {
@@ -60152,6 +60379,11 @@ export class ImportContactInput implements IImportContactInput {
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
     requestCustomInfo!: ImportCustomFieldsInput | undefined;
+    subscription1!: ImportSubscriptionInput | undefined;
+    subscription2!: ImportSubscriptionInput | undefined;
+    subscription3!: ImportSubscriptionInput | undefined;
+    subscription4!: ImportSubscriptionInput | undefined;
+    subscription5!: ImportSubscriptionInput | undefined;
 
     constructor(data?: IImportContactInput) {
         if (data) {
@@ -60213,6 +60445,11 @@ export class ImportContactInput implements IImportContactInput {
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
             this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
+            this.subscription1 = data["subscription1"] ? ImportSubscriptionInput.fromJS(data["subscription1"]) : <any>undefined;
+            this.subscription2 = data["subscription2"] ? ImportSubscriptionInput.fromJS(data["subscription2"]) : <any>undefined;
+            this.subscription3 = data["subscription3"] ? ImportSubscriptionInput.fromJS(data["subscription3"]) : <any>undefined;
+            this.subscription4 = data["subscription4"] ? ImportSubscriptionInput.fromJS(data["subscription4"]) : <any>undefined;
+            this.subscription5 = data["subscription5"] ? ImportSubscriptionInput.fromJS(data["subscription5"]) : <any>undefined;
         }
     }
 
@@ -60271,6 +60508,11 @@ export class ImportContactInput implements IImportContactInput {
         data["utmAdGroup"] = this.utmAdGroup;
         data["utmName"] = this.utmName;
         data["requestCustomInfo"] = this.requestCustomInfo ? this.requestCustomInfo.toJSON() : <any>undefined;
+        data["subscription1"] = this.subscription1 ? this.subscription1.toJSON() : <any>undefined;
+        data["subscription2"] = this.subscription2 ? this.subscription2.toJSON() : <any>undefined;
+        data["subscription3"] = this.subscription3 ? this.subscription3.toJSON() : <any>undefined;
+        data["subscription4"] = this.subscription4 ? this.subscription4.toJSON() : <any>undefined;
+        data["subscription5"] = this.subscription5 ? this.subscription5.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -60314,6 +60556,11 @@ export interface IImportContactInput {
     utmAdGroup: string | undefined;
     utmName: string | undefined;
     requestCustomInfo: ImportCustomFieldsInput | undefined;
+    subscription1: ImportSubscriptionInput | undefined;
+    subscription2: ImportSubscriptionInput | undefined;
+    subscription3: ImportSubscriptionInput | undefined;
+    subscription4: ImportSubscriptionInput | undefined;
+    subscription5: ImportSubscriptionInput | undefined;
 }
 
 export enum InstanceType {
