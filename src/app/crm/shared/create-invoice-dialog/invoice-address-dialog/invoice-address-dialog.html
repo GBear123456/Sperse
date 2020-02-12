@@ -149,11 +149,11 @@
                     [acceptCustomValue]="true"
                     [dataSource]="getCountryStates() | async"
                     displayExpr="name"
+                    valueExpr="name"
                     [disabled]="data.viewMode"
-                    valueExpr="code"
                     name="state"
                     [searchEnabled]="true"
-                    [(value)]="data.stateId"
+                    [(value)]="data.stateName"
                     fieldTemplate="field"
                     (onCustomItemCreating)="onCustomStateCreate($event)">
                     <div *dxTemplate="let data of 'field'">

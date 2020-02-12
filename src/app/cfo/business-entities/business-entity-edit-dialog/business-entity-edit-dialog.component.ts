@@ -163,6 +163,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         let countryCode = this.getCountryCode(event.value);
         if (countryCode) {
             this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+            this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
         }
     }
 
