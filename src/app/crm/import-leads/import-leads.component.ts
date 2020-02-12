@@ -312,11 +312,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         workFullAddress: ImportAddressInput.fromJS({}),
         customFields: ImportCustomFieldsInput.fromJS({}),
         requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
-        Subscription1: ImportSubscriptionInput.fromJS({}),
-        Subscription2: ImportSubscriptionInput.fromJS({}),
-        Subscription3: ImportSubscriptionInput.fromJS({}),
-        Subscription4: ImportSubscriptionInput.fromJS({}),
-        Subscription5: ImportSubscriptionInput.fromJS({})
+        subscription1: ImportSubscriptionInput.fromJS({}),
+        subscription2: ImportSubscriptionInput.fromJS({}),
+        subscription3: ImportSubscriptionInput.fromJS({}),
+        subscription4: ImportSubscriptionInput.fromJS({}),
+        subscription5: ImportSubscriptionInput.fromJS({})
     };
 
     readonly countryFields = {
