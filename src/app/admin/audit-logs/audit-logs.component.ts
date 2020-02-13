@@ -1,10 +1,11 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Injector, ViewChild, OnDestroy, OnInit } from '@angular/core';
 
 /** Third party imports */
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -127,8 +128,9 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private auditLogService: AuditLogServiceProxy,
         private appService: AppService,
+        private changeDetectorRef: ChangeDetectorRef,
+        private auditLogService: AuditLogServiceProxy,
         private fileDownloadService: FileDownloadService,
         private dialog: MatDialog,
         private filtersService: FiltersService
@@ -136,6 +138,14 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+
+        combineLatest(
+            this.appService.toolbarIsHidden$, 
+            this.fullScreenService.isFullScreenMode$
+        ).pipe(takeUntil(this.destroy$)).subscribe(
+            () => this.changeDetectorRef.detectChanges()
+        );
+
         this.initFilterConfig();
         this.initToolbarConfig();
     }

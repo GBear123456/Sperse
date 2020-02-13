@@ -61,8 +61,9 @@
             <div>
                 <div id="LeadsTable">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid id="gridContainer"
-                                class="limitedPagerTotal"
+                    <dx-data-grid 
+                                id="gridContainer"
+                                class="limitedPagerTotal main-component-view"
                                 accessKey="narrowHeaderPanel"
                                 [noDataText]="''"
                                 [allowColumnReordering]="true"
@@ -141,7 +142,7 @@
     </div>
     <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div class="funnel-wrapper">
+            <div class="funnel-wrapper main-component-view">
                 <app-pipeline
                     totalsURI="LeadCount"
                     dragulaName="leadStages"
