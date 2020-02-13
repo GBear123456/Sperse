@@ -505,7 +505,7 @@
         }
     }
 
-    #gridContainer {
+    ::ng-deep #gridContainer {
         height: calc(~"100vh - 146px");
         overflow: hidden;
 
@@ -515,6 +515,13 @@
 
         @media all and (max-width: 540px) {
             height: calc(~"100vh - 244px");
+        }
+        &.limitedPagerTotal .dx-pages .dx-info {
+            display: block;
+        }
+
+        .dx-datagrid-pager .dx-page-sizes .dx-page-size {
+            padding: 4px 5px 5px;
         }
     }
 
@@ -550,10 +557,6 @@
         @media (min-width: 1200px) {
             padding: 28px 39px 0;
         }
-    }
-
-    /deep/ #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
-        padding: 4px 5px 5px;
     }
 
     app-no-data {

@@ -113,12 +113,14 @@
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                                      (onContentReady)="onContentReady()">
                             <dxo-paging [pageSize]="10"></dxo-paging>
                             <dxo-pager
                                 [showPageSizeSelector]="true"
                                 [allowedPageSizes]="[10, 20, 50]"
                                 [visible]="true"
+                                [infoText]="getInfoText()"
                                 [showInfo]="true">
                             </dxo-pager>
                             <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
@@ -154,7 +156,7 @@
                             <dxo-sorting mode="none"></dxo-sorting>
                         </dx-data-grid>
                     </div>
-                    <app-no-data [hidden]="totalCount > 0"
+                    <app-no-data [hidden]="dataIsLoading || totalCount > 0"
                                  title="No contacts added yet"
                                  [showLink]="false">
                     </app-no-data>
