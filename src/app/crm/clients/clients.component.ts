@@ -11,6 +11,7 @@ import { RouteReuseStrategy } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
@@ -86,7 +87,6 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { CrmService } from '@app/crm/crm.service';
-import DataSource from '@root/node_modules/devextreme/data/data_source';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
@@ -383,7 +383,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     ngOnInit() {
         this.filterModelStatus.updateCaptions();
-        this.dataSource = {
+        this.dataSource = new DataSource({
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -394,6 +394,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -407,9 +408,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (this.appService.isCfoLinkOrVerifyEnabled) {
                         this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
                     }
+                    this.isDataLoaded = true;
                 }
             }
-        };
+        });
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { AfterViewInit, Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
@@ -16,13 +16,15 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
+import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-widget.component';
 
 @Component({
     selector: 'bank-accounts-component',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less']
 })
-export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
+export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(BankAccountsWidgetComponent) bankAccountsWidget: BankAccountsWidgetComponent;
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
     syncAccounts;
@@ -37,7 +39,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        this.refresh();
         this.subscribeToObservables();
     }
 
@@ -56,6 +57,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         });
     }
 
+    ngAfterViewInit() {
+        this.refresh();
+    }
+
     subscribeToObservables() {
         this.syncCompletedSubscription = this.synchProgress.syncCompleted$.pipe(
             takeUntil(this.deactivate$),
@@ -70,11 +75,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     refresh() {
-        const elementForSpinner = document.querySelector('.frame-wrap');
-        abp.ui.setBusy(elementForSpinner);
-        this.bankAccountsService.load(false)
-            .pipe(finalize(() => abp.ui.clearBusy(elementForSpinner)))
-            .subscribe();
+        if (this.bankAccountsWidget) {
+            this.bankAccountsWidget.refresh();
+        }
     }
 
     selectedAccountsChange() {

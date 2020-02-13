@@ -59,8 +59,6 @@
                 <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
                     {{ formatDepartments(cellData.value) }}
                 </div>
-
-                <dxo-load-panel [enabled]="true"></dxo-load-panel>
                 <dxo-sorting mode="single"></dxo-sorting>
                 <dxo-group-panel [visible]="false"></dxo-group-panel>
             </dx-data-grid>

@@ -127,6 +127,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    this.isDataLoaded = false;
+                    this.changeDetector.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     if (request.params.$filter && request.url.indexOf('$filter')) {

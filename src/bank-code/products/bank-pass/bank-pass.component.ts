@@ -133,7 +133,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
             message: this.ls.l('MaxLengthIs', 30)
         }
     ];
-
     goalTypes: GoalType[] = this.bankCodeService.goalTypes;
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];

@@ -1,5 +1,13 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    Injector,
+    ViewChild,
+    OnDestroy,
+    OnInit,
+    ChangeDetectorRef
+} from '@angular/core';
 
 /** Third party imports */
 import * as moment from 'moment';
@@ -131,7 +139,8 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
         private appService: AppService,
         private fileDownloadService: FileDownloadService,
         private dialog: MatDialog,
-        private filtersService: FiltersService
+        private filtersService: FiltersService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -152,6 +161,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             key: 'id',
             load: (loadOptions) => {
                 this.isDataLoaded = false;
+                this.changeDetectorRef.detectChanges();
                 return this.auditLogService.getAuditLogs(
                     this.searchValue,
                     this.filtersValues.date.startDate,

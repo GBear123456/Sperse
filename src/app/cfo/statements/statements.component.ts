@@ -326,14 +326,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                         text: this.l('Export to Google Sheets'),
                                         icon: 'sheet'
                                     },
-                                    {type: 'downloadOptions'}
+                                    { type: 'downloadOptions' }
                                 ]
                             }
-                        },
-                        {
-                            name: 'columnChooser',
-                            visible: !this._cfoService.hasStaticInstance,
-                            action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
                         }
                     ]
                 }
@@ -375,6 +370,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         DataGridService.toggleCompactRowsHeight(this.dataGrid);
         let rootComponent = this.getRootComponent();
         rootComponent.overflowHidden(true);
+    }
+
+    toggleCompactView() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
     reload() {

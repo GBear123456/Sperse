@@ -65,13 +65,13 @@ export class HostDashboardComponent implements OnInit {
     recentTenantsData$: Observable<RecentTenant[]>;
     refreshing = false;
     constructor(
-        private _dateTimeService: DateTimeService,
-        private _hostDashboardService: HostDashboardServiceProxy,
-        private _momentFormatPipe: MomentFormatPipe,
-        private _currencyPipe: CurrencyPipe,
-        public ls: AppLocalizationService,
-        private _changeDetector: ChangeDetectorRef,
-        private _datePipe: DatePipe
+        private dateTimeService: DateTimeService,
+        private hostDashboardService: HostDashboardServiceProxy,
+        private momentFormatPipe: MomentFormatPipe,
+        private currencyPipe: CurrencyPipe,
+        private changeDetector: ChangeDetectorRef,
+        private datePipe: DatePipe,
+        public ls: AppLocalizationService
     ) {
         const startDate = DateHelper.addTimezoneOffset(moment().subtract(7, 'days').startOf('day').toDate(), true);
         const endDate = DateHelper.addTimezoneOffset(moment().endOf('day').toDate(), true);
@@ -94,10 +94,10 @@ export class HostDashboardComponent implements OnInit {
         ).pipe(
             tap(() => {
                 this.refreshing = true;
-                this._changeDetector.detectChanges();
+                this.changeDetector.detectChanges();
             }),
             switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, CalendarValuesModel]) => {
-                return this._hostDashboardService.getDashboardStatisticsData(
+                return this.hostDashboardService.getDashboardStatisticsData(
                     interval as ChartDateInterval,
                     dateRange.from.value && DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from'),
                     dateRange.to.value && DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to')
@@ -127,7 +127,7 @@ export class HostDashboardComponent implements OnInit {
 
     getSelectedDateRangeLabel(format: string) {
         return this.selectedDateRange.value.from.value && this.selectedDateRange.value.to.value
-            ? this._datePipe.transform(this.selectedDateRange.value.from.value, format) + ' - ' + this._datePipe.transform(this.selectedDateRange.value.to.value, format)
+            ? this.datePipe.transform(this.selectedDateRange.value.from.value, format) + ' - ' + this.datePipe.transform(this.selectedDateRange.value.to.value, format)
             : this.ls.l('Periods_AllTime');
     }
 
@@ -163,7 +163,7 @@ export class HostDashboardComponent implements OnInit {
     }
 
     reformatCreationTime = (data) => {
-        return this._momentFormatPipe.transform(data.creationTime, 'L LT');
+        return this.momentFormatPipe.transform(data.creationTime, 'L LT');
     }
 
     customizePieChartLabel = (point) => {
@@ -184,13 +184,13 @@ export class HostDashboardComponent implements OnInit {
             const isLastItem = e.point.index === e.point.series._points.length - 1;
             html += moment(e.argument).format('LL');
             if (isLastItem) {
-                html += ' - ' + this._datePipe.transform(this.selectedDateRange.value.to.value, 'MMMM dd, yyyy');
+                html += ' - ' + this.datePipe.transform(this.selectedDateRange.value.to.value, 'MMMM dd, yyyy');
             } else {
                 const nextItem = e.point.series._points[e.point.index + 1];
                 html += ' - ' + moment(nextItem[0]).format('LL');
             }
         }
-        html += `<br/>Income: <span class="bold">${this._currencyPipe.transform(e.originalValue)}</span>`;
+        html += `<br/>Income: <span class="bold">${this.currencyPipe.transform(e.originalValue)}</span>`;
         return { html: html };
     }
 

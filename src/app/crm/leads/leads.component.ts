@@ -32,6 +32,7 @@ import {
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import invert from 'lodash/invert';
+import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -446,6 +447,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    this.isDataLoaded = false;
                     request.params.contactGroupId = this.contactGroupId.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1197,7 +1199,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     initDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
-                setTimeout(() => { this.pipelineDataSource = this.dataSource; });
+                setTimeout(() => this.pipelineDataSource = cloneDeep(this.dataSource));
         } else if (this.showDataGrid) {
             this.totalDataSource.load();
             this.setDataGridInstance();

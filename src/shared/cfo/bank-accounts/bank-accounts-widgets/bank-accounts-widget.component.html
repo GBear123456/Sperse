@@ -67,6 +67,7 @@
                   width="99.9%"
                   [height]="calculateHeight()"
                   [dataSource]="dataSource"
+                  noDataText="''"
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
                   [showColumnHeaders]="showColumnHeaders"
@@ -80,8 +81,7 @@
                   (onRowPrepared)="rowPrepared($event)"
                   (onContentReady)="contentReady()"
                   (onRowClick)="dataRowClick($event)"
-                  (onCellClick)="dataCellClick($event)"
-                  #syncAccountsGrid>
+                  (onCellClick)="dataCellClick($event)">
 
         <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
         <dxo-paging [enabled]="false"></dxo-paging>
@@ -111,7 +111,7 @@
                               (onCellClick)="detailCellClick($event)"
                               (onEditingStart)="editingStart($event)"
                               (onEditorPrepared)="editorPrepared($event)"
-                              (onContentReady)="detailContentReady($event)"
+                              (onContentReady)="detailContentReady()"
                               (onRowUpdating)="detailsRowUpdating($event)">
                     <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                     <dxo-editing [mode]="allowEditing ? 'popup': 'row'"
