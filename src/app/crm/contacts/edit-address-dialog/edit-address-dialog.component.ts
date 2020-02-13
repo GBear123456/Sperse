@@ -81,16 +81,18 @@ export class EditAddressDialog {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((countries: CountryDto[]) => {
             this.countries = countries;
-            if (this.data.country)
-                this.onCountryChange({
-                    value: this.data.country
-                });
+            this.onCountryChange({
+                value: this.data.country
+            });
         });
     }
 
     onCountryChange(event) {
-        this.data.countryCode = _.findWhere(this.countries, { name: event.value })['code'];
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryCode));
+        const country = _.findWhere(this.countries, { name: event.value });
+        this.data.countryCode = country ? country['code'] : null;
+        if (country) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryCode));
+        }
         this.statesService.updateState(this.data.countryCode, this.data.stateId, this.data.stateName);
     }
 
