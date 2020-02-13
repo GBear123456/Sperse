@@ -155,10 +155,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         ).pipe(
             takeUntil(this.destroy$),
             switchMap(data => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
-            tap(() => {
-                this.isDataLoaded = false;
-                abp.ui.setBusy();
-            }),
+            tap(() => this.isDataLoaded = false),
             switchMap(([forecastModelId, currencyId, requestFilter]:
                               [number, string, StatsFilter]) => {
                 return this.bankAccountService.getStats(
@@ -171,8 +168,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     requestFilter.endDate || requestFilter.startDate,
                     GroupByPeriod.Monthly
                 ).pipe(
-                    catchError(() => of([])),
-                    finalize(() => abp.ui.clearBusy())
+                    catchError(() => of([]))
                 );
             })
         ).subscribe(
@@ -396,9 +392,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     invalidate() {
         this.refresh.next();
-        this.bankAccountsService.load(true, false).pipe(
-            finalize(() => abp.ui.clearBusy())
-        ).subscribe();
+        this.bankAccountsService.load(true, false).subscribe();
     }
 
     updateCurrencySymbol = (data) => {
@@ -463,7 +457,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         }
     }
 
-    expandColapseRow(e) {
+    expandCollapseRow(e) {
         if (!e.data.sourceData) return;
 
         if (e.isExpanded) {

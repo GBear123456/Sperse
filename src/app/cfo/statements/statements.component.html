@@ -12,12 +12,13 @@
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid id="gridContainer"
                       [columnAutoWidth]="true"
+                      [hidden]="!isDataLoaded"
                       [hoverStateEnabled]="true"
                       [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
                       [dataSource]="statementsData"
                       [masterDetail]="{ enabled: false, template: 'detail' }"
-                      (onRowClick)="expandColapseRow($event)"
+                      (onRowClick)="expandCollapseRow($event)"
                       (onRowPrepared)="onRowPrepared($event)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
