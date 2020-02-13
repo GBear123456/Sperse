@@ -6,7 +6,7 @@ import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment-timezone';
 import buildQuery from 'odata-query';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
@@ -33,9 +33,14 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
-    schedulerHeight$: Observable<number> = this.appService.toolbarIsHidden$.pipe(map((hidden: boolean) => {
-        return hidden ? window.innerHeight - 150 : window.innerHeight - 210;
-    }));
+    schedulerHeight$: Observable<number> = combineLatest(
+        this.appService.toolbarIsHidden$, 
+        this.fullScreenService.isFullScreenMode$
+    ).pipe(
+        map(([hidden, fullscreen]: [boolean, boolean]) => {
+            return window.innerHeight - (fullscreen ? (hidden ? 0 : 60) : (hidden ? 150 : 210));
+        })
+    );
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;

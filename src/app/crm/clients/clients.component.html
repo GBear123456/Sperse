@@ -44,7 +44,8 @@
         <div class="portlet-body">
             <div id="ClientsTable">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                <dx-data-grid id="gridContainer"
+                <dx-data-grid class="main-component-view"
+                              id="gridContainer"
                               class="limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               [dataSource]="dataSource"

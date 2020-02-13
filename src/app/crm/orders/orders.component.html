@@ -27,6 +27,7 @@
               <div>
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
+                                      class="main-component-view"
                                       accesskey="narrowHeaderPanel"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
@@ -92,7 +93,7 @@
 
     <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div class="funnel-wrapper">
+            <div class="funnel-wrapper main-component-view">
                 <app-pipeline
                     [totalsURI]="'OrderCount'"
                     [dragulaName]="'orderStages'"

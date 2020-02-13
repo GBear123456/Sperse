@@ -2,11 +2,8 @@
     position: relative;
     top: 74px;
     height: 100%;
-    &.fullscreen {
-        top: 0px !important;
-        #gridContainer {
-            height: calc(~"100vh - 60px");
-        }
+    /deep/ .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td {
+        height: 40px !important;
     }
     /deep/ #gridContainer {
         .dx-datagrid .dx-link.dx-link-edit {
