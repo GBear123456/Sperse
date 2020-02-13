@@ -32,7 +32,11 @@
                             <div class="bank-code-groups">
                                 <ng-container *ngIf="availableBankCodes$ | async; else loading">
                                     <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
-                                        <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png">
+                                        <figure>
+                                            <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png"
+                                            [alt]="bankCodeGroups[i][0][0]"
+                                            srcset="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1@2x.png 2x, ./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1@3x.png 3x">
+                                        </figure>
                                         <div class="title" [ngStyle]="{ background: bankCodeService.getBackgroundColorByLetter(bankCodeGroup[i][0]) }">
                                             {{ bankCodeService.bankCodeConfig[bankCodeGroup[i][0]].definition }}
                                         </div>
@@ -54,7 +58,9 @@
                             <div class="badges">
                                 <ng-container  *ngFor="let bankCodeBadge of bankCodeBadges; let i = index">
                                     <img *ngIf="getBadgeImageName(i) | async as badgeImageName"
-                                         src="./assets/common/images/bank-code/badges/L{{ badgeImageName }}.png">
+                                         src="./assets/common/images/bank-code/badges/L{{ badgeImageName }}.png"
+                                         [alt]="badgeImageName"
+                                         srcset="./assets/common/images/bank-code/badges/L{{ badgeImageName }}@2x.png 2x, ./assets/common/images/bank-code/badges/L{{ badgeImageName }}@3x.png 3x">
                                 </ng-container>
                             </div>
                         </div>

@@ -321,8 +321,11 @@ input.form-control {
                         height: 18px;
                         display: inline-block;
                         position: absolute;
-                        left: 8px;
-                        top: 19px;
+                        left: 0;
+                        right: 0;
+                        top: 0;
+                        bottom: 0;
+                        margin: auto;
                         opacity: 0.5;
                     }
 
@@ -339,7 +342,9 @@ input.form-control {
                             display: inline-block;
                             position: absolute;
                             left: 8px;
-                            top: 19px;
+                            top: 0;
+                            bottom: 0;
+                            margin: auto;
                             opacity: 0.5;
                         }
                     }
@@ -444,8 +449,11 @@ input.form-control {
                 height: 18px;
                 display: inline-block;
                 position: absolute;
-                left: 8px;
-                top: 19px;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                margin: auto;
                 opacity: 0.5;
             }
         }
@@ -581,6 +589,14 @@ input.form-control {
             .dx-selection ~ .dx-separator + .dx-page {
                 display: none;
             }
+        }
+    }
+
+    &.grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td {
+        padding: 0 7px;
+        .img-circle {
+            width: 30px;
+            height: 30px;
         }
     }
 }
