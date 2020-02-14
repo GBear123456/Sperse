@@ -6,8 +6,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
         '../../shared/aviano-sans-font.less',
         '../../app/shared/core.less',
         '../../assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css',
-        '../../node_modules/devextreme/dist/css/dx.common.css',
-        '../../node_modules/devextreme/dist/css/dx.light.css',
+        '../../app/shared/dx-customs.less'
     ],
     encapsulation: ViewEncapsulation.None
 })
