@@ -136,16 +136,16 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
     private readonly PERSONAL_AFFILIATE_CODE = 'personalInfo_affiliateCode';
-    private readonly SUBSCRIPTION1_AMOUNT = 'Subscription1_amount';
-    private readonly SUBSCRIPTION2_AMOUNT = 'Subscription2_amount';
-    private readonly SUBSCRIPTION3_AMOUNT = 'Subscription3_amount';
-    private readonly SUBSCRIPTION4_AMOUNT = 'Subscription4_amount';
-    private readonly SUBSCRIPTION5_AMOUNT = 'Subscription5_amount';
-    private readonly SUBSCRIPTION1_END_DATE = 'Subscription1_endDate';
-    private readonly SUBSCRIPTION2_END_DATE = 'Subscription2_endDate';
-    private readonly SUBSCRIPTION3_END_DATE = 'Subscription3_endDate';
-    private readonly SUBSCRIPTION4_END_DATE = 'Subscription4_endDate';
-    private readonly SUBSCRIPTION5_END_DATE = 'Subscription5_endDate';
+    private readonly SUBSCRIPTION1_AMOUNT = 'subscription1_amount';
+    private readonly SUBSCRIPTION2_AMOUNT = 'subscription2_amount';
+    private readonly SUBSCRIPTION3_AMOUNT = 'subscription3_amount';
+    private readonly SUBSCRIPTION4_AMOUNT = 'subscription4_amount';
+    private readonly SUBSCRIPTION5_AMOUNT = 'subscription5_amount';
+    private readonly SUBSCRIPTION1_END_DATE = 'subscription1_endDate';
+    private readonly SUBSCRIPTION2_END_DATE = 'subscription2_endDate';
+    private readonly SUBSCRIPTION3_END_DATE = 'subscription3_endDate';
+    private readonly SUBSCRIPTION4_END_DATE = 'subscription4_endDate';
+    private readonly SUBSCRIPTION5_END_DATE = 'subscription5_endDate';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -407,6 +407,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.fieldsConfig[field] = { cellTemplate: 'phoneCell' };
         });
 
+        this.FIELDS_AMOUNT.forEach(field => {
+            this.fieldsConfig[field] = { cellTemplate: 'amountCell' };
+        });
+
         this.FIELDS_DATE_TIME.forEach(field => {
             this.fieldsConfig[field] = { cellTemplate: 'datetimeCell' };
         });
@@ -504,7 +508,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private parseCurrency(field, value, dataSource) {
-        let amount = isNaN(value) ? parseFloat(value.replace(/\D/g, '')) : value;
+        let amount = isNaN(value) ? parseFloat(value.replace(/[^0-9.]/g, '')) : value;
         if (amount)
             amount *= ({
                 'H': 100,
@@ -512,8 +516,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 'M': 1000000,
                 'B': 1000000000
             }[value.trim().split('').pop()] || 1);
-
-        this.setFieldIfDefined(isNaN(amount) ? value : amount, field.mappedField, dataSource);
+        this.setFieldIfDefined(isNaN(amount) ? ([
+                    this.SUBSCRIPTION1_AMOUNT,
+                    this.SUBSCRIPTION2_AMOUNT,
+                    this.SUBSCRIPTION3_AMOUNT,
+                    this.SUBSCRIPTION4_AMOUNT,
+                    this.SUBSCRIPTION5_AMOUNT
+                ].indexOf(field) >= 0 ? null : value)
+            : amount, field.mappedField, dataSource);
         return true;
     }
 
