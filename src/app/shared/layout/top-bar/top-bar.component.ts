@@ -140,6 +140,7 @@ export class TopBarComponent implements OnDestroy {
                         this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex) : this.menu.items;
                     }
                 }
+                this.navBar.instance.option('selectedIndex', this.selectedIndex);
             }, 300);
         }
     }
@@ -197,7 +198,6 @@ export class TopBarComponent implements OnDestroy {
     showMenuItem(item: PanelMenuItem): boolean {
         return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item);
     }
-
 
     ngOnDestroy() {
         this.lifecycleService.destroy.next(null);
