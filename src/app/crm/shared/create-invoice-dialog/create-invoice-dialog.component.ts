@@ -38,7 +38,8 @@ import {
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
     ContactServiceProxy,
-    InvoiceAddressInfo
+    InvoiceAddressInfo,
+    ContactAddressDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -277,7 +278,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ?
                     details.emails[0].emailAddress : undefined,
-                address = details.addresses[0];
+                address: ContactAddressDto = details.addresses[0];
             this.selectedContact = {
                 id: contact.id,
                 name: this.customer,
@@ -285,7 +286,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 address: address ? {
                     streetAddress: address.streetAddress,
                     city: address.city,
-                    state: address.state,
+                    stateId: address.stateId,
+                    stateName: address.stateName,
                     country: address.country,
                     zip: address.zip
                 } : {},
