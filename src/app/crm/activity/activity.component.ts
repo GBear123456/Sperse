@@ -34,7 +34,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     schedulerHeight$: Observable<number> = combineLatest(
-        this.appService.toolbarIsHidden$, 
+        this.appService.toolbarIsHidden$,
         this.fullScreenService.isFullScreenMode$
     ).pipe(
         map(([hidden, fullscreen]: [boolean, boolean]) => {
@@ -166,6 +166,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 },
                 deserializeDates: false,
                 onLoaded: (res) => {
+                    this.finishLoading();
                     this.totalCount = res && res.length;
                     res.forEach((record) => {
                         record.fieldTimeZone = 'Etc/UTC';
@@ -405,10 +406,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.initToolbarConfig();
     }
 
-    onContentReady() {
-        setTimeout(() => this.finishLoading(), 2000);
-    }
-
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
         this.showActivityDialog(event.appointmentData);
@@ -487,8 +484,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     refresh(stageId?: number) {
-        this.schedulerComponent.instance.repaint();
-        this.pipelineComponent.refresh(stageId);
+        if (this.showPipeline) {
+            if (this.pipelineDataSource)
+                this.pipelineComponent.refresh(stageId);
+        } else
+            this.schedulerComponent.instance.getDataSource().reload();
     }
 
     repaint() {

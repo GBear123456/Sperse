@@ -504,6 +504,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.message.error(error);
                 }
             );
+            this.detectChanges();
         }
 
         if (!oneStageOnly && stages[index + 1])
