@@ -219,6 +219,9 @@
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
+                                <div *dxTemplate="let cellValue of 'item'">
+                                    <span title="{{cellValue}}">{{cellValue}}</span>
+                                </div>
                             </dx-select-box>
 
                             <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
