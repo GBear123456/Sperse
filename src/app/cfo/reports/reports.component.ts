@@ -48,7 +48,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             enabled: this.isInstanceAdmin || this.isMemberAccessManage
         }
     ];
-    toolbarConfig: any = [];
     menuItems = [
         {
             caption: 'MonthlyReports',
@@ -165,7 +164,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     initToolbarConfig() {
-        this.toolbarConfig = [
+        this.appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -210,7 +209,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     }
                 ]
             }
-        ];
+        ]);
     }
 
     searchValueChange(e: object) {
@@ -556,7 +555,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     ngOnDestroy() {
         this.deactivate();
-        this.toolbarConfig = [];
         this.viewerToolbarConfig = [];
         if (this.openReportMode) {
             this.closeReport();

@@ -5,7 +5,6 @@
                   [showToggleToolbarButton]="true">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
         <action-menu width="180px"
@@ -16,7 +15,7 @@
         <div [hidden]="openReportMode" class="reports">
             <ghost-list [hidden]="isDataLoaded"></ghost-list>
             <dx-data-grid id="gridContainer"
-                        height="100%"
+                        class="main-component-view"
                         [dataSource]="dataSource"
                         [allowColumnReordering]="true"
                         [columnAutoWidth]="true"

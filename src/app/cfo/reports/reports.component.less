@@ -6,10 +6,10 @@
     .main-wrapper {
         max-width: 100vw;
         display: flex;
+        border-top: 1px solid #dfdfdf;
 
         .reports {
             z-index: 1;
-            height: calc(100vh - 210px);
             width: 100%;
             /deep/ dx-data-grid#gridContainer {
                 .dx-toolbar-before {
@@ -74,12 +74,6 @@
         .deptCell {
             text-overflow: ellipsis;
             overflow: hidden;
-        }
-    }
-
-    /deep/ app-toolbar {
-        .dx-item.dx-toolbar-item.dx-toolbar-label {
-            max-width: unset!important;
         }
     }
 }
