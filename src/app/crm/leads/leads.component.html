@@ -61,13 +61,14 @@
             <div>
                 <div id="LeadsTable">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid 
+                    <dx-data-grid
                                 id="gridContainer"
                                 class="limitedPagerTotal main-component-view"
                                 accessKey="narrowHeaderPanel"
                                 noDataText="''"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
+                                [cacheEnabled]="false"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
