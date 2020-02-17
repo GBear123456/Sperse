@@ -102,7 +102,7 @@
                 <dx-data-grid accessKey="detailGrid"
                               [dataSource]="syncAccount.data.bankAccounts"
                               [showBorders]="false"
-                              [width]="'100%'"
+                              width="100%"
                               [showColumnLines]="false"
                               [showRowLines]="false"
                               [columnAutoWidth]="true"
@@ -116,8 +116,7 @@
                     <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                     <dxo-editing [mode]="allowEditing ? 'popup': 'row'"
                                  [allowUpdating]="false">
-                        <dxo-popup #editingPopup
-                                   accessKey="accountsEditingPopup"
+                        <dxo-popup accessKey="accountsEditingPopup"
                                    [height]="340"
                                    [width]="700"
                                    [deferRendering]="true">
