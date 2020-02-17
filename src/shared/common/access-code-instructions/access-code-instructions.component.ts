@@ -1,5 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 /** Third party imports  */
@@ -12,7 +13,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { environment } from '@root/environments/environment';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
     selector: 'access-code-instructions',
@@ -34,7 +34,7 @@ export class AccessCodeInstructionsComponent {
                 : (environment.releaseStage === 'production'
                     ? (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
                         ? 'https://sf.crackmycode.com'
-                        : 'https://www.MyBankCode.com')
+                        : 'https://bp.crackmycode.com')
                     : 'https://bankpass.bankcode.pro'
                 )
             ) + '/' + accessCode;
