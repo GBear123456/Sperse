@@ -4,14 +4,16 @@
         [ngStyle]="{
             flexBasis: 'calc(100% / ' + (stages.length > stage.width ? stages.length - stage.width : stages.length) + ')'
         }"
-        [ngClass]="stageWidths[stage.width].toLowerCase()">
+        [ngClass]="stageWidths[stage.width].toLowerCase()"
+        #parent>
         <div class="column-title"
              [title]="stage.name"
              [hidden]="loading"
              [ngStyle]="{
                  backgroundColor: stage.color,
                  borderLeftColor: stage.color,
-                 borderRightColor: stage.color
+                 borderRightColor: stage.color,
+                 width: parent.offsetWidth + 'px'
              }">
             <span class="stageName">{{stage.name}}</span>
             <div *ngIf="stage?.total">
