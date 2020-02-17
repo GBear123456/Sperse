@@ -34,7 +34,7 @@ export class AccessCodeInstructionsComponent {
                 : (environment.releaseStage === 'production'
                     ? (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
                         ? 'https://sf.crackmycode.com'
-                        : 'https://www.MyBankCode.com')
+                        : 'https://bp.crackmycode.com')
                     : 'https://bankpass.bankcode.pro'
                 )
             ) + '/' + accessCode;
