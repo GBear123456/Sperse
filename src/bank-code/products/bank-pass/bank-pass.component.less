@@ -170,15 +170,22 @@
                         display: flex;
                         flex-direction: column;
                         align-items: center;
+
+                        figure {
+                            padding: 0 8px;
+                        }
+
                         /deep/ bank-code-letters {
                             margin-bottom: 3px;
                         }
                     }
                 }
+
                 img {
                     max-width: 100%;
-                    height: 125px;
+                    height: 106px;
                 }
+
                 @media (max-width: 767px) {
                     margin-bottom: 30px;
                 }
@@ -348,6 +355,7 @@
 
         .search {
             width: 263px;
+            min-width: 140px;
             position: absolute;
             left: 0;
             right: 320px;
@@ -446,7 +454,7 @@
                     bottom: initial;
                     left: initial;
                     position: absolute;
-                    right: -60px;
+                    right: -55px;
                 }
 
                 dx-button {
@@ -468,25 +476,47 @@
             }
         }
 
-        @media (max-width: 767px) {
+        @media (max-width: 992px) {
             justify-content: flex-end;
             flex-direction: column-reverse;
             margin-top: 15px;
+            position: static;
             align-items: flex-end;
-            .search,
-            .access-code {
-                margin: 5px;
+            padding: 0 39px;
+            width: 100%;
+
+            .search {
+                position: absolute;
+                right: 0;
+                margin: auto;
             }
 
-            .my-access-code span {
-                display: inherit;
+            .my-access-code {
+                position: absolute;
+                right: 0;
+                top: 48px;
+                z-index: 1;
+            }
+
+            ~ .mat-tab-group.mat-primary {
+                padding: 44px 20px 0 20px;
             }
         }
 
         @media (max-width: 767px) {
+            justify-content: flex-end;
+            flex-direction: column-reverse;
+            margin-top: 15px;
             position: static;
-            align-items: center;
-            width: 100%;
+            align-items: center !important;
+            width: 100% !important;
+            .my-access-code {
+                padding-right: 0;
+                position: relative;
+                span {
+                    display: inherit;
+                }
+            }
         }
 
         @media (min-width: 1200px) {
@@ -496,7 +526,7 @@
         }
     }
 
-    #gridContainer {
+    ::ng-deep #gridContainer {
         height: calc(~"100vh - 146px");
         overflow: hidden;
 
@@ -506,6 +536,13 @@
 
         @media all and (max-width: 540px) {
             height: calc(~"100vh - 244px");
+        }
+        &.limitedPagerTotal .dx-pages .dx-info {
+            display: block;
+        }
+
+        .dx-datagrid-pager .dx-page-sizes .dx-page-size {
+            padding: 4px 5px 5px;
         }
     }
 
@@ -541,10 +578,6 @@
         @media (min-width: 1200px) {
             padding: 28px 39px 0;
         }
-    }
-
-    ::ng-deep #gridContainer .dx-datagrid-pager .dx-page-sizes .dx-page-size {
-        padding: 4px 5px 5px;
     }
 
     app-no-data {

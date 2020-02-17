@@ -189,3 +189,20 @@ app-root > ng-component {
 .modal-backdrop {
     display: none !important;
 }
+
+i.save-to-clipboard {
+    width: 25px;
+    min-height: 16px;
+    display: inline-block;
+    background: url(assets/common/icons/copy.svg) center no-repeat;
+    cursor: pointer;
+}
+
+.img-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}

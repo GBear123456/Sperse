@@ -9,9 +9,19 @@
 @import "../assets/metronic/src/vendors/flaticon/css/flaticon.css";
 @import "../assets/metronic/src/vendors/line-awesome/css/line-awesome.css";
 
+.toolbar-hidden .fullscreen .page-container {
+    &, .page-content-wrapper, .page-content {
+        height: 100%!important;
+        .fullscreen {
+            #gridContainer, .main-component-view {
+                height: 100vh !important;
+            }
+        }
+    }
+}
+
 .page-container {
     padding: 0;
-    height: calc(~"100% - 75px");
     .page-sidebar-wrapper {
         z-index: 100;
         transition: 1s;
@@ -22,9 +32,14 @@
         }
     }
 
-    .page-content-wrapper,
-    .page-content {
-        height: calc(~"100vh - 75px");
+    &, .page-content-wrapper, .page-content {
+        height: calc(100vh - 75px);
+        .fullscreen {
+            top: 0 !important;
+            #gridContainer, .main-component-view {
+                height: calc(100vh - 60px) !important;
+            }
+        }
     }
 
     .page-content-wrapper {
@@ -47,7 +62,7 @@
         margin-top: 45px;
         ::ng-deep ng-component {
             #gridContainer, .funnel-wrapper, dx-scheduler {
-                height: calc(~"100vh - 256px")!important;
+                height: calc(100vh - 256px)!important;
             }
         }
     }
@@ -64,4 +79,3 @@
 ::ng-deep .dxc-tooltip {
     z-index: 1000 !important;
 }
-

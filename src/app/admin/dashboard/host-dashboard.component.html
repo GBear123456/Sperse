@@ -196,7 +196,7 @@
                         </div>
                         <div class="m-portlet__body">
                             <ng-container *ngIf="!refreshing; else ghostList">
-                                <ng-container *ngIf="(incomeStatistics$ | async) as incomeStatistic; else ghostList">
+                                <ng-container *ngIf="incomeStatistics$ | async as incomeStatistic; else ghostList">
                                     <dx-chart *ngIf="incomeStatistic && incomeStatistic.length; else noData"
                                               id="chart"
                                               [dataSource]="incomeStatistic"

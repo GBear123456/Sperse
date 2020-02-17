@@ -6,13 +6,6 @@
     top: 74px;
     height: 100%;
 
-    &.fullscreen {
-        top: 0 !important;
-        #gridContainer {
-            height: calc(~"100vh - 60px");
-        }
-    }
-
     ::ng-deep #tenantsGrid {
         .dx-datagrid .dx-link.dx-link-edit {
             width: 18px !important;
@@ -21,9 +14,6 @@
         td.dx-command-edit {
             & + td::before {
                 display: none !important;
-            }
-            &:before {
-                left: 47px !important;
             }
         }
     }

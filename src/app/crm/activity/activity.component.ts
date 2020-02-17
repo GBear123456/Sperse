@@ -6,7 +6,7 @@ import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment-timezone';
 import buildQuery from 'odata-query';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
@@ -34,9 +34,14 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent, { static: true }) schedulerComponent: DxSchedulerComponent;
     @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
-    schedulerHeight$: Observable<number> = this.appService.toolbarIsHidden$.pipe(map((hidden: boolean) => {
-        return hidden ? window.innerHeight - 150 : window.innerHeight - 210;
-    }));
+    schedulerHeight$: Observable<number> = combineLatest(
+        this.appService.toolbarIsHidden$,
+        this.fullScreenService.isFullScreenMode$
+    ).pipe(
+        map(([hidden, fullscreen]: [boolean, boolean]) => {
+            return window.innerHeight - (fullscreen ? (hidden ? 0 : 60) : (hidden ? 150 : 210));
+        })
+    );
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
@@ -162,6 +167,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 },
                 deserializeDates: false,
                 onLoaded: (res) => {
+                    this.finishLoading();
                     this.totalCount = res && res.length;
                     res.forEach((record) => {
                         record.fieldTimeZone = 'Etc/UTC';
@@ -401,10 +407,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.initToolbarConfig();
     }
 
-    onContentReady() {
-        setTimeout(() => this.finishLoading());
-    }
-
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
         this.showActivityDialog(event.appointmentData);
@@ -483,8 +485,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     refresh(stageId?: number) {
-        this.schedulerComponent.instance.repaint();
-        this.pipelineComponent.refresh(stageId);
+        if (this.showPipeline) {
+            if (this.pipelineDataSource)
+                this.pipelineComponent.refresh(stageId);
+        } else
+            this.schedulerComponent.instance.getDataSource().reload();
     }
 
     repaint() {

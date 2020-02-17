@@ -48,11 +48,11 @@ export class StaticListComponent extends AppComponentBase {
     @Input() convertNameStartCase = true;
     @Input('list')
     set list(value: any[]) {
-        this._list = this.convertNameStartCase ? value.map((item) => {
+        this._list = (this.convertNameStartCase ? value.map((item) => {
             return _.extend(item, {
                 name: startCase(item.name.toLowerCase())
             });
-        }) : value;
+        }) : value).filter((item) => !!item.name);
     }
     get list(): any[] {
         return this._list;

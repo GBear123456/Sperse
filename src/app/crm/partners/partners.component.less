@@ -2,12 +2,6 @@
     position: relative;
     top: 74px;
     height: 100%;
-    &.fullscreen {
-        top: 0px !important;
-        #gridContainer {
-            height: calc(~"100vh - 60px");
-        }
-    }
     .total-count {
         font-size: 24px;
         font-weight: 600;
@@ -15,9 +9,7 @@
         margin-left: 0;
         flex-grow: 0;
     }
-    ::ng-deep .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td {
-        height: 40px !important;
-    }
+
     ::ng-deep #gridContainer {
         .verify-icon {
             width: 11px;

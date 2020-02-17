@@ -39,8 +39,8 @@ export class MapComponent implements OnChanges {
     @Input() data: MapData;
     @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
     @Input() infoItems: InfoItem[];
-    @Input() width: InfoItem[];
-    @Input() height: InfoItem[];
+    @Input() width: number;
+    @Input() height: number;
     @Input() dataIsLoading;
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;

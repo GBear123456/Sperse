@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { MatHorizontalStepper } from '@angular/material/stepper';
@@ -40,6 +40,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private userService: UserServiceProxy,
+        private elementRef: ElementRef,
         public appService: AppService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
@@ -64,12 +65,15 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
             if (!this.importUsersStepComponent.validationResult)
                 return;
 
-            this.startLoading(true);
+            this.startLoading(false, this.elementRef.nativeElement);
             this.importUsersStepComponent.submitInviteUsers()
-                .subscribe(() => this.questionnaire.submitQuestionnaire(), () => this.finishLoading(true));
+                .subscribe(
+                    () => this.questionnaire.submitQuestionnaire(this.elementRef.nativeElement),
+                    () => this.finishLoading(false, this.elementRef.nativeElement)
+                );
         } else {
             this.startLoading(true);
-            this.questionnaire.submitQuestionnaire();
+            this.questionnaire.submitQuestionnaire(this.elementRef.nativeElement);
         }
     }
 

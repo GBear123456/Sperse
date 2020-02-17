@@ -22,13 +22,6 @@ export class AccountConnectorChooserComponent implements OnInit {
     @Output() onConnectorChosen: EventEmitter<AccountConnectors> = new EventEmitter<AccountConnectors>();
     selectedConnector: AccountConnector;
     connectors: AccountConnector[];
-    xeroConnector = {
-        name: AccountConnectors.Xero,
-        iconName: 'xero-connector',
-        title: this.ls.l('XeroConnectorTitle'),
-        description: this.ls.l('XeroConnectorDescription'),
-        disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Xero))
-    };
     constructor(
         private dialogRef: MatDialogRef<AccountConnectorChooserComponent>,
         public ls: AppLocalizationService

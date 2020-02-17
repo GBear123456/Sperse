@@ -10,15 +10,17 @@ import {
     ViewChild
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
+import { DxoPagerComponent } from 'devextreme-angular/ui/nested';
 import 'devextreme/data/odata/store';
+import ODataStore from 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
 import { filter, takeUntil, tap, map } from 'rxjs/operators';
 
@@ -49,12 +51,14 @@ import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available
 export class BankPassComponent implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     @ViewChild(MatTabGroup, { static: true }) matTabGroup: MatTabGroup;
+    @ViewChild(DxoPagerComponent, { static: true }) pager: DxoPagerComponent;
     dataIsLoading = true;
     gridInitialized = false;
     totalCount: number;
     currentTabIndex = 0;
     searchValue: '';
-    dataSourceURI = 'Lead';
+    private readonly dataSourceURI = 'Lead';
+    private readonly totalDataSourceURI = 'Lead/$count';
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
@@ -77,30 +81,30 @@ export class BankPassComponent implements OnInit, OnDestroy {
             beforeSend: (request) => {
                 this.dataIsLoading = true;
                 this.changeDetectorRef.detectChanges();
-                if (this.searchValue) {
-                    request.params.quickSearchString = this.searchValue;
-                }
-                request.params.contactGroupId = ContactGroup.Client;
-                const queryParams = UrlHelper.getQueryParameters();
-                if (queryParams['user-key']) {
-                    request.headers['user-key'] = queryParams['user-key'];
-                    if (queryParams['tenantId']) {
-                        request.params['tenantId'] = queryParams['tenantId'];
-                    }
-                } else {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                }
-                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                this.transformRequest(request);
             },
             deserializeDates: false,
             paginate: true
         },
         onChanged: () => {
-            this.totalCount = this.dataSource.totalCount();
             this.dataIsLoading = false;
             this.gridInitialized = true;
             this.changeDetectorRef.detectChanges();
         }
+    });
+    totalDataSource = new DataSource({
+        paginate: false,
+        store: new ODataStore({
+            url: this.getODataUrl(this.totalDataSourceURI),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                this.transformRequest(request);
+            },
+            onLoaded: (count: any) => {
+                this.totalCount = count;
+                this.changeDetectorRef.detectChanges();
+            }
+        })
     });
     formatting = AppConsts.formatting;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
@@ -129,7 +133,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
             message: this.ls.l('MaxLengthIs', 30)
         }
     ];
-
     goalTypes: GoalType[] = this.bankCodeService.goalTypes;
     workDaysPerWeekValues = [ 1, 2, 3, 4, 5, 6, 7 ];
     goalValues = [ 3, 4, 5 ];
@@ -176,6 +179,25 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 this.renderer.removeClass(this.document.body, 'overflow-hidden');
             }
         });
+        this.totalDataSource.load();
+    }
+
+    private transformRequest(request) {
+        if (this.searchValue) {
+            request.params.quickSearchString = this.searchValue;
+        }
+        request.params.contactGroupId = ContactGroup.Client;
+        request.params.$count = true;
+        const queryParams = UrlHelper.getQueryParameters();
+        if (queryParams['user-key']) {
+            request.headers['user-key'] = queryParams['user-key'];
+            if (queryParams['tenantId']) {
+                request.params['tenantId'] = queryParams['tenantId'];
+            }
+        } else {
+            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+        }
+        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
     }
 
     onIframeLoad(e) {
@@ -213,7 +235,12 @@ export class BankPassComponent implements OnInit, OnDestroy {
             this.matTabGroup.selectedIndex = 1;
         }
         this.searchValue = e.value;
+        this.refresh();
+    }
+
+    private refresh() {
         this.dataGrid.instance.refresh();
+        this.totalDataSource.load();
     }
 
     accessCodeChanged(accessCode: string) {
@@ -238,6 +265,20 @@ export class BankPassComponent implements OnInit, OnDestroy {
         return this.bankCodeService.bankCodeLevel$.pipe(
             map((bankCodeLevel: number) => (index + 1) + '-' + ((index + 1) <= bankCodeLevel ? '1' : '0'))
         );
+    }
+
+    getInfoText(): string {
+        let infoText = '';
+        if (this.pager) {
+            const from = this.pager.instance.pageIndex() * this.pager.instance.pageSize() + 1;
+            const to = from + this.pager.instance.getVisibleRows().length - 1;
+            infoText = `${from && to ? `Showing ${from} to ${to} of ` : ''}${this.totalCount} records`;
+        }
+        return infoText;
+    }
+
+    onContentReady() {
+        this.changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy() {

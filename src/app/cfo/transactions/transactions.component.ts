@@ -338,6 +338,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.isDataLoaded = false;
+                    this.changeDetectionRef.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     if (request.params.$filter && request.url.indexOf('$filter')) {
                         let parts = request.url.split('?');
@@ -1401,7 +1402,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     get gridHeight() {
-        return window.innerHeight - (AppConsts.isMobile ? 160 : 150) - (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
+        return window.innerHeight -
+            (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : 150)) -
+            (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
 
     toggleDataGridToolbar() {

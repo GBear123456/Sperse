@@ -2,12 +2,7 @@
     position: relative;
     top: 74px;
     height: 100%;
-    &.fullscreen {
-        top: 0px !important;
-        #gridContainer {
-            height: calc(~"100vh - 60px");
-        }
-    }
+
     ::ng-deep .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td {
         height: 40px !important;
     }
@@ -18,9 +13,6 @@
         td.dx-command-edit {
             & + td::before {
                 display: none !important;
-            }
-            &:before {
-                left: 47px !important;
             }
         }
         .role-container {

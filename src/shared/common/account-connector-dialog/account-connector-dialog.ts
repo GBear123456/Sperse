@@ -17,7 +17,6 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 import { AccountConnectors } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
-import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
 
 @Component({
     selector: 'account-connector-dialog',
@@ -34,7 +33,6 @@ export class AccountConnectorDialogComponent implements OnInit {
         panelClass: ['account-connector-dialog']
     };
     @ViewChild(QuovoLoginComponent, { static: true }) quovoLogin: QuovoLoginComponent;
-    @ViewChild(XeroLoginComponent, { static: true }) xeroLogin: XeroLoginComponent;
     @Output() onComplete: EventEmitter<boolean> = new EventEmitter<boolean>();
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
@@ -62,11 +60,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     openConnector(connector: AccountConnectors) {
-        if (connector === AccountConnectors.Quovo || connector == AccountConnectors.XeroOAuth2) {
-            /** Decrease dialog sized to 0 (like hide) and open quovo iframe dialog instead,
-             * setTimeout to avoid changed after check error */
-            this.dialogRef.updateSize('0', '0');
-        }
+        this.dialogRef.updateSize('0', '0');
         this.selectedConnector = connector;
     }
 

@@ -97,12 +97,11 @@ export class InvoiceAddressDialog {
         });
     }
 
-    checkCountryByName(forcedChange = true) {
+    checkCountryByName() {
         let country = this.data.country && this.data.country.trim();
-        if (country = country && _.findWhere(this.countries, {name: country}))
+        if (country = country && _.findWhere(this.countries, { name: country }))
             this.data.countryId = country['code'];
-        if ((country || forcedChange) && this.data.countryId)
-            this.onCountryChange({value: this.data.countryId});
+        this.onCountryChange({ value: this.data.countryId });
     }
 
     onCountryChange(event) {
@@ -110,6 +109,7 @@ export class InvoiceAddressDialog {
         if (countryCode) {
             this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
         }
+        this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
     }
 
     onAddressChanged(event) {
@@ -132,9 +132,9 @@ export class InvoiceAddressDialog {
     onCustomStateCreate(e) {
         this.data.stateId = null;
         this.data.stateName = e.text;
-        this.statesService.updateState(this.data.countryId, e.text, e.text);
+        this.statesService.updateState(this.data.countryId, null, e.text);
         e.customItem = {
-            code: e.text,
+            code: null,
             name: e.text
         };
     }
@@ -211,7 +211,7 @@ export class InvoiceAddressDialog {
         this.data.city = address.city;
         this.data.zip = address.zip;
         this.data.address1 = address.streetAddress;
-        setTimeout(() => this.checkCountryByName(false));
+        setTimeout(() => this.checkCountryByName());
         component.instance.hide();
     }
 

@@ -3,6 +3,8 @@
                   iconSrc="assets/common/icons/credit-card-icon.svg"
                   [showReloadButton]="true"
                   [showToggleToolbarButton]="true"
+                  [showToggleCompactViewButton]="!_cfoService.hasStaticInstance"
+                  (onToggleCompactView)="toggleCompactView()"
                   (onReload)="reload()">
         <business-entities-chooser (onFilterButtonClick)="openBankAccountsSelectDialog()"></business-entities-chooser>
         <synch-progress class="synch-progress" (onComplete)="refresh.next()"></synch-progress>
@@ -12,12 +14,13 @@
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid id="gridContainer"
                       [columnAutoWidth]="true"
+                      [hidden]="!isDataLoaded"
                       [hoverStateEnabled]="true"
                       [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
                       [dataSource]="statementsData"
                       [masterDetail]="{ enabled: false, template: 'detail' }"
-                      (onRowClick)="expandColapseRow($event)"
+                      (onRowClick)="expandCollapseRow($event)"
                       (onRowPrepared)="onRowPrepared($event)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"

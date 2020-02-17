@@ -38,7 +38,8 @@ import {
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
     ContactServiceProxy,
-    InvoiceAddressInfo
+    InvoiceAddressInfo,
+    ContactAddressDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -277,7 +278,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ?
                     details.emails[0].emailAddress : undefined,
-                address = details.addresses[0];
+                address: ContactAddressDto = details.addresses[0];
             this.selectedContact = {
                 id: contact.id,
                 name: this.customer,
@@ -285,7 +286,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 address: address ? {
                     streetAddress: address.streetAddress,
                     city: address.city,
-                    state: address.state,
+                    stateId: address.stateId,
+                    stateName: address.stateName,
                     country: address.country,
                     zip: address.zip
                 } : {},
@@ -514,12 +516,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
+    onAddressChanged(e, field: string) {
+        if (e.event && e.value && !e.value.lastBillingDate && !e.value.lastShippingDate) {
+            this.showEditAddressDialog(e.event, field);
+        }
+    }
+
     private sortAddresses(addresses: InvoiceAddressInfo[], usageTypeId: 'B' | 'S') {
         const dateProperty = usageTypeId === 'B' ? 'lastBillingDate' : 'lastShippingDate';
         return addresses.sort((addressA: InvoiceAddressInfo, addressB: InvoiceAddressInfo) => {
             let result = 0;
             if (addressA[dateProperty] && addressB[dateProperty]) {
-                result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) ? -1 : 1;
+                result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) > 0 ? -1 : 1;
             } else if (addressA[dateProperty] && !addressB[dateProperty]) {
                 result = -1;
             } else if (addressB[dateProperty] && !addressA[dateProperty]) {
@@ -575,7 +583,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    productLookupItems($event) {
+    productLookupItems($event, cellData) {
         this.lastProductPhrase = $event.event.target.value;
         if (this.products.length)
             this.products = [];
@@ -589,6 +597,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
             this.productsLookupRequest(this.lastProductPhrase, res => {
+                cellData.data.description = this.lastProductPhrase;
                 if (!res['length'])
                     $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
@@ -778,20 +787,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             address = this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
         let dialogData: any = this[field] || {
-                countryId: address.countryCode,
-                stateId: address.stateId,
-                stateName: address.stateName,
-                country: address.country,
-                city: address.city,
-                zip: address.zip,
-                address1: address.streetAddress,
-                address2: undefined,
-                firstName: person.firstName,
-                lastName: person.lastName,
-                company: undefined,
-                email: this.selectedContact.email,
-                phone: undefined
-            };
+            countryId: address.countryCode,
+            stateId: address.stateId,
+            stateName: address.stateName,
+            country: address.country,
+            city: address.city,
+            zip: address.zip,
+            address1: address.streetAddress,
+            address2: undefined,
+            firstName: person.firstName,
+            lastName: person.lastName,
+            company: undefined,
+            email: this.selectedContact.email,
+            phone: undefined
+        };
         dialogData['viewMode'] = this.disabledForUpdate;
         dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         this.dialog.open(InvoiceAddressDialog, {
@@ -809,7 +818,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this[field] = new InvoiceAddressInput(dialogData);
             this.changeDetectorRef.detectChanges();
         });
-        event.stopPropagation();
-        event.preventDefault();
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
 }

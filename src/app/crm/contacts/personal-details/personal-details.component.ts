@@ -202,6 +202,8 @@ export class PersonalDetailsComponent implements OnDestroy {
                 this.getStates(this.person && this.person.citizenship);
                 this.person.drivingLicenseState = null;
             }
+            if (!this.person.marriageDate)
+                this.person.divorceDate = null;
             this.personContactService.updatePersonInfo(new UpdatePersonInfoInput({
                 id: this.person.contactId,
                 dob: this.getDateWithoutTime(this.person.dob),

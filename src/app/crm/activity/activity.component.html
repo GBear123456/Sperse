@@ -16,6 +16,7 @@
     <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <dx-scheduler
+                class="main-component-view"
                 [height]="schedulerHeight$ | async"
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
@@ -33,7 +34,6 @@
                 startDateTimeZoneExpr="fieldTimeZone"
                 endDateTimeZoneExpr="fieldTimeZone"
                 dropDownAppointmentTemplate="appointmentDropDown"
-                (onContentReady)="onContentReady()"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
                 <div *dxTemplate="let appointment of 'appointmentDropDown'">
@@ -53,7 +53,7 @@
 
     <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div class="funnel-wrapper">
+            <div class="funnel-wrapper main-component-view">
                 <app-pipeline
                     totalsURI="ActivityCount"
                     [dataSource]="pipelineDataSource"

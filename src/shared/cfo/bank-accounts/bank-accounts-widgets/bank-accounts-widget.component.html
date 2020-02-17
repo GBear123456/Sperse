@@ -67,6 +67,7 @@
                   width="99.9%"
                   [height]="calculateHeight()"
                   [dataSource]="dataSource"
+                  noDataText="''"
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
                   [showColumnHeaders]="showColumnHeaders"
@@ -80,8 +81,7 @@
                   (onRowPrepared)="rowPrepared($event)"
                   (onContentReady)="contentReady()"
                   (onRowClick)="dataRowClick($event)"
-                  (onCellClick)="dataCellClick($event)"
-                  #syncAccountsGrid>
+                  (onCellClick)="dataCellClick($event)">
 
         <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
         <dxo-paging [enabled]="false"></dxo-paging>
@@ -102,7 +102,7 @@
                 <dx-data-grid accessKey="detailGrid"
                               [dataSource]="syncAccount.data.bankAccounts"
                               [showBorders]="false"
-                              [width]="'100%'"
+                              width="100%"
                               [showColumnLines]="false"
                               [showRowLines]="false"
                               [columnAutoWidth]="true"
@@ -111,13 +111,12 @@
                               (onCellClick)="detailCellClick($event)"
                               (onEditingStart)="editingStart($event)"
                               (onEditorPrepared)="editorPrepared($event)"
-                              (onContentReady)="detailContentReady($event)"
+                              (onContentReady)="detailContentReady()"
                               (onRowUpdating)="detailsRowUpdating($event)">
                     <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                     <dxo-editing [mode]="allowEditing ? 'popup': 'row'"
                                  [allowUpdating]="false">
-                        <dxo-popup #editingPopup
-                                   accessKey="accountsEditingPopup"
+                        <dxo-popup accessKey="accountsEditingPopup"
                                    [height]="340"
                                    [width]="700"
                                    [deferRendering]="true">

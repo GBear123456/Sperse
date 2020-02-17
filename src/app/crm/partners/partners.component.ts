@@ -362,7 +362,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 deserializeDates: false,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }

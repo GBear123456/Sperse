@@ -152,9 +152,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
             this.countries = result;
-            if (this.address['country']) {
-                this.onCountryChange({ value: this.address['country'] });
-            }
+            this.onCountryChange({ value: this.address['country'] });
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -164,13 +162,12 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         if (countryCode) {
             this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
         }
+        this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
     }
 
     getCountryCode(name) {
         let country = _.findWhere(this.countries, { name: name });
-        if (country) {
-            return country && country.code;
-        }
+        return country && country.code;
     }
 
     onKeyUp($event, propName) {
@@ -218,9 +215,9 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     onCustomStateCreate(e) {
         this.businessEntity.stateId = null;
         this.businessEntity.stateName = e.text;
-        this.statesService.updateState(this.address.countryCode, e.text, e.text);
+        this.statesService.updateState(this.address.countryCode, null, e.text);
         e.customItem = {
-            code: e.text,
+            code: null,
             name: e.text
         };
     }

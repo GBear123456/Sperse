@@ -178,13 +178,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                             name: 'stage',
                             action: this.toggleStages.bind(this),
                             disabled: !this.contactService.checkCGPermission(this.customerType),
-                            visible: this.leadId
+                            visible: this.contactInfo.statusId == ContactStatus.Prospective
                         },
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
                             disabled: !this.contactService.checkCGPermission(this.customerType),
-                            visible: !this.leadId
+                            visible: this.contactInfo.statusId != ContactStatus.Prospective
                         },
                         {
                             name: 'partnerType',

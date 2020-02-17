@@ -559,9 +559,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onCustomStateCreate(e, i: number) {
         this.contacts.addresses[i].stateCode = null;
         this.contacts.addresses[i].stateName = e.text;
-        this.statesService.updateState(this.contacts.addresses[i].countryCode, e.text, e.text);
+        this.statesService.updateState(this.contacts.addresses[i].countryCode, null, e.text);
         e.customItem = {
-            code: e.text,
+            code: null,
             name: e.text
         };
     }

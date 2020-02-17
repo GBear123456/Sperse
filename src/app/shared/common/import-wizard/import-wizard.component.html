@@ -164,7 +164,7 @@
                     {{cellData.value | phone: getPhoneDefaultCountry(cellData) }}
                 </div>
 
-                <div *dxTemplate="let cellData of 'revenueCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
+                <div *dxTemplate="let cellData of 'amountCell'" [ngClass]="{invalid: checkFieldInvalid(cellData)}">
                     {{cellData.value | currency}}
                 </div>
 

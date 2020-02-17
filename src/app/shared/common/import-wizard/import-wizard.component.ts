@@ -705,10 +705,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     initColumnTemplate(column) {
         this.validateFieldList.some((fld) => {
             if (column.dataField.toLowerCase().includes(fld.toLowerCase()))
-                return !!(column.cellTemplate = ([
-                    'phone',
-                    'revenue'
-                ].indexOf(fld) < 0 ? 'common' : fld) + 'Cell');
+                return !!(column.cellTemplate = column.cellTemplate || 'commonCell');
         });
     }
 
@@ -741,7 +738,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     value, this.getFieldDefaultCountry(data, field)).replace(/[^\d+]/g, '');
             return isValid;
         } else if (key == 'revenue')
-            return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
+            return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/[^0-9.]/g, '')));
         else if (key == 'countryName')
             return value.trim().length > 3;
         else if (key == 'countryId')

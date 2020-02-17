@@ -20,7 +20,7 @@ import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto
 export class PivotGridComponent {
     @Input() dataSource: any;
     @Input() storageKey: string;
-    @Input() height = 'auto';
+    @Input() height: string | number = 'auto';
     @Input() isLoading = true;
     @ViewChild(DxPivotGridComponent, { static: true }) pivotGrid: DxPivotGridComponent;
     showFieldPanel = false;

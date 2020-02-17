@@ -245,8 +245,20 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 }
                 return syncAccounts;
             }),
-            distinctUntilChanged((oldAccounts, newAccounts) => !ArrayHelper.dataChanged(oldAccounts, newAccounts))
+            distinctUntilChanged((oldAccounts: SyncAccountBankDto[], newAccounts: SyncAccountBankDto[]) => {
+                return !ArrayHelper.dataChanged(
+                    oldAccounts.map(this.pluckSelectedProperty),
+                    newAccounts.map(this.pluckSelectedProperty)
+                );
+            })
         );
+    }
+
+    pluckSelectedProperty(account: SyncAccountBankDto) {
+        return {
+            ...account,
+            selected: null
+        };
     }
 
     rowPrepared(e) {
@@ -344,6 +356,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         if (e.event) {
             this.mainDataGrid.instance.getVisibleRows().forEach(row => {
                 row.isSelected = e.value;
+                row.data.selected = e.value;
                 row.data.bankAccounts.forEach(account => {
                     account.selected = e.value;
                 });
@@ -376,15 +389,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     editingStart(e) {
         this.editingStarted = true;
-        const syncAccount: SyncAccountBankDto = this.dataSource.find(syncAccount => syncAccount.syncAccountId === e.data.syncAccountId);
-        if (syncAccount.syncTypeId === SyncTypeIds.Xero) {
-            e.component.columnOption(
-                'accountName',
-                'editorOptions',
-                { disabled: true },
-                true
-            );
-        }
         if (this.allowBankAccountsEditing && this.cfoService && this.businessEntities.length === 1 && !this.accountsTypes) {
             this.instanceType = <any>this.cfoService.instanceType;
             this.instanceId = <any>this.cfoService.instanceId;

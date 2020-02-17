@@ -35,7 +35,7 @@
 
     .item-edit-label {
         display: inline-block;
-        min-width: 200px;
+        min-width: 150px;
         line-height: 35px;
         font-size: 14px;
         font-weight: normal;
@@ -43,6 +43,9 @@
         font-style: normal;
         letter-spacing: 0.2px;
         color: #677380;
+        &.app {
+            min-width: 200px;
+        }
     }
 
     .item-value {
@@ -52,8 +55,19 @@
         font-stretch: normal;
         font-style: normal;
         line-height: 35px;
+        white-space: nowrap;
         letter-spacing: 0.3px;
         color: #424c56;
+        span {
+            overflow: hidden;
+            display: inline-block;
+            white-space: nowrap;
+            line-height: 18px;
+            text-overflow: ellipsis;
+            &.wide {
+                max-width: calc((100vw - 350px) / 2 - 200px);
+            }
+        }
     }
 
     .lead-info {

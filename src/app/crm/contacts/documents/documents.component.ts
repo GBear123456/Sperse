@@ -310,7 +310,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     loadDocuments(callback = null) {
-        this.startLoading();
         let documentData = this._documentService['data'], groupId = this.data.contactInfo.id;
         const dataSource$: Observable<DocumentInfo[]> = !callback && documentData && documentData.groupId == groupId
                             ? of(documentData.source)
@@ -320,7 +319,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                     source: documents
                                 };
                             }));
-        dataSource$.pipe(finalize(() => this.finishLoading())).subscribe((documents: DocumentInfo[]) => {
+        dataSource$.subscribe((documents: DocumentInfo[]) => {
             if (this.componentIsActivated) {
                 this.dataSource = documents;
                 if (!this.dataSource || !this.dataSource.length)

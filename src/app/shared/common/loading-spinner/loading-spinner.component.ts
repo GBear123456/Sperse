@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'loading-spinner',
@@ -9,4 +9,4 @@ import { Component, Input } from '@angular/core';
         './loading-spinner.component.less'
     ]
 })
-export class LoadingSpinnerComponent { }
+export class LoadingSpinnerComponent {}
