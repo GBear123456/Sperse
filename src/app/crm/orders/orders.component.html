@@ -9,6 +9,7 @@
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <app-static-list
         [width]="'210px'"
         [title]="l('Stages')"

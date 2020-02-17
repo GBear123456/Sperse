@@ -91,6 +91,7 @@ import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -123,8 +124,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (lead && lead.CustomerId)
                 this.selectedClientKeys.push(lead.CustomerId);
         });
-        if (this.appService.toolbarConfig)
-            this.initToolbarConfig();
+        this.initToolbarConfig();
     }
     actionEvent: any;
     actionMenuItems = [
@@ -414,6 +414,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         { contactGroup: ContactGroup.Client }
     );
     totalCount: number;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -834,7 +835,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     initToolbarConfig() {
         this.manageDisabled = !this.contactService.checkCGPermission(this.contactGroupId.value);
-        this.componentIsActivated && this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -1099,7 +1100,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 ]
             },
-        ]);
+        ];
     }
 
     repaintDataGrid(delay = 0) {
@@ -1165,7 +1166,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
-            this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
@@ -1373,7 +1373,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     deactivate() {
         super.deactivate();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         if (!this.showPipeline) {

@@ -20,6 +20,7 @@ import { SetupStepsComponent } from '@app/shared/common/setup-steps/setup-steps.
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -69,6 +70,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         }
     ];
     headlineButtons: HeadlineButton[];
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -142,94 +144,92 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-        if (this.componentIsActivated) {
-            this.appService.updateToolbar([
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'search',
-                            widget: 'dxTextBox',
-                            options: {
-                                value: this.section == 'offers' ? this.offersQuickSearch : this.visitorsQuickSearch,
-                                width: '279',
-                                mode: 'search',
-                                placeholder: this.l('Search') + ' '
-                                    + this.l(this.section == 'offers' ? 'Offers' : 'Customers').toLowerCase(),
-                                onValueChanged: (e) => {
-                                    if (this.section == 'offers') {
-                                        this.offersQuickSearch = e.value;
-                                        this.refreshOfferStats();
-                                    } else {
-                                        this.visitorsQuickSearch = e.value;
-                                        this.refreshVisitors();
-                                    }
+        this.toolbarConfig = [
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.section == 'offers' ? this.offersQuickSearch : this.visitorsQuickSearch,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' '
+                                + this.l(this.section == 'offers' ? 'Offers' : 'Customers').toLowerCase(),
+                            onValueChanged: (e) => {
+                                if (this.section == 'offers') {
+                                    this.offersQuickSearch = e.value;
+                                    this.refreshOfferStats();
+                                } else {
+                                    this.visitorsQuickSearch = e.value;
+                                    this.refreshVisitors();
                                 }
-                            },
-                            visible: this.section != 'clicks'
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'showCompactRowsHeight',
-                            visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
-                            action: DataGridService.toggleCompactRowsHeight.bind(this, this.openedGrid)
-                        },
-                        {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [
-                                    {
-                                        action: Function(),
-                                        text: this.l('Save as PDF'),
-                                        icon: 'pdf',
-                                    },
-                                    {
-                                        action: this.exportToXLS.bind(this, 'all', this.openedGrid),
-                                        text: this.l('Export to Excel'),
-                                        icon: 'xls',
-                                    },
-                                    {
-                                        action: this.exportToCSV.bind(this, 'all', this.openedGrid),
-                                        text: this.l('Export to CSV'),
-                                        icon: 'sheet'
-                                    },
-                                    {
-                                        action: this.exportToGoogleSheet.bind(this, 'all', this.openedGrid),
-                                        text: this.l('Export to Google Sheets'),
-                                        icon: 'sheet'
-                                    }
-                                ],
-                                visible: this.section !== 'clicks'
                             }
                         },
-                        {
-                            name: 'columnChooser',
-                            visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
-                            action: DataGridService.showColumnChooser.bind(this, this.openedGrid)
-                        },
-                        {
-                            widget: 'dxButton',
-                            options: {
-                                text: 'Show all',
-                                onClick: () => {
-                                    this.visitorsCampaignId = null;
-                                    this.refreshVisitors();
-                                    this.initToolbarConfig();
+                        visible: this.section != 'clicks'
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'showCompactRowsHeight',
+                        visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
+                        action: DataGridService.toggleCompactRowsHeight.bind(this, this.openedGrid)
+                    },
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.exportToXLS.bind(this, 'all', this.openedGrid),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: this.exportToCSV.bind(this, 'all', this.openedGrid),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: this.exportToGoogleSheet.bind(this, 'all', this.openedGrid),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
                                 }
-                            },
-                            visible: this.section == 'visitors' && this.visitorsCampaignId
+                            ],
+                            visible: this.section !== 'clicks'
                         }
-                    ]
-                },
-            ]);
-        }
+                    },
+                    {
+                        name: 'columnChooser',
+                        visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
+                        action: DataGridService.showColumnChooser.bind(this, this.openedGrid)
+                    },
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Show all',
+                            onClick: () => {
+                                this.visitorsCampaignId = null;
+                                this.refreshVisitors();
+                                this.initToolbarConfig();
+                            }
+                        },
+                        visible: this.section == 'visitors' && !!this.visitorsCampaignId
+                    }
+                ]
+            },
+        ];
     }
 
     onStatsClick(event) {
@@ -375,7 +375,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     deactivate() {
         super.deactivate();
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
     }
 
     getVisitorFullName = (e) => {

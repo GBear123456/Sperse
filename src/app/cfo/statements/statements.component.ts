@@ -11,7 +11,6 @@ import * as moment from 'moment';
 import { Observable, Subject, combineLatest, of } from 'rxjs';
 import {
     catchError,
-    finalize,
     filter,
     first,
     tap,
@@ -52,6 +51,7 @@ import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-va
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -115,6 +115,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             endDate: moment(new Date()).add(10, 'years').toDate()
         }
     });
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         private injector: Injector,
@@ -220,7 +221,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             takeUntil(this.destroy$),
             filter(() => this.componentIsActivated)
         ).subscribe(([forecastModels, selectedForecastModelId]) => {
-            this.appService.updateToolbar([
+            this.toolbarConfig = [
                 {
                     location: 'before',
                     items: [
@@ -332,7 +333,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         }
                     ]
                 }
-            ]);
+            ];
         });
 
         this.bankAccountsService.accountsAmountWithApply$.pipe(
@@ -494,7 +495,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     deactivate() {
         this.dialog.closeAll();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.getRootComponent().overflowHidden();

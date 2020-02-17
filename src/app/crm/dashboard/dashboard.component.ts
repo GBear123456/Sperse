@@ -177,7 +177,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.subscribeToRefreshParam();
-        this.appService.updateToolbar(null);
         this.showHostElement(() => {
             if (this.clientsByRegion && this.clientsByRegion.mapComponent)
                 this.clientsByRegion.mapComponent.vectorMapComponent.instance.render();

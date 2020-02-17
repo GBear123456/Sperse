@@ -9,11 +9,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class JobsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     link: SafeResourceUrl;
-    public headlineConfig = {
-        names: [this.l('Jobs')],
-        icon: 'magic-wand',
-        buttons: []
-    };
 
     constructor(
         injector: Injector,

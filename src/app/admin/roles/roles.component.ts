@@ -21,11 +21,11 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
-import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './roles.component.html',
@@ -52,10 +52,11 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     dataSource: any;
     permissionFilterModel: FilterModel;
     moduleFilterModel: FilterModel;
+    toolbarConfig: ToolbarGroupModel[];
+
     constructor(
         injector: Injector,
         private roleService: RoleServiceProxy,
-        private appService: AppService,
         private filtersService: FiltersService,
         private permissionService: PermissionServiceProxy,
         private dialog: MatDialog
@@ -108,7 +109,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -191,7 +192,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -247,7 +248,6 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
-        this.initToolbarConfig();
         if (this.searchValue)
             this.dataGrid.instance.filter(['displayName', 'contains', this.searchValue]);
         else
@@ -261,7 +261,6 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
     }
 

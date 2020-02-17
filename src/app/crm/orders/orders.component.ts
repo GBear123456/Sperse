@@ -42,6 +42,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -90,6 +91,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     permissions = AppPermissions;
     currency: string;
     totalCount: number;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -337,7 +339,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     initToolbarConfig() {
         if (this.componentIsActivated) {
             this.manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-            this.appService.updateToolbar([
+            this.toolbarConfig = [
                 {
                     location: 'before', items: [
                         {
@@ -499,7 +501,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         }
                     ]
                 }
-            ]);
+            ];
         }
     }
 
@@ -678,7 +680,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         if (!this.showPipeline)

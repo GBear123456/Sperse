@@ -28,6 +28,7 @@
         </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionEvent"
                  (onItemClick)="onMenuItemClick($event)">
@@ -60,7 +61,7 @@
         <div class="portlet-body">
             <div>
                 <div id="LeadsTable">
-                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                    <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                     <dx-data-grid
                                 id="gridContainer"
                                 class="limitedPagerTotal main-component-view"

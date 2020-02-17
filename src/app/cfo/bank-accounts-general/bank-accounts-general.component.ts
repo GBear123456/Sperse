@@ -27,7 +27,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
 
-    headlineConfig: any;
     private rootComponent: any;
     createAccountAvailable = false;
 

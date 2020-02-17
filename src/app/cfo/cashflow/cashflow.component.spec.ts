@@ -6,14 +6,13 @@ import { HeadLineComponent } from '@app/shared/common/headline/headline.componen
 import { SelectionFilterComponent } from '@shared/cfo/bank-accounts/selection-filter/selection-filter.component';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
-import { OperationsComponent } from '@app/cfo/cashflow/operations/operations.component';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import {
     DxButtonComponent, DxDataGridComponent,
     DxPivotGridComponent, DxProgressBarComponent,
     DxResizableComponent, DxScrollViewComponent, DxSelectBoxComponent,
     DxTabsComponent, DxTagBoxComponent, DxTemplateDirective, DxToolbarComponent, DxTooltipComponent
-} from '@root/node_modules/devextreme-angular';
+} from 'devextreme-angular';
 import { DxoEditingComponent } from '@root/node_modules/devextreme-angular/ui/nested/editing';
 import { DxoHeaderFilterComponent } from '@root/node_modules/devextreme-angular/ui/nested/header-filter';
 import { DxoSelectionComponent } from '@root/node_modules/devextreme-angular/ui/nested/selection';
@@ -95,7 +94,6 @@ describe('CashflowComponent', () => {
                 SelectionFilterComponent,
                 SynchProgressComponent,
                 CalendarButtonComponent,
-                OperationsComponent,
                 ToolBarComponent,
                 DxButtonComponent,
                 DxTabsComponent,

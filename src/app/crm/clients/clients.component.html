@@ -13,6 +13,7 @@
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionEvent"
                  target=".dx-state-hover .dx-link.dx-link-edit"
@@ -44,9 +45,8 @@
         <div class="portlet-body">
             <div id="ClientsTable">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                <dx-data-grid class="main-component-view"
+                <dx-data-grid class="main-component-view limitedPagerTotal"
                               id="gridContainer"
-                              class="limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               [dataSource]="dataSource"
                               [allowColumnReordering]="true"

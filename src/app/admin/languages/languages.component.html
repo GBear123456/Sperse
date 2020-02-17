@@ -9,8 +9,9 @@
                   (onToggleToolbar)="repaintDataGrid()"
                   (onReload)="refreshDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
-                  (onTooggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionRecord"
                  width="240px"

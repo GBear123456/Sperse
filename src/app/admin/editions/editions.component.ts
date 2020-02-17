@@ -16,6 +16,7 @@ import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-moda
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -65,6 +66,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         }
     ];
     private rootComponent: any;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -84,7 +86,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before',
                 items: [
@@ -141,7 +143,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactRowHeight() {
@@ -222,6 +224,5 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
     }
 }

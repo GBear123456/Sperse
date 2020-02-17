@@ -25,6 +25,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { ImportServiceProxy, ImportFieldInfoDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     selector: 'import-wizard',
@@ -71,7 +72,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     uploadFile: FormGroup;
     dataMapping: FormGroup;
 
-    _toolbarConfig: any[];
+    _toolbarConfig: ToolbarGroupModel[];
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];

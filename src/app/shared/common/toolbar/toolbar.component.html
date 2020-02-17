@@ -1,4 +1,5 @@
 <dx-toolbar
+    *ngIf="_config && !appService.toolbarIsHidden.value"
     [width]="width"
     [items]="items"
     [elementAttr]="{ compact: compact }"

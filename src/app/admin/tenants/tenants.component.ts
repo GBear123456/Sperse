@@ -36,6 +36,7 @@ import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-loo
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -111,6 +112,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         field: 'name',
         items: { name: new FilterItemModel(this.tenantName)}
     });
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -176,7 +178,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -259,7 +261,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -435,6 +437,5 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
     }
 }

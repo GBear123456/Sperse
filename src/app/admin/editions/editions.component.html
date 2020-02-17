@@ -7,9 +7,10 @@
                   [showToggleCompactViewButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactRowHeight()"
-                  (onTooggleFullScreen)="toggleFullScreen()"
+                  (onToggleFullScreen)="toggleFullScreen()"
                   (onReload)="refreshDataGrid()">
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionRecord"
                  (onItemClick)="onMenuItemClick($event)"

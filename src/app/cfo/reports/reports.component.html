@@ -5,6 +5,7 @@
                   [showToggleToolbarButton]="true">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
         <action-menu width="180px"
@@ -24,7 +25,7 @@
                         [hoverStateEnabled]="true"
                         [pager]="defaultGridPagerConfig"
                         (onCellClick)="onCellClick($event)"
-                        (onInitialized)="onDataGridInit($event)"
+                        (onInitialized)="onDataGridInit()"
                         (onContentReady)="onContentReady()"
                         (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>

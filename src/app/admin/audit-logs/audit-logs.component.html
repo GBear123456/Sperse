@@ -7,8 +7,9 @@
                   (onReload)="refreshData()"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="showCompactRowHeight()"
-                  (onTooggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="operationsLogsGridContainer">

@@ -35,6 +35,7 @@ import {
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -292,7 +293,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     isListsSelected = false;
     isTagsSelected = false;
     isStarSelected = false;
-    toolbarConfig = [];
+    toolbarConfig: ToolbarGroupModel[] = [];
     selectedClientKeys: any = [];
     selectedStageId: number;
     selectedPartnerTypeName: string;
@@ -947,7 +948,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
-        this.appService.updateToolbar(null);
     }
 
     onMappingChanged(event) {
@@ -968,7 +968,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingValue = undefined;
-        this.appService.updateToolbar(null);
     }
 
     cancelImport() {

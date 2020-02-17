@@ -23,6 +23,7 @@ import { ActivityServiceProxy, ActivityType } from '@shared/service-proxies/serv
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -97,6 +98,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     ];
     public searchValue: string;
     public totalCount: number;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -212,7 +214,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before',
                 items: [
@@ -251,10 +253,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Tasks').toLowerCase(),
-                            onValueChanged: () => {
-                                this.searchValueChange();
-                            }
+                            placeholder: this.l('Search') + ' ' + this.l('Tasks').toLowerCase()
                         }
                     }
                 ]
@@ -387,7 +386,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -400,10 +399,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     toggleFullScreen() {
         !this.showPipeline && this.repaintDataGrid(100);
-    }
-
-    searchValueChange() {
-        this.initToolbarConfig();
     }
 
     onAppointmentFormCreated(event) {
@@ -514,7 +509,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     deactivate() {
         this.appService.hideSubscriptionCallback = null;
-        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 

@@ -6,7 +6,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */
-import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -41,8 +40,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     constructor(injector: Injector,
         private importLeadsService: ImportLeadsService,
         private sizeFormatPipe: FileSizePipe,
-        private importProxy: ImportServiceProxy,
-        private appService: AppService
+        private importProxy: ImportServiceProxy
     ) {
         super(injector);
         this.dataSource = {
@@ -197,7 +195,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     deactivate() {
-        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 

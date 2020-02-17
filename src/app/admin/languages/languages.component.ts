@@ -18,6 +18,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './languages.component.html',
@@ -39,6 +40,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     ];
     defaultLanguageName: string;
     private rootComponent: any;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -119,7 +121,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'after',
                 locateInMenu: 'auto',
@@ -158,7 +160,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -216,7 +218,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
     }
 
     sortLanguages = (item1, item2) => {

@@ -95,6 +95,7 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -351,6 +352,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     private usersInstancesLoadingSubscription: Subscription;
     totalCount: number;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -708,7 +710,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+       this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -935,7 +937,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     }
                 ]
             }
-        ]);
+        ];
+       return this.toolbarConfig;
     }
 
     repaintDataGrid(delay = 0) {
@@ -1049,7 +1052,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
-            this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
@@ -1166,7 +1168,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         super.deactivate();
 
         this.subRouteParams.unsubscribe();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         if (this.dataGrid) {

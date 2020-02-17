@@ -37,6 +37,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FiltersService } from '@shared/filters/filters.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -133,6 +134,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     ];
     operationLogsDataSource: DataSource;
     isDataLoaded = false;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -201,7 +203,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -257,23 +259,31 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                         widget: 'dxDropDownMenu',
                         options: {
                             hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    type: 'downloadOptions'
+                                }
+                            ]
                         }
                     },
                     { name: 'print', action: Function() }
@@ -286,7 +296,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                     { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     repaintDataGrid(delay = 0) {
@@ -299,7 +309,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
-        this.initToolbarConfig();
         if (this.searchValue)
             this.dataGrid.instance.filter(['displayName', 'contains', this.searchValue]);
         else
@@ -358,9 +367,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     initFilterConfig() {
         this.filtersService.setup(this.filtersModels);
         this.filtersService.checkIfAnySelected();
-        this.filtersService.apply(() => {
-            this.initToolbarConfig();
-        });
     }
 
     refreshData(): void {
@@ -379,7 +385,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
     }
 }

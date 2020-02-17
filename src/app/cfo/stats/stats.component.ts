@@ -43,6 +43,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     'selector': 'app-stats',
@@ -178,6 +179,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             endDate: moment(new Date()).add(10, 'years').toDate()
         }
     });
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -304,7 +306,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 first()
             ).subscribe(([selectedForecastModelIndex, forecastModels]: [number, ForecastModelDto[]]) => {
                 /** Get currencies list and selected currency index */
-                this.appService.updateToolbar([
+                this.toolbarConfig = [
                     {
                         location: 'before',
                         items: [
@@ -432,7 +434,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             }
                         ]
                     }
-                ]);
+                ];
             });
         }
     }
@@ -516,7 +518,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
@@ -698,7 +699,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     deactivate() {
         this.dialog.closeAll();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden();

@@ -11,6 +11,7 @@ import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'app-toolbar',
@@ -22,7 +23,7 @@ export class ToolBarComponent implements OnDestroy {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     @Input() compact = false;
-    private _config: ToolbarGroupModel[];
+    _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
         this._config = config;
@@ -35,7 +36,8 @@ export class ToolBarComponent implements OnDestroy {
 
     constructor(
         filtersService: FiltersService,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        public appService: AppService
     ) {
         this.subscription = filtersService.filterToggle$.subscribe((enabled) => {
             enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', filtersService.hasFilterSelected);

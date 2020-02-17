@@ -5,9 +5,10 @@
         <dx-select-box *ngIf="section == 'clicks'"
             [items]="years"
             [(value)]="clickStatsYear"
-            (selectionChanged)="yearSelectionChanged($event)">
+            (selectionChanged)="yearSelectionChanged()">
         </dx-select-box>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="wrapper portlet light">
         <setup-steps-common [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps-common>
         <div #rightSection>
