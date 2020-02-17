@@ -3,16 +3,19 @@
         <dx-list 
             width="100%"
             height="100%"
-            [items]="emails"
+            [dataSource]="dataSource"
+            [selectionMode]="single"
+            [selectedItemKeys]="[activeEmail?.id]"
             [searchEditorOptions]="{placeholder: l('SearchMessage')}"
             [searchEnabled]="true"
             searchExpr="Name"
-            searchMode="contains">
+            searchMode="contains"
+            (onItemClick)="initActiveEmail($event.itemData)">
                 <div *dxTemplate="let item of 'item'">
                     <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
                         <img [src]="profileService.getPhoto(item.avatar)" class="avatar small"/>
                         <div class="details">
-                            <span class="from">{{item.from}}</span>
+                            <span class="from">{{item.fromUserName}}</span>
                             <span class="subject">{{item.subject}}</span>
                             <span class="body">{{item.body}}</span>
                         </div>
@@ -24,18 +27,16 @@
     <div class="inbox-content">
         <app-toolbar [config]="contentToolbar"></app-toolbar>        
         <div class="header">
-            <img [src]="profileService.getPhoto(activeEmail.avatar)" class="avatar"/>
+            <img [src]="profileService.getPhoto(activeEmail?.avatar)" class="avatar"/>
             <div class="details">
-                <span class="from">{{activeEmail.from}}</span>
-                <span class="subject">{{activeEmail.subject}}</span>
-                <span class="to">{{l('to')}} {{activeEmail.to}}</span>
+                <span class="from">{{activeEmail?.from}}</span>
+                <span class="subject">{{activeEmail?.subject}}</span>
+                <span class="to">{{l('to')}} {{activeEmail?.to}}</span>
             </div>
-            <div class="date">{{activeEmail.date | date: formatting.inboxDate : userTimezone}}</div>
+            <div class="date">{{activeEmail?.date | date: formatting.inboxDate : userTimezone}}</div>
         </div>
         <dx-scroll-view showScrollbar="onHover">
-            <div class="body">    
-                {{activeEmail.body}}
-            </div>
+            <div class="body" [innerHtml]="activeEmail?.body"></div>
         </dx-scroll-view>
     </div>
 </div>

@@ -8530,6 +8530,140 @@ export class ContactCommunicationServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getEmail(id: number, contactId: number): Observable<EmailDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetEmail?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<EmailDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EmailDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEmail(response: HttpResponseBase): Observable<EmailDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EmailDto.fromJS(resultData200) : new EmailDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EmailDto>(<any>null);
+    }
+
+    /**
+     * @userId (optional) 
+     * @filter (optional) 
+     * @status (optional) 
+     * @sorting (optional) 
+     * @maxResultCount (optional) 
+     * @skipCount (optional) 
+     * @return Success
+     */
+    getEmails(contactId: number, userId: number | null | undefined, filter: string | null | undefined, status: CommunicationEmailStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<EmailListDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetEmails?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
+        if (filter !== undefined)
+            url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
+        if (status !== undefined)
+            url_ += "Status=" + encodeURIComponent("" + status) + "&"; 
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEmails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEmails(<any>response_);
+                } catch (e) {
+                    return <Observable<EmailListDtoPagedResultDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EmailListDtoPagedResultDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEmails(response: HttpResponseBase): Observable<EmailListDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EmailListDtoPagedResultDto.fromJS(resultData200) : new EmailListDtoPagedResultDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EmailListDtoPagedResultDto>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -8563,6 +8697,113 @@ export class ContactCommunicationServiceProxy {
     }
 
     protected processSendEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    saveAttachment(body: Body | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/SaveAttachment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveAttachment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveAttachment(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveAttachment(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    deleteAttachment(id: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/DeleteAttachment?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAttachment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAttachment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAttachment(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18823,6 +19064,7 @@ export class MyFinancesServiceProxy {
     /**
      * @syncTypeId (optional) 
      * @return Success
+     * @deprecated
      */
     createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
@@ -18879,6 +19121,7 @@ export class MyFinancesServiceProxy {
      * @forcedSync (optional) 
      * @newOnly (optional) 
      * @return Success
+     * @deprecated
      */
     syncAllQuovoAccounts(forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/MyFinances/SyncAllQuovoAccounts?";
@@ -26176,64 +26419,6 @@ export class SyncAccountServiceProxy {
             }));
         }
         return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @body (optional) 
-     * @return Success
-     */
-    update(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: UpdateSyncAccountInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Update?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdate(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdate(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -45424,6 +45609,242 @@ export interface IPersonOrgRelationTypeDto {
     isDeleted: boolean | undefined;
 }
 
+export class EmailAttachmentDto implements IEmailAttachmentDto {
+    name!: string | undefined;
+    size!: number | undefined;
+    id!: string | undefined;
+
+    constructor(data?: IEmailAttachmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.size = data["size"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EmailAttachmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailAttachmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["size"] = this.size;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEmailAttachmentDto {
+    name: string | undefined;
+    size: number | undefined;
+    id: string | undefined;
+}
+
+export class EmailDto implements IEmailDto {
+    to!: string | undefined;
+    replyTo!: string | undefined;
+    cc!: string | undefined;
+    bcc!: string | undefined;
+    subject!: string | undefined;
+    body!: string | undefined;
+    attachments!: EmailAttachmentDto[] | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.to = data["to"];
+            this.replyTo = data["replyTo"];
+            this.cc = data["cc"];
+            this.bcc = data["bcc"];
+            this.subject = data["subject"];
+            this.body = data["body"];
+            if (data["attachments"] && data["attachments"].constructor === Array) {
+                this.attachments = [];
+                for (let item of data["attachments"])
+                    this.attachments.push(EmailAttachmentDto.fromJS(item));
+            }
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EmailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["to"] = this.to;
+        data["replyTo"] = this.replyTo;
+        data["cc"] = this.cc;
+        data["bcc"] = this.bcc;
+        data["subject"] = this.subject;
+        data["body"] = this.body;
+        if (this.attachments && this.attachments.constructor === Array) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEmailDto {
+    to: string | undefined;
+    replyTo: string | undefined;
+    cc: string | undefined;
+    bcc: string | undefined;
+    subject: string | undefined;
+    body: string | undefined;
+    attachments: EmailAttachmentDto[] | undefined;
+    id: number | undefined;
+}
+
+export enum CommunicationEmailStatus {
+    Draft = "Draft", 
+    Pending = "Pending", 
+    Failed = "Failed", 
+    Sent = "Sent", 
+    Delivered = "Delivered", 
+}
+
+export class EmailListDto implements IEmailListDto {
+    fromUserId!: number | undefined;
+    fromUserName!: string | undefined;
+    to!: string | undefined;
+    replyTo!: string | undefined;
+    cc!: string | undefined;
+    bcc!: string | undefined;
+    subject!: string | undefined;
+    id!: number | undefined;
+
+    constructor(data?: IEmailListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fromUserId = data["fromUserId"];
+            this.fromUserName = data["fromUserName"];
+            this.to = data["to"];
+            this.replyTo = data["replyTo"];
+            this.cc = data["cc"];
+            this.bcc = data["bcc"];
+            this.subject = data["subject"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): EmailListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fromUserId"] = this.fromUserId;
+        data["fromUserName"] = this.fromUserName;
+        data["to"] = this.to;
+        data["replyTo"] = this.replyTo;
+        data["cc"] = this.cc;
+        data["bcc"] = this.bcc;
+        data["subject"] = this.subject;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IEmailListDto {
+    fromUserId: number | undefined;
+    fromUserName: string | undefined;
+    to: string | undefined;
+    replyTo: string | undefined;
+    cc: string | undefined;
+    bcc: string | undefined;
+    subject: string | undefined;
+    id: number | undefined;
+}
+
+export class EmailListDtoPagedResultDto implements IEmailListDtoPagedResultDto {
+    totalCount!: number | undefined;
+    items!: EmailListDto[] | undefined;
+
+    constructor(data?: IEmailListDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(EmailListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EmailListDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailListDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IEmailListDtoPagedResultDto {
+    totalCount: number | undefined;
+    items: EmailListDto[] | undefined;
+}
+
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     to!: string[] | undefined;
@@ -45432,6 +45853,7 @@ export class SendEmailInput implements ISendEmailInput {
     bcc!: string[] | undefined;
     subject!: string;
     body!: string;
+    attachments!: string[] | undefined;
 
     constructor(data?: ISendEmailInput) {
         if (data) {
@@ -45467,6 +45889,11 @@ export class SendEmailInput implements ISendEmailInput {
             }
             this.subject = data["subject"];
             this.body = data["body"];
+            if (data["attachments"] && data["attachments"].constructor === Array) {
+                this.attachments = [];
+                for (let item of data["attachments"])
+                    this.attachments.push(item);
+            }
         }
     }
 
@@ -45502,6 +45929,11 @@ export class SendEmailInput implements ISendEmailInput {
         }
         data["subject"] = this.subject;
         data["body"] = this.body;
+        if (this.attachments && this.attachments.constructor === Array) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item);
+        }
         return data; 
     }
 }
@@ -45514,6 +45946,7 @@ export interface ISendEmailInput {
     bcc: string[] | undefined;
     subject: string;
     body: string;
+    attachments: string[] | undefined;
 }
 
 export class SendSMSToContactInput implements ISendSMSToContactInput {
@@ -65130,50 +65563,6 @@ export interface ICreateSyncAccountInput {
     isSyncBankAccountsEnabled: boolean | undefined;
 }
 
-export class UpdateSyncAccountInput implements IUpdateSyncAccountInput {
-    id!: number | undefined;
-    consumerKey!: string | undefined;
-    consumerSecret!: string | undefined;
-
-    constructor(data?: IUpdateSyncAccountInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.consumerKey = data["consumerKey"];
-            this.consumerSecret = data["consumerSecret"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSyncAccountInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSyncAccountInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["consumerKey"] = this.consumerKey;
-        data["consumerSecret"] = this.consumerSecret;
-        return data; 
-    }
-}
-
-export interface IUpdateSyncAccountInput {
-    id: number | undefined;
-    consumerKey: string | undefined;
-    consumerSecret: string | undefined;
-}
-
 export class RenameSyncAccountInput implements IRenameSyncAccountInput {
     id!: number;
     newName!: string;
@@ -70579,6 +70968,42 @@ export class ProcessLeadConfiguration implements IProcessLeadConfiguration {
 }
 
 export interface IProcessLeadConfiguration {
+}
+
+export class Body implements IBody {
+    file!: string;
+
+    constructor(data?: IBody) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.file = data["file"];
+        }
+    }
+
+    static fromJS(data: any): Body {
+        data = typeof data === 'object' ? data : {};
+        let result = new Body();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["file"] = this.file;
+        return data; 
+    }
+}
+
+export interface IBody {
+    file: string;
 }
 
 export class Flags implements IFlags {

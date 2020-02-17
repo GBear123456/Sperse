@@ -2,12 +2,14 @@
 import { Injector, Component, OnDestroy, ViewChild, HostListener } from '@angular/core';
 
 /** Third party imports */
+import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, ContactCommunicationServiceProxy, CommunicationEmailStatus } from '@shared/service-proxies/service-proxies';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactsService } from '../contacts.service';
@@ -18,16 +20,6 @@ import { ContactsService } from '../contacts.service';
     styleUrls: ['./user-inbox.component.less']
 })
 export class UserInboxComponent extends AppComponentBase implements OnDestroy {
-    emails = [{
-        avatar: '',
-        from: 'Test Tester',
-        to: ['Some@Person.com'],
-        subject: 'About important styling subject text',
-        body: 'The CKEditor 5 rich text editor component for Angular can be styled using the component stylesheet or using a global stylesheet. See how to set the CKEditor 5 components height using these two approaches.',
-        date: new Date()
-    }];
-
-    activeEmail = this.emails[0];
     isSendSmsAndEmailAllowed = false;
 
     contentToolbar = [{
@@ -79,11 +71,16 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
         ]
     }];
 
-    contactId: Number;
+    activeEmail;
+    contactId: number;
+    searchPhrase: string;
+    dataSource: DataSource;
     formatting = AppConsts.formatting;
+    status: CommunicationEmailStatus;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private communicationService: ContactCommunicationServiceProxy,
         private contactsService: ContactsService
     ) {
         super(injector);
@@ -96,11 +93,12 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
                 contactsService.toolbarUpdate({ customToolbar: [{
                     location: 'before',
                     items: [{
-                        widget: 'dxTextBox',
+                        widget: 'dxSelectBox',
                         options: {
-                            value: this.l('Inbox'),
+                            value: this.l('Outbox'),
+                            dataSource: [this.l('Outbox'), this.l('Inbox')],
                             inputAttr: {view: 'headline'},
-                            readOnly: true
+                            onValueChanged: () => { }
                         }
                     }]
                 }, {
@@ -115,10 +113,46 @@ export class UserInboxComponent extends AppComponentBase implements OnDestroy {
                     }]
                 }]});
             });
+            this.initDataSource();
         }, this.constructor.name);
     }
 
+    initDataSource() {
+        this.dataSource = new DataSource({
+            key: 'id',
+            load: (loadOptions) => {
+                this.startLoading();
+                return this.communicationService.getEmails(
+                    this.contactId,
+                    undefined /* filter by user maybe add later */,
+                    this.searchPhrase,
+                    this.status,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','), loadOptions.take || -1, loadOptions.skip
+                ).toPromise().then(response => {
+                    this.initActiveEmail(response.items[0]);
+                    return {
+                        data: response.items,
+                        totalCount: response.totalCount
+                    };
+                });
+            }
+        });
+    }
+
+    initActiveEmail(record) {
+        this.startLoading();
+        this.communicationService.getEmail(record.id, this.contactId).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(res => {
+            this.activeEmail = res;
+            this.activeEmail.from = record.fromUserName;
+        });
+    }
+
     invalidate() {
+        this.dataSource.reload();
         this.dialog.closeAll();
     }
 
