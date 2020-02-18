@@ -1,5 +1,15 @@
 /** Core imports */
-import { Component, OnInit, Injector, Inject, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Injector,
+    Inject,
+    AfterViewInit,
+    OnDestroy,
+    ViewChild,
+    HostListener,
+    HostBinding
+} from '@angular/core';
 import { DOCUMENT, CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
@@ -181,6 +191,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @HostBinding('class.toolbar-is-shown') toolbarIsShown;
     transactionId: any;
     selectedBankAccountsIds;
 
@@ -898,6 +909,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.bankAccountsService.accountsAmountWithApply$.pipe(takeUntil(this.destroy$)).subscribe( amount => {
             this.bankAccountCount = amount;
+        });
+        this.appService.toolbarIsHidden$.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((toolbarIsHidden: boolean) => {
+            this.toolbarIsShown = !toolbarIsHidden;
         });
     }
 

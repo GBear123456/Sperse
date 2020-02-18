@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
@@ -19,8 +19,12 @@ import { FiltersService } from '@shared/filters/filters.service';
 export class PivotGridComponent {
     @Input() dataSource: any;
     @Input() storageKey: string;
-    @Input() height: string | number = 'auto';
     @Input() isLoading = true;
+    @Input() height: number | string = 'auto';
+    @HostBinding('style.height')
+    public get  componentHeight(): string {
+        return this.height + 'px';
+    }
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     showFieldPanel = false;
     summaryDisplayModes: any[] = [
@@ -33,6 +37,8 @@ export class PivotGridComponent {
         { text: 'Percent of Row Grand Total', value: 'percentOfRowGrandTotal' },
         { text: 'Percent of Grand Total', value: 'percentOfGrandTotal' }
     ];
+    contentShowen = false;
+
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         public filtersService: FiltersService
@@ -56,11 +62,11 @@ export class PivotGridComponent {
     }
 
     onContentReady(e) {
+        this.contentShowen = true;
         e.element.querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach(grandTotalCell => {
             if (grandTotalCell.parentElement.previousSibling &&
                 (grandTotalCell.parentElement.style.position === 'fixed'
-                 || grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
-                )
+                 || grandTotalCell.getBoundingClientRect().bottom > window.innerHeight)
             ) {
                 grandTotalCell.parentElement.style.position = 'fixed';
                 grandTotalCell.parentElement.style.bottom = '0';

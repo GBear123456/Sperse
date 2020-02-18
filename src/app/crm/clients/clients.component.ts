@@ -182,13 +182,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    pivotGridDataSource = {
+    private _pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
-            /** To show global spinner only during the first loading */
-            if (this.pivotGridDataIsLoading === undefined) {
-                this.pivotGridDataIsLoading = true;
-            }
+            this.pivotGridDataIsLoading = true;
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
@@ -279,6 +276,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ]
     };
+    public pivotGridDataSource;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
@@ -376,7 +374,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ) {
         super(injector);
         if (this.userManagementService.checkBankCodeFeature()) {
-            this.pivotGridDataSource.fields.unshift({
+            this._pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -1024,8 +1022,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
-        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        this.pivotGridDataSource = this._pivotGridDataSource;
     }
 
     private setChartInstance() {

@@ -109,7 +109,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         private store$: Store<AppStore.State>
     ) {
         super(injector);
-
         this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;

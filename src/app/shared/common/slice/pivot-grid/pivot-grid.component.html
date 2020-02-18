@@ -1,9 +1,10 @@
-<dx-pivot-grid [dataSource]="dataSource"
+<dx-pivot-grid *ngIf="dataSource"
+               [dataSource]="dataSource"
                [allowExpandAll]="true"
                [allowFiltering]="true"
                [allowSorting]="true"
                [height]="height"
-               [visible]="!isLoading"
+               [visible]="contentShowen"
                [allowSortingBySummary]="true"
                [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
@@ -13,13 +14,8 @@
     <dxo-field-panel [visible]="true"></dxo-field-panel>
     <dxo-header-filter [allowSearch]="true">
     </dxo-header-filter>
-    <dxo-load-panel indicatorSrc="./assets/common/images/spinner.gif"
-                    text=""
-                    [showPane]="false">
-    </dxo-load-panel>
-    <dxo-state-storing [enabled]="true"
-                       [storageKey]="storageKey">
-    </dxo-state-storing>
+    <dxo-load-panel [enabled]="false"></dxo-load-panel>
+    <dxo-state-storing [enabled]="true" [storageKey]="storageKey"></dxo-state-storing>
 </dx-pivot-grid>
 <button class="close-button" *ngIf="showFieldPanel" (click)="toggleFieldPanel()"></button>
 <loading-spinner *ngIf="isLoading"></loading-spinner>

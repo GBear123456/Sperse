@@ -211,13 +211,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    pivotGridDataSource = {
+    private _pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
-            /** To show global spinner only during the first loading */
-            if (this.pivotGridDataIsLoading === undefined) {
-                this.pivotGridDataIsLoading = true;
-            }
+            this.pivotGridDataIsLoading = true;
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
@@ -345,6 +342,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         ]
     };
+    public pivotGridDataSource;
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
         key: 'id',
@@ -474,7 +472,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         this.searchValue = '';
         if (this.userManagementService.checkBankCodeFeature()) {
-            this.pivotGridDataSource.fields.unshift({
+            this._pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -1219,8 +1217,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
-        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        this.pivotGridDataSource = this._pivotGridDataSource;
     }
 
     private setChartInstance() {

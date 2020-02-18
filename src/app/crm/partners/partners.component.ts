@@ -176,13 +176,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    pivotGridDataSource = {
+    private _pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
-            /** To show global spinner only during the first loading */
-            if (this.pivotGridDataIsLoading === undefined) {
-                this.pivotGridDataIsLoading = true;
-            }
+            this.pivotGridDataIsLoading = true;
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
@@ -277,6 +274,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             }
         ]
     };
+    public pivotGridDataSource;
     sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
@@ -376,7 +374,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
         if (this.userManagementService.checkBankCodeFeature()) {
-            this.pivotGridDataSource.fields.unshift({
+            this._pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -1020,8 +1018,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
-        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        this.pivotGridDataSource = this._pivotGridDataSource;
     }
 
     private setChartInstance() {

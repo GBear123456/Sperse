@@ -41,7 +41,7 @@
     top: 75px;
     display: block;
     position: relative;
-    height: 100%;
+    height: calc(~"100% - 75px");
 
     .sidebar-calculator-widget {
         position: absolute;
@@ -1555,6 +1555,12 @@
 
         .cashflow-scroll {
             height: calc(100vh - 63px) !important;
+        }
+    }
+
+    &.toolbar-is-shown {
+        ::ng-deep .spinner {
+            top: 30px !important;
         }
     }
 
