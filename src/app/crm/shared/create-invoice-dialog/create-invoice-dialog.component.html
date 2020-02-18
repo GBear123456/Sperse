@@ -77,7 +77,7 @@
                         [dataSource]="billingAddresses"
                         (onValueChanged)="onAddressChanged($event, 'selectedBillingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
-                            <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
+                            <i class="address-icons type-{{cellData.usageTypeId || 'B'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
@@ -115,7 +115,7 @@
                         [dataSource]="shippingAddresses"
                         (onValueChanged)="onAddressChanged($event, 'selectedShippingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
-                            <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
+                            <i class="address-icons type-{{cellData.usageTypeId || 'S'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
