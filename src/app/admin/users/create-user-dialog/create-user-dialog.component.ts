@@ -304,11 +304,13 @@ export class CreateUserDialogComponent implements OnInit {
                 role.isAssigned = this.initialRoles[index].isAssigned;
             });
 
-            if (this.orgUnits.length)
+            if (this.orgUnits.length) {
                 this.organizationUnits = <IOrganizationUnitsTreeComponentData>{
                     allOrganizationUnits: this.orgUnits,
-                    selectedOrganizationUnits: [this.orgUnits[0].code]
+                    selectedOrganizationUnits: [ this.orgUnits[0].code ]
                 };
+                this.selectedOrganizationsIds = [ this.orgUnits[0].id ];
+            }
 
             setTimeout(() => this.setComponentToValid(this.phoneNumber.instance), 800);
             setTimeout(() => this.changeDetectorRef.detectChanges());
