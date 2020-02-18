@@ -12,7 +12,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { pluck, filter, finalize } from 'rxjs/operators';
+import { takeUntil, pluck, filter, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */
@@ -124,6 +124,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         invoicesService.settings$.subscribe(res => this.currency = res.currency);
         this._activatedRoute.queryParams.pipe(
+            takeUntil(this.destroy$),
             filter(() => this.componentIsActivated),
             pluck('refresh'),
             filter(Boolean)
@@ -509,12 +510,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     processFilterInternal() {
-        if (this.showPipeline) {
-            this.pipelineComponent.searchColumns = this.searchColumns;
-            this.pipelineComponent.searchValue = this.searchValue;
-        }
+        let context: any = this;
+        if (this.showPipeline && this.pipelineComponent) {
+            context = this.pipelineComponent;
+            context.searchColumns = this.searchColumns;
+            context.searchValue = this.searchValue;
+        } else if (!this.dataGrid)
+            return ;
 
-        let context = this.showPipeline ? this.pipelineComponent : this;
         context.processODataFilter.call(context,
             this.dataGrid.instance,
             this.dataSourceURI,

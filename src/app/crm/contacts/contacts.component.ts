@@ -646,7 +646,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     close(force = false) {
         this.dialog.closeAll();
-        let data = force || JSON.stringify(<any>this.contactService['data']);
+        let data = this.contactService['data'],
+            refresh = data.refresh;
+        if (!refresh && !force) {
+            let compare = JSON.stringify(<any>data);
+            refresh = this.initialData != compare;
+        }
         this._router.navigate(
             [this.queryParams.referrer || 'app/crm/clients'],
             {
@@ -655,10 +660,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         this.queryParams,
                         (val, key) => key == 'referrer' ? undefined : val
                     ),
-                    !force && this.initialData != data ? {refresh: true} : {}
+                    refresh ? {refresh: Date.now()} : {}
                 )
             }
         );
+        delete data.refresh;
     }
 
     closeEditDialogs(event) {

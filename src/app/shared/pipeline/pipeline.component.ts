@@ -869,9 +869,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getStageSpinnerTopPosition(stage: Stage): string {
-        let topPosition = '123px';
-        if (stage && stage.entities && stage.entities.length) {
-            topPosition = (window.innerHeight - document.querySelector('.column-title').getBoundingClientRect().top) / 2 - 30 + 'px';
+        let topPosition = '123px',
+            titleElm = document.querySelector('.column-title');
+        if (stage && stage.entities && stage.entities.length && titleElm) {
+            topPosition = (window.innerHeight - titleElm.getBoundingClientRect().top) / 2 - 30 + 'px';
         }
         return topPosition;
     }
