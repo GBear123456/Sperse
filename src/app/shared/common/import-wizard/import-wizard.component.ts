@@ -747,12 +747,14 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/[^0-9.]/g, '')));
         else if (key == 'countryName')
             return value.trim().length > 3;
-        else if (key == 'countryId')
+        else if (key == 'countryId') {
+            value = data[field] = value.toUpperCase();
             return this.excludeCCValidation.indexOf(value) >= 0
                 || !!_.findWhere(this.countries, {code: value});
-        else if (key == 'stateId')
+        } else if (key == 'stateId') {
+            value = data[field] = value.toUpperCase();
             return value.length >= 2 && value.length <= 3;
-        else if (key == 'rating')
+        } else if (key == 'rating')
             return !isNaN(value) && value >= 1 && value <= 10;
         else
             return !value || AppConsts.regexPatterns[key].test(value);
