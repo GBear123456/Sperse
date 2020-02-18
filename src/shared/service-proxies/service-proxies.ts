@@ -16145,71 +16145,6 @@ export class InvoiceServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
-     * @searchPhrase (optional) 
-     * @topCount (optional) 
-     * @return Success
-     */
-    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetProductsByPhrase?";
-        if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
-        if (searchPhrase !== undefined)
-            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
-        if (topCount !== undefined)
-            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetProductsByPhrase(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetProductsByPhrase(<any>response_);
-                } catch (e) {
-                    return <Observable<ProductInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ProductInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetProductsByPhrase(response: HttpResponseBase): Observable<ProductInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ProductInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ProductInfo[]>(<any>null);
-    }
-
-    /**
      * @body (optional) 
      * @return Success
      */
@@ -16853,6 +16788,71 @@ export class InvoiceServiceProxy {
             }));
         }
         return _observableOf<InvoiceAddressInfo[]>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetProductsByPhrase?";
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductsByPhrase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductsByPhrase(<any>response_);
+                } catch (e) {
+                    return <Observable<ProductInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProductInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProductsByPhrase(response: HttpResponseBase): Observable<ProductInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ProductInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProductInfo[]>(<any>null);
     }
 }
 
@@ -44952,7 +44952,6 @@ export interface IContactLinkInfo {
 }
 
 export class ContactTagInfo implements IContactTagInfo {
-    id!: number | undefined;
     name!: string | undefined;
 
     constructor(data?: IContactTagInfo) {
@@ -44966,7 +44965,6 @@ export class ContactTagInfo implements IContactTagInfo {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
         }
     }
@@ -44980,19 +44978,16 @@ export class ContactTagInfo implements IContactTagInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface IContactTagInfo {
-    id: number | undefined;
     name: string | undefined;
 }
 
 export class ContactListInfo implements IContactListInfo {
-    id!: number | undefined;
     name!: string | undefined;
 
     constructor(data?: IContactListInfo) {
@@ -45006,7 +45001,6 @@ export class ContactListInfo implements IContactListInfo {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
         }
     }
@@ -45020,14 +45014,12 @@ export class ContactListInfo implements IContactListInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface IContactListInfo {
-    id: number | undefined;
     name: string | undefined;
 }
 
@@ -45654,13 +45646,17 @@ export interface IEmailAttachmentDto {
 }
 
 export class EmailDto implements IEmailDto {
+    body!: string | undefined;
+    attachments!: EmailAttachmentDto[] | undefined;
+    fromUserId!: number | undefined;
+    fromUserName!: string | undefined;
+    fromUserThumbnailId!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
     cc!: string | undefined;
     bcc!: string | undefined;
     subject!: string | undefined;
-    body!: string | undefined;
-    attachments!: EmailAttachmentDto[] | undefined;
+    creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
     constructor(data?: IEmailDto) {
@@ -45674,17 +45670,21 @@ export class EmailDto implements IEmailDto {
 
     init(data?: any) {
         if (data) {
-            this.to = data["to"];
-            this.replyTo = data["replyTo"];
-            this.cc = data["cc"];
-            this.bcc = data["bcc"];
-            this.subject = data["subject"];
             this.body = data["body"];
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
                 for (let item of data["attachments"])
                     this.attachments.push(EmailAttachmentDto.fromJS(item));
             }
+            this.fromUserId = data["fromUserId"];
+            this.fromUserName = data["fromUserName"];
+            this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.to = data["to"];
+            this.replyTo = data["replyTo"];
+            this.cc = data["cc"];
+            this.bcc = data["bcc"];
+            this.subject = data["subject"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -45698,30 +45698,38 @@ export class EmailDto implements IEmailDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["to"] = this.to;
-        data["replyTo"] = this.replyTo;
-        data["cc"] = this.cc;
-        data["bcc"] = this.bcc;
-        data["subject"] = this.subject;
         data["body"] = this.body;
         if (this.attachments && this.attachments.constructor === Array) {
             data["attachments"] = [];
             for (let item of this.attachments)
                 data["attachments"].push(item.toJSON());
         }
+        data["fromUserId"] = this.fromUserId;
+        data["fromUserName"] = this.fromUserName;
+        data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["to"] = this.to;
+        data["replyTo"] = this.replyTo;
+        data["cc"] = this.cc;
+        data["bcc"] = this.bcc;
+        data["subject"] = this.subject;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
 }
 
 export interface IEmailDto {
+    body: string | undefined;
+    attachments: EmailAttachmentDto[] | undefined;
+    fromUserId: number | undefined;
+    fromUserName: string | undefined;
+    fromUserThumbnailId: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
     cc: string | undefined;
     bcc: string | undefined;
     subject: string | undefined;
-    body: string | undefined;
-    attachments: EmailAttachmentDto[] | undefined;
+    creationTime: moment.Moment | undefined;
     id: number | undefined;
 }
 
@@ -45736,11 +45744,13 @@ export enum CommunicationEmailStatus {
 export class EmailListDto implements IEmailListDto {
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
+    fromUserThumbnailId!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
     cc!: string | undefined;
     bcc!: string | undefined;
     subject!: string | undefined;
+    creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
     constructor(data?: IEmailListDto) {
@@ -45756,11 +45766,13 @@ export class EmailListDto implements IEmailListDto {
         if (data) {
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
+            this.fromUserThumbnailId = data["fromUserThumbnailId"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
             this.cc = data["cc"];
             this.bcc = data["bcc"];
             this.subject = data["subject"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -45776,11 +45788,13 @@ export class EmailListDto implements IEmailListDto {
         data = typeof data === 'object' ? data : {};
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
+        data["fromUserThumbnailId"] = this.fromUserThumbnailId;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
         data["cc"] = this.cc;
         data["bcc"] = this.bcc;
         data["subject"] = this.subject;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -45789,11 +45803,13 @@ export class EmailListDto implements IEmailListDto {
 export interface IEmailListDto {
     fromUserId: number | undefined;
     fromUserName: string | undefined;
+    fromUserThumbnailId: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
     cc: string | undefined;
     bcc: string | undefined;
     subject: string | undefined;
+    creationTime: moment.Moment | undefined;
     id: number | undefined;
 }
 
@@ -54107,50 +54123,6 @@ export interface IInvoiceInfo {
     lines: InvoiceLineInfo[] | undefined;
 }
 
-export class ProductInfo implements IProductInfo {
-    description!: string | undefined;
-    unitId!: InvoiceLineUnit | undefined;
-    rate!: number | undefined;
-
-    constructor(data?: IProductInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.description = data["description"];
-            this.unitId = data["unitId"];
-            this.rate = data["rate"];
-        }
-    }
-
-    static fromJS(data: any): ProductInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProductInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["description"] = this.description;
-        data["unitId"] = this.unitId;
-        data["rate"] = this.rate;
-        return data; 
-    }
-}
-
-export interface IProductInfo {
-    description: string | undefined;
-    unitId: InvoiceLineUnit | undefined;
-    rate: number | undefined;
-}
-
 export class InvoiceAddressInput implements IInvoiceAddressInput {
     countryId!: string | undefined;
     stateId!: string | undefined;
@@ -54979,6 +54951,50 @@ export interface IAddBankCardPaymentInput {
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
     bankCardInfo: BankCardInput | undefined;
+}
+
+export class ProductInfo implements IProductInfo {
+    description!: string | undefined;
+    unitId!: InvoiceLineUnit | undefined;
+    rate!: number | undefined;
+
+    constructor(data?: IProductInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.description = data["description"];
+            this.unitId = data["unitId"];
+            this.rate = data["rate"];
+        }
+    }
+
+    static fromJS(data: any): ProductInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["description"] = this.description;
+        data["unitId"] = this.unitId;
+        data["rate"] = this.rate;
+        return data; 
+    }
+}
+
+export interface IProductInfo {
+    description: string | undefined;
+    unitId: InvoiceLineUnit | undefined;
+    rate: number | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -65285,8 +65301,8 @@ export interface IUpdateSortOrderInput {
 
 export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationInput {
     syncTypeId!: string;
-    clientId!: string;
-    clientSecret!: string;
+    clientId!: string | undefined;
+    clientSecret!: string | undefined;
 
     constructor(data?: ISetupSyncUserApplicationInput) {
         if (data) {
@@ -65323,8 +65339,8 @@ export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationI
 
 export interface ISetupSyncUserApplicationInput {
     syncTypeId: string;
-    clientId: string;
-    clientSecret: string;
+    clientId: string | undefined;
+    clientSecret: string | undefined;
 }
 
 export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
