@@ -114,27 +114,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
-    private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
-    affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
-        map((affiliateCode: string) => (affiliateCode || '').trim())
-    );
-    affiliateValidationRules = [
-        {
-            type: 'pattern',
-            pattern: AppConsts.regexPatterns.affiliateCode,
-            message: this.l('AffiliateCodeIsNotValid')
-        },
-        {
-            type: 'stringLength',
-            max: 4,
-            message: this.l('MinLengthIs', 4)
-        },
-        {
-            type: 'stringLength',
-            max: 30,
-            message: this.l('MaxLengthIs', 30)
-        }
-    ];
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean));
 
