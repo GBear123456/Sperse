@@ -41,6 +41,7 @@ import * as moment from 'moment-timezone';
 import 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
+import invert from 'lodash/invert';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -54,6 +55,8 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { Period } from '@app/shared/common/period/period.enum';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'totals-by-period',
@@ -221,7 +224,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
         this.isCumulative.next(e.selectedItem.value);
     }
 
-    private savePeriod(period: PeriodModel) {
+    private savePeriod(period: PeriodModel): TotalsByPeriodModel {
         if (period) {
             if ([Period.Today, Period.Yesterday, Period.ThisWeek, Period.ThisMonth, Period.LastMonth].indexOf(period.period) >= 0)
                 this.selectedPeriod = { ...this.periods[0] };
@@ -259,11 +262,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
             purpose: AppConsts.PipelinePurposeIds.lead,
             stageId: stageId
         }))).pipe(
-            filter(stage => !!stage),
             first(),
-            map(stage => ({
+            map((stage: StageDtoExtended) => ({
                 valueField: stageId.toString(),
-                name: stage && stage.name,
+                name: stage && (stage.name + (stage.contactGroupId !== ContactGroup.Client ? (' ' + invert(ContactGroup)[stage.contactGroupId]) : '')),
                 color: (stage && stage.color) || this.pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder),
                 type: 'stackedBar',
                 sortOrder: stage && stage.sortOrder
