@@ -19,8 +19,7 @@
                 <i class="icon-{{item.icon}}"></i> {{item.label}}
             </button>
         </ng-template>
-        <div class="vertical-delimiter"></div>
-        <ng-container *ngIf="showReloadButton || showToggleToolbarButton || showToggleCompactViewButton || showToggleFullScreenButton">
+        <div class="toggle-button-container" *ngIf="showReloadButton || showToggleToolbarButton || showToggleCompactViewButton || showToggleFullScreenButton">
             <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
             <ul *ngIf="showHeadlineButtons" class="buttons">
                 <li *ngIf="showReloadButton">
@@ -44,6 +43,6 @@
                     <div class="right"><span class="icon toggleFullScreenView" (click)="toggleFullScreen()"></span></div>
                 </li>
             </ul>
-        </ng-container>
+        </div>
     </div>
 </div>

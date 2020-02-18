@@ -155,41 +155,29 @@
         display: flex;
         align-items: center;
         margin-left: 5px;
-        .vertical-delimiter {
-            width: 1px;
-            height: 74px;
-            position: relative;
-            vertical-align: top;
-            align-self: flex-start;
+        height: 100%;
+
+        .toggle-button-container {
+            background: #f9fbfc;
+            height: 100%;
             border-left: 1px solid #dfdfdf;
-            margin: 0 5px;
-            @media (max-width: 767px) {
-                &:before {
-                    left: 0;
-                }
-            }
-        }
-        .refresh-button,
-        .toggle-button {
-            width: 44px;
-            height: 44px;
-            margin: 10px;
-            outline: none;
-            border: none;
-            cursor: pointer;
-            vertical-align: bottom;
-            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
-            @media (max-width: 767px) {
-                margin: 5px 5px 5px 0;
-            }
+            display: flex;
+            align-items: center;
         }
 
         .toggle-button {
+            vertical-align: bottom;
+            cursor: pointer;
+            outline: none;
+            margin: 10px;
             width: 42px;
             height: 42px;
             border: 1px solid #e6eaed;
             border-radius: 50%;
             background: #fff url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
+            @media (max-width: 767px) {
+                margin: 5px;
+            }
         }
 
         &.need-refresh {
@@ -232,9 +220,6 @@
 
         @media (max-width: 767px) {
             margin-left: 0;
-            .vertical-delimiter {
-                width: 1px;
-            }
         }
 
         ul.buttons {
@@ -242,7 +227,7 @@
             right: 0;
             top: 75px;
             flex-direction: column;
-            background-color: #f3f7fa;
+            background-color: #f9fbfc;
             border-left: 1px solid #dfdfdf;
             border-bottom: 1px solid #dfdfdf;
             padding: 15px 0;
