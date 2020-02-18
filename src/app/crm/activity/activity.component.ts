@@ -99,6 +99,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public searchValue: string;
     public totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
+    layoutTypes = DataLayoutType;
 
     constructor(
         injector: Injector,

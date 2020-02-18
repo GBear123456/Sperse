@@ -463,13 +463,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     location: 'after',
                     locateInMenu: 'auto',
-                    items: [
-                        { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
                     areItemsDependent: true,
                     items: [
                         // {

@@ -4,7 +4,7 @@
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="true"
-                  [showToggleCompactViewButton]="true"
+                  [showToggleCompactViewButton]="dataLayoutType === layoutTypes.Pipeline"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"

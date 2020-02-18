@@ -3,7 +3,9 @@
                   icon="briefcase"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
+                  [showToggleCompactViewButton]="true"
                   [showReloadButton]="true"
+                  (onToggleCompactView)="toggleContactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="processFilterInternal()">
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
