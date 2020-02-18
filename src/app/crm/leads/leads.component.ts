@@ -141,13 +141,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
         }
     ];
-    contactGroups = Object.keys(ContactGroup).map((group: string) => {
-        return {
+    contactGroups = Object.keys(ContactGroup)
+        .filter((group: string) => this.contactService.checkCGPermission(ContactGroup[group], ''))
+        .map((group: string) => ({
             text: this.getUserGroup(group),
-            value: group,
-            disabled: !this.contactService.checkCGPermission(ContactGroup[group], '')
-        };
-    });
+            value: group
+        }));
     selectedContactGroup = Object.keys(ContactGroup).shift();
     contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup[this.selectedContactGroup]);
     contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();

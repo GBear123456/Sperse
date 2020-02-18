@@ -10,6 +10,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)">
         <div class="contact-group">
             <dx-select-box
+                    *ngIf="contactGroups.length > 1; else text"
                     accessKey="contactGroup"
                     displayExpr="text"
                     valueExpr="value"
@@ -25,6 +26,12 @@
                     </div>
                 </div>
             </dx-select-box>
+            <ng-template #text>
+                <div  class="select-header" *ngIf="contactGroups.length === 1">
+                    <span>{{contactGroups[0].text}}</span>
+                    <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+                </div>
+            </ng-template>
         </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
