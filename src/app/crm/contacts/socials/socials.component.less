@@ -96,10 +96,16 @@
         display: inline-block;
         vertical-align: top;        
 
+        .edit-buttons.right {
+            display: inline-block;
+        }
+
         .inplace-edit-view-mode {
-            width: 100%;
+            width: 94%;
             cursor: pointer;
             display: flex;
+            justify-content: space-between;
+
             &:hover {
                 background-color: #F7FAFA;
             }
@@ -148,9 +154,9 @@
             }
 
             /deep/ dx-button {
+                right: 0!important;
                 border: none;
                 position: relative;
-                top: -14px;
                 display: inline-block;
 
                 &.button-update i {
