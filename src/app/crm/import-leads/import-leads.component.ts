@@ -972,6 +972,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     cancelImport() {
         this.importWizardService.cancelImport();
+        this.importWizardService.finishStatusCheck();
+        this.navigateToList();
     }
 
     onStepChanged(event) {
