@@ -3,7 +3,7 @@ import { State } from './state';
 import { PipelineDto } from 'shared/service-proxies/service-proxies';
 import { StageDto } from '@shared/service-proxies/service-proxies';
 import { ContactGroup } from '@shared/AppEnums';
-import { Stage } from '@app/shared/pipeline/stage.model';
+import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
 
 interface Filter {
     id?: number;
@@ -14,9 +14,13 @@ interface Filter {
 
 export const getPipelinesState = createFeatureSelector<State>('pipelines');
 
-export const getPipelines = createSelector(
+export const getPipelines = (filter: Filter) => createSelector(
     getPipelinesState,
-    (state: State) => state.pipelines
+    (state: State) => {
+        return filter
+            ? state.pipelines.filter(filterCallback.bind(this, filter))
+            : state.pipelines;
+    }
 );
 
 export const getLoadedTime = createSelector(
@@ -26,18 +30,20 @@ export const getLoadedTime = createSelector(
 
 /** @todo change with using memoization (test on orders page where component destroy) */
 export const getPipeline = (filter: Filter) => createSelector(
-    getPipelines,
+    getPipelines(filter),
     (pipelines: PipelineDto[]) => {
         /** @todo change for using of entity adapter */
         return pipelines && pipelines.length
-               ? pipelines.find(pipeline => {
-                    return filter.id !== undefined ? pipeline.id === filter.id :
-                        (filter.purpose ? pipeline.purpose === filter.purpose &&
-                            (!filter.contactGroupId || pipeline.contactGroupId == filter.contactGroupId) : false);
-                })
+               ? pipelines.find(filterCallback.bind(this, filter))
                : null;
     }
 );
+
+const filterCallback = (filter: Filter, pipeline: PipelineDto) => {
+    return filter.id !== undefined ? pipeline.id === filter.id :
+        (filter.purpose ? pipeline.purpose === filter.purpose &&
+            (!filter.contactGroupId || pipeline.contactGroupId == filter.contactGroupId) : false);
+};
 
 export const getSortedPipeline = (filter: Filter) => createSelector(
     getPipeline(filter),
@@ -56,9 +62,22 @@ export const getSortedPipeline = (filter: Filter) => createSelector(
     }
 );
 
-export const getPipelineStages = (filter: Filter) => createSelector(
-    getPipeline(filter),
-    (pipeline: PipelineDto) => pipeline && pipeline.stages
+export const getPipelinesStages = (filter: Filter) => createSelector(
+    getPipelines(filter),
+    (pipelines: PipelineDto[]) => {
+        let stages: StageDtoExtended[] = [];
+        if (pipelines && pipelines.length) {
+            pipelines.forEach((pipeline: PipelineDto) => {
+                stages = [ ...stages, ...pipeline.stages.map((stage: StageDto) => {
+                    return {
+                        ...stage,
+                        contactGroupId: pipeline.contactGroupId
+                    };
+                }) ];
+            });
+        }
+        return stages;
+    }
 );
 
 export const getPipelineTreeSource = (filter: Filter) => createSelector(
@@ -85,8 +104,8 @@ export const getPipelineTreeSource = (filter: Filter) => createSelector(
 );
 
 export const getStageById = (filter: Filter) => createSelector(
-    getPipelineStages(filter),
-    (stages: StageDto[]) => {
+    getPipelinesStages(filter),
+    (stages: StageDtoExtended[]) => {
         return stages && stages.find(stage => stage.id === +filter.stageId);
     }
 );
