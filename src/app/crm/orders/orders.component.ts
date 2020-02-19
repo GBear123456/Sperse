@@ -503,7 +503,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.stagesComponent.toggle();
     }
 
-    private toggleContactView() {
+    toggleContactView() {
         this.pipelineService.toggleContactView();
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();

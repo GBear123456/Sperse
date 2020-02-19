@@ -7954,6 +7954,58 @@ export class ContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateXref(body: UpdateContactXrefInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateXref";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateXref(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateXref(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateXref(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -15904,71 +15956,6 @@ export class InvoiceServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
-     * @searchPhrase (optional) 
-     * @topCount (optional) 
-     * @return Success
-     */
-    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetProductsByPhrase?";
-        if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
-        if (searchPhrase !== undefined)
-            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
-        if (topCount !== undefined)
-            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetProductsByPhrase(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetProductsByPhrase(<any>response_);
-                } catch (e) {
-                    return <Observable<ProductInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ProductInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetProductsByPhrase(response: HttpResponseBase): Observable<ProductInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ProductInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ProductInfo[]>(<any>null);
-    }
-
-    /**
      * @body (optional) 
      * @return Success
      */
@@ -16612,6 +16599,71 @@ export class InvoiceServiceProxy {
             }));
         }
         return _observableOf<InvoiceAddressInfo[]>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetProductsByPhrase?";
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductsByPhrase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductsByPhrase(<any>response_);
+                } catch (e) {
+                    return <Observable<ProductInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProductInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProductsByPhrase(response: HttpResponseBase): Observable<ProductInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ProductInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProductInfo[]>(<any>null);
     }
 }
 
@@ -44186,6 +44238,46 @@ export interface IUpdateContactAffiliateCodeInput {
     affiliateCode: string;
 }
 
+export class UpdateContactXrefInput implements IUpdateContactXrefInput {
+    contactId!: number;
+    xref!: string | undefined;
+
+    constructor(data?: IUpdateContactXrefInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.xref = data["xref"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactXrefInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactXrefInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["xref"] = this.xref;
+        return data; 
+    }
+}
+
+export interface IUpdateContactXrefInput {
+    contactId: number;
+    xref: string | undefined;
+}
+
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     id!: number | undefined;
 
@@ -44767,7 +44859,6 @@ export interface IContactLinkInfo {
 }
 
 export class ContactTagInfo implements IContactTagInfo {
-    id!: number | undefined;
     name!: string | undefined;
 
     constructor(data?: IContactTagInfo) {
@@ -44781,7 +44872,6 @@ export class ContactTagInfo implements IContactTagInfo {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
         }
     }
@@ -44795,19 +44885,16 @@ export class ContactTagInfo implements IContactTagInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface IContactTagInfo {
-    id: number | undefined;
     name: string | undefined;
 }
 
 export class ContactListInfo implements IContactListInfo {
-    id!: number | undefined;
     name!: string | undefined;
 
     constructor(data?: IContactListInfo) {
@@ -44821,7 +44908,6 @@ export class ContactListInfo implements IContactListInfo {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
         }
     }
@@ -44835,14 +44921,12 @@ export class ContactListInfo implements IContactListInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface IContactListInfo {
-    id: number | undefined;
     name: string | undefined;
 }
 
@@ -53674,50 +53758,6 @@ export interface IInvoiceInfo {
     lines: InvoiceLineInfo[] | undefined;
 }
 
-export class ProductInfo implements IProductInfo {
-    description!: string | undefined;
-    unitId!: InvoiceLineUnit | undefined;
-    rate!: number | undefined;
-
-    constructor(data?: IProductInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.description = data["description"];
-            this.unitId = data["unitId"];
-            this.rate = data["rate"];
-        }
-    }
-
-    static fromJS(data: any): ProductInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProductInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["description"] = this.description;
-        data["unitId"] = this.unitId;
-        data["rate"] = this.rate;
-        return data; 
-    }
-}
-
-export interface IProductInfo {
-    description: string | undefined;
-    unitId: InvoiceLineUnit | undefined;
-    rate: number | undefined;
-}
-
 export class InvoiceAddressInput implements IInvoiceAddressInput {
     countryId!: string | undefined;
     stateId!: string | undefined;
@@ -54546,6 +54586,50 @@ export interface IAddBankCardPaymentInput {
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
     bankCardInfo: BankCardInput | undefined;
+}
+
+export class ProductInfo implements IProductInfo {
+    description!: string | undefined;
+    unitId!: InvoiceLineUnit | undefined;
+    rate!: number | undefined;
+
+    constructor(data?: IProductInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.description = data["description"];
+            this.unitId = data["unitId"];
+            this.rate = data["rate"];
+        }
+    }
+
+    static fromJS(data: any): ProductInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["description"] = this.description;
+        data["unitId"] = this.unitId;
+        data["rate"] = this.rate;
+        return data; 
+    }
+}
+
+export interface IProductInfo {
+    description: string | undefined;
+    unitId: InvoiceLineUnit | undefined;
+    rate: number | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -64852,8 +64936,8 @@ export interface IUpdateSortOrderInput {
 
 export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationInput {
     syncTypeId!: string;
-    clientId!: string;
-    clientSecret!: string;
+    clientId!: string | undefined;
+    clientSecret!: string | undefined;
 
     constructor(data?: ISetupSyncUserApplicationInput) {
         if (data) {
@@ -64890,8 +64974,8 @@ export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationI
 
 export interface ISetupSyncUserApplicationInput {
     syncTypeId: string;
-    clientId: string;
-    clientSecret: string;
+    clientId: string | undefined;
+    clientSecret: string | undefined;
 }
 
 export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {

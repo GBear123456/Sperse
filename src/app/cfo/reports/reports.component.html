@@ -29,8 +29,12 @@
                         (onContentReady)="onContentReady()"
                         (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-
-                <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                <dxi-column width="40px"
+                            [fixed]="true"
+                            fixedPosition="left"
+                            [showInColumnChooser]="false"
+                            [allowExporting]="false">
+                </dxi-column>
                 <dxi-column
                     alignment="center"
                     width="90px"

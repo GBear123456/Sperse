@@ -154,7 +154,7 @@ export class UserAssignmentComponent {
         this.store$.pipe(assignedUsersSelector)
             .pipe(filter(Boolean), first())
             .subscribe((result) => {
-                if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
+                if (this.selectedKeys && this.selectedKeys.length && this.selectedKeys[0] && result && this.proxyService)
                     this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
                         if (res && res.length) {
                             res.forEach((user) => {

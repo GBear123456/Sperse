@@ -70,6 +70,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     leftMenuHidden = true;
     isGrantedCustomers = this.isGranted(AppPermissions.CRMCustomers);
     isGrantedOrders = this.isGranted(AppPermissions.CRMOrders);
+    hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
+    hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
+    hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
+
     constructor(
         injector: Injector,
         private appService: AppService,

@@ -44,7 +44,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     );
 
     private rootComponent: any;
-    private dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
+    dataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private dataSourceURI = 'Activity';
     private stages: any;
 

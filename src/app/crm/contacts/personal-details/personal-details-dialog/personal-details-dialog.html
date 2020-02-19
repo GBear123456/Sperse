@@ -2,18 +2,40 @@
 <mat-dialog-content>
     <mat-tab-group>
         <mat-tab [label]="ls.l('General')">
-            <div class="affiliate-code">
-                <h3>{{ ls.l('AffiliateInfo') }}</h3>
-                <h4>{{ ls.l('AffiliateCode') }}</h4>
-                <inplace-edit [id]="contactInfo.id"
-                              lEntityName="Name"
-                              [editPlaceholder]="ls.l('Affiliate')"
-                              [value]="affiliateCode$ | async"
-                              [validationRules]="affiliateValidationRules"
-                              [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
-                              (valueChanged)="updateAffiliateCode($event)">
-                </inplace-edit>
-            </div>            
+            <div class="general-tab">
+                <div>
+                    <h3>{{ ls.l('AffiliateInfo') }}</h3>
+                    <h4>{{ ls.l('AffiliateCode') }}</h4>
+                    <inplace-edit [id]="contactInfo.id"
+                                lEntityName="Name"
+                                [editPlaceholder]="ls.l('Affiliate')"
+                                [value]="affiliateCode$ | async"
+                                [validationRules]="affiliateValidationRules"
+                                [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
+                                (valueChanged)="updateAffiliateCode($event)">
+                    </inplace-edit>
+                </div>
+                <div>
+                    <h4>{{ ls.l('Xref') }}</h4>
+                    <inplace-edit [id]="contactInfo.id"
+                                lEntityName="Name"
+                                [editPlaceholder]="ls.l('Xref')"
+                                [value]="contactXref$ | async"
+                                isOptional="true"
+                                [validationRules]="xrefValidationRules"
+                                [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
+                                (valueChanged)="updateXref($event)">
+                    </inplace-edit>
+                </div>
+                <div>
+                    <ng-container *ngFor="let n of [1,2,3,4,5]">
+                        <ng-container *ngIf="contactInfo?.personContactInfo['customField' + n]">
+                            <h4>{{ ls.l('Contact_CustomField' + n) }}</h4>
+                            <p>{{ contactInfo?.personContactInfo['customField' + n] }}</p>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
         </mat-tab>    
         <mat-tab [label]="ls.l('Overview')" *ngIf="showOverviewTab">
             <span class="gear-icon" (click)="toggleConfigMode()"></span>

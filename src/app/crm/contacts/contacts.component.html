@@ -58,28 +58,6 @@
         </div>
     </ng-container>
     <ng-container rightPanel>
-        <div class="affiliate-code" *ngIf="rightPanelSetting.id === RP_CONTACT_INFO_ID; else matGroup">
-            <h3>{{ l('AffiliateInfo') }}</h3>
-            <h4>{{ l('AffiliateCode') }}</h4>
-            <inplace-edit [id]="contactInfo.id"
-                          lEntityName="Name"
-                          [editPlaceholder]="l('Affiliate')"
-                          [value]="affiliateCode$ | async"
-                          [validationRules]="affiliateValidationRules"
-                          [isReadOnlyField]="!contactsService.checkCGPermission(this.contactInfo.groupId)"
-                          (valueChanged)="updateAffiliateCode($event)">
-            </inplace-edit>
-            <ng-container *ngFor="let n of [1,2,3,4,5]">
-                <ng-container *ngIf="contactInfo?.personContactInfo['customField' + n]">
-                    <h4>{{ l('Contact_CustomField' + n) }}</h4>
-                    <p>{{ contactInfo?.personContactInfo['customField' + n] }}</p>
-                </ng-container>
-            </ng-container>
-            <div *ngIf="contactInfo?.personContactInfo.xref" class="pt-4">
-                <h3>{{ l('Xref') }}</h3>
-                <h4>{{ contactInfo?.personContactInfo.xref }}</h4>
-            </div>
-        </div>
         <ng-template #matGroup>
             <mat-tab-group>
                 <mat-tab [label]="l('Overview')" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
