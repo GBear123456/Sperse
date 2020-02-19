@@ -105,7 +105,7 @@
                                 [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                     <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                    <dxi-column dataField="PhotoPublicId" caption="" cellTemplate="photoTemplate"
                                 [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                 [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">

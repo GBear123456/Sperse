@@ -45,7 +45,9 @@ export class CfoPreferencesService {
                         ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value)
                         : this.formatDate(dateRange.from.value)
                     )
-                    : (this.cfoService.hasStaticInstance ? this.ls.l('Periods_LastQuarter') : this.ls.l('Periods_ThisYear'))
+                    : (this.cfoService.hasStaticInstance
+                        ? this.ls.l('Periods_LastQuarter')
+                        : this.ls.l('Periods_ThisYear'))
             );
         })
     );
