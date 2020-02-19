@@ -70,16 +70,18 @@ export class ImportWizardService {
                                 this.activeImportId = importId;
                         }
                     } else
-                        this.finishStatusCheck();
+                        this.finishStatusCheck(true);
                     callback(res);
                 });
             });
     }
 
-    finishStatusCheck() {
-        this.activeImportId = undefined;
-        clearTimeout(this.statusCheckTimeout);
-        this.statusCheckTimeout = null;
+    finishStatusCheck(forced = false) {
+        if (this.activeImportId || forced) {
+            this.activeImportId = undefined;
+            clearTimeout(this.statusCheckTimeout);
+            this.statusCheckTimeout = null;
+        }
     }
 
     setupCheckTimeout(method: (callback: any) => void, initial = true) {

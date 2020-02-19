@@ -44,10 +44,10 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
                 });
                 this.progress = Math.round(this.progress / data.length);
                 if (this.progress >= 100)
-                    _importService.finishStatusCheck();
+                    _importService.finishStatusCheck(true);
             } else {
                 this.progress = 100;
-                _importService.finishStatusCheck();
+                _importService.finishStatusCheck(true);
             }
         });
     }
