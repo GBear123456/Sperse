@@ -12,6 +12,7 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
+                 width="220px"
                  [visible]="actionRecord"
                  (onItemClick)="onMenuItemClick($event)"
                  (onHidden)="actionRecord = null">
