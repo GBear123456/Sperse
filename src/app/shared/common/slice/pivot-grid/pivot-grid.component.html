@@ -1,10 +1,9 @@
-<dx-pivot-grid *ngIf="dataSource"
-               [dataSource]="dataSource"
+<dx-pivot-grid [dataSource]="dataSource"
                [allowExpandAll]="true"
                [allowFiltering]="true"
                [allowSorting]="true"
                [height]="height"
-               [visible]="contentShowen"
+               [visible]="contentShown$ | async"
                [allowSortingBySummary]="true"
                [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
@@ -12,8 +11,7 @@
                (onContextMenuPreparing)="prepareContextMenu($event)">
     <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
     <dxo-field-panel [visible]="true"></dxo-field-panel>
-    <dxo-header-filter [allowSearch]="true">
-    </dxo-header-filter>
+    <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
     <dxo-load-panel [enabled]="false"></dxo-load-panel>
     <dxo-state-storing [enabled]="true" [storageKey]="storageKey"></dxo-state-storing>
 </dx-pivot-grid>

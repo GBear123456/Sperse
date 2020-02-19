@@ -1,7 +1,9 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { BehaviorSubject, Observable } from 'rxjs';
+import { delay, filter, first } from 'rxjs/operators';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 
 /** Application imports */
@@ -16,7 +18,7 @@ import { FiltersService } from '@shared/filters/filters.service';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PivotGridComponent {
+export class PivotGridComponent implements OnInit {
     @Input() dataSource: any;
     @Input() storageKey: string;
     @Input() isLoading = true;
@@ -37,12 +39,23 @@ export class PivotGridComponent {
         { text: 'Percent of Row Grand Total', value: 'percentOfRowGrandTotal' },
         { text: 'Percent of Grand Total', value: 'percentOfGrandTotal' }
     ];
-    contentShowen = false;
+    private contentShown: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    contentShown$: Observable<boolean> = this.contentShown.asObservable();
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         public filtersService: FiltersService
     ) {}
+
+    ngOnInit() {
+        this.contentShown$.pipe(
+            filter(Boolean),
+            first(),
+            delay(0)
+        ).subscribe(() => {
+            this.pivotGrid.instance.repaint();
+        });
+    }
 
     prepareContextMenu(e) {
         if (e.field && e.field.name === 'count') {
@@ -62,22 +75,24 @@ export class PivotGridComponent {
     }
 
     onContentReady(e) {
-        this.contentShowen = true;
-        e.element.querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach(grandTotalCell => {
-            if (grandTotalCell.parentElement.previousSibling &&
-                (grandTotalCell.parentElement.style.position === 'fixed'
-                 || grandTotalCell.getBoundingClientRect().bottom > window.innerHeight)
-            ) {
-                grandTotalCell.parentElement.style.position = 'fixed';
-                grandTotalCell.parentElement.style.bottom = '0';
-                /** Get width and height of cell from previous row */
-                const cellIndex = grandTotalCell.cellIndex;
-                const sameElementFromPrevRow = grandTotalCell.parentElement.previousSibling.children[cellIndex];
-                grandTotalCell.style.width = (sameElementFromPrevRow.clientWidth - 20) + 'px';
-                if (!grandTotalCell.closest('.dx-pivotgrid-vertical-headers')) {
-                    grandTotalCell.style.height = grandTotalCell.parentElement.clientHeight + 'px';
+        this.contentShown.next(this.isLoading !== undefined);
+        setTimeout(() => {
+            e.element.querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach(grandTotalCell => {
+                if (grandTotalCell.parentElement.previousSibling &&
+                    (grandTotalCell.parentElement.style.position === 'fixed'
+                        || grandTotalCell.getBoundingClientRect().bottom > window.innerHeight)
+                ) {
+                    grandTotalCell.parentElement.style.position = 'fixed';
+                    grandTotalCell.parentElement.style.bottom = '0';
+                    /** Get width and height of cell from previous row */
+                    const cellIndex = grandTotalCell.cellIndex;
+                    const sameElementFromPrevRow = grandTotalCell.parentElement.previousSibling.children[cellIndex];
+                    grandTotalCell.style.width = (sameElementFromPrevRow.clientWidth - 20) + 'px';
+                    if (!grandTotalCell.closest('.dx-pivotgrid-vertical-headers')) {
+                        grandTotalCell.style.height = grandTotalCell.parentElement.clientHeight + 'px';
+                    }
                 }
-            }
+            });
         });
     }
 
