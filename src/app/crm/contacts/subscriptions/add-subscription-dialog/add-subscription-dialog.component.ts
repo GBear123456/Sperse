@@ -56,6 +56,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             new SubscriptionInput({
                 name: this.data.name,
                 code: this.data.code,
+                level: this.data.level,
                 endDate: this.data.endDate,
                 amount: this.data.amount
             })

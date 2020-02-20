@@ -16,7 +16,7 @@
                  width: parent.offsetWidth + 'px'
              }">
             <span class="stageName">{{stage.name}}</span>
-            <div *ngIf="stage?.total">
+            <div *ngIf="stage?.total !== undefined">
                 <span>
                     (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{ selectedEntitiesCount | number }} of </ng-container>{{ stage?.total | number }})
                 </span>

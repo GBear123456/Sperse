@@ -58,6 +58,16 @@
                 </dx-text-box>
             </div>
             <div class="field">
+                <label for="name">{{ls.l('Level')}}</label>
+                <dx-text-box name="level"
+                                [inputAttr]="{ id: 'level' }"
+                                [(value)]="subscription.level">
+                    <dx-validator>
+                        <dxi-validation-rule type="stringLength" [max]="50"></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+            <div class="field">
                 <label for="endDate">{{ls.l('EndDate') }}</label>
                 <dx-date-box
                     #endDateDateBox

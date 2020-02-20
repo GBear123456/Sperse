@@ -101,6 +101,8 @@ export class AppConsts {
     static readonly imageUrls = {
         noPhoto: 'assets/common/images/no-photo.png',
         noPhotoAdvicePeriod: 'assets/common/icons/advice-period-avatar.svg',
+        noPhotoBankCode: 'assets/common/images/bank-code/default-avatar.png',
+        noPhotoBankCode3x: 'assets/common/images/bank-code/default-avatar-3x.png',
         profileDefault: 'assets/common/images/default-profile-picture.png',
         profileLendSpace: 'assets/common/images/lend-space-dark/avatar.svg'
     };

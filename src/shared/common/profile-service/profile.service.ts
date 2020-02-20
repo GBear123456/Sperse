@@ -38,6 +38,18 @@ export class ProfileService {
     );
     private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);
     accessCode$: Observable<string> = this.accessCode.asObservable();
+    defaultPhotos = {
+        [LayoutType.AdvicePeriod]: AppConsts.imageUrls.noPhotoAdvicePeriod,
+        [LayoutType.BankCode]: AppConsts.imageUrls.noPhotoBankCode
+    };
+    defaultProfilePictures = {
+        [LayoutType.AdvicePeriod]: AppConsts.imageUrls.profileLendSpace,
+        [LayoutType.BankCode]: AppConsts.imageUrls.noPhotoBankCode3x,
+        [LayoutType.LendSpace]: AppConsts.imageUrls.profileLendSpace
+    };
+    defaultContactPhotos = {
+        [LayoutType.BankCode]: AppConsts.imageUrls.noPhotoBankCode
+    };
 
     constructor(
         private appSession: AppSessionService,
@@ -61,16 +73,16 @@ export class ProfileService {
             return 'assets/common/images/no-photo-' + gender + '.png';
 
         const tenant = this.appSession.tenant;
-        return tenant && tenant.customLayoutType === LayoutType.AdvicePeriod
-            ? AppConsts.imageUrls.noPhotoAdvicePeriod
+        return tenant && this.defaultPhotos[tenant.customLayoutType]
+            ? this.defaultPhotos[tenant.customLayoutType]
             : AppConsts.imageUrls.noPhoto;
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         if (!id) {
             let tenant = this.appSession.tenant;
-            return tenant && [LayoutType.LendSpace, LayoutType.AdvicePeriod].indexOf(tenant.customLayoutType) >= 0
-                ? AppConsts.imageUrls.profileLendSpace
+            return tenant && this.defaultProfilePictures[tenant.customLayoutType]
+                ? this.defaultProfilePictures[tenant.customLayoutType]
                 : defaultUrl;
         }
 
@@ -85,7 +97,10 @@ export class ProfileService {
             return AppConsts.remoteServiceBaseUrl + '/api/contact/' + actionName + '/' + tenantId + '/' + publicId;
         }
 
-        return AppConsts.imageUrls.noPhoto;
+        const tenant = this.appSession.tenant;
+        return tenant && this.defaultContactPhotos[tenant.customLayoutType]
+            ? this.defaultContactPhotos[tenant.customLayoutType]
+            : AppConsts.imageUrls.noPhoto;
     }
 
     checkServiceSubscription(serviceTypeId: BankCodeServiceType): Observable<boolean> {
