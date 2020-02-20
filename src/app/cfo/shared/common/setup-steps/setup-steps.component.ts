@@ -41,6 +41,11 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
          this.isInstanceAdmin || this._cfoService.isMainInstanceType;
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+    get showIntroTour(): boolean {
+        let tenant = this.appSessionService.tenant;
+        return !tenant || tenant.customLayoutType == LayoutType.Default;
+    }
+
     private dialogConfig = new MatDialogConfig();
     private subscription: Subscription;
 
@@ -78,8 +83,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
     }
 
     showIntro() {
-        let tenant = this.appSessionService.tenant;
-        if (tenant && tenant.customLayoutType == LayoutType.Default) {
+        if (this.showIntroTour) {
             this.dialogConfig.height = '655px';
             this.dialogConfig.width = '880px';
             this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';

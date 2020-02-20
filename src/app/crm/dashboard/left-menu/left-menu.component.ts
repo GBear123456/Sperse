@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -19,8 +21,13 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class DashboardMenuComponent {
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
+    get showIntroTour(): boolean {
+        let tenant = this.appSessionService.tenant;
+        return !tenant || tenant.customLayoutType == LayoutType.Default;
+    }
     items = [];
     constructor(
+        private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
         private router: Router,
         public appService: AppService,
