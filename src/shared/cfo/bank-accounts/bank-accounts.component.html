@@ -2,6 +2,7 @@
     [allowBankAccountsEditing]="true"
     [allowUpdateAccount]="true"
     [showSyncDate]="true"
+    [wide]="true"
     (selectionChanged)="selectedAccountsChange()"
     (onUpdateAccount)="onUpdateAccount($event)"
     (reloadDataSource)="bankAccountsService.load()"
