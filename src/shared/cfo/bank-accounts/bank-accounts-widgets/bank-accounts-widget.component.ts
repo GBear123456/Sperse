@@ -10,7 +10,8 @@ import {
     OnDestroy,
     EventEmitter,
     ElementRef,
-    SimpleChanges
+    SimpleChanges,
+    HostBinding
 } from '@angular/core';
 
 /** Third party imports */
@@ -79,6 +80,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
     @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
+    @HostBinding('class.wide') @Input() wide = false;
     allowEditing = false;
     editingStarted = false;
     accessAllDepartments = true;
