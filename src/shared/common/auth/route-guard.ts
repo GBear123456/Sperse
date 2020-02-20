@@ -77,14 +77,15 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     getBestRouteForTenant(preferedModule = null): string {
-        if (this.sessionService.userId !== null) {
-            const lastModuleName = this.cacheService.get('lastVisitedModule_' + this.sessionService.tenantId + '_' + this.sessionService.userId);
+        let tenant = this.sessionService.tenant,
+            user = this.sessionService.user;
+
+        if (user && user.group != UserGroup.Member) {
+            const lastModuleName = this.cacheService.get('lastVisitedModule_' + (tenant && tenant.id) + '_' + user.id);
             if (lastModuleName)
                 return 'app/' + lastModuleName;
         }
 
-        let tenant = this.sessionService.tenant,
-            user = this.sessionService.user;
         if (tenant && tenant.customLayoutType == LayoutType.BankCode
             && user && user.group == UserGroup.Member
         )
