@@ -17,7 +17,7 @@ export class AdLayoutHostDirective {
 @Component({
     templateUrl: './account.component.html',
     styleUrls: [
-        '../app/shared/core.less',
+        '../shared/common/styles/core.less',
         './account.component.less'
     ],
     encapsulation: ViewEncapsulation.None
