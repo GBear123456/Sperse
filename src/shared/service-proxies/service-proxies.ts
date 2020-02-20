@@ -52427,6 +52427,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
     systemType!: string | undefined;
     code!: string | undefined;
     name!: string | undefined;
+    level!: string | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -52444,6 +52445,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
             this.systemType = data["systemType"];
             this.code = data["code"];
             this.name = data["name"];
+            this.level = data["level"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -52461,6 +52463,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
         data["systemType"] = this.systemType;
         data["code"] = this.code;
         data["name"] = this.name;
+        data["level"] = this.level;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -52471,6 +52474,7 @@ export interface IImportSubscriptionInput {
     systemType: string | undefined;
     code: string | undefined;
     name: string | undefined;
+    level: string | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }
@@ -60089,8 +60093,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
     tenantId!: string | undefined;
+    serviceId!: string | undefined;
+    serviceName!: string | undefined;
     serviceType!: string | undefined;
-    serviceTypeName!: string | undefined;
+    serviceTypeId!: string | undefined;
     systemType!: string | undefined;
     orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
@@ -60115,8 +60121,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.tenantId = data["tenantId"];
+            this.serviceId = data["serviceId"];
+            this.serviceName = data["serviceName"];
             this.serviceType = data["serviceType"];
-            this.serviceTypeName = data["serviceTypeName"];
+            this.serviceTypeId = data["serviceTypeId"];
             this.systemType = data["systemType"];
             this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
@@ -60145,8 +60153,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["tenantId"] = this.tenantId;
+        data["serviceId"] = this.serviceId;
+        data["serviceName"] = this.serviceName;
         data["serviceType"] = this.serviceType;
-        data["serviceTypeName"] = this.serviceTypeName;
+        data["serviceTypeId"] = this.serviceTypeId;
         data["systemType"] = this.systemType;
         data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
@@ -60168,8 +60178,10 @@ export interface IOrderSubscriptionDto {
     endDate: moment.Moment | undefined;
     fee: number | undefined;
     tenantId: string | undefined;
+    serviceId: string | undefined;
+    serviceName: string | undefined;
     serviceType: string | undefined;
-    serviceTypeName: string | undefined;
+    serviceTypeId: string | undefined;
     systemType: string | undefined;
     orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
@@ -60182,6 +60194,7 @@ export interface IOrderSubscriptionDto {
 export class SubscriptionInput implements ISubscriptionInput {
     code!: string;
     name!: string;
+    level!: string | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -60198,6 +60211,7 @@ export class SubscriptionInput implements ISubscriptionInput {
         if (data) {
             this.code = data["code"];
             this.name = data["name"];
+            this.level = data["level"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -60214,6 +60228,7 @@ export class SubscriptionInput implements ISubscriptionInput {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["name"] = this.name;
+        data["level"] = this.level;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -60223,6 +60238,7 @@ export class SubscriptionInput implements ISubscriptionInput {
 export interface ISubscriptionInput {
     code: string;
     name: string;
+    level: string | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }
