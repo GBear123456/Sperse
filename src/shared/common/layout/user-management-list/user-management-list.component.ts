@@ -7,7 +7,7 @@ import { AppSessionService } from 'shared/common/session/app-session.service';
     selector: 'user-management-list',
     templateUrl: './user-management-list.component.html',
     styleUrls: [
-        '../../../../app/shared/dx-customs.less',
+        '../../../../shared/common/styles/dx-customs.less',
         '../../../metronic/m-top-bar.less',
         '../../../metronic/m-dropdown.less',
         '../../../metronic/m-d.less',
