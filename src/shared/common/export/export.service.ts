@@ -122,7 +122,15 @@ export class ExportService {
                 dataStore = instance.getDataSource().store(),
                 initialBeforeSend = dataStore._beforeSend,
                 isLoadPanel = instance.option('loadPanel.enabled'),
-                initialFileName = dataGrid.export.fileName;
+                initialFileName = dataGrid.export.fileName,
+                onLoadInternal = (res) => {
+                    if (res instanceof Array)
+                        return this.checkJustifyData(res);
+                    else if (res.data)
+                        res.data = this.checkJustifyData(res.data);
+
+                    return res;
+                };
 
             dataGrid.export.fileName = this.getFileName(dataGrid, null, prefix);
             if (isLoadPanel)
@@ -133,22 +141,14 @@ export class ExportService {
                 initialBeforeSend.call(dataStore, request);
             };
 
-            dataStore.on('loaded', (res) => {
-                if (res instanceof Array)
-                    return this.checkJustifyData(res);
-                else if (res.data)
-                    res.data = this.checkJustifyData(res.data);
-
-                return res;
-            });
-
+            dataStore.on('loaded', onLoadInternal);
             instance.on('exported', () => {
                 if (isLoadPanel)
                     instance.option('loadPanel.enabled', true);
 
                 dataGrid.export.fileName = initialFileName;
                 dataStore._beforeSend = initialBeforeSend;
-                dataStore.off('loaded');
+                dataStore.off('loaded', onLoadInternal);
                 resolve();
             });
 

@@ -126,8 +126,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.isDataLoaded = false;
-                    this.changeDetector.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     if (request.params.$filter && request.url.indexOf('$filter')) {
@@ -352,7 +350,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 instanceType: this.instanceType,
                 instanceId: this.instanceId,
                 period: this.selectedPeriod,
-                reportGenerated: () => this.dataGrid.instance.refresh()
+                reportGenerated: () => this.invalidate()
             }
         });
     }
@@ -485,7 +483,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     this.reportsProxy.delete(<any>this.instanceType, this.instanceId, this.currentReportInfo.Id)
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
-                            this.dataGrid.instance.refresh();
+                            this.invalidate();
                             if (this.actionMenu && this.actionMenu.visible) {
                                 this.hideActionsMenu();
                             }
@@ -502,11 +500,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.viewerToolbarConfig = [];
         this.changeDetector.markForCheck();
         setTimeout(() => this.dataGrid.instance.repaint());
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
-        this.changeDetector.detectChanges();
     }
 
     getFilters() {

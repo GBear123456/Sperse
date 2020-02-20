@@ -165,14 +165,12 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             .pipe(takeUntil(this.destroy$))
             .subscribe(filtersValues => {
                 this.filtersValues = filtersValues;
-                this.refreshData();
+                this.invalidate();
             });
         this.dateFilterModel.updateCaptions();
         this.operationLogsDataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                this.isDataLoaded = false;
-                this.changeDetectorRef.detectChanges();
                 return this.auditLogService.getAuditLogs(
                     this.searchValue,
                     this.filtersValues.date.startDate,
@@ -367,14 +365,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     initFilterConfig() {
         this.filtersService.setup(this.filtersModels);
         this.filtersService.checkIfAnySelected();
-    }
-
-    refreshData(): void {
-        this.dataGrid.instance.refresh();
-    }
-
-    contentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {

@@ -120,7 +120,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     onContentReady(event) {
-        this.finishLoading();
         if (!event.component.totalCount())
             return this.navigateToWizard();
 
@@ -131,11 +130,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
             visibleIndex: -1,
             width: 40
         });
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
     }
 
     navigateToDashboard() {
@@ -156,7 +150,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                             return this.importProxy.delete(id);
                         })
                     ).subscribe(() => {
-                        this.refreshDataGrid();
+                        this.invalidate();
                     });
             });
     }
@@ -171,7 +165,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                           return this.importProxy.cancel(id);
                       })
                   ).subscribe(() => {
-                      this.refreshDataGrid();
+                      this.invalidate();
                   });
             });
     }
@@ -191,7 +185,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     activate() {
         this.rootComponent.overflowHidden(true);
-        this.refreshDataGrid();
+        this.invalidate();
     }
 
     deactivate() {
@@ -200,7 +194,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.startLoading();
         this.activate();
     }
 

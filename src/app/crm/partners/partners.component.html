@@ -91,6 +91,7 @@
                               [hoverStateEnabled]="true"
                               [loadPanel]="{ enabled: false }"
                               [pager]="defaultGridPagerConfig"
+                              (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)"
                               (onCellClick)="onCellClick($event)"
                               (onEditingStart)="showActionsMenu($event)"

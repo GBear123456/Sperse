@@ -138,8 +138,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
 
         this.dataSource = new DataSource({
             key: 'id',
-            load: (loadOptions) => {
-                this.isDataLoaded = false;
+            load: (loadOptions) => {                
                 return this.tenantService.getTenants(
                     this.searchValue || this.tenantName || undefined,
                     this.creationDateStart || undefined,
@@ -349,12 +348,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             panelClass: [ 'slider' ],
             data: {}
         }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.refreshDataGrid()
+            () => this.invalidate()
         );
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {
@@ -396,7 +391,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             panelClass: ['slider'],
             data: { tenantId: tenantId }
         }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.refreshDataGrid()
+            () => this.invalidate()
         );
     }
 
@@ -428,11 +423,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             this.dataGrid.instance.filter(['Name', 'contains', this.searchValue]);
         else
             this.dataGrid.instance.clearFilter();
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
     }
 
     ngOnDestroy() {

@@ -24,9 +24,10 @@
                         [loadPanel]="{ enabled: false }"
                         [hoverStateEnabled]="true"
                         [pager]="defaultGridPagerConfig"
+                        (onOptionChanged)="onGridOptionChanged($event)"
                         (onCellClick)="onCellClick($event)"
                         (onInitialized)="onDataGridInit()"
-                        (onContentReady)="onContentReady()"
+                        (onContentReady)="setGridDataLoaded()"
                         (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
                 <dxi-column width="40px"

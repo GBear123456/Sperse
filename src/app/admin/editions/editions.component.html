@@ -8,7 +8,7 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactRowHeight()"
                   (onToggleFullScreen)="toggleFullScreen()"
-                  (onReload)="refreshDataGrid()">
+                  (onReload)="invalidate()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
@@ -31,6 +31,7 @@
                                   [pager]="defaultGridPagerConfig"
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="onContentReady()"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onCellClick)="this.openCreateOrEditDialog($event.data.id)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   [dataSource]="dataSource">

@@ -394,7 +394,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -408,7 +407,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (this.appService.isCfoLinkOrVerifyEnabled) {
                         this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
                     }
-                    this.isDataLoaded = true;
                 }
             }
         });
