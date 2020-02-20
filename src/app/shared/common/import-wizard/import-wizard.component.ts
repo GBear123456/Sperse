@@ -1,9 +1,9 @@
 /** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { Papa } from 'ngx-papaparse';
@@ -11,7 +11,6 @@ import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 import { first, filter } from 'rxjs/operators';
-
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
 

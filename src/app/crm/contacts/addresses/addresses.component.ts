@@ -4,7 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ClipboardService } from 'ngx-clipboard'
+import { ClipboardService } from 'ngx-clipboard';
 import { Store, select } from '@ngrx/store';
 import { filter, first } from 'rxjs/operators';
 import * as _ from 'underscore';
