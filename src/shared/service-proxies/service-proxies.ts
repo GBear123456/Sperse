@@ -51888,12 +51888,12 @@ export interface ISendTestEmailInput {
 }
 
 export class ImportFullName implements IImportFullName {
-    prefix!: string | undefined;
+    namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
     lastName!: string | undefined;
+    nameSuffix!: string | undefined;
     nickName!: string | undefined;
-    suffix!: string | undefined;
 
     constructor(data?: IImportFullName) {
         if (data) {
@@ -51906,12 +51906,12 @@ export class ImportFullName implements IImportFullName {
 
     init(data?: any) {
         if (data) {
-            this.prefix = data["prefix"];
+            this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
             this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
-            this.suffix = data["suffix"];
         }
     }
 
@@ -51924,23 +51924,23 @@ export class ImportFullName implements IImportFullName {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["prefix"] = this.prefix;
+        data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
         data["nickName"] = this.nickName;
-        data["suffix"] = this.suffix;
         return data; 
     }
 }
 
 export interface IImportFullName {
-    prefix: string | undefined;
+    namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
     lastName: string | undefined;
+    nameSuffix: string | undefined;
     nickName: string | undefined;
-    suffix: string | undefined;
 }
 
 export class ImportAddressInput implements IImportAddressInput {
