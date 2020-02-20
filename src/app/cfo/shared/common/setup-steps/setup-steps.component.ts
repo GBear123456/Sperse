@@ -8,7 +8,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { InstanceType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
 import { SetupStepsService } from './setup-steps.service';
@@ -47,6 +48,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private appSessionService: AppSessionService,
         private setupStepsService: SetupStepsService
     ) {
         super(injector);
@@ -77,12 +79,15 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
     }
 
     showIntro() {
-        this.dialogConfig.height = '655px';
-        this.dialogConfig.width = '880px';
-        this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';
-        this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
-        this.dialogConfig.data = { alreadyStarted: true };
-        this.dialog.open(CfoIntroComponent, this.dialogConfig);
+        let tenant = this.appSessionService.tenant;
+        if (tenant && tenant.customLayoutType == LayoutType.Default) {
+            this.dialogConfig.height = '655px';
+            this.dialogConfig.width = '880px';
+            this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';
+            this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
+            this.dialogConfig.data = { alreadyStarted: true };
+            this.dialog.open(CfoIntroComponent, this.dialogConfig);
+        }
     }
 
     toggle() {

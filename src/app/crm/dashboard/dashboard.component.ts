@@ -20,10 +20,11 @@ import { filter, first, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { RootStore, StatesStoreActions } from '@root/store';
-import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType } from '@shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
@@ -77,6 +78,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     constructor(
         injector: Injector,
         private appService: AppService,
+        private appSessionService: AppSessionService,
         private dashboardWidgetsService: DashboardWidgetsService,
         private changeDetectorRef: ChangeDetectorRef,
         private periodService: PeriodService,
@@ -142,15 +144,18 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     openDialog() {
-        this.dialogConfig.height = '650px';
-        this.dialogConfig.width = '900px';
-        this.dialogConfig.id = 'crm-intro';
-        this.dialogConfig.panelClass = ['crm-intro', 'setup'];
-        this.dialogConfig.data = { alreadyStarted: false };
-        this.dialog.open(CrmIntroComponent, this.dialogConfig).afterClosed().subscribe(() => {
-            /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
-            this.cacheService.set(this.introAcceptedCacheKey, 'true');
-        });
+        let tenant = this.appSessionService.tenant;
+        if (tenant && tenant.customLayoutType == LayoutType.Default) {
+            this.dialogConfig.height = '650px';
+            this.dialogConfig.width = '900px';
+            this.dialogConfig.id = 'crm-intro';
+            this.dialogConfig.panelClass = ['crm-intro', 'setup'];
+            this.dialogConfig.data = { alreadyStarted: false };
+            this.dialog.open(CrmIntroComponent, this.dialogConfig).afterClosed().subscribe(() => {
+                /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
+                this.cacheService.set(this.introAcceptedCacheKey, 'true');
+            });
+        }
     }
 
     periodChanged(period: Period) {
