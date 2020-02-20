@@ -217,7 +217,7 @@ export abstract class AppComponentBase implements OnDestroy {
         }
     }
 
-    protected onGridOptionChanged(event) {
+    onGridOptionChanged(event) {
         if (event.name == "paging")
             this.isDataLoaded = false;
     }
