@@ -796,6 +796,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 this.photoOriginalData = result.origImage;
                 this.photoThumbnailData = result.thumImage;
                 this.photoSourceData = result.source;
+                this.changeDetectorRef.detectChanges();
             }
         });
         $event.stopPropagation();
