@@ -102,18 +102,20 @@
                         <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                     </div>
                     <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                    <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                    <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false"></dxi-column>
                     <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                        <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
-                            <span *ngIf="appService.checkCFOClientAccessPermission()">
-                                <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
-                            </span>
-                        </ng-container>
-                        <ng-template #verify>
-                            <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
-                                <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
-                            </span>
-                        </ng-template>
+                        <div *ngIf="appService.checkCFOClientAccessPermission()">
+                            <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
+                                <span>
+                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
+                                </span>
+                            </ng-container>
+                            <ng-template #verify>
+                                <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
+                                    <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                </span>
+                            </ng-template>
+                        </div>
                     </div>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | date: formatting.dateTime : userTimezone }}
