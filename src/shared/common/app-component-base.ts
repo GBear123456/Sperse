@@ -206,7 +206,7 @@ export abstract class AppComponentBase implements OnDestroy {
         this.titleService.setTitle(moduleName);
     }
 
-    protected setGridDataLoaded() {
+    setGridDataLoaded() {
         let gridInstance = this.dataGrid && this.dataGrid.instance;
         if (gridInstance) {
             let dataSource = gridInstance.getDataSource();
