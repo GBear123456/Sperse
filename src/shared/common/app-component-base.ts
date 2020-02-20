@@ -196,8 +196,10 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     invalidate() {
-        if (this.dataGrid && this.dataGrid.instance)
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.isDataLoaded = false;
             this.dataGrid.instance.refresh();
+        }
     }
 
     protected setTitle(moduleName: string) {
@@ -213,6 +215,11 @@ export abstract class AppComponentBase implements OnDestroy {
                 this.totalRowCount = dataSource.totalCount();
             }
         }
+    }
+
+    protected onGridOptionChanged(event) {
+        if (event.name == "paging")
+            this.isDataLoaded = false;
     }
 
     getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null) {

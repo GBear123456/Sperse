@@ -363,7 +363,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }

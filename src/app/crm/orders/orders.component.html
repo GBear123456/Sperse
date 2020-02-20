@@ -41,6 +41,7 @@
                                   (onEditingStart)="onCellClick($event)"
                                   (onCellClick)="onCellClick($event)"
                                   [pager]="defaultGridPagerConfig"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">

@@ -145,7 +145,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     openDialog() {
         let tenant = this.appSessionService.tenant;
-        if (tenant && tenant.customLayoutType == LayoutType.Default) {
+        if (!tenant || tenant.customLayoutType == LayoutType.Default) {
             this.dialogConfig.height = '650px';
             this.dialogConfig.width = '900px';
             this.dialogConfig.id = 'crm-intro';

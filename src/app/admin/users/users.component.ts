@@ -117,7 +117,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                this.isDataLoaded = false;
                 return this.userServiceProxy.getUsers(
                     this.searchValue || undefined,
                     this.selectedPermissions || undefined,
@@ -594,12 +593,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     registerToEvents() {
         abp.event.on('profilePictureChanged', () => {
+            this.isDataLoaded = false;
             this.dataGrid.instance.refresh();
         });
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {

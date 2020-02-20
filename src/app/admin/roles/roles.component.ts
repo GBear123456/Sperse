@@ -90,7 +90,6 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
-                this.isDataLoaded = false;
                 return this.roleService.getRoles(
                     this.selectedPermission,
                     this.selectedModule
@@ -242,7 +241,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             this.selectedPermission = this.permissionFilterModel && this.permissionFilterModel.items.element.value;
             this.selectedModule = this.moduleFilterModel && this.moduleFilterModel.items.element.value;
             this.initToolbarConfig();
-            this.refreshDataGrid();
+            this.invalidate();
         });
     }
 
@@ -254,18 +253,9 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             this.dataGrid.instance.clearFilter();
     }
 
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
-    }
-
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
         this.filtersService.unsubscribe();
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {
@@ -314,7 +304,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             }
         });
         dialogRef.componentInstance.modalSave.subscribe(() => {
-            this.refreshDataGrid();
+            this.invalidate();
         });
     }
 
@@ -326,7 +316,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             isConfirmed => {
                 if (isConfirmed) {
                     this.roleService.deleteRole(role.id).subscribe(() => {
-                        this.refreshDataGrid();
+                        this.invalidate();
                         abp.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }

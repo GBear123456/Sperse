@@ -57,6 +57,7 @@
                                   [height]="gridHeight"
                                   [elementAttr]="{ class: 'with-custom-loader' }"
                                   [columnResizingMode]="'widget'"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)"

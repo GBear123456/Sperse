@@ -32,8 +32,9 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onInitialized)="onInitialized($event)"
-                                  (onContentReady)="onContentReady()"
+                                  (onContentReady)="setGridDataLoaded()"
                                   (onCellClick)="editUser($event)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">

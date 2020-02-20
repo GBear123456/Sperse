@@ -57,7 +57,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
-                this.isDataLoaded = false;
                 return this.languageService.getLanguages().toPromise().then(response => {
                     this.defaultLanguageName = response.defaultLanguageName;
                     return {
@@ -183,7 +182,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         const input = new SetDefaultLanguageInput();
         input.name = language.name;
         this.languageService.setDefaultLanguage(input).subscribe(() => {
-            this.refreshDataGrid();
+            this.invalidate();
             this.notify.success(this.l('SuccessfullySaved'));
         });
     }
@@ -195,7 +194,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             isConfirmed => {
                 if (isConfirmed) {
                     this.languageService.deleteLanguage(language.id).subscribe(() => {
-                        this.refreshDataGrid();
+                        this.invalidate();
                         this.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }
@@ -209,11 +208,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             this.dataGrid.instance.filter(['displayName', 'contains', this.searchValue]);
         else
             this.dataGrid.instance.clearFilter();
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
     }
 
     ngOnDestroy() {
@@ -232,7 +226,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             }
         });
         dialogRef.componentInstance.modalSave.subscribe(() => {
-            this.refreshDataGrid();
+            this.invalidate();
         });
     }
 
@@ -240,10 +234,6 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         if (e.rowType === 'data' && e.data.name === this.defaultLanguageName) {
             e.rowElement.classList.add('default');
         }
-    }
-
-    contentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {

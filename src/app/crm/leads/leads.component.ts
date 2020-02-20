@@ -445,7 +445,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.isDataLoaded = false;
                     request.params.contactGroupId = this.contactGroupId.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1432,5 +1431,4 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     updateTotalCount(totalCount: number) {
         this.totalCount = totalCount;
     }
-
 }

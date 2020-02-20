@@ -48,8 +48,6 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource = new DataSource({
         key: 'id',
         load: () => {
-            this.isDataLoaded = false;
-            this.changeDetectorRef.detectChanges();
             return  this.editionService.getEditions().toPromise().then(response => {
                 return {
                     data: response.items,
@@ -161,17 +159,12 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                 editionId: editionId
             }
         }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.refreshDataGrid()
+            () => this.invalidate()
         );
     }
 
     createEdition(): void {
         this.openCreateOrEditDialog();
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
     }
 
     showActionsMenu(event) {
@@ -196,7 +189,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
             isConfirmed => {
                 if (isConfirmed) {
                     this.editionService.deleteEdition(edition.id).subscribe(() => {
-                        this.refreshDataGrid();
+                        this.invalidate();
                     });
                 }
             }
