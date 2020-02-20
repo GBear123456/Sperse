@@ -6,14 +6,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { CacheService } from '@node_modules/ng2-cache-service';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 
 @Injectable()
 export class SetupStepsService {
-    private collapsedSubject = new BehaviorSubject<boolean>(
-        AppConsts.isMobile || this.cfoService.hasStaticInstance || !!this.cfoService.instanceId);
+    private collapsedSubject = new BehaviorSubject<boolean>(true);
     private readonly CACHE_KEY_COLLAPSED = 'Collapsed';
 
     collapsed$: Observable<boolean> = this.collapsedSubject.asObservable();

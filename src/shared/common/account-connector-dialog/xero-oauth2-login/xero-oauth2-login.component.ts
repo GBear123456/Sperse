@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 /** Third party imports */
 import { finalize, filter, first, switchMap } from 'rxjs/operators';
@@ -16,6 +16,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     template: ``
 })
 export class XeroOauth2LoginComponent implements OnInit {
+    @Input() loadingContainerElement: Element;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
     constructor(
@@ -26,7 +27,7 @@ export class XeroOauth2LoginComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.loadingService.startLoading();
+        this.loadingService.startLoading(this.loadingContainerElement);
         this.getSetupAccountLink();
     }
 
@@ -41,7 +42,7 @@ export class XeroOauth2LoginComponent implements OnInit {
                 null,
                 null
             ).pipe(
-                finalize(() => this.loadingService.finishLoading())
+                finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))
             ))
         ).subscribe((result: GetSetupAccountsLinkOutput) => {
             const setupAccountWindow = window.open(
