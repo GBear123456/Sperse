@@ -21,8 +21,8 @@
     <dxi-column dataField="id" [visible]="false" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="serviceType" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="serviceName" cssClass="clipboard-holder"></dxi-column>
-    <dxi-column dataField="startDate" cellTemplate="dateCell" cssClass="clipboard-holder"></dxi-column>
-    <dxi-column dataField="endDate" cellTemplate="dateCell" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="startDate" cellTemplate="dateCell"></dxi-column>
+    <dxi-column dataField="endDate" cellTemplate="dateCell"></dxi-column>
     <dxi-column dataField="trialEndDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
     <dxi-column dataField="status" [caption]="ls.l('Status')" cssClass="clipboard-holder"></dxi-column>
@@ -33,7 +33,7 @@
         <!-- <br /> -->
         <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>
-    <div *dxTemplate="let cellData of 'dateCell'">
+    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
         {{cellData.value | date: formatting.date : userTimezone }}
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
