@@ -6,3 +6,4 @@
     [elementAttr]="{ compact: compact }"
     (onItemRendered)="onItemRendered($event)">
 </dx-toolbar>
+<div class="empty-container" [ngClass]="{ compact: compact }" *ngIf="!_config"></div>
