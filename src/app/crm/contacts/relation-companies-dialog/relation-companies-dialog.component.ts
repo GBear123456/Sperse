@@ -1,12 +1,16 @@
-import { ChangeDetectionStrategy, Component, Inject, Injector, ViewChild, OnInit } from '@angular/core';
+/** Core imports */
+import { ChangeDetectionStrategy, Component, Inject, ViewChild, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
-import { PersonOrgRelationServiceProxy, PersonOrgRelationShortInfo, ContactInfoDto } from 'shared/service-proxies/service-proxies';
+
+/** Third party imports */
+import * as _ from 'underscore';
+
+/** Application imports */
+import { PersonOrgRelationServiceProxy } from 'shared/service-proxies/service-proxies';
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
 import { ContactsService } from '../contacts.service';
-
-import * as _ from 'underscore';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'relation-companies-dialog',
@@ -14,27 +18,26 @@ import * as _ from 'underscore';
     styleUrls: ['./relation-companies-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RelationCompaniesDialogComponent extends AppComponentBase implements OnInit {
+export class RelationCompaniesDialogComponent implements OnInit {
     @ViewChild(ContactListDialogComponent) contactList: ContactListDialogComponent;
     manageAllowed = false;
 
     constructor(
-        injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        private relationsServiceProxy: PersonOrgRelationServiceProxy,
+        private contactsService: ContactsService,
+        private notifyService: NotifyService,
         public dialogRef: MatDialogRef<ContactListDialogComponent>,
-        private _relationsServiceProxy: PersonOrgRelationServiceProxy,
-        private _contactsService: ContactsService
-    ) {
-        super(injector);
-    }
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {}
 
     ngOnInit() {
-        this.contactList.title = this.l('Related Companies');
-        this.contactList.addNewTitle = this.l('Add Contact');
+        this.contactList.title = this.ls.l('Related Companies');
+        this.contactList.addNewTitle = this.ls.l('Add Contact');
         this.contactList.photoType = 'Organization';
         this.contactList.data = this.data;
         this.contactList.manageAllowed = this.manageAllowed =
-            this._contactsService.checkCGPermission(this.data.groupId);
+            this.contactsService.checkCGPermission(this.data.groupId);
 
         this.contactList.filter = (search?) => {
             return this.data.personContactInfo.orgRelations.map((item) => {
@@ -49,7 +52,7 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
     }
 
     setPrimary(event, contact) {
-        this._relationsServiceProxy.setPrimaryOrgRelation(contact.relation.id).subscribe(
+        this.relationsServiceProxy.setPrimaryOrgRelation(contact.relation.id).subscribe(
             () => {
                 let orgRelations = this.data.personContactInfo.orgRelations;
                 let orgRelation = _.find(orgRelations, orgRelation => orgRelation.isPrimary);
@@ -57,10 +60,10 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
                 orgRelation = _.find(orgRelations, orgRelation => orgRelation.id === contact.relation.id);
                 orgRelation.isPrimary = true;
                 this.data.primaryOrganizationContactId = contact.id;
-                this.notify.info(this.l('SavedSuccessfully'));
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.dialogRef.close(contact);
             },
-            (e) => { this.notify.error(e); }
+            e => this.notifyService.error(e)
         );
         event.stopPropagation();
     }

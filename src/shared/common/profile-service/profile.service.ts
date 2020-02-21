@@ -48,7 +48,10 @@ export class ProfileService {
         [LayoutType.LendSpace]: AppConsts.imageUrls.profileLendSpace
     };
     defaultContactPhotos = {
-        [LayoutType.BankCode]: AppConsts.imageUrls.noPhotoBankCode
+        [LayoutType.BankCode]: {
+            'small': AppConsts.imageUrls.noPhotoBankCode,
+            'large': AppConsts.imageUrls.noPhotoBankCode3x
+        }
     };
 
     constructor(
@@ -90,7 +93,7 @@ export class ProfileService {
         return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;
     }
 
-    getContactPhotoUrl(publicId, isThumbnail = true): string {
+    getContactPhotoUrl(publicId = null, isThumbnail = true, defaultPhotoSize: 'small' | 'large' = 'small'): string {
         if (publicId) {
             let actionName = isThumbnail ? 'thumbnail' : 'photo';
             let tenantId = this.appSession.tenantId || 0;
@@ -99,7 +102,7 @@ export class ProfileService {
 
         const tenant = this.appSession.tenant;
         return tenant && this.defaultContactPhotos[tenant.customLayoutType]
-            ? this.defaultContactPhotos[tenant.customLayoutType]
+            ? this.defaultContactPhotos[tenant.customLayoutType][defaultPhotoSize]
             : AppConsts.imageUrls.noPhoto;
     }
 
