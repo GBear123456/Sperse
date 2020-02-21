@@ -94,12 +94,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private initialData: string;
 
     navLinks: NavLink[] = [];
-    rightPanelSetting: any = {
-        id: RP_DEFAULT_ID,
-        width: '0px',
-        opened: false
-    };
-
     params: any;
     private rootComponent: any;
     queryParams: Params;
