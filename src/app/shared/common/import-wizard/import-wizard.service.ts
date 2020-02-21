@@ -60,10 +60,9 @@ export class ImportWizardService {
                             let importStatus = res[0];
                             method && method(importStatus);
                             if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
-                                if (invalUri) {
-                                    invalUri = (this.reuseService as CustomReuseStrategy).keyExists(invalUri) ? invalUri : 'leads';
-                                    (this.reuseService as CustomReuseStrategy).invalidate(invalUri);
-                                }
+                                this.invalidateImportList();
+                                if (invalUri)
+                                    this.invalidateRouteByUri((this.reuseService as CustomReuseStrategy).keyExists(invalUri) ? invalUri : 'leads');
                                 this.activeImportId = undefined;
                             }
                             if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
@@ -80,8 +79,17 @@ export class ImportWizardService {
         if (this.activeImportId || forced) {
             this.activeImportId = undefined;
             clearTimeout(this.statusCheckTimeout);
+            this.invalidateImportList();
             this.statusCheckTimeout = null;
         }
+    }
+
+    invalidateRouteByUri(uri: string) {
+        (this.reuseService as CustomReuseStrategy).invalidate(uri);
+    }
+
+    invalidateImportList() {
+        this.invalidateRouteByUri('import-list');
     }
 
     setupCheckTimeout(method: (callback: any) => void, initial = true) {

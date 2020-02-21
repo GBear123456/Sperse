@@ -38,9 +38,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-        if (handle && (<any>handle).componentRef.instance.deactivate && this.componentIsTheSame(route, handle))
-            (<any>handle).componentRef.instance.deactivate();
-        this.handlers[this.getKey(route)] = handle;
+        if (handle) {
+            if ((<any>handle).componentRef.instance.deactivate && this.componentIsTheSame(route, handle))
+                (<any>handle).componentRef.instance.deactivate();
+            this.handlers[this.getKey(route)] = handle;
+        }
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
