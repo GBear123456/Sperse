@@ -32,7 +32,7 @@ export class AccessCodeInstructionsComponent {
                 trackingLink
                 ? trackingLink
                 : (environment.releaseStage === 'production'
-                    ? (this.title.getTitle().toLowerCase().indexOf('success factory') >= 0
+                    ? (location.href.indexOf('successfactory.com') >= 0
                         ? 'https://sf.crackmycode.com'
                         : 'https://bp.crackmycode.com')
                     : 'https://bankpass.bankcode.pro'
@@ -46,7 +46,6 @@ export class AccessCodeInstructionsComponent {
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
         private router: ActivatedRoute,
-        private title: Title,
         public ls: AppLocalizationService
     ) {}
 
