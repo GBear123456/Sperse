@@ -41,7 +41,7 @@
             padding: 70px 0 0 0;
 
             .column-title {
-                position: absolute !important;
+                position: absolute;
                 top: 0;
                 z-index: 1;
                 height: 63px;
@@ -56,6 +56,11 @@
                 color: #076943;
                 background-color: #076943;
                 width: 100%;
+
+                @supports (-ms-ime-align: auto) {
+                    position: relative;
+                }
+
                 .toggleAll {
                     position: absolute;
                     left: 2px;
