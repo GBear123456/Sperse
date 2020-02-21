@@ -67,7 +67,7 @@
                                    mode="multiple">
                     </dxo-selection>
                     <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-                    <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
+                    <dxi-column [width]="40" cssClass="stars" [fixed]="true" [fixedPosition]="'left'"
                                 [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                     <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>

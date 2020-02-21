@@ -5,8 +5,7 @@ import {
     EventEmitter,
     Inject,
     Output,
-    ViewChild,
-    ChangeDetectorRef
+    ViewChild
 } from '@angular/core';
 
 /** Third party imports */
@@ -19,8 +18,7 @@ import extend from 'lodash/extend';
 import {
     CommonLookupServiceProxy,
     FindUsersInput,
-    NameValueDto,
-    NameValueDtoPagedResultDto
+    NameValueDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -48,7 +46,7 @@ export class CommonLookupModalComponent {
         filterText: '',
         title: this.ls.l('SelectAUser'),
         load: (loadOptions) => {
-            return this._commonLookupService.findUsers(new FindUsersInput({
+            return this.commonLookupService.findUsers(new FindUsersInput({
                 filter: this.data.filterText || undefined,
                 maxResultCount: loadOptions.take,
                 skipCount: loadOptions.skip,
@@ -65,8 +63,7 @@ export class CommonLookupModalComponent {
     };
 
     constructor(
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private commonLookupService: CommonLookupServiceProxy,
         private dialogRef: MatDialogRef<CommonLookupModalComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: ICommonLookupModalOptions
