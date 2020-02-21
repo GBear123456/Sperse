@@ -121,6 +121,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 onLoaded: () => {
                     this.dataGrid.instance.cancelEditData();
                     this.dataGrid.instance.endCustomLoading();
+                    setTimeout(() => this.dataGrid.instance.repaint());
                 },
                 deserializeDates: false,
                 paginate: true
