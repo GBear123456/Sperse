@@ -399,6 +399,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.currentDocumentInfo = this.actionRecordData;
         $event.itemData.action.call(this);
         this.actionRecordData = null;
+        this.actionMenu.hide();
     }
 
     getFileType(fileName): string {
