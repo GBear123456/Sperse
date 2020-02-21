@@ -330,7 +330,6 @@ input.form-control {
                     }
 
                     + td {
-                        position: relative;
                         width: 100%;
 
                         &::before {
@@ -340,11 +339,6 @@ input.form-control {
                             width: 18px;
                             height: 18px;
                             display: inline-block;
-                            position: absolute;
-                            left: 8px;
-                            top: 0;
-                            bottom: 0;
-                            margin: auto;
                             opacity: 0.5;
                         }
                     }
@@ -437,24 +431,24 @@ input.form-control {
             }
         }
 
-        .dx-command-edit + td {
-            position: relative;
-            width: 100%;
+        .dx-command-edit {
+            text-overflow: initial;
+            & + td {
+                width: 100%;
+                &.stars {
+                    line-height: 13px;
+                    text-align: center !important;
+                }
 
-            &::before {
-                content: '';
-                background: url("../../../assets/common/icons/star-icon.svg");
-                background-size: cover;
-                width: 18px;
-                height: 18px;
-                display: inline-block;
-                position: absolute;
-                left: 0;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                margin: auto;
-                opacity: 0.5;
+                &::before {
+                    content: '';
+                    background: url("../../../assets/common/icons/star-icon.svg");
+                    background-size: cover;
+                    width: 18px;
+                    height: 18px;
+                    display: inline-block;
+                    opacity: 0.5;
+                }
             }
         }
 
@@ -598,6 +592,9 @@ input.form-control {
             width: 30px;
             height: 30px;
         }
+    }
+    .dx-datagrid-content-fixed .dx-col-fixed {
+        background-color: initial;
     }
 }
 

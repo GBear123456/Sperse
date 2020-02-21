@@ -92,13 +92,19 @@
                             showCheckBoxesMode="always"
                             mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0', width: '0'}" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxo-editing mode="popup" [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" [allowUpdating]="true"></dxo-editing>
+                        <dxi-column cssClass="stars" [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId" caption="" cellTemplate="photoTemplate"
-                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="PhotoPublicId"
+                                    caption=""
+                                    cellTemplate="photoTemplate"
+                                    [width]="50"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false">
+                        </dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
