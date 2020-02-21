@@ -748,7 +748,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     checkFieldValid(key, data, field): boolean {
-        let value = data[field] && data[field].trim ? data[field].trim() : value;
+        let value = data[field] && data[field].trim ? data[field].trim() : data[field];
         if (!value)
             return true;
         if (key == 'phone') {
