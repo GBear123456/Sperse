@@ -4,6 +4,7 @@ import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStr
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
 import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
+import { Observable, of } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -22,7 +23,14 @@ import { AppService } from '@app/app.service';
 export class ToolBarComponent implements OnDestroy {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
-    @Input() compact = false;
+    _compact: boolean;
+    @Input()
+    set compact(value: boolean) {
+        if (value) {
+            this.hidden$ = of(false);
+        }
+        this._compact = value;
+    }
     _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
@@ -33,6 +41,7 @@ export class ToolBarComponent implements OnDestroy {
     public items = [];
     public options = {};
     private subscription: any;
+    hidden$: Observable<boolean> = this.appService.toolbarIsHidden$;
 
     constructor(
         filtersService: FiltersService,
