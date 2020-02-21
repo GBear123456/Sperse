@@ -138,7 +138,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
 
         this.dataSource = new DataSource({
             key: 'id',
-            load: (loadOptions) => {                
+            load: (loadOptions) => {
                 return this.tenantService.getTenants(
                     this.searchValue || this.tenantName || undefined,
                     this.creationDateStart || undefined,
