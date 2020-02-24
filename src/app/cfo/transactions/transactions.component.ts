@@ -487,7 +487,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
-        DataGridService.toggleCompactRowsHeight(this.dataGrid);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
