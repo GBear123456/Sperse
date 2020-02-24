@@ -138,12 +138,12 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private appService: AppService,
         private changeDetectorRef: ChangeDetectorRef,
         private auditLogService: AuditLogServiceProxy,
         private fileDownloadService: FileDownloadService,
         private dialog: MatDialog,
-        private filtersService: FiltersService
+        private filtersService: FiltersService,
+        public appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

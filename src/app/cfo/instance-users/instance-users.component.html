@@ -4,7 +4,7 @@
               (onReload)="invalidate()">
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
-<app-toolbar [config]="toolbarConfig"></app-toolbar>
+<app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 <div class="main-wrapper">
     <setup-steps SelectedStepIndex="5"></setup-steps>
     <dx-data-grid id="gridContainer"

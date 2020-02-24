@@ -33,9 +33,9 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
 
     constructor(
         private injector: Injector,
-        private appService: AppService,
         private dialog: MatDialog,
-        private instanceProxy: InstanceServiceProxy
+        private instanceProxy: InstanceServiceProxy,
+        public appService: AppService
     ) {
         super(injector);
         this.dataSource = new DataSource({

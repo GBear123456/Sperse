@@ -10,7 +10,7 @@
                   (onToggleFullScreen)="toggleFullScreen()"
                   (onReload)="invalidate()">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionRecord"
                  (onItemClick)="onMenuItemClick($event)"

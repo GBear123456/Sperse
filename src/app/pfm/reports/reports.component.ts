@@ -74,10 +74,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(
         injector: Injector,
-        private appService: AppService,
         private dialog: MatDialog,
         private cfoService: CFOService,
-        private datePipe: DatePipe
+        private datePipe: DatePipe,
+        public appService: AppService
     ) {
         super(injector);
     }

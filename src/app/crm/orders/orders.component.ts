@@ -94,15 +94,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     toolbarConfig: ToolbarGroupModel[];
 
     constructor(injector: Injector,
-        public dialog: MatDialog,
         private orderProxy: OrderServiceProxy,
         private invoicesService: InvoicesService,
         private contactsService: ContactsService,
         private filtersService: FiltersService,
-        private appService: AppService,
         private pipelineService: PipelineService,
         private itemDetailsService: ItemDetailsService,
-        private store$: Store<CrmStore.State>
+        private store$: Store<CrmStore.State>,
+        public appService: AppService,
+        public dialog: MatDialog,
     ) {
         super(injector);
 

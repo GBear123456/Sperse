@@ -22,6 +22,7 @@ import { ClassificationServiceProxy, ApplyToTransactionsOption, InstanceType } f
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -42,6 +43,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     constructor(
         injector: Injector,
         private classificationService: ClassificationServiceProxy,
+        public appService: AppService,
         public dialog: MatDialog,
         public filtersService: FiltersService
     ) {

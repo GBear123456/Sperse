@@ -103,11 +103,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
         private pipelineService: PipelineService,
-        private appService: AppService,
         private filtersService: FiltersService,
-        private store$: Store<AppStore.State>
+        private store$: Store<AppStore.State>,
+        public appService: AppService,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));

@@ -2,10 +2,10 @@
 import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
-import { MatDialog } from '@angular/material';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -46,9 +46,9 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         injector: Injector,
         private languageService: LanguageServiceProxy,
         private filtersService: FiltersService,
-        private appService: AppService,
         private sessionService: AbpSessionService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

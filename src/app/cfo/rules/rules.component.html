@@ -8,7 +8,7 @@
                   (onReload)="refreshList()">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="portlet light no-padding margin-bottom-0">
         <setup-steps SelectedStepIndex="3"
             [collapsed]="filtersService.fixed">

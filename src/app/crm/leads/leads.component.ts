@@ -419,7 +419,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
         private filtersService: FiltersService,
-        private appService: AppService,
         private store$: Store<AppStore.State>,
         private reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -432,7 +431,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private impersonationService: ImpersonationService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
-        public userManagementService: UserManagementService
+        public userManagementService: UserManagementService,
+        public appService: AppService
     ) {
         super(injector);
         this.contactGroupOptionInit();
