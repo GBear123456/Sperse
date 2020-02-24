@@ -1,7 +1,10 @@
 <header>
     <div class="avatar">
         <div class="active"></div>
-        <div class="photo-area" (click)="showUploadPhotoDialog($event)" [ngStyle]="{'background-image': data?.personContactInfo?.primaryPhoto ? 'url(data:image/png;base64,' + data.personContactInfo.primaryPhoto + ')': ''}"></div>
+        <div class="photo-area"
+             [ngStyle]="{ 'background-image': getPhoto(data?.personContactInfo?.primaryPhoto) }"
+             (click)="showUploadPhotoDialog($event)">
+        </div>
     </div>
     <div class="personal_info">
         <div class="full_name">

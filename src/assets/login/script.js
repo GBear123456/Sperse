@@ -114,9 +114,7 @@
     }
 
     function checkShowInitialSpinner() {
-        var config = window['generalInfo'].userConfig,
-            showSperseSpinner = location.port || config && 
-                config.session.multiTenancySide == config.multiTenancy.sides.host;
+        var showSperseSpinner = location.port || location.href.indexOf('sperse.com') > 0;
         showSpinner((showSperseSpinner ? 'sperse-' : '' ) + 'spinner');
     }
 

@@ -90,7 +90,7 @@ export class AppConsts {
         phone: /^[0-9]{10}$/,
         url: /^(http[s]?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
         fullName: /^[^\d]+$/,
-        affiliateCode: /^[a-zA-Z0-9\._-]*$/,
+        affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
         siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
@@ -101,6 +101,8 @@ export class AppConsts {
     static readonly imageUrls = {
         noPhoto: 'assets/common/images/no-photo.png',
         noPhotoAdvicePeriod: 'assets/common/icons/advice-period-avatar.svg',
+        noPhotoBankCode: 'assets/common/images/bank-code/default-avatar.png',
+        noPhotoBankCode3x: 'assets/common/images/bank-code/default-avatar-3x.png',
         profileDefault: 'assets/common/images/default-profile-picture.png',
         profileLendSpace: 'assets/common/images/lend-space-dark/avatar.svg'
     };

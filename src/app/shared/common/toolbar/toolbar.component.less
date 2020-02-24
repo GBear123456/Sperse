@@ -731,6 +731,7 @@
                 }
             }
 
+            &[aria-label="Stage"],
             &[aria-label="Rank"],
             &[aria-label="Assign"],
             &[aria-label="Rating"],
@@ -1031,7 +1032,7 @@
         }
 
         &[accesskey="sort"] {
-            padding: 6px 0px;
+            padding: 6px 0;
 
             .dx-button-content {
                 display: none;
@@ -1446,5 +1447,15 @@
                 display: inline-block;
             }
         }
+    }
+}
+
+.empty-container {
+    min-height: 62px;
+    display: block;
+    position: relative;
+    border-bottom: 1px solid #dfdfdf !important;
+    &.compact {
+        min-height: 37px;
     }
 }

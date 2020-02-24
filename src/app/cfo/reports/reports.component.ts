@@ -20,7 +20,6 @@ import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { GenerateReportDialogComponent } from './generate-report-dialog/generate-report-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { AppService } from '@app/app.service';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
@@ -29,7 +28,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -106,10 +105,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         && this._cfoService.accessAllDepartments;
 
     readonly RESERVED_TIME_SECONDS = 30;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         private injector: Injector,
-        private appService: AppService,
         private dialog: MatDialog,
         private fileSizePipe: FileSizePipe,
         private changeDetector: ChangeDetectorRef,
@@ -127,8 +126,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.isDataLoaded = false;
-                    this.changeDetector.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     if (request.params.$filter && request.url.indexOf('$filter')) {
@@ -165,7 +162,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before',
                 items: [
@@ -210,7 +207,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     }
                 ]
             }
-        ]);
+        ];
     }
 
     searchValueChange(e: object) {
@@ -353,7 +350,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 instanceType: this.instanceType,
                 instanceId: this.instanceId,
                 period: this.selectedPeriod,
-                reportGenerated: () => this.dataGrid.instance.refresh()
+                reportGenerated: () => this.invalidate()
             }
         });
     }
@@ -368,7 +365,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         return null;
     }
 
-    onDataGridInit(event) {
+    onDataGridInit() {
         this.changeDetector.markForCheck();
     }
 
@@ -486,7 +483,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                     this.reportsProxy.delete(<any>this.instanceType, this.instanceId, this.currentReportInfo.Id)
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
-                            this.dataGrid.instance.refresh();
+                            this.invalidate();
                             if (this.actionMenu && this.actionMenu.visible) {
                                 this.hideActionsMenu();
                             }
@@ -503,11 +500,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.viewerToolbarConfig = [];
         this.changeDetector.markForCheck();
         setTimeout(() => this.dataGrid.instance.repaint());
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
-        this.changeDetector.detectChanges();
     }
 
     getFilters() {

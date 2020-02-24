@@ -1,6 +1,6 @@
 /** Core imports */
-import { Component, Inject, AfterViewInit, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { AfterViewInit, Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
@@ -20,7 +20,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 @Component({
     selector: 'app-root',
     template: '<router-outlet></router-outlet>',
-    styleUrls: ['./root.component.less']
+    styleUrls: ['./root.component.less'],
+    encapsulation: ViewEncapsulation.None
 })
 export class RootComponent implements OnInit, AfterViewInit {
     constructor(

@@ -16,28 +16,28 @@
     }
 
     ::ng-deep dx-select-box[accessKey="contactGroup"] {
-        padding: 21px 0px;
+        padding: 21px 0;
         background: transparent;
         justify-content: flex-start;
-
-        .select-header {
-            font-size: 24px;
-            font-weight: 600;
-            color: rgb(23, 28, 29);
-            display: flex;
-            align-items: center;
-            padding-right: 30px;
-
-            i {
-                margin-left: 15px;
-                position: relative;
-            }
-        }
 
         &.dx-state-hover, &.dx-state-active, &.dx-dropdowneditor-active {
             .dx-dropdowneditor-icon {
                 background-color: transparent;
             }
+        }
+    }
+
+    ::ng-deep .select-header {
+        font-size: 24px;
+        font-weight: 600;
+        color: rgb(23, 28, 29);
+        display: flex;
+        align-items: center;
+        padding-right: 30px;
+
+        i {
+            margin-left: 15px;
+            position: relative;
         }
     }
 }

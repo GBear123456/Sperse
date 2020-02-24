@@ -6,7 +6,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */
-import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -41,8 +40,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     constructor(injector: Injector,
         private importLeadsService: ImportLeadsService,
         private sizeFormatPipe: FileSizePipe,
-        private importProxy: ImportServiceProxy,
-        private appService: AppService
+        private importProxy: ImportServiceProxy
     ) {
         super(injector);
         this.dataSource = {
@@ -122,7 +120,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     onContentReady(event) {
-        this.finishLoading();
         if (!event.component.totalCount())
             return this.navigateToWizard();
 
@@ -133,11 +130,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
             visibleIndex: -1,
             width: 40
         });
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
     }
 
     navigateToDashboard() {
@@ -158,7 +150,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                             return this.importProxy.delete(id);
                         })
                     ).subscribe(() => {
-                        this.refreshDataGrid();
+                        this.invalidate();
                     });
             });
     }
@@ -173,7 +165,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                           return this.importProxy.cancel(id);
                       })
                   ).subscribe(() => {
-                      this.refreshDataGrid();
+                      this.invalidate();
                   });
             });
     }
@@ -193,17 +185,15 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     activate() {
         this.rootComponent.overflowHidden(true);
-        this.refreshDataGrid();
+        this.invalidate();
     }
 
     deactivate() {
-        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.startLoading();
         this.activate();
     }
 

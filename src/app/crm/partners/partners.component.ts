@@ -82,6 +82,7 @@ import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -175,13 +176,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    pivotGridDataSource = {
+    private _pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
-            /** To show global spinner only during the first loading */
-            if (this.pivotGridDataIsLoading === undefined) {
-                this.pivotGridDataIsLoading = true;
-            }
+            this.pivotGridDataIsLoading = true;
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
@@ -276,6 +274,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             }
         ]
     };
+    public pivotGridDataSource;
     sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
@@ -333,6 +332,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.partnersData$, this.selectedMapArea$);
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
     totalCount: number;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -363,7 +363,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
@@ -374,7 +373,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
         if (this.userManagementService.checkBankCodeFeature()) {
-            this.pivotGridDataSource.fields.unshift({
+            this._pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -685,7 +684,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -920,7 +919,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     }
                 ]
             }
-        ]);
+        ];
     }
 
     repaintDataGrid(delay = 0) {
@@ -984,7 +983,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
-            this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
@@ -1019,8 +1017,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
-        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
+        this.pivotGridDataSource = this._pivotGridDataSource;
     }
 
     private setChartInstance() {
@@ -1107,7 +1104,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     deactivate() {
         super.deactivate();
         this.subRouteParams.unsubscribe();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());

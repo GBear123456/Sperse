@@ -185,8 +185,8 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     loadResourcesData() {
-        this.modalDialog.startLoading();
         if (this.permissionChecker.isGranted(AppPermissions.CRMCustomers)) {
+            this.modalDialog.startLoading();
             Promise.all([
                 this.lookup('Leads').then(res => this.leads = res),
                 this.lookup('Clients').then(res => this.clients = res)

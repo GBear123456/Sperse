@@ -37,6 +37,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { AppStore, RatingsStoreSelectors } from '@app/store';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -145,6 +146,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             hidden: true
         })
     ];
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         private injector: Injector,
@@ -187,8 +189,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     initToolbarConfig() {
-        if (this.componentIsActivated) {
-            this.appService.updateToolbar([
+        this.toolbarConfig = [
                 {
                     location: 'before',
                     items: [
@@ -322,8 +323,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                         { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                     ]
                 }
-            ]);
-        }
+            ];
     }
 
     toggleRating() {
@@ -349,7 +349,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.processFilterInternal();
-        this.initToolbarConfig();
     }
 
     filterByCategory(filter) {
@@ -464,7 +463,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     deactivate() {
         super.deactivate();
         this.filtersService.unsubscribe();
-        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Offer, this.dataGrid.instance.getDataSource());
     }

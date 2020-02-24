@@ -34,7 +34,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './users.component.html',
@@ -63,6 +63,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private rootComponent: any;
     formatting = AppConsts.formatting;
     dataSource: DataSource;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -116,7 +117,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                this.isDataLoaded = false;
                 return this.userServiceProxy.getUsers(
                     this.searchValue || undefined,
                     this.selectedPermissions || undefined,
@@ -144,7 +144,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -346,7 +346,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -497,7 +497,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
-        this.initToolbarConfig();
         this.invalidate();
     }
 
@@ -575,7 +574,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     deactivate() {
         super.deactivate();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.User, this.dataGrid.instance.getDataSource());
@@ -595,12 +593,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     registerToEvents() {
         abp.event.on('profilePictureChanged', () => {
+            this.isDataLoaded = false;
             this.dataGrid.instance.refresh();
         });
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {

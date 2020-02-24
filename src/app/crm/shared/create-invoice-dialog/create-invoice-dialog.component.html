@@ -60,7 +60,7 @@
                         [dataSource]="customers"
                         [searchEnabled]="true"
                         [searchTimeout]="0"
-                        (onFocusIn)="onFieldFocus($event)"
+                        (onFocusIn)="onFieldFocusIn($event)"
                         (onInput)="customerLookupItems($event)"
                         (onSelectionChanged)="selectContact($event)">
                     </dx-select-box>
@@ -77,7 +77,7 @@
                         [dataSource]="billingAddresses"
                         (onValueChanged)="onAddressChanged($event, 'selectedBillingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
-                            <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
+                            <i class="address-icons type-{{cellData.usageTypeId || 'B'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
@@ -115,7 +115,7 @@
                         [dataSource]="shippingAddresses"
                         (onValueChanged)="onAddressChanged($event, 'selectedShippingAddress')">
                         <div *dxTemplate="let cellData of 'addressTemplate'" [title]="cellData.display">
-                            <i class="address-icons type-{{cellData.usageTypeId || 'H'}}"></i>
+                            <i class="address-icons type-{{cellData.usageTypeId || 'S'}}"></i>
                             <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
@@ -206,6 +206,7 @@
                                 name="customer"
                                 width="300px"
                                 height="32px"
+                                valueChangeEvent="keyup"
                                 [showClearButton]="true"
                                 [placeholder]="ls.lr('Invoice_EnterDescription')"
                                 [acceptCustomValue]="true"
@@ -213,7 +214,7 @@
                                 [dataSource]="descriptions"
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
-                                (onFocusIn)="onFieldFocus($event)"
+                                (onFocusIn)="onFieldFocusIn($event)"
                                 (onInput)="productLookupItems($event, cellData)"
                                 (onValueChanged)="selectProduct($event, cellData)">
                                 <dx-validator>

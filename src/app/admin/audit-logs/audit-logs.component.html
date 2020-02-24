@@ -4,11 +4,12 @@
                   [showReloadButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
-                  (onReload)="refreshData()"
+                  (onReload)="invalidate()"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="showCompactRowHeight()"
-                  (onTooggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="operationsLogsGridContainer">
@@ -23,8 +24,9 @@
                               [loadPanel]="{ enabled: false }"
                               [hoverStateEnabled]="true"
                               [pager]="defaultGridPagerConfig"
+                              (onOptionChanged)="onGridOptionChanged($event)"
                               (onInitialized)="onInitialized($event)"
-                              (onContentReady)="contentReady()">
+                              (onContentReady)="setGridDataLoaded()">
                     <dxi-column [caption]="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
                     <dxi-column [caption]="" width="30px" cellTemplate="statusTemplate"></dxi-column>
                     <dxi-column [caption]="l('Time')" dataField="executionTime" dataType="datetime" cssClass="clipboard-holder" sortOrder="desc" sortIndex="0"></dxi-column>

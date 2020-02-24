@@ -1,5 +1,15 @@
 /** Core imports */
-import { Component, OnInit, Injector, Inject, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Injector,
+    Inject,
+    AfterViewInit,
+    OnDestroy,
+    ViewChild,
+    HostListener,
+    HostBinding
+} from '@angular/core';
 import { DOCUMENT, CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
@@ -106,7 +116,6 @@ import { IExpandLevel } from './models/expand-level';
 import { IEventDescription } from './models/event-description';
 import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
 import { WeekInfo } from './models/week-info';
-import { OperationsComponent } from './operations/operations.component';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
@@ -127,7 +136,9 @@ import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { AppFeatures } from '@shared/AppFeatures';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -179,8 +190,8 @@ export class CellOptions {
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent, { static: false }) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent, { static: true }) cashFlowGrid: DxDataGridComponent;
-    @ViewChild(OperationsComponent, { static: true }) operations: OperationsComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @HostBinding('class.toolbar-is-shown') toolbarIsShown;
     transactionId: any;
     selectedBankAccountsIds;
 
@@ -706,6 +717,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         },
         function() { return JSON.stringify(arguments); }
     );
+    private selectedGroupByIndex = 0;
+    private bankAccountCount: string;
+    public toolbarConfig: ToolbarGroupModel[];
 
     constructor(injector: Injector,
         private cashflowServiceProxy: CashflowServiceProxy,
@@ -723,6 +737,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private cfoPreferencesService: CfoPreferencesService,
         private currencyPipe: CurrencyPipe,
         private lifecycleService: LifecycleSubjectsService,
+        private fullscreenService: FullScreenService,
         public cashflowService: CashflowService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
@@ -889,6 +904,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.getNewTextWidth.cache = {};
             this.pivotGrid.instance.repaint();
         });
+
+        this.bankAccountsService.accountsAmountWithApply$.pipe(takeUntil(this.destroy$)).subscribe( amount => {
+            this.bankAccountCount = amount;
+        });
+        this.appService.toolbarIsHidden$.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((toolbarIsHidden: boolean) => {
+            this.toolbarIsShown = !toolbarIsHidden;
+        });
+    }
+
+    openBankAccountsSelectDialog() {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+        }).componentInstance.onApply.subscribe(() => {
+            this.filterByBankAccounts();
+        });
+    }
+
+    private fullscreen() {
+        this.fullScreenService.toggleFullscreen(this.getFullscreenElement());
+    }
+
+    filterByBankAccounts() {
+        this.setBankAccountsFilter(true);
     }
 
     private showEmptyCategories() {
@@ -980,9 +1020,171 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     initToolbarConfig() {
-        if (this.componentIsActivated) {
-            this.operations.initToolbarConfig();
-        }
+        this.toolbarConfig = [
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'filters',
+                        visible: !this._cfoService.hasStaticInstance,
+                        action: () => {
+                            setTimeout(this.repaintDataGrid.bind(this), 1000);
+                            this.filtersService.fixed = !this.filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
+                            },
+                            mouseover: () => {
+                                this.filtersService.enable();
+                            },
+                            mouseout: () => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' '
+                                + this.l('Transaction').toLowerCase(),
+                            onValueChanged: this.searchValueChange.bind(this)
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'select-box',
+                        text: this.ls('CFO', 'CashflowToolbar_Group_By'),
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('CashflowToolbar_Group_By'),
+                            width: 175,
+                            selectedIndex: this.selectedGroupByIndex,
+                            items: [
+                                {
+                                    action: this.changeGroupBy.bind(this),
+                                    text: 'Years'
+                                }, {
+                                    action: this.changeGroupBy.bind(this),
+                                    text: 'Quarters'
+                                }, {
+                                    action: this.changeGroupBy.bind(this),
+                                    text: 'Months'
+                                }
+                            ],
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.selectedGroupByIndex = e.itemIndex;
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'bankAccountSelect',
+                        widget: 'dxButton',
+                        action: this.openBankAccountsSelectDialog.bind(this),
+                        options: {
+                            id: 'bankAccountSelect',
+                            text: this.l('Accounts'),
+                            icon: './assets/common/icons/accounts.svg'
+                        },
+                        attr: {
+                            'custaccesskey': 'bankAccountSelect',
+                            'accountCount': this.bankAccountCount
+                        }
+                    },
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'rules',
+                        action: this.showPreferencesDialog.bind(this)
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('SaveAs', 'PDF'),
+                                format: 'pdf',
+                                icon: 'pdf',
+                            }, {
+                                action: this.downloadData.bind(this),
+                                text: this.l('Export to Excel'),
+                                format: 'xls',
+                                icon: 'xls',
+                            }, {
+                                action: Function(),
+                                text: this.l('Export to CSV'),
+                                format: 'csv',
+                                icon: 'sheet'
+                            }, {
+                                action: this.downloadData.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                format: 'gs',
+                                icon: 'sheet'
+                            }]
+                        }
+                    },
+                    {
+                        name: 'print',
+                        options: {
+                            width: 58
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'comments',
+                        visible: !this._cfoService.hasStaticInstance,
+                    },
+                    {
+                        name: 'fullscreen',
+                        visible: !this._cfoService.hasStaticInstance,
+                        action: this.fullscreen.bind(this)
+                    }
+                ]
+            },
+        ];
     }
 
     /**
@@ -1262,7 +1464,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Remove cashflow events handlers */
         CashflowService.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this.appService.toolbarIsHidden.next(false);
-
         this.document.removeEventListener('keydown', this.keyDownEventHandler);
         super.ngOnDestroy();
     }
@@ -1301,8 +1502,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             () => {},
         () => {
             if (!this.gridDataExists && (!this.cashflowService.cashflowData || !this.cashflowService.cashflowData.length)) {
-                if (this.componentIsActivated)
-                    this.appService.updateToolbar(null);
+
             } else {
                 this.gridDataExists = true;
                 this.dataSource = this.getApiDataSource();
@@ -3781,9 +3981,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }, 1000);
     }
 
-    searchValueChange(value) {
+    searchValueChange(e) {
         this.detailsStartLoading();
-        this.searchValue = value;
+        this.searchValue = e.value;
         if (this.searchValue) {
             this.cashflowService.showAllVisible = true;
             this.cashflowService.showAllDisable = true;
@@ -4605,7 +4805,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     deactivate() {
         this.toggleGridOpacity();
         this.dialog.closeAll();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden();

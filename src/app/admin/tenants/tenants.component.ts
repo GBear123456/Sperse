@@ -36,7 +36,7 @@ import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-loo
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -112,6 +112,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         field: 'name',
         items: { name: new FilterItemModel(this.tenantName)}
     });
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -138,7 +139,6 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
-                this.isDataLoaded = false;
                 return this.tenantService.getTenants(
                     this.searchValue || this.tenantName || undefined,
                     this.creationDateStart || undefined,
@@ -177,7 +177,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -260,7 +260,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -348,12 +348,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             panelClass: [ 'slider' ],
             data: {}
         }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.refreshDataGrid()
+            () => this.invalidate()
         );
-    }
-
-    onContentReady() {
-        this.setGridDataLoaded();
     }
 
     onInitialized(event) {
@@ -395,7 +391,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             panelClass: ['slider'],
             data: { tenantId: tenantId }
         }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.refreshDataGrid()
+            () => this.invalidate()
         );
     }
 
@@ -429,13 +425,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             this.dataGrid.instance.clearFilter();
     }
 
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
-    }
-
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
     }
 }

@@ -75,7 +75,6 @@ import { PreferencesDialogComponent } from './cashflow/preferences-dialog/prefer
 import { ChooseResetRulesComponent } from './transactions/choose-reset-rules/choose-reset-rules.component';
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
-import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
 import { InstanceUsersComponent } from './instance-users/instance-users.component';
 import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -112,7 +111,6 @@ let COMPONENTS = [
     SetupStepComponent,
     CurrenciesDropdownComponent,
     CashflowComponent,
-    OperationsComponent,
     PreferencesDialogComponent,
     StatsComponent,
     SourceDataComponent,

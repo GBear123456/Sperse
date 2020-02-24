@@ -105,9 +105,9 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private bankCodeService: BankCodeService,
         private memberSettingsService: MemberSettingsServiceProxy,
-        private profileService: ProfileService,
+        private userManagementService: UserManagementService,
+        public profileService: ProfileService,
         public appSession: AppSessionService,
-        public userManagementService: UserManagementService,
         public ls: AppLocalizationService
     ) {
         this.impersonationService = injector.get(ImpersonationService);

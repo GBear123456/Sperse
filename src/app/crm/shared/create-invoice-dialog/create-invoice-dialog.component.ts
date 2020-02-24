@@ -167,8 +167,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.productsLookupRequest();
-        this.customerLookupRequest();
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
@@ -210,6 +208,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
+            this.productsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -239,8 +238,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     });
                     this.changeDetectorRef.detectChanges();
                 });
-        } else
+        } else {
             this.resetNoteDefault();
+            if (!this.data.contactInfo)
+                this.customerLookupRequest();
+        }
 
         this.initNewInvoiceInfo();
         this.initContextMenuItems();
@@ -293,6 +295,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 } : {},
                 isActive: true
             };
+            this.productsLookupRequest();
         }
     }
 
@@ -497,7 +500,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field]);
     }
 
-    onFieldFocus(event) {
+    onFieldFocusIn(event) {
         event.component.option('isValid', true);
     }
 
@@ -668,6 +671,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.orderId = undefined;
                 this.orderNumber = undefined;
             }
+            this.productsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(this.contactId);
             this.changeDetectorRef.detectChanges();

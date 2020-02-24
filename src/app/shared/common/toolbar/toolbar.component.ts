@@ -4,6 +4,7 @@ import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStr
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
 import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
+import { Observable, of } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -11,6 +12,7 @@ import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'app-toolbar',
@@ -21,8 +23,15 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class ToolBarComponent implements OnDestroy {
     @ViewChild(DxToolbarComponent, { static: true }) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
-    @Input() compact = false;
-    private _config: ToolbarGroupModel[];
+    _compact: boolean;
+    @Input()
+    set compact(value: boolean) {
+        if (value) {
+            this.hidden$ = of(false);
+        }
+        this._compact = value;
+    }
+    _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
         this._config = config;
@@ -32,10 +41,12 @@ export class ToolBarComponent implements OnDestroy {
     public items = [];
     public options = {};
     private subscription: any;
+    hidden$: Observable<boolean> = this.appService.toolbarIsHidden$;
 
     constructor(
         filtersService: FiltersService,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        public appService: AppService
     ) {
         this.subscription = filtersService.filterToggle$.subscribe((enabled) => {
             enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', filtersService.hasFilterSelected);

@@ -38,6 +38,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { Router } from '@angular/router';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Injectable()
 export class UserManagementService {
@@ -203,7 +204,8 @@ export class UserManagementService {
         private abpSessionService: AbpSessionService,
         private ls: AppLocalizationService,
         private permissionChecker: PermissionCheckerService,
-        private router: Router
+        private router: Router,
+        private profileService: ProfileService
     ) {}
 
     backToMyAccount(): void {
@@ -237,7 +239,7 @@ export class UserManagementService {
     changeProfilePicture(e): void {
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
-                source: this.getProfilePictureUrl(this.appSession.user.profilePictureId),
+                source: this.profileService.getProfilePictureUrl(this.appSession.user.profilePictureId),
                 maxSizeBytes: AppConsts.maxImageSize
             },
             hasBackdrop: true
@@ -303,11 +305,6 @@ export class UserManagementService {
     checkBankCodeFeature(): boolean {
         const tenant = this.appSession.tenant;
         return tenant && (this.feature.isEnabled(AppFeatures.CRMBANKCode));
-    }
-
-    getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
-        return id ? AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (this.appSession.tenantId || 0) + '/' + id
-            : (this.checkLendSpaceLayout() || this.checkAdvicePeriodLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);
     }
 
     showLoginAttempts(e): void {

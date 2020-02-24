@@ -10,6 +10,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)">
         <div class="contact-group">
             <dx-select-box
+                    *ngIf="contactGroups.length > 1; else text"
                     accessKey="contactGroup"
                     displayExpr="text"
                     valueExpr="value"
@@ -25,9 +26,16 @@
                     </div>
                 </div>
             </dx-select-box>
+            <ng-template #text>
+                <div  class="select-header" *ngIf="contactGroups.length === 1">
+                    <span>{{contactGroups[0].text}}</span>
+                    <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+                </div>
+            </ng-template>
         </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionEvent"
                  (onItemClick)="onMenuItemClick($event)">
@@ -60,7 +68,7 @@
         <div class="portlet-body">
             <div>
                 <div id="LeadsTable">
-                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                    <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                     <dx-data-grid
                                 id="gridContainer"
                                 class="limitedPagerTotal main-component-view"
@@ -73,6 +81,7 @@
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
                                 [pager]="defaultGridPagerConfig"
+                                (onOptionChanged)="onGridOptionChanged($event)"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
                                 (onEditingStart)="showActionsMenu($event)"
@@ -83,13 +92,19 @@
                             showCheckBoxesMode="always"
                             mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0', width: '0'}" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxo-editing mode="popup" [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" [allowUpdating]="true"></dxo-editing>
+                        <dxi-column cssClass="stars" [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
-                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="PhotoPublicId"
+                                    caption=""
+                                    cellTemplate="photoTemplate"
+                                    [width]="50"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false">
+                        </dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
@@ -98,7 +113,7 @@
                         <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="State" [caption]="l('State')"></dxi-column>
+                        <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
                         <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
                             <dxi-column dataField="BankCode"
@@ -166,6 +181,7 @@
     </div>
     <div [hidden]="hidePivotGrid$ | async">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [dataSource]="pivotGridDataSource"
                           [height]="contentHeight$ | async"
                           [isLoading]="pivotGridDataIsLoading">
         </slice-pivot-grid>

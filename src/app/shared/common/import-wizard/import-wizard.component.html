@@ -86,7 +86,7 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
-                          [paging]="{pageSize: 1000}"
+                          [paging]="{ pageSize: 1000 }"
                           [selectedRowKeys]="selectedMapRowKeys"
                           (onCellClick)="onMapCellClick($event)"
                           (onSelectionChanged)="onMapSelectionChanged($event)"
@@ -100,8 +100,8 @@
                              [allowDeleting]="false"
                              [allowAdding]="false">
                 </dxo-editing>
-                <dxi-column width="20%" dataField="sourceField" caption="{{l('SourceField')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column width="60%" dataField="sampleValue" caption="{{l('SampleValue')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column width="20%" dataField="sourceField" [caption]="l('SourceField')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column width="60%" dataField="sampleValue" [caption]="l('SampleValue')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column width="20%" dataField="mappedField"
                             [showEditorAlways]="true"
                             [editCellTemplate]="'mappedFieldTemplate'"
@@ -112,10 +112,10 @@
                     <dx-drop-down-box [dataSource]="lookupFields"
                                       valueExpr="id"
                                       displayExpr="name"
-                                      [placeholder]="l('MapFieldPlaceholder')"
                                       [showClearButton]="true"
+                                      [placeholder]="l('MapFieldPlaceholder')"
                                       [value]="cell.value"
-                                      (onValueChanged)="cell.setValue($event.value)">
+                                      (onValueChanged)="mappedFieldChanged($event, cell)">
                         <div *dxTemplate="let data of 'content'" style="padding-bottom: 15px;">
                             <dx-tree-view id="mappedFieldsTreeView"
                                           [dataSource]="lookupFields"

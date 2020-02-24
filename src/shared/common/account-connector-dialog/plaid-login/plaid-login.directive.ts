@@ -1,5 +1,6 @@
 /** Core imports */
-import { Directive, EventEmitter, Output } from '@angular/core';
+import { Directive, EventEmitter, Inject, Output, Renderer2 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { first, filter, switchMap } from 'rxjs/operators';
@@ -9,6 +10,7 @@ import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
+import { SetupStepsService } from '@app/cfo/shared/common/setup-steps/setup-steps.service';
 
 @Directive({
     selector: 'plaid-login',
@@ -21,7 +23,10 @@ export class PlaidLoginDirective {
     constructor(
         private cfoService: CFOService,
         private syncAccount: SyncAccountServiceProxy,
-        private syncProgressService: SynchProgressService
+        private syncProgressService: SynchProgressService,
+        private setupStepsService: SetupStepsService,
+        private renderer: Renderer2,
+        @Inject(DOCUMENT) private document
     ) {
         if (window['Plaid'])
           this.createPlaidHandler();
@@ -42,10 +47,10 @@ export class PlaidLoginDirective {
                 product: res.product,
                 webhook: res.webhook,
                 linkCustomizationName: 'app',
-                onExit: (err, metadata) => {
+                onExit: () => {
                     this.onClose.emit();
                 },
-                onSuccess: (public_token, metadata) => {
+                onSuccess: (public_token) => {
                     handler.exit();
                     this.onComplete.emit();
                     this.syncAccount.create(this.cfoService.instanceType, this.cfoService.instanceId, new CreateSyncAccountInput({
@@ -58,6 +63,13 @@ export class PlaidLoginDirective {
                 }
             });
             handler.open();
+            this.setupStepsService.collapsed$.pipe(
+                first(),
+                filter((collapsed: boolean) => !collapsed)
+            ).subscribe(() => {
+                const plaidIframe = this.document.querySelector('[id^="plaid-link-iframe-"]:last-child');
+                this.renderer.setStyle(plaidIframe, 'left', '161px');
+            });
         });
     }
 

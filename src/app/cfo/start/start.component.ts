@@ -14,8 +14,9 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { PortalDashboardComponent } from './dashboard/portal-dashboard.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { InstanceType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CfoIntroComponent } from '@app/cfo/shared/cfo-intro/cfo-intro.component';
 import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
@@ -44,6 +45,7 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
         injector: Injector,
         private appService: AppService,
         private cacheService: CacheService,
+        private appSessionService: AppSessionService,
         private componentFactoryResolver: ComponentFactoryResolver,
         private dialog: MatDialog
     ) {
@@ -88,18 +90,21 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     openDialog() {
-        const dialogConfig: MatDialogConfig = {
-            height: '655px',
-            width: '880px',
-            id: 'cfo-intro',
-            panelClass: ['cfo-intro', 'setup'],
-            data: { alreadyStarted: this._cfoService.initialized }
-        };
-        const dialogRef = this.dialog.open(CfoIntroComponent, dialogConfig);
-        dialogRef.afterClosed().subscribe(() => {
-            /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
-            this.cacheService.set(this.introAcceptedCacheKey, 'true');
-        });
+        let tenant = this.appSessionService.tenant;
+        if (!tenant || tenant.customLayoutType == LayoutType.Default) {
+            const dialogConfig: MatDialogConfig = {
+                height: '655px',
+                width: '880px',
+                id: 'cfo-intro',
+                panelClass: ['cfo-intro', 'setup'],
+                data: { alreadyStarted: this._cfoService.initialized }
+            };
+            const dialogRef = this.dialog.open(CfoIntroComponent, dialogConfig);
+            dialogRef.afterClosed().subscribe(() => {
+                /** Mark accepted cache with true when user closed intro and don't want to see it anymore) */
+                this.cacheService.set(this.introAcceptedCacheKey, 'true');
+            });
+        }
     }
 
     activate() {

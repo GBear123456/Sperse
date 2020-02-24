@@ -11,7 +11,7 @@ import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-t
     selector: 'why-they-buy-host',
     templateUrl: '../../bank-code/products/why-they-buy/why-they-buy.component.html',
     styleUrls: [
-        '../../app/shared/core.less',
+        '../../shared/common/styles/core.less',
         './why-they-buy-host.component.less',
         '../../assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css',
         '../../node_modules/devextreme/dist/css/dx.common.css',

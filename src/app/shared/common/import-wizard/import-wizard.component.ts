@@ -1,9 +1,9 @@
 /** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { Papa } from 'ngx-papaparse';
@@ -11,7 +11,6 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 import { first, filter } from 'rxjs/operators';
-
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
 
@@ -25,6 +24,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { ImportServiceProxy, ImportFieldInfoDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     selector: 'import-wizard',
@@ -71,7 +71,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     uploadFile: FormGroup;
     dataMapping: FormGroup;
 
-    _toolbarConfig: any[];
+    _toolbarConfig: ToolbarGroupModel[];
     private files: NgxFileDropEntry[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];
@@ -266,6 +266,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         this.emptyReviewData();
         setTimeout(() => {
             let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0 : 1),
+                mappedFieldsSorted = mappedFields.slice().sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)),
                 onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100),
                 columnsIndex = {}, columnCount = 0;
 
@@ -275,8 +276,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     let row = this.fileData.data[index];
                     if (index) {
                         if (row.length == columnCount) {
-                            let data = {};
-                            mappedFields.sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)).forEach((field) => {
+                            let data = {}, dataSorted = {};
+                            mappedFieldsSorted.forEach(field => {
                                 let value = (row[columnsIndex[field.sourceField]] || '').trim();
                                 if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
@@ -499,7 +500,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             if (this.fileData && this.fileData.data && this.fileData.data.length) {
                 this.checkFileHeaderAvailability();
                 let createDataSourceInternal = (mappingSuggestions = []) => {
-                    let noNameCount = 0,
+                    let noNameCount = 0, usedMapFields = {},
                         data = this.fileData.data[0].map((field, index) => {
                             let fieldId, suggestionField = _.findWhere(mappingSuggestions, {inputFieldName: field});
                             return {
@@ -507,11 +508,13 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                                 sourceField: field || this.l('NoName', [++noNameCount]),
                                 sampleValue: this.lookForValueExample(index),
                                 mappedField: field ? (this.lookupFields.every((item) => {
-                                    let isSameField = suggestionField ? suggestionField.outputFieldName == item.id :
+                                    let isSameField = (suggestionField ? suggestionField.outputFieldName == item.id :
                                         (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase()
-                                            .indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0);
-                                    if (isSameField)
+                                            .indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0)) && !usedMapFields[item.id];
+                                    if (isSameField) {
                                         fieldId = item.id;
+                                        usedMapFields[fieldId] = true;
+                                    }
                                     return !isSameField;
                                 }) ? '' : fieldId) : undefined
                             };
@@ -640,14 +643,16 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     onMapSelectionChanged($event) {
-        let rowIdsToDeselect = [];
-        $event.selectedRowsData.forEach((row) => {
-            if (!row.mappedField)
-                rowIdsToDeselect.push(row.id);
-        });
+        setTimeout(() => {
+                let rowIdsToDeselect = [];
+                $event.selectedRowsData.forEach((row) => {
+                    if (!row.mappedField)
+                        rowIdsToDeselect.push(row.id);
+                });
 
-        $event.component.deselectRows(rowIdsToDeselect);
-        this.onMappingChanged.emit($event);
+                $event.component.deselectRows(rowIdsToDeselect);
+                this.onMappingChanged.emit($event);
+        }, 500);
     }
 
     onLookupFieldsContentReady($event, cell) {
@@ -657,13 +662,21 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     onLookupFieldsItemRendered($event) {
         this.mapGrid.instance.getSelectedRowsData().forEach((row) => {
-            if (row.mappedField == $event.itemIndex)
+            if (row.mappedField == $event.node.key)
                 $event.itemElement.classList.add('mapped');
         });
     }
 
+    mappedFieldChanged(event, cell) {
+        if (event.previousValue && !event.value) {
+            cell.component.deselectRows(cell.key);
+            cell.setValue(event.value);
+        }
+    }
+
     customizePreviewColumns = (columns) => {
-        columns.forEach((column) => {
+        let mappedFileds = this.getMappedFields();
+        columns.forEach((column, index) => {
             if (['uniqueIdent', 'highliteFields'].indexOf(column.dataField) >= 0)
                 return column.visible = false;
 
@@ -680,6 +693,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     _.extend(column, columnConfig);
                 this.initColumnTemplate(column);
                 column.calculateDisplayValue = this.calculateDisplayValue;
+                column.visibleIndex = _.findIndex(mappedFileds, item => column.dataField == item.mappedField);
 //                this.updateColumnOrder(column);
             }
 
@@ -729,7 +743,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     checkFieldValid(key, data, field): boolean {
-        let value = data[field].trim();
+        let value = data[field] && data[field].trim ? data[field].trim() : data[field];
+        if (!value)
+            return true;
         if (key == 'phone') {
             let isValid = this.phoneNumberService.isPhoneNumberValid(
                 value, this.getFieldCountryCode(data, field));
@@ -741,15 +757,17 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/[^0-9.]/g, '')));
         else if (key == 'countryName')
             return value.trim().length > 3;
-        else if (key == 'countryId')
+        else if (key == 'countryId') {
+            value = data[field] = value.toUpperCase();
             return this.excludeCCValidation.indexOf(value) >= 0
                 || !!_.findWhere(this.countries, {code: value});
-        else if (key == 'stateId')
+        } else if (key == 'stateId') {
+            value = data[field] = value.toUpperCase();
             return value.length >= 2 && value.length <= 3;
-        else if (key == 'rating')
+        } else if (key == 'rating')
             return !isNaN(value) && value >= 1 && value <= 10;
         else
-            return !value || AppConsts.regexPatterns[key].test(value);
+            return AppConsts.regexPatterns[key].test(value);
     }
 
     getPhoneDefaultCountry(cellData) {

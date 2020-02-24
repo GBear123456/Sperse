@@ -1,8 +1,8 @@
 <bank-accounts-widget
     [allowBankAccountsEditing]="true"
     [allowUpdateAccount]="true"
-    [showCreditInfo]="true"
     [showSyncDate]="true"
+    [wide]="true"
     (selectionChanged)="selectedAccountsChange()"
     (onUpdateAccount)="onUpdateAccount($event)"
     (reloadDataSource)="bankAccountsService.load()"

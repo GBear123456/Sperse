@@ -4,9 +4,9 @@ import { Component, ViewEncapsulation } from '@angular/core';
     template: '<bank-pass-host></bank-pass-host>',
     styleUrls: [
         '../../shared/aviano-sans-font.less',
-        '../../app/shared/core.less',
+        '../../shared/common/styles/core.less',
         '../../assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css',
-        '../../app/shared/dx-customs.less'
+        '../../shared/common/styles/dx-customs.less'
     ],
     encapsulation: ViewEncapsulation.None
 })

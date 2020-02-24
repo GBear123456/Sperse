@@ -16,7 +16,7 @@ import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-moda
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -48,8 +48,6 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource = new DataSource({
         key: 'id',
         load: () => {
-            this.isDataLoaded = false;
-            this.changeDetectorRef.detectChanges();
             return  this.editionService.getEditions().toPromise().then(response => {
                 return {
                     data: response.items,
@@ -66,6 +64,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         }
     ];
     private rootComponent: any;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
@@ -85,7 +84,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before',
                 items: [
@@ -142,7 +141,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactRowHeight() {
@@ -160,17 +159,12 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                 editionId: editionId
             }
         }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.refreshDataGrid()
+            () => this.invalidate()
         );
     }
 
     createEdition(): void {
         this.openCreateOrEditDialog();
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
     }
 
     showActionsMenu(event) {
@@ -195,7 +189,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
             isConfirmed => {
                 if (isConfirmed) {
                     this.editionService.deleteEdition(edition.id).subscribe(() => {
-                        this.refreshDataGrid();
+                        this.invalidate();
                     });
                 }
             }
@@ -223,6 +217,5 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this.appService.updateToolbar(null);
     }
 }

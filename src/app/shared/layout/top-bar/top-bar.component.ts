@@ -10,11 +10,12 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { PanelMenu } from './panel-menu';
-import { PanelMenuItem } from './panel-menu-item';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PanelMenuItem } from './panel-menu-item';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { LayoutType, UserGroup } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
@@ -71,7 +72,7 @@ export class TopBarComponent implements OnDestroy {
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
-                this.initMenu(config['navigation'], config['localizationSource'], 0)
+                this.initMenu(this.getCheckLayoutMenuConfig(config['navigation']), config['localizationSource'], 0)
             );
             const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
@@ -101,6 +102,18 @@ export class TopBarComponent implements OnDestroy {
             navList.push(item);
         });
         return navList;
+    }
+
+    getCheckLayoutMenuConfig(config) {
+        const MENU_HOME = 'Home';
+        let tenant = this.appSessionService.tenant,
+            user = this.appSessionService.user;
+
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode
+            && user && user.group == UserGroup.Member && config[0][0] != MENU_HOME
+        ) config.unshift([MENU_HOME, '', 'icon-home', '/code-breaker']);
+
+        return config;
     }
 
     navigate(event) {

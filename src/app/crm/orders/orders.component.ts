@@ -12,7 +12,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { pluck, filter, finalize } from 'rxjs/operators';
+import { takeUntil, pluck, filter, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */
@@ -42,6 +42,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -90,6 +91,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     permissions = AppPermissions;
     currency: string;
     totalCount: number;
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -122,6 +124,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         invoicesService.settings$.subscribe(res => this.currency = res.currency);
         this._activatedRoute.queryParams.pipe(
+            takeUntil(this.destroy$),
             filter(() => this.componentIsActivated),
             pluck('refresh'),
             filter(Boolean)
@@ -337,7 +340,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     initToolbarConfig() {
         if (this.componentIsActivated) {
             this.manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-            this.appService.updateToolbar([
+            this.toolbarConfig = [
                 {
                     location: 'before', items: [
                         {
@@ -461,13 +464,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     location: 'after',
                     locateInMenu: 'auto',
-                    items: [
-                        { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
                     areItemsDependent: true,
                     items: [
                         // {
@@ -499,7 +495,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         }
                     ]
                 }
-            ]);
+            ];
         }
     }
 
@@ -507,19 +503,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.stagesComponent.toggle();
     }
 
-    private toggleContactView() {
+    toggleContactView() {
         this.pipelineService.toggleContactView();
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
     }
 
     processFilterInternal() {
-        if (this.showPipeline) {
-            this.pipelineComponent.searchColumns = this.searchColumns;
-            this.pipelineComponent.searchValue = this.searchValue;
-        }
+        let context: any = this;
+        if (this.showPipeline && this.pipelineComponent) {
+            context = this.pipelineComponent;
+            context.searchColumns = this.searchColumns;
+            context.searchValue = this.searchValue;
+        } else if (!this.dataGrid)
+            return ;
 
-        let context = this.showPipeline ? this.pipelineComponent : this;
         context.processODataFilter.call(context,
             this.dataGrid.instance,
             this.dataSourceURI,
@@ -678,7 +676,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
-        this.appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         if (!this.showPipeline)

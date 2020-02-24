@@ -4,7 +4,7 @@
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="true"
-                  [showToggleCompactViewButton]="true"
+                  [showToggleCompactViewButton]="dataLayoutType === layoutTypes.Pipeline"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
@@ -13,6 +13,7 @@
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <dx-scheduler

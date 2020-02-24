@@ -51,6 +51,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'details-header',
@@ -136,18 +137,28 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         private messageService: MessageService,
         private loadingService: LoadingService,
         private permissionChecker: PermissionCheckerService,
+        private profileService: ProfileService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {}
 
-    private static getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
+    private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
         if (isCompany && data['organizationContactInfo'].primaryPhoto) {
             photoBase64 = data['organizationContactInfo'].primaryPhoto;
         } else if (!isCompany && data.personContactInfo.primaryPhoto) {
             photoBase64 = data.personContactInfo.primaryPhoto;
         }
-        return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
+        return { source: photoBase64
+                    ? 'data:image/jpeg;base64,' + photoBase64
+                    : this.profileService.getContactPhotoUrl(null, true, 'large')
+               };
+    }
+
+    getPhoto(primaryPhoto: string): string {
+        return primaryPhoto
+            ? 'url(data:image/png;base64,' + this.data.personContactInfo.primaryPhoto + ')'
+            : 'url(' + this.profileService.getContactPhotoUrl(null, true, 'large') + ')';
     }
 
     ngOnInit(): void {
@@ -319,7 +330,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         }
 
         this.dialog.closeAll();
-        let data = { ...this.data, ...DetailsHeaderComponent.getPhotoSrc(this.data, isCompany) };
+        let data = { ...this.data, ...this.getPhotoSrc(this.data, isCompany) };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
             hasBackdrop: true

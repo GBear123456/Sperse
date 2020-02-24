@@ -7,10 +7,11 @@
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
-                  (onReload)="refreshDataGrid()"
+                  (onReload)="invalidate()"
                   (onToggleCompactView)="toggleCompactView()"
-                  (onTooggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionRecord"
                  width="240px"
@@ -29,10 +30,11 @@
                       [hoverStateEnabled]="true"
                       [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
+                      (onOptionChanged)="onGridOptionChanged($event)"
                       (onInitialized)="onInitialized($event)"
                       (onEditingStart)="showActionsMenu($event)"
                       (onRowPrepared)="onRowPrepared($event)"
-                      (onContentReady)="contentReady()"
+                      (onContentReady)="setGridDataLoaded()"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
             <dxi-column dataField="displayName" [caption]="l('Name')" cssClass="clipboard-holder"></dxi-column>

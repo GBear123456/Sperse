@@ -7954,6 +7954,58 @@ export class ContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateXref(body: UpdateContactXrefInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateXref";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateXref(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateXref(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateXref(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -43583,6 +43635,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
+    noWelcomeEmail!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
         if (data) {
@@ -43664,6 +43717,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
+            this.noWelcomeEmail = data["noWelcomeEmail"];
         }
     }
 
@@ -43745,6 +43799,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
+        data["noWelcomeEmail"] = this.noWelcomeEmail;
         return data; 
     }
 }
@@ -43791,6 +43846,7 @@ export interface ICreateOrUpdateContactInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
+    noWelcomeEmail: boolean | undefined;
 }
 
 export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput {
@@ -44369,6 +44425,46 @@ export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateC
 export interface IUpdateContactAffiliateCodeInput {
     contactId: number;
     affiliateCode: string;
+}
+
+export class UpdateContactXrefInput implements IUpdateContactXrefInput {
+    contactId!: number;
+    xref!: string | undefined;
+
+    constructor(data?: IUpdateContactXrefInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.xref = data["xref"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactXrefInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactXrefInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["xref"] = this.xref;
+        return data; 
+    }
+}
+
+export interface IUpdateContactXrefInput {
+    contactId: number;
+    xref: string | undefined;
 }
 
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
@@ -52249,12 +52345,12 @@ export interface ISendTestEmailInput {
 }
 
 export class ImportFullName implements IImportFullName {
-    prefix!: string | undefined;
+    namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
     lastName!: string | undefined;
+    nameSuffix!: string | undefined;
     nickName!: string | undefined;
-    suffix!: string | undefined;
 
     constructor(data?: IImportFullName) {
         if (data) {
@@ -52267,12 +52363,12 @@ export class ImportFullName implements IImportFullName {
 
     init(data?: any) {
         if (data) {
-            this.prefix = data["prefix"];
+            this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
             this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
-            this.suffix = data["suffix"];
         }
     }
 
@@ -52285,23 +52381,23 @@ export class ImportFullName implements IImportFullName {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["prefix"] = this.prefix;
+        data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
         data["nickName"] = this.nickName;
-        data["suffix"] = this.suffix;
         return data; 
     }
 }
 
 export interface IImportFullName {
-    prefix: string | undefined;
+    namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
     lastName: string | undefined;
+    nameSuffix: string | undefined;
     nickName: string | undefined;
-    suffix: string | undefined;
 }
 
 export class ImportAddressInput implements IImportAddressInput {
@@ -52792,6 +52888,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
     systemType!: string | undefined;
     code!: string | undefined;
     name!: string | undefined;
+    level!: string | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -52809,6 +52906,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
             this.systemType = data["systemType"];
             this.code = data["code"];
             this.name = data["name"];
+            this.level = data["level"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -52826,6 +52924,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
         data["systemType"] = this.systemType;
         data["code"] = this.code;
         data["name"] = this.name;
+        data["level"] = this.level;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -52836,6 +52935,7 @@ export interface IImportSubscriptionInput {
     systemType: string | undefined;
     code: string | undefined;
     name: string | undefined;
+    level: string | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }
@@ -55805,6 +55905,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
+    noWelcomeEmail!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
@@ -55885,6 +55986,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
+            this.noWelcomeEmail = data["noWelcomeEmail"];
         }
     }
 
@@ -55965,6 +56067,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
+        data["noWelcomeEmail"] = this.noWelcomeEmail;
         return data; 
     }
 }
@@ -56010,6 +56113,7 @@ export interface ICreateOrUpdateLeadInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
+    noWelcomeEmail: boolean | undefined;
 }
 
 export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
@@ -60454,8 +60558,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
     tenantId!: string | undefined;
+    serviceId!: string | undefined;
+    serviceName!: string | undefined;
     serviceType!: string | undefined;
-    serviceTypeName!: string | undefined;
+    serviceTypeId!: string | undefined;
     systemType!: string | undefined;
     orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
@@ -60480,8 +60586,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.tenantId = data["tenantId"];
+            this.serviceId = data["serviceId"];
+            this.serviceName = data["serviceName"];
             this.serviceType = data["serviceType"];
-            this.serviceTypeName = data["serviceTypeName"];
+            this.serviceTypeId = data["serviceTypeId"];
             this.systemType = data["systemType"];
             this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
@@ -60510,8 +60618,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["tenantId"] = this.tenantId;
+        data["serviceId"] = this.serviceId;
+        data["serviceName"] = this.serviceName;
         data["serviceType"] = this.serviceType;
-        data["serviceTypeName"] = this.serviceTypeName;
+        data["serviceTypeId"] = this.serviceTypeId;
         data["systemType"] = this.systemType;
         data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
@@ -60533,8 +60643,10 @@ export interface IOrderSubscriptionDto {
     endDate: moment.Moment | undefined;
     fee: number | undefined;
     tenantId: string | undefined;
+    serviceId: string | undefined;
+    serviceName: string | undefined;
     serviceType: string | undefined;
-    serviceTypeName: string | undefined;
+    serviceTypeId: string | undefined;
     systemType: string | undefined;
     orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
@@ -60547,6 +60659,7 @@ export interface IOrderSubscriptionDto {
 export class SubscriptionInput implements ISubscriptionInput {
     code!: string;
     name!: string;
+    level!: string | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -60563,6 +60676,7 @@ export class SubscriptionInput implements ISubscriptionInput {
         if (data) {
             this.code = data["code"];
             this.name = data["name"];
+            this.level = data["level"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -60579,6 +60693,7 @@ export class SubscriptionInput implements ISubscriptionInput {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["name"] = this.name;
+        data["level"] = this.level;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -60588,6 +60703,7 @@ export class SubscriptionInput implements ISubscriptionInput {
 export interface ISubscriptionInput {
     code: string;
     name: string;
+    level: string | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }

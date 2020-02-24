@@ -13,6 +13,7 @@
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionEvent"
                  target=".dx-state-hover .dx-link.dx-link-edit"
@@ -44,9 +45,8 @@
         <div class="portlet-body">
             <div id="ClientsTable">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                <dx-data-grid class="main-component-view"
+                <dx-data-grid class="main-component-view limitedPagerTotal"
                               id="gridContainer"
-                              class="limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               [dataSource]="dataSource"
                               [allowColumnReordering]="true"
@@ -56,6 +56,7 @@
                               [loadPanel]="{ enabled: false }"
                               [hoverStateEnabled]="true"
                               [pager]="defaultGridPagerConfig"
+                              (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)"
                               (onCellClick)="onCellClick($event)"
                               (onEditingStart)="showActionsMenu($event)"
@@ -66,11 +67,11 @@
                                    mode="multiple">
                     </dxo-selection>
                     <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-                    <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
+                    <dxi-column [width]="40" cssClass="stars" [fixed]="true" [fixedPosition]="'left'"
                                 [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                     <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column dataField="PhotoPublicId" [caption]=" " cellTemplate="photoTemplate"
+                    <dxi-column dataField="PhotoPublicId" caption="" cellTemplate="photoTemplate"
                                 [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                 [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">
@@ -102,18 +103,20 @@
                         <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                     </div>
                     <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                    <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                    <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false"></dxi-column>
                     <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                        <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
-                            <span *ngIf="appService.checkCFOClientAccessPermission()">
-                                <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
-                            </span>
-                        </ng-container>
-                        <ng-template #verify>
-                            <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
-                                <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
-                            </span>
-                        </ng-template>
+                        <div *ngIf="appService.checkCFOClientAccessPermission()">
+                            <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
+                                <span>
+                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
+                                </span>
+                            </ng-container>
+                            <ng-template #verify>
+                                <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
+                                    <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                </span>
+                            </ng-template>
+                        </div>
                     </div>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                         {{cellData.value | date: formatting.dateTime : userTimezone }}
@@ -132,6 +135,7 @@
     </div>
     <div [hidden]="hidePivotGrid$ | async">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [dataSource]="pivotGridDataSource"
                           [isLoading]="pivotGridDataIsLoading"
                           [height]="contentHeight$ | async">
         </slice-pivot-grid>

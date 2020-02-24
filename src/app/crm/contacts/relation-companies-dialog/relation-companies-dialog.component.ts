@@ -25,10 +25,10 @@ export class RelationCompaniesDialogComponent implements OnInit {
     constructor(
         private relationsServiceProxy: PersonOrgRelationServiceProxy,
         private contactsService: ContactsService,
-        private notify: NotifyService,
+        private notifyService: NotifyService,
         public dialogRef: MatDialogRef<ContactListDialogComponent>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
 
     ngOnInit() {
@@ -60,10 +60,10 @@ export class RelationCompaniesDialogComponent implements OnInit {
                 orgRelation = _.find(orgRelations, orgRelation => orgRelation.id === contact.relation.id);
                 orgRelation.isPrimary = true;
                 this.data.primaryOrganizationContactId = contact.id;
-                this.notify.info(this.ls.l('SavedSuccessfully'));
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.dialogRef.close(contact);
             },
-            (e) => { this.notify.error(e); }
+            e => this.notifyService.error(e)
         );
         event.stopPropagation();
     }

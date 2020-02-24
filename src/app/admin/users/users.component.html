@@ -11,6 +11,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()">
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionRecord"
                  (onItemClick)="onMenuItemClick($event)"
@@ -31,8 +32,9 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onInitialized)="onInitialized($event)"
-                                  (onContentReady)="onContentReady()"
+                                  (onContentReady)="setGridDataLoaded()"
                                   (onCellClick)="editUser($event)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
@@ -43,7 +45,7 @@
 
                         <dxo-editing 
                             mode="popup" 
-                            [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" 
+                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
 
@@ -64,7 +66,7 @@
                         <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="userKey" [caption]="l('UserKey')"></dxi-column>
+                        <dxi-column dataField="userKey" [caption]="l('UserKey')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="isActive" [caption]="l('Active')"></dxi-column>
                         <dxi-column dataField="lastLoginTime" [caption]="l('LastLoginTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>

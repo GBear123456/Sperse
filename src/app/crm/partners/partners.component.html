@@ -13,6 +13,7 @@
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionEvent"
                  (onItemClick)="onMenuItemClick($event)">
@@ -90,6 +91,7 @@
                               [hoverStateEnabled]="true"
                               [loadPanel]="{ enabled: false }"
                               [pager]="defaultGridPagerConfig"
+                              (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)"
                               (onCellClick)="onCellClick($event)"
                               (onEditingStart)="showActionsMenu($event)"
@@ -100,11 +102,11 @@
                                    mode="multiple">
                     </dxo-selection>
                     <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-                    <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
+                    <dxi-column cssClass="stars" [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                 [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                     <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                     <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                    <dxi-column dataField="PhotoPublicId" caption="" cellTemplate="photoTemplate"
                                 [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                 [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">
@@ -154,6 +156,7 @@
     </div>
     <div [hidden]="hidePivotGrid$ | async">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [dataSource]="pivotGridDataSource"
                           [isLoading]="pivotGridDataIsLoading"
                           [height]="contentHeight$ | async">
         </slice-pivot-grid>

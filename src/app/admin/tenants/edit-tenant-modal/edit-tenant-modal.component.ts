@@ -88,7 +88,7 @@ export class EditTenantModalComponent implements OnInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(([editionsGroups, tenantResult]) => {
             this.editionsGroups = editionsGroups;
-            this.initialTenant = tenantResult;
+            this.initialTenant = cloneDeep(tenantResult);
             this.tenant = cloneDeep(tenantResult);
             this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
             this.changeDetectorRef.detectChanges();

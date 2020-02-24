@@ -176,8 +176,9 @@ export class SubscriptionsComponent implements OnInit {
                 ...data,
                 endDate: subscription.endDate,
                 systemType: subscription.systemType,
-                code: subscription.statusCode,
-                name: subscription.serviceTypeName
+                code: subscription.serviceTypeId,
+                name: subscription.serviceType,
+                level: subscription.serviceId
             };
         }
         this.dialog.open(AddSubscriptionDialogComponent, {

@@ -28,7 +28,6 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit {
     @ViewChild(SynchProgressComponent, { static: true }) syncComponent: SynchProgressComponent;
 
-    headlineConfig: any;
     private rootComponent: any;
     createAccountAvailable = false;
 

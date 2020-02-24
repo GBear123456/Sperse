@@ -19,6 +19,7 @@
         <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
         <calendar-button></calendar-button>
     </app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div class="main-wrapper" [ngClass]="{'expanded': categoriesShowed}">
@@ -26,7 +27,7 @@
                     <categorization
                         [hidden]="!toggleTabContent"
                         [width]="'340px'"
-                        [height]="isFullscreenMode ? 'calc(100vh - 150px)': 'calc(100vh - 300px)'"
+                        [height]="isFullscreenMode ? 'calc(100vh - 150px)' : 'calc(100vh - 300px)'"
                         [showTitle]="true"
                         [showHeader]="true"
                         [showClearSelection]="true"
@@ -56,6 +57,7 @@
                                   [height]="gridHeight"
                                   [elementAttr]="{ class: 'with-custom-loader' }"
                                   [columnResizingMode]="'widget'"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)"

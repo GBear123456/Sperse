@@ -18,13 +18,17 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 
 @Component({
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less',
+    styleUrls: [
         '../shared/common/clipboard/clipboard.directive.less',
         '../../node_modules/ng2-image-viewer/imageviewer.scss',
         '../assets/common/styles/spinner.css',
         './shared/layout/layout.less',
-        './shared/dx-customs.less',
-        './shared/core.less',
+        '../shared/common/styles/dx-customs.less',
+        '../shared/common/styles/core.less',
+        '../shared/metronic/m-content.less',
+        '../shared/metronic/m-portlet.less',
+        '../shared/metronic/m-subheader.less',
+        './app.component.less'
     ],
     encapsulation: ViewEncapsulation.None
 })

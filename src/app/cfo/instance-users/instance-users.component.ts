@@ -16,7 +16,7 @@ import { AddInstanceUserDialogComponent } from './add-instance-user-dialog/add-i
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { InstanceServiceProxy, AddUserInput } from '@shared/service-proxies/service-proxies';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './instance-users.component.html',
@@ -27,11 +27,9 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     @ViewChild('userAssignList', { static: true }) userAssignList: StaticListComponent;
     @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
-    currentUserId = abp.session.userId;
     formatting = AppConsts.formatting;
-    lastSearch: string;
-    lookupTimeout;
     contacts = [];
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         private injector: Injector,
@@ -40,10 +38,9 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
         private instanceProxy: InstanceServiceProxy
     ) {
         super(injector);
-
         this.dataSource = new DataSource({
             key: 'userId',
-            load: (loadOptions) => {
+            load: () => {
                 this.startLoading();
                 this.isDataLoaded = false;
                 return this.instanceProxy.getUsers(this.instanceType, this.instanceId).pipe(
@@ -74,7 +71,7 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'after',
                 locateInMenu: 'auto',
@@ -90,7 +87,7 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
                     }
                 ]
             }
-        ]);
+        ];
     }
 
     showAddInstanceUserDialog() {
@@ -134,7 +131,6 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     }
 
     deactivate() {
-        this.appService.updateToolbar(null);
         this.synchProgressComponent.deactivate();
         this.getRootComponent().overflowHidden();
     }

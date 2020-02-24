@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { AppService } from '@app/app.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -19,6 +18,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './language-texts.component.html',
@@ -45,13 +45,13 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         targetValueFilter: undefined
     };
     private filtersModels: FilterModel[];
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
         private languageService: LanguageServiceProxy,
         private filtersService: FiltersService,
-        private dialog: MatDialog,
-        private appService: AppService
+        private dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -176,7 +176,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -259,7 +259,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                     { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
                 ]
             }
-        ]);
+        ];
     }
 
     toggleCompactView() {
@@ -309,6 +309,5 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
         this.filtersService.unsubscribe();
-        this.appService.updateToolbar(null);
     }
 }

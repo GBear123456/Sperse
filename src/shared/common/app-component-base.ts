@@ -196,15 +196,17 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     invalidate() {
-        if (this.dataGrid && this.dataGrid.instance)
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.isDataLoaded = false;
             this.dataGrid.instance.refresh();
+        }
     }
 
     protected setTitle(moduleName: string) {
         this.titleService.setTitle(moduleName);
     }
 
-    protected setGridDataLoaded() {
+    setGridDataLoaded() {
         let gridInstance = this.dataGrid && this.dataGrid.instance;
         if (gridInstance) {
             let dataSource = gridInstance.getDataSource();
@@ -213,6 +215,11 @@ export abstract class AppComponentBase implements OnDestroy {
                 this.totalRowCount = dataSource.totalCount();
             }
         }
+    }
+
+    onGridOptionChanged(event) {
+        if (event.name == "paging" || ['asc', 'desc'].indexOf(event.value) >= 0)
+            this.isDataLoaded = false;
     }
 
     getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null) {

@@ -11,7 +11,6 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { AppService } from '@app/app.service';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
 import { RuleDeleteDialogComponent } from './rule-delete-dialog/rule-delete-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -22,7 +21,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { ClassificationServiceProxy, ApplyToTransactionsOption, InstanceType } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -38,10 +37,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     public ruleTreeListDataSource: DataSource = new DataSource([]);
     private filters: FilterModel[];
     headlineButtons: HeadlineButton[] = [];
+    toolbarConfig: ToolbarGroupModel[];
 
     constructor(
         injector: Injector,
-        private appService: AppService,
         private classificationService: ClassificationServiceProxy,
         public dialog: MatDialog,
         public filtersService: FiltersService
@@ -116,7 +115,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.appService.updateToolbar([
+        this.toolbarConfig = [
             {
                 location: 'before',
                 items: [
@@ -148,7 +147,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     }
                 ]
             }
-        ]);
+        ];
     }
 
     refreshList() {
@@ -221,7 +220,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
-        this.appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
         this.filtersService.unsubscribe();
         super.ngOnDestroy();

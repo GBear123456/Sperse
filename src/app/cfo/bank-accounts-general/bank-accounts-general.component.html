@@ -9,7 +9,7 @@
     </app-headline>
     <div class="content-wrap">
         <setup-steps #setupStep [SelectedStepIndex]="0"></setup-steps>
-        <div [ngClass]="{'frame-wrap': true, 'expanded': !setupStep?.collapsed}">
+        <div [ngClass]="{ 'frame-wrap': true, 'expanded': !setupStep?.collapsed }">
             <router-outlet></router-outlet>
         </div>
     </div>
