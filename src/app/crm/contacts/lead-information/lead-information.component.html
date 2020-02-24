@@ -48,7 +48,7 @@
                         <h3 class="lab {{upperCase(group) == 'TRACKING INFORMATION' ? 'single-content': 'c-info'}}">{{upperCase(group)}}</h3>
                         <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
                             <div class="item-edit-label app">{{startCase(field)}}:</div>
-                            <div class="item-value" *ngIf="formatFieldValue(field, application[group][field]) as value" [title]="value">{{value}}</div>
+                            <div class="item-value app" *ngIf="formatFieldValue(field, application[group][field]) as value" [title]="value">{{value}}</div>
                         </div>
                     </div>
                 </div>
