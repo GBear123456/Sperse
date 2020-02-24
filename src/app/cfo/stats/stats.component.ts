@@ -183,7 +183,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     constructor(
         injector: Injector,
-        private appService: AppService,
         private filtersService: FiltersService,
         private bankAccountService: BankAccountsServiceProxy,
         private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
@@ -192,6 +191,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private lifecycleService: LifecycleSubjectsService,
         private cfoStore$: Store<CfoStore.State>,
         private rootStore$: Store<RootStore.State>,
+        public appService: AppService,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {

@@ -9,7 +9,7 @@
                   (onToggleCompactView)="showCompactRowHeight()"
                   (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="operationsLogsGridContainer">

@@ -67,7 +67,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     constructor(
         injector: Injector,
-        private appService: AppService,
         private filtersService: FiltersService,
         private userServiceProxy: UserServiceProxy,
         private notifyService: NotifyService,
@@ -75,6 +74,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         private permissionService: PermissionServiceProxy,
         private roleService: RoleServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        public appService: AppService,
         public impersonationService: ImpersonationService,
         public dialog: MatDialog
     ) {

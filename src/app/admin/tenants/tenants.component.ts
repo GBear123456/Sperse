@@ -118,13 +118,13 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         injector: Injector,
         private tenantService: TenantServiceProxy,
         private editionService: EditionServiceProxy,
-        private appService: AppService,
         private filtersService: FiltersService,
         private permissionService: PermissionServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
         private dialog: MatDialog,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        public appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

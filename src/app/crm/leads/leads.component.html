@@ -35,7 +35,7 @@
         </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <action-menu [items]="actionMenuItems"
                  [visible]="actionEvent"
                  (onItemClick)="onMenuItemClick($event)">

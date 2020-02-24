@@ -119,7 +119,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     constructor(
         private injector: Injector,
-        private appService: AppService,
         private filtersService: FiltersService,
         private bankAccountService: BankAccountsServiceProxy,
         private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
@@ -128,6 +127,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private lifecycleService: LifecycleSubjectsService,
         private rootStore$: Store<RootStore.State>,
         private cfoStore$: Store<CfoStore.State>,
+        public appService: AppService,
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
@@ -368,7 +368,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     ngAfterViewInit(): void {
-        DataGridService.toggleCompactRowsHeight(this.dataGrid);
         let rootComponent = this.getRootComponent();
         rootComponent.overflowHidden(true);
     }

@@ -14,7 +14,7 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="refreshDataGrid()">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <app-static-list #categoriesComponent
         [width]="'310px'"
         [title]="l('Categories')"
