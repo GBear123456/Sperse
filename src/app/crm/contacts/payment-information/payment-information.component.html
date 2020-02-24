@@ -16,7 +16,7 @@
                 <img src="./assets/common/icons/automatic-payments.svg">
                 {{ ls.l('AutomaticPayments') }}
             </li>
-            <li *ngIf="lastPaymentAmount">
+            <li *ngIf="dispayedPayments$ | async">
                 <img src="./assets/common/icons/last-payment.svg">
                 {{ ls.l('LastPayment', lastPaymentDate, '', lastPaymentAmount | currency:amountCurrency:'symbol': '1.2-2') }}
             </li>

@@ -88,13 +88,18 @@ export class PaymentInformationComponent implements OnInit {
                             tap(paymentInfo => {
                                 this.createPaymentsCache(this.contactService['data'].contactInfo.id);
                                 this.paymentServiceProxy['data'][contactId].payments = paymentInfo.payments;
-                                this.lastPaymentAmount = paymentInfo.lastPaymentAmount;
-                                this.lastPaymentDate = paymentInfo.lastPaymentDate && paymentInfo.lastPaymentDate.utc().format('MMM D');
+                                this.paymentServiceProxy['data'][contactId].lastPaymentAmount = paymentInfo.lastPaymentAmount;
+                                this.paymentServiceProxy['data'][contactId].lastPaymentDate = paymentInfo.lastPaymentDate && paymentInfo.lastPaymentDate.utc().format('MMM D');
                             }),
                             map(paymentInfo => paymentInfo.payments)
                         )).pipe(finalize(() => {abp.ui.clearBusy(this.paymentsContainer.nativeElement); }));
                 }
             ),
+            tap(() => {
+                const contactId = this.contactService['data'].contactInfo.id;
+                this.lastPaymentAmount = this.paymentServiceProxy['data'][contactId].lastPaymentAmount;
+                this.lastPaymentDate = this.paymentServiceProxy['data'][contactId].lastPaymentDate;
+            }),
             publishReplay(),
             refCount()
         );
@@ -137,7 +142,7 @@ export class PaymentInformationComponent implements OnInit {
     private createPaymentsCache(contactId: number) {
         if (!this.paymentServiceProxy['data']) {
             this.paymentServiceProxy['data'] = {
-                [contactId]: { payments: null, paymentMethods: null }
+                [contactId]: { payments: null, lastPaymentAmount: null, lastPaymentDate: null, paymentMethods: null }
             };
         }
     }
