@@ -161,7 +161,11 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                             this.impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
                         }
                     }
-                ].concat(this.optionButtonConfig || [])
+                ]
+            }, optionItem = {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: this.optionButtonConfig ? [this.optionButtonConfig] : []
             };
 
             this.toolbarConfig = this._enabled ? [
@@ -227,10 +231,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                     ]
                 },
                 impersonationItem,
+                optionItem,
                 this.printButtonConfig,
                 this.getNavigationConfig()
             ] : [
                 impersonationItem,
+                optionItem,
                 this.printButtonConfig,
                 this.getNavigationConfig()
             ];
