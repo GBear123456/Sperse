@@ -74,41 +74,181 @@
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
 
-                        <dxi-column dataField="Date" dataType="date" cssClass="tabular" [caption]="l('Transactions_Date')" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column dataField="BusinessEntityId" [caption]="l('Transactions_BusinessEntity')" [lookup]="{allowClearing: false, dataSource: filtersInitialData?.businessEntities, displayExpr: 'name', valueExpr: 'id'}"></dxi-column>
+                        <dxi-column dataField="Date"
+                                    dataType="date"
+                                    cssClass="tabular"
+                                    [caption]="l('Transactions_Date')"
+                                    cellTemplate="dateCell">
+                        </dxi-column>
+                        <dxi-column dataField="BusinessEntityId"
+                                    [caption]="l('Transactions_BusinessEntity')"
+                                    [lookup]="{
+                                        allowClearing: false,
+                                        dataSource: filtersInitialData?.businessEntities,
+                                        displayExpr: 'name',
+                                        valueExpr: 'id'
+                                    }">
+                        </dxi-column>
                         <dxi-column [caption]="l('Transactions_CashflowCategoryName')"
                                     dataField="CashflowCategoryName"
                                     dataType="string"
                                     cellTemplate="CashflowCategoryNameTemplate"
                                     cssClass="category">
                         </dxi-column>
-                        <dxi-column dataField="CounterpartyName" dataType="string" [caption]="l('Transactions_Vendor')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Description" cssClass="description-column" dataType="string" cellTemplate="descriptionTemplate" [caption]="l('Transactions_Description')"></dxi-column>
-                        <dxi-column dataField="Amount" dataType="number" cssClass="tabular" name="Amount" [caption]="l('Transactions_Amount')" cellTemplate="amountTemplate"></dxi-column>
-                        <dxi-column dataField="BankAccountNumber" cssClass="tabular clipboard-holder" [caption]="l('Transactions_BankAccountNumber')" [lookup]="{allowClearing: false, dataSource: bankAccountsLookup, displayExpr: 'accountName', valueExpr: 'accountNumber'}"></dxi-column>
-                        <dxi-column dataField="Comments" dataType="string" [caption]="l('Transactions_Comments')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="CounterpartyName"
+                                    dataType="string"
+                                    [caption]="l('Transactions_Vendor')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="Description"
+                                    cssClass="description-column"
+                                    dataType="string"
+                                    cellTemplate="descriptionTemplate"
+                                    [caption]="l('Transactions_Description')">
+                        </dxi-column>
+                        <dxi-column dataField="Amount"
+                                    dataType="number"
+                                    cssClass="tabular"
+                                    name="Amount"
+                                    [caption]="l('Transactions_Amount')"
+                                    cellTemplate="amountTemplate">
+                        </dxi-column>
+                        <dxi-column dataField="BankAccountId"
+                                    cssClass="tabular clipboard-holder"
+                                    [caption]="l('Transactions_BankAccountNumber')"
+                                    [lookup]="{
+                                        allowClearing: false,
+                                        dataSource: bankAccountsLookup,
+                                        displayExpr: 'accountName',
+                                        valueExpr: 'id'
+                                    }">
+                        </dxi-column>
+                        <dxi-column dataField="Comments"
+                                    dataType="string"
+                                    [caption]="l('Transactions_Comments')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
 
-                        <dxi-column dataField="CategoryName" dataType="string" [caption]="l('Transactions_CategoryName')" [lookup]="{dataSource: categories}" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CashflowSubCategoryName" dataType="string" [caption]="l('Transactions_CashflowSubCategoryName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="EndingBalance" dataType="number" cssClass="tabular" [caption]="l('Transactions_EndingBalance')" cellTemplate="endBalanceTemplate" [visible]="false"></dxi-column>
-                        <dxi-column dataField="CashFlowTypeName" dataType="string" cellTemplate="CashFlowTypeNameTemplate" cssClass="cashflow-type" alignment="center"
-                            [lookup]="{dataSource: ['Inflows', 'Outflows']}" [visible]="false" [caption]="l('Transactions_CashFlowType')"></dxi-column>
-                        <dxi-column dataField="AccountingTypeName" dataType="string" [caption]="l('Transactions_AccountingTypeName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Descriptor" dataType="string" [caption]="l('Transactions_Descriptor')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="BankAccountBankName" dataType="string" [caption]="l('Transactions_BankName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Id" cssClass="tabular id-column clipboard-holder" [caption]="l('Transactions_Id')" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
-                        <dxi-column dataField="BankCode" [caption]="l('Transactions_BankCode')" [visible]="false" [filterOperations]="'='" cssClass="clipboard-holder"></dxi-column>
-
-                        <dxi-column dataField="IsPending" [caption]="l('Transactions_IsPending')" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
-                        <dxi-column dataField="MonthYear" [caption]="l('Transactions_MonthYear')" cellTemplate="dateMonthYear" groupCellTemplate="dateMonthYear" calculateSortValue="Date" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Debit" dataType="number" cssClass="tabular" name="Debit" [caption]="l('Transactions_Debit')" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Credit" dataType="number" cssClass="tabular" name="Credit" [caption]="l('Transactions_Credit')" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
-                        <dxi-column dataField="BankAccountTypeName" [caption]="l('Transactions_BankAccountType')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Currency" [caption]="l('Transactions_Currency')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Fees" dataType="number" cssClass="tabular clipboard-holder" [caption]="l('Transactions_Fees')" [visible]="false"></dxi-column>
-                        <dxi-column dataField="TypeName" [caption]="l('Transactions_Type')" [visible]="false" [lookup]="{dataSource: types}" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ProviderCashFlowCategoryName" [caption]="l('Transactions_ProviderCashFlowCategory')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ProviderCashFlowSubCategoryName" [caption]="l('Transactions_ProviderCashFlowSubCategory')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="CategoryName"
+                                    dataType="string"
+                                    [caption]="l('Transactions_CategoryName')"
+                                    [lookup]="{ dataSource: categories }"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="CashflowSubCategoryName"
+                                    dataType="string"
+                                    [caption]="l('Transactions_CashflowSubCategoryName')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="EndingBalance"
+                                    dataType="number"
+                                    cssClass="tabular"
+                                    [caption]="l('Transactions_EndingBalance')"
+                                    cellTemplate="endBalanceTemplate"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="CashFlowTypeName"
+                                    dataType="string"
+                                    cellTemplate="CashFlowTypeNameTemplate"
+                                    cssClass="cashflow-type"
+                                    alignment="center"
+                                    [lookup]="{ dataSource: ['Inflows', 'Outflows'] }"
+                                    [visible]="false"
+                                    [caption]="l('Transactions_CashFlowType')">
+                        </dxi-column>
+                        <dxi-column dataField="AccountingTypeName"
+                                    dataType="string"
+                                    [caption]="l('Transactions_AccountingTypeName')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="Descriptor"
+                                    dataType="string"
+                                    [caption]="l('Transactions_Descriptor')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="BankAccountBankName"
+                                    dataType="string"
+                                    [caption]="l('Transactions_BankName')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="Id"
+                                    cssClass="tabular id-column clipboard-holder"
+                                    [caption]="l('Transactions_Id')"
+                                    sortOrder="desc"
+                                    sortIndex="0"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="BankCode"
+                                    [caption]="l('Transactions_BankCode')"
+                                    [visible]="false"
+                                    [filterOperations]="'='"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="IsPending"
+                                    [caption]="l('Transactions_IsPending')"
+                                    [visible]="false"
+                                    cellTemplate="isPendingTemplate">
+                        </dxi-column>
+                        <dxi-column dataField="MonthYear"
+                                    [caption]="l('Transactions_MonthYear')"
+                                    cellTemplate="dateMonthYear"
+                                    groupCellTemplate="dateMonthYear"
+                                    calculateSortValue="Date"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="Debit"
+                                    dataType="number"
+                                    cssClass="tabular"
+                                    name="Debit"
+                                    [caption]="l('Transactions_Debit')"
+                                    cellTemplate="amountTemplate"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="Credit"
+                                    dataType="number"
+                                    cssClass="tabular"
+                                    name="Credit"
+                                    [caption]="l('Transactions_Credit')"
+                                    cellTemplate="amountTemplate"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="BankAccountTypeName"
+                                    [caption]="l('Transactions_BankAccountType')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="Currency"
+                                    [caption]="l('Transactions_Currency')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="Fees"
+                                    dataType="number"
+                                    cssClass="tabular clipboard-holder"
+                                    [caption]="l('Transactions_Fees')"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="TypeName"
+                                    [caption]="l('Transactions_Type')"
+                                    [visible]="false"
+                                    [lookup]="{dataSource: types}"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ProviderCashFlowCategoryName"
+                                    [caption]="l('Transactions_ProviderCashFlowCategory')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ProviderCashFlowSubCategoryName"
+                                    [caption]="l('Transactions_ProviderCashFlowSubCategory')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
                         <dxi-column dataField="Department"
                                     cssClass="clipboard-holder"
                                     [caption]="l('Transactions_Department')"
