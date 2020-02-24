@@ -1,19 +1,12 @@
 /** Core imports */
-import {
-    Component,
-    OnInit,
-    AfterViewInit,
-    OnDestroy,
-    Injector,
-    ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
+import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { takeUntil, pluck, filter, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
+import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -43,6 +36,10 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { OrderType } from '@app/crm/orders/order-type.enum';
+import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
+import { CacheService } from '@node_modules/ng2-cache-service';
+import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -50,7 +47,8 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     providers: [ PipelineService, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild('ordersGrid') ordersGrid: DxDataGridComponent;
+    @ViewChild('subscriptionsGrid') subscriptionsGrid: DxDataGridComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
     items: any;
@@ -68,30 +66,496 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     set selectedOrders(orders) {
         this._selectedOrders = orders;
         this.selectedOrderKeys = orders.map((item) => item.Id);
-        this.initToolbarConfig();
+        //this.initToolbarConfig();
     }
 
-    manageDisabled = true;
+    manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
     filterModelStages: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
-    private readonly dataSourceURI = 'Order';
+    private readonly ordersDataSourceURI = 'Order';
+    private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
+    private ordersFilters: FilterModel[] = [
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'creation',
+            field: 'OrderDate',
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+        }),
+        this.filterModelStages = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'orderStages',
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({ purpose: AppConsts.PipelinePurposeIds.order }))),
+                        nameField: 'name',
+                        parentExpr: 'parentId',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterDropDownComponent,
+            caption: 'paymentType',
+            items: {
+                paymentType: new FilterDropDownModel({
+                    elements: null,
+                    filterField: 'paymentTypeId',
+                    onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
+                        filter.items['paymentType'].value = event && event.value;
+                    }
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'product',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'orderTotals',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'currencies',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'recurrence',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'regions',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'zipCode',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'referringAffiliates',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'referringWebsites',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'utmSources',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'utmMediums',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'UtmCampaings',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'entryPages',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'salesAgents',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'cardBins',
+            items: {}
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'Amount',
+            field: 'Amount',
+            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        })
+    ];
+    private subscriptionsFilters: FilterModel[] = [
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'ContactDate',
+            field: 'ContactDate',
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+        }),
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'StartDate',
+            field: 'StartDate',
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+        }),
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'EndDate',
+            field: 'EndDate',
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'StatusId',
+            field: 'StatusId',
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource: Object.keys(SubscriptionsStatus).map((status: string) => ({
+                            id: SubscriptionsStatus[status],
+                            name: status
+                        })),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'Amount',
+            field: 'Amount',
+            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        })
+    ];
     private filterChanged = false;
     masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
-    public headlineButtons: HeadlineButton[] = [
+    private _headlineButtons: HeadlineButton[] = [
         {
             enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
             action: this.createInvoice.bind(this),
             label: this.l('CreateInvoice')
+        },
+        {
+            enabled: this.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement),
+            action: this.createSubscription.bind(this),
+            label: this.l('CreateSubscription')
         }
     ];
+    headlineButtons = this._headlineButtons[0];
     permissions = AppPermissions;
     currency: string;
     totalCount: number;
+    ordersToolbarConfig: ToolbarGroupModel[] = [
+        {
+            location: 'before', items: [
+                {
+                    name: 'filters',
+                    action: () => {
+                        setTimeout(() => {
+                            this.dataGrid.instance.repaint();
+                        }, 1000);
+                        this.filtersService.fixed = !this.filtersService.fixed;
+                    },
+                    options: {
+                        checkPressed: () => {
+                            return this.filtersService.fixed;
+                        },
+                        mouseover: () => {
+                            this.filtersService.enable();
+                        },
+                        mouseout: () => {
+                            if (!this.filtersService.fixed)
+                                this.filtersService.disable();
+                        }
+                    },
+                    attr: {
+                        'filter-selected': this.filtersService.hasFilterSelected
+                    }
+                }
+            ]
+        },
+        {
+            location: 'before',
+            items: [
+                {
+                    name: 'search',
+                    widget: 'dxTextBox',
+                    options: {
+                        width: '279',
+                        mode: 'search',
+                        value: this.searchValue,
+                        placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                        onValueChanged: (e) => {
+                            this.searchValueChange(e);
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            location: 'before',
+            locateInMenu: 'auto',
+            items: [
+                {
+                    name: 'assign',
+                    disabled: this.manageDisabled
+                },
+                {
+                    name: 'stage',
+                    action: this.toggleStages.bind(this),
+                    disabled: this.manageDisabled,
+                    attr: {
+                        'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                    }
+                }
+            ]
+        },
+        {
+            location: 'before',
+            locateInMenu: 'auto',
+            items: [{
+                name: 'delete',
+                disabled: this.manageDisabled || !this.selectedOrderKeys.length,
+                action: this.deleteOrders.bind(this)
+            }]
+        },
+        {
+            location: 'after',
+            locateInMenu: 'auto',
+            items: [{
+                name: 'rules',
+                options: {
+                    text: this.l('Settings')
+                },
+                visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                action: this.invoiceSettings.bind(this)
+            }]
+        },
+        {
+            location: 'after',
+            locateInMenu: 'auto',
+            items: [
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportToXLS.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: this.exportToCSV.bind(this),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportToGoogleSheet.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }, { type: 'downloadOptions' }]
+                    }
+                },
+                {
+                    name: 'columnChooser',
+                    action: () => DataGridService.showColumnChooser(this.dataGrid),
+                    disabled: this.showPipeline
+                }
+            ]
+        },
+        {
+            location: 'after',
+            locateInMenu: 'auto',
+            areItemsDependent: true,
+            items: [
+                // {
+                //     name: 'box',
+                //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                //     options: {
+                //         checkPressed: () => {
+                //             return (this.dataLayoutType == DataLayoutType.Box);
+                //         },
+                //     }
+                // },
+                {
+                    name: 'pipeline',
+                    action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                    options: {
+                        checkPressed: () => {
+                            return (this.dataLayoutType == DataLayoutType.Pipeline);
+                        },
+                    }
+                },
+                {
+                    name: 'dataGrid',
+                    action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
+                    options: {
+                        checkPressed: () => {
+                            return (this.dataLayoutType == DataLayoutType.DataGrid);
+                        },
+                    }
+                }
+            ]
+        }
+    ];
     toolbarConfig: ToolbarGroupModel[];
+    subscriptionsToolbarConfig: ToolbarGroupModel[] = [
+        {
+            location: 'before',
+            items: [
+                {
+                    name: 'filters',
+                    action: () => {
+                        setTimeout(() => {
+                            this.dataGrid.instance.repaint();
+                        }, 1000);
+                        this.filtersService.fixed = !this.filtersService.fixed;
+                    },
+                    options: {
+                        checkPressed: () => {
+                            return this.filtersService.fixed;
+                        },
+                        mouseover: () => {
+                            this.filtersService.enable();
+                        },
+                        mouseout: () => {
+                            if (!this.filtersService.fixed)
+                                this.filtersService.disable();
+                        }
+                    },
+                    attr: {
+                        'filter-selected': this.filtersService.hasFilterSelected
+                    }
+                }
+            ]
+        },
+        {
+            location: 'before',
+            items: [
+                {
+                    name: 'search',
+                    widget: 'dxTextBox',
+                    options: {
+                        width: '279',
+                        mode: 'search',
+                        value: this.searchValue,
+                        placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                        onValueChanged: (e) => {
+                            this.searchValueChange(e);
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            location: 'after',
+            locateInMenu: 'auto',
+            items: [
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportToXLS.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: this.exportToCSV.bind(this),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportToGoogleSheet.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }, { type: 'downloadOptions' }]
+                    }
+                },
+                {
+                    name: 'columnChooser',
+                    action: () => DataGridService.showColumnChooser(this.dataGrid),
+                    disabled: this.showPipeline
+                }
+            ]
+        }
+    ];
+    orderTypesEnum = OrderType;
+    orderTypes = [
+        {
+            text: this.l('Orders'),
+            value: OrderType.Order
+        },
+        {
+            text: this.l('Subscriptions'),
+            value: OrderType.Subscription
+        }
+    ];
+    selectedOrderType = OrderType.Order;
+    private readonly ORDER_TYPE_CACHE_KEY = 'ORDER_TYPE';
+    ordersDataSource = {
+        uri: this.ordersDataSourceURI,
+        requireTotalCount: true,
+        store: {
+            key: 'Id',
+            type: 'odata',
+            url: this.getODataUrl(this.ordersDataSourceURI),
+            version: AppConsts.ODataVersion,
+            deserializeDates: false,
+            beforeSend: function (request) {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            },
+            paginate: true
+        }
+    };
+    subscriptionsDataSource = {
+        uri: this.subscriptionsDataSourceURI,
+        requireTotalCount: true,
+        store: {
+            key: 'Id',
+            type: 'odata',
+            url: this.getODataUrl(this.subscriptionsDataSourceURI),
+            version: AppConsts.ODataVersion,
+            deserializeDates: false,
+            beforeSend: function (request) {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            },
+            paginate: true
+        }
+    };
 
     constructor(injector: Injector,
         private orderProxy: OrderServiceProxy,
@@ -101,27 +565,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private pipelineService: PipelineService,
         private itemDetailsService: ItemDetailsService,
         private store$: Store<CrmStore.State>,
+        private cacheService: CacheService,
         public appService: AppService,
         public dialog: MatDialog,
     ) {
         super(injector);
-
-        this.dataSource = {
-            uri: this.dataSourceURI,
-            requireTotalCount: true,
-            store: {
-                key: 'Id',
-                type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
-                version: AppConsts.ODataVersion,
-                deserializeDates: false,
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                },
-                paginate: true
-            }
-        };
-
         invoicesService.settings$.subscribe(res => this.currency = res.currency);
         this._activatedRoute.queryParams.pipe(
             takeUntil(this.destroy$),
@@ -130,18 +578,26 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             filter(Boolean)
         ).subscribe(() => this.invalidate());
 
-        this.initToolbarConfig();
+        //this.initToolbarConfig();
     }
 
     ngOnInit() {
         this.activate();
     }
 
+    get dataGrid() {
+        return this.selectedOrderType === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
+    }
+
+    get dataSource() {
+        return this.selectedOrderType === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
+    }
+
     toggleToolbar() {
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
         this.filtersService.fixed = false;
         this.filtersService.disable();
-        this.initToolbarConfig();
+        //this.initToolbarConfig();
     }
 
     ngAfterViewInit(): void {
@@ -149,16 +605,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     initDataSource() {
-        if (this.showPipeline) {
-            if (!this.pipelineDataSource)
-                setTimeout(() => { this.pipelineDataSource = this.dataSource; });
-        } else {
-            this.setDataGridInstance();
+        if (this.selectedOrderType === OrderType.Order) {
+            if (this.showPipeline) {
+                if (!this.pipelineDataSource)
+                    setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
+            } else {
+                this.setDataGridInstance(this.ordersGrid);
+            }
+        } else if (this.selectedOrderType === OrderType.Subscription) {
+            this.setDataGridInstance(this.subscriptionsGrid);
         }
     }
 
-    setDataGridInstance() {
-        let instance = this.dataGrid && this.dataGrid.instance;
+    setDataGridInstance(dataGrid: DxDataGridComponent) {
+        let instance = dataGrid && dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
         }
@@ -183,7 +643,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        this.initToolbarConfig();
+        //this.initToolbarConfig();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
         else {
@@ -196,307 +656,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     }
 
-    initFilterConfig(): void {
-        if (this.filters) {
+    initFilterConfig(hardUpdate = false): void {
+        if (!hardUpdate && this.filters) {
             this.filtersService.setup(this.filters);
             this.filtersService.checkIfAnySelected();
         } else {
-            this.filtersService.setup(this.filters = [
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'creation',
-                    field: 'OrderDate',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-                }),
-                this.filterModelStages = new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'orderStages',
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({ purpose: AppConsts.PipelinePurposeIds.order }))),
-                                nameField: 'name',
-                                parentExpr: 'parentId',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterDropDownComponent,
-                    caption: 'paymentType',
-                    items: {
-                        paymentType: new FilterDropDownModel({
-                            elements: null,
-                            filterField: 'paymentTypeId',
-                            onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items['paymentType'].value = event && event.value;
-                            }
-                        })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'product',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'orderTotals',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'currencies',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'recurrence',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'regions',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'zipCode',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'referringAffiliates',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'referringWebsites',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'utmSources',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'utmMediums',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'UtmCampaings',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'entryPages',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'salesAgents',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'cardBins',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'Amount',
-                    field: 'Amount',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                })
-            ]);
+            this.filtersService.setup(this.filters = this.selectedOrderType === OrderType.Order
+                ? this.ordersFilters
+                : this.subscriptionsFilters
+            );
         }
         this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
-            this.initToolbarConfig();
             this.processFilterInternal();
         });
-    }
-
-    initToolbarConfig() {
-        if (this.componentIsActivated) {
-            this.manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-            this.toolbarConfig = [
-                {
-                    location: 'before', items: [
-                        {
-                            name: 'filters',
-                            action: () => {
-                                setTimeout(() => {
-                                    this.dataGrid.instance.repaint();
-                                }, 1000);
-                                this.filtersService.fixed = !this.filtersService.fixed;
-                            },
-                            options: {
-                                checkPressed: () => {
-                                    return this.filtersService.fixed;
-                                },
-                                mouseover: () => {
-                                    this.filtersService.enable();
-                                },
-                                mouseout: () => {
-                                    if (!this.filtersService.fixed)
-                                        this.filtersService.disable();
-                                }
-                            },
-                            attr: {
-                                'filter-selected': this.filtersService.hasFilterSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'search',
-                            widget: 'dxTextBox',
-                            options: {
-                                width: '279',
-                                mode: 'search',
-                                value: this.searchValue,
-                                placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
-                                onValueChanged: (e) => {
-                                    this.searchValueChange(e);
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'assign',
-                            disabled: this.manageDisabled
-                        },
-                        {
-                            name: 'stage',
-                            action: this.toggleStages.bind(this),
-                            disabled: this.manageDisabled,
-                            attr: {
-                                'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [{
-                        name: 'delete',
-                        disabled: this.manageDisabled || !this.selectedOrderKeys.length,
-                        action: this.deleteOrders.bind(this)
-                    }]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [{
-                        name: 'rules',
-                        options: {
-                            text: this.l('Settings')
-                        },
-                        visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
-                        action: this.invoiceSettings.bind(this)
-                    }]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [{
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                }, {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                }, {
-                                    action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet'
-                                }, {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                }, { type: 'downloadOptions' }]
-                            }
-                        },
-                        {
-                            name: 'columnChooser',
-                            action: () => DataGridService.showColumnChooser(this.dataGrid),
-                            disabled: this.showPipeline
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    areItemsDependent: true,
-                    items: [
-                        // {
-                        //     name: 'box',
-                        //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                        //     options: {
-                        //         checkPressed: () => {
-                        //             return (this.dataLayoutType == DataLayoutType.Box);
-                        //         },
-                        //     }
-                        // },
-                        {
-                            name: 'pipeline',
-                            action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                            options: {
-                                checkPressed: () => {
-                                    return (this.dataLayoutType == DataLayoutType.Pipeline);
-                                },
-                            }
-                        },
-                        {
-                            name: 'dataGrid',
-                            action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
-                            options: {
-                                checkPressed: () => {
-                                    return (this.dataLayoutType == DataLayoutType.DataGrid);
-                                },
-                            }
-                        }
-                    ]
-                }
-            ];
-        }
     }
 
     toggleStages() {
@@ -511,16 +685,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     processFilterInternal() {
         let context: any = this;
-        if (this.showPipeline && this.pipelineComponent) {
+        let dataGrid = this.selectedOrderType === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
+        if (this.selectedOrderType === OrderType.Order && this.showPipeline && this.pipelineComponent) {
             context = this.pipelineComponent;
             context.searchColumns = this.searchColumns;
             context.searchValue = this.searchValue;
-        } else if (!this.dataGrid)
+        } else if (!dataGrid)
             return ;
 
         context.processODataFilter.call(context,
-            this.dataGrid.instance,
-            this.dataSourceURI,
+            dataGrid.instance,
+            this.selectedOrderType === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
             this.filters,
             this.filtersService.getCheckCustom
         );
@@ -529,7 +704,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
-            this.initToolbarConfig();
+            //this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
@@ -543,7 +718,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 name: stage.name,
             };
         });
-        this.initToolbarConfig();
+        //this.initToolbarConfig();
     }
 
     onShowingPopup(e) {
@@ -592,6 +767,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
+    createSubscription() {
+        this.dialog.open(AddSubscriptionDialogComponent, {
+            panelClass: ['slider'],
+            disableClose: false,
+            hasBackdrop: false,
+            closeOnNavigation: true
+        });
+    }
+
     invoiceSettings() {
         this.contactsService.showInvoiceSettingsDialog();
     }
@@ -600,7 +784,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         super.activate();
 
         this.initFilterConfig();
-        this.initToolbarConfig();
+        //this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -672,6 +856,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.filterChanged = true;
         });
+    }
+
+    onContactGroupChanged(event) {
+        if (event.previousValue != event.value) {
+            this.totalCount = null;
+            this.headlineButtons[0] = this._headlineButtons[event.value];
+            this.cacheService.set(this.getCacheKey(this.ORDER_TYPE_CACHE_KEY), event.value);
+            this.filterChanged = true;
+            this.initFilterConfig(true);
+            setTimeout(() => {
+                this.initDataSource();
+                this.processFilterInternal();
+            });
+            //this.initToolbarConfig();
+        }
     }
 
     deactivate() {
