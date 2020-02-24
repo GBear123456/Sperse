@@ -36,7 +36,7 @@
                 endDateTimeZoneExpr="fieldTimeZone"
                 dropDownAppointmentTemplate="appointmentDropDown"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
-                (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
+                (onAppointmentFormOpening)="onAppointmentFormCreated($event)">
                 <div *dxTemplate="let appointment of 'appointmentDropDown'">
                     <div class="appointment-content">
                         <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment.Type[0]}}</div>
