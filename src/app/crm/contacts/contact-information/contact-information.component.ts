@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ContactsService } from '../contacts.service';
 import { ContactServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PersonalDetailsDialogComponent } from '../personal-details/personal-details-dialog/personal-details-dialog.component';
+import { PersonalDetailsService } from '../personal-details/personal-details.service';
 
 @Component({
     selector: 'contact-information',
@@ -24,14 +24,15 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private contactsService: ContactsService,
         private contactService: ContactServiceProxy,
+        private personalDetailsService: PersonalDetailsService,
         public ls: AppLocalizationService
     ) {
         this.contactsService.contactInfoSubscribe(() => {
-            this.showPersonalDetailsDialog();
+            this.personalDetailsService.showPersonalDetailsDialog();
             setTimeout(() => this.contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
-                    action: this.showPersonalDetailsDialog.bind(this)
+                    action: this.personalDetailsService.showPersonalDetailsDialog.bind(this)
                 }
             }));
         });
@@ -39,18 +40,6 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.data = this.contactService['data'];
-    }
-
-    showPersonalDetailsDialog() {
-        setTimeout(() =>
-            this.dialog.open(PersonalDetailsDialogComponent, {
-                panelClass: ['slider'],
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {}
-            })
-        );
     }
 
     ngOnDestroy() {

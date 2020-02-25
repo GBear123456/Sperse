@@ -30,7 +30,7 @@ import {
     TimingServiceProxy,
     UpdatePersonInfoInput
 } from 'shared/service-proxies/service-proxies';
-import { PersonalDetailsDialogComponent } from './personal-details-dialog/personal-details-dialog.component';
+import { PersonalDetailsService } from './personal-details.service';
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
@@ -100,6 +100,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private personContactService: PersonContactServiceProxy,
         private dictionaryProxy: DictionaryServiceProxy,
         private clipboardService: ClipboardService,
+        private personalDetailsService: PersonalDetailsService,
         private asyncPipe: AsyncPipe,
         public dialog: MatDialog,
         public ls: AppLocalizationService
@@ -113,10 +114,10 @@ export class PersonalDetailsComponent implements OnDestroy {
             setTimeout(() => this.contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
-                    action: this.showPersonalDetailsDialog.bind(this)
+                    action: () => this.personalDetailsService.showPersonalDetailsDialog()
                 }
             }));
-            this.showPersonalDetailsDialog();
+            this.personalDetailsService.showPersonalDetailsDialog();
             this.changeDetector.markForCheck();
         }, this.constructor.name);
 
@@ -243,18 +244,6 @@ export class PersonalDetailsComponent implements OnDestroy {
             event.event.preventDefault();
             event.event.stopPropagation();
         }
-    }
-
-    showPersonalDetailsDialog() {
-        setTimeout(() =>
-            this.dialog.open(PersonalDetailsDialogComponent, {
-                panelClass: ['slider'],
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {}
-            })
-        );
     }
 
     saveToClipboard(event, value) {
