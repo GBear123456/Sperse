@@ -153,28 +153,35 @@
                       [loadPanel]="{ enabled: false }"
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
+                      [hoverStateEnabled]="true"
                       [allowColumnResizing]="true"
+                      (onCellClick)="onCellClick($event, 'subscriptions')"
                       (onContentReady)="onContentReady($event)">
             <dxo-sorting mode="multiple"></dxo-sorting>
-            <dxi-column dataField="ContactId" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="FirstName" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="LastName" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="EmailAddress" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="PhoneNumber" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="City" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="StateName" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="Zip" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="CountryCode" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="PersonalAffiliateCode" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="ContactDate" cssClass="clipboard-holder" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="ServiceType" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="ServiceName" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="StartDate" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="EndDate" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="Amount" cellTemplate="amountTemplate" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="StatusName" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="LeadId" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="SourceAffiliateCode" cssClass="clipboard-holder"></dxi-column>
+            <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxi-column dataField="ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <dxi-column dataField="FirstName" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="LastName" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="EmailAddress" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="PhoneNumber" [caption]="l('Contact.Phone')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <dxi-column dataField="StateName" [caption]="l('Contact.State')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <dxi-column dataField="Zip" [caption]="l('Contact.Zip')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <dxi-column dataField="CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <dxi-column dataField="ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell"></dxi-column>
+            <dxi-column dataField="ServiceType" [caption]="l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
+            <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
+            <dxi-column dataField="Amount" [caption]="l('Amount')" cellTemplate="amountTemplate"></dxi-column>
+            <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="LeadId" [caption]="l('LeadId')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{cellData.value | date: formatting.date : userTimezone }}
             </div>
