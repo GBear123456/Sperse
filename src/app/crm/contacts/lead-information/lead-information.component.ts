@@ -164,6 +164,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {
         contactsService.contactInfoSubscribe(() => {
+            this.showOrgUnitsDialog();
             setTimeout(() => contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',

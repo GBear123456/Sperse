@@ -116,6 +116,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                     action: this.showPersonalDetailsDialog.bind(this)
                 }
             }));
+            this.showPersonalDetailsDialog();
             this.changeDetector.markForCheck();
         }, this.constructor.name);
 
