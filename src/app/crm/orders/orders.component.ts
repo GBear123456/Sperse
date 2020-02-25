@@ -741,7 +741,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    onCardClick({entity, entityStageDataSource, loadMethod, section}) {
+    onCardClick({entity, entityStageDataSource, loadMethod, section = 'invoices'}) {
         if (entity && entity.ContactId) {
             this.searchClear = false;
             this._router.navigate(

@@ -1,7 +1,7 @@
-<div class="bestValue" *ngIf="bestValue"><span>{{ l('BestValue') }}</span></div>
+<div class="bestValue" *ngIf="bestValue"><span>{{ ls.l('BestValue') }}</span></div>
 <div class="cardHeader">
     <h3 class="title">{{ name }}</h3>
-    <div class="includesUsers">{{ l('PlanIncludesUsers', displayedUsersAmount) }}</div>
+    <div class="includesUsers">{{ ls.l('PlanIncludesUsers', displayedUsersAmount) }}</div>
     <div class="price-block">
         <div class="amountPerMonth">
             <span class="currency-symbol">{{ currencySymbol }}</span>
@@ -10,7 +10,7 @@
             </span>
             <div class="number-info">
                 <span class="decimal">{{ pricePerMonth | customNumber: '0.2-2' }}</span>
-                <span>{{ billingPeriod === 0 ? l('priceMonthly') : l('priceAnnually') }}</span>
+                <span>{{ billingPeriod === 0 ? ls.l('priceMonthly') : ls.l('priceAnnually') }}</span>
             </div>
         </div>
         <div class="amountPerUser">
@@ -19,7 +19,7 @@
                 <span class="priceNumber">{{ pricePerUserPerMonth | customNumber : '1.0-0' | currency: 'USD' : '' : '1.0-0'}}</span>.<span class="decimal">{{ pricePerUserPerMonth | customNumber : '0.2-2' }}</span>
             </div>
             <div class="bottom">
-                <span>{{ l('mo/seat')}}</span>
+                <span>{{ ls.l('mo/seat')}}</span>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
     <ul [ngClass]="{ lowerMargin: features.length > 10 }">
         <li *ngFor="let feature of features" [ngClass]="{ disabled: feature.definition.disabled }">
             <img [src]="baseUrl + 'assets/common/icons/feature-' + (feature.definition.disabled ? 'grey-disabled' : 'enabled') + '.svg'">
-            {{ localizationService.ls(feature.definition.displayName.sourceName, feature.definition.displayName.name) }}
+            {{ ls.ls(feature.definition.displayName.sourceName, feature.definition.displayName.name) }}
             {{ getFeatureValue(feature) }}
             {{ feature.definition.measurementUnit ? ' ' + feature.definition.measurementUnit : '' }}
         </li>
