@@ -6,7 +6,7 @@
                   [showReloadButton]="true"
                   (onToggleCompactView)="toggleContactView()"
                   (onToggleToolbar)="toggleToolbar()"
-                  (onReload)="processFilterInternal()">
+                  (onReload)="invalidate()">
         <div class="order-types">
             <dx-select-box accessKey="orderTypes"
                            displayExpr="text"

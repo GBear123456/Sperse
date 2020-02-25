@@ -65,6 +65,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     set selectedOrders(orders) {
         this._selectedOrders = orders;
         this.selectedOrderKeys = orders.map((item) => item.Id);
+        this.initOrdersToolbarConfig();
     }
 
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
@@ -266,163 +267,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     permissions = AppPermissions;
     currency: string;
     totalCount: number;
-    ordersToolbarConfig: ToolbarGroupModel[] = [
-        {
-            location: 'before', items: [
-                {
-                    name: 'filters',
-                    action: () => {
-                        setTimeout(() => {
-                            this.dataGrid.instance.repaint();
-                        }, 1000);
-                        this.filtersService.fixed = !this.filtersService.fixed;
-                    },
-                    options: {
-                        checkPressed: () => {
-                            return this.filtersService.fixed;
-                        },
-                        mouseover: () => {
-                            this.filtersService.enable();
-                        },
-                        mouseout: () => {
-                            if (!this.filtersService.fixed)
-                                this.filtersService.disable();
-                        }
-                    },
-                    attr: {
-                        'filter-selected': this.filtersService.hasFilterSelected
-                    }
-                }
-            ]
-        },
-        {
-            location: 'before',
-            items: [
-                {
-                    name: 'search',
-                    widget: 'dxTextBox',
-                    options: {
-                        width: '279',
-                        mode: 'search',
-                        value: this.searchValue,
-                        placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
-                        onValueChanged: (e) => {
-                            this.searchValueChange(e);
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            location: 'before',
-            locateInMenu: 'auto',
-            items: [
-                {
-                    name: 'assign',
-                    disabled: this.manageDisabled
-                },
-                {
-                    name: 'stage',
-                    action: this.toggleStages.bind(this),
-                    disabled: this.manageDisabled,
-                    attr: {
-                        'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
-                    }
-                }
-            ]
-        },
-        {
-            location: 'before',
-            locateInMenu: 'auto',
-            items: [{
-                name: 'delete',
-                disabled: this.manageDisabled || !this.selectedOrderKeys.length,
-                action: this.deleteOrders.bind(this)
-            }]
-        },
-        {
-            location: 'after',
-            locateInMenu: 'auto',
-            items: [{
-                name: 'rules',
-                options: {
-                    text: this.l('Settings')
-                },
-                visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
-                action: this.invoiceSettings.bind(this)
-            }]
-        },
-        {
-            location: 'after',
-            locateInMenu: 'auto',
-            items: [
-                {
-                    name: 'download',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Download'),
-                        items: [{
-                            action: Function(),
-                            text: this.l('Save as PDF'),
-                            icon: 'pdf',
-                        }, {
-                            action: this.exportToXLS.bind(this),
-                            text: this.l('Export to Excel'),
-                            icon: 'xls',
-                        }, {
-                            action: this.exportToCSV.bind(this),
-                            text: this.l('Export to CSV'),
-                            icon: 'sheet'
-                        }, {
-                            action: this.exportToGoogleSheet.bind(this),
-                            text: this.l('Export to Google Sheets'),
-                            icon: 'sheet'
-                        }, { type: 'downloadOptions' }]
-                    }
-                },
-                {
-                    name: 'columnChooser',
-                    action: () => DataGridService.showColumnChooser(this.dataGrid),
-                    disabled: this.showPipeline
-                }
-            ]
-        },
-        {
-            location: 'after',
-            locateInMenu: 'auto',
-            areItemsDependent: true,
-            items: [
-                // {
-                //     name: 'box',
-                //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                //     options: {
-                //         checkPressed: () => {
-                //             return (this.dataLayoutType == DataLayoutType.Box);
-                //         },
-                //     }
-                // },
-                {
-                    name: 'pipeline',
-                    action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                    options: {
-                        checkPressed: () => {
-                            return (this.dataLayoutType == DataLayoutType.Pipeline);
-                        },
-                    }
-                },
-                {
-                    name: 'dataGrid',
-                    action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
-                    options: {
-                        checkPressed: () => {
-                            return (this.dataLayoutType == DataLayoutType.DataGrid);
-                        },
-                    }
-                }
-            ]
-        }
-    ];
-    toolbarConfig: ToolbarGroupModel[];
+    ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[] = [
         {
             location: 'before',
@@ -585,6 +430,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             pluck('refresh'),
             filter(Boolean)
         ).subscribe(() => this.invalidate());
+        this.initOrdersToolbarConfig();
     }
 
     ngOnInit() {
@@ -597,6 +443,166 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     get dataSource() {
         return this.selectedOrderType === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
+    }
+
+    initOrdersToolbarConfig() {
+        this.ordersToolbarConfig = [
+            {
+                location: 'before', items: [
+                    {
+                        name: 'filters',
+                        action: () => {
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            this.filtersService.fixed = !this.filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
+                            },
+                            mouseover: () => {
+                                this.filtersService.enable();
+                            },
+                            mouseout: () => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            width: '279',
+                            mode: 'search',
+                            value: this.searchValue,
+                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'assign',
+                        disabled: this.manageDisabled
+                    },
+                    {
+                        name: 'stage',
+                        action: this.toggleStages.bind(this),
+                        disabled: this.manageDisabled,
+                        attr: {
+                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [{
+                    name: 'delete',
+                    disabled: this.manageDisabled || !this.selectedOrderKeys.length ||
+                        (!this.isGranted(AppPermissions.CRMBulkUpdates) && this.selectedOrderKeys.length > 1),
+                    action: this.deleteOrders.bind(this)
+                }]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [{
+                    name: 'rules',
+                    options: {
+                        text: this.l('Settings')
+                    },
+                    visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                    action: this.invoiceSettings.bind(this)
+                }]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    },
+                    {
+                        name: 'columnChooser',
+                        action: () => DataGridService.showColumnChooser(this.dataGrid),
+                        disabled: this.showPipeline
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                areItemsDependent: true,
+                items: [
+                    // {
+                    //     name: 'box',
+                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                    //     options: {
+                    //         checkPressed: () => {
+                    //             return (this.dataLayoutType == DataLayoutType.Box);
+                    //         },
+                    //     }
+                    // },
+                    {
+                        name: 'pipeline',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Pipeline);
+                            },
+                        }
+                    },
+                    {
+                        name: 'dataGrid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.DataGrid);
+                            },
+                        }
+                    }
+                ]
+            }
+        ];
     }
 
     toggleToolbar() {
@@ -639,6 +645,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     invalidate() {
+        this.selectedOrders = [];
         this.processFilterInternal();
         this.filterChanged = true;
     }
