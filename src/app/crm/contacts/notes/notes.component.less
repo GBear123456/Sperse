@@ -1,17 +1,52 @@
 ﻿:host {
-    width: 100%;
-    height: 100%;
-    padding: 0 10px 0 0;
-    display: block;
-    position: relative;
-    
-    .notes-sidenav-content,
-    .notes-container {
+    .wrapper {
+        display: flex;
+        margin: 0px 23px;
         height: 100%;
-    }
-    
-    .mat-drawer-content {
         overflow: hidden;
+        width: 97%;
+       
+        .grid-view {
+            width: auto;
+            max-width: 100%;
+            height: 100%;
+
+            /deep/ dx-data-grid {
+                .title {
+                    margin-top: 12px;
+                    padding-left: 20px;
+                }
+
+                .dx-template-wrapper, 
+                .dx-column-indicators, 
+                .dx-header-filter-indicator {
+                    padding: 9px 0;
+                }
+
+                .dx-datagrid-header-panel {
+                    height: 62px;
+                    .dx-toolbar .dx-toolbar-after {                        
+                        margin: 6px!important;
+                    }
+                }
+
+                .dx-datagrid-search-panel {
+                    input {
+                        border-radius: 3px;
+                        border: solid 1px #dadee1;
+                    }
+                }
+
+                .dx-button {
+                    &.btn-layout {
+                        background-color: #00aeef !important;
+                        i {
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
     }
     
     .add-note {
@@ -19,24 +54,4 @@
         top: 20px;
         left: 20px;
     }
-
-    /deep/ dx-data-grid {
-        .title {
-            margin-top: 20px;
-            padding-left: 20px;
-        }
-
-        .dx-button {
-            &.btn-layout {
-                background-color: #00aeef !important;
-                i {
-                    color: #fff;
-                }
-            }
-        }
-    }
-}
-
-/deep/ .main-content {
-    max-width: 100%;
 }

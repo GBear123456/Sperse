@@ -1,8 +1,8 @@
-<mat-drawer-container class="notes-container" autosize>
-    <div class="notes-sidenav-content">
-        <dx-data-grid
-            id="gridContainer"
+<div class="wrapper">
+    <div class="grid-view">
+        <dx-data-grid            
             height="100%"
+            class="main-component-view"
             [dataSource]="dataSource"
             [pager]="defaultGridPagerConfig"
             [allowColumnReordering]="true"
@@ -13,8 +13,8 @@
             (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
+            <dxi-column width="40px" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
             <dxi-column dataField="text" caption="{{l('Note')}}" width="350px" cssClass="text-wrap clipboard-holder" dataType="string"></dxi-column>
             <dxi-column dataField="dateTime" caption="{{l('Date')}}" sortOrder="desc" cssClass="tabular clipboard-holder" [calculateCellValue]="calculateDateCellValue"></dxi-column>
             <dxi-column dataField="addedByUserName" caption="{{l('AddedBy')}}" cssClass="clipboard-holder"></dxi-column>
@@ -30,11 +30,9 @@
                 <h2 class="title">{{l('Notes')}}</h2>
             </div>
 
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-group-panel [visible]="false"></dxo-group-panel>
         </dx-data-grid>
     </div>
-</mat-drawer-container>
+</div>
