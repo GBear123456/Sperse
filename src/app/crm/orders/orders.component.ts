@@ -7,6 +7,7 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
 import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -37,8 +38,6 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
-import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
-import { CacheService } from '@node_modules/ng2-cache-service';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 
 @Component({
@@ -66,7 +65,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     set selectedOrders(orders) {
         this._selectedOrders = orders;
         this.selectedOrderKeys = orders.map((item) => item.Id);
-        //this.initToolbarConfig();
     }
 
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
@@ -231,8 +229,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterCheckBoxesComponent,
-            caption: 'StatusId',
+            caption: 'Status',
             field: 'StatusId',
+            isSelected: true,
             items: {
                 element: new FilterCheckBoxesModel(
                     {
@@ -240,6 +239,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             id: SubscriptionsStatus[status],
                             name: status
                         })),
+                        value: [ SubscriptionsStatus.Active ],
                         nameField: 'name',
                         keyExpr: 'id'
                     })
@@ -256,19 +256,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filterChanged = false;
     masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
-    private _headlineButtons: HeadlineButton[] = [
+    headlineButtons: HeadlineButton[] = [
         {
             enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
             action: this.createInvoice.bind(this),
             label: this.l('CreateInvoice')
-        },
-        {
-            enabled: this.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement),
-            action: this.createSubscription.bind(this),
-            label: this.l('CreateSubscription')
         }
     ];
-    headlineButtons = this._headlineButtons[0];
     permissions = AppPermissions;
     currency: string;
     totalCount: number;
@@ -469,7 +463,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         width: '279',
                         mode: 'search',
                         value: this.searchValue,
-                        placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                        placeholder: this.l('Search') + ' ' + this.l('Subscriptions').toLowerCase(),
                         onValueChanged: (e) => {
                             this.searchValueChange(e);
                         }
@@ -486,29 +480,43 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     widget: 'dxDropDownMenu',
                     options: {
                         hint: this.l('Download'),
-                        items: [{
-                            action: Function(),
-                            text: this.l('Save as PDF'),
-                            icon: 'pdf',
-                        }, {
-                            action: this.exportToXLS.bind(this),
-                            text: this.l('Export to Excel'),
-                            icon: 'xls',
-                        }, {
-                            action: this.exportToCSV.bind(this),
-                            text: this.l('Export to CSV'),
-                            icon: 'sheet'
-                        }, {
-                            action: this.exportToGoogleSheet.bind(this),
-                            text: this.l('Export to Google Sheets'),
-                            icon: 'sheet'
-                        }, { type: 'downloadOptions' }]
+                        items: [
+                            {
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            },
+                            {
+                                action: (options) => {
+                                    this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                    this.exportToXLS(options);
+                                },
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            },
+                            {
+                                action: (options) => {
+                                    this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                    this.exportToCSV(options);
+                                },
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            },
+                            {
+                                action: (options) => {
+                                    this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                    this.exportToGoogleSheet(options);
+                                },
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            },
+                            {   type: 'downloadOptions' }
+                         ]
                     }
                 },
                 {
                     name: 'columnChooser',
-                    action: () => DataGridService.showColumnChooser(this.dataGrid),
-                    disabled: this.showPipeline
+                    action: () => DataGridService.showColumnChooser(this.dataGrid)
                 }
             ]
         }
@@ -577,8 +585,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             pluck('refresh'),
             filter(Boolean)
         ).subscribe(() => this.invalidate());
-
-        //this.initToolbarConfig();
     }
 
     ngOnInit() {
@@ -597,7 +603,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
         this.filtersService.fixed = false;
         this.filtersService.disable();
-        //this.initToolbarConfig();
     }
 
     ngAfterViewInit(): void {
@@ -643,7 +648,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        //this.initToolbarConfig();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
         else {
@@ -704,7 +708,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
-            //this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
@@ -718,7 +721,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 name: stage.name,
             };
         });
-        //this.initToolbarConfig();
     }
 
     onShowingPopup(e) {
@@ -726,7 +728,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         e.component.hide();
     }
 
-    onCellClick(event) {
+    onCellClick(event, section = 'invoices') {
         let col = event.column;
         if (col && col.command)
             return;
@@ -734,15 +736,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.onCardClick({
             entity: event.data,
             entityStageDataSource: null,
-            loadMethod: null
+            loadMethod: null,
+            section: section
         });
     }
 
-    onCardClick({entity, entityStageDataSource, loadMethod}) {
+    onCardClick({entity, entityStageDataSource, loadMethod, section}) {
         if (entity && entity.ContactId) {
             this.searchClear = false;
             this._router.navigate(
-                ['app/crm/contact', entity.ContactId, 'invoices'], {
+                ['app/crm/contact', entity.ContactId, section], {
                     queryParams: {
                         id: entity.Id,
                         referrer: 'app/crm/orders',
@@ -767,15 +770,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    createSubscription() {
-        this.dialog.open(AddSubscriptionDialogComponent, {
-            panelClass: ['slider'],
-            disableClose: false,
-            hasBackdrop: false,
-            closeOnNavigation: true
-        });
-    }
-
     invoiceSettings() {
         this.contactsService.showInvoiceSettingsDialog();
     }
@@ -784,7 +778,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         super.activate();
 
         this.initFilterConfig();
-        //this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -861,7 +854,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
             this.totalCount = null;
-            this.headlineButtons[0] = this._headlineButtons[event.value];
+            this.searchValue = '';
             this.cacheService.set(this.getCacheKey(this.ORDER_TYPE_CACHE_KEY), event.value);
             this.filterChanged = true;
             this.initFilterConfig(true);
@@ -869,7 +862,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 this.initDataSource();
                 this.processFilterInternal();
             });
-            //this.initToolbarConfig();
         }
     }
 
