@@ -39,7 +39,6 @@ import { SliceConfig } from '@app/shared/common/slice/slice.config';
 @Injectable()
 export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
-    public toolbarConfig: any = null;
     public toolbarIsHidden: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public toolbarIsHidden$: Observable<boolean> = this.toolbarIsHidden.asObservable();
     public narrowingPageContentWhenFixedFilter = true;

@@ -10,7 +10,7 @@
     <calendar-button></calendar-button>
 </app-headline>
 <app-toolbar [config]="toolbarConfig"></app-toolbar>
-<div [hidden]="!statsData || !statsData.length">
+<div [hidden]="!statsData || !statsData.length" class="main-wrapper">
     <div class="mainStatsView">
         <setup-steps
             [SetupSteps]="leftSideBarItems"
@@ -214,7 +214,6 @@
         </linearGradient>
     </svg>
 </div>
-
 <app-no-data
     *ngIf="loadingFinished && (!statsData || !statsData.length)"
     [showLink]="false">

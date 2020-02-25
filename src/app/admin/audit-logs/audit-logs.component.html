@@ -10,7 +10,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="isDataLoaded && !totalRowCount" class="main-wrapper portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div id="operationsLogsGridContainer">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>

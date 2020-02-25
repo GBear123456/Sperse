@@ -11,42 +11,44 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <action-menu [items]="actionMenuItems"
-                 [visible]="actionRecord"
-                 width="240px"
-                 (onItemClick)="onMenuItemClick($event)"
-                 (onHidden)="actionRecord = null">
-    </action-menu>
+    <div class="main-wrapper">
+        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+        <action-menu [items]="actionMenuItems"
+                     [visible]="actionRecord"
+                     width="240px"
+                     (onItemClick)="onMenuItemClick($event)"
+                     (onHidden)="actionRecord = null">
+        </action-menu>
 
-    <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
-        <ghost-list [hidden]="isDataLoaded"></ghost-list>
-        <dx-data-grid id="gridContainer"
-                      class="main-component-view"
-                      [dataSource]="dataSource"
-                      [allowColumnReordering]="true"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="true"
-                      [hoverStateEnabled]="true"
-                      [loadPanel]="{ enabled: false }"
-                      [pager]="defaultGridPagerConfig"
-                      (onOptionChanged)="onGridOptionChanged($event)"
-                      (onInitialized)="onInitialized($event)"
-                      (onEditingStart)="showActionsMenu($event)"
-                      (onRowPrepared)="onRowPrepared($event)"
-                      (onContentReady)="setGridDataLoaded()"
-                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-            <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
-            <dxi-column dataField="displayName" [caption]="l('Name')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="name" [sortingMethod]="sortLanguages" [sortIndex]="0" sortOrder="asc" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="creationTime" dataType="date" [caption]="l('CreationTime')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="isEnabled" [caption]="l('IsEnabled')" cellTemplate="isEnabledTemplate"></dxi-column>
-            <div *dxTemplate="let cellData of 'isEnabledTemplate'">
-                <span class="status" [ngClass]="cellData ? 'enabled' : 'disabled'">{{ cellData ? 'Yes' : 'No' }}</span>
-            </div>
-            <dxo-sorting mode="multiple"></dxo-sorting>
-            <dxo-paging [pageSize]="20"></dxo-paging>
-            <dxo-group-panel [visible]="false"></dxo-group-panel>
-        </dx-data-grid>
+        <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
+            <ghost-list [hidden]="isDataLoaded"></ghost-list>
+            <dx-data-grid id="gridContainer"
+                          class="main-component-view"
+                          [dataSource]="dataSource"
+                          [allowColumnReordering]="true"
+                          [columnAutoWidth]="true"
+                          [allowColumnResizing]="true"
+                          [hoverStateEnabled]="true"
+                          [loadPanel]="{ enabled: false }"
+                          [pager]="defaultGridPagerConfig"
+                          (onOptionChanged)="onGridOptionChanged($event)"
+                          (onInitialized)="onInitialized($event)"
+                          (onEditingStart)="showActionsMenu($event)"
+                          (onRowPrepared)="onRowPrepared($event)"
+                          (onContentReady)="setGridDataLoaded()"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
+                <dxi-column dataField="displayName" [caption]="l('Name')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="name" [sortingMethod]="sortLanguages" [sortIndex]="0" sortOrder="asc" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="creationTime" dataType="date" [caption]="l('CreationTime')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="isEnabled" [caption]="l('IsEnabled')" cellTemplate="isEnabledTemplate"></dxi-column>
+                <div *dxTemplate="let cellData of 'isEnabledTemplate'">
+                    <span class="status" [ngClass]="cellData ? 'enabled' : 'disabled'">{{ cellData ? 'Yes' : 'No' }}</span>
+                </div>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+                <dxo-paging [pageSize]="20"></dxo-paging>
+                <dxo-group-panel [visible]="false"></dxo-group-panel>
+            </dx-data-grid>
+        </div>
     </div>
 </div>

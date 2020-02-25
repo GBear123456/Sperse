@@ -11,42 +11,43 @@
                   (onReload)="invalidate()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <action-menu [items]="actionMenuItems"
-                 width="220px"
-                 [visible]="actionRecord"
-                 (onItemClick)="onMenuItemClick($event)"
-                 (onHidden)="actionRecord = null">
-    </action-menu>
-
-    <div class="portlet light no-padding margin-bottom-0">
-        <div class="portlet-body">
-            <div>
-                <div id="tenantsGrid">
-                    <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid id="gridContainer"
-                                  class="main-component-view"
-                                  [remoteOperations]="true"
-                                  [allowColumnReordering]="true"
-                                  [columnAutoWidth]="true"
-                                  [allowColumnResizing]="true"
-                                  [hoverStateEnabled]="true"
-                                  [pager]="defaultGridPagerConfig"
-                                  [loadPanel]="{ enabled: false }"
-                                  (onOptionChanged)="onGridOptionChanged($event)"
-                                  (onInitialized)="onInitialized($event)"
-                                  (onContentReady)="setGridDataLoaded()"
-                                  (onCellClick)="editTenant($event)"
-                                  (onEditingStart)="showActionsMenu($event)"
-                                  [dataSource]="dataSource">
-                        <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>
-                        <dxi-column [caption]="l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column [caption]="l('Active')" cellTemplate="isActiveTemplate"></dxi-column>
-                        <dxi-column [caption]="l('CreationTime')" dataField="creationTime" dataType="date" sortOrder="desc" sortIndex="0" cssClass="clipboard-holder"></dxi-column>
-                        <ng-container *dxTemplate="let cell of 'isActiveTemplate'">
-                            <span class="status" [ngClass]="cell.data.isActive ? 'success' : 'danger'">{{cell.data.isActive ? 'Yes' : 'No'}}</span>
-                        </ng-container>
-                    </dx-data-grid>
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuItems"
+                     width="220px"
+                     [visible]="actionRecord"
+                     (onItemClick)="onMenuItemClick($event)"
+                     (onHidden)="actionRecord = null">
+        </action-menu>
+        <div class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div>
+                    <div id="tenantsGrid">
+                        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                        <dx-data-grid id="gridContainer"
+                                      class="main-component-view"
+                                      [remoteOperations]="true"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [allowColumnResizing]="true"
+                                      [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
+                                      [loadPanel]="{ enabled: false }"
+                                      (onOptionChanged)="onGridOptionChanged($event)"
+                                      (onInitialized)="onInitialized($event)"
+                                      (onContentReady)="setGridDataLoaded()"
+                                      (onCellClick)="editTenant($event)"
+                                      (onEditingStart)="showActionsMenu($event)"
+                                      [dataSource]="dataSource">
+                            <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
+                            <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>
+                            <dxi-column [caption]="l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [caption]="l('Active')" cellTemplate="isActiveTemplate"></dxi-column>
+                            <dxi-column [caption]="l('CreationTime')" dataField="creationTime" dataType="date" sortOrder="desc" sortIndex="0" cssClass="clipboard-holder"></dxi-column>
+                            <ng-container *dxTemplate="let cell of 'isActiveTemplate'">
+                                <span class="status" [ngClass]="cell.data.isActive ? 'success' : 'danger'">{{cell.data.isActive ? 'Yes' : 'No'}}</span>
+                            </ng-container>
+                        </dx-data-grid>
+                    </div>
                 </div>
             </div>
         </div>

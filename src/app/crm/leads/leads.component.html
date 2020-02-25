@@ -36,40 +36,41 @@
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <action-menu [items]="actionMenuItems"
-                 [visible]="actionEvent"
-                 (onItemClick)="onMenuItemClick($event)">
-    </action-menu>
-    <app-static-list
-        [width]="'210px'"
-        [title]="l('Stages')"
-        [selectedKeys]="selectedClientKeys"
-        [filterModel]="filterModelStages"
-        [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
-        [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
-        [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
-        [targetSelector]="'[aria-label=Stage]'"
-        [funnelStyling]="true"
-        [list]="stages"
-        (onItemSelected)="updateLeadsStage($event)">
-    </app-static-list>
-    <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
-    <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
-                              [bulkUpdateMode]="true"
-                              [filterModel]="filterModelAssignment"
-                              [proxyService]="contactProxy"
-                              [permissionKey]="permissions.CRMCustomersManageAssignments"
-                              [assignedUsersSelector]="assignedUsersSelector">
-    </crm-user-assignment-list>
-    <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
-    <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
-    <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
-        <div class="portlet-body">
-            <div>
-                <div id="LeadsTable">
-                    <ghost-list *ngIf="!isDataLoaded"></ghost-list>
-                    <dx-data-grid
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuItems"
+                     [visible]="actionEvent"
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
+        <app-static-list
+                [width]="'210px'"
+                [title]="l('Stages')"
+                [selectedKeys]="selectedClientKeys"
+                [filterModel]="filterModelStages"
+                [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
+                [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
+                [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
+                [targetSelector]="'[aria-label=Stage]'"
+                [funnelStyling]="true"
+                [list]="stages"
+                (onItemSelected)="updateLeadsStage($event)">
+        </app-static-list>
+        <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
+        <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
+        <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
+                                  [bulkUpdateMode]="true"
+                                  [filterModel]="filterModelAssignment"
+                                  [proxyService]="contactProxy"
+                                  [permissionKey]="permissions.CRMCustomersManageAssignments"
+                                  [assignedUsersSelector]="assignedUsersSelector">
+        </crm-user-assignment-list>
+        <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
+        <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
+        <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div>
+                    <div id="LeadsTable">
+                        <ghost-list *ngIf="!isDataLoaded"></ghost-list>
+                        <dx-data-grid
                                 id="gridContainer"
                                 class="limitedPagerTotal main-component-view"
                                 accessKey="narrowHeaderPanel"
@@ -87,123 +88,124 @@
                                 (onEditingStart)="showActionsMenu($event)"
                                 (onSelectionChanged)="onSelectionChanged($event)"
                                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                        <dxo-selection
-                            selectAllMode="page"
-                            showCheckBoxesMode="always"
-                            mode="multiple">
-                        </dxo-selection>
-                        <dxo-editing mode="popup" [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column cssClass="stars" [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
-                        <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId"
-                                    caption=""
-                                    cellTemplate="photoTemplate"
-                                    [width]="50"
-                                    [showInColumnChooser]="false"
-                                    [allowExporting]="false"
-                                    [allowGrouping]="false"
-                                    [allowSorting]="false">
-                        </dxi-column>
-                        <div *dxTemplate="let data of 'photoTemplate'">
-                            <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
-                        </div>
-                        <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
-                        <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
-                            <dxi-column dataField="BankCode"
-                                        cellTemplate="bankCodeCell"
-                                        [caption]="l('BankCode')"
-                                        [visible]="tenantHasBankCodeFeature"
-                                        [showInColumnChooser]="tenantHasBankCodeFeature">
+                            <dxo-selection
+                                    selectAllMode="page"
+                                    showCheckBoxesMode="always"
+                                    mode="multiple">
+                            </dxo-selection>
+                            <dxo-editing mode="popup" [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" [allowUpdating]="true"></dxo-editing>
+                            <dxi-column cssClass="stars" [width]="40" [fixed]="true" fixedPosition="left" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                            <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
+                            <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
+                            <dxi-column dataField="PhotoPublicId"
+                                        caption=""
+                                        cellTemplate="photoTemplate"
+                                        [width]="50"
+                                        [showInColumnChooser]="false"
+                                        [allowExporting]="false"
+                                        [allowGrouping]="false"
+                                        [allowSorting]="false">
                             </dxi-column>
-                        </ng-container>
+                            <div *dxTemplate="let data of 'photoTemplate'">
+                                <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+                            </div>
+                            <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
+                            <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
+                                <dxi-column dataField="BankCode"
+                                            cellTemplate="bankCodeCell"
+                                            [caption]="l('BankCode')"
+                                            [visible]="tenantHasBankCodeFeature"
+                                            [showInColumnChooser]="tenantHasBankCodeFeature">
+                                </dxi-column>
+                            </ng-container>
 
-                        <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                            {{cellData.value | phone}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
-                        </div>
-                        <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                    </dx-data-grid>
+                            <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                                {{cellData.value | phone}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'bankCodeCell'">
+                                <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                            </div>
+                            <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                        </dx-data-grid>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
-        <div class="portlet-body">
-            <div class="funnel-wrapper main-component-view">
-                <app-pipeline
-                    totalsURI="LeadCount"
-                    dragulaName="leadStages"
-                    [dataSource]="pipelineDataSource"
-                    [selectFields]="pipelineSelectFields"
-                    [pipelinePurposeId]="pipelinePurposeId"
-                    [filterModelStages]="filterModelStages"
-                    [(selectedEntities)]="selectedLeads"
-                    dateField="LeadDate"
-                    [contactGroupId]="contactGroupId.value"
-                    [moveDisabled]="manageDisabled"
-                    (onEntityStageChanged)="onLeadStageChanged($event)"
-                    (onStagesLoaded)="onStagesLoaded($event)"
-                    (onCardClick)="onCardClick($event)"
-                    (onTotalChange)="updateTotalCount($event)">
-                    Loading...
-                </app-pipeline>
+        <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div class="funnel-wrapper main-component-view">
+                    <app-pipeline
+                            totalsURI="LeadCount"
+                            dragulaName="leadStages"
+                            [dataSource]="pipelineDataSource"
+                            [selectFields]="pipelineSelectFields"
+                            [pipelinePurposeId]="pipelinePurposeId"
+                            [filterModelStages]="filterModelStages"
+                            [(selectedEntities)]="selectedLeads"
+                            dateField="LeadDate"
+                            [contactGroupId]="contactGroupId.value"
+                            [moveDisabled]="manageDisabled"
+                            (onEntityStageChanged)="onLeadStageChanged($event)"
+                            (onStagesLoaded)="onStagesLoaded($event)"
+                            (onCardClick)="onCardClick($event)"
+                            (onTotalChange)="updateTotalCount($event)">
+                        Loading...
+                    </app-pipeline>
+                </div>
             </div>
         </div>
-    </div>
-    <div [hidden]="hidePivotGrid$ | async">
-        <slice-pivot-grid [storageKey]="sliceStorageKey"
-                          [dataSource]="pivotGridDataSource"
-                          [height]="contentHeight$ | async"
-                          [isLoading]="pivotGridDataIsLoading">
-        </slice-pivot-grid>
-    </div>
-    <div [hidden]="hideChart$ | async">
-        <slice-chart [width]="contentWidth$ | async"
-                     [height]="contentHeight$ | async"
-                     [infoItems]="chartInfoItems"
-                     [itemsName]="l('ContactGroup_' + selectedContactGroup)"
-                     [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
-                     argumentField="creationDate"
-                     valueField="count">
-        </slice-chart>
-    </div>
-    <div [hidden]="hideMap$ | async">
-        <slice-info [items]="mapInfoItems$ | async"></slice-info>
-        <slice-map [width]="contentWidth$ | async"
-                   [height]="mapHeight$ | async"
-                   [contactGroupText]="userGroupText$ | async"
-                   [dataIsLoading]="mapDataIsLoading"
-                   [data]="mapData$ | async">
-        </slice-map>
+        <div [hidden]="hidePivotGrid$ | async">
+            <slice-pivot-grid [storageKey]="sliceStorageKey"
+                              [dataSource]="pivotGridDataSource"
+                              [height]="contentHeight$ | async"
+                              [isLoading]="pivotGridDataIsLoading">
+            </slice-pivot-grid>
+        </div>
+        <div [hidden]="hideChart$ | async">
+            <slice-chart [width]="contentWidth$ | async"
+                         [height]="contentHeight$ | async"
+                         [infoItems]="chartInfoItems"
+                         [itemsName]="l('ContactGroup_' + selectedContactGroup)"
+                         [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
+                         argumentField="creationDate"
+                         valueField="count">
+            </slice-chart>
+        </div>
+        <div [hidden]="hideMap$ | async">
+            <slice-info [items]="mapInfoItems$ | async"></slice-info>
+            <slice-map [width]="contentWidth$ | async"
+                       [height]="mapHeight$ | async"
+                       [contactGroupText]="userGroupText$ | async"
+                       [dataIsLoading]="mapDataIsLoading"
+                       [data]="mapData$ | async">
+            </slice-map>
+        </div>
     </div>
 </div>
 
