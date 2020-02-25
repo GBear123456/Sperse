@@ -5,20 +5,20 @@
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="config-wrap">
                 <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator != 'slider'">
-                    <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
+                    <span class="totalSeatsLabel">{{ ls.l('TotalSeatsLabel') }}</span>
                     <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
                     <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
                     <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
                 </div>
                 <div class="sperse-toggle" [ngClass]="{'both-active': configurator == 'slider'}">
-                    <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('Monthly') }}</div>
+                    <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ ls.l('Monthly') }}</div>
                     <mat-slide-toggle
                         [checked]="selectedBillingPeriod === billingPeriod.Yearly"
                         (change)="billingPeriodChanged($event)">
                     </mat-slide-toggle>
                     <div class="right" [ngClass]="{ 'active': getActiveStatus('year') }">
-                        <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ l('OrMore') }}</span></p>
-                        {{ l('Annually') }}
+                        <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ ls.l('OrMore') }}</span></p>
+                        {{ ls.l('Annually') }}
                     </div>
                 </div>
                 <button [hidden]="module === modules.CFO || module === 'CFO_CRM' || module === 'CFO_Partner' || configurator == 'slider'"
@@ -28,10 +28,6 @@
                 </button>
             </div>
         </ng-container>
-        <ng-template #nopackages>
-            <h2 class="title">{{ localizationService.ls('Platform', 'ModuleIsNotUpgradable', module) }}</h2>
-            <h3 class="subtitle">{{ l('AdditionalFeaturesCanOnlyBeEnabled') }}</h3>
-        </ng-template>
     </ng-container>
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
@@ -60,7 +56,7 @@
             <div>
                 <p *ngIf="showDowngradeLink && this.freePackages && this.freePackages.length"
                    class="downgrade"
-                   (click)="downGradeToFree()">{{ l('DowngradeToFree') }}
+                   (click)="downGradeToFree()">{{ ls.l('DowngradeToFree') }}
                 </p>
                 <div class="free-version-available">
                     <div class="downgrade-info">
@@ -94,3 +90,7 @@
         </div>
     </ng-container>
 </ng-container>
+<ng-template #nopackages>
+    <h2 class="title">{{ localizationService.ls('Platform', 'ModuleIsNotUpgradable', module) }}</h2>
+    <h3 class="subtitle">{{ ls.l('AdditionalFeaturesCanOnlyBeEnabled') }}</h3>
+</ng-template>

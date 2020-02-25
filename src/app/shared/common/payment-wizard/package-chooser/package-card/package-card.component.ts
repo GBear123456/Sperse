@@ -34,17 +34,13 @@ export class PackageCardComponent implements OnChanges {
     selectedEdition: PackageEditionConfigDto;
 
     constructor(
-        public localizationService: AppLocalizationService,
-        private decimalPipe: DecimalPipe
+        private decimalPipe: DecimalPipe,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnChanges(changes) {
         this.selectedEdition = this.getSelectedEdition();
         this.isActive = this.editions && !!this.selectedEdition;
-    }
-
-    l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, 'CRM', ...args);
     }
 
     getSelectedEdition(): PackageEditionConfigDto {
@@ -103,7 +99,7 @@ export class PackageCardComponent implements OnChanges {
             if (feature.definition.isVariable && feature.value !== '-1') {
                 featureValue += +feature.value / this.usersCoefficient;
             } else if (feature.value === '-1') {
-                featureValue += this.l('Unlimited');
+                featureValue += this.ls.l('Unlimited');
             } else {
                 featureValue += feature.value;
             }
