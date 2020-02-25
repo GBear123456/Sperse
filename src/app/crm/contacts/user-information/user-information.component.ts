@@ -125,6 +125,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.data.userId = userId;
                 if (userId) {
                     this.loadData();
+                    this.showOrgUnitsDialog();
                     this.updateToolbarOptions();
                 } else
                     this.getPhonesAndEmails();

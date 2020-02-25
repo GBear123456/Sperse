@@ -12,7 +12,8 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ContactServiceProxy, ContactInfoDto, UpdateContactAffiliateCodeInput, UpdateContactXrefInput } from '@shared/service-proxies/service-proxies';
+import { LayoutType, ContactServiceProxy, ContactInfoDto, UpdateContactAffiliateCodeInput, UpdateContactXrefInput } from '@shared/service-proxies/service-proxies';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppConsts } from '@shared/AppConsts';
@@ -64,6 +65,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
         max: 255,
         message: this.ls.l('MaxLengthIs', 255)
     }];
+    isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         private cacheHelper: CacheHelper,
@@ -72,6 +74,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
         private elementRef: ElementRef,
         public contactsService: ContactsService,
         public ls: AppLocalizationService,
+        public userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
