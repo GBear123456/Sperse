@@ -1,12 +1,10 @@
 /** Core imports */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import { filter, first, map } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
@@ -20,6 +18,7 @@ import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
+    CountryStateDto,
     DictionaryServiceProxy,
     Gender,
     MaritalStatus,
@@ -35,55 +34,50 @@ import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { InplaceSelectBox } from '@app/shared/common/inplace-select-box/inplace-select-box.interface';
+import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
 
 @Component({
     templateUrl: './personal-details.component.html',
     styleUrls: ['./personal-details.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ AsyncPipe ]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalDetailsComponent implements OnDestroy {
     person: PersonInfoDto;
     isEditAllowed = false;
     startCase = startCase;
     personContactInfo: PersonContactInfoDto;
-    interests$ = this.dictionaryProxy.getInterests();
     accessConfidentialData = this.permission.isGranted(AppPermissions.CRMAccessConfidentialData);
-
     columns = [
         [
-            { name: 'General',              type: 'head',   icon:         'profile'                     },
-            { name: 'gender',               type: 'select'                                              },
-            { name: 'dob',                  type: 'date'                                                },
-            { name: 'timeZone',             type: 'select'                                              },
-            { name: 'preferredToD',         type: 'select'                                              },
-            { name: 'interests',            type: 'list',   source: this.interests$                     }
+            { name: 'General', type: 'head', icon: 'profile' },
+            { name: 'gender', type: 'select' },
+            { name: 'dob', type: 'date' },
+            { name: 'timeZone', type: 'select' },
+            { name: 'preferredToD', type: 'select' },
+            { name: 'interests', type: 'list', source: this.dictionaryProxy.getInterests() }
         ], [
-            { name: 'Personal Info',        type: 'head',   icon:         'social'                      },
-            { name: 'maritalStatus',        type: 'select'                                              },
-            { name: 'marriageDate',         type: 'date'                                                },
-            { name: 'divorceDate',          type: 'date',   isVisible: () => this.person.marriageDate   },
-            { name: 'drivingLicense',       type: 'string', confidential: true                          },
-            { name: 'drivingLicenseState',  type: 'select'                                              },
-            { name: 'ssn',                  type: 'string', confidential: true                          },
-            { name: 'citizenship',          type: 'select'                                              },
-            { name: 'isUSCitizen',          type: 'bool'                                                },
-            { name: 'isActiveMilitaryDuty', type: 'bool'                                                }
+            { name: 'Personal Info', type: 'head', icon: 'social' },
+            { name: 'maritalStatus', type: 'select' },
+            { name: 'marriageDate', type: 'date' },
+            { name: 'divorceDate', type: 'date', isVisible: () => this.person.marriageDate },
+            { name: 'drivingLicense', type: 'string', confidential: true },
+            { name: 'drivingLicenseState', type: 'select' },
+            { name: 'ssn', type: 'string', confidential: true },
+            { name: 'citizenship', type: 'select' },
+            { name: 'isUSCitizen', type: 'bool' },
+            { name: 'isActiveMilitaryDuty', type: 'bool' }
         ], [
-            { name: 'Profile Summary',      type: 'head',   icon:         'blog'                        },
-            { name: 'profileSummary',       type: 'string', multiline:    true                          }
+            { name: 'Profile Summary', type: 'head', icon: 'blog' },
+            { name: 'profileSummary', type: 'string', multiline: true }
         ], [
-            { name: 'Experience',           type: 'head',   icon:         'blog'                        },
-            { name: 'experience',           type: 'string', multiline:    true                          }
+            { name: 'Experience', type: 'head', icon: 'blog' },
+            { name: 'experience', type: 'string', multiline: true }
         ]
     ];
 
     selectList = {
         timeZone: [],
-        citizenship: this.asyncPipe.transform(this.store$.pipe(
-            select(CountriesStoreSelectors.getCountries),
-            map(countries => this.getSelectListFromObject(countries))
-        )),
+        citizenship: [],
         drivingLicenseState: [],
         gender: this.getGenderList(),
         maritalStatus: this.getMaritalStatusList(),
@@ -101,7 +95,6 @@ export class PersonalDetailsComponent implements OnDestroy {
         private dictionaryProxy: DictionaryServiceProxy,
         private clipboardService: ClipboardService,
         private personalDetailsService: PersonalDetailsService,
-        private asyncPipe: AsyncPipe,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
@@ -122,12 +115,24 @@ export class PersonalDetailsComponent implements OnDestroy {
         }, this.constructor.name);
 
         this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res) => {
-            this.selectList.timeZone = res.items.map(item => ({id: item.value, name: item.name}));
+            this.selectList.timeZone = res.items.map(item => ({ id: item.value, name: item.name }));
             this.changeDetector.markForCheck();
         });
 
-        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.loadCountries();
+        this.getCountries();
         this.loadStates();
+    }
+
+    private getCountries() {
+        this.store$.pipe(
+            select(CountriesStoreSelectors.getCountries),
+            filter(Boolean),
+            first(),
+            map((countries: CountryStateDto[]) => this.getSelectListFromObject(countries))
+        ).subscribe((countries: SelectListItem[]) => {
+            this.selectList.citizenship = countries;
+        });
     }
 
     getStates(countryId = AppConsts.defaultCountry): any {
@@ -138,9 +143,13 @@ export class PersonalDetailsComponent implements OnDestroy {
             filter(Boolean),
             first(),
             map(states => this.getSelectListFromObject(states))
-        ).subscribe((states: any) => {
+        ).subscribe((states: SelectListItem[]) => {
             this.selectList.drivingLicenseState = states;
         });
+    }
+
+    private loadCountries() {
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
     }
 
     private loadStates(countryId = AppConsts.defaultCountry) {
@@ -187,11 +196,11 @@ export class PersonalDetailsComponent implements OnDestroy {
     }
 
     getSelectList(items) {
-        return items.map(item => ({id: item, name: this.ls.l(item)}));
+        return items.map(item => ({ id: item, name: this.ls.l(item) }));
     }
 
-    getSelectListFromObject(collection): Observable<{id: string, name: string}> {
-        return (collection || []).map(item => ({id: item.code, name: item.name}));
+    getSelectListFromObject(collection): SelectListItem[] {
+        return (collection || []).map(item => ({ id: item.code, name: item.name }));
     }
 
     updateValue(value: string, field: string) {
@@ -226,11 +235,11 @@ export class PersonalDetailsComponent implements OnDestroy {
                 isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
                 interests: this.person.interests
             })).subscribe(
-            () => this.notifyService.success(this.ls.l('SavedSuccessfully')),
-            () => {
-                this.person[field] = initialValue;
-                this.changeDetector.markForCheck();
-            });
+                () => this.notifyService.success(this.ls.l('SavedSuccessfully')),
+                () => {
+                    this.person[field] = initialValue;
+                    this.changeDetector.markForCheck();
+                });
         }
     }
 

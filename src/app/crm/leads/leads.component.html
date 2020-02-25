@@ -37,7 +37,7 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <action-menu [items]="actionMenuItems"
-                 [visible]="actionEvent"
+                 [visible]="!!actionEvent"
                  (onItemClick)="onMenuItemClick($event)">
     </action-menu>
     <app-static-list

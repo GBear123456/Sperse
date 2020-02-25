@@ -15,7 +15,7 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <action-menu [items]="actionMenuItems"
-                 [visible]="actionEvent"
+                 [visible]="!!actionEvent"
                  target=".dx-state-hover .dx-link.dx-link-edit"
                  (onItemClick)="onMenuItemClick($event)">
     </action-menu>

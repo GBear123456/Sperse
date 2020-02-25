@@ -745,7 +745,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (entity && entity.ContactId) {
             this.searchClear = false;
             this._router.navigate(
-                ['app/crm/contact', entity.ContactId, section], {
+                [
+                    'app/crm/contact',
+                    entity.ContactId,
+                    ...(entity.LeadId != null ? [ 'lead', entity.LeadId ] : []),
+                    section
+                ], {
                     queryParams: {
                         id: entity.Id,
                         referrer: 'app/crm/orders',
