@@ -22,7 +22,6 @@ import { AppService } from '@app/app.service';
 export class ToolBarComponent implements OnDestroy {
     @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
-    @Input() compact: boolean;
     _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
@@ -30,6 +29,7 @@ export class ToolBarComponent implements OnDestroy {
         this.initToolbarItems();
     }
     @HostBinding('style.display') display: string;
+    @HostBinding('class.compact') @Input() compact = false;
     public items = [];
     public options = {};
     private subscription: any = this.filtersService.filterToggle$.subscribe((enabled) => {
