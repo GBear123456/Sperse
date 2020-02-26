@@ -152,15 +152,17 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         setTimeout(() => this.dataGrid.instance.repaint(), 100);
     }
 
-    openCreateOrEditDialog(editionId?: number) {
-        this.dialog.open(CreateOrEditEditionModalComponent, {
-            panelClass: ['slider', 'edition-modal'],
-            data: {
-                editionId: editionId
-            }
-        }).afterClosed().pipe(filter(Boolean)).subscribe(
-            () => this.invalidate()
-        );
+    openCreateOrEditDialog(e?) {
+        if (!e || e.rowType === 'data') {
+            this.dialog.open(CreateOrEditEditionModalComponent, {
+                panelClass: ['slider', 'edition-modal'],
+                data: {
+                    editionId: e && e.data.id
+                }
+            }).afterClosed().pipe(filter(Boolean)).subscribe(
+                () => this.invalidate()
+            );
+        }
     }
 
     createEdition(): void {
