@@ -249,8 +249,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterInputsComponent,
             operator: { from: 'ge', to: 'le' },
-            caption: 'Amount',
-            field: 'Amount',
+            caption: 'Fee',
+            field: 'Fee',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         })
     ];
