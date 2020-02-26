@@ -180,7 +180,7 @@
             <dxi-column dataField="ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
             <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate"></dxi-column>
+            <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate" alignment="left"></dxi-column>
             <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">

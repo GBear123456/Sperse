@@ -119,6 +119,10 @@ export class FiltersService {
         return data;
     }
 
+    static filterByFee(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
     static filterByOrderStages(filter: FilterModel) {
         let data = {};
         if (filter.items.element) {
