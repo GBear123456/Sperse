@@ -30,6 +30,7 @@ export class UserInboxComponent implements OnDestroy {
     contactId: number;
     contentToolbar = [];
     dataSource: DataSource;
+    noPhotoUrl = AppConsts.imageUrls.noPhoto;
     formatting = AppConsts.formatting;
     status: CommunicationEmailStatus;
     isSendSmsAndEmailAllowed = false;
