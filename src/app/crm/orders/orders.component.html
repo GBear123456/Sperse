@@ -148,7 +148,8 @@
         <app-toolbar [config]="subscriptionsToolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
         <ghost-list *ngIf="!isDataLoaded"></ghost-list>
         <dx-data-grid #subscriptionsGrid
-                      id="gridContainer"
+                      class="main-component-view"
+                      accesskey="narrowHeaderPanel"
                       keyExpr="id"
                       [loadPanel]="{ enabled: false }"
                       [allowColumnReordering]="true"
