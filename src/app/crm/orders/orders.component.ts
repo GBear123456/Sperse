@@ -498,10 +498,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 locateInMenu: 'auto',
                 items: [
                     {
-                        name: 'assign',
-                        disabled: this.manageDisabled
-                    },
-                    {
                         name: 'stage',
                         action: this.toggleStages.bind(this),
                         disabled: this.manageDisabled,
