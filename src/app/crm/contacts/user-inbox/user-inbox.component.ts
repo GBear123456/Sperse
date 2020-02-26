@@ -33,14 +33,15 @@ export class UserInboxComponent implements OnDestroy {
     formatting = AppConsts.formatting;
     status: CommunicationEmailStatus;
     isSendSmsAndEmailAllowed = false;
+    userTimezone = '0000';
 
     constructor(
-        public dialog: MatDialog,
-        public ls: AppLocalizationService,
-        public profileService: ProfileService,
         private loadingService: LoadingService,
         private communicationService: ContactCommunicationServiceProxy,
-        private contactsService: ContactsService
+        private contactsService: ContactsService,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService,
+        public profileService: ProfileService
     ) {
         contactsService.contactInfoSubscribe(res => {
             this.contactId = res.id;
