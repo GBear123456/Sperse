@@ -26,6 +26,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './roles.component.html',
@@ -59,7 +60,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         private roleService: RoleServiceProxy,
         private filtersService: FiltersService,
         private permissionService: PermissionServiceProxy,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

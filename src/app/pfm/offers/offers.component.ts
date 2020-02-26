@@ -150,12 +150,12 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     constructor(
         private injector: Injector,
-        private appService: AppService,
         private filtersService: FiltersService,
         private offerProxy: OfferServiceProxy,
         private offersProxy: OfferManagementServiceProxy,
         private store$: Store<AppStore.State>,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        public appService: AppService
     ) {
         super(injector);
 

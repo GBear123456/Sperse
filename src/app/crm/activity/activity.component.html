@@ -13,7 +13,7 @@
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div [hidden]="showPipeline" class="main-wrapper portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <dx-scheduler
@@ -36,7 +36,7 @@
                 endDateTimeZoneExpr="fieldTimeZone"
                 dropDownAppointmentTemplate="appointmentDropDown"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
-                (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
+                (onAppointmentFormOpening)="onAppointmentFormCreated($event)">
                 <div *dxTemplate="let appointment of 'appointmentDropDown'">
                     <div class="appointment-content">
                         <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment.Type[0]}}</div>

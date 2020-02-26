@@ -37,7 +37,6 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
-import { SyncTypeIds } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 

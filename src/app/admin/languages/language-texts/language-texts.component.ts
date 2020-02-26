@@ -19,6 +19,7 @@ import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdow
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './language-texts.component.html',
@@ -51,7 +52,8 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         injector: Injector,
         private languageService: LanguageServiceProxy,
         private filtersService: FiltersService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

@@ -58,12 +58,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly USER_PASSWORD = 'userPassword';
     private readonly DATE_CREATED = 'dateCreated';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
-    private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
+    private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_namePrefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
     private readonly MIDDLE_NAME_FIELD = 'personalInfo_fullName_middleName';
     private readonly LAST_NAME_FIELD = 'personalInfo_fullName_lastName';
     private readonly NICK_NAME_FIELD = 'personalInfo_fullName_nickName';
-    private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_suffix';
+    private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_nameSuffix';
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
     private readonly PERSONAL_DOB = 'personalInfo_doB';
     private readonly PERSONAL_PHONE1 = 'personalInfo_phone1';

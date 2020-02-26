@@ -48,10 +48,10 @@ export class PackageChooserComponent implements OnInit {
     @ViewChildren(MatSlider) slider: MatSlider;
     @Input() module: ModuleType;
     @Input() widgettitle: string;
-    @Input() subtitle = this.l('ChoosePlan');
+    @Input() subtitle = this.ls.l('ChoosePlan');
     @Input() yearDiscount = 20;
     @Input() packagesMaxUsersAmount: number;
-    @Input() nextStepButtonText = this.l('Next');
+    @Input() nextStepButtonText = this.ls.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Input() showDowngradeLink = false;
     private _preselect = true;
@@ -91,12 +91,9 @@ export class PackageChooserComponent implements OnInit {
         private localizationService: AppLocalizationService,
         private localizationResolver: LocalizationResolver,
         private packageServiceProxy: PackageServiceProxy,
-        private changeDetectionRef: ChangeDetectorRef
+        private changeDetectionRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
     ) {}
-
-    l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, ...args);
-    }
 
     ngOnInit() {
         forkJoin([
@@ -111,7 +108,7 @@ export class PackageChooserComponent implements OnInit {
     loadPackages() {
         if (!this.widgettitle) {
             /** Default value for title if any was set in input */
-            this.widgettitle = this.l('ModuleExpired', this.module, 'trial');
+            this.widgettitle = this.ls.l('ModuleExpired', this.module, 'trial');
         }
         this.packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
@@ -2260,7 +2257,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     private getDefaultUserAmount(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): number {
-        let usersAmount;
+        let usersAmount: number;
         if (this.tenantSubscriptionIsTrial || this.tenantSubscriptionIsFree) {
             usersAmount = this.defaultUsersAmount;
         } else {

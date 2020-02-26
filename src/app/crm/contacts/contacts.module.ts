@@ -121,6 +121,7 @@ import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component
 import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
+import { PersonalDetailsService } from './personal-details/personal-details.service';
 import { PersonalDetailsDialogComponent } from './personal-details/personal-details-dialog/personal-details-dialog.component';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
@@ -287,6 +288,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         DocumentTypeServiceProxy,
         OrderSubscriptionServiceProxy,
         ContactCommunicationServiceProxy,
+        PersonalDetailsService,
         DocumentsService,
         InvoicesService,
         CrmService

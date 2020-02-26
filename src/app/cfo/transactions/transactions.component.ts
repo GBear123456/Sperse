@@ -291,7 +291,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     toolbarConfig: ToolbarGroupModel[];
 
     constructor(injector: Injector,
-        private appService: AppService,
         private transactionsServiceProxy: TransactionsServiceProxy,
         private classificationServiceProxy: ClassificationServiceProxy,
         private changeDetectionRef: ChangeDetectorRef,
@@ -299,6 +298,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private lifecycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
         private route: ActivatedRoute,
+        public appService: AppService,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
         public dialog: MatDialog,

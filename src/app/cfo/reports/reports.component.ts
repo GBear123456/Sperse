@@ -29,6 +29,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -115,6 +116,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         private cacheService: CacheService,
         private filtersService: FiltersService,
         private departmentsProxy: DepartmentsServiceProxy,
+        public appService: AppService,
         public reportsProxy: ReportsServiceProxy,
         public bankAccountsService: BankAccountsService
     ) {

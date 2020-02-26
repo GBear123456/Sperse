@@ -11,7 +11,7 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="repaintDataGrid()">
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
                      [visible]="actionRecord"

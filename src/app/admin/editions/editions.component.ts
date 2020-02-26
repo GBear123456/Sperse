@@ -68,10 +68,10 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
 
     constructor(
         injector: Injector,
-        private appService: AppService,
         private editionService: EditionServiceProxy,
         private dialog: MatDialog,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        public appService: AppService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

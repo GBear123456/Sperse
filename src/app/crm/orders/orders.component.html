@@ -1,126 +1,197 @@
 <div>
-    <app-headline [names]="[ l('Orders') ]"
-                  icon="briefcase"
+    <app-headline icon="briefcase"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showReloadButton]="true"
                   (onToggleCompactView)="toggleContactView()"
                   (onToggleToolbar)="toggleToolbar()"
-                  (onReload)="processFilterInternal()">
-        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+                  (onReload)="invalidate()">
+        <div class="order-types">
+            <dx-select-box accessKey="orderTypes"
+                           displayExpr="text"
+                           valueExpr="value"
+                           [items]="orderTypes"
+                           fieldTemplate="selectTemplate"
+                           [(value)]="selectedOrderType"
+                           (onValueChanged)="onContactGroupChanged($event)">
+                <div *dxTemplate="let data of 'selectTemplate'">
+                    <div class="select-header">
+                        <span>{{data.text}}</span>
+                        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+                        <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
+                    </div>
+                </div>
+            </dx-select-box>
+        </div>
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <div class="main-wrapper">
-        <app-static-list
-                [width]="'210px'"
-                [title]="l('Stages')"
-                [selectedKeys]="selectedOrderKeys"
-                [filterModel]="filterModelStages"
-                [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
-                [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
-                [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
-                [targetSelector]="'[aria-label=Stage]'"
-                [funnelStyling]="true"
-                [list]="stages"
-                (onItemSelected)="updateOrdersStage($event)">
-        </app-static-list>
-        <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
-            <div class="portlet-body">
-                <div>
-                    <div id="ClientsTable">
-                        <ghost-list *ngIf="!isDataLoaded"></ghost-list>
-                        <dx-data-grid id="gridContainer"
-                                      class="main-component-view"
-                                      accesskey="narrowHeaderPanel"
-                                      [allowColumnReordering]="true"
-                                      [columnAutoWidth]="true"
-                                      [allowColumnResizing]="true"
-                                      [hoverStateEnabled]="true"
-                                      [loadPanel]="{ enabled: false }"
-                                      (onEditingStart)="onCellClick($event)"
-                                      (onCellClick)="onCellClick($event)"
-                                      [pager]="defaultGridPagerConfig"
-                                      (onOptionChanged)="onGridOptionChanged($event)"
-                                      (onContentReady)="onContentReady($event)"
-                                      (onSelectionChanged)="onSelectionChanged($event)"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                            <dxo-selection selectAllMode="page"
-                                           showCheckBoxesMode="always"
-                                           mode="multiple">
-                            </dxo-selection>
-                            <dxo-editing mode="popup"
-                                         [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }" [allowUpdating]="true">
-                            </dxo-editing>
-                            <dxi-column cssClass="stars" [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                            <dxi-column dataField="Id" [caption]="l('Id')" [visible]="false" sortOrder="asc"></dxi-column>
-                            <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
-                                        [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                                        [allowGrouping]="false" [allowSorting]="false"></dxi-column>
-                            <div *dxTemplate="let data of 'photoTemplate'">
-                                <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
-                            </div>
-                            <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="Email" [caption]="l('Contact.Email')" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Phone"
-                                        [caption]="l('Contact.Phone')"
-                                        [visible]="false" cellTemplate="phoneCell"
-                                        [editorOptions]="{
-                                        mask: masks.phone,
-                                        maskInvalidMessage: l('PhoneValidationError')
-                                    }">
-                            </dxi-column>
-                            <dxi-column dataField="Number" [caption]="l('Number')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="Amount" [caption]="l('Amount')" cellTemplate="amountCell"></dxi-column>
-                            <dxi-column dataField="OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="CurrentNumber" [caption]="l('CurrentNumber')" [visible]="false"></dxi-column>
-                            <dxi-column dataField="TotalNumber" [caption]="l('TotalNumber')" [visible]="false"></dxi-column>
-                            <dxi-column dataField="NoteCount" [caption]="l('NoteCount')" [visible]="false"></dxi-column>
-                            <dxi-column dataField="DocumentCount" [caption]="l('DocumentCount')" [visible]="false"></dxi-column>
-                            <dxi-column dataField="OrderDate" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
-                            <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
-                            <dxo-sorting mode="multiple"></dxo-sorting>
-                            <dxo-group-panel [visible]="true"></dxo-group-panel>
-                            <dxo-paging [pageSize]="20"></dxo-paging>
-                            <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                                {{cellData.value | phone}}
-                            </div>
-                            <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                                {{cellData.value | currency: currency}}
-                            </div>
-                            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                                {{cellData.value | date: formatting.dateTime : userTimezone}}
-                            </div>
-                        </dx-data-grid>
+    <div [hidden]="selectedOrderType !== orderTypesEnum.Order">
+        <app-toolbar [config]="ordersToolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+        <div class="main-wrapper">
+            <app-static-list
+                    [width]="'210px'"
+                    [title]="l('Stages')"
+                    [selectedKeys]="selectedOrderKeys"
+                    [filterModel]="filterModelStages"
+                    [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
+                    [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
+                    [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
+                    [targetSelector]="'[aria-label=Stage]'"
+                    [funnelStyling]="true"
+                    [list]="stages"
+                    (onItemSelected)="updateOrdersStage($event)">
+            </app-static-list>
+            <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
+                <div class="portlet-body">
+                    <div>
+                        <div id="ClientsTable">
+                            <ghost-list *ngIf="!isDataLoaded"></ghost-list>
+                            <dx-data-grid #ordersGrid
+                                          id="gridContainer"
+                                          class="main-component-view"
+                                          accesskey="narrowHeaderPanel"
+                                          [allowColumnReordering]="true"
+                                          [columnAutoWidth]="true"
+                                          [allowColumnResizing]="true"
+                                          [hoverStateEnabled]="true"
+                                          [loadPanel]="{ enabled: false }"
+                                          (onEditingStart)="onCellClick($event)"
+                                          (onCellClick)="onCellClick($event)"
+                                          [pager]="defaultGridPagerConfig"
+                                          (onOptionChanged)="onGridOptionChanged($event)"
+                                          (onContentReady)="onContentReady($event)"
+                                          (onSelectionChanged)="onSelectionChanged($event)"
+                                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                <dxo-selection selectAllMode="page"
+                                               showCheckBoxesMode="always"
+                                               mode="multiple">
+                                </dxo-selection>
+                                <dxo-editing mode="popup"
+                                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }" [allowUpdating]="true">
+                                </dxo-editing>
+                                <dxi-column cssClass="stars"
+                                            [width]="40"
+                                            [fixed]="true"
+                                            [fixedPosition]="'left'"
+                                            [showInColumnChooser]="false"
+                                            [allowExporting]="false">
+                                </dxi-column>
+                                <dxi-column dataField="Id" [caption]="l('Id')" [visible]="false" sortOrder="asc"></dxi-column>
+                                <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                                <div *dxTemplate="let data of 'photoTemplate'">
+                                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+                                </div>
+                                <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="Email" [caption]="l('Contact.Email')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="Phone"
+                                            [caption]="l('Contact.Phone')"
+                                            [visible]="false" cellTemplate="phoneCell"
+                                            [editorOptions]="{
+                                            mask: masks.phone,
+                                            maskInvalidMessage: l('PhoneValidationError')
+                                        }">
+                                </dxi-column>
+                                <dxi-column dataField="Number" [caption]="l('Number')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="Amount" [caption]="l('Amount')" cellTemplate="amountCell"></dxi-column>
+                                <dxi-column dataField="OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="CurrentNumber" [caption]="l('CurrentNumber')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="TotalNumber" [caption]="l('TotalNumber')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="NoteCount" [caption]="l('NoteCount')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="DocumentCount" [caption]="l('DocumentCount')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="OrderDate" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
+                                <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
+                                <dxo-sorting mode="multiple"></dxo-sorting>
+                                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                                <dxo-paging [pageSize]="20"></dxo-paging>
+                                <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                                    {{cellData.value | phone}}
+                                </div>
+                                <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
+                                    {{cellData.value | currency: currency}}
+                                </div>
+                                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                </div>
+                            </dx-data-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
+                <div class="portlet-body">
+                    <div class="funnel-wrapper main-component-view">
+                        <app-pipeline
+                                [totalsURI]="'OrderCount'"
+                                [dragulaName]="'orderStages'"
+                                [dataSource]="pipelineDataSource"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId']"
+                                dateField="OrderDate"
+                                [pipelinePurposeId]="pipelinePurposeId"
+                                [filterModelStages]="filterModelStages"
+                                [moveDisabled]="manageDisabled"
+                                [(selectedEntities)]="selectedOrders"
+                                (onEntityStageChanged)="onOrderStageChanged($event)"
+                                (onStagesLoaded)="onStagesLoaded($event)"
+                                (onCardClick)="onCardClick($event)"
+                                (onTotalChange)="updateTotalCount($event)">
+                            Loading...
+                        </app-pipeline>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
-            <div class="portlet-body">
-                <div class="funnel-wrapper main-component-view">
-                    <app-pipeline
-                            [totalsURI]="'OrderCount'"
-                            [dragulaName]="'orderStages'"
-                            [dataSource]="pipelineDataSource"
-                            [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId']"
-                            dateField="OrderDate"
-                            [pipelinePurposeId]="pipelinePurposeId"
-                            [filterModelStages]="filterModelStages"
-                            [moveDisabled]="manageDisabled"
-                            [(selectedEntities)]="selectedOrders"
-                            (onEntityStageChanged)="onOrderStageChanged($event)"
-                            (onStagesLoaded)="onStagesLoaded($event)"
-                            (onCardClick)="onCardClick($event)"
-                            (onTotalChange)="updateTotalCount($event)">
-                        Loading...
-                    </app-pipeline>
+    </div>
+    <div [hidden]="selectedOrderType !== orderTypesEnum.Subscription">
+        <app-toolbar [config]="subscriptionsToolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+        <div class="main-wrapper">
+            <ghost-list *ngIf="!isDataLoaded"></ghost-list>
+            <dx-data-grid #subscriptionsGrid
+                          id="gridContainer"
+                          keyExpr="id"
+                          [loadPanel]="{ enabled: false }"
+                          [allowColumnReordering]="true"
+                          [columnAutoWidth]="true"
+                          [hoverStateEnabled]="true"
+                          [allowColumnResizing]="true"
+                          (onCellClick)="onCellClick($event, 'subscriptions')"
+                          (onContentReady)="onContentReady($event)">
+                <dxo-sorting mode="multiple"></dxo-sorting>
+                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-selection selectAllMode="page"
+                               showCheckBoxesMode="always"
+                               mode="multiple">
+                </dxo-selection>
+                <dxi-column dataField="Id" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
+                <dxi-column dataField="ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <dxi-column dataField="FirstName" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="LastName" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="EmailAddress" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="PhoneNumber" [caption]="l('Contact.Phone')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <dxi-column dataField="StateName" [caption]="l('Contact.State')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <dxi-column dataField="Zip" [caption]="l('Contact.Zip')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <dxi-column dataField="CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <dxi-column dataField="ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell"></dxi-column>
+                <dxi-column dataField="ServiceType" [caption]="l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
+                <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
+                <dxi-column dataField="Amount" [caption]="l('Amount')" cellTemplate="amountTemplate"></dxi-column>
+                <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | date: formatting.date : userTimezone }}
                 </div>
-            </div>
+                <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                    <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+                </div>
+            </dx-data-grid>
         </div>
     </div>
 </div>

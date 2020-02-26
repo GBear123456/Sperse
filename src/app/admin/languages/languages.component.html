@@ -12,7 +12,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
     <div class="main-wrapper">
-        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
         <action-menu [items]="actionMenuItems"
                      [visible]="actionRecord"
                      width="240px"
