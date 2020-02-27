@@ -96,6 +96,25 @@
             ::ng-deep app-toolbar dx-toolbar {
                 border-bottom: none !important;
             }
+
+            .content {
+                display: flex;
+                flex-flow: column;
+                height: calc(100vh - 420px);
+                .attachments {
+                    margin: 15px;
+                    align-self: flex-end;
+                    .attachment {
+                        display: inline-block;
+                        padding: 5px;
+                        border-radius: 15px;
+                        margin: 5px;
+                        border: 1px dashed #dedede;
+                        text-align: right;
+                        float: right;
+                    }
+                }
+            }
           
             .header {
                 display: flex;

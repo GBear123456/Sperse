@@ -141,8 +141,17 @@
                     </dx-tooltip>
                     <a id="tagsButton" class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
                     <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)"></ckeditor>
+                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
+                        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                            <a href="javascript:void(0);" (click)="openFileSelector()">{{ls.l('Add attachment')}}</a>
+                        </ng-template>
+                    </ngx-file-drop>
                 </div>
-                <div class="field-area attachments"></div>
+                <div class="field-area attachments" *ngIf="!templateEditMode">
+                    <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
+                        <a target="_blank" [download]="attachment.name" [href]="attachment.url" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
+                    </div>
+                </div>
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>

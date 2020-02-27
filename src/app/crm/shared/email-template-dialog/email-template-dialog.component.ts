@@ -1,22 +1,31 @@
-/** Core imports */
+  /** Core imports */
 import { Component, ChangeDetectionStrategy, ViewChild, OnInit, Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest, GetTemplateReponse, EmailAttachmentDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+
+class EmailAttachment extends EmailAttachmentDto {
+    progress!: number;
+    loader!: Subscription;
+    url!: SafeResourceUrl;
+}
 
 @Component({
     selector: 'email-template-dialog',
@@ -69,8 +78,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         }
     ];
     templates$: Observable<GetTemplatesResponse[]>;
+    attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
 
     constructor(
+        private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
@@ -96,8 +107,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.validateData()) {
             if (this.templateEditMode)
                 this.saveTemplateData();
-            else
+            else {
+                this.data.attachments = this.attachments.map(item => item.id);
                 this.onSave.emit(this.data);
+            }
         }
     }
 
@@ -258,7 +271,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onTagClick(event) {
-        console.log(event, this.ckEditor, this.onTagItemClick);
         if (this.onTagItemClick.observers.length)
             this.onTagItemClick.emit(event.itemData);
         else
@@ -272,6 +284,68 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     addLinkTag(tag: string, link: string) {
         this.ckEditor.insertHtml('<a href="#' + tag + '#">' + link + '</a>');
+    }
+
+    addAttachments(files: NgxFileDropEntry[]) {
+        if (files.length)
+            files.forEach(file => {
+                if (file.fileEntry)
+                    file.fileEntry['file'](this.uploadFile.bind(this));
+                else
+                    this.uploadFile(file);
+            });
+    }
+
+    removeAttachment(attachment: Partial<EmailAttachment>, index) {
+        attachment.loader.unsubscribe();
+        this.attachments.splice(index, 1);
+    }
+
+    uploadFile(file) {
+        if (file.size > 5 * 1024 * 1024)
+            return this.notifyService.warn(this.ls.l('FilesizeLimitWarn', 5));
+
+        let attachment: Partial<EmailAttachment> = {
+            name: file.name,
+            size: file.size
+        };
+
+        attachment.url = this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));
+        attachment.loader = this.sendAttachment(file).subscribe((res: any) => {
+            if (res) {
+                if (res.result)
+                    attachment.id = res.result;
+                else {
+                    attachment.progress = res.loaded == res.total ? 0 :
+                        Math.round(res.loaded / res.total * 100);
+                    this.changeDetectorRef.markForCheck();
+                }
+            }
+        });
+        this.attachments.push(attachment);
+    }
+
+    sendAttachment(file) {
+        return new Observable(subscriber => {
+            let xhr = new XMLHttpRequest(),
+                formData = new FormData();
+            formData.append('file', file);
+            xhr.open('POST', AppConsts.remoteServiceBaseUrl + '/api/services/CRM/ContactCommunication/SaveAttachment');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
+
+            xhr.addEventListener('progress', event => {
+                subscriber.next(event);
+            });
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200)
+                    subscriber.next(JSON.parse(xhr.responseText));
+                else
+                    subscriber.error(xhr);
+                subscriber.complete();
+            });
+            xhr.send(formData);
+        });
     }
 
     close() {
