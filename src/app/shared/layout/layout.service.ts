@@ -31,11 +31,11 @@ export class LayoutService {
         [LayoutType.AdvicePeriod]: {
             historicalCredit: '#86c5dc',
             historicalDebit: '#e47822',
-            historicalNetChange: '#ffab3e',
+            historicalNetChange: '#5b5f97',
             endingBalance: '#fed142',
             forecastCredit: '#3d8ba9',
             forecastDebit: '#99c24d',
-            forecastNetChange: '#5b5f97',
+            forecastNetChange: '#7F7F7F',
             forecastEndingBalance: '#817c97',
             green: '#99c24d',
             blue: '#86c5dc',
