@@ -18,6 +18,7 @@ import { PlaidLoginDirective } from './plaid-login/plaid-login.directive';
 import { QuovoLoginComponent } from './quovo-login/quovo-login.component';
 import { SyncDatePickerService } from './sync-date-picker/sync-date-picker.service';
 import { SyncDatePickerComponent } from './sync-date-picker/sync-date-picker.component';
+import { QuickBookLoginComponent } from './quick-book-login/quick-book-login.component';
 import { XeroOauth2LoginComponent } from './xero-oauth2-login/xero-oauth2-login.component';
 
 @NgModule({
@@ -36,6 +37,7 @@ import { XeroOauth2LoginComponent } from './xero-oauth2-login/xero-oauth2-login.
         AccountConnectorDialogComponent,
         AccountConnectorChooserComponent,
         PlaidLoginDirective,
+        QuickBookLoginComponent,
         QuovoLoginComponent,
         XeroOauth2LoginComponent
     ],

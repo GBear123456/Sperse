@@ -45,6 +45,13 @@ export class AccountConnectorChooserComponent implements OnInit {
                 // disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
             },
             {
+                name: AccountConnectors.QuickBook,
+                iconName: 'quick-book-connector',
+                title: this.ls.l('QuickBookConnectorTitle'),
+                description: this.ls.l('QuickBookConnectorDescription'),
+                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.QuickBook))
+            },
+            {
                 name: AccountConnectors.XeroOAuth2,
                 iconName: 'xero-connector',
                 title: this.ls.l('XeroConnectorTitle'),
