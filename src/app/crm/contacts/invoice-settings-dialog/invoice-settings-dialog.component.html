@@ -42,11 +42,10 @@
                     [text]="ls.l('InvoiceEmail_ShowShippingAddress')"
                     [(value)]="settings.showShippingAddress">
                 </dx-check-box>
-                <!-- dx-check-box
+                <dx-check-box
                     [text]="ls.l('InvoiceEmail_AttachPDF')"
-                    [disabled]="true"
-                    [value]="false">
-                </dx-check-box -->
+                    [(value)]="settings.attachPDF">
+                </dx-check-box>
             </div>
         </div>
     </ng-container>

@@ -258,9 +258,9 @@ export class ContactsService {
     }
 
     getContactInfo(contactId): Observable<any> {
-        let contactInfo = this.contactProxy['data'].contactInfo;
-        return contactInfo.id == contactId
-            ? of(contactInfo)
+        let contactInfo = this.contactProxy['data'] &&
+            this.contactProxy['data'].contactInfo;
+        return contactInfo && contactInfo.id == contactId ? of(contactInfo)
             : this.contactProxy.getContactInfo(contactId);
     }
 

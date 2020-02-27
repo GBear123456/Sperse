@@ -12,7 +12,6 @@ import capitalize from 'underscore.string/capitalize';
 /** Application imports */
 import { AppStore, TagsStoreActions, TagsStoreSelectors } from '@app/store';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagContactsInput } from '@shared/service-proxies/service-proxies';

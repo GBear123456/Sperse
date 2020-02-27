@@ -37,8 +37,15 @@
             </div>
             <div class="date">{{activeEmail?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
         </div>
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="body" [innerHtml]="activeEmail?.body"></div>
-        </dx-scroll-view>
+        <div class="content">
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="body" [innerHtml]="activeEmail?.body"></div>
+            </dx-scroll-view>
+            <div class="attachments">
+                <div *ngFor="let attachment of activeEmail?.attachments" class="attachment">
+                    <a [download]="attachment.name" href="javascript:void(0)" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

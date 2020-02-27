@@ -56,6 +56,7 @@
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [loadPanel]="{ enabled: false }"
+                                          [remoteOperations]="{ filtering: false }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
                                           [pager]="defaultGridPagerConfig"
@@ -91,9 +92,9 @@
                                             [caption]="l('Contact.Phone')"
                                             [visible]="false" cellTemplate="phoneCell"
                                             [editorOptions]="{
-                                            mask: masks.phone,
-                                            maskInvalidMessage: l('PhoneValidationError')
-                                        }">
+                                                mask: masks.phone,
+                                                maskInvalidMessage: l('PhoneValidationError')
+                                            }">
                                 </dxi-column>
                                 <dxi-column dataField="Number" [caption]="l('Number')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
@@ -152,11 +153,15 @@
             <ghost-list *ngIf="!isDataLoaded"></ghost-list>
             <dx-data-grid #subscriptionsGrid
                           id="gridContainer"
+                          class="main-component-view"
+                          accesskey="narrowHeaderPanel"
                           keyExpr="id"
                           [loadPanel]="{ enabled: false }"
                           [allowColumnReordering]="true"
                           [columnAutoWidth]="true"
+                          [pager]="defaultGridPagerConfig"
                           [hoverStateEnabled]="true"
+                          [remoteOperations]="{ filtering: false }"
                           [allowColumnResizing]="true"
                           (onCellClick)="onCellClick($event, 'subscriptions')"
                           (onContentReady)="onContentReady($event)">

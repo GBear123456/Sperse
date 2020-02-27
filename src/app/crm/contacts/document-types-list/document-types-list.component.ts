@@ -1,11 +1,11 @@
-import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 
 import * as _ from 'underscore';
+import capitalize from 'underscore.string/capitalize';
 import { finalize } from 'rxjs/operators';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { DocumentTypeServiceProxy, UpdateDocumentTypeInput, CreateDocumentTypeInput, DocumentTypeInfo } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
   selector: 'crm-document-types-list',
@@ -13,7 +13,7 @@ import { DocumentTypeServiceProxy, UpdateDocumentTypeInput, CreateDocumentTypeIn
   styleUrls: ['./document-types-list.component.less'],
   providers: [DocumentTypeServiceProxy]
 })
-export class DocumentTypesListComponent extends AppComponentBase implements OnInit {
+export class DocumentTypesListComponent implements OnInit {
     @Input() set selectedItem(value) {
         this.selectedDocumentTypeId = value;
         this.selectedDocumentTypes = [value];
@@ -35,11 +35,9 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
     addNewTimeout: any;
 
     constructor(
-        injector: Injector,
-        private _documentTypeService: DocumentTypeServiceProxy
-    ) {
-        super(injector);
-    }
+        private documentTypeService: DocumentTypeServiceProxy,
+        public ls: AppLocalizationService
+    ) {}
 
     onDropDownInitialized(event) {
         this.dropDownComponent = event.component;
@@ -78,7 +76,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
     }
 
     refresh() {
-        this._documentTypeService.getAll().subscribe((result) => {
+        this.documentTypeService.getAll().subscribe((result) => {
             this.list = this.prepareDataSource(result);
         });
     }
@@ -92,7 +90,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
 
     addActionButton(name, container: HTMLElement, callback) {
         let buttonElement = document.createElement('a');
-        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.innerText = this.ls.l(capitalize(name));
         buttonElement.className = 'dx-link dx-link-' + name;
         buttonElement.addEventListener('click', callback);
         container.appendChild(buttonElement);
@@ -100,7 +98,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, (event) => {
+            this.addActionButton('delete', $event.cellElement, () => {
                 if ($event.data.hasOwnProperty('id'))
                     this.listComponent.deleteRow(
                         this.listComponent.getRowIndexByKey($event.data.id));
@@ -112,7 +110,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
 
     onRowRemoving($event) {
         let isItemDeleted = false;
-        this._documentTypeService.delete($event.key)
+        this.documentTypeService.delete($event.key)
         .pipe(finalize(() => {
             if (!isItemDeleted) {
                 this.refresh();
@@ -135,7 +133,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
             return;
         }
 
-        this._documentTypeService.update(UpdateDocumentTypeInput.fromJS({
+        this.documentTypeService.update(UpdateDocumentTypeInput.fromJS({
             id: $event.oldData.id,
             name: name
         })).subscribe(() => {
@@ -154,7 +152,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
             return;
         }
 
-        this._documentTypeService.create(CreateDocumentTypeInput.fromJS({
+        this.documentTypeService.create(CreateDocumentTypeInput.fromJS({
             name: name
         })).subscribe((id) => {
             if (id) {

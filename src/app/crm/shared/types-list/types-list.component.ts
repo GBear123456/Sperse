@@ -1,5 +1,5 @@
 /** Core imports */
-import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular/core';
+import {Component, Input, EventEmitter, Output, OnInit} from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -7,17 +7,20 @@ import { ActionsSubject, Store, select } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
 import { first } from 'rxjs/operators';
 import * as _ from 'underscore';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { AppStore, PartnerTypesStoreActions, PartnerTypesStoreSelectors } from '@app/store';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import {
     PartnerTypeServiceProxy,
     PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { MessageService } from '@abp/message/message.service';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permission-checker.service';
 
 @Component({
     selector: 'crm-types-list',
@@ -25,7 +28,7 @@ import {
     styleUrls: ['./types-list.component.less'],
     providers: [ PartnerTypeServiceProxy, PartnerServiceProxy ]
 })
-export class TypesListComponent extends AppComponentBase implements OnInit {
+export class TypesListComponent implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = '[aria-label="Type"]';
@@ -52,16 +55,16 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     tooltipVisible = false;
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
         private filterService: FiltersService,
         private partnerService: PartnerServiceProxy,
         private partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>,
-        private actions$: ActionsSubject
-    ) {
-        super(injector);
-    }
+        private actions$: ActionsSubject,
+        private message: MessageService,
+        private permission: PermissionCheckerService,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService
+    ) {}
 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible) {
@@ -77,7 +80,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove
+                        this.ls.l(isRemove
                             ? 'RemoveFromTypeBulkUpdateConfirmation'
                             : 'AddToTypeUpdateConfirmation', this.selectedKeys.length, this.selectedItems[0].name
                         ),
@@ -104,7 +107,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         this.store$.dispatch(new PartnerTypesStoreActions.AddPartnerType({
             partnerIds: partnerIds,
             typeName: typeName,
-            successMessage: this.l(notifyMessageKey)
+            successMessage: this.ls.l(notifyMessageKey)
         }));
     }
 
@@ -139,7 +142,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
 
     addActionButton(name, container: HTMLElement, callback) {
         let buttonElement = document.createElement('a');
-        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.innerText = this.ls.l(capitalize(name));
         buttonElement.className = 'dx-link dx-link-' + name;
         buttonElement.addEventListener('click', callback);
         container.appendChild(buttonElement);

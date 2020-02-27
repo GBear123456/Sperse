@@ -1138,10 +1138,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                 }).afterClosed().subscribe();
             }
-        }
-        if ($event.rowType === 'data' && $event.column.dataField == 'Description') {
-            this.transactionId = $event.data.Id;
-            this.showTransactionDetailsInfo();
+            if ($event.column.dataField == 'Description') {
+                this.transactionId = $event.data.Id;
+                this.showTransactionDetailsInfo();
+            }
         }
     }
 

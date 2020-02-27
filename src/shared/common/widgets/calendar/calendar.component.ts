@@ -27,7 +27,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         this.setDateRageValues();
     }
 
-    @Output() onChange = new EventEmitter();
+    @Output() onChange: EventEmitter<CalendarValuesModel> = new EventEmitter();
 
     constructor(injector: Injector) {
         super(injector);
