@@ -144,12 +144,14 @@ export enum ImportStatus {
 
 export enum AccountConnectors {
     Plaid = 'Plaid',
+    QuickBook = 'QuickBook',
     Quovo = 'Quovo',
     XeroOAuth2 = 'XeroOAuth2'
 }
 
 export enum SyncTypeIds {
     Plaid = 'P',
+    QuickBook = 'B',
     Quovo = 'Q',
     XeroOAuth2 = 'O'
 }

@@ -13,6 +13,11 @@
             (onClose)="closeDialog($event)">
         </plaid-login>
     </ng-template>
+    <ng-template [ngIf]="selectedConnector === accountConnectors.QuickBook">
+        <quick-book-login [loadingContainerElement]="data?.loadingContainerElement"
+            (onComplete)="complete()">
+        </quick-book-login>
+    </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.Quovo">
         <quovo-login [loadingContainerElement]="data?.loadingContainerElement"
             [accountId]="data?.config?.accountId"
