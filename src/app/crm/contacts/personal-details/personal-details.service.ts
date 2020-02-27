@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { PersonalDetailsDialogComponent } from './personal-details-dialog/person
 @Injectable()
 export class PersonalDetailsService {
 
-    constructor(injector: Injector,
+    constructor(
         public dialog: MatDialog
     ) {}
 

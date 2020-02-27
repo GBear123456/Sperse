@@ -866,11 +866,11 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@bugsnag/browser@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@bugsnag/browser/-/browser-6.5.0.tgz#cec29fba00b47cbfca464be7f52b3900dd809cef"
+"@bugsnag/browser@^6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@bugsnag/browser/-/browser-6.5.2.tgz#3f8f911dd739d2ace056fd5a38d5d25283ca4bfc"
 
-"@bugsnag/core@^6.2.0":
+"@bugsnag/core@^6.2.2":
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/@bugsnag/core/-/core-6.5.0.tgz#5dfaac6b4cc1f76049834323d09f5ec7394abad2"
   dependencies:
@@ -884,16 +884,16 @@
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@bugsnag/cuid/-/cuid-3.0.0.tgz#2ee7642a30aee6dc86f5e7f824653741e42e5c35"
 
-"@bugsnag/js@^6.2.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@bugsnag/js/-/js-6.5.0.tgz#4961e799d93c84ca9dd37877ecdbfa939ebf3404"
+"@bugsnag/js@^6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@bugsnag/js/-/js-6.5.2.tgz#810383aa7a2246639041bb9031ab316432959527"
   dependencies:
-    "@bugsnag/browser" "^6.5.0"
-    "@bugsnag/node" "^6.5.0"
+    "@bugsnag/browser" "^6.5.2"
+    "@bugsnag/node" "^6.5.2"
 
-"@bugsnag/node@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@bugsnag/node/-/node-6.5.0.tgz#10ebba701f3f78bbbc1cf7cc806ffa633d61e5ec"
+"@bugsnag/node@^6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@bugsnag/node/-/node-6.5.2.tgz#7bc2d0d1c7a682784be388404ab728a80b7ae2b9"
   dependencies:
     byline "^5.0.0"
     error-stack-parser "^2.0.2"
@@ -901,9 +901,9 @@
     pump "^3.0.0"
     stack-generator "^2.0.3"
 
-"@bugsnag/plugin-angular@^6.2.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@bugsnag/plugin-angular/-/plugin-angular-6.5.0.tgz#ff80409e6de1f2150545d118923654379c8a4460"
+"@bugsnag/plugin-angular@^6.5.2":
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/@bugsnag/plugin-angular/-/plugin-angular-6.5.2.tgz#48f37888a69ecb9cfb7373bc4784afe6bf81f05c"
 
 "@bugsnag/safe-json-stringify@4.0.0":
   version "4.0.0"

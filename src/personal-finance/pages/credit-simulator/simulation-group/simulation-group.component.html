@@ -1,6 +1,6 @@
 <div class="sub-title">
     <h2>
-        {{l("creditSimulatorPageTitle")}}
+        {{ls.l("creditSimulatorPageTitle")}}
         <button class=" pull-right reset-link" type="reset" (click)="resetAll()">reset all</button>
     </h2>
 </div>
@@ -12,7 +12,7 @@
                    href="#transferBalanceToNewCard"
                    aria-expanded="true" aria-controls="transferBalanceToNewCard">
                     <img src="assets/images/icons/pay-of-all-cerds-icon.svg" alt="Close card" width="20">
-                    {{l("transferBalanceToNewCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("transferBalanceToNewCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.transferCreditBalances">
                         <span class="value pull-right">+{{(score?.transferCreditBalances)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
@@ -22,9 +22,9 @@
         <div id="transferBalanceToNewCard" class="collapse show" role="tabpanel"
              aria-labelledby="headingTransferBalanceToNewCard">
             <div class="card-body">
-                <p>{{l("transferBalanceToNewCardDescription")}}</p>
+                <p>{{ls.l("transferBalanceToNewCardDescription")}}</p>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("amount")}}</div>
+                    <div class="dx-field-label">{{ls.l("amount")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="0"
                                    [max]="10000000"
@@ -54,7 +54,7 @@
                 <a role="button" data-toggle="collapse" href="#changeCreditBalance"
                    aria-expanded="true" aria-controls="changeCreditBalance">
                     <img src="assets/images/icons/change-card-balance-icon.svg" alt="Close card" width="20">
-                    {{l("changeCreditBalance")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("changeCreditBalance")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.increaseCreditBalance">
                         <span class="value pull-right">+{{(score?.increaseCreditBalance)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
@@ -67,10 +67,10 @@
         <div id="changeCreditBalance" class="collapse show" role="tabpanel"
              aria-labelledby="headingchangeCreditBalance">
             <div class="card-body">
-                <p>{{l("changeCreditBalanceDescription")}}</p>
+                <p>{{ls.l("changeCreditBalanceDescription")}}</p>
                 <form>
                     <div class="dx-field custom-height-slider changeCreditBalance">
-                        <div class="dx-field-label">{{l("amount")}}</div>
+                        <div class="dx-field-label">{{ls.l("amount")}}</div>
                         <div class="dx-field-value">
                             <dx-slider [min]="0"
                                        [max]="actualCreditScore?.totalCreditLimit * 100"
@@ -89,7 +89,7 @@
                         </div>
                     </div>
                     <div class="dx-field custom-radio-2-btn">
-                        <div class="dx-field-label">{{l("payOffAllCreditCards")}}</div>
+                        <div class="dx-field-label">{{ls.l("payOffAllCreditCards")}}</div>
                         <div class="dx-field-value">
                             <dx-radio-group [dataSource]="trueFalse"
                                             displayExpr="title"
@@ -116,7 +116,7 @@
                 <a role="button" data-toggle="collapse"
                    href="#increaseMyCreditCardLimit" aria-expanded="true" aria-controls="increaseMyCreditCardLimit">
                     <img src="assets/images/icons/increase-icon.svg" alt="Close card" width="20">
-                    {{l("increaseMyCreditCardLimit")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("increaseMyCreditCardLimit")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.increaseCreditCardLimit">
                         <span class="value pull-right">+{{(score?.increaseCreditCardLimit)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
@@ -126,9 +126,9 @@
         <div id="increaseMyCreditCardLimit" class=" collapse show" role="tabpanel"
              aria-labelledby="headingIncreaseMyCreditCardLimit">
             <div class="card-body">
-                <p>{{l("increaseMyCreditCardLimitDescription")}}</p>
+                <p>{{ls.l("increaseMyCreditCardLimitDescription")}}</p>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("amount")}}</div>
+                    <div class="dx-field-label">{{ls.l("amount")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="0"
                                    [max]="10000000"
@@ -158,7 +158,7 @@
                 <a role="button" data-toggle="collapse"
                    href="#openNewCreditCard" aria-expanded="true" aria-controls="openNewCreditCard">
                     <img src="assets/images/icons/obtain-cc-icon.svg" alt="Close card" width="20">
-                    {{l("openNewCreditCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("openNewCreditCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.applyForCreditCard">
                         <span class="value pull-right">({{score?.applyForCreditCard}})</span>
                     </ng-container>
@@ -171,9 +171,9 @@
         <div id="openNewCreditCard" class=" collapse show" role="tabpanel"
              aria-labelledby="headingopenNewCreditCard">
             <div class="card-body">
-                <p>{{l("openNewCreditCardDescription")}}</p>
+                <p>{{ls.l("openNewCreditCardDescription")}}</p>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("numberOfCards")}}</div>
+                    <div class="dx-field-label">{{ls.l("numberOfCards")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="1"
                                    [max]="11"
@@ -189,7 +189,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("amount")}}</div>
+                    <div class="dx-field-label">{{ls.l("amount")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="0"
                                    [max]="10000000"
@@ -220,7 +220,7 @@
                    href="#closeOldestCreditCard"
                    aria-expanded="true" aria-controls="closeOldestCreditCard">
                     <img src="assets/images/icons/close-card-icon.svg" alt="Close card" width="20">
-                    {{l("closeOldestCreditCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("closeOldestCreditCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.closeOldestCreditCard == 'true'">
                         <span class="value pull-right">Yes</span>
                     </ng-container>
@@ -232,10 +232,10 @@
         </div>
         <div id="closeOldestCreditCard" class="collapse show" role="tabpanel" aria-labelledby="headingcloseOldestCreditCard">
             <div class="card-body">
-                <p>{{l("closeOldestCreditCardDescription")}}</p>
+                <p>{{ls.l("closeOldestCreditCardDescription")}}</p>
                 <form>
                     <div class="dx-field custom-radio-2-btn">
-                        <div class="dx-field-label">{{l("labelForCloseOldestCreditCard")}}</div>
+                        <div class="dx-field-label">{{ls.l("labelForCloseOldestCreditCard")}}</div>
                         <div class="dx-field-value">
                             <dx-radio-group [dataSource]="trueFalse"
                                             displayExpr="title"
@@ -260,7 +260,7 @@
                 <a role="button" data-toggle="collapse"
                    href="#getNewLoan" aria-expanded="true" aria-controls="getNewLoan">
                     <img src="assets/images/icons/obtain-personal-loan-icon.svg" alt="Close card" width="20">
-                    {{l("getNewLoan")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("getNewLoan")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.obtainPersonalLoan">
                         <span class="value pull-right">Personal (+{{(score?.obtainPersonalLoan)/100 | currency:'USD':'symbol':'1.0-0'}})</span>
                     </ng-container>
@@ -276,9 +276,9 @@
         <div id="getNewLoan" class="collapse show" role="tabpanel"
              aria-labelledby="headingGetNewLoan">
             <div class="card-body">
-                <p>{{l("getNewLoanDescription")}}</p>
+                <p>{{ls.l("getNewLoanDescription")}}</p>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("labelObtainMortgage")}}</div>
+                    <div class="dx-field-label">{{ls.l("labelObtainMortgage")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="0"
                                    [max]="200000000"
@@ -296,7 +296,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("labelObtainAutoLoan")}}</div>
+                    <div class="dx-field-label">{{ls.l("labelObtainAutoLoan")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="0"
                                    [max]="50000000"
@@ -314,7 +314,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("labelPersonalLoan")}}</div>
+                    <div class="dx-field-label">{{ls.l("labelPersonalLoan")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="0"
                                    [max]="50000000"
@@ -344,7 +344,7 @@
                 <a role="button" data-toggle="collapse"
                    href="#makeTimelyPayments" aria-expanded="true" aria-controls="makeTimelyPayments">
                     <img src="assets/images/icons/attention-icon.svg" alt="Close card" width="20">
-                    {{l("makeTimelyPayments")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("makeTimelyPayments")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.onTimePayment">
                         <span class="value pull-right">{{score?.onTimePayment}} month(s)</span>
                     </ng-container>
@@ -354,9 +354,9 @@
         <div id="makeTimelyPayments" class="collapse show" role="tabpanel"
              aria-labelledby="headingmakeTimelyPayments">
             <div class="card-body">
-                <p>{{l("makeTimelyPaymentsDescription")}}</p>
+                <p>{{ls.l("makeTimelyPaymentsDescription")}}</p>
                 <div class="dx-field custom-height-slider">
-                    <div class="dx-field-label">{{l("makeTimelyPayments")}}</div>
+                    <div class="dx-field-label">{{ls.l("makeTimelyPayments")}}</div>
                     <div class="dx-field-value">
                         <dx-slider [min]="1"
                                    [max]="24"
@@ -386,7 +386,7 @@
                    href="#getPastDueOnMyAccounts"
                    aria-expanded="true" aria-controls="getPastDueOnMyAccounts">
                     <img src="assets/images/icons/close-card-icon.svg" alt="Close card" width="20">
-                    {{l("getPastDueOnMyAccounts")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("getPastDueOnMyAccounts")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.oneAccountPastDue">
                         <span class="value pull-right">{{score?.oneAccountPastDue}} days</span>
                     </ng-container>
@@ -399,9 +399,9 @@
         <div id="getPastDueOnMyAccounts" class="collapse show" role="tabpanel"
              aria-labelledby="headingGetPastDueOnMyAccounts">
             <div class="card-body">
-                <p>{{l("getPastDueOnMyAccountsDescription")}}</p>
+                <p>{{ls.l("getPastDueOnMyAccountsDescription")}}</p>
                 <div class="dx-field">
-                    <div class="dx-field-label">{{l("oneAccountPastDue")}}</div>
+                    <div class="dx-field-label">{{ls.l("oneAccountPastDue")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="pastDueDays"
                                         displayExpr="title"
@@ -413,7 +413,7 @@
                     </div>
                 </div>
                 <div class="dx-field">
-                    <div class="dx-field-label">{{l("allAccountsPastDue")}}</div>
+                    <div class="dx-field-label">{{ls.l("allAccountsPastDue")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="pastDueDays"
                                         displayExpr="title"
@@ -438,9 +438,9 @@
                    href="#negativePublicRecords"
                    aria-expanded="true" aria-controls="negativePublicRecords">
                     <img src="assets/images/icons/lot-icon.svg" alt="Close card" width="20">
-                    {{l("negativePublicRecords")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                    {{ls.l("negativePublicRecords")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.moveOneAccountToCollection == 'true' || score.addForeClosurePublicRecord == 'true' || score.declareBankruptcy == 'true' || score.addTaxLienPublicRecord == 'true' || score.addChildSupportPublicRecord == 'true' || score.addWageGarnishmentPublicRecord == 'true'">
-                        <span class="value pull-right">{{l("Yes")}}</span>
+                        <span class="value pull-right">{{ls.l("Yes")}}</span>
                     </ng-container>
                 </a>
             </h4>
@@ -448,9 +448,9 @@
         <div id="negativePublicRecords" class="collapse show" role="tabpanel"
              aria-labelledby="headingnegativePublicRecords">
             <div class="card-body">
-                <p>{{l("negativePublicRecordsDescription")}}</p>
+                <p>{{ls.l("negativePublicRecordsDescription")}}</p>
                 <div class="dx-field custom-radio-2-btn">
-                    <div class="dx-field-label">{{l("moveOneAccountToCollection")}}</div>
+                    <div class="dx-field-label">{{ls.l("moveOneAccountToCollection")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="trueFalse"
                                         displayExpr="title"
@@ -462,7 +462,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-radio-2-btn">
-                    <div class="dx-field-label">{{l("addForeClosurePublicRecord")}}</div>
+                    <div class="dx-field-label">{{ls.l("addForeClosurePublicRecord")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="trueFalse"
                                         displayExpr="title"
@@ -474,7 +474,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-radio-2-btn">
-                    <div class="dx-field-label">{{l("declareBankruptcy")}}</div>
+                    <div class="dx-field-label">{{ls.l("declareBankruptcy")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="trueFalse"
                                         displayExpr="title"
@@ -486,7 +486,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-radio-2-btn">
-                    <div class="dx-field-label">{{l("addTaxLienPublicRecord")}}</div>
+                    <div class="dx-field-label">{{ls.l("addTaxLienPublicRecord")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="trueFalse"
                                         displayExpr="title"
@@ -498,7 +498,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-radio-2-btn">
-                    <div class="dx-field-label">{{l("addChildSupportPublicRecord")}}</div>
+                    <div class="dx-field-label">{{ls.l("addChildSupportPublicRecord")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="trueFalse"
                                         displayExpr="title"
@@ -510,7 +510,7 @@
                     </div>
                 </div>
                 <div class="dx-field custom-radio-2-btn">
-                    <div class="dx-field-label">{{l("addWageGarnishmentPublicRecord")}}</div>
+                    <div class="dx-field-label">{{ls.l("addWageGarnishmentPublicRecord")}}</div>
                     <div class="dx-field-value">
                         <dx-radio-group [dataSource]="trueFalse"
                                         displayExpr="title"
