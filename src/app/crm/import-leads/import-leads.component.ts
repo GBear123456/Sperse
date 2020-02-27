@@ -470,9 +470,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private parseFullAddressIntoDataSource(field, fullAddress, dataSource) {
         let parsed = addressParser.parseLocation(fullAddress);
-
         if (parsed) {
-            this.setFieldIfDefined(AppConsts.defaultCountry, field.mappedField + '_countryId', dataSource);
             this.setFieldIfDefined(parsed.state, field.mappedField +
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateId'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
@@ -482,7 +480,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
                     field.mappedField + '_street', dataSource);
         }
-
         return true;
     }
 
