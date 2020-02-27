@@ -6,24 +6,24 @@
     [(value)]="selectedDocumentTypeId"
     [showClearButton]="true"
     [dataSource]="list"
-    placeholder="{{l('ChooseDocumentType')}}"
+    [placeholder]="ls.l('ChooseDocumentType')"
     (onInitialized)="onDropDownInitialized($event)"
     (onValueChanged)=onValueChanged($event)>
     <div class="document-types" *dxTemplate="let data of 'content'">
         <div class="actions clearfix">
-            <span class="title">{{l('Document Types')}}</span>
-            <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+            <span class="title">{{ls.l('Document Types')}}</span>
+            <span class="filter-apply" (click)="apply()">{{ls.l('Apply')}}</span>
         </div>
-        <dx-tree-list  #documentTypeslist
+        <dx-tree-list
             width="300px"
             height="360px"
             keyExpr="id"
             parentIdExpr="parent"
             [rootValue]="0"
-            [noDataText]="l('AddNewDocumentType')"
+            [noDataText]="ls.l('AddNewDocumentType')"
             [showColumnLines]="false"
             [showColumnHeaders]="false"
-            [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
+            [searchPanel]="{visible: true, placeholder: ls.l('Search'), width: 260}"
             [selection]="{allowSelectAll: false, mode: 'single' }"
             [selectedRowKeys]="selectedDocumentTypes"
             [(dataSource)]="list"

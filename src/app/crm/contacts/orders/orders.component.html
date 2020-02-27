@@ -13,7 +13,7 @@
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
 
-                <dxi-column [width]="40" [alignment]="'center'" [allowEditing]="false" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false" cellTemplate="historyCell"></dxi-column>
+                <dxi-column [width]="40" [alignment]="'center'" [allowEditing]="false" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false" cellTemplate="historyCell"></dxi-column>
                 <dxi-column dataField="Number" caption="{{l('Number')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="Amount" alignment="left" caption="{{l('Amount')}}" [allowEditing]="false" [customizeText]="customizeAmountValue" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column dataField="OrderType" caption="{{l('Type')}}" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>

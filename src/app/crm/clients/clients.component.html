@@ -16,7 +16,7 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
-                     [visible]="actionEvent"
+                     [visible]="!!actionEvent"
                      target=".dx-state-hover .dx-link.dx-link-edit"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
@@ -57,6 +57,7 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
+                                  [remoteOperations]="{ filtering: false }"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
