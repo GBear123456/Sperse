@@ -5,7 +5,7 @@
             <dx-tree-list keyExpr="id"
                           parentIdExpr="parentId"
                           [autoExpandAll]="true"
-                          [scrolling]="{showScrollbar: 'never'}"
+                          [scrolling]="{ showScrollbar: 'never' }"
                           [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                           [dataSource]="bankAccountsService.sortedBusinessEntities$ | async"
                           (onContentReady)="onContentReady($event)"

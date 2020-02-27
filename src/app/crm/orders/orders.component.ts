@@ -700,7 +700,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         } else if (!dataGrid)
             return ;
 
-        context.processODataFilter.call(context,
+        context.processODataFilter.call(
+            context,
             dataGrid.instance,
             this.selectedOrderType === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
             this.filters,

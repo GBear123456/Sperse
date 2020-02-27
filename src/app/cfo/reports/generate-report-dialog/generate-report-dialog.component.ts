@@ -104,9 +104,8 @@ export class GenerateReportDialogComponent implements OnInit {
         public ls: AppLocalizationService
     ) {
         this.dialogRef['_overlayRef'].hostElement.classList.add('generate-report');
-      
         if (feature.isEnabled(AppFeatures.CFODepartmentsManagement))
-            this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType, 
+            this.departmentsProxy.getAccessibleDepartments(this.cfoService.instanceType,
                 this.cfoService.instanceId).subscribe(res => {
                     this.departmentsEntities = [this.noDepartmentItem].concat(res);
                 });
@@ -126,6 +125,7 @@ export class GenerateReportDialogComponent implements OnInit {
      * Return GenerateInput
      * @param {string} currencyId
      * @param {number[]} businessEntityIds
+     * @param {string[]} departments
      * @return {GenerateInput}
      */
     private getGenerateInput(currencyId: string, businessEntityIds: number[], departments: string[]): GenerateInput {
@@ -160,7 +160,7 @@ export class GenerateReportDialogComponent implements OnInit {
 
     private prev() {
         this.currentStep--;
-        if (this.currentStep == GenerateReportStep.Step2 
+        if (this.currentStep == GenerateReportStep.Step2
             && this.departmentsEntities.length <= 1
         ) this.currentStep--;
         this.processStep();
@@ -236,8 +236,7 @@ export class GenerateReportDialogComponent implements OnInit {
                                     this.getGenerateInput(currencyId, [+param], [dept])
                                 ));
                             });
-                        }
-                        else {
+                        } else {
                             observables.push(this.reportsProxy.generate(
                                 <any>this.data.instanceType,
                                 this.data.instanceId,
@@ -247,8 +246,7 @@ export class GenerateReportDialogComponent implements OnInit {
                     });
 
                     return forkJoin(observables);
-                }
-                else {
+                } else {
                     return this.reportsProxy.generate(
                         <any>this.data.instanceType,
                         this.data.instanceId,
@@ -276,7 +274,9 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     onSelectionChanged(event) {
-        this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
+        if (this.currentStep === GenerateReportStep.Step1) {
+            this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
+        }
     }
 
     get submitButtonDisabled() {
