@@ -55,6 +55,7 @@
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
                                       [loadPanel]="{ enabled: false }"
+                                      [remoteOperations]="{ filtering: false }"
                                       (onEditingStart)="onCellClick($event)"
                                       (onCellClick)="onCellClick($event)"
                                       [pager]="defaultGridPagerConfig"
@@ -155,6 +156,7 @@
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
                       [hoverStateEnabled]="true"
+                      [remoteOperations]="{ filtering: false }"
                       [allowColumnResizing]="true"
                       (onCellClick)="onCellClick($event, 'subscriptions')"
                       (onContentReady)="onContentReady($event)">

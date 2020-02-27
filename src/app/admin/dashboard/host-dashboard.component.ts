@@ -15,7 +15,6 @@ import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { finalize, first, map, tap, switchMap, catchError, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
-import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 import { AppIncomeStatisticsDateInterval } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
@@ -65,7 +64,6 @@ export class HostDashboardComponent implements OnInit {
     recentTenantsData$: Observable<RecentTenant[]>;
     refreshing = false;
     constructor(
-        private dateTimeService: DateTimeService,
         private hostDashboardService: HostDashboardServiceProxy,
         private momentFormatPipe: MomentFormatPipe,
         private currencyPipe: CurrencyPipe,
