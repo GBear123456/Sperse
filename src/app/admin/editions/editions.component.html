@@ -32,7 +32,7 @@
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="onContentReady()"
                                   (onOptionChanged)="onGridOptionChanged($event)"
-                                  (onCellClick)="this.openCreateOrEditDialog($event.data.id)"
+                                  (onCellClick)="openCreateOrEditDialog($event)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   [dataSource]="dataSource">
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>

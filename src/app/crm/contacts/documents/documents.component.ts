@@ -98,22 +98,22 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     constructor(injector: Injector,
         private dialog: MatDialog,
-        private _fileSizePipe: FileSizePipe,
-        private _documentService: DocumentServiceProxy,
-        private _documentTypeService: DocumentTypeServiceProxy,
-        private _contactService: ContactServiceProxy,
+        private fileSizePipe: FileSizePipe,
+        private documentService: DocumentServiceProxy,
+        private documentTypeService: DocumentTypeServiceProxy,
+        private contactService: ContactServiceProxy,
         private clientService: ContactsService,
         private printerService: PrinterService,
         private cacheService: CacheService,
         private renderer: Renderer2,
-        public documentsService: DocumentsService,
-        private csvParser: Papa
+        private csvParser: Papa,
+        public documentsService: DocumentsService
     ) {
         super(injector);
-        this.data = this._contactService['data'];
+        this.data = this.contactService['data'];
         clientService.invalidateSubscribe((area) => {
             if (area == 'documents') {
-                this._documentService['data'] = undefined;
+                this.documentService['data'] = undefined;
                 this.loadDocuments();
             }
         });
@@ -152,7 +152,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             return of(requestInfo);
         }
 
-        return this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(
+        return this.documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(
             flatMap((response) => {
                 this.storeWopiRequestInfoToCache(wopiDocumentDataCacheKey, response);
                 return of(response);
@@ -168,7 +168,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         action: this.closeDocument.bind(this)
                     },
                     {
-                        html: `<div class="file-name ${this.getFileExtensionByFileName(this.currentDocumentInfo.fileName)} ${this.getFileType(this.currentDocumentInfo.fileName)}" title="${this.currentDocumentInfo.fileName} ${this._fileSizePipe.transform(this.currentDocumentInfo.size)}">
+                        html: `<div class="file-name ${this.getFileExtensionByFileName(this.currentDocumentInfo.fileName)} ${this.getFileType(this.currentDocumentInfo.fileName)}" title="${this.currentDocumentInfo.fileName} ${this.fileSizePipe.transform(this.currentDocumentInfo.size)}">
                                     ${this.currentDocumentInfo.fileName.split('.').shift()}
                                </div>`
                     }
@@ -294,9 +294,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     loadDocumentTypes() {
-        if (!(this.documentTypes = this._documentTypeService['data']))
-            this._documentTypeService.getAll().subscribe((result) => {
-                this._documentTypeService['data'] = this.documentTypes = result;
+        if (!(this.documentTypes = this.documentTypeService['data']))
+            this.documentTypeService.getAll().subscribe((result) => {
+                this.documentTypeService['data'] = this.documentTypes = result;
             });
     }
 
@@ -310,11 +310,11 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     loadDocuments(callback = null) {
-        let documentData = this._documentService['data'], groupId = this.data.contactInfo.id;
+        let documentData = this.documentService['data'], groupId = this.data.contactInfo.id;
         const dataSource$: Observable<DocumentInfo[]> = !callback && documentData && documentData.groupId == groupId
                             ? of(documentData.source)
-                            : this._documentService.getAll(groupId).pipe(tap((documents: DocumentInfo[]) => {
-                                this._documentService['data'] = {
+                            : this.documentService.getAll(groupId).pipe(tap((documents: DocumentInfo[]) => {
+                                this.documentService['data'] = {
                                     groupId: groupId,
                                     source: documents
                                 };
@@ -352,7 +352,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         });
     }
 
-    calculateFileSizeValue = (data: DocumentInfo) => this._fileSizePipe.transform(data.size);
+    calculateFileSizeValue = (data: DocumentInfo) => this.fileSizePipe.transform(data.size);
 
     numerizeFileSizeSortValue = (rowData) => +rowData.size;
 
@@ -574,7 +574,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             editDisabled: true
         });
         super.startLoading(true);
-        this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+        this.documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
             super.finishLoading(true);
         })).subscribe((response) => {
             this.showOfficeOnline(response);
@@ -619,7 +619,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     super.startLoading(true);
                     this.showViewerType = undefined;
                     this.openDocumentMode = false;
-                    this._documentService.delete(this.currentDocumentInfo.id)
+                    this.documentService.delete(this.currentDocumentInfo.id)
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
                             this.loadDocuments(() => {
@@ -667,7 +667,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     onDocumentTypeSelected(documentTypeId, data) {
-        this._documentService.updateType(UpdateTypeInput.fromJS({
+        this.documentService.updateType(UpdateTypeInput.fromJS({
             documentId: data.id,
             typeId: documentTypeId
         })).subscribe(() => {
@@ -684,6 +684,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     onTypeListUpdated(list) {
-        this._documentTypeService['data'] = this.documentTypes = list;
+        this.documentTypeService['data'] = this.documentTypes = list;
     }
 }

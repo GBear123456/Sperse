@@ -104,6 +104,7 @@ export class AppPreBootstrap {
             requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
         }
 
+        delete queryStringObj.tenantId;
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?secureId=' + queryStringObj.secureId,
             method: 'POST',
