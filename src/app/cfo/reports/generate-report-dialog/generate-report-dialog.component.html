@@ -105,7 +105,7 @@
                     <div class="col-12 text-center">
                         <button (click)="generateReport()"
                                 [disabled]="submitButtonDisabled"
-                                [ngClass]="{ disabled: submitButtonDisabled }"
+                                [ngClass]="{ disabled: submitButtonDisabled, progress: generatingStarted }"
                                 class="btn send-btn">
                             {{ls.l('Reports_RunReportGenerator')}}
                         </button>

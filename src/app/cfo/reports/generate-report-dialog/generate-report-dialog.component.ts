@@ -86,6 +86,7 @@ export class GenerateReportDialogComponent implements OnInit {
     sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
     dontSendEmailNotification = false;
+    generatingStarted = false;
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
@@ -218,7 +219,10 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     generateReport() {
-        this.modalDialog.startLoading();
+        if (this.submitButtonDisabled)
+            return ;
+
+        this.generatingStarted = true;
         this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             first(),
@@ -255,12 +259,12 @@ export class GenerateReportDialogComponent implements OnInit {
                 }
             }),
             finalize(() => {
-                this.modalDialog.finishLoading();
-                this.modalDialog.close(true);
+                this.generatingStarted = false;
             })
         ).subscribe(
             () => {
                 this.data.reportGenerated();
+                this.modalDialog.close(true);
                 this.notify.info(this.ls.l('SuccessfullyGenerated'));
             },
             () => {
@@ -280,7 +284,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     get submitButtonDisabled() {
-        return !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && !this.emailIsValid;
+        return this.generatingStarted || !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && !this.emailIsValid;
     }
 
     onInitialized(event) {
