@@ -21174,6 +21174,62 @@ export class OrderSubscriptionServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getServiceTypes(): Observable<ServiceTypeInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetServiceTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetServiceTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetServiceTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<ServiceTypeInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ServiceTypeInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetServiceTypes(response: HttpResponseBase): Observable<ServiceTypeInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ServiceTypeInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ServiceTypeInfo[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -42964,15 +43020,15 @@ export interface IContactShortInfo {
     statusId: string | undefined;
 }
 
-export class CreateContactEmailInput implements ICreateContactEmailInput {
+export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
     contactId!: number;
-    emailAddress!: string;
+    emailAddress!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
-    constructor(data?: ICreateContactEmailInput) {
+    constructor(data?: ICreateContactEmailInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -42992,9 +43048,9 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         }
     }
 
-    static fromJS(data: any): CreateContactEmailInput {
+    static fromJS(data: any): CreateContactEmailInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactEmailInput();
+        let result = new CreateContactEmailInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -43011,9 +43067,9 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
     }
 }
 
-export interface ICreateContactEmailInput {
+export interface ICreateContactEmailInputWithoutCheck {
     contactId: number;
-    emailAddress: string;
+    emailAddress: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -43022,7 +43078,7 @@ export interface ICreateContactEmailInput {
 
 export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneInputWithoutCheck {
     contactId!: number;
-    phoneNumber!: string;
+    phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
@@ -43072,7 +43128,7 @@ export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneI
 
 export interface ICreateContactPhoneInputWithoutCheck {
     contactId: number;
-    phoneNumber: string;
+    phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
@@ -43080,7 +43136,7 @@ export interface ICreateContactPhoneInputWithoutCheck {
     usageTypeId: string | undefined;
 }
 
-export class CreateContactAddressInput implements ICreateContactAddressInput {
+export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
     contactId!: number;
     streetAddress!: string | undefined;
     city!: string | undefined;
@@ -43096,7 +43152,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
 
-    constructor(data?: ICreateContactAddressInput) {
+    constructor(data?: ICreateContactAddressInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -43124,9 +43180,9 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         }
     }
 
-    static fromJS(data: any): CreateContactAddressInput {
+    static fromJS(data: any): CreateContactAddressInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactAddressInput();
+        let result = new CreateContactAddressInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -43151,7 +43207,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     }
 }
 
-export interface ICreateContactAddressInput {
+export interface ICreateContactAddressInputWithoutCheck {
     contactId: number;
     streetAddress: string | undefined;
     city: string | undefined;
@@ -43168,16 +43224,16 @@ export interface ICreateContactAddressInput {
     ownershipTypeId: string | undefined;
 }
 
-export class CreateContactLinkInput implements ICreateContactLinkInput {
+export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInputWithoutCheck {
     contactId!: number;
-    url!: string;
+    url!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
     isCompany!: boolean;
 
-    constructor(data?: ICreateContactLinkInput) {
+    constructor(data?: ICreateContactLinkInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -43198,9 +43254,9 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         }
     }
 
-    static fromJS(data: any): CreateContactLinkInput {
+    static fromJS(data: any): CreateContactLinkInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactLinkInput();
+        let result = new CreateContactLinkInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -43218,9 +43274,9 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
     }
 }
 
-export interface ICreateContactLinkInput {
+export interface ICreateContactLinkInputWithoutCheck {
     contactId: number;
-    url: string;
+    url: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -43418,10 +43474,10 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
-    emailAddresses!: CreateContactEmailInput[] | undefined;
+    emailAddresses!: CreateContactEmailInputWithoutCheck[] | undefined;
     phoneNumbers!: CreateContactPhoneInputWithoutCheck[] | undefined;
-    addresses!: CreateContactAddressInput[] | undefined;
-    links!: CreateContactLinkInput[] | undefined;
+    addresses!: CreateContactAddressInputWithoutCheck[] | undefined;
+    links!: CreateContactLinkInputWithoutCheck[] | undefined;
     dob!: moment.Moment | undefined;
     bankCode!: string | undefined;
     gender!: Gender | undefined;
@@ -43451,6 +43507,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
     noWelcomeEmail!: boolean | undefined;
+    bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
         if (data) {
@@ -43475,7 +43532,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
                 this.emailAddresses = [];
                 for (let item of data["emailAddresses"])
-                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+                    this.emailAddresses.push(CreateContactEmailInputWithoutCheck.fromJS(item));
             }
             if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
                 this.phoneNumbers = [];
@@ -43485,12 +43542,12 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             if (data["addresses"] && data["addresses"].constructor === Array) {
                 this.addresses = [];
                 for (let item of data["addresses"])
-                    this.addresses.push(CreateContactAddressInput.fromJS(item));
+                    this.addresses.push(CreateContactAddressInputWithoutCheck.fromJS(item));
             }
             if (data["links"] && data["links"].constructor === Array) {
                 this.links = [];
                 for (let item of data["links"])
-                    this.links.push(CreateContactLinkInput.fromJS(item));
+                    this.links.push(CreateContactLinkInputWithoutCheck.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.bankCode = data["bankCode"];
@@ -43533,6 +43590,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
+            this.bypassValidation = data["bypassValidation"];
         }
     }
 
@@ -43615,6 +43673,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
+        data["bypassValidation"] = this.bypassValidation;
         return data; 
     }
 }
@@ -43629,10 +43688,10 @@ export interface ICreateOrUpdateContactInput {
     lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
-    emailAddresses: CreateContactEmailInput[] | undefined;
+    emailAddresses: CreateContactEmailInputWithoutCheck[] | undefined;
     phoneNumbers: CreateContactPhoneInputWithoutCheck[] | undefined;
-    addresses: CreateContactAddressInput[] | undefined;
-    links: CreateContactLinkInput[] | undefined;
+    addresses: CreateContactAddressInputWithoutCheck[] | undefined;
+    links: CreateContactLinkInputWithoutCheck[] | undefined;
     dob: moment.Moment | undefined;
     bankCode: string | undefined;
     gender: Gender | undefined;
@@ -43662,6 +43721,7 @@ export interface ICreateOrUpdateContactInput {
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
     noWelcomeEmail: boolean | undefined;
+    bypassValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput {
@@ -44280,6 +44340,94 @@ export class UpdateContactXrefInput implements IUpdateContactXrefInput {
 export interface IUpdateContactXrefInput {
     contactId: number;
     xref: string | undefined;
+}
+
+export class CreateContactAddressInput implements ICreateContactAddressInput {
+    contactId!: number;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactAddressInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactAddressInput {
+    contactId: number;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
 }
 
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
@@ -45648,6 +45796,62 @@ export interface ISendSMSToContactInput {
     phoneNumber: string;
 }
 
+export class CreateContactEmailInput implements ICreateContactEmailInput {
+    contactId!: number;
+    emailAddress!: string | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmailInput {
+    contactId: number;
+    emailAddress: string | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+}
+
 export class CreateContactEmailOutput implements ICreateContactEmailOutput {
     id!: number | undefined;
 
@@ -45687,7 +45891,7 @@ export interface ICreateContactEmailOutput {
 export class UpdateContactEmailInput implements IUpdateContactEmailInput {
     id!: number;
     contactId!: number;
-    emailAddress!: string;
+    emailAddress!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
@@ -45737,7 +45941,7 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
 export interface IUpdateContactEmailInput {
     id: number;
     contactId: number;
-    emailAddress: string;
+    emailAddress: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -45832,6 +46036,66 @@ export interface IEmailUsageTypeDtoListResultDto {
     items: EmailUsageTypeDto[] | undefined;
 }
 
+export class CreateContactLinkInput implements ICreateContactLinkInput {
+    contactId!: number;
+    url!: string | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
+    comment!: string | undefined;
+    linkTypeId!: string | undefined;
+    isCompany!: boolean;
+
+    constructor(data?: ICreateContactLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.linkTypeId = data["linkTypeId"];
+            this.isCompany = data["isCompany"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["linkTypeId"] = this.linkTypeId;
+        data["isCompany"] = this.isCompany;
+        return data; 
+    }
+}
+
+export interface ICreateContactLinkInput {
+    contactId: number;
+    url: string | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string | undefined;
+    linkTypeId: string | undefined;
+    isCompany: boolean;
+}
+
 export class CreateContactLinkOutput implements ICreateContactLinkOutput {
     id!: number | undefined;
 
@@ -45871,7 +46135,7 @@ export interface ICreateContactLinkOutput {
 export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     id!: number;
     contactId!: number;
-    url!: string;
+    url!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
@@ -45924,7 +46188,7 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
 export interface IUpdateContactLinkInput {
     id: number;
     contactId: number;
-    url: string;
+    url: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -46166,7 +46430,7 @@ export interface IUpdateContactListInput {
 
 export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     contactId!: number;
-    phoneNumber!: string;
+    phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
@@ -46216,7 +46480,7 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
 
 export interface ICreateContactPhoneInput {
     contactId: number;
-    phoneNumber: string;
+    phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
@@ -46263,7 +46527,7 @@ export interface ICreateContactPhoneOutput {
 export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
     id!: number;
     contactId!: number;
-    phoneNumber!: string;
+    phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
@@ -46316,7 +46580,7 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
 export interface IUpdateContactPhoneInput {
     id: number;
     contactId: number;
-    phoneNumber: string;
+    phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     isActive: boolean;
     isConfirmed: boolean;
@@ -53925,6 +54189,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     description!: string | undefined;
     note!: string | undefined;
     lines!: CreateInvoiceLineInput[] | undefined;
+    bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateInvoiceInput) {
         if (data) {
@@ -53959,6 +54224,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
                 for (let item of data["lines"])
                     this.lines.push(CreateInvoiceLineInput.fromJS(item));
             }
+            this.bypassValidation = data["bypassValidation"];
         }
     }
 
@@ -53993,6 +54259,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             for (let item of this.lines)
                 data["lines"].push(item.toJSON());
         }
+        data["bypassValidation"] = this.bypassValidation;
         return data; 
     }
 }
@@ -54016,6 +54283,7 @@ export interface ICreateInvoiceInput {
     description: string | undefined;
     note: string | undefined;
     lines: CreateInvoiceLineInput[] | undefined;
+    bypassValidation: boolean | undefined;
 }
 
 export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
@@ -54097,6 +54365,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     description!: string | undefined;
     note!: string | undefined;
     lines!: UpdateInvoiceLineInput[] | undefined;
+    bypassValidation!: boolean | undefined;
 
     constructor(data?: IUpdateInvoiceInput) {
         if (data) {
@@ -54127,6 +54396,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
                 for (let item of data["lines"])
                     this.lines.push(UpdateInvoiceLineInput.fromJS(item));
             }
+            this.bypassValidation = data["bypassValidation"];
         }
     }
 
@@ -54157,6 +54427,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             for (let item of this.lines)
                 data["lines"].push(item.toJSON());
         }
+        data["bypassValidation"] = this.bypassValidation;
         return data; 
     }
 }
@@ -54176,6 +54447,7 @@ export interface IUpdateInvoiceInput {
     description: string | undefined;
     note: string | undefined;
     lines: UpdateInvoiceLineInput[] | undefined;
+    bypassValidation: boolean | undefined;
 }
 
 export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
@@ -55416,10 +55688,10 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
-    emailAddresses!: CreateContactEmailInput[] | undefined;
+    emailAddresses!: CreateContactEmailInputWithoutCheck[] | undefined;
     phoneNumbers!: CreateContactPhoneInputWithoutCheck[] | undefined;
-    addresses!: CreateContactAddressInput[] | undefined;
-    links!: CreateContactLinkInput[] | undefined;
+    addresses!: CreateContactAddressInputWithoutCheck[] | undefined;
+    links!: CreateContactLinkInputWithoutCheck[] | undefined;
     dob!: moment.Moment | undefined;
     bankCode!: string | undefined;
     gender!: Gender | undefined;
@@ -55449,6 +55721,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
     noWelcomeEmail!: boolean | undefined;
+    bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
         if (data) {
@@ -55472,7 +55745,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
                 this.emailAddresses = [];
                 for (let item of data["emailAddresses"])
-                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+                    this.emailAddresses.push(CreateContactEmailInputWithoutCheck.fromJS(item));
             }
             if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
                 this.phoneNumbers = [];
@@ -55482,12 +55755,12 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             if (data["addresses"] && data["addresses"].constructor === Array) {
                 this.addresses = [];
                 for (let item of data["addresses"])
-                    this.addresses.push(CreateContactAddressInput.fromJS(item));
+                    this.addresses.push(CreateContactAddressInputWithoutCheck.fromJS(item));
             }
             if (data["links"] && data["links"].constructor === Array) {
                 this.links = [];
                 for (let item of data["links"])
-                    this.links.push(CreateContactLinkInput.fromJS(item));
+                    this.links.push(CreateContactLinkInputWithoutCheck.fromJS(item));
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.bankCode = data["bankCode"];
@@ -55530,6 +55803,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
+            this.bypassValidation = data["bypassValidation"];
         }
     }
 
@@ -55611,6 +55885,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
+        data["bypassValidation"] = this.bypassValidation;
         return data; 
     }
 }
@@ -55624,10 +55899,10 @@ export interface ICreateOrUpdateLeadInput {
     lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
-    emailAddresses: CreateContactEmailInput[] | undefined;
+    emailAddresses: CreateContactEmailInputWithoutCheck[] | undefined;
     phoneNumbers: CreateContactPhoneInputWithoutCheck[] | undefined;
-    addresses: CreateContactAddressInput[] | undefined;
-    links: CreateContactLinkInput[] | undefined;
+    addresses: CreateContactAddressInputWithoutCheck[] | undefined;
+    links: CreateContactLinkInputWithoutCheck[] | undefined;
     dob: moment.Moment | undefined;
     bankCode: string | undefined;
     gender: Gender | undefined;
@@ -55657,6 +55932,7 @@ export interface ICreateOrUpdateLeadInput {
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
     noWelcomeEmail: boolean | undefined;
+    bypassValidation: boolean | undefined;
 }
 
 export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
@@ -60352,6 +60628,46 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 export interface ICancelOrderSubscriptionInput {
     orderSubscriptionId: number;
     cancelationReason: string | undefined;
+}
+
+export class ServiceTypeInfo implements IServiceTypeInfo {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IServiceTypeInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ServiceTypeInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServiceTypeInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IServiceTypeInfo {
+    id: string | undefined;
+    name: string | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
