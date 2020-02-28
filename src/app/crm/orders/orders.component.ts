@@ -10,7 +10,7 @@ import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
-import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
+import { CrmStore, PipelinesStoreSelectors, SubscriptionsStoreActions, SubscriptionsStoreSelectors } from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -252,7 +252,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'Fee',
             field: 'Fee',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        })
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Subscription',
+            field: 'ServiceTypeId',
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(
+                            select(SubscriptionsStoreSelectors.getSubscriptions)
+                        ),
+                        dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
     ];
     private filterChanged = false;
     masks = AppConsts.masks;

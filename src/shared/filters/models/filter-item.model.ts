@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export class FilterItemModel {
     dataSource: any;
     dataSource$: Observable<any>;
+    dispatch: () => any;
     selectedKeys$: Observable<any>;
     disableOuterScroll: boolean;
     protected _value: any = '';
