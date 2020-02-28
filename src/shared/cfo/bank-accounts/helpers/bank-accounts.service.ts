@@ -200,7 +200,7 @@ export class BankAccountsService {
             this.businessEntities$,
             this.selectedBusinessEntitiesIds$
         ).pipe(
-            map(([syncAccounts, businessEntities, selectedBusinessEntitiesIds]: [BusinessEntityDto[], number[]]) => {
+            map(([syncAccounts, businessEntities, selectedBusinessEntitiesIds]: [SyncAccountBankDto[], BusinessEntityDto[], number[]]) => {
                 let availableBusinessEntityIds = syncAccounts.reduce((businessEntityIds, syncAccount) => {
                     return businessEntityIds.concat(syncAccount.bankAccounts.map(bankAccount => bankAccount.businessEntityId));
                 }, []);
