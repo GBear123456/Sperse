@@ -1,18 +1,24 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, OnInit } from '@angular/core';
 import { FilterComponent } from '../models/filter-component';
+import capitalize from 'underscore.string/capitalize';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './filter-cboxes.component.html',
     styleUrls: ['./filter-cboxes.component.less']
 })
-export class FilterCBoxesComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class FilterCBoxesComponent implements OnInit, FilterComponent {
     items: {};
     apply: (event) => void;
     selectAll: boolean;
+    capitalize = capitalize;
 
-    constructor(injector: Injector) {
-        super(injector);
+    constructor(
+        public ls: AppLocalizationService
+    ) {}
+
+    ngOnInit(): void {
+        this.updateSelectAll();
     }
 
     getItems(): string[] {
@@ -33,9 +39,5 @@ export class FilterCBoxesComponent extends AppComponentBase implements OnInit, F
         for (let item in this.items)
             this.selectAll = this.selectAll
                 && this.items[item].value;
-    }
-
-    ngOnInit(): void {
-        this.updateSelectAll();
     }
 }

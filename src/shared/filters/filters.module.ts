@@ -10,12 +10,12 @@ import { FiltersService } from './filters.service';
 import { FilterManagerComponent, AdDirective } from './filter.manager.component';
 import { FilterStatesComponent } from './states/filter-states.component';
 import { FilterCheckBoxesComponent } from './check-boxes/filter-check-boxes.component';
+import { FilterMultipleCheckBoxesComponent } from './multiple-check-boxes/filter-multiple-check-boxes.component';
 import { FilterDropDownComponent } from './dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 import { FilterDatesComponent } from './dates/filter-dates.component';
 import { FilterCalendarComponent } from './calendar/filter-calendar.component';
-import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.component';
 import { FilterTreeListComponent } from './tree-list/tree-list.component';
 
@@ -56,8 +56,8 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         FilterManagerComponent,
         FilterStatesComponent,
         FilterCheckBoxesComponent,
+        FilterMultipleCheckBoxesComponent,
         FilterDropDownComponent,
-        FilterMultiselectDropDownComponent,
         FilterInputsComponent,
         FilterCBoxesComponent,
         FilterDatesComponent,
@@ -71,8 +71,8 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
     entryComponents: [
         FilterStatesComponent,
         FilterCheckBoxesComponent,
+        FilterMultipleCheckBoxesComponent,
         FilterDropDownComponent,
-        FilterMultiselectDropDownComponent,
         FilterCBoxesComponent,
         FilterInputsComponent,
         FilterDatesComponent,

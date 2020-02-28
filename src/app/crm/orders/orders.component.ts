@@ -35,10 +35,13 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrderServiceProxy, ServiceTypeInfo } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
+import { DomSanitizer } from '@angular/platform-browser';
+import { FilterMultipleCheckBoxesModel } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.model';
+import { FilterMultipleCheckBoxesComponent } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -117,6 +120,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'Amount',
             field: 'Amount',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        }),
+        new FilterModel({
+            component: FilterMultipleCheckBoxesComponent,
+            caption: 'Subscription',
+            field: 'ServiceTypeId',
+            hidden: true,
+            items: {
+                element: new FilterMultipleCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(
+                            select(SubscriptionsStoreSelectors.getSubscriptions)
+                        ),
+                        dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
         })
     ];
     private subscriptionsFilters: FilterModel[] = [
@@ -184,7 +204,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         keyExpr: 'id'
                     })
             }
-        }),
+        })
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
@@ -351,6 +371,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private itemDetailsService: ItemDetailsService,
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
+        private sanitizer: DomSanitizer,
         public appService: AppService,
         public dialog: MatDialog,
     ) {

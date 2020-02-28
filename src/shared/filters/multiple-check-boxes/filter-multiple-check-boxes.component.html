@@ -1,0 +1,16 @@
+<div class="wrapper">
+    <dx-tree-list [selection]="{ allowSelectAll: true, mode: 'none', recursive: true }"
+                  [dataSource]="items.element.dataSource"
+                  [keyExpr]="items.element.keyExpr"
+                  [parentIdExpr]="items.element.parentExpr"
+                  [showColumnHeaders]="false"
+                  [autoExpandAll]="true"
+                  [(selectedRowKeys)]="items.element.value">
+        <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
+        <div *dxTemplate="let cell of 'checkBoxTemplate'">
+            <div class="name">{{ cell.data[items.element.nameField] }}</div>
+            <dx-check-box [value]="cell.data['hasSubscription'] === true"></dx-check-box>
+            <dx-check-box [value]="cell.data['doesnhasSubscription'] === false"></dx-check-box>
+        </div>
+    </dx-tree-list>
+</div>
