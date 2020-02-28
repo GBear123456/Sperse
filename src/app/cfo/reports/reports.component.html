@@ -8,9 +8,7 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
         <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
-        <action-menu width="180px"
-                     target=""
-                     [items]="actionMenuItems"
+        <action-menu [items]="actionMenuItems"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <div [hidden]="openReportMode" class="reports">
