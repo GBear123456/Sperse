@@ -168,6 +168,9 @@
                            mode="multiple">
             </dxo-selection>
             <dxi-column dataField="Id" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
+            <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                [allowGrouping]="false" [allowSorting]="false"></dxi-column>
             <dxi-column dataField="ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
             <dxi-column dataField="FirstName" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="LastName" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
@@ -186,6 +189,9 @@
             <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate" alignment="left"></dxi-column>
             <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+            <div *dxTemplate="let data of 'photoTemplate'">
+                <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+            </div>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{cellData.value | date: formatting.date : userTimezone }}
             </div>
