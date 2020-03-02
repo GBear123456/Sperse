@@ -7,7 +7,7 @@
             <div class="actions clearfix">
                 <span class="title" [hidden]="!showTitle">{{title}}</span>
                 <div [hidden]="hideButtons">
-                    <span class="filter-apply" [hidden]="!selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
+                    <span class="filter-apply" [hidden]="!selectedItems?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <div class="custom-search" *ngIf="customSearchEnabled">
@@ -16,7 +16,7 @@
                         <dx-text-box #customSearch
                             [showClearButton]="true"
                             (onInput)="getNewListData($event, title)"
-                            [placeholder]="l('Search')">
+                            [placeholder]="ls.l('Search')">
                         </dx-text-box>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                         </div>
                         <a *ngIf="filterModel"
                            class="dx-link dx-link-filter"
-                           [title]="l('Filter')"
+                           [title]="ls.l('Filter')"
                            (click)="applyFilter($event, data)">
                         </a>
                     </div>

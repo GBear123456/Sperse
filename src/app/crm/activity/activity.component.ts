@@ -24,6 +24,8 @@ import { CreateActivityDialogComponent } from './create-activity-dialog/create-a
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -106,11 +108,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         private pipelineService: PipelineService,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
+        private permissionCheckerService: PermissionCheckerService,
         public appService: AppService,
         public dialog: MatDialog
     ) {
         super(injector);
-        this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
+        if (this.permissionCheckerService.isGranted(AppPermissions.CRMManageEventsAssignments)) {
+            this.store$.dispatch(new ActivityAssignedUsersStoreActions.LoadRequestAction(false));
+        }
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
 

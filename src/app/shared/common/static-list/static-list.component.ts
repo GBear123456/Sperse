@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, EventEmitter, Output, HostBinding, ViewChild } from '@angular/core';
+import { Component, Input, EventEmitter, Output, HostBinding, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxListComponent } from 'devextreme-angular/ui/list';
@@ -9,16 +9,18 @@ import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { MessageService } from '@abp/message/message.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
   selector: 'app-static-list',
   templateUrl: './static-list.component.html',
   styleUrls: ['./static-list.component.less']
 })
-export class StaticListComponent extends AppComponentBase {
+export class StaticListComponent {
     @ViewChild('staticList') dxList: DxListComponent;
     @ViewChild('customSearch') dxSearch: DxTextBoxComponent;
     @ViewChild(DxTooltipComponent) dxTooltip: DxTooltipComponent;
@@ -48,11 +50,11 @@ export class StaticListComponent extends AppComponentBase {
     @Input() convertNameStartCase = true;
     @Input('list')
     set list(value: any[]) {
-        this._list = (this.convertNameStartCase ? value.map((item) => {
+        this._list = (this.convertNameStartCase && value ? value.map((item) => {
             return _.extend(item, {
                 name: startCase(item.name.toLowerCase())
             });
-        }) : value).filter((item) => !!item.name);
+        }) : (value || [])).filter((item) => !!item.name);
     }
     get list(): any[] {
         return this._list;
@@ -71,11 +73,11 @@ export class StaticListComponent extends AppComponentBase {
     private _list: any[];
 
     constructor(
-        injector: Injector,
-        private _filtersService: FiltersService
-    ) {
-        super(injector);
-    }
+        private filtersService: FiltersService,
+        private messageService: MessageService,
+        private permissionCheckerService: PermissionCheckerService,
+        public ls: AppLocalizationService
+    ) {}
 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
@@ -92,8 +94,8 @@ export class StaticListComponent extends AppComponentBase {
     changeItems(selectedData = this.selectedItems[0]) {
         if (this.selectedKeys && this.selectedKeys.length) {
             if (this.showConfirmation && this.checkPermissions())
-                this.message.confirm(
-                    this.updateConfirmationMessage || this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                this.messageService.confirm(
+                    this.updateConfirmationMessage || this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
                     this.updateConfirmationTitle || null,
                     isConfirmed => {
                         isConfirmed && this.onItemSelected.emit(selectedData);
@@ -144,7 +146,7 @@ export class StaticListComponent extends AppComponentBase {
             this.filterModel.items.element.value = [data.id];
             event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
-        this._filtersService.change(this.filterModel);
+        this.filtersService.change(this.filterModel);
     }
 
     onContentReady($event) {
@@ -163,7 +165,7 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(this.bulkUpdatePermissionKey);
+        return this.permissionCheckerService.isGranted(this.bulkUpdatePermissionKey);
     }
 
     getNewListData(event, title) {
