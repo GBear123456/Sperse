@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 /** Third party imports */
 import buildQuery from 'odata-query';
 import * as dxAjax from 'devextreme/core/utils/ajax';
+import isObject from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -18,6 +19,7 @@ import { InstanceModel } from '@shared/cfo/instance.model';
 export class ODataService {
     private _dxRequestPool = {};
     private pivotGridInitialBeforeSend;
+
     constructor() {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
@@ -42,7 +44,7 @@ export class ODataService {
         return promise;
     }
 
-    getODataUrl(uri: String, filter?: Object, instanceData: InstanceModel = null, params?: { name: string, value: string }[]) {
+    getODataUrl(uri: String, filter?: any, instanceData: InstanceModel = null, params: { name: string, value: string }[] = []) {
         let url = AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
         if (instanceData) {
             url += (url.indexOf('?') == -1 ? '?' : '&');
@@ -60,7 +62,9 @@ export class ODataService {
         if (params && params.length) {
             params.forEach(param => {
                 url += (url.indexOf('?') == -1 ? '?' : '&');
-                url += param.name + '=' + encodeURIComponent(param.value).replace(/[?&]$/, '');
+                url += param.name + '=' + encodeURIComponent(
+                    isObject(param.value) ? JSON.stringify(param.value) : param.value
+                ).replace(/[?&]$/, '');
             });
         }
 

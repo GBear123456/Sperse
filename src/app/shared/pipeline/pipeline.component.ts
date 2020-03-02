@@ -112,6 +112,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     allStagesEntitiesTotal: number;
 
     private queryWithSearch: any = [];
+    private params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 5;
     private readonly COMPACT_VIEW_PAGE_COUNT = 10;
     compactView: boolean;
@@ -423,14 +424,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    private loadData(page = 0, stageIndex?: number, oneStageOnly = false, params = null): Observable<any> {
-        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false, params);
+    private loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
+        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false);
         if (this.totalsURI && !oneStageOnly)
-            this.processTotalsRequest(this.queryWithSearch, params);
+            this.processTotalsRequest(this.queryWithSearch);
         return entities$;
     }
 
-    private loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false, params = null): Observable<any> {
+    private loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false): Observable<any> {
         let response = of(null),
             index = stageIndex || 0,
             stages: Stage[] = this.stages || [],
@@ -462,7 +463,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this._dataSource.uri,
                     this.queryWithSearch.concat({and: [ extend(filter, this._dataSource.customFilter)] }),
                     null,
-                    params
+                    this.params
                 )
             )).pipe(
                 finalize(() => {
@@ -510,22 +511,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
 
         if (!oneStageOnly && stages[index + 1])
-            response = this.loadStagesEntities(page, index + 1, false, false, params);
+            response = this.loadStagesEntities(page, index + 1, false, false);
         return response;
     }
 
-    private getTotalsRequestUrl(filter, params = null) {
+    private getTotalsRequestUrl(filter) {
         return this.getODataUrl(
             this.totalsURI,
             filter.concat({and: [
                 this._dataSource.customFilter
             ]}),
             null,
-            params
+            this.params
         );
     }
 
-    private processTotalsRequest(filter?: any, params = null) {
+    private processTotalsRequest(filter?: any) {
         if (!this._totalDataSource) {
             this._totalDataSource = new DataSource({
                 requireTotalCount: false,
@@ -539,7 +540,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
         } else {
             /** Update total source url in a case custom filter has changed */
-            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter, params);
+            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter);
         }
 
         if (!this._totalDataSource.isLoading()) {
@@ -597,14 +598,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             return getCheckCustom && getCheckCustom(filter) ||
                 filter.getODataFilterObject();
         }).concat(this.getSearchFilter());
-        this.loadData(0, null, false, params);
+        this.params = params;
+        this.loadData(0, null, false);
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex): Observable<any> {
         return this.loadData(
-            Math.floor(this.stages[stageIndex].entities.length
-                / this.stagePageCount), stageIndex, true
+            Math.floor(this.stages[stageIndex].entities.length / this.stagePageCount),
+            stageIndex,
+            true
         );
     }
 
@@ -785,9 +788,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (result && result.moveToStage) {
                         this.mergeStagesInput.destinationStageId = result.moveToStage;
                         this.stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
-                                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
-                            }
-                        );
+                            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                        });
                     } else if (result && !result.moveToStage) {
                         this.stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
