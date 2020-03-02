@@ -101,8 +101,8 @@
                              [allowAdding]="false">
                 </dxo-editing>
                 <dxi-column width="20%" dataField="sourceField" [caption]="l('SourceField')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column width="60%" dataField="sampleValue" [caption]="l('SampleValue')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column width="20%" dataField="mappedField"
+                <dxi-column width="40%" dataField="sampleValue" [caption]="l('SampleValue')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column width="40%" dataField="mappedField"
                             [showEditorAlways]="true"
                             [editCellTemplate]="'mappedFieldTemplate'"
                             [caption]="l('MappedField')">
@@ -111,7 +111,7 @@
                 <div *dxTemplate="let cell of 'mappedFieldTemplate'" class="mapped-field-edit">
                     <dx-drop-down-box [dataSource]="lookupFields"
                                       valueExpr="id"
-                                      displayExpr="name"
+                                      displayExpr="longName"
                                       [showClearButton]="true"
                                       [placeholder]="l('MapFieldPlaceholder')"
                                       [value]="cell.value"

@@ -35,6 +35,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 export class ImportWizardComponent extends AppComponentBase implements AfterViewInit {
 
     public static readonly FieldSeparator = '_';
+    public static readonly NameSeparator = ' > ';
     public static readonly FieldLocalizationPrefix = 'Import';
 
     @ViewChild(MatHorizontalStepper, { static: false }) stepper: MatHorizontalStepper;
@@ -626,7 +627,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         } else
             $event.component.deselectRows([$event.key]);
 
-        if ($event.isValid)
+        if ($event.isValid && this.mapGrid)
             this.mapGrid.instance.closeEditCell();
     }
 
@@ -661,10 +662,11 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     onLookupFieldsItemRendered($event) {
-        this.mapGrid.instance.getSelectedRowsData().forEach((row) => {
-            if (row.mappedField == $event.node.key)
-                $event.itemElement.classList.add('mapped');
-        });
+        if (this.mapGrid)
+            this.mapGrid.instance.getSelectedRowsData().forEach((row) => {
+                if (row.mappedField == $event.node.key)
+                    $event.itemElement.classList.add('mapped');
+            });
     }
 
     mappedFieldChanged(event, cell) {

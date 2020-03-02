@@ -639,33 +639,49 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         return ImportInput.fromJS(result);
     }
 
+    resolveFieldLocalization(field: string): string {
+        let path = field.split(ImportWizardComponent.FieldSeparator);
+        return path.map((item, index) =>
+            this.l(ImportWizardComponent.getFieldLocalizationName(path.slice(0, index + 1).join(ImportWizardComponent.FieldSeparator)))
+        ).join(ImportWizardComponent.NameSeparator) + ImportWizardComponent.NameSeparator;
+    }
+
     setMappingFields(obj: object, parent: string = null) {
         let keys: string[] = Object.keys(obj);
-        keys.forEach(v => {
-            let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${v}` : v;
-            if (this.mappingObjectNames[v]) {
+        keys.forEach(key => {
+            let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${key}` : key,
+                name = this.l(ImportWizardComponent.getFieldLocalizationName(combinedName));
+            if (this.mappingObjectNames[key]) {
                 this.mappingFields.push({
                     id: combinedName,
-                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),
+                    name: name,
+                    longName: (parent ? this.resolveFieldLocalization(parent) : '') + name,
                     parent: parent,
                     expanded: true
                 });
-                this.setMappingFields(this.mappingObjectNames[v], combinedName);
+                this.setMappingFields(this.mappingObjectNames[key], combinedName);
             } else {
                 if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
                     return;
-
+                let parentField = parent || 'Other';
                 this.mappingFields.push({
                     id: combinedName,
-                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),
-                    parent: parent || 'Other'
+                    name: name,
+                    longName: (parentField ? this.resolveFieldLocalization(parentField) : '') + name,
+                    parent: parentField
                 });
             }
         });
 
         if (!parent) {
+            let key = 'Other',
+                name = this.l(ImportWizardComponent.getFieldLocalizationName(key));
             this.mappingFields.push({
-                id: 'Other', name: this.l('Import_Other'), parent: null, expanded: true
+                id: key,
+                name: name,
+                longName: name,
+                parent: null,
+                expanded: true
             });
         }
     }
