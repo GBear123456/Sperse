@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
-import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
+import { filter, finalize, pluck, takeUntil, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -39,7 +39,6 @@ import { OrderServiceProxy, ServiceTypeInfo } from '@shared/service-proxies/serv
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
-import { DomSanitizer } from '@angular/platform-browser';
 import { FilterMultipleCheckBoxesModel } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.model';
 import { FilterMultipleCheckBoxesComponent } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.component';
 
@@ -79,6 +78,32 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
+    private subscriptionStatusFilter = new FilterModel({
+        component: FilterMultipleCheckBoxesComponent,
+        caption: 'SubscriptionStatus',
+        field: 'ServiceTypeId',
+        items: {
+            element: new FilterMultipleCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(
+                        select(SubscriptionsStoreSelectors.getSubscriptions),
+                        filter(Boolean),
+                        map((subscriptions: ServiceTypeInfo[]) => {
+                            return subscriptions.map((subscription: ServiceTypeInfo) => {
+                                return {
+                                    ...subscription,
+                                    checkbox1: null,
+                                    checkbox2: null
+                                };
+                            });
+                        })
+                    ),
+                    dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+        }
+    });
     private ordersFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -121,23 +146,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: 'Amount',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        new FilterModel({
-            component: FilterMultipleCheckBoxesComponent,
-            caption: 'Subscription',
-            field: 'ServiceTypeId',
-            hidden: true,
-            items: {
-                element: new FilterMultipleCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(
-                            select(SubscriptionsStoreSelectors.getSubscriptions)
-                        ),
-                        dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                        nameField: 'name',
-                        keyExpr: 'id'
-                    })
-            }
-        })
+        this.subscriptionStatusFilter
     ];
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
@@ -371,7 +380,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private itemDetailsService: ItemDetailsService,
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
-        private sanitizer: DomSanitizer,
         public appService: AppService,
         public dialog: MatDialog,
     ) {
@@ -658,7 +666,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             dataGrid.instance,
             this.selectedOrderType === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
             this.filters,
-            this.filtersService.getCheckCustom
+            this.filtersService.getCheckCustom,
+            null,
+            [{
+                name: 'subscriptionInfos',
+                value: this.subscriptionStatusFilter.items.element.value
+            }]
         );
     }
 

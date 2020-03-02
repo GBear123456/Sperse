@@ -58,7 +58,7 @@ export class SideBarComponent {
     excludeFilter(event, filter: FilterModel, displayElement: DisplayElement) {
         filter.displayElements = undefined;
         if (displayElement.item.removeFilterItem)
-            displayElement.item.removeFilterItem(filter, displayElement.args);
+            displayElement.item.removeFilterItem(filter, displayElement.args, displayElement.id);
 
         this.filtersService.change(filter);
         event.stopPropagation();

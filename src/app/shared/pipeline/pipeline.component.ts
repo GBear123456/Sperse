@@ -423,14 +423,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    private loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
-        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly);
+    private loadData(page = 0, stageIndex?: number, oneStageOnly = false, params = null): Observable<any> {
+        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false, params);
         if (this.totalsURI && !oneStageOnly)
-            this.processTotalsRequest(this.queryWithSearch);
+            this.processTotalsRequest(this.queryWithSearch, params);
         return entities$;
     }
 
-    private loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false): Observable<any> {
+    private loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false, params = null): Observable<any> {
         let response = of(null),
             index = stageIndex || 0,
             stages: Stage[] = this.stages || [],
@@ -454,14 +454,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 filter['SortOrder'] = {lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
-            dataSource.sort({getter: 'SortOrder', desc: true});
+            dataSource.sort({ getter: 'SortOrder', desc: true });
             response = from(this.odataService.loadDataSource(
                 dataSource,
                 this._dataSource.uri + stage.id,
-                this.getODataUrl(this._dataSource.uri,
-                    this.queryWithSearch.concat({and: [
-                        extend(filter, this._dataSource.customFilter)
-                ]}))
+                this.getODataUrl(
+                    this._dataSource.uri,
+                    this.queryWithSearch.concat({and: [ extend(filter, this._dataSource.customFilter)] }),
+                    null,
+                    params
+                )
             )).pipe(
                 finalize(() => {
                     this.detectChanges();
@@ -508,20 +510,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
 
         if (!oneStageOnly && stages[index + 1])
-            response = this.loadStagesEntities(page, index + 1);
+            response = this.loadStagesEntities(page, index + 1, false, false, params);
         return response;
     }
 
-    private getTotalsRequestUrl(filter) {
+    private getTotalsRequestUrl(filter, params = null) {
         return this.getODataUrl(
             this.totalsURI,
             filter.concat({and: [
                 this._dataSource.customFilter
-            ]})
+            ]}),
+            null,
+            params
         );
     }
 
-    private processTotalsRequest(filter?: any) {
+    private processTotalsRequest(filter?: any, params = null) {
         if (!this._totalDataSource) {
             this._totalDataSource = new DataSource({
                 requireTotalCount: false,
@@ -535,7 +539,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
         } else {
             /** Update total source url in a case custom filter has changed */
-            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter);
+            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter, params);
         }
 
         if (!this._totalDataSource.isLoading()) {
@@ -588,12 +592,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.stages && this.stages.some((stage: Stage) => stage.isLoading);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null, params = null) {
         this.queryWithSearch = filters.map((filter) => {
             return getCheckCustom && getCheckCustom(filter) ||
                 filter.getODataFilterObject();
         }).concat(this.getSearchFilter());
-        this.loadData();
+        this.loadData(0, null, false, params);
         return this.queryWithSearch;
     }
 
