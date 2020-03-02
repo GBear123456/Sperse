@@ -10,18 +10,19 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 import { SyncAccountServiceProxy, CategoryTreeServiceProxy, InstanceType, SyncDto } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
-import { ChooseXeroAccountComponent } from '@shared/cfo/bank-accounts/xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
+import { ChooseAccountComponent } from '@shared/cfo/bank-accounts/chart-of-accounts/import-chart-of-accounts-button/choose-account/choose-account.component';
 
 @Component({
-    selector: 'import-xero-chart-of-accounts-button',
-    templateUrl: './import-xero-chart-of-accounts-button.component.html',
-    styleUrls: ['./import-xero-chart-of-accounts-button.component.less'],
+    selector: 'import-chart-of-accounts-button',
+    templateUrl: './import-chart-of-accounts-button.component.html',
+    styleUrls: ['./import-chart-of-accounts-button.component.less'],
     providers: [ SyncAccountServiceProxy, CategoryTreeServiceProxy ]
 })
-export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
+export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
     @Output() onComplete = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Input() override: boolean;
+    @Input() syncTypeId: string;
     createAccountAvailable: boolean;
 
     constructor(
@@ -40,13 +41,13 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
     importChartOfAccount(): void {
         abp.ui.setBusy();
 
-        this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, SyncTypeIds.XeroOAuth2)
+        this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, this.syncTypeId)
             .subscribe(result => {
                 if (result.length == 0) {
                     this.newConnect();
                 } else {
                     abp.ui.clearBusy();
-                    let dialogRef = this.dialog.open(ChooseXeroAccountComponent, {
+                    let dialogRef = this.dialog.open(ChooseAccountComponent, {
                         width: '450px',
                         data: {
                             createAccountAvailable: this.createAccountAvailable,
@@ -75,7 +76,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
         const dialogConfig = {
             ...{
                 data: {
-                    connector: AccountConnectors.XeroOAuth2,
+                    connector: this.syncTypeId === SyncTypeIds.QuickBook ? AccountConnectors.QuickBook : AccountConnectors.XeroOAuth2,
                 }
             }
         };

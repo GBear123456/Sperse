@@ -4,18 +4,18 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountDto } from 'shared/service-proxies/service-proxies';
 
 @Component({
-    selector: 'app-choose-xero-account',
-    templateUrl: './choose-xero-account.component.html',
-    styleUrls: ['./choose-xero-account.component.less']
+    selector: 'app-choose-account',
+    templateUrl: './choose-account.component.html',
+    styleUrls: ['./choose-account.component.less']
 })
-export class ChooseXeroAccountComponent extends CFOComponentBase implements OnInit {
+export class ChooseAccountComponent extends CFOComponentBase implements OnInit {
     accounts: SyncAccountDto[] = null;
     selectedAccountId: number = null;
     createAccountAvailable = false;
 
     constructor(
         injector: Injector,
-        public dialogRef: MatDialogRef<ChooseXeroAccountComponent>,
+        public dialogRef: MatDialogRef<ChooseAccountComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
