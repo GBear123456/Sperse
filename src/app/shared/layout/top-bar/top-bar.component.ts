@@ -106,12 +106,10 @@ export class TopBarComponent implements OnDestroy {
 
     getCheckLayoutMenuConfig(config) {
         const MENU_HOME = 'Home';
-        let tenant = this.appSessionService.tenant,
-            user = this.appSessionService.user;
+        let tenant = this.appSessionService.tenant;
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode
-            && user && user.group == UserGroup.Member && config[0][0] != MENU_HOME
-        ) config.unshift([MENU_HOME, '', 'icon-home', '/code-breaker']);
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode && config[0][0] != MENU_HOME)
+            config.unshift([MENU_HOME, '', 'icon-home', '/code-breaker']);
 
         return config;
     }

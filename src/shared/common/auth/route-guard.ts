@@ -86,9 +86,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode
-            && user && user.group == UserGroup.Member
-        )
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode)
             return '/code-breaker';
 
         if ((!preferedModule || preferedModule == 'CRM') && this.feature.isEnabled(AppFeatures.CRM) && this.permissionChecker.isGranted(AppPermissions.CRM))
