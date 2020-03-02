@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 /** Third party imports */
 import buildQuery from 'odata-query';
 import * as dxAjax from 'devextreme/core/utils/ajax';
-import isObject from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -62,9 +61,7 @@ export class ODataService {
         if (params && params.length) {
             params.forEach(param => {
                 url += (url.indexOf('?') == -1 ? '?' : '&');
-                url += param.name + '=' + encodeURIComponent(
-                    isObject(param.value) ? JSON.stringify(param.value) : param.value
-                ).replace(/[?&]$/, '');
+                url += param.name + '=' + encodeURIComponent(param.value).replace(/[?&]$/, '');
             });
         }
 

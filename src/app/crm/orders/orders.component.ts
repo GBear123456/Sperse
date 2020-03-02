@@ -668,10 +668,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filters,
             this.filtersService.getCheckCustom,
             null,
-            [{
-                name: 'subscriptionInfos',
-                value: this.subscriptionStatusFilter.items.element.value
-            }]
+            this.subscriptionStatusFilter.items.element.value
         );
     }
 

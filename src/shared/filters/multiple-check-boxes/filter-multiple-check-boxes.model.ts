@@ -11,13 +11,26 @@ export class FilterMultipleCheckBoxesModel extends FilterItemModel {
     }
 
     get value() {
-        return this.dataSource && this.dataSource
+        let result = [];
+        this.dataSource && this.dataSource
             .filter(item => item.checkbox1 || item.checkbox2)
-            .map((item) => ({
-                TypeId: item.id,
-                Status: 'A',
-                HasSubscription: !!item.checkbox1
-            }));
+            .forEach((item, index) => {
+                result.push(
+                    {
+                        name: ['subscriptionFilters[' + index + '].TypeId'],
+                        value: item.id
+                    },
+                    {
+                        name: ['subscriptionFilters[' + index + '].StatusId'],
+                        value: 'A'
+                    },
+                    {
+                        name: ['subscriptionFilters[' + index + '].HasSubscription'],
+                        value: !!item.checkbox1
+                    }
+                );
+            });
+        return result;
     }
 
     getDisplayElements(): DisplayElement[] {

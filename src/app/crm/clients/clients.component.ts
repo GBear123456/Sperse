@@ -1089,10 +1089,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     processFilterInternal() {
         if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
             || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
-            const params = [{
-                name: 'subscriptionInfos',
-                value: this.subscriptionStatusFilter.items.element.value
-            }];
+            const params = this.subscriptionStatusFilter.items.element.value;
             const filterQuery = this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
