@@ -190,7 +190,9 @@ export class CrmModule {
                     else
                         importLeadsService.stopImportCheck();
                 });
-            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
+            if (this.appStoreService.crmIsAllowed) {
+                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
+            }
         }
     }
 }

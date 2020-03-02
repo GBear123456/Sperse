@@ -24,6 +24,19 @@ import { AppPermissions } from '@shared/AppPermissions';
 @Injectable()
 export class AppStoreService {
 
+    crmIsAllowed: boolean = (
+            this.permission.isGranted(AppPermissions.CRM)
+            || this.permission.isGranted(AppPermissions.Administration)
+        )
+        && (
+            this.permission.isGranted(AppPermissions.CRMCustomers)
+            || this.permission.isGranted(AppPermissions.CRMPartners)
+            || this.permission.isGranted(AppPermissions.CRMInvestors)
+            || this.permission.isGranted(AppPermissions.CRMVendors)
+            || this.permission.isGranted(AppPermissions.CRMEmployees)
+            || this.permission.isGranted(AppPermissions.AdministrationUsers)
+        );
+
     constructor(
         private store$: Store<AppStore.State>,
         private permission: AppPermissionService
@@ -43,20 +56,7 @@ export class AppStoreService {
     }
 
     loadUserDictionaries() {
-        const isAllowed: boolean = (
-            this.permission.isGranted(AppPermissions.CRM)
-            || this.permission.isGranted(AppPermissions.Administration)
-        )
-        && (
-            this.permission.isGranted(AppPermissions.CRMCustomers)
-            || this.permission.isGranted(AppPermissions.CRMPartners)
-            || this.permission.isGranted(AppPermissions.CRMInvestors)
-            || this.permission.isGranted(AppPermissions.CRMVendors)
-            || this.permission.isGranted(AppPermissions.CRMEmployees)
-            || this.permission.isGranted(AppPermissions.AdministrationUsers)
-        );
-
-        if (isAllowed) {
+        if (this.crmIsAllowed) {
             this.store$.dispatch(new PartnerTypesStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
