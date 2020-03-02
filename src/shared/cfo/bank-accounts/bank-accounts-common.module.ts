@@ -41,11 +41,11 @@ import { QuovoPfmComponent } from './quovo-pfm/quovo-pfm.component';
 import { AddAccountButtonComponent } from './add-account-button/add-account-button.component';
 import { QuovoService } from './quovo/QuovoService';
 import { AddQuovoAccountButtonComponent } from './quovo/add-quovo-account-button/add-quovo-account-button.component';
-import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
+import { ImportChartOfAccountsButtonComponent } from './chart-of-accounts/import-chart-of-accounts-button/import-chart-of-accounts-button.component';
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { ChooseXeroAccountComponent } from './xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
+import { ChooseAccountComponent } from './chart-of-accounts/import-chart-of-accounts-button/choose-account/choose-account.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { SearchInputModule } from '@app/shared/common/search-input/search-input.module';
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
@@ -88,8 +88,8 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         BankAccountsQuovoComponent,
         QuovoPfmComponent,
         AddAccountButtonComponent,
-        ImportXeroChartOfAccountsButtonComponent,
-        ChooseXeroAccountComponent,
+        ImportChartOfAccountsButtonComponent,
+        ChooseAccountComponent,
         AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
@@ -102,15 +102,15 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         BankAccountsQuovoComponent,
         QuovoPfmComponent,
         AddAccountButtonComponent,
-        ImportXeroChartOfAccountsButtonComponent,
-        ChooseXeroAccountComponent,
+        ImportChartOfAccountsButtonComponent,
+        ChooseAccountComponent,
         AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
         SynchProgressComponent
     ],
     entryComponents: [
-        ChooseXeroAccountComponent
+        ChooseAccountComponent
     ],
     providers: [
         QuovoService,

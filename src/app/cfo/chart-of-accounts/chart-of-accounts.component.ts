@@ -13,6 +13,7 @@ import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, Catego
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { SyncTypeIds } from '../../../shared/AppEnums';
 
 class UploadCategoryModel {
     'Cashflow Type': string;
@@ -36,6 +37,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     override = false;
+    syncTypeIds = SyncTypeIds;
 
     constructor(
         injector: Injector,
