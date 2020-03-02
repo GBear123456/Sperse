@@ -8,8 +8,7 @@
                   [keyExpr]="items.element.keyExpr"
                   [parentIdExpr]="items.element.parentExpr"
                   [showColumnHeaders]="false"
-                  [autoExpandAll]="true"
-                  [(selectedRowKeys)]="items.element.value">
+                  [autoExpandAll]="true">
         <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
             <div class="name">{{ cell.data[items.element.nameField] }}</div>

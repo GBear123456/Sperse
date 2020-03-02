@@ -15,7 +15,7 @@ export class FilterMultipleCheckBoxesComponent implements FilterComponent {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private ls: AppLocalizationService
+        public ls: AppLocalizationService
     ) {}
 
     checkboxClick(e, data, oppositeCheckboxProperty: string) {
