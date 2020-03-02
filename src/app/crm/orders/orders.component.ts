@@ -39,8 +39,8 @@ import { OrderServiceProxy, ServiceTypeInfo } from '@shared/service-proxies/serv
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
-import { FilterMultipleCheckBoxesModel } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.model';
-import { FilterMultipleCheckBoxesComponent } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.component';
+import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
+import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -79,11 +79,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
     private subscriptionStatusFilter = new FilterModel({
-        component: FilterMultipleCheckBoxesComponent,
+        component: SubscriptionsFilterComponent,
         caption: 'SubscriptionStatus',
         field: 'ServiceTypeId',
         items: {
-            element: new FilterMultipleCheckBoxesModel(
+            element: new SubscriptionsFilterModel(
                 {
                     dataSource$: this.store$.pipe(
                         select(SubscriptionsStoreSelectors.getSubscriptions),

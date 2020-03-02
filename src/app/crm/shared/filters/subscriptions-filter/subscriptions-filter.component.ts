@@ -1,15 +1,15 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FilterComponent } from '../models/filter-component';
-import { FilterMultipleCheckBoxesModel } from './filter-multiple-check-boxes.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { FilterComponent } from '@shared/filters/models/filter-component';
+import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 
 @Component({
-    templateUrl: './filter-multiple-check-boxes.component.html',
-    styleUrls: ['./filter-multiple-check-boxes.component.less']
+    templateUrl: './subscriptions-filter.component.html',
+    styleUrls: ['./subscriptions-filter.component.less']
 })
-export class FilterMultipleCheckBoxesComponent implements FilterComponent {
+export class SubscriptionsFilterComponent implements FilterComponent {
     items: {
-        element: FilterMultipleCheckBoxesModel
+        element: SubscriptionsFilterModel
     };
     apply: (event) => void;
 

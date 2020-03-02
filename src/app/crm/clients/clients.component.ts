@@ -102,8 +102,8 @@ import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import { FilterMultipleCheckBoxesComponent } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.component';
-import { FilterMultipleCheckBoxesModel } from '@shared/filters/multiple-check-boxes/filter-multiple-check-boxes.model';
+import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
+import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -360,11 +360,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private subscriptionStatusFilter = new FilterModel({
-        component: FilterMultipleCheckBoxesComponent,
+        component: SubscriptionsFilterComponent,
         caption: 'SubscriptionStatus',
         field: 'ServiceTypeId',
         items: {
-            element: new FilterMultipleCheckBoxesModel(
+            element: new SubscriptionsFilterModel(
                 {
                     dataSource$: this.store$.pipe(
                         select(SubscriptionsStoreSelectors.getSubscriptions),

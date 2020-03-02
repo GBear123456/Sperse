@@ -1,12 +1,12 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 
-export class FilterMultipleCheckBoxesModel extends FilterItemModel {
+export class SubscriptionsFilterModel extends FilterItemModel {
     keyExpr: any;
     parentExpr?: any = 'parentId';
     nameField: string;
 
-    public constructor(init?: Partial<FilterMultipleCheckBoxesModel>) {
+    public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
     }
 

@@ -10,7 +10,6 @@ import { FiltersService } from './filters.service';
 import { FilterManagerComponent, AdDirective } from './filter.manager.component';
 import { FilterStatesComponent } from './states/filter-states.component';
 import { FilterCheckBoxesComponent } from './check-boxes/filter-check-boxes.component';
-import { FilterMultipleCheckBoxesComponent } from './multiple-check-boxes/filter-multiple-check-boxes.component';
 import { FilterDropDownComponent } from './dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
@@ -33,6 +32,7 @@ import { DxRangeSliderModule } from 'devextreme-angular/ui/range-slider';
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
+import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 
 @NgModule({
     imports: [
@@ -56,7 +56,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         FilterManagerComponent,
         FilterStatesComponent,
         FilterCheckBoxesComponent,
-        FilterMultipleCheckBoxesComponent,
+        SubscriptionsFilterComponent,
         FilterDropDownComponent,
         FilterInputsComponent,
         FilterCBoxesComponent,
@@ -71,7 +71,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
     entryComponents: [
         FilterStatesComponent,
         FilterCheckBoxesComponent,
-        FilterMultipleCheckBoxesComponent,
+        SubscriptionsFilterComponent,
         FilterDropDownComponent,
         FilterCBoxesComponent,
         FilterInputsComponent,
