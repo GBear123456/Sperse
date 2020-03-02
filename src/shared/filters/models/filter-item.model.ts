@@ -53,7 +53,7 @@ export class FilterItemModel {
         return [<DisplayElement>{ item: this, displayValue: value }];
     }
 
-    removeFilterItem(filter: FilterModel, args?: any) {
+    removeFilterItem(filter: FilterModel, args?: any, id?: string) {
         if ((typeof (this.value) == 'string') || (this.value instanceof Date))
             this.value = '';
         else if (typeof (this.value) == 'boolean')
@@ -66,6 +66,7 @@ export class FilterItemModel {
 export class DisplayElement {
     item: FilterItemModel;
     displayValue: string;
+    id?: string;
     parentCode?: string;
     parentName?: string;
     sortField?: any;

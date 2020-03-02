@@ -1,58 +1,45 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import each from 'lodash/each';
-import remove from 'lodash/remove';
 
 export class FilterMultipleCheckBoxesModel extends FilterItemModel {
     keyExpr: any;
     parentExpr?: any = 'parentId';
     nameField: string;
-    selectionMode?: 'multiple' | 'none' | 'single';
 
     public constructor(init?: Partial<FilterMultipleCheckBoxesModel>) {
         super(init, true);
     }
 
+    get value() {
+        return this.dataSource && this.dataSource
+            .filter(item => item.checkbox1 || item.checkbox2)
+            .map((item) => ({
+                TypeId: item.id,
+                Status: 'A',
+                HasSubscription: !!item.checkbox1
+            }));
+    }
+
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
-        let values = this.value && this.value.sort ? this.value.sort() : [ this.value ];
-        values.forEach(x => {
-            let data = this.dataSource && this.dataSource.find((val: any) => val.id == x);
-            data && result.push(<DisplayElement>{
-                item: this,
-                displayValue: data.name || data.displayName,
-                args: x,
-                parentCode: data[this.parentExpr],
-                sortField: x
-            });
-        });
-
-        result = this.generateParents(result);
-        return result;
-    }
-
-    private generateParents(arr: DisplayElement[]): DisplayElement[] {
-        let result: DisplayElement[] = [];
-        each(arr, x => {
-            if (x.parentCode) {
-                let parent = result.find(y => y.args == x.parentCode);
-                if (!parent) {
-                    let parentName = this.dataSource.find((val: any) => val.id == x.parentCode).name;
-                    result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
+        if (this.dataSource) {
+            this.dataSource.forEach((item) => {
+                if (item.checkbox1 || item.checkbox2) {
+                    result.push(<DisplayElement>{
+                        item: this,
+                        id: item.id,
+                        displayValue: item.name + ' (' + (item.checkbox1 ? 'has' : 'doesn\'t have') + ')'
+                    });
                 }
-                result.push(x);
-            } else {
-                result.push(x);
-            }
-        });
-
+            });
+        }
         return result;
     }
 
-    removeFilterItem(filter: FilterModel, args: any) {
-        if (args)
-            remove(this.value, (val: any) => val == args);
-        else
-            this.value = [];
+    removeFilterItem(filter: FilterModel, args: any, id: string) {
+        if (id) {
+            let item = filter.items.element.dataSource.find((item) => item.id === id);
+            item.checkbox1 = item.checkbox2 = null;
+        }
     }
 }

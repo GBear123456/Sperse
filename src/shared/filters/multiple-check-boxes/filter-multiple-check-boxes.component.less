@@ -2,6 +2,14 @@
     .wrapper {
         padding-bottom: 90px;
 
+        .labels {
+            display: flex;
+            justify-content: flex-end;
+            div:last-child {
+                margin-left: 10px;
+            }
+        }
+
         /deep/ .dx-treelist {
             .dx-select-checkbox {
                 position: static;
@@ -15,7 +23,10 @@
             }
             .dx-checkbox {
                 position: relative;
-                margin-left: 10px;
+                &:last-child {
+                    margin-left: 49px;
+                    margin-right: 29px;
+                }
             }
             .dx-treelist-rowsview {
                 border-top: none;
