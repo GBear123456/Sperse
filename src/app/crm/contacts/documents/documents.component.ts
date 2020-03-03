@@ -295,8 +295,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     loadDocumentTypes() {
         if (!(this.documentTypes = this.documentTypeService['data']))
-            this.documentTypeService.getAll().subscribe((result) => {
-                this.documentTypeService['data'] = this.documentTypes = result;
+            this.documentTypeService.getAll().subscribe((documentTypes: DocumentTypeInfo[]) => {
+                this.documentTypeService['data'] = this.documentTypes = documentTypes;
             });
     }
 
