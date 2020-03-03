@@ -210,7 +210,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    private _pivotGridDataSource = {
+    private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
@@ -341,7 +341,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         ]
     };
-    public pivotGridDataSource;
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
         key: 'id',
@@ -470,7 +469,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         this.searchValue = '';
         if (this.userManagementService.checkBankCodeFeature()) {
-            this._pivotGridDataSource.fields.unshift({
+            this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -691,7 +690,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'creation',
                     field: this.dateField,
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
                 }),
                 this.filterModelStages = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -1215,7 +1214,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private setPivotGridInstance() {
-        this.pivotGridDataSource = this._pivotGridDataSource;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {

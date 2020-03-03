@@ -190,7 +190,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    private _pivotGridDataSource = {
+    private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
@@ -284,7 +284,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ]
     };
-    public pivotGridDataSource;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
@@ -408,7 +407,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ) {
         super(injector);
         if (this.userManagementService.checkBankCodeFeature()) {
-            this._pivotGridDataSource.fields.unshift({
+            this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -610,13 +609,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         caption: 'email',
                         items: { Email: new FilterItemModel() }
                     }),
+                    this.subscriptionStatusFilter,
                     new FilterModel({
                         component: FilterCalendarComponent,
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
                         field: this.dateField,
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true}
                     }),
                     this.filterModelStatus,
                     new FilterModel({
@@ -726,8 +726,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     }
                                 })
                         }
-                    }),
-                    this.subscriptionStatusFilter
+                    })
                 ]
             );
         }
@@ -1055,7 +1054,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private setPivotGridInstance() {
-        this.pivotGridDataSource = this._pivotGridDataSource;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {

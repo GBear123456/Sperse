@@ -176,7 +176,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    private _pivotGridDataSource = {
+    private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
@@ -274,7 +274,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             }
         ]
     };
-    public pivotGridDataSource;
     sliceStorageKey = 'CRM_Partners_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     private filterChanged = false;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
@@ -373,7 +372,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
         if (this.userManagementService.checkBankCodeFeature()) {
-            this._pivotGridDataSource.fields.unshift({
+            this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -539,8 +538,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
                         field: this.dateField,
-                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+                        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                        options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
                     }),
                     this.filterModelStatus = new FilterModel({
                         component: FilterCheckBoxesComponent,
@@ -1017,7 +1016,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private setPivotGridInstance() {
-        this.pivotGridDataSource = this._pivotGridDataSource;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
