@@ -21017,6 +21017,72 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getDetailedReportAsync(sourceOrganizationUnitId: number, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetDetailedReportAsync?";
+        if (sourceOrganizationUnitId === undefined || sourceOrganizationUnitId === null)
+            throw new Error("The parameter 'sourceOrganizationUnitId' must be defined and cannot be null.");
+        else
+            url_ += "SourceOrganizationUnitId=" + encodeURIComponent("" + sourceOrganizationUnitId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDetailedReportAsync(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDetailedReportAsync(<any>response_);
+                } catch (e) {
+                    return <Observable<SubscriptionsDetailedReportInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SubscriptionsDetailedReportInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDetailedReportAsync(response: HttpResponseBase): Observable<SubscriptionsDetailedReportInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SubscriptionsDetailedReportInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SubscriptionsDetailedReportInfo[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -60473,6 +60539,82 @@ export interface IOrderSubscriptionDto {
     status: string | undefined;
     cancelationReason: string | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
+}
+
+export class SubscriptionsDetailedReportInfo implements ISubscriptionsDetailedReportInfo {
+    name!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+    city!: string | undefined;
+    status!: string | undefined;
+    bankCode!: string | undefined;
+    created!: moment.Moment | undefined;
+    bankPassFee!: number | undefined;
+    bankVaultFee!: number | undefined;
+    wtbFee!: number | undefined;
+    total!: number | undefined;
+
+    constructor(data?: ISubscriptionsDetailedReportInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.city = data["city"];
+            this.status = data["status"];
+            this.bankCode = data["bankCode"];
+            this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
+            this.bankPassFee = data["bankPassFee"];
+            this.bankVaultFee = data["bankVaultFee"];
+            this.wtbFee = data["wtbFee"];
+            this.total = data["total"];
+        }
+    }
+
+    static fromJS(data: any): SubscriptionsDetailedReportInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionsDetailedReportInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["city"] = this.city;
+        data["status"] = this.status;
+        data["bankCode"] = this.bankCode;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["bankPassFee"] = this.bankPassFee;
+        data["bankVaultFee"] = this.bankVaultFee;
+        data["wtbFee"] = this.wtbFee;
+        data["total"] = this.total;
+        return data; 
+    }
+}
+
+export interface ISubscriptionsDetailedReportInfo {
+    name: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+    city: string | undefined;
+    status: string | undefined;
+    bankCode: string | undefined;
+    created: moment.Moment | undefined;
+    bankPassFee: number | undefined;
+    bankVaultFee: number | undefined;
+    wtbFee: number | undefined;
+    total: number | undefined;
 }
 
 export class SubscriptionInput implements ISubscriptionInput {
