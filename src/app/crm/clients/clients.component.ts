@@ -190,7 +190,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    private _pivotGridDataSource = {
+    private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
@@ -284,7 +284,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ]
     };
-    public pivotGridDataSource;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
@@ -408,7 +407,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ) {
         super(injector);
         if (this.userManagementService.checkBankCodeFeature()) {
-            this._pivotGridDataSource.fields.unshift({
+            this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -1055,7 +1054,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private setPivotGridInstance() {
-        this.pivotGridDataSource = this._pivotGridDataSource;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
