@@ -21017,16 +21017,15 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
+     * @sourceOrganizationUnitIds (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @return Success
      */
-    getDetailedReport(sourceOrganizationUnitId: number, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
+    getDetailedReport(sourceOrganizationUnitIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetDetailedReport?";
-        if (sourceOrganizationUnitId === undefined || sourceOrganizationUnitId === null)
-            throw new Error("The parameter 'sourceOrganizationUnitId' must be defined and cannot be null.");
-        else
-            url_ += "SourceOrganizationUnitId=" + encodeURIComponent("" + sourceOrganizationUnitId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -21083,16 +21082,15 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
+     * @sourceOrganizationUnitIds (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @return Success
      */
-    getTotalsReport(sourceOrganizationUnitId: number, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsTotalsReportInfo> {
+    getTotalsReport(sourceOrganizationUnitIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsTotalsReportInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetTotalsReport?";
-        if (sourceOrganizationUnitId === undefined || sourceOrganizationUnitId === null)
-            throw new Error("The parameter 'sourceOrganizationUnitId' must be defined and cannot be null.");
-        else
-            url_ += "SourceOrganizationUnitId=" + encodeURIComponent("" + sourceOrganizationUnitId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
