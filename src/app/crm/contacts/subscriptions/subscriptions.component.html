@@ -10,8 +10,9 @@
 
 <dx-data-grid #mainGrid
               id="gridContainer"
-              [dataSource]="dataSource"
               keyExpr="id"
+              [pager]="pagerConfig"
+              [dataSource]="dataSource"
               [allowColumnReordering]="true"
               [columnAutoWidth]="true"
               [allowColumnResizing]="true"
