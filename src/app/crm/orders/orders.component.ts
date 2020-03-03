@@ -111,7 +111,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'creation',
             field: 'OrderDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         this.filterModelStages = new FilterModel({
             component: FilterCheckBoxesComponent,
@@ -142,7 +142,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'ContactDate',
             field: 'ContactDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCalendarComponent,
@@ -150,7 +150,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'StartDate',
             field: 'StartDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCalendarComponent,
@@ -158,7 +158,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'EndDate',
             field: 'EndDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCheckBoxesComponent,

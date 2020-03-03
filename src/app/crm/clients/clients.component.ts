@@ -610,13 +610,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         caption: 'email',
                         items: { Email: new FilterItemModel() }
                     }),
+                    this.subscriptionStatusFilter,
                     new FilterModel({
                         component: FilterCalendarComponent,
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
                         field: this.dateField,
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true}
                     }),
                     this.filterModelStatus,
                     new FilterModel({
@@ -726,8 +727,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     }
                                 })
                         }
-                    }),
-                    this.subscriptionStatusFilter
+                    })
                 ]
             );
         }
