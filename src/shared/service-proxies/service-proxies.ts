@@ -21021,8 +21021,8 @@ export class OrderSubscriptionServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getDetailedReportAsync(sourceOrganizationUnitId: number, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetDetailedReportAsync?";
+    getDetailedReport(sourceOrganizationUnitId: number, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetDetailedReport?";
         if (sourceOrganizationUnitId === undefined || sourceOrganizationUnitId === null)
             throw new Error("The parameter 'sourceOrganizationUnitId' must be defined and cannot be null.");
         else
@@ -21043,11 +21043,11 @@ export class OrderSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetDetailedReportAsync(response_);
+            return this.processGetDetailedReport(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetDetailedReportAsync(<any>response_);
+                    return this.processGetDetailedReport(<any>response_);
                 } catch (e) {
                     return <Observable<SubscriptionsDetailedReportInfo[]>><any>_observableThrow(e);
                 }
@@ -21056,7 +21056,7 @@ export class OrderSubscriptionServiceProxy {
         }));
     }
 
-    protected processGetDetailedReportAsync(response: HttpResponseBase): Observable<SubscriptionsDetailedReportInfo[]> {
+    protected processGetDetailedReport(response: HttpResponseBase): Observable<SubscriptionsDetailedReportInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
