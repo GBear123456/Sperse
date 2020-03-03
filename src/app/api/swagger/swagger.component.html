@@ -1,6 +1,7 @@
 <app-headline [names]="[ l('Interactive API Documentation') ]"
               icon="magic-wand">
 </app-headline>
-<setup-steps></setup-steps>
-
-<iframe [src]="link" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%"></iframe>
+<div class="content">
+    <setup-steps></setup-steps>
+    <iframe [src]="link" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%"></iframe>
+</div>
