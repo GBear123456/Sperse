@@ -11,14 +11,13 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)">
     </app-headline>
-    <div class="main-wrapper">
-        <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
-        <action-menu [items]="actionMenuItems"
-                     [visible]="actionRecord"
-                     width="240px"
-                     (onItemClick)="onMenuItemClick($event)"
-                     (onHidden)="actionRecord = null">
-        </action-menu>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <action-menu [items]="actionMenuItems"
+                 [visible]="actionRecord"
+                 width="240px"
+                 (onItemClick)="onMenuItemClick($event)"
+                 (onHidden)="actionRecord = null">
+    </action-menu>
 
     <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
