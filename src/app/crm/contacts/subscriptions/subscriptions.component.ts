@@ -27,6 +27,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -40,6 +41,7 @@ export class SubscriptionsComponent implements OnInit {
     public data: {
         contactInfo: ContactInfoDto
     };
+    pagerConfig = DataGridService.defaultGridPagerConfig;
 
     currency: string;
     public dataSource: DataSource;
