@@ -127,19 +127,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         }),
         new FilterModel({
-            component: FilterDropDownComponent,
-            caption: 'paymentType',
-            items: {
-                paymentType: new FilterDropDownModel({
-                    elements: null,
-                    filterField: 'paymentTypeId',
-                    onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                        filter.items['paymentType'].value = event && event.value;
-                    }
-                })
-            }
-        }),
-        new FilterModel({
             component: FilterInputsComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'Amount',
