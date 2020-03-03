@@ -196,11 +196,15 @@ export class BankAccountsService {
         );
 
         this.sortedBusinessEntities$ = combineLatest(
+            this.syncAccounts$,
             this.businessEntities$,
             this.selectedBusinessEntitiesIds$
         ).pipe(
-            map(([businessEntities, selectedBusinessEntitiesIds]: [BusinessEntityDto[], number[]]) => {
-                return this.sortBusinessEntities(businessEntities, selectedBusinessEntitiesIds);
+            map(([syncAccounts, businessEntities, selectedBusinessEntitiesIds]: [SyncAccountBankDto[], BusinessEntityDto[], number[]]) => {
+                let availableBusinessEntityIds = syncAccounts.reduce((businessEntityIds, syncAccount) => {
+                    return businessEntityIds.concat(syncAccount.bankAccounts.map(bankAccount => bankAccount.businessEntityId));
+                }, []);
+                return this.sortBusinessEntities(businessEntities.filter(item => availableBusinessEntityIds.indexOf(item.id) >= 0), selectedBusinessEntitiesIds);
             })
         );
 

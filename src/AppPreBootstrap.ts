@@ -48,9 +48,14 @@ export class AppPreBootstrap {
     }
 
     private static processRegularBootstrap(queryStringObj, callback) {
-        if (queryStringObj.hasOwnProperty('tenantId') && !abp.session.userId)
+        let tenantId = queryStringObj.hasOwnProperty('tenantId');
+        if (tenantId) {
+            if (tenantId != abp.session.tenantId) {
+                window['generalInfo'] = undefined;
+                abp.auth.clearToken();
+            }
             abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
-
+        }
         AppPreBootstrap.getUserConfiguration(callback).subscribe();
     }
 

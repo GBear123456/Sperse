@@ -222,9 +222,9 @@ export abstract class AppComponentBase implements OnDestroy {
             this.isDataLoaded = false;
     }
 
-    getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null) {
+    getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null, params = null) {
         const searchParam = this.getQuickSearchParam();
-        const params = searchParam && [searchParam];
+        params = (searchParam && [searchParam] || []).concat(params || []);
         return this.oDataService.getODataUrl(uri, filter, instanceData, params);
     }
 

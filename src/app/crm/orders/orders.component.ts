@@ -6,11 +6,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
-import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
+import { filter, finalize, pluck, takeUntil, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
-import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
+import { CrmStore, PipelinesStoreSelectors, SubscriptionsStoreActions, SubscriptionsStoreSelectors } from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -35,10 +35,12 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrderServiceProxy, ServiceTypeInfo } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
+import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
+import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -76,6 +78,32 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
+    private subscriptionStatusFilter = new FilterModel({
+        component: SubscriptionsFilterComponent,
+        caption: 'SubscriptionStatus',
+        field: 'ServiceTypeId',
+        items: {
+            element: new SubscriptionsFilterModel(
+                {
+                    dataSource$: this.store$.pipe(
+                        select(SubscriptionsStoreSelectors.getSubscriptions),
+                        filter(Boolean),
+                        map((subscriptions: ServiceTypeInfo[]) => {
+                            return subscriptions.map((subscription: ServiceTypeInfo) => {
+                                return {
+                                    ...subscription,
+                                    checkbox1: null,
+                                    checkbox2: null
+                                };
+                            });
+                        })
+                    ),
+                    dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+        }
+    });
     private ordersFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -99,109 +127,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         }),
         new FilterModel({
-            component: FilterDropDownComponent,
-            caption: 'paymentType',
-            items: {
-                paymentType: new FilterDropDownModel({
-                    elements: null,
-                    filterField: 'paymentTypeId',
-                    onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                        filter.items['paymentType'].value = event && event.value;
-                    }
-                })
-            }
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'product',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'orderTotals',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'currencies',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'recurrence',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'regions',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'zipCode',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'referringAffiliates',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'referringWebsites',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'utmSources',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'utmMediums',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'UtmCampaings',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'entryPages',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'salesAgents',
-            items: {}
-        }),
-        new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'cardBins',
-            items: {}
-        }),
-        new FilterModel({
             component: FilterInputsComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'Amount',
             field: 'Amount',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        })
+        }),
+        this.subscriptionStatusFilter
     ];
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
@@ -252,6 +184,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'Fee',
             field: 'Fee',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Subscription',
+            field: 'ServiceTypeId',
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(
+                            select(SubscriptionsStoreSelectors.getSubscriptions)
+                        ),
+                        dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
         })
     ];
     private filterChanged = false;
@@ -705,7 +653,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             dataGrid.instance,
             this.selectedOrderType === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
             this.filters,
-            this.filtersService.getCheckCustom
+            this.filtersService.getCheckCustom,
+            null,
+            this.subscriptionStatusFilter.items.element.value
         );
     }
 

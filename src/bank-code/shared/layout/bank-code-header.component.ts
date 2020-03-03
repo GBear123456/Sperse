@@ -15,7 +15,8 @@ import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -46,6 +47,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
         private profileService: ProfileService,
         public sessionService: AppSessionService,
         public appSession: AppSessionService,
+        private permission: AppPermissionService
     ) {}
 
     ngOnInit() {
@@ -61,10 +63,9 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             zip(
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-                this.showResourcesLink(),
-                this.getBCRMLink(),
-            ).subscribe(([showTrainerLink, showAffiliateLink, showResourcesLink, bcrmLink]: [boolean, boolean, boolean, string]) => {
-                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showResourcesLink, bcrmLink);
+                this.showResourcesLink()
+            ).subscribe(([showTrainerLink, showAffiliateLink, showResourcesLink]: [boolean, boolean, boolean]) => {
+                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showResourcesLink, this.getBCRMLink());
             });
         }
     }
@@ -134,15 +135,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
         ];
     }
 
-    private getBCRMLink(): Observable<string> {
-        return zip(
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
-        ).pipe(
-            map((subcriptions: boolean[]) => {
-                return subcriptions.some(Boolean) ? '../app/crm' : './products/bankpass';
-            })
-        );
+    private getBCRMLink(): string {
+        return this.permission.isGranted(AppPermissions.CRM) ? '../app/crm' : './products/bankpass';
     }
 
     /**

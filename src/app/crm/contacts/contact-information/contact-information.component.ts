@@ -35,7 +35,7 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
                     action: this.personalDetailsService.showPersonalDetailsDialog.bind(this)
                 }
             }));
-        });
+        }, this.constructor.name);
     }
 
     ngOnInit() {
@@ -44,5 +44,6 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
+        this.contactsService.unsubscribe(this.constructor.name);
     }
 }

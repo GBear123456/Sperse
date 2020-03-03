@@ -126,87 +126,85 @@
                                 </dxi-column>
                             </ng-container>
 
-                            <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                            <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                            <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                            <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                            <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                                {{cellData.value | phone}}
-                            </div>
-                            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                                {{cellData.value | date: formatting.dateTime : userTimezone}}
-                            </div>
-                            <div *dxTemplate="let cellData of 'bankCodeCell'">
-                                <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
-                            </div>
-                            <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
-                            <dxo-group-panel [visible]="true"></dxo-group-panel>
-                            <dxo-sorting mode="multiple"></dxo-sorting>
-                        </dx-data-grid>
-                    </div>
+                        <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
+                        <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
+                        <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                            {{cellData.value | phone}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | date: formatting.dateTime : userTimezone}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'bankCodeCell'">
+                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                        </div>
+                        <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                    </dx-data-grid>
                 </div>
             </div>
         </div>
-        <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
-            <div class="portlet-body">
-                <div class="funnel-wrapper main-component-view">
-                    <app-pipeline
-                            totalsURI="LeadCount"
-                            dragulaName="leadStages"
-                            [dataSource]="pipelineDataSource"
-                            [selectFields]="pipelineSelectFields"
-                            [pipelinePurposeId]="pipelinePurposeId"
-                            [filterModelStages]="filterModelStages"
-                            [(selectedEntities)]="selectedLeads"
-                            dateField="LeadDate"
-                            [contactGroupId]="contactGroupId.value"
-                            [moveDisabled]="manageDisabled"
-                            (onEntityStageChanged)="onLeadStageChanged($event)"
-                            (onStagesLoaded)="onStagesLoaded($event)"
-                            (onCardClick)="onCardClick($event)"
-                            (onTotalChange)="updateTotalCount($event)">
-                        Loading...
-                    </app-pipeline>
-                </div>
+    </div>
+    <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div class="funnel-wrapper main-component-view">
+                <app-pipeline
+                    totalsURI="LeadCount"
+                    dragulaName="leadStages"
+                    [dataSource]="pipelineDataSource"
+                    [selectFields]="pipelineSelectFields"
+                    [pipelinePurposeId]="pipelinePurposeId"
+                    [filterModelStages]="filterModelStages"
+                    [(selectedEntities)]="selectedLeads"
+                    dateField="LeadDate"
+                    [contactGroupId]="contactGroupId.value"
+                    [moveDisabled]="manageDisabled"
+                    (onEntityStageChanged)="onLeadStageChanged($event)"
+                    (onStagesLoaded)="onStagesLoaded($event)"
+                    (onCardClick)="onCardClick($event)"
+                    (onTotalChange)="updateTotalCount($event)">
+                    Loading...
+                </app-pipeline>
             </div>
         </div>
-        <div [hidden]="hidePivotGrid$ | async">
-            <slice-pivot-grid [storageKey]="sliceStorageKey"
-                              [dataSource]="pivotGridDataSource"
-                              [height]="contentHeight$ | async"
-                              [isLoading]="pivotGridDataIsLoading">
-            </slice-pivot-grid>
-        </div>
-        <div [hidden]="hideChart$ | async">
-            <slice-chart [width]="contentWidth$ | async"
-                         [height]="contentHeight$ | async"
-                         [infoItems]="chartInfoItems"
-                         [itemsName]="l('ContactGroup_' + selectedContactGroup)"
-                         [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
-                         argumentField="creationDate"
-                         valueField="count">
-            </slice-chart>
-        </div>
-        <div [hidden]="hideMap$ | async">
-            <slice-info [items]="mapInfoItems$ | async"></slice-info>
-            <slice-map [width]="contentWidth$ | async"
-                       [height]="mapHeight$ | async"
-                       [contactGroupText]="userGroupText$ | async"
-                       [dataIsLoading]="mapDataIsLoading"
-                       [data]="mapData$ | async">
-            </slice-map>
-        </div>
+    </div>
+    <div [hidden]="hidePivotGrid$ | async">
+        <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [height]="contentHeight$ | async"
+                          [isLoading]="pivotGridDataIsLoading">
+        </slice-pivot-grid>
+    </div>
+    <div [hidden]="hideChart$ | async">
+        <slice-chart [width]="contentWidth$ | async"
+                     [height]="contentHeight$ | async"
+                     [infoItems]="chartInfoItems"
+                     [itemsName]="l('ContactGroup_' + selectedContactGroup)"
+                     [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
+                     argumentField="creationDate"
+                     valueField="count">
+        </slice-chart>
+    </div>
+    <div [hidden]="hideMap$ | async">
+        <slice-info [items]="mapInfoItems$ | async"></slice-info>
+        <slice-map [width]="contentWidth$ | async"
+                   [height]="mapHeight$ | async"
+                   [contactGroupText]="userGroupText$ | async"
+                   [dataIsLoading]="mapDataIsLoading"
+                   [data]="mapData$ | async">
+        </slice-map>
     </div>
 </div>
 

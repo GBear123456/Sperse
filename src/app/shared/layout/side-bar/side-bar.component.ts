@@ -58,7 +58,7 @@ export class SideBarComponent {
     excludeFilter(event, filter: FilterModel, displayElement: DisplayElement) {
         filter.displayElements = undefined;
         if (displayElement.item.removeFilterItem)
-            displayElement.item.removeFilterItem(filter, displayElement.args);
+            displayElement.item.removeFilterItem(filter, displayElement.args, displayElement.id);
 
         this.filtersService.change(filter);
         event.stopPropagation();
@@ -80,6 +80,9 @@ export class SideBarComponent {
 
     showFilterDialog(event, filter) {
         this.activeFilter = filter;
+        if (filter && filter.items && filter.items.element && filter.items.element.dispatch) {
+            filter.items.element.dispatch();
+        }
         this.disableFilterScroll = this.activeFilter && this.activeFilter.items &&
             this.activeFilter.items.element && this.activeFilter.items.element.disableOuterScroll;
         event.stopPropagation();

@@ -1,10 +1,9 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material/dialog';
-import { ClipboardModule } from 'ngx-clipboard';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
@@ -14,6 +13,7 @@ import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group'
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
+import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { ApiRoutingModule } from './api-routing.module';
 import { SwaggerComponent } from './swagger/swagger.component';
@@ -24,8 +24,9 @@ import { ApiWelcomeComponent } from './introduction/api-welcome/api-welcome.comp
 
 @NgModule({
     imports: [
-        ApiRoutingModule,
         CommonModule,
+        ApiRoutingModule,
+        ngCommon.CommonModule,
         AppCommonModule,
         DxDataGridModule,
         DxTextBoxModule,
@@ -34,8 +35,7 @@ import { ApiWelcomeComponent } from './introduction/api-welcome/api-welcome.comp
         DxValidationGroupModule,
         DxTooltipModule,
         DxScrollViewModule,
-        MatDialogModule,
-        ClipboardModule
+        MatDialogModule
     ],
     declarations: [
         SwaggerComponent,

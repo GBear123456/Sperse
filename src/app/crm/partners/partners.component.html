@@ -148,40 +148,38 @@
                             <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                         </div>
 
-                        <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                    </dx-data-grid>
-                </div>
+                    <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
+                    <dxo-sorting mode="multiple"></dxo-sorting>
+                    <dxo-paging [pageSize]="20"></dxo-paging>
+                    <dxo-group-panel [visible]="true"></dxo-group-panel>
+                </dx-data-grid>
             </div>
         </div>
-        <div [hidden]="hidePivotGrid$ | async">
-            <slice-pivot-grid [storageKey]="sliceStorageKey"
-                              [dataSource]="pivotGridDataSource"
-                              [isLoading]="pivotGridDataIsLoading"
-                              [height]="contentHeight$ | async">
-            </slice-pivot-grid>
-        </div>
-        <div [hidden]="hideChart$ | async">
-            <slice-chart [width]="contentWidth$ | async"
-                         [height]="contentHeight$ | async"
-                         [infoItems]="chartInfoItems"
-                         [itemsName]="l('Partners')"
-                         [title]="l('PartnersNumber')"
-                         argumentField="creationDate"
-                         valueField="count">
-            </slice-chart>
-        </div>
-        <div [hidden]="hideMap$ | async">
-            <slice-info [items]="mapInfoItems$ | async"></slice-info>
-            <slice-map [width]="contentWidth$ | async"
-                       [height]="mapHeight$ | async"
-                       [contactGroupText]="l('Partners').toLowerCase()"
-                       [dataIsLoading]="mapDataIsLoading"
-                       [data]="mapData$ | async">
-            </slice-map>
-        </div>
+    </div>
+    <div [hidden]="hidePivotGrid$ | async">
+        <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [isLoading]="pivotGridDataIsLoading"
+                          [height]="contentHeight$ | async">
+        </slice-pivot-grid>
+    </div>
+    <div [hidden]="hideChart$ | async">
+        <slice-chart [width]="contentWidth$ | async"
+                     [height]="contentHeight$ | async"
+                     [infoItems]="chartInfoItems"
+                     [itemsName]="l('Partners')"
+                     [title]="l('PartnersNumber')"
+                     argumentField="creationDate"
+                     valueField="count">
+        </slice-chart>
+    </div>
+    <div [hidden]="hideMap$ | async">
+        <slice-info [items]="mapInfoItems$ | async"></slice-info>
+        <slice-map [width]="contentWidth$ | async"
+                   [height]="mapHeight$ | async"
+                   [contactGroupText]="l('Partners').toLowerCase()"
+                   [dataIsLoading]="mapDataIsLoading"
+                   [data]="mapData$ | async">
+        </slice-map>
     </div>
 </div>
 

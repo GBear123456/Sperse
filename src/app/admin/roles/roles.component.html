@@ -14,7 +14,7 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
-                     [visible]="actionRecord"
+                     [visible]="!!actionRecord"
                      (onItemClick)="onMenuItemClick($event)"
                      (onHidden)="actionRecord = null">
         </action-menu>
@@ -42,11 +42,14 @@
                                            showCheckBoxesMode="always"
                                            mode="none">
                             </dxo-selection>
-                            <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
+                            <dxo-editing mode="popup"
+                                         [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                         [allowUpdating]="true">
+                            </dxo-editing>
 
-                            <dxi-column dataField="displayName" caption="{{l('Role')}}" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="moduleId" caption="{{l('Module')}}" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="displayName" [caption]="l('Role')" cssClass="clipboard-holder" width="33%"></dxi-column>
+                            <dxi-column dataField="moduleId" [caption]="l('Module')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
                             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                                 {{ cellData.value | date: formatting.dateTime : userTimezone }}

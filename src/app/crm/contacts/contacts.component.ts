@@ -5,7 +5,7 @@ import { ActivationEnd, Params, Event, NavigationEnd } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, forkJoin, of } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, forkJoin, of } from 'rxjs';
 import {
     buffer,
     debounceTime,
@@ -591,7 +591,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             data: this.contactInfo,
             hasBackdrop: false,
             minWidth: 420,
-            position: this.getDialogPossition(event, -182, 89),
+            position: this.getDialogPosition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
             if (result == 'addContact')
@@ -613,7 +613,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         event.stopPropagation();
     }
 
-    getDialogPossition(event, shiftX, shiftY) {
+    getDialogPosition(event, shiftX, shiftY) {
         return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
     }
 
