@@ -5,7 +5,7 @@ import { ActivationEnd, Params, Event, NavigationEnd } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, forkJoin, of } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, forkJoin, of } from 'rxjs';
 import {
     buffer,
     debounceTime,
@@ -53,7 +53,6 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AppFeatures } from '@shared/AppFeatures';
 import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
@@ -591,7 +590,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             data: this.contactInfo,
             hasBackdrop: false,
             minWidth: 420,
-            position: this.getDialogPossition(event, -182, 89),
+            position: this.getDialogPosition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
             if (result == 'addContact')
@@ -613,7 +612,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         event.stopPropagation();
     }
 
-    getDialogPossition(event, shiftX, shiftY) {
+    getDialogPosition(event, shiftX, shiftY) {
         return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
     }
 
