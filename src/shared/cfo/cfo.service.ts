@@ -19,6 +19,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { ConfigInterface } from '@app/shared/common/config.interface';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -38,8 +39,8 @@ export class CFOService extends CFOServiceBase {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
         this.statusActive$ = this.statusActive.asObservable();
-        appService.subscribeModuleChange(config => {
-            switch (config['code']) {
+        appService.subscribeModuleChange((config: ConfigInterface) => {
+            switch (config.code) {
                 case 'CFO':
                     if (this.hasStaticInstance) {
                         this.initialized = false;
@@ -67,7 +68,7 @@ export class CFOService extends CFOServiceBase {
                     }
             }
         });
-        this.instance$.subscribe((instance) => {
+        this.instance$.subscribe((instance: InstanceModel) => {
             if (instance) {
                 this.instanceType = instance.instanceType;
                 this.instanceId = instance.instanceId;

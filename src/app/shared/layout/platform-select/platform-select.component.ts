@@ -17,6 +17,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { TitleService } from '@shared/common/title/title.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ConfigInterface } from '@app/shared/common/config.interface';
 
 @Component({
     templateUrl: './platform-select.component.html',
@@ -95,12 +96,12 @@ export class PlatformSelectComponent {
                 }
             }
         });
-        appService.subscribeModuleChange((config) => {
-            this.module = config['name'];
-            this.displayName = config['displayName'] || config['name'];
+        appService.subscribeModuleChange((config: ConfigInterface) => {
+            this.module = config.name;
+            this.displayName = config.displayName || config.name;
             this.uri = appService.params.instance;
             this.cssClass = this.module.toLowerCase();
-            this.titleService.setTitle(config['name']);
+            this.titleService.setTitle(config.name);
         });
     }
 
@@ -109,10 +110,7 @@ export class PlatformSelectComponent {
             (this.appService.isModuleActive(module.name) || module.name === 'BankCode' || module.name === 'Slice')
         ) {
             let navigate = null;
-            let moduleConfig = this.appService.getModuleConfig(module.name);
-            if (moduleConfig && moduleConfig.defaultPath) {
-                navigate = this.router.navigate([moduleConfig.defaultPath]);
-            } else if (module.name === 'Slice' && this.permission.isGranted(AppPermissions.CRMCustomers)) {
+            if (module.name === 'Slice' && this.permission.isGranted(AppPermissions.CRMCustomers)) {
                 const lastSegment = this.router.url.substring(this.router.url.lastIndexOf('/') + 1);
                 const availableSliceLinks: string[] = ['leads', 'clients', 'partners'];
                 const group = availableSliceLinks.indexOf(lastSegment) > 0 ? lastSegment : 'leads';

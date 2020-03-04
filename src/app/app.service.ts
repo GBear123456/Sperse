@@ -163,13 +163,13 @@ export class AppService extends AppServiceBase {
                 }
             ],
             {
-                admin: AdminConfig,
-                api: ApiConfig,
-                crm: CrmConfig,
-                cfo: CfoConfig,
-                cfoPortal: CfoPortalConfig,
-                pfm: PfmConfig,
-                slice: SliceConfig
+                admin: new AdminConfig(),
+                api: new ApiConfig(),
+                crm: new CrmConfig(),
+                cfo: new CfoConfig(),
+                cfoPortal: new CfoPortalConfig(),
+                pfm: new PfmConfig(),
+                slice: new SliceConfig()
             },
         );
 

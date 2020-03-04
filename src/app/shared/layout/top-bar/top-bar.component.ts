@@ -17,6 +17,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ConfigInterface } from '@app/shared/common/config.interface';
+import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -30,11 +32,11 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 export class TopBarComponent implements OnDestroy {
     @ViewChild(DxNavBarComponent, { static: true }) navBar: DxNavBarComponent;
 
-    config: any = {};
+    config: ConfigInterface;
     selectedIndex: number;
     lastInnerWidth: number;
     updateTimeout: any;
-    navbarItems: any = [];
+    navbarItems: PanelMenuItem[] = [];
     adaptiveMenuItems: any = [];
     mutationObservers: any = {};
     menu: PanelMenu = <PanelMenu>{
@@ -56,7 +58,7 @@ export class TopBarComponent implements OnDestroy {
                 takeUntil(this.lifecycleService.destroy$),
                 filter(event => event instanceof NavigationEnd)
             ).subscribe((event: any) => {
-                let currModuleName = (this.config.name || '').toLowerCase();
+                let currModuleName = (this.config && this.config.name || '').toLowerCase();
                 if (currModuleName && currModuleName != appService.getModule())
                     appService.initModule();
                 setTimeout(() => {
@@ -67,12 +69,12 @@ export class TopBarComponent implements OnDestroy {
                     });
                 });
             });
-        this.appService.subscribeModuleChange((config) => {
+        this.appService.subscribeModuleChange((config: ConfigInterface) => {
             this.config = config;
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
-                this.initMenu(this.getCheckLayoutMenuConfig(config['navigation']), config['localizationSource'], 0)
+                this.initMenu(this.getCheckLayoutMenuConfig(config.navigation), config['localizationSource'], 0)
             );
             const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
@@ -90,25 +92,22 @@ export class TopBarComponent implements OnDestroy {
         });
     }
 
-    initMenu(config, localizationSource, level): PanelMenuItem[] {
+    initMenu(configNavigation: ConfigNavigation[], localizationSource, level): PanelMenuItem[] {
         let navList: PanelMenuItem[] = [];
-        config.forEach((val) => {
-            let value = val.slice(0);
-            if (val.length === 7)
-                value.push(this.initMenu(value.pop(), localizationSource, ++level));
-            /** @todo refactor */
+        configNavigation.forEach((navigation: ConfigNavigation) => {
+            // if (val.length === 7)
+            //     value.push(this.initMenu(value.pop(), localizationSource, ++level));
             let item = new PanelMenuItem(
-                value[0] && this.ls.ls(localizationSource, 'Navigation_' + value[0]),
-                value[1],
-                value[2],
-                value[3],
-                value[4],
-                value[3] === '/app/crm/reports' && this.appSessionService.tenant
-                    ? this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode
-                    : !value[3],
-                value[5],
-                value[6],
-                value[7]
+                navigation.text && this.ls.ls(localizationSource, 'Navigation_' + navigation.text),
+                navigation.permission,
+                navigation.icon,
+                navigation.route,
+                navigation.feature,
+                navigation.layout && this.appSessionService.tenant
+                    ? this.appSessionService.tenant.customLayoutType !== navigation.layout
+                    : !navigation.route,
+                navigation.alterRoutes,
+                navigation.host
             );
             item.visible = this.showMenuItem(item);
             navList.push(item);
@@ -116,14 +115,20 @@ export class TopBarComponent implements OnDestroy {
         return navList;
     }
 
-    getCheckLayoutMenuConfig(config) {
+    getCheckLayoutMenuConfig(configNavigation: ConfigNavigation[]): ConfigNavigation[] {
         const MENU_HOME = 'Home';
         let tenant = this.appSessionService.tenant;
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode && config[0][0] != MENU_HOME)
-            config.unshift([MENU_HOME, '', 'icon-home', '/code-breaker']);
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode && configNavigation[0][0] != MENU_HOME)
+            configNavigation.unshift(
+                {
+                    text: MENU_HOME,
+                    icon: 'icon-home',
+                    route: '/code-breaker'
+                }
+            );
 
-        return config;
+        return configNavigation;
     }
 
     navigate(event) {
@@ -208,8 +213,8 @@ export class TopBarComponent implements OnDestroy {
     }
 
     private checkMenuItemPermission(item: PanelMenuItem): boolean {
-        return this.appService.isFeatureEnable(item.featureName) && (this.permissionChecker.isGranted(item.permissionName) ||
-            (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
+        return this.appService.isFeatureEnable(item.feature) && (this.permissionChecker.isGranted(item.permission) ||
+            (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permission));
     }
 
     private checkChildMenuItemPermission(menu: PanelMenuItem): boolean {
@@ -218,8 +223,12 @@ export class TopBarComponent implements OnDestroy {
         });
     }
 
+    private checkMenuItemLayout(menu: PanelMenuItem): boolean {
+        return !menu.layoutType;
+    }
+
     showMenuItem(item: PanelMenuItem): boolean {
-        return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item);
+        return (!item.host || (abp.session.multiTenancySide == <any>abp.multiTenancy.sides[item.host.toUpperCase()])) && this.checkMenuItemPermission(item) && this.checkMenuItemLayout(item);
     }
 
     ngOnDestroy() {

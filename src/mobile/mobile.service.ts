@@ -16,7 +16,7 @@ export class AppService extends AppServiceBase {
                 }
             ],
             {
-                cfo: CfoConfig
+                cfo: new CfoConfig()
             }
         );
     }
