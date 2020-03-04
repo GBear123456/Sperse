@@ -204,7 +204,17 @@ export class BankAccountsService {
                 let availableBusinessEntityIds = syncAccounts.reduce((businessEntityIds, syncAccount) => {
                     return businessEntityIds.concat(syncAccount.bankAccounts.map(bankAccount => bankAccount.businessEntityId));
                 }, []);
-                return this.sortBusinessEntities(businessEntities.filter(item => availableBusinessEntityIds.indexOf(item.id) >= 0), selectedBusinessEntitiesIds);
+                return this.sortBusinessEntities(businessEntities.filter(
+                    item => availableBusinessEntityIds.indexOf(item.id) >= 0
+                ).map(item => {
+                    if (item.parentId && availableBusinessEntityIds.indexOf(item.parentId) < 0)
+                        return {
+                            ...item,
+                            parentId: null
+                        } as BusinessEntityDto;
+                    else
+                        return item;
+                }), selectedBusinessEntitiesIds);
             })
         );
 
