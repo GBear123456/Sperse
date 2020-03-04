@@ -8584,8 +8584,8 @@ export class ContactCommunicationServiceProxy {
     /**
      * @return Success
      */
-    getEmail(id: number, contactId: number): Observable<EmailDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetEmail?";
+    getMessage(id: number, contactId: number): Observable<MessageDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetMessage?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
@@ -8606,20 +8606,20 @@ export class ContactCommunicationServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetEmail(response_);
+            return this.processGetMessage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetEmail(<any>response_);
+                    return this.processGetMessage(<any>response_);
                 } catch (e) {
-                    return <Observable<EmailDto>><any>_observableThrow(e);
+                    return <Observable<MessageDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<EmailDto>><any>_observableThrow(response_);
+                return <Observable<MessageDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetEmail(response: HttpResponseBase): Observable<EmailDto> {
+    protected processGetMessage(response: HttpResponseBase): Observable<MessageDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8630,7 +8630,7 @@ export class ContactCommunicationServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? EmailDto.fromJS(resultData200) : new EmailDto();
+            result200 = resultData200 ? MessageDto.fromJS(resultData200) : new MessageDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -8638,7 +8638,7 @@ export class ContactCommunicationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<EmailDto>(<any>null);
+        return _observableOf<MessageDto>(<any>null);
     }
 
     /**
@@ -8650,8 +8650,8 @@ export class ContactCommunicationServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getEmails(contactId: number, userId: number | null | undefined, filter: string | null | undefined, status: CommunicationEmailStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<EmailListDtoPagedResultDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetEmails?";
+    getMessages(contactId: number, userId: number | null | undefined, filter: string | null | undefined, status: CommunicationMessageStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetMessages?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
         else
@@ -8680,20 +8680,20 @@ export class ContactCommunicationServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetEmails(response_);
+            return this.processGetMessages(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetEmails(<any>response_);
+                    return this.processGetMessages(<any>response_);
                 } catch (e) {
-                    return <Observable<EmailListDtoPagedResultDto>><any>_observableThrow(e);
+                    return <Observable<MessageListDtoPagedResultDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<EmailListDtoPagedResultDto>><any>_observableThrow(response_);
+                return <Observable<MessageListDtoPagedResultDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetEmails(response: HttpResponseBase): Observable<EmailListDtoPagedResultDto> {
+    protected processGetMessages(response: HttpResponseBase): Observable<MessageListDtoPagedResultDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8704,7 +8704,7 @@ export class ContactCommunicationServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? EmailListDtoPagedResultDto.fromJS(resultData200) : new EmailListDtoPagedResultDto();
+            result200 = resultData200 ? MessageListDtoPagedResultDto.fromJS(resultData200) : new MessageListDtoPagedResultDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -8712,59 +8712,7 @@ export class ContactCommunicationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<EmailListDtoPagedResultDto>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    sendEmail(body: SendEmailInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/SendEmail";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendEmail(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSendEmail(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSendEmail(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
+        return _observableOf<MessageListDtoPagedResultDto>(<any>null);
     }
 
     /**
@@ -8802,6 +8750,61 @@ export class ContactCommunicationServiceProxy {
     }
 
     protected processSaveAttachment(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    getAttachmentLink(id: string | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetAttachmentLink?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAttachmentLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAttachmentLink(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAttachmentLink(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8872,6 +8875,62 @@ export class ContactCommunicationServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendEmail(body: SendEmailInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/SendEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendEmail(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -45911,12 +45970,12 @@ export interface IPersonOrgRelationTypeDto {
     isDeleted: boolean | undefined;
 }
 
-export class EmailAttachmentDto implements IEmailAttachmentDto {
+export class AttachmentDto implements IAttachmentDto {
     name!: string | undefined;
     size!: number | undefined;
     id!: string | undefined;
 
-    constructor(data?: IEmailAttachmentDto) {
+    constructor(data?: IAttachmentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -45933,9 +45992,9 @@ export class EmailAttachmentDto implements IEmailAttachmentDto {
         }
     }
 
-    static fromJS(data: any): EmailAttachmentDto {
+    static fromJS(data: any): AttachmentDto {
         data = typeof data === 'object' ? data : {};
-        let result = new EmailAttachmentDto();
+        let result = new AttachmentDto();
         result.init(data);
         return result;
     }
@@ -45949,15 +46008,15 @@ export class EmailAttachmentDto implements IEmailAttachmentDto {
     }
 }
 
-export interface IEmailAttachmentDto {
+export interface IAttachmentDto {
     name: string | undefined;
     size: number | undefined;
     id: string | undefined;
 }
 
-export class EmailDto implements IEmailDto {
+export class MessageDto implements IMessageDto {
     body!: string | undefined;
-    attachments!: EmailAttachmentDto[] | undefined;
+    attachments!: AttachmentDto[] | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
@@ -45969,7 +46028,7 @@ export class EmailDto implements IEmailDto {
     creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
-    constructor(data?: IEmailDto) {
+    constructor(data?: IMessageDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -45984,7 +46043,7 @@ export class EmailDto implements IEmailDto {
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
                 for (let item of data["attachments"])
-                    this.attachments.push(EmailAttachmentDto.fromJS(item));
+                    this.attachments.push(AttachmentDto.fromJS(item));
             }
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
@@ -45999,9 +46058,9 @@ export class EmailDto implements IEmailDto {
         }
     }
 
-    static fromJS(data: any): EmailDto {
+    static fromJS(data: any): MessageDto {
         data = typeof data === 'object' ? data : {};
-        let result = new EmailDto();
+        let result = new MessageDto();
         result.init(data);
         return result;
     }
@@ -46028,9 +46087,9 @@ export class EmailDto implements IEmailDto {
     }
 }
 
-export interface IEmailDto {
+export interface IMessageDto {
     body: string | undefined;
-    attachments: EmailAttachmentDto[] | undefined;
+    attachments: AttachmentDto[] | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
@@ -46043,7 +46102,7 @@ export interface IEmailDto {
     id: number | undefined;
 }
 
-export enum CommunicationEmailStatus {
+export enum CommunicationMessageStatus {
     Draft = "Draft", 
     Pending = "Pending", 
     Failed = "Failed", 
@@ -46051,7 +46110,7 @@ export enum CommunicationEmailStatus {
     Delivered = "Delivered", 
 }
 
-export class EmailListDto implements IEmailListDto {
+export class MessageListDto implements IMessageListDto {
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
@@ -46063,7 +46122,7 @@ export class EmailListDto implements IEmailListDto {
     creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
-    constructor(data?: IEmailListDto) {
+    constructor(data?: IMessageListDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46087,9 +46146,9 @@ export class EmailListDto implements IEmailListDto {
         }
     }
 
-    static fromJS(data: any): EmailListDto {
+    static fromJS(data: any): MessageListDto {
         data = typeof data === 'object' ? data : {};
-        let result = new EmailListDto();
+        let result = new MessageListDto();
         result.init(data);
         return result;
     }
@@ -46110,7 +46169,7 @@ export class EmailListDto implements IEmailListDto {
     }
 }
 
-export interface IEmailListDto {
+export interface IMessageListDto {
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
@@ -46123,11 +46182,11 @@ export interface IEmailListDto {
     id: number | undefined;
 }
 
-export class EmailListDtoPagedResultDto implements IEmailListDtoPagedResultDto {
+export class MessageListDtoPagedResultDto implements IMessageListDtoPagedResultDto {
     totalCount!: number | undefined;
-    items!: EmailListDto[] | undefined;
+    items!: MessageListDto[] | undefined;
 
-    constructor(data?: IEmailListDtoPagedResultDto) {
+    constructor(data?: IMessageListDtoPagedResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46142,14 +46201,14 @@ export class EmailListDtoPagedResultDto implements IEmailListDtoPagedResultDto {
             if (data["items"] && data["items"].constructor === Array) {
                 this.items = [];
                 for (let item of data["items"])
-                    this.items.push(EmailListDto.fromJS(item));
+                    this.items.push(MessageListDto.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): EmailListDtoPagedResultDto {
+    static fromJS(data: any): MessageListDtoPagedResultDto {
         data = typeof data === 'object' ? data : {};
-        let result = new EmailListDtoPagedResultDto();
+        let result = new MessageListDtoPagedResultDto();
         result.init(data);
         return result;
     }
@@ -46166,9 +46225,9 @@ export class EmailListDtoPagedResultDto implements IEmailListDtoPagedResultDto {
     }
 }
 
-export interface IEmailListDtoPagedResultDto {
+export interface IMessageListDtoPagedResultDto {
     totalCount: number | undefined;
-    items: EmailListDto[] | undefined;
+    items: MessageListDto[] | undefined;
 }
 
 export class SendEmailInput implements ISendEmailInput {

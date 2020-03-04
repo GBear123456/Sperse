@@ -18,10 +18,10 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    UpdateEmailTemplateRequest, GetTemplateReponse, EmailAttachmentDto } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest, GetTemplateReponse, AttachmentDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
-class EmailAttachment extends EmailAttachmentDto {
+class EmailAttachment extends AttachmentDto {
     progress!: number;
     loader!: Subscription;
     url!: SafeResourceUrl;

@@ -12,7 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ContactCommunicationServiceProxy, CommunicationEmailStatus } from '@shared/service-proxies/service-proxies';
+import { ContactCommunicationServiceProxy, CommunicationMessageStatus } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class UserInboxComponent implements OnDestroy {
     dataSource: DataSource;
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
     formatting = AppConsts.formatting;
-    status: CommunicationEmailStatus;
+    status: CommunicationMessageStatus;
     isSendSmsAndEmailAllowed = false;
     userTimezone = '0000';
 
@@ -146,7 +146,7 @@ export class UserInboxComponent implements OnDestroy {
             load: (loadOptions) => {
                 if (loadOptions.take) {
                     this.loadingService.startLoading();
-                    return this.communicationService.getEmails(
+                    return this.communicationService.getMessages(
                         this.contactId,
                         undefined /* filter by user maybe add later */,
                         loadOptions.searchValue || undefined,
@@ -173,7 +173,7 @@ export class UserInboxComponent implements OnDestroy {
     initActiveEmail(record) {
         if (record) {
             this.loadingService.startLoading();
-            this.communicationService.getEmail(record.id, this.contactId).pipe(
+            this.communicationService.getMessage(record.id, this.contactId).pipe(
                 finalize(() => this.loadingService.finishLoading())
             ).subscribe(res => {
                 this.activeEmail = res;
