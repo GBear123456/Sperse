@@ -1,7 +1,7 @@
 /** Core imports */
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 /** Third party imports */
 import { DxNavBarComponent } from 'devextreme-angular/ui/nav-bar';
@@ -14,7 +14,7 @@ import { AppService } from '@app/app.service';
 import { PanelMenuItem } from './panel-menu-item';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { LayoutType, UserGroup } from '@shared/service-proxies/service-proxies';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
@@ -96,8 +96,20 @@ export class TopBarComponent implements OnDestroy {
             let value = val.slice(0);
             if (val.length === 7)
                 value.push(this.initMenu(value.pop(), localizationSource, ++level));
-            let item = new PanelMenuItem(value[0] && this.ls.ls(localizationSource, 'Navigation_' + value[0]),
-                value[1], value[2], value[3], value[4], value[5], value[6], value[7]);
+            /** @todo refactor */
+            let item = new PanelMenuItem(
+                value[0] && this.ls.ls(localizationSource, 'Navigation_' + value[0]),
+                value[1],
+                value[2],
+                value[3],
+                value[4],
+                value[3] === '/app/crm/reports' && this.appSessionService.tenant
+                    ? this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode
+                    : !value[3],
+                value[5],
+                value[6],
+                value[7]
+            );
             item.visible = this.showMenuItem(item);
             navList.push(item);
         });
