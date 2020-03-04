@@ -8937,7 +8937,7 @@ export class ContactCommunicationServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    sendSMS(body: SendSMSToContactInput | null | undefined): Observable<void> {
+    sendSMS(body: SendSMSInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/SendSMS";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -46014,6 +46014,19 @@ export interface IAttachmentDto {
     id: string | undefined;
 }
 
+export enum CommunicationMessageDeliveryType {
+    Email = "Email", 
+    SMS = "SMS", 
+}
+
+export enum CommunicationMessageStatus {
+    Draft = "Draft", 
+    Pending = "Pending", 
+    Failed = "Failed", 
+    Sent = "Sent", 
+    Delivered = "Delivered", 
+}
+
 export class MessageDto implements IMessageDto {
     body!: string | undefined;
     attachments!: AttachmentDto[] | undefined;
@@ -46026,6 +46039,8 @@ export class MessageDto implements IMessageDto {
     bcc!: string | undefined;
     subject!: string | undefined;
     creationTime!: moment.Moment | undefined;
+    deliveryType!: CommunicationMessageDeliveryType | undefined;
+    status!: CommunicationMessageStatus | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageDto) {
@@ -46054,6 +46069,8 @@ export class MessageDto implements IMessageDto {
             this.bcc = data["bcc"];
             this.subject = data["subject"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.deliveryType = data["deliveryType"];
+            this.status = data["status"];
             this.id = data["id"];
         }
     }
@@ -46082,6 +46099,8 @@ export class MessageDto implements IMessageDto {
         data["bcc"] = this.bcc;
         data["subject"] = this.subject;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["deliveryType"] = this.deliveryType;
+        data["status"] = this.status;
         data["id"] = this.id;
         return data; 
     }
@@ -46099,15 +46118,9 @@ export interface IMessageDto {
     bcc: string | undefined;
     subject: string | undefined;
     creationTime: moment.Moment | undefined;
+    deliveryType: CommunicationMessageDeliveryType | undefined;
+    status: CommunicationMessageStatus | undefined;
     id: number | undefined;
-}
-
-export enum CommunicationMessageStatus {
-    Draft = "Draft", 
-    Pending = "Pending", 
-    Failed = "Failed", 
-    Sent = "Sent", 
-    Delivered = "Delivered", 
 }
 
 export class MessageListDto implements IMessageListDto {
@@ -46120,6 +46133,8 @@ export class MessageListDto implements IMessageListDto {
     bcc!: string | undefined;
     subject!: string | undefined;
     creationTime!: moment.Moment | undefined;
+    deliveryType!: CommunicationMessageDeliveryType | undefined;
+    status!: CommunicationMessageStatus | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageListDto) {
@@ -46142,6 +46157,8 @@ export class MessageListDto implements IMessageListDto {
             this.bcc = data["bcc"];
             this.subject = data["subject"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.deliveryType = data["deliveryType"];
+            this.status = data["status"];
             this.id = data["id"];
         }
     }
@@ -46164,6 +46181,8 @@ export class MessageListDto implements IMessageListDto {
         data["bcc"] = this.bcc;
         data["subject"] = this.subject;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["deliveryType"] = this.deliveryType;
+        data["status"] = this.status;
         data["id"] = this.id;
         return data; 
     }
@@ -46179,6 +46198,8 @@ export interface IMessageListDto {
     bcc: string | undefined;
     subject: string | undefined;
     creationTime: moment.Moment | undefined;
+    deliveryType: CommunicationMessageDeliveryType | undefined;
+    status: CommunicationMessageStatus | undefined;
     id: number | undefined;
 }
 
@@ -46334,12 +46355,12 @@ export interface ISendEmailInput {
     attachments: string[] | undefined;
 }
 
-export class SendSMSToContactInput implements ISendSMSToContactInput {
+export class SendSMSInput implements ISendSMSInput {
     contactId!: number;
     message!: string | undefined;
     phoneNumber!: string;
 
-    constructor(data?: ISendSMSToContactInput) {
+    constructor(data?: ISendSMSInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46356,9 +46377,9 @@ export class SendSMSToContactInput implements ISendSMSToContactInput {
         }
     }
 
-    static fromJS(data: any): SendSMSToContactInput {
+    static fromJS(data: any): SendSMSInput {
         data = typeof data === 'object' ? data : {};
-        let result = new SendSMSToContactInput();
+        let result = new SendSMSInput();
         result.init(data);
         return result;
     }
@@ -46372,7 +46393,7 @@ export class SendSMSToContactInput implements ISendSMSToContactInput {
     }
 }
 
-export interface ISendSMSToContactInput {
+export interface ISendSMSInput {
     contactId: number;
     message: string | undefined;
     phoneNumber: string;
