@@ -32,7 +32,7 @@ import { AppConsts } from '@root/shared/AppConsts';
 })
 export class SMSDialogComponent {
     @ViewChild(DxValidationGroupComponent, { static: true }) validationGroup: DxValidationGroupComponent;
-    @ViewChild(CountryPhoneNumberComponent, { static: true }) countryPhoneNumber: CountryPhoneNumberComponent;
+    @ViewChild(CountryPhoneNumberComponent, { static: false }) countryPhoneNumber: CountryPhoneNumberComponent;
     phoneNumber: string;
     phones: string[];
     smsText = '';
