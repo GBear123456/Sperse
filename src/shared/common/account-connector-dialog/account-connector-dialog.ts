@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     EventEmitter,
     ViewChild,
+    ElementRef,
     ViewEncapsulation,
     Inject,
     OnInit,
@@ -39,6 +40,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     showBackButton = true;
 
     constructor(
+        private elementRef: ElementRef,
         private dialogRef: MatDialogRef<AccountConnectorDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: AccountConnectorDialogData
     ) {}
@@ -60,6 +62,9 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     openConnector(connector: AccountConnectors) {
+        this.elementRef.nativeElement.closest(
+            '#' + this.dialogRef.id
+        ).style.padding = 0;
         this.dialogRef.updateSize('0', '0');
         this.selectedConnector = connector;
     }

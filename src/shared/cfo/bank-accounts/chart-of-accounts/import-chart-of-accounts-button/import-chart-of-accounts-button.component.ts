@@ -22,8 +22,15 @@ export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
     @Output() onComplete = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Input() override: boolean;
-    @Input() syncTypeId: string;
+    @Input() syncTypeId: SyncTypeIds;
     createAccountAvailable: boolean;
+
+    syncTypeConfigs = {
+        [SyncTypeIds.Plaid]: { name: 'plaid', icon: 'plaid.png', caption: 'Plaid' },
+        [SyncTypeIds.Quovo]: { name: 'quovo', icon: 'quovo.png', caption: 'Quovo' },
+        [SyncTypeIds.QuickBook]: { name: 'quick-book', icon: 'quick-book.png', caption: 'QuickBook' },
+        [SyncTypeIds.XeroOAuth2]: { name: 'xero', icon: 'xero.svg', caption: 'Xero' }
+    };
 
     constructor(
         injector: Injector,
@@ -50,6 +57,7 @@ export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
                     let dialogRef = this.dialog.open(ChooseAccountComponent, {
                         width: '450px',
                         data: {
+                            syncTypeCaption: this.syncTypeConfigs[this.syncTypeId].caption,
                             createAccountAvailable: this.createAccountAvailable,
                             accounts: result
                         }

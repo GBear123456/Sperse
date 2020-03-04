@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{l("Choose_Xero_Account")}}</h2>
+<h2 mat-dialog-title>{{l('Choose_Account', data.syncTypeCaption)}}</h2>
 <div mat-dialog-content class="content">
     <dx-radio-group [items]="accounts"
                     [(value)]="selectedAccountId"
@@ -10,5 +10,5 @@
 <div mat-dialog-actions>
     <button mat-button class="button-layout button-default" (click)="onCancel()">{{l('Cancel')}}</button>
     <button mat-button class="button-layout button-primary" (click)="onSave()">{{l('Import')}}</button>
-    <button mat-button class="button-layout button-primary another-account" (click)="onConnectNew()" [disabled]="!createAccountAvailable">{{l('Add_xero_account')}}</button>
+    <button mat-button class="button-layout button-primary another-account" (click)="onConnectNew()" [disabled]="!createAccountAvailable">{{l('Another_Account', data.syncTypeCaption)}}</button>
 </div>

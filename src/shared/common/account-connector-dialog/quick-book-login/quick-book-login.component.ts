@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 /** Third party imports */
 import { finalize, filter, first, switchMap } from 'rxjs/operators';
@@ -11,9 +11,8 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
-@Component({
-    selector: 'quick-book-login',
-    template: ``
+@Directive({
+    selector: 'quick-book-login'
 })
 export class QuickBookLoginComponent implements OnInit {
     @Input() loadingContainerElement: Element;

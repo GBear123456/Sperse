@@ -22,6 +22,7 @@ export class ChooseAccountComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        this.dialogRef.updateSize('550px');
         this.createAccountAvailable = this.data.createAccountAvailable;
         this.accounts = this.data.accounts;
         this.selectedAccountId = this.accounts[0].id;

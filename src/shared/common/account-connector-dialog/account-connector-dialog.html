@@ -26,7 +26,7 @@
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.XeroOAuth2">
         <xero-oauth2-login [loadingContainerElement]="data?.loadingContainerElement"
-                           (onComplete)="complete()">
+            (onComplete)="complete()">
         </xero-oauth2-login>
     </ng-template>
 </mat-dialog-content>

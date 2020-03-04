@@ -1,9 +1,9 @@
 <a (click)="importChartOfAccount()"
-   class="xero-container"
+   class="container"
    [ngClass]="{'disabled':!createAccountAvailable}">
-    <img src="./assets/common/images/xero.svg" class="xero-img" />
+    <img src="./assets/common/images/{{syncTypeConfigs[syncTypeId].icon}}" class="sync-img" />
     <span class="import-text">
-        <p>Import from</p>
-        <p>Xero Accounting</p>
+        <p>{{l('Import from')}}</p>
+        <p>{{l(syncTypeConfigs[syncTypeId].caption)}} {{l('Accounting')}}</p>
     </span>
 </a>
