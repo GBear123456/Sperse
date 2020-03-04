@@ -309,14 +309,19 @@ export class ToolBarComponent implements OnDestroy {
 
     getDropDownItemTemplate(link, width) {
         return {
-            item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
-                (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
-            option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox"' + (link.checked || link.checked == undefined ? ' checked' : '') + '><label for="' + link.name + '">' + link.text + '</label></div>',
-            downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
-                '<div><input type="radio" name="export" value="all" checked><label>' + this.ls.l('Export all data') + '</label></div>' +
-                '<div><input type="radio" name="export" value="selected"><label>' + this.ls.l('Export selected') + '</label></div>' +
-                '</div>',
-            header: '<span class="dropdown-header">' + link.text + '</span>',
+            item: `<div class="toolbar-dropdown-item" ${width ? 'style="width:' + width + 'px;"' : ''}>
+                ${link.icon ? `<img style="margin-right: 15px; position: relative; top: -2px;" src="${this.getImgURI(link.icon)}">` : ''}
+                ${link.text}
+            </div>`,
+            option: `<div>
+                <input type="checkbox" id="${link.name}" class="dropdown-option-checkbox"${link.checked || link.checked == undefined ? ' checked' : ''}>
+                <label for="${link.name}">${link.text}</label>
+            </div>`,
+            downloadOptions: `<div class="toolbar-download-options" onclick="event.stopPropagation()">
+                <div><input type="radio" name="export" value="all" checked id="allDataExport"><label for="allDataExport">${this.ls.l('Export all data')}</label></div>
+                <div><input type="radio" name="export" value="selected" id="selectedDataExport"><label for="selectedDataExport">${this.ls.l('Export selected')}</label></div>
+             </div>`,
+            header: `<span class="dropdown-header">${link.text}</span>`,
             delimiter: '<hr>'
         }[link.type || 'item'];
     }

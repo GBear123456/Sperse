@@ -10,6 +10,7 @@ import capitalize from 'underscore.string/capitalize';
 import * as moment from 'moment';
 import { exportFromMarkup } from 'devextreme/viz/export';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Injectable()
 export class ExportService {
@@ -17,7 +18,10 @@ export class ExportService {
     private _exportGoogleSheetService: ExportGoogleSheetService;
     private readonly EXPORT_REQUEST_TIMEOUT = 3 * 60 * 1000;
 
-    constructor(private injector: Injector) {
+    constructor(
+        private injector: Injector,
+        private loadingService: LoadingService
+    ) {
         this._exportGoogleSheetService = injector.get(ExportGoogleSheetService);
     }
 
@@ -74,6 +78,24 @@ export class ExportService {
             callback(dataGrid.instance.getSelectedRowsData());
     }
 
+    exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string): Promise<any> {
+        this.loadingService.startLoading();
+        return this['exportTo' + type + 'Internal'](dataGrid, option == 'all', prefix)
+            .then(() => this.loadingService.finishLoading());
+    }
+
+    exportToXLS(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
+        return this.exportTo(option, 'Excel', dataGrid, prefix);
+    }
+
+    exportToCSV(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
+        return this.exportTo(option, 'CSV', dataGrid, prefix);
+    }
+
+    exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
+        return this.exportTo(option, 'GoogleSheets', dataGrid, prefix);
+    }
+
     moveItemsToCSV(data, dataGrid, prefix?: string) {
         if (data) {
             setTimeout(() => {
@@ -86,7 +108,7 @@ export class ExportService {
         }
     }
 
-    exportToCSV(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToCSVInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 this.moveItemsToCSV(data, dataGrid, prefix);
@@ -95,7 +117,7 @@ export class ExportService {
         });
     }
 
-    exportToGoogleSheets(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return this._exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
@@ -116,7 +138,7 @@ export class ExportService {
         }), this.getFileName(dataGrid, null, prefix));
     }
 
-    exportToExcel(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return new Promise((resolve) => {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),

@@ -111,7 +111,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'creation',
             field: 'OrderDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         this.filterModelStages = new FilterModel({
             component: FilterCheckBoxesComponent,
@@ -142,7 +142,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'ContactDate',
             field: 'ContactDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCalendarComponent,
@@ -150,7 +150,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'StartDate',
             field: 'StartDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCalendarComponent,
@@ -158,7 +158,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'EndDate',
             field: 'EndDate',
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCheckBoxesComponent,
@@ -385,6 +385,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.activate();
     }
 
+    activate() {
+        super.activate();
+
+        this.initFilterConfig();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+
+        this.showHostElement(() => {
+            this.pipelineComponent.detectChanges();
+        });
+    }
+
     get dataGrid() {
         return this.selectedOrderType === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
@@ -599,6 +611,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
+        this.initOrdersToolbarConfig();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
         else {
@@ -731,18 +744,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     invoiceSettings() {
         this.contactsService.showInvoiceSettingsDialog();
-    }
-
-    activate() {
-        super.activate();
-
-        this.initFilterConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-
-        this.showHostElement(() => {
-            this.pipelineComponent.detectChanges();
-        });
     }
 
     onOrderStageChanged(order) {

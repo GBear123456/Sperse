@@ -81,6 +81,7 @@ import { SliceModule } from '@app/shared/common/slice/slice.module';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { ReportsComponent } from '@app/crm/reports/reports.component';
 
 @NgModule({
     imports: [
@@ -144,6 +145,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         PartnersComponent,
         LeadsComponent,
         OrdersComponent,
+        ReportsComponent,
         DashboardComponent,
         DashboardMenuComponent,
         ImportListComponent,

@@ -690,7 +690,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'creation',
                     field: this.dateField,
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
                 }),
                 this.filterModelStages = new FilterModel({
                     component: FilterCheckBoxesComponent,

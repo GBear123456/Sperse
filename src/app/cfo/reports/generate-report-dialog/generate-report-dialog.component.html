@@ -6,7 +6,7 @@
                           parentIdExpr="parentId"
                           [autoExpandAll]="true"
                           [scrolling]="{ showScrollbar: 'never' }"
-                          [selectedRowKeys]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
+                          [selectedRowKeys]="selectedBusinessEntityIds"
                           [dataSource]="bankAccountsService.sortedBusinessEntities$ | async"
                           (onContentReady)="onContentReady($event)"
                           (onSelectionChanged)="onSelectionChanged($event)"

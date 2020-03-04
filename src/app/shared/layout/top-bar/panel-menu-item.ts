@@ -19,6 +19,7 @@ export class PanelMenuItem {
         icon: string,
         route: string,
         featureName: AppFeatures,
+        disabled: boolean,
         alterRoutes?: string[],
         items?: PanelMenuItem[],
         host?: string
@@ -28,7 +29,7 @@ export class PanelMenuItem {
         this.featureName = featureName;
         this.icon = icon;
         this.route = route;
-        this.disabled = !route;
+        this.disabled = disabled;
         this.visible = Boolean(text);
         this.host = host;
 
