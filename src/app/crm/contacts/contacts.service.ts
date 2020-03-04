@@ -305,8 +305,8 @@ export class ContactsService {
                     catchError(error => of(error))
                 );
             }),
-            tap(error => {
-                if (!error) {
+            tap(res => {
+                if (!isNaN(res)) {
                     this.notifyService.info(this.ls.l('MailSent'));
                     dialogComponent.close();
                 }
