@@ -107,7 +107,10 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
 
 @Component({
     templateUrl: './clients.component.html',
-    styleUrls: ['./clients.component.less'],
+    styleUrls: [
+        '../shared/styles/client-status.less',
+        './clients.component.less'
+    ],
     animations: [appModuleAnimation()],
     providers: [
         ClientService,

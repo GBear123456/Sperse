@@ -385,6 +385,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.activate();
     }
 
+    activate() {
+        super.activate();
+
+        this.initFilterConfig();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+
+        this.showHostElement(() => {
+            this.pipelineComponent.detectChanges();
+        });
+    }
+
     get dataGrid() {
         return this.selectedOrderType === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
@@ -599,6 +611,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
+        this.initOrdersToolbarConfig();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
         else {
@@ -731,18 +744,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     invoiceSettings() {
         this.contactsService.showInvoiceSettingsDialog();
-    }
-
-    activate() {
-        super.activate();
-
-        this.initFilterConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-
-        this.showHostElement(() => {
-            this.pipelineComponent.detectChanges();
-        });
     }
 
     onOrderStageChanged(order) {
