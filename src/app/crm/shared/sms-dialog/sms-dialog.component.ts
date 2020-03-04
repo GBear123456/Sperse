@@ -14,7 +14,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import {
     ContactPhoneDto,
     ContactCommunicationServiceProxy,
-    SendSMSToContactInput,
+    SendSMSInput,
     PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -86,7 +86,7 @@ export class SMSDialogComponent {
         setTimeout(() => {
             if (this.validationGroup.instance.validate().isValid && this.countryPhoneNumber.isValid()) {
                 this.loadingService.startLoading(this.validationGroup.instance.element());
-                this.contactCommunicationServiceProxy.sendSMS(new SendSMSToContactInput({
+                this.contactCommunicationServiceProxy.sendSMS(new SendSMSInput({
                     contactId: this.data.contact.id,
                     message: this.smsText,
                     phoneNumber: this.phoneNumber
