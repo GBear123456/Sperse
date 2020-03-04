@@ -5,7 +5,7 @@
         height: 100%;
         padding: 20px 30px 30px 30px;
 
-        /deep/ dx-tree-list {
+        ::ng-deep dx-tree-list {
             .dx-treelist-headers {
                 td {
                     padding: 0!important;
@@ -17,6 +17,10 @@
                     line-height: 20px;
                     padding-left: 20px;
                 }
+            }
+            td {
+                background: transparent!important;
+                border: none!important;
             }
             .dx-select-checkbox {
                 position: static;
