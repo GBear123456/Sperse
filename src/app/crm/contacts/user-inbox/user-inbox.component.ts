@@ -231,7 +231,14 @@ export class UserInboxComponent implements OnDestroy {
         data['contactId'] = this.contactId;
         data['switchTemplate'] = true;
         this.contactsService.showEmailDialog(data, title)
-            .subscribe(error => error || this.invalidate());
+            .subscribe(res => isNaN(res) || this.invalidate());
+    }
+
+    openAttachment(attachment) {
+        this.loadingService.startLoading();
+        this.communicationService.getAttachmentLink(attachment.id).pipe(
+            finalize(() => this.loadingService.finishLoading())
+        ).subscribe(res => window.open(res, '_blank'));
     }
 
     ngOnDestroy() {
