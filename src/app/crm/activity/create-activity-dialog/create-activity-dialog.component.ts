@@ -25,7 +25,6 @@ import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -84,7 +83,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     activityTypeIndex = 0;
 
-    isUserSelected = true;
+    isUserSelected = false;
     isStatusSelected = true;
     isLeadsSelected = false;
     isClientSelected = false;
@@ -101,12 +100,12 @@ export class CreateActivityDialogComponent implements OnInit {
     ];
     permissions = AppPermissions;
     assignedUsersSelector = select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
+    hasManagePermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments);
 
     constructor(
         private cacheService: CacheService,
         private dialogService: DialogService,
         private cacheHelper: CacheHelper,
-        private appSession: AppSessionService,
         private notifyService: NotifyService,
         private messageService: MessageService,
         private dialogRef: MatDialogRef<CreateActivityDialogComponent>,
@@ -131,6 +130,8 @@ export class CreateActivityDialogComponent implements OnInit {
 
             this.activityProxy.get(this.data.appointment.Id).subscribe((res) => {
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
+                this.isUserSelected = !!this.data.appointment.AssignedUserIds;
+                this.initToolbarConfig();
                 this.changeDetectorRef.detectChanges();
             });
         } else
@@ -167,9 +168,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     ngOnInit() {
         this.loadResourcesData();
-        if (!this.data.appointment.AssignedUserIds)
-            this.data.appointment.AssignedUserIds = [this.appSession.userId];
-
         if (!this.data.appointment.StageId && this.data.stages)
             this.initialStageId = this.data.appointment.StageId =
                 this.data.stages[Math.floor(this.data.stages.length / 2)].id;
@@ -234,13 +232,13 @@ export class CreateActivityDialogComponent implements OnInit {
                     },
                     {
                         name: 'assign',
-                        action: this.toggleUserAssignmen.bind(this),
-                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments),
+                        action: this.toggleUserAssignment.bind(this),
+                        disabled: !this.hasManagePermission,
                         options: {
                             accessKey: 'UserAssign'
                         },
                         attr: {
-                            'filter-selected': this.isUserSelected
+                            'filter-selected': this.hasManagePermission && this.isUserSelected
                         }
                     },
                     {
@@ -350,7 +348,7 @@ export class CreateActivityDialogComponent implements OnInit {
             type: this.data.appointment.Type,
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
-            assignedUserIds: this.data.appointment.AssignedUserIds || [this.appSession.userId],
+            assignedUserIds: this.data.appointment.AssignedUserIds,
             startDate: this.getDateWithoutTimezone(this.startDate, 'startDate'),
             endDate: this.getDateWithoutTimezone(this.endDate, 'endDate'),
             allDay: this.isAllDay,
@@ -476,7 +474,7 @@ export class CreateActivityDialogComponent implements OnInit {
         this.initToolbarConfig();
     }
 
-    toggleUserAssignmen() {
+    toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
         this.changeDetectorRef.detectChanges();
     }
@@ -571,7 +569,8 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     onUserAssignmentChanged(event) {
-        this.isUserSelected = !!event.addedItems.length;
+        const selectedItemKeys = event.component.option('selectedItemKeys');
+        this.isUserSelected = !!(selectedItemKeys && selectedItemKeys.length);
         this.initToolbarConfig();
     }
 

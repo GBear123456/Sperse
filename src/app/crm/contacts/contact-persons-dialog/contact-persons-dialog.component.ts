@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'contact-persons-dialog',
@@ -9,16 +9,13 @@ import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-
     styleUrls: ['./contact-persons-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactPersonsDialogComponent extends AppComponentBase implements OnInit {
+export class ContactPersonsDialogComponent implements OnInit {
     @ViewChild(ContactListDialogComponent, { static: true }) contactList: ContactListDialogComponent;
 
     constructor(
-        injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        public dialogRef: MatDialogRef<ContactPersonsDialogComponent>
-    ) {
-        super(injector);
-    }
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {}
 
     ngOnInit() {
         this.contactList.filter = (search?) => {

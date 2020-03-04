@@ -69,7 +69,8 @@ import {
     ContactServiceProxy,
     ContactStatusDto,
     CreateContactEmailInput,
-    OrganizationUnitDto
+    OrganizationUnitDto,
+    ServiceTypeInfo
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
@@ -82,7 +83,12 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
+import {
+    OrganizationUnitsStoreActions,
+    OrganizationUnitsStoreSelectors,
+    SubscriptionsStoreActions,
+    SubscriptionsStoreSelectors
+} from '@app/crm/store';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
@@ -96,6 +102,8 @@ import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
+import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -182,7 +190,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    private _pivotGridDataSource = {
+    private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
@@ -276,7 +284,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ]
     };
-    public pivotGridDataSource;
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
@@ -351,6 +358,32 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private usersInstancesLoadingSubscription: Subscription;
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
+    private subscriptionStatusFilter = new FilterModel({
+        component: SubscriptionsFilterComponent,
+        caption: 'SubscriptionStatus',
+        field: 'ServiceTypeId',
+        items: {
+            element: new SubscriptionsFilterModel(
+                {
+                    dataSource$: this.store$.pipe(
+                        select(SubscriptionsStoreSelectors.getSubscriptions),
+                        filter(Boolean),
+                        map((subscriptions: ServiceTypeInfo[]) => {
+                            return subscriptions.map((subscription: ServiceTypeInfo) => {
+                                return {
+                                    ...subscription,
+                                    checkbox1: null,
+                                    checkbox2: null
+                                };
+                            });
+                        })
+                    ),
+                    dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+        }
+    });
 
     constructor(
         injector: Injector,
@@ -374,7 +407,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ) {
         super(injector);
         if (this.userManagementService.checkBankCodeFeature()) {
-            this._pivotGridDataSource.fields.unshift({
+            this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'
             });
@@ -692,7 +725,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     }
                                 })
                         }
-                    })
+                    }),
+                    this.subscriptionStatusFilter
                 ]
             );
         }
@@ -1020,7 +1054,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private setPivotGridInstance() {
-        this.pivotGridDataSource = this._pivotGridDataSource;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
     private setChartInstance() {
@@ -1054,14 +1089,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     processFilterInternal() {
         if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
             || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
+            const params = this.subscriptionStatusFilter.items.element.value;
             const filterQuery = this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
-                this.filtersService.getCheckCustom
+                this.filtersService.getCheckCustom,
+                null,
+                params
             );
             if (this.showDataGrid) {
-                this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                this.totalDataSource['_store']['_url'] = this.getODataUrl(
+                    this.totalDataSourceURI,
+                    filterQuery,
+                    null,
+                    params
+                );
                 this.totalDataSource.load();
             }
         }

@@ -1,19 +1,19 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component } from '@angular/core';
 import { FilterComponent } from '../models/filter-component';
 import { splice } from 'underscore.string/splice';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import capitalize from 'underscore.string/capitalize';
 
 @Component({
     templateUrl: './filter-dates.component.html',
     styleUrls: ['./filter-dates.component.less']
 })
-export class FilterDatesComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class FilterDatesComponent implements FilterComponent {
     items: {};
     apply: (event) => void;
+    capitalize = capitalize;
 
-    constructor(injector: Injector) {
-        super(injector);
-    }
+    constructor(public ls: AppLocalizationService) {}
 
     getItems(): string[] {
         return Object.keys(this.items);
@@ -52,6 +52,4 @@ export class FilterDatesComponent extends AppComponentBase implements OnInit, Fi
             event.preventDefault();
     }
 
-    ngOnInit(): void {
-    }
 }

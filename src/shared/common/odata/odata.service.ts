@@ -18,6 +18,7 @@ import { InstanceModel } from '@shared/cfo/instance.model';
 export class ODataService {
     private _dxRequestPool = {};
     private pivotGridInitialBeforeSend;
+
     constructor() {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
@@ -42,7 +43,7 @@ export class ODataService {
         return promise;
     }
 
-    getODataUrl(uri: String, filter?: Object, instanceData: InstanceModel = null, params?: { name: string, value: string }[]) {
+    getODataUrl(uri: String, filter?: any, instanceData: InstanceModel = null, params: { name: string, value: string }[] = []) {
         let url = AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
         if (instanceData) {
             url += (url.indexOf('?') == -1 ? '?' : '&');

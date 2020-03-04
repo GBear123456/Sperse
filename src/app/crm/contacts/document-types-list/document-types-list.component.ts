@@ -1,9 +1,12 @@
+/** Core imports */
 import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 
+/** Third party imports */
+import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
-import { finalize } from 'rxjs/operators';
 
+/** Application imports */
 import { DocumentTypeServiceProxy, UpdateDocumentTypeInput, CreateDocumentTypeInput, DocumentTypeInfo } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 

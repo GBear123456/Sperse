@@ -64,7 +64,7 @@ export class ContactsAreaComponent {
         public ls: AppLocalizationService
     ) {}
 
-    getDialogPossition(event) {
+    getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('ul');
         return this.dialogService.calculateDialogPosition(event, parent, 400, shiftY);
@@ -127,7 +127,7 @@ export class ContactsAreaComponent {
         this.dialog.open(EditContactDialog, {
             data: dialogData,
             hasBackdrop: false,
-            position: this.getDialogPossition(event)
+            position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
             if (result && dialogData.contactId) {

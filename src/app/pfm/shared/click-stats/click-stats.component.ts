@@ -57,7 +57,6 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
         this.initTotalColumn();
         this.dataSource = new DataSource({
-            key: 'value',
             load: () => {
                 return this._offerService.getOffersStats(
                     GroupByPeriod.Daily,
@@ -138,13 +137,12 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     }
 
     showVisitors(record) {
-        let day = record.data.day, 
+        let day = record.data.day,
             month = record.column.dataField,
             isOneDay = Boolean(record.rowIndex),
             dateFrom = this.getQueryStringDate(isOneDay ? day : 1, month),
-            dateTo = this.getQueryStringDate(isOneDay ? day : 
+            dateTo = this.getQueryStringDate(isOneDay ? day :
                 this.getMonthLastDay(record.column.index), month);
-        
         this.onStatsClick.emit({ from: dateFrom, to: dateTo });
     }
 

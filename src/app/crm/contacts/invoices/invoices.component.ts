@@ -119,9 +119,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 onLoaded: () => {
-                    this.dataGrid.instance.cancelEditData();
-                    this.dataGrid.instance.endCustomLoading();
-                    setTimeout(() => this.dataGrid.instance.repaint());
+                    if (this.dataGrid && this.dataGrid.instance) {
+                        this.dataGrid.instance.cancelEditData();
+                        this.dataGrid.instance.endCustomLoading();
+                    }
                 },
                 deserializeDates: false,
                 paginate: true
@@ -338,5 +339,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     onStageOptionChanged(data, event) {
         event.component.option('disabled', event.component.option('dataSource')
             .some(item => data.value == item.name && item.isFinal));
+    }
+
+    ngOnDestroy() {
+        this.clientService.unsubscribe(this.constructor.name);
     }
 }

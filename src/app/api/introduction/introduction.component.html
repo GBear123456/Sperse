@@ -42,8 +42,7 @@
                             <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
                         </div>
                         <div *dxTemplate="let data of 'keyTemplate'" class="key-container">
-                            <span [title]="data.data.key">{{data.data.key}}</span>
-                            <i class="fa fa-copy" (click)="copyToClipboard(data.data.key)"></i>
+                            <span [title]="data.data.key" class="clipboard-holder">{{data.data.key}}</span>
                         </div>
                     </dx-data-grid>
                 </div>

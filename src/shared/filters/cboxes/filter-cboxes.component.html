@@ -4,7 +4,7 @@
             name="all"
             [value]="selectAll"
             (onValueChanged)="selectAllChanged($event)"
-            text="{{l('All')}}">
+            [text]="ls.l('All')">
         </dx-check-box>
     </p>
     <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
@@ -13,7 +13,7 @@
                 name="item"
                 [(value)]="items[item].value"
                 (onValueChanged)="updateSelectAll($event)"
-                text="{{l(capitalize(item))}}">
+                [text]="ls.l(capitalize(item))">
             </dx-check-box>
         </p>
     </ng-template>

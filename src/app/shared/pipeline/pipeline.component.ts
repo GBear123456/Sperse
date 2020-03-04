@@ -112,6 +112,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     allStagesEntitiesTotal: number;
 
     private queryWithSearch: any = [];
+    private params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 5;
     private readonly COMPACT_VIEW_PAGE_COUNT = 10;
     compactView: boolean;
@@ -424,7 +425,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
-        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly);
+        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false);
         if (this.totalsURI && !oneStageOnly)
             this.processTotalsRequest(this.queryWithSearch);
         return entities$;
@@ -454,14 +455,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 filter['SortOrder'] = {lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
-            dataSource.sort({getter: 'SortOrder', desc: true});
+            dataSource.sort({ getter: 'SortOrder', desc: true });
             response = from(this.odataService.loadDataSource(
                 dataSource,
                 this._dataSource.uri + stage.id,
-                this.getODataUrl(this._dataSource.uri,
-                    this.queryWithSearch.concat({and: [
-                        extend(filter, this._dataSource.customFilter)
-                ]}))
+                this.getODataUrl(
+                    this._dataSource.uri,
+                    this.queryWithSearch.concat({and: [ extend(filter, this._dataSource.customFilter)] }),
+                    null,
+                    this.params
+                )
             )).pipe(
                 finalize(() => {
                     this.detectChanges();
@@ -508,7 +511,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
 
         if (!oneStageOnly && stages[index + 1])
-            response = this.loadStagesEntities(page, index + 1);
+            response = this.loadStagesEntities(page, index + 1, false, false);
         return response;
     }
 
@@ -517,7 +520,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.totalsURI,
             filter.concat({and: [
                 this._dataSource.customFilter
-            ]})
+            ]}),
+            null,
+            this.params
         );
     }
 
@@ -588,19 +593,21 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.stages && this.stages.some((stage: Stage) => stage.isLoading);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null, params = null) {
         this.queryWithSearch = filters.map((filter) => {
             return getCheckCustom && getCheckCustom(filter) ||
                 filter.getODataFilterObject();
         }).concat(this.getSearchFilter());
-        this.loadData();
+        this.params = params;
+        this.loadData(0, null, false);
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex): Observable<any> {
         return this.loadData(
-            Math.floor(this.stages[stageIndex].entities.length
-                / this.stagePageCount), stageIndex, true
+            Math.floor(this.stages[stageIndex].entities.length / this.stagePageCount),
+            stageIndex,
+            true
         );
     }
 
@@ -781,9 +788,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (result && result.moveToStage) {
                         this.mergeStagesInput.destinationStageId = result.moveToStage;
                         this.stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
-                                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
-                            }
-                        );
+                            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                        });
                     } else if (result && !result.moveToStage) {
                         this.stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));

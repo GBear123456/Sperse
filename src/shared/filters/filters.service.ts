@@ -62,6 +62,14 @@ export class FiltersService {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }
 
+    static filterBySubscription(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySetOfValues(filter);
+    }
+
+    static filterBySubscriptionStatus(filter: FilterModel) {
+        return null;
+    }
+
     static filterByType(filter: FilterModel) {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }
