@@ -23,6 +23,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Input() override: boolean;
     createAccountAvailable: boolean;
+    xeroConnectorIsOpen: boolean;
 
     constructor(
         injector: Injector,
@@ -43,7 +44,14 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
         this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, SyncTypeIds.XeroOAuth2)
             .subscribe(result => {
                 if (result.length == 0) {
-                    this.newConnect();
+                    if (!this.xeroConnectorIsOpen) {
+                        this.xeroConnectorIsOpen = true;
+                        this.newConnect();
+                    } else {
+                        this.xeroConnectorIsOpen = false;
+                        abp.ui.clearBusy();
+                        return;
+                    }
                 } else {
                     abp.ui.clearBusy();
                     let dialogRef = this.dialog.open(ChooseXeroAccountComponent, {
