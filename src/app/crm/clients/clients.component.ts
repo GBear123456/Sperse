@@ -375,8 +375,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             return subscriptions.map((subscription: ServiceTypeInfo) => {
                                 return {
                                     ...subscription,
-                                    checkbox1: null,
-                                    checkbox2: null
+                                    current: null,
+                                    past: null,
+                                    never: null
                                 };
                             });
                         })

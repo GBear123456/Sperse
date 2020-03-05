@@ -1,7 +1,8 @@
 <div class="wrapper">
     <div class="labels">
-        <div>{{ ls.l('Has') }}</div>
-        <div>{{ ls.l('DoesntHave') }}</div>
+        <div>{{ ls.l('Current') }}</div>
+        <div>{{ ls.l('Past') }}</div>
+        <div>{{ ls.l('Never') }}</div>
     </div>
     <dx-tree-list [selection]="{ allowSelectAll: true, mode: 'none', recursive: true }"
                   [dataSource]="items.element.dataSource"
@@ -12,14 +13,9 @@
         <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
             <div class="name">{{ cell.data[items.element.nameField] }}</div>
-            <dx-check-box
-                    [(value)]="cell.data['checkbox1']"
-                    (onValueChanged)="checkboxClick($event, cell.data, 'checkbox2')">
-            </dx-check-box>
-            <dx-check-box
-                    [(value)]="cell.data['checkbox2']"
-                    (onValueChanged)="checkboxClick($event, cell.data, 'checkbox1')">
-            </dx-check-box>
+            <dx-check-box [(value)]="cell.data['current']"></dx-check-box>
+            <dx-check-box [(value)]="cell.data['past']"></dx-check-box>
+            <dx-check-box [(value)]="cell.data['never']"></dx-check-box>
         </div>
     </dx-tree-list>
 </div>

@@ -92,8 +92,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             return subscriptions.map((subscription: ServiceTypeInfo) => {
                                 return {
                                     ...subscription,
-                                    checkbox1: null,
-                                    checkbox2: null
+                                    current: null,
+                                    past: null,
+                                    never: null
                                 };
                             });
                         })
