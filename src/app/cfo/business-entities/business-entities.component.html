@@ -2,7 +2,7 @@
     <app-headline [names]="[ l('Setup_Title'), l('SetupStep_BusinessEntities') ]"
                   iconSrc="assets/common/icons/magic-stick-icon.svg"
                   [buttons]="headlineButtons"
-                  [showReloadButton]="true"
+                  [showReloadButton]="showReload"
                   (onReload)="refreshDataGrid()">
     </app-headline>
     <div class="content-wrap">

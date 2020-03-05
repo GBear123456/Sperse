@@ -1,7 +1,7 @@
 <div [@routerTransition]>
     <app-headline [buttons]="headlineButtons"
                   [showToggleCompactViewButton]="showPipeline || showDataGrid"
-                  [showReloadButton]="true"
+                  [showReloadButton]="showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onReload)="refresh()"

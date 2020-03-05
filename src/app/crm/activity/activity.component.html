@@ -3,7 +3,7 @@
                   icon="docs"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="showReload"
                   [showToggleCompactViewButton]="dataLayoutType === layoutTypes.Pipeline"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
