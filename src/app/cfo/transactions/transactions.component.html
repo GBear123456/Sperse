@@ -23,7 +23,7 @@
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div class="main-wrapper" [ngClass]="{'expanded': categoriesShowed}">
-                <div class="categories">
+                <div class="categories" *ngIf="!isAdvicePeriod">
                     <categorization
                         [hidden]="!toggleTabContent"
                         [width]="'340px'"
@@ -72,7 +72,7 @@
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
+                        <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
 
                         <dxi-column dataField="Date"
                                     dataType="date"
