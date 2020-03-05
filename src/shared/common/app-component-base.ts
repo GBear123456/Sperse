@@ -123,7 +123,7 @@ export abstract class AppComponentBase implements OnDestroy {
             .subscribe((isFullScreenMode: boolean) => {
                 this.isFullscreenMode = isFullScreenMode;
             });
-        this.showReload = this.appSession.tenant.customLayoutType != LayoutType.AdvicePeriod;
+        this.showReload = !this.appSession.tenant || this.appSession.tenant.customLayoutType != LayoutType.AdvicePeriod;
     }
 
     getRootComponent() {
