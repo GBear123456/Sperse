@@ -49,6 +49,7 @@ export class PlaidLoginDirective {
                 linkCustomizationName: 'app',
                 onExit: () => {
                     this.onClose.emit();
+                    this.renderer.removeChild(document.body, plaidIframe);
                 },
                 onSuccess: (public_token) => {
                     handler.exit();
@@ -61,13 +62,12 @@ export class PlaidLoginDirective {
                         publicToken: public_token
                     })).subscribe(() => this.syncProgressService.runSynchProgress());
                 }
-            });
+            }), plaidIframe = this.document.querySelector('[id^="plaid-link-iframe-"]:last-child');
             handler.open();
             this.setupStepsService.collapsed$.pipe(
                 first(),
                 filter((collapsed: boolean) => !collapsed)
             ).subscribe(() => {
-                const plaidIframe = this.document.querySelector('[id^="plaid-link-iframe-"]:last-child');
                 this.renderer.setStyle(plaidIframe, 'left', '161px');
             });
         });
