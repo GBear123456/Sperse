@@ -675,7 +675,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         name: 'rowFilter',
                         action: DataGridService.enableFilteringRow.bind(this, this.dataGrid),
                         options: {
-                            checkPressed: DataGridService.getGridOption(this.dataGrid, 'filterRow.visible')
+                            checkPressed: () => DataGridService.getGridOption(this.dataGrid, 'filterRow.visible')
                         }
                     },
                     {
