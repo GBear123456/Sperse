@@ -8642,24 +8642,30 @@ export class ContactCommunicationServiceProxy {
     }
 
     /**
+     * @parentId (optional) 
      * @userId (optional) 
      * @filter (optional) 
+     * @deliveryType (optional) 
      * @status (optional) 
      * @sorting (optional) 
      * @maxResultCount (optional) 
      * @skipCount (optional) 
      * @return Success
      */
-    getMessages(contactId: number, userId: number | null | undefined, filter: string | null | undefined, status: CommunicationMessageStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
+    getMessages(contactId: number, parentId: number | null | undefined, userId: number | null | undefined, filter: string | null | undefined, deliveryType: CommunicationMessageDeliveryType | null | undefined, status: CommunicationMessageStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetMessages?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
         else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (parentId !== undefined)
+            url_ += "ParentId=" + encodeURIComponent("" + parentId) + "&"; 
         if (userId !== undefined)
             url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
+        if (deliveryType !== undefined)
+            url_ += "DeliveryType=" + encodeURIComponent("" + deliveryType) + "&"; 
         if (status !== undefined)
             url_ += "Status=" + encodeURIComponent("" + status) + "&"; 
         if (sorting !== undefined)
@@ -46094,6 +46100,7 @@ export enum CommunicationMessageStatus {
 export class MessageDto implements IMessageDto {
     body!: string | undefined;
     attachments!: AttachmentDto[] | undefined;
+    parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
@@ -46124,6 +46131,7 @@ export class MessageDto implements IMessageDto {
                 for (let item of data["attachments"])
                     this.attachments.push(AttachmentDto.fromJS(item));
             }
+            this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
@@ -46154,6 +46162,7 @@ export class MessageDto implements IMessageDto {
             for (let item of this.attachments)
                 data["attachments"].push(item.toJSON());
         }
+        data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
@@ -46173,6 +46182,7 @@ export class MessageDto implements IMessageDto {
 export interface IMessageDto {
     body: string | undefined;
     attachments: AttachmentDto[] | undefined;
+    parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
@@ -46188,6 +46198,7 @@ export interface IMessageDto {
 }
 
 export class MessageListDto implements IMessageListDto {
+    parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
@@ -46212,6 +46223,7 @@ export class MessageListDto implements IMessageListDto {
 
     init(data?: any) {
         if (data) {
+            this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
@@ -46236,6 +46248,7 @@ export class MessageListDto implements IMessageListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
@@ -46253,6 +46266,7 @@ export class MessageListDto implements IMessageListDto {
 }
 
 export interface IMessageListDto {
+    parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
@@ -46317,6 +46331,7 @@ export interface IMessageListDtoPagedResultDto {
 
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
+    parentId!: number | undefined;
     to!: string[] | undefined;
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -46337,6 +46352,7 @@ export class SendEmailInput implements ISendEmailInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.parentId = data["parentId"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -46377,6 +46393,7 @@ export class SendEmailInput implements ISendEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["parentId"] = this.parentId;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -46410,6 +46427,7 @@ export class SendEmailInput implements ISendEmailInput {
 
 export interface ISendEmailInput {
     contactId: number;
+    parentId: number | undefined;
     to: string[] | undefined;
     replyTo: string[] | undefined;
     cc: string[] | undefined;
@@ -46421,6 +46439,7 @@ export interface ISendEmailInput {
 
 export class SendSMSInput implements ISendSMSInput {
     contactId!: number;
+    parentId!: number | undefined;
     phoneNumber!: string;
     message!: string | undefined;
 
@@ -46436,6 +46455,7 @@ export class SendSMSInput implements ISendSMSInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.parentId = data["parentId"];
             this.phoneNumber = data["phoneNumber"];
             this.message = data["message"];
         }
@@ -46451,6 +46471,7 @@ export class SendSMSInput implements ISendSMSInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["parentId"] = this.parentId;
         data["phoneNumber"] = this.phoneNumber;
         data["message"] = this.message;
         return data; 
@@ -46459,6 +46480,7 @@ export class SendSMSInput implements ISendSMSInput {
 
 export interface ISendSMSInput {
     contactId: number;
+    parentId: number | undefined;
     phoneNumber: string;
     message: string | undefined;
 }
