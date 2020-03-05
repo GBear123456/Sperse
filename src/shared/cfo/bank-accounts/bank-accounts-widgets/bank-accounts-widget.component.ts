@@ -16,6 +16,7 @@ import {
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import Form from 'devextreme/ui/form';
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
@@ -30,7 +31,9 @@ import {
     SyncAccountBankDto,
     UpdateBankAccountDto,
     RenameSyncAccountInput,
-    BankAccountDto
+    BankAccountDto,
+    SyncProgressOutput,
+    InstanceType
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -48,6 +51,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
+    @ViewChild('actionRequiredTooltip') actionRequiredTooltip: DxTooltipComponent;
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showSyncDate = false;
     @Input() saveChangesInCache = true;
@@ -87,6 +91,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     dxFormInstance: Form;
     instanceType;
     instanceId;
+    syncData: SyncProgressOutput;
+    hoveredItemStatus: any[];
+    actionsRequiredTooltipTarget;
+    actionsRequiredTooltipVisible = false;
+    actionsRequiredTooltipText: string;
 
     /** Default empty business entity */
     businessEntities = [{ id: null, name: '' }];
@@ -174,12 +183,34 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [];
         }
+        this.syncServiceProxy.getSyncProgress(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId
+        ).subscribe(syncData => {
+            this.syncData = syncData;
+        });
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.changeOnlyAfterApply && changes.changeOnlyAfterApply.firstChange) {
             this.syncAccounts$ = this.getSyncAccounts(changes['changeOnlyAfterApply'].currentValue);
         }
+    }
+
+    showInfo(cellObj) {
+        this.syncAccount = cellObj.data;
+        this.updateAccountInfo(this.syncAccount);
+    }
+
+    mouseEnter(cellObj) {
+        this.hoveredItemStatus = this.syncData.accountProgresses.filter(item => {
+            return cellObj.data.syncAccountId === item.accountId;
+        });
+
+        this.actionsRequiredTooltipVisible = true;
+        this.actionsRequiredTooltipTarget = '#account' + this.hoveredItemStatus[0].accountId;
+        this.actionsRequiredTooltipText = this.hoveredItemStatus[0].syncStatusMessage;
+        setTimeout(() => this.actionRequiredTooltip.instance.repaint());
     }
 
     refresh() {
@@ -556,7 +587,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             case this.l('Resync_All'):
                 this.requestSyncForAccounts(true);
                 break;
-            case this.l('Update_Info'):
+            case this.l('Reconnect'):
                 this.updateAccountInfo(this.syncAccount);
                 break;
             case this.l('Delete'):

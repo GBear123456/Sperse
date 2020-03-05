@@ -1,85 +1,84 @@
-<div>
-    <app-headline [names]="[ l('REPORTS') ]"
-                  iconSrc="assets/common/icons/credit-card-icon.svg"
-                  [buttons]="headlineButtons"
-                  [showToggleToolbarButton]="true">
-        <synch-progress class="synch-progress"></synch-progress>
-    </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
-    <div class="main-wrapper">
-        <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
-        <action-menu [items]="actionMenuItems"
-                     (onItemClick)="onMenuItemClick($event)">
-        </action-menu>
-        <div [hidden]="openReportMode" class="reports">
-            <ghost-list [hidden]="isDataLoaded"></ghost-list>
-            <dx-data-grid id="gridContainer"
-                        class="main-component-view"
-                        [dataSource]="dataSource"
-                        [allowColumnReordering]="true"
-                        [columnAutoWidth]="true"
-                        [allowColumnResizing]="true"
-                        [loadPanel]="{ enabled: false }"
-                        [hoverStateEnabled]="true"
-                        [pager]="defaultGridPagerConfig"
-                        (onOptionChanged)="onGridOptionChanged($event)"
-                        (onCellClick)="onCellClick($event)"
-                        (onInitialized)="onDataGridInit()"
-                        (onContentReady)="setGridDataLoaded()"
-                        (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-                <dxi-column width="40px"
-                            [fixed]="true"
-                            fixedPosition="left"
-                            [showInColumnChooser]="false"
-                            [allowExporting]="false">
-                </dxi-column>
-                <dxi-column
-                    alignment="center"
-                    width="90px"
-                    [fixed]="true"
-                    [showInColumnChooser]="false"
-                    [allowExporting]="false"
-                    cellTemplate="actionsCellTemplate"
-                    headerCellTemplate="actionsCellTemplate">
-                </dxi-column>
-                <dxi-column dataField="FileName" caption="{{l('Reports_FileName')}}" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="Departments" caption="{{l('Reports_Departments')}}" cellTemplate="deptCell" [allowSearch]="false" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
-                <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateTimeCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
-                <dxi-column dataField="From" caption="{{l('Reports_PeriodFrom')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
-                <dxi-column dataField="To" caption="{{l('Reports_PeriodTo')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
-                <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+<app-headline [names]="[ l('REPORTS') ]"
+              iconSrc="assets/common/icons/credit-card-icon.svg"
+              [buttons]="headlineButtons"
+              [showToggleToolbarButton]="true">
+    <synch-progress class="synch-progress"></synch-progress>
+</app-headline>
+<app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 
-                <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+<div class="main-wrapper">
+    <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
+    <action-menu [items]="actionMenuItems"
+                 (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
+    <div [hidden]="openReportMode" class="reports">
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+        <dx-data-grid id="gridContainer"
+                    class="main-component-view"
+                    [dataSource]="dataSource"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [loadPanel]="{ enabled: false }"
+                    [hoverStateEnabled]="true"
+                    [pager]="defaultGridPagerConfig"
+                    (onOptionChanged)="onGridOptionChanged($event)"
+                    (onCellClick)="onCellClick($event)"
+                    (onInitialized)="onDataGridInit()"
+                    (onContentReady)="setGridDataLoaded()"
+                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxi-column width="40px"
+                        [fixed]="true"
+                        fixedPosition="left"
+                        [showInColumnChooser]="false"
+                        [allowExporting]="false">
+            </dxi-column>
+            <dxi-column
+                alignment="center"
+                width="90px"
+                [fixed]="true"
+                [showInColumnChooser]="false"
+                [allowExporting]="false"
+                cellTemplate="actionsCellTemplate"
+                headerCellTemplate="actionsCellTemplate">
+            </dxi-column>
+            <dxi-column dataField="FileName" caption="{{l('Reports_FileName')}}" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('Reports_Size')}}" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Departments" caption="{{l('Reports_Departments')}}" cellTemplate="deptCell" [allowSearch]="false" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column dataField="CreationTime" caption="{{l('Reports_Created')}}" cssClass="tabular" cellTemplate="dateTimeCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
+            <dxi-column dataField="From" caption="{{l('Reports_PeriodFrom')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
+            <dxi-column dataField="To" caption="{{l('Reports_PeriodTo')}}" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
+            <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
-                <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
-                    {{ cellData.value | date: formatting.dateTime : userTimezone }}
-                </div>
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{ cellData.value | date: formatting.date }}
-                </div>
-                <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
-                    {{ formatDepartments(cellData.value) }}
-                </div>
-                <dxo-sorting mode="single"></dxo-sorting>
-                <dxo-group-panel [visible]="false"></dxo-group-panel>
-            </dx-data-grid>
-        </div>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
 
-        <div *ngIf="openReportMode" class="report-viewer-wrapper">
-            <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
-            <div class="reportView">
-                <app-image-viewer
-                    [images]="[previewContent]"
-                    [idContainer]="'imageViewer'"
-                    [loadOnInit]="true">
-                </app-image-viewer>
+            <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
+                {{ cellData.value | date: formatting.dateTime : userTimezone }}
             </div>
-        </div>
-
-        <ng-template #nodata>
-            <app-no-data [showLink]="false"></app-no-data>
-        </ng-template>
+            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                {{ cellData.value | date: formatting.date }}
+            </div>
+            <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
+                {{ formatDepartments(cellData.value) }}
+            </div>
+            <dxo-sorting mode="single"></dxo-sorting>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+        </dx-data-grid>
     </div>
+
+    <div *ngIf="openReportMode" class="report-viewer-wrapper">
+        <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
+        <div class="reportView">
+            <app-image-viewer
+                [images]="[previewContent]"
+                [idContainer]="'imageViewer'"
+                [loadOnInit]="true">
+            </app-image-viewer>
+        </div>
+    </div>
+
+    <ng-template #nodata>
+        <app-no-data [showLink]="false"></app-no-data>
+    </ng-template>
 </div>
