@@ -9,6 +9,7 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list/import-list.component';
 import { ActivityComponent } from './activity/activity.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ReportsComponent } from '@app/crm/reports/reports.component';
 
 @NgModule({
     imports: [
@@ -24,7 +25,8 @@ import { AppPermissions } from '@shared/AppPermissions';
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
-                    { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } }
+                    { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } }
                 ]
             }
         ])

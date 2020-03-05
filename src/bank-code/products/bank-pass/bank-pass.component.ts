@@ -40,6 +40,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available-bank-codes.interface';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'bank-pass',
@@ -114,7 +115,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         }))
     );
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
-    userTimezone = '0000';
+    userTimezone = DateHelper.getUserTimezone();
     accessCode$: Observable<string> = this.profileService.accessCode$;
     accessCodeValidationRules = [
         {

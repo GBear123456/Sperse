@@ -48,7 +48,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource = new DataSource({
         key: 'id',
         load: () => {
-            return  this.editionService.getEditions().toPromise().then(response => {
+            return this.editionService.getEditions().toPromise().then(response => {
                 return {
                     data: response.items,
                     totalCount: response.items.length
