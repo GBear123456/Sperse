@@ -1,5 +1,6 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
+import { SubscriptionAvailability } from '@app/crm/shared/filters/subscriptions-filter/subscription-availability.enum';
 
 export class SubscriptionsFilterModel extends FilterItemModel {
     keyExpr: any;
@@ -13,7 +14,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     get value() {
         let result = [];
         this.dataSource && this.dataSource
-            .filter(item => item.checkbox1 || item.checkbox2)
+            .filter(item => item.current || item.past || item.never)
             .forEach((item, index) => {
                 result.push(
                     {
@@ -21,12 +22,10 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                         value: item.id
                     },
                     {
-                        name: ['subscriptionFilters[' + index + '].StatusId'],
-                        value: 'A'
-                    },
-                    {
                         name: ['subscriptionFilters[' + index + '].HasSubscription'],
-                        value: !!item.checkbox1
+                        value: (item.current ? SubscriptionAvailability.Current : 0) |
+                               (item.past ? SubscriptionAvailability.Past : 0) |
+                               (item.never ? SubscriptionAvailability.Never : 0)
                     }
                 );
             });
@@ -37,11 +36,16 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         let result: DisplayElement[] = [];
         if (this.dataSource) {
             this.dataSource.forEach((item) => {
-                if (item.checkbox1 || item.checkbox2) {
+                if (item.current || item.past || item.never) {
+                    let subscriptions = [
+                        item.current ? 'Current' : null,
+                        item.past ? 'Past' : null,
+                        item.never ? 'Never' : null
+                    ];
                     result.push(<DisplayElement>{
                         item: this,
                         id: item.id,
-                        displayValue: item.name + ' (' + (item.checkbox1 ? 'has' : 'doesn\'t have') + ')'
+                        displayValue: item.name + ' (' + (subscriptions.filter(Boolean).join(',')) + ')'
                     });
                 }
             });
