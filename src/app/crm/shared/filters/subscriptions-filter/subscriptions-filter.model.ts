@@ -64,7 +64,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     removeFilterItem(filter: FilterModel, args: any, id: string) {
         if (id) {
             let item = filter.items.element.dataSource.find((item) => item.id === id);
-            item.checkbox1 = item.checkbox2 = null;
+            item.current = item.past = item.never = null;
         }
     }
 }
