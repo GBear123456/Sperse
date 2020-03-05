@@ -19,12 +19,10 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
