@@ -24,6 +24,7 @@ export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
     @Input() override: boolean;
     @Input() syncTypeId: SyncTypeIds;
     createAccountAvailable: boolean;
+    xeroConnectorIsOpen: boolean;
 
     syncTypeConfigs = {
         [SyncTypeIds.Plaid]: { name: 'plaid', icon: 'plaid.png', caption: 'Plaid' },
@@ -51,7 +52,14 @@ export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
         this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, this.syncTypeId)
             .subscribe(result => {
                 if (result.length == 0) {
-                    this.newConnect();
+                    if (!this.xeroConnectorIsOpen) {
+                        this.xeroConnectorIsOpen = true;
+                        this.newConnect();
+                    } else {
+                        this.xeroConnectorIsOpen = false;
+                        abp.ui.clearBusy();
+                        return;
+                    }
                 } else {
                     abp.ui.clearBusy();
                     let dialogRef = this.dialog.open(ChooseAccountComponent, {

@@ -338,10 +338,10 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             this.filtersValues.maxExecutionDuration,
             undefined,
             1,
-            0)
-            .subscribe(result => {
-                this.fileDownloadService.downloadTempFile(result);
-            });
+            0
+        ).subscribe(result => {
+            this.fileDownloadService.downloadTempFile(result);
+        });
     }
 
     exportToExcelEntityChanges(): void {

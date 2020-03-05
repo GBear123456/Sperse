@@ -538,8 +538,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         operator: {from: 'ge', to: 'le'},
                         caption: 'creation',
                         field: this.dateField,
-                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
+                        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                        options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
                     }),
                     this.filterModelStatus = new FilterModel({
                         component: FilterCheckBoxesComponent,

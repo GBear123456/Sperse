@@ -12,11 +12,11 @@
         <div *dxTemplate="let link of 'navBarItem'">
             <dx-menu
                 [dataSource]="[link]"
-                [selectionMode]="none"
+                selectionMode="none"
                 [hoverStateEnabled]="true"
                 [hideSubmenuOnMouseLeave]="true"
-                [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-                [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+                [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
+                [showSubmenuMode]="{ name: 'onHover', delay: { hide: 0, show: 0 }}"
                 (onItemClick)="navigate($event)">
             </dx-menu>
         </div>
@@ -29,8 +29,8 @@
         [dataSource]="adaptiveMenuItems"
         [hideSubmenuOnMouseLeave]="true"
         [adaptivityEnabled]="true"
-        [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-        [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+        [showFirstSubmenuMode]="{ name: 'onHover', delay: { hide:0, show: 0 }}"
+        [showSubmenuMode]="{ name: 'onHover', delay: { hide:0, show: 0 }}"
         (onItemClick)="navigate($event)">
     </dx-menu>
 </div>

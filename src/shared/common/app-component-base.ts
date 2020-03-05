@@ -153,23 +153,16 @@ export abstract class AppComponentBase implements OnDestroy {
         return abp.setting.get(key);
     }
 
-    exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        this.startLoading();
-        return this.exportService['exportTo' + type](
-            dataGrid || this.dataGrid, option == 'all', prefix
-        ).then(() => this.finishLoading());
-    }
-
     exportToXLS(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        return this.exportTo(option, 'Excel', dataGrid, prefix);
+        return this.exportService.exportToXLS(option, dataGrid || this.dataGrid, prefix);
     }
 
     exportToCSV(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        return this.exportTo(option, 'CSV', dataGrid, prefix);
+        return this.exportService.exportToCSV(option, dataGrid || this.dataGrid, prefix);
     }
 
     exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        return this.exportTo(option, 'GoogleSheets', dataGrid, prefix);
+        return this.exportService.exportToGoogleSheet(option, dataGrid || this.dataGrid, prefix);
     }
 
     startLoading(globally = false, element: any = null) {

@@ -8642,24 +8642,30 @@ export class ContactCommunicationServiceProxy {
     }
 
     /**
+     * @parentId (optional) 
      * @userId (optional) 
      * @filter (optional) 
+     * @deliveryType (optional) 
      * @status (optional) 
      * @sorting (optional) 
      * @maxResultCount (optional) 
      * @skipCount (optional) 
      * @return Success
      */
-    getMessages(contactId: number, userId: number | null | undefined, filter: string | null | undefined, status: CommunicationMessageStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
+    getMessages(contactId: number, parentId: number | null | undefined, userId: number | null | undefined, filter: string | null | undefined, deliveryType: CommunicationMessageDeliveryType | null | undefined, status: CommunicationMessageStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetMessages?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
         else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (parentId !== undefined)
+            url_ += "ParentId=" + encodeURIComponent("" + parentId) + "&"; 
         if (userId !== undefined)
             url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
+        if (deliveryType !== undefined)
+            url_ += "DeliveryType=" + encodeURIComponent("" + deliveryType) + "&"; 
         if (status !== undefined)
             url_ += "Status=" + encodeURIComponent("" + status) + "&"; 
         if (sorting !== undefined)
@@ -21323,16 +21329,15 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
+     * @sourceOrganizationUnitIds (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @return Success
      */
-    getDetailedReport(sourceOrganizationUnitId: number, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
+    getDetailedReport(sourceOrganizationUnitIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsDetailedReportInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetDetailedReport?";
-        if (sourceOrganizationUnitId === undefined || sourceOrganizationUnitId === null)
-            throw new Error("The parameter 'sourceOrganizationUnitId' must be defined and cannot be null.");
-        else
-            url_ += "SourceOrganizationUnitId=" + encodeURIComponent("" + sourceOrganizationUnitId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -21386,6 +21391,67 @@ export class OrderSubscriptionServiceProxy {
             }));
         }
         return _observableOf<SubscriptionsDetailedReportInfo[]>(<any>null);
+    }
+
+    /**
+     * @sourceOrganizationUnitIds (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getTotalsReport(sourceOrganizationUnitIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscriptionsTotalsReportInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetTotalsReport?";
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTotalsReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTotalsReport(<any>response_);
+                } catch (e) {
+                    return <Observable<SubscriptionsTotalsReportInfo>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SubscriptionsTotalsReportInfo>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTotalsReport(response: HttpResponseBase): Observable<SubscriptionsTotalsReportInfo> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SubscriptionsTotalsReportInfo.fromJS(resultData200) : new SubscriptionsTotalsReportInfo();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SubscriptionsTotalsReportInfo>(<any>null);
     }
 
     /**
@@ -46034,6 +46100,7 @@ export enum CommunicationMessageStatus {
 export class MessageDto implements IMessageDto {
     body!: string | undefined;
     attachments!: AttachmentDto[] | undefined;
+    parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
@@ -46064,6 +46131,7 @@ export class MessageDto implements IMessageDto {
                 for (let item of data["attachments"])
                     this.attachments.push(AttachmentDto.fromJS(item));
             }
+            this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
@@ -46094,6 +46162,7 @@ export class MessageDto implements IMessageDto {
             for (let item of this.attachments)
                 data["attachments"].push(item.toJSON());
         }
+        data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
@@ -46113,6 +46182,7 @@ export class MessageDto implements IMessageDto {
 export interface IMessageDto {
     body: string | undefined;
     attachments: AttachmentDto[] | undefined;
+    parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
@@ -46128,6 +46198,7 @@ export interface IMessageDto {
 }
 
 export class MessageListDto implements IMessageListDto {
+    parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
@@ -46152,6 +46223,7 @@ export class MessageListDto implements IMessageListDto {
 
     init(data?: any) {
         if (data) {
+            this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
@@ -46176,6 +46248,7 @@ export class MessageListDto implements IMessageListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
@@ -46193,6 +46266,7 @@ export class MessageListDto implements IMessageListDto {
 }
 
 export interface IMessageListDto {
+    parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
@@ -46257,6 +46331,7 @@ export interface IMessageListDtoPagedResultDto {
 
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
+    parentId!: number | undefined;
     to!: string[] | undefined;
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -46277,6 +46352,7 @@ export class SendEmailInput implements ISendEmailInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.parentId = data["parentId"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -46317,6 +46393,7 @@ export class SendEmailInput implements ISendEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["parentId"] = this.parentId;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -46350,6 +46427,7 @@ export class SendEmailInput implements ISendEmailInput {
 
 export interface ISendEmailInput {
     contactId: number;
+    parentId: number | undefined;
     to: string[] | undefined;
     replyTo: string[] | undefined;
     cc: string[] | undefined;
@@ -46361,6 +46439,7 @@ export interface ISendEmailInput {
 
 export class SendSMSInput implements ISendSMSInput {
     contactId!: number;
+    parentId!: number | undefined;
     phoneNumber!: string;
     message!: string | undefined;
 
@@ -46376,6 +46455,7 @@ export class SendSMSInput implements ISendSMSInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.parentId = data["parentId"];
             this.phoneNumber = data["phoneNumber"];
             this.message = data["message"];
         }
@@ -46391,6 +46471,7 @@ export class SendSMSInput implements ISendSMSInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["parentId"] = this.parentId;
         data["phoneNumber"] = this.phoneNumber;
         data["message"] = this.message;
         return data; 
@@ -46399,6 +46480,7 @@ export class SendSMSInput implements ISendSMSInput {
 
 export interface ISendSMSInput {
     contactId: number;
+    parentId: number | undefined;
     phoneNumber: string;
     message: string | undefined;
 }
@@ -61156,6 +61238,174 @@ export interface ISubscriptionsDetailedReportInfo {
     bankVaultFee: number | undefined;
     wtbFee: number | undefined;
     total: number | undefined;
+}
+
+export class SubscriptionsTotalsReportGroupedByDateInfo implements ISubscriptionsTotalsReportGroupedByDateInfo {
+    date!: moment.Moment | undefined;
+    leadCount!: number | undefined;
+    clientCount!: number | undefined;
+    bankConnectCount!: number | undefined;
+    bankConnectAmount!: number | undefined;
+    bankBeyondCount!: number | undefined;
+    bankBeyondAmount!: number | undefined;
+    starterKitCount!: number | undefined;
+    starterKitAmount!: number | undefined;
+    bankVaultOnlyCount!: number | undefined;
+    bankVaultOnlyAmount!: number | undefined;
+    totalAmount!: number | undefined;
+
+    constructor(data?: ISubscriptionsTotalsReportGroupedByDateInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.leadCount = data["leadCount"];
+            this.clientCount = data["clientCount"];
+            this.bankConnectCount = data["bankConnectCount"];
+            this.bankConnectAmount = data["bankConnectAmount"];
+            this.bankBeyondCount = data["bankBeyondCount"];
+            this.bankBeyondAmount = data["bankBeyondAmount"];
+            this.starterKitCount = data["starterKitCount"];
+            this.starterKitAmount = data["starterKitAmount"];
+            this.bankVaultOnlyCount = data["bankVaultOnlyCount"];
+            this.bankVaultOnlyAmount = data["bankVaultOnlyAmount"];
+            this.totalAmount = data["totalAmount"];
+        }
+    }
+
+    static fromJS(data: any): SubscriptionsTotalsReportGroupedByDateInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionsTotalsReportGroupedByDateInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["leadCount"] = this.leadCount;
+        data["clientCount"] = this.clientCount;
+        data["bankConnectCount"] = this.bankConnectCount;
+        data["bankConnectAmount"] = this.bankConnectAmount;
+        data["bankBeyondCount"] = this.bankBeyondCount;
+        data["bankBeyondAmount"] = this.bankBeyondAmount;
+        data["starterKitCount"] = this.starterKitCount;
+        data["starterKitAmount"] = this.starterKitAmount;
+        data["bankVaultOnlyCount"] = this.bankVaultOnlyCount;
+        data["bankVaultOnlyAmount"] = this.bankVaultOnlyAmount;
+        data["totalAmount"] = this.totalAmount;
+        return data; 
+    }
+}
+
+export interface ISubscriptionsTotalsReportGroupedByDateInfo {
+    date: moment.Moment | undefined;
+    leadCount: number | undefined;
+    clientCount: number | undefined;
+    bankConnectCount: number | undefined;
+    bankConnectAmount: number | undefined;
+    bankBeyondCount: number | undefined;
+    bankBeyondAmount: number | undefined;
+    starterKitCount: number | undefined;
+    starterKitAmount: number | undefined;
+    bankVaultOnlyCount: number | undefined;
+    bankVaultOnlyAmount: number | undefined;
+    totalAmount: number | undefined;
+}
+
+export class SubscriptionsTotalsReportInfo implements ISubscriptionsTotalsReportInfo {
+    totalLeadCount!: number | undefined;
+    totalClientCount!: number | undefined;
+    totalBankConnectCount!: number | undefined;
+    totalBankConnectAmount!: number | undefined;
+    totalBankBeyondCount!: number | undefined;
+    totalBankBeyondAmount!: number | undefined;
+    totalStarterKitCount!: number | undefined;
+    totalStarterKitAmount!: number | undefined;
+    totalBankVaultOnlyCount!: number | undefined;
+    totalBankVaultOnlyAmount!: number | undefined;
+    totalAmount!: number | undefined;
+    groupedByDateTotals!: SubscriptionsTotalsReportGroupedByDateInfo[] | undefined;
+
+    constructor(data?: ISubscriptionsTotalsReportInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalLeadCount = data["totalLeadCount"];
+            this.totalClientCount = data["totalClientCount"];
+            this.totalBankConnectCount = data["totalBankConnectCount"];
+            this.totalBankConnectAmount = data["totalBankConnectAmount"];
+            this.totalBankBeyondCount = data["totalBankBeyondCount"];
+            this.totalBankBeyondAmount = data["totalBankBeyondAmount"];
+            this.totalStarterKitCount = data["totalStarterKitCount"];
+            this.totalStarterKitAmount = data["totalStarterKitAmount"];
+            this.totalBankVaultOnlyCount = data["totalBankVaultOnlyCount"];
+            this.totalBankVaultOnlyAmount = data["totalBankVaultOnlyAmount"];
+            this.totalAmount = data["totalAmount"];
+            if (data["groupedByDateTotals"] && data["groupedByDateTotals"].constructor === Array) {
+                this.groupedByDateTotals = [];
+                for (let item of data["groupedByDateTotals"])
+                    this.groupedByDateTotals.push(SubscriptionsTotalsReportGroupedByDateInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SubscriptionsTotalsReportInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubscriptionsTotalsReportInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalLeadCount"] = this.totalLeadCount;
+        data["totalClientCount"] = this.totalClientCount;
+        data["totalBankConnectCount"] = this.totalBankConnectCount;
+        data["totalBankConnectAmount"] = this.totalBankConnectAmount;
+        data["totalBankBeyondCount"] = this.totalBankBeyondCount;
+        data["totalBankBeyondAmount"] = this.totalBankBeyondAmount;
+        data["totalStarterKitCount"] = this.totalStarterKitCount;
+        data["totalStarterKitAmount"] = this.totalStarterKitAmount;
+        data["totalBankVaultOnlyCount"] = this.totalBankVaultOnlyCount;
+        data["totalBankVaultOnlyAmount"] = this.totalBankVaultOnlyAmount;
+        data["totalAmount"] = this.totalAmount;
+        if (this.groupedByDateTotals && this.groupedByDateTotals.constructor === Array) {
+            data["groupedByDateTotals"] = [];
+            for (let item of this.groupedByDateTotals)
+                data["groupedByDateTotals"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISubscriptionsTotalsReportInfo {
+    totalLeadCount: number | undefined;
+    totalClientCount: number | undefined;
+    totalBankConnectCount: number | undefined;
+    totalBankConnectAmount: number | undefined;
+    totalBankBeyondCount: number | undefined;
+    totalBankBeyondAmount: number | undefined;
+    totalStarterKitCount: number | undefined;
+    totalStarterKitAmount: number | undefined;
+    totalBankVaultOnlyCount: number | undefined;
+    totalBankVaultOnlyAmount: number | undefined;
+    totalAmount: number | undefined;
+    groupedByDateTotals: SubscriptionsTotalsReportGroupedByDateInfo[] | undefined;
 }
 
 export class SubscriptionInput implements ISubscriptionInput {
