@@ -103,8 +103,8 @@ export class TopBarComponent implements OnDestroy {
                 value[2],
                 value[3],
                 value[4],
-                value[3] === '/app/crm/reports' && this.appSessionService.tenant
-                    ? this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode
+                value[3] === '/app/crm/reports'
+                    ? (!this.appSessionService.tenant || this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode)
                     : !value[3],
                 value[5],
                 value[6],
