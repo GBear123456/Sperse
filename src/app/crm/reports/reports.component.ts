@@ -1,12 +1,5 @@
 /** Core imports */
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    Inject,
-    OnInit,
-    ViewChild
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 
 /** Third party imports */
@@ -14,7 +7,9 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
+import { CacheService } from 'ng2-cache-service';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
@@ -23,8 +18,11 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
+    Currency,
+    InvoiceSettings,
     OrderSubscriptionServiceProxy,
-    SubscriptionsDetailedReportInfo
+    SubscriptionsDetailedReportInfo,
+    SubscriptionsTotalsReportInfo
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -37,6 +35,9 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
+import { ReportType } from '@app/crm/reports/report-type.enum';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     selector: 'reports-component',
@@ -48,8 +49,9 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
     providers: [ CurrencyPipe, DatePipe, PhoneFormatPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReportsComponent implements OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+export class ReportsComponent implements OnInit, AfterViewInit {
+    @ViewChild('subscribersDataGrid') subscibersDataGrid: DxDataGridComponent;
+    @ViewChild('statsDataGrid') statsDataGrid: DxDataGridComponent;
     toolbarConfig = [
         {
             location: 'before', items: [
@@ -91,7 +93,7 @@ export class ReportsComponent implements OnInit {
                         items: [
                             {
                                 action: (options) => {
-                                    this.dataGrid.instance.option('export.fileName', '');
+                                    this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
                                     this.exportService.exportToXLS(options, this.dataGrid);
                                 },
                                 text: this.ls.l('Export to Excel'),
@@ -99,7 +101,7 @@ export class ReportsComponent implements OnInit {
                             },
                             {
                                 action: (options) => {
-                                    this.dataGrid.instance.option('export.fileName', this.ls.l(''));
+                                    this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
                                     this.exportService.exportToCSV(options, this.dataGrid);
                                 },
                                 text: this.ls.l('Export to CSV'),
@@ -107,7 +109,7 @@ export class ReportsComponent implements OnInit {
                             },
                             {
                                 action: (options) => {
-                                    this.dataGrid.instance.option('export.fileName', '');
+                                    this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
                                     this.exportService.exportToGoogleSheet(options, this.dataGrid);
                                 },
                                 text: this.ls.l('Export to Google Sheets'),
@@ -133,8 +135,7 @@ export class ReportsComponent implements OnInit {
             endDate: undefined
         }
     };
-    dataSource = new DataSource({
-        paginate: false,
+    subscribersDataSource = new DataSource({
         load: (options) => {
             if (!options.requireTotalCount) {
                 this.isDataLoaded = false;
@@ -149,6 +150,27 @@ export class ReportsComponent implements OnInit {
                 return {
                     data: response,
                     totalCount: this.totalCount
+                };
+            });
+        }
+    });
+    subscriptionsTotals: SubscriptionsTotalsReportInfo;
+    statsDataSource = new DataSource({
+        load: (options) => {
+            if (!options.requireTotalCount) {
+                this.isDataLoaded = false;
+                this.changeDetectorRef.detectChanges();
+            }
+            return this.orderSubscription.getTotalsReport(
+                this.filtersValues.sourceOrganizationUnits,
+                this.filtersValues.date.startDate,
+                this.filtersValues.date.endDate
+            ).toPromise().then((response: SubscriptionsTotalsReportInfo) => {
+                this.subscriptionsTotals = response;
+                this.totalCount = response.groupedByDateTotals.length;
+                return {
+                    data: response.groupedByDateTotals,
+                    totalCount: response.groupedByDateTotals.length
                 };
             });
         }
@@ -184,6 +206,19 @@ export class ReportsComponent implements OnInit {
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
     currency = 'USD';
+    selectedReportType = ReportType.Subscribers;
+    reportTypes = [
+        {
+            text: this.ls.l('Subscribers'),
+            value: ReportType.Subscribers
+        },
+        {
+            text: this.ls.l('SubscriberDailyStats'),
+            value: ReportType.SubscribersStats
+        }
+    ];
+    reportTypesEnum = ReportType;
+    private readonly REPORT_TYPE_CACHE_KEY = 'REPORT_TYPE';
 
     constructor(
         private filtersService: FiltersService,
@@ -195,6 +230,9 @@ export class ReportsComponent implements OnInit {
         private phonePipe: PhoneFormatPipe,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
+        private cacheService: CacheService,
+        private cacheHelper: CacheHelper,
+        private invoiceService: InvoicesService,
         public ls: AppLocalizationService,
         public appService: AppService,
         public httpInterceptor: AppHttpInterceptor,
@@ -203,6 +241,12 @@ export class ReportsComponent implements OnInit {
 
     ngOnInit(): void {
         this.activate();
+        this.invoiceService.settings$.pipe(
+            takeUntil(this.deactivate$),
+            map((settings: InvoiceSettings) => settings.currency)
+        ).subscribe((currency: Currency) => {
+            this.currency = currency.toString();
+        });
     }
 
     activate() {
@@ -215,6 +259,22 @@ export class ReportsComponent implements OnInit {
             this.filtersValues = filtersValues;
             this.dataGrid.instance.refresh();
         });
+    }
+
+    ngAfterViewInit() {
+        this.initDataSource();
+    }
+
+    get dataSource() {
+        return this.selectedReportType === ReportType.Subscribers
+            ? this.subscribersDataSource
+            : this.statsDataSource;
+    }
+
+    get dataGrid() {
+        return this.selectedReportType === ReportType.Subscribers
+                ? this.subscibersDataGrid
+                : this.statsDataGrid;
     }
 
     toggleContactView() {
@@ -245,6 +305,10 @@ export class ReportsComponent implements OnInit {
         return this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
     }
 
+    customizeDateCell = (data) => {
+        return DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
+    }
+
     customizeBankPassFeeCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
 
     customizeBankVaultFeeCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankVaultFee');
@@ -253,8 +317,49 @@ export class ReportsComponent implements OnInit {
 
     customizeTotalCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'total');
 
-    customizeAmountCell(data: SubscriptionsDetailedReportInfo, field: string) {
+    customizeBankConnectAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankConnectAmount');
+
+    customizeBankBeyondAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankBeyondAmount');
+
+    customizeStarterKitAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'starterKitAmount');
+
+    customizeTotalAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'totalAmount');
+
+    customizeAmountCell(data: any, field: string) {
         return this.currencyPipe.transform(data[field], this.currency);
+    }
+
+    customizeAmountSummary = (itemInfo) => this.currencyPipe.transform(itemInfo.value, this.currency);
+
+    initDataSource() {
+        if (this.selectedReportType === ReportType.Subscribers) {
+            this.setDataGridInstance(this.dataGrid);
+        } else if (this.selectedReportType === ReportType.SubscribersStats) {
+            this.setDataGridInstance(this.dataGrid);
+        }
+    }
+
+    private setDataGridInstance(dataGrid: DxDataGridComponent) {
+        let instance = dataGrid && dataGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.dataSource);
+        }
+    }
+
+    onReportTypeChanged(event) {
+        if (event.previousValue != event.value) {
+            this.totalCount = null;
+            this.isDataLoaded = false;
+            this.changeDetectorRef.detectChanges();
+            this.cacheService.set(
+                this.cacheHelper.getCacheKey(this.REPORT_TYPE_CACHE_KEY, this.constructor.name),
+                event.value
+            );
+             setTimeout(() => {
+                 this.initDataSource();
+                 this.reload();
+            });
+        }
     }
 
     reload() {

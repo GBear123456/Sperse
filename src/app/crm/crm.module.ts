@@ -82,6 +82,7 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
+import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 
 @NgModule({
     imports: [
@@ -156,7 +157,8 @@ import { ReportsComponent } from '@app/crm/reports/reports.component';
         CreateActivityDialogComponent,
         BankSettingsDialogComponent,
         CrmIntroComponent,
-        ActivityComponent
+        ActivityComponent,
+        TypesDropdownComponent
     ],
     providers: [
         AppStoreService,

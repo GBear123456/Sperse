@@ -3,43 +3,6 @@
     position: relative;
     height: 100%;
 
-    .contact-group {
-        margin-right: auto;
-        display: flex;
-        align-items: center;
-        .total-count {
-            font-size: 24px;
-            font-weight: 600;
-            margin-left: 5px;
-        }
-    }
-
-    /deep/ dx-select-box[accessKey="contactGroup"] {
-        padding: 21px 0;
-        background: transparent;
-        justify-content: flex-start;
-
-        &.dx-state-hover, &.dx-state-active, &.dx-dropdowneditor-active {
-            .dx-dropdowneditor-icon {
-                background-color: transparent;
-            }
-        }
-    }
-
-    ::ng-deep .select-header {
-        font-size: 24px;
-        font-weight: 600;
-        color: rgb(23, 28, 29);
-        display: flex;
-        align-items: center;
-        padding-right: 30px;
-
-        i {
-            margin-left: 15px;
-            position: relative;
-        }
-    }
-
     ::ng-deep .dx-datagrid-rowsview .dx-row {
         cursor: pointer;
     }

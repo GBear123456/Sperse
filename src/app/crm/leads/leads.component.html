@@ -8,31 +8,11 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)">
-        <div class="contact-group">
-            <dx-select-box
-                    *ngIf="contactGroups.length > 1; else text"
-                    accessKey="contactGroup"
-                    displayExpr="text"
-                    valueExpr="value"
-                    [items]="contactGroups"
-                    fieldTemplate="selectTemplate"
-                    [(value)]="selectedContactGroup"
-                    (onValueChanged)="onContactGroupChanged($event)">
-                <div *dxTemplate="let data of 'selectTemplate'">
-                    <div class="select-header">
-                        <span>{{data.text}}</span>
-                        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
-                        <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
-                    </div>
-                </div>
-            </dx-select-box>
-            <ng-template #text>
-                <div  class="select-header" *ngIf="contactGroups.length === 1">
-                    <span>{{contactGroups[0].text}}</span>
-                    <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
-                </div>
-            </ng-template>
-        </div>
+        <types-dropdown [items]="contactGroups"
+                        [totalCount]="totalCount"
+                        [(value)]="selectedContactGroup"
+                        (onValueChanged)="onContactGroupChanged($event)">
+        </types-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>

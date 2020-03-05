@@ -1,21 +1,6 @@
-import { AppFeatures } from '@shared/AppFeatures';
-import { AppPermissions } from '@shared/AppPermissions';
+import { CrmConfig } from '@app/crm/crm.config';
 
-export class SliceConfig {
+export class SliceConfig extends CrmConfig {
     code = 'Slice';
     name = 'Slice';
-    search = false;
-    requiredFeature = AppFeatures.CRM;
-    requiredPermission = AppPermissions.CRM;
-    localizationSource = 'CRM';
-    navigation = [
-        [ 'Dashboard', '', 'icon-home', '/app/crm/dashboard' ],
-        [ 'Contacts', AppPermissions.CRMCustomers, 'icon-globe', '/app/slice/leads' ],
-        [ 'Clients', AppPermissions.CRMCustomers, 'icon-globe', '/app/slice/clients' ],
-        [ 'Partners', AppPermissions.CRMPartners, 'icon-globe', '/app/slice/partners' ],
-        [ 'Tasks', AppPermissions.CRM, 'icon-globe', '/app/crm/activity' ],
-        [ 'Orders', AppPermissions.CRMOrders, 'icon-globe', '/app/crm/orders' ],
-        [ 'Reports', '', '', '' ],
-        [ 'Products', '', '', '' ]
-    ];
 }

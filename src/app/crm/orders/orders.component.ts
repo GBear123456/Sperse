@@ -576,10 +576,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
             } else {
-                this.setDataGridInstance(this.ordersGrid);
+                this.setDataGridInstance(this.dataGrid);
             }
         } else if (this.selectedOrderType === OrderType.Subscription) {
-            this.setDataGridInstance(this.subscriptionsGrid);
+            this.setDataGridInstance(this.dataGrid);
         }
     }
 
@@ -810,7 +810,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    onContactGroupChanged(event) {
+    onOrderTypeChanged(event) {
         if (event.previousValue != event.value) {
             this.totalCount = null;
             this.searchValue = '';
