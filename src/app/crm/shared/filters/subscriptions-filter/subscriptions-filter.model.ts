@@ -32,6 +32,14 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         return result;
     }
 
+    getObjectValue() {
+        let value = {};
+        this.value.forEach((item) => {
+            value[item.name] = item.value;
+        });
+        return value;
+    }
+
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         if (this.dataSource) {

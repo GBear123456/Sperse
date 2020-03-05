@@ -200,7 +200,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                loadOptions
+                loadOptions,
+                /** @todo change to strict typing and handle typescript error */
+                this.subscriptionStatusFilter.items.element['getObjectValue']()
             ).then((data, additionalData) => {
                 this.totalCount = additionalData.totalCount;
                 return data;
@@ -329,7 +331,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,
-            this.dateField
+            this.dateField,
+            this.subscriptionStatusFilter.items.element['getObjectValue']()
         )),
         publishReplay(),
         refCount(),
@@ -345,7 +348,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 this.chartComponent.summaryBy.value,
-                this.dateField
+                this.dateField,
+                this.subscriptionStatusFilter.items.element['getObjectValue']()
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
                 this.totalCount = this.chartInfoItems[0].value;
