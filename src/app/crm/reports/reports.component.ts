@@ -223,7 +223,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     constructor(
         private filtersService: FiltersService,
-        private ui: AppUiCustomizationService,
         private orderSubscription: OrderSubscriptionServiceProxy,
         private store$: Store<CrmStore.State>,
         private loadingService: LoadingService,
@@ -235,6 +234,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         private cacheService: CacheService,
         private cacheHelper: CacheHelper,
         private invoiceService: InvoicesService,
+        public ui: AppUiCustomizationService,
         public ls: AppLocalizationService,
         public appService: AppService,
         public httpInterceptor: AppHttpInterceptor,
