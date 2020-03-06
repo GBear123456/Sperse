@@ -72,7 +72,7 @@ export class TopBarComponent implements OnDestroy {
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
-                this.initMenu(this.getCheckLayoutMenuConfig(config['navigation']), config['localizationSource'], 0)
+                this.initMenu(this.getCheckLayoutMenuConfig(config['navigation'], config['code']), config['localizationSource'], 0)
             );
             const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
@@ -116,14 +116,16 @@ export class TopBarComponent implements OnDestroy {
         return navList;
     }
 
-    getCheckLayoutMenuConfig(config) {
+    getCheckLayoutMenuConfig(configNavigation, configCode: string) {
         const MENU_HOME = 'Home';
         let tenant = this.appSessionService.tenant;
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode && config[0][0] != MENU_HOME)
-            config.unshift([MENU_HOME, '', 'icon-home', '/code-breaker']);
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode && configNavigation[0][0] != MENU_HOME
+            && (configCode === 'CRM' || configCode === 'Slice')
+        )
+            configNavigation.unshift([MENU_HOME, '', 'icon-home', '/code-breaker']);
 
-        return config;
+        return configNavigation;
     }
 
     navigate(event) {
