@@ -88,6 +88,7 @@ export class SMSDialogComponent {
                 this.loadingService.startLoading(this.validationGroup.instance.element());
                 this.contactCommunicationServiceProxy.sendSMS(new SendSMSInput({
                     contactId: this.data.contact.id,
+                    parentId: undefined,
                     message: this.smsText,
                     phoneNumber: this.phoneNumber
                 })).pipe(

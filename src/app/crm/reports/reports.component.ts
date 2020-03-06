@@ -49,7 +49,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     toolbarConfig = [
         {
             location: 'before', items: [
