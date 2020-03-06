@@ -92,7 +92,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     instanceType;
     instanceId;
     syncData: SyncProgressOutput;
-    hoveredItemStatus: any[];
+    hoveredItemStatusInfo: any[];
     actionsRequiredTooltipTarget;
     actionsRequiredTooltipVisible = false;
     actionsRequiredTooltipText: string;
@@ -197,19 +197,14 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         }
     }
 
-    showInfo(cellObj) {
-        this.syncAccount = cellObj.data;
-        this.updateAccountInfo(this.syncAccount);
-    }
-
     mouseEnter(cellObj) {
-        this.hoveredItemStatus = this.syncData.accountProgresses.filter(item => {
+        this.hoveredItemStatusInfo = this.syncData.accountProgresses.filter(item => {
             return cellObj.data.syncAccountId === item.accountId;
         });
 
         this.actionsRequiredTooltipVisible = true;
-        this.actionsRequiredTooltipTarget = '#account' + this.hoveredItemStatus[0].accountId;
-        this.actionsRequiredTooltipText = this.hoveredItemStatus[0].syncStatusMessage;
+        this.actionsRequiredTooltipTarget = '#account' + this.hoveredItemStatusInfo[0].accountId;
+        this.actionsRequiredTooltipText = this.hoveredItemStatusInfo[0].syncStatusMessage;
         setTimeout(() => this.actionRequiredTooltip.instance.repaint());
     }
 

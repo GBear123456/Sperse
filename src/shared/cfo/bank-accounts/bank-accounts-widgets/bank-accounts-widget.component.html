@@ -192,7 +192,7 @@
                 <div [class]="'account-status ' + cell.text | lowercase" [ngClass]="{'short': !showStatusText}" id="account{{cell.key}}">
                     <ng-container *ngIf="showStatusText">
                         <a *ngIf="(cell.text | lowercase) == 'actionrequired'; else textBlock"
-                           (click)="showInfo(cell)"
+                           (click)="updateAccountInfo(cell.data)"
                            (mouseenter)="mouseEnter(cell)"
                            (mouseleave)="actionsRequiredTooltipVisible = false">
                             {{l('SyncStatus_' + cell.text) | uppercase}}
