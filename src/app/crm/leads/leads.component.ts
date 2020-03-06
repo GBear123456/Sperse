@@ -1298,7 +1298,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onCellClick($event) {
         let col = $event.column;
-        if (col && col.command || col.dataField == 'BankCode')
+        if (col && col.command)
             return;
         this.showLeadDetails($event);
     }

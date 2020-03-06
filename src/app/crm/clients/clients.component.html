@@ -56,7 +56,7 @@
                               [loadPanel]="{ enabled: false }"
                               [hoverStateEnabled]="true"
                               [pager]="defaultGridPagerConfig"
-                              [remoteOperations]="{ filtering: false }"
+                              [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                               (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)"
                               (onCellClick)="onCellClick($event)"
@@ -101,11 +101,7 @@
                         </div>
                     </div>
                     <div *dxTemplate="let cellData of 'bankCodeCell'">
-                        <bank-code-letters  [bankCode]="cellData.value" 
-                                            [showReportLink]="true"
-                                            reportLinkType="Sales"
-                                            reportIconName="blue">
-                        </bank-code-letters>
+                        <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                     </div>
                     <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false"></dxi-column>

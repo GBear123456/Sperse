@@ -57,7 +57,7 @@
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [cacheEnabled]="false"
-                                [remoteOperations]="{ filtering: false }"
+                                [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
@@ -127,11 +127,7 @@
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
                         </div>
                         <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters  [bankCode]="cellData.value" 
-                                                [showReportLink]="true"
-                                                reportLinkType="Sales"
-                                                reportIconName="blue">
-                            </bank-code-letters>
+                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                         </div>
                         <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

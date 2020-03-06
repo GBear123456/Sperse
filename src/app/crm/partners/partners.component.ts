@@ -1079,7 +1079,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     onCellClick($event) {
         let col = $event.column;
-        if (col && (col.command || col.name == 'LinkToCFO'|| col.dataField == "BankCode"))
+        if (col && (col.command || col.name == 'LinkToCFO'))
             return;
         this.showPartnerDetails($event);
     }

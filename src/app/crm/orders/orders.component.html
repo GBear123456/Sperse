@@ -43,7 +43,7 @@
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
                                       [loadPanel]="{ enabled: false }"
-                                      [remoteOperations]="{ filtering: false }"
+                                      [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                                       (onEditingStart)="onCellClick($event)"
                                       (onCellClick)="onCellClick($event)"
                                       [pager]="defaultGridPagerConfig"
