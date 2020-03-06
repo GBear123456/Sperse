@@ -52,7 +52,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     ) {}
 
     ngOnChanges(change: SimpleChanges) {
-        if (change.bankCode && (this.showBankCodeDefinition || this.showReportLink)) {
+        if (change.bankCode && change.bankCode.currentValue && (this.showBankCodeDefinition || this.showReportLink)) {
             this.bankCodeDefinition = this.bankCodeService.getBankCodeDefinition(change.bankCode.currentValue[0]);
             this.changeDetectorRef.detectChanges();
         }
