@@ -84,12 +84,13 @@
     <div [hidden]="totalCount <= 0 || selectedReportType !== reportTypesEnum.SubscribersStats">
         <dx-data-grid #statsDataGrid
                       id="gridContainer"
-                      class="main-component-view"
+                      class="main-component-view subscribers-stats-grid"
                       accesskey="narrowHeaderPanel"
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
+                      [showBorders]="true"
                       [loadPanel]="{ enabled: false }"
                       [remoteOperations]="{ filtering: false }"
                       [pager]="defaultGridPagerConfig"
@@ -107,55 +108,59 @@
                         [calculateDisplayValue]="customizeDateCell"
                         cssClass="clipboard-holder">
             </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="leadCount"
-                        [caption]="ls.l('BankLeads')"
-                        cssClass="clipboard-holder">
+            <dxi-column [caption]="ls.l('TotalCounts')" alignment="center">
+                <dxi-column alignment="center"
+                            dataField="leadCount"
+                            [caption]="ls.l('BankLeads')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="clientCount"
+                            [caption]="ls.l('Clients')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="bankConnectCount"
+                            [caption]="ls.l('Connect')"
+                            cssClass="clipboard-holder"
+                            headerCellTemplate="headerTemplate">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="bankBeyondCount"
+                            [caption]="ls.l('Beyond')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="starterKitCount"
+                            [caption]="ls.l('StarterKit')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
             </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="clientCount"
-                        [caption]="ls.l('Clients')"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="bankConnectCount"
-                        [caption]="ls.l('Connect')"
-                        cssClass="clipboard-holder"
-                        headerCellTemplate="headerTemplate">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="bankBeyondCount"
-                        [caption]="ls.l('Beyond')"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="starterKitCount"
-                        [caption]="ls.l('StarterKit')"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="bankConnectAmount"
-                        [caption]="ls.l('Connect')"
-                        [calculateDisplayValue]="customizeBankConnectAmountCell"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="bankBeyondAmount"
-                        [caption]="ls.l('Beyond')"
-                        [calculateDisplayValue]="customizeBankBeyondAmountCell"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="starterKitAmount"
-                        [caption]="ls.l('StarterKit')"
-                        [calculateDisplayValue]="customizeStarterKitAmountCell"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column alignment="center"
-                        dataField="totalAmount"
-                        [caption]="ls.l('Total')"
-                        [calculateDisplayValue]="customizeTotalAmountCell"
-                        cssClass="clipboard-holder">
+            <dxi-column [caption]="ls.l('GrossSales')" alignment="center">
+                <dxi-column alignment="center"
+                            dataField="bankConnectAmount"
+                            [caption]="ls.l('Connect')"
+                            [calculateDisplayValue]="customizeBankConnectAmountCell"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="bankBeyondAmount"
+                            [caption]="ls.l('Beyond')"
+                            [calculateDisplayValue]="customizeBankBeyondAmountCell"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="starterKitAmount"
+                            [caption]="ls.l('StarterKit')"
+                            [calculateDisplayValue]="customizeStarterKitAmountCell"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="totalAmount"
+                            [caption]="ls.l('Total')"
+                            [calculateDisplayValue]="customizeTotalAmountCell"
+                            cssClass="clipboard-holder">
+                </dxi-column>
             </dxi-column>
             <dxo-summary>
                 <dxi-total-item alignment="center"
