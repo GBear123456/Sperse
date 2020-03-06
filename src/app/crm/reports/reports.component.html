@@ -107,10 +107,10 @@
                         [calculateDisplayValue]="customizeDateCell"
                         cssClass="clipboard-holder">
             </dxi-column>
-            <dxi-column [caption]="ls.l('TotalCounts')" alignment="center">
+            <dxi-column [caption]="ls.l('Contacts')" alignment="center">
                 <dxi-column alignment="center"
                             dataField="leadCount"
-                            [caption]="ls.l('BankLeads')"
+                            [caption]="ls.l('Leads')"
                             cssClass="clipboard-holder">
                 </dxi-column>
                 <dxi-column alignment="center"
@@ -118,11 +118,12 @@
                             [caption]="ls.l('Clients')"
                             cssClass="clipboard-holder">
                 </dxi-column>
+            </dxi-column>
+            <dxi-column [caption]="ls.l('Subscribers')" alignment="center">
                 <dxi-column alignment="center"
                             dataField="bankConnectCount"
                             [caption]="ls.l('Connect')"
-                            cssClass="clipboard-holder"
-                            headerCellTemplate="headerTemplate">
+                            cssClass="clipboard-holder">
                 </dxi-column>
                 <dxi-column alignment="center"
                             dataField="bankBeyondCount"
