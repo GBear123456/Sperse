@@ -197,11 +197,9 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     private applyBusinessEntity() {
-        this.bankAccountsService.changeSelectedBusinessEntities(
-            this.selectedBusinessEntityIds = this.treeList.instance.getVisibleRows()
-                .filter((item) => item.isSelected)
-                .map(item => item.key)
-        );
+        this.selectedBusinessEntityIds = this.treeList.instance.getVisibleRows()
+            .filter((item) => item.isSelected)
+            .map(item => item.key);
     }
 
     get emailIsValidAndNotEmpty(): boolean {
