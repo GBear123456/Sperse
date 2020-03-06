@@ -15,6 +15,7 @@ import capitalize from 'underscore.string/capitalize';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
@@ -222,6 +223,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     constructor(
         private filtersService: FiltersService,
+        private ui: AppUiCustomizationService,
         private orderSubscription: OrderSubscriptionServiceProxy,
         private store$: Store<CrmStore.State>,
         private loadingService: LoadingService,
