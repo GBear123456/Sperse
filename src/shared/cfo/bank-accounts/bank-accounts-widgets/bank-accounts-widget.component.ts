@@ -106,7 +106,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         { text: this.l('Edit_Name'), name: 'edit' },
         { text: this.l('Sync_Now'), name: 'sync' },
         { text: this.l('Resync_All'), name: 'resync' },
-        { text: this.l('Update_Info'), name: 'update' },
+        { text: this.l('Reconnect'), name: 'update' },
         { text: this.l('Delete'), name: 'delete' }
     ];
     syncAccountId: number;

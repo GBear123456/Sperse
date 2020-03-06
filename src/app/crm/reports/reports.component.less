@@ -1,3 +1,17 @@
 .total {
     text-align: center;
 }
+
+::ng-deep dx-data-grid.main-component-view.subscribers-stats-grid {
+    .dx-datagrid-rowsview .dx-column-lines td,
+    .dx-datagrid-headers .dx-column-lines td {
+        border-left: 1px solid #ddd !important;
+        border-right: 1px solid #ddd !important;
+    }
+    .dx-datagrid-headers {
+        border-bottom: 0;
+        .dx-column-lines td {
+            border-bottom: 1px solid #ddd !important;
+        }
+    }
+}
