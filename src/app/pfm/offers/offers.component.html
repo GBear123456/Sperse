@@ -10,7 +10,7 @@
     <app-headline [names]="[ l('Offers') ]"
                   icon="people"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="refreshDataGrid()">
     </app-headline>

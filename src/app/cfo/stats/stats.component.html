@@ -1,7 +1,7 @@
 <app-headline [names]="[ l('Daily Cash Balances') ]"
               iconSrc="assets/common/icons/pulse-icon.svg"
               [buttons]="headlineButtons"
-              [showReloadButton]="showReload"
+              [showReloadButton]="ui.showReload"
               [showToggleToolbarButton]="true"
               (onReload)="reload()"
               (onToggleToolbar)="toggleToolbar()">

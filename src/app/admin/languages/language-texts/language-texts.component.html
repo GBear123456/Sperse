@@ -2,7 +2,7 @@
     <app-headline [names]="[ l('LanguageTexts') ]"
                   icon="flag"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
