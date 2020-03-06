@@ -34,7 +34,6 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 })
 export class AppComponent implements OnInit {
     installationMode = false;
-    @HostBinding('attr.module') module: string;
     @HostBinding('class.fullscreen') isFullscreenMode = false;
     @HostListener('document:webkitfullscreenchange', ['$event'])
     @HostListener('document:mozfullscreenchange', ['$event'])
@@ -101,6 +100,6 @@ export class AppComponent implements OnInit {
     }
 
     initModuleAttribute() {
-        this.module = this.appService.getModule();
+        document.body.setAttribute('module', this.appService.getModule());
     }
 }
