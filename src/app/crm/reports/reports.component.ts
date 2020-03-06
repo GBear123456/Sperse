@@ -50,7 +50,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit, AfterViewInit {
-    @ViewChild('subscribersDataGrid') subscibersDataGrid: DxDataGridComponent;
+    @ViewChild('subscribersDataGrid') subscribersDataGrid: DxDataGridComponent;
     @ViewChild('statsDataGrid') statsDataGrid: DxDataGridComponent;
     toolbarConfig = [
         {
@@ -272,7 +272,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     get dataGrid() {
         return this.selectedReportType === ReportType.Subscribers
-                ? this.subscibersDataGrid
+                ? this.subscribersDataGrid
                 : this.statsDataGrid;
     }
 
