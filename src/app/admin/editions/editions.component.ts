@@ -17,6 +17,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -26,7 +28,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    public actionMenuItems: any = [
+    public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),
             class: 'edit',
@@ -169,13 +171,11 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         this.openCreateOrEditDialog();
     }
 
-    showActionsMenu(event) {
-        setTimeout(() => {
-            this.actionRecord = event.data;
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionRecord).subscribe((actionRecord) => {
+            this.actionRecord = actionRecord;
             this.changeDetectorRef.detectChanges();
-        }, this.actionRecord ? 500 : 0);
-        this.actionRecord = null;
-        event.cancel = true;
+        });
     }
 
     onMenuItemClick($event) {

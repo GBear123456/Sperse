@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, Input, ViewChild } from '@angular/core';
 import { DxTooltipComponent } from '@root/node_modules/devextreme-angular/ui/tooltip';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
 @Component({
     selector: 'action-menu',
@@ -7,7 +8,7 @@ import { DxTooltipComponent } from '@root/node_modules/devextreme-angular/ui/too
     styleUrls: ['./action-menu.component.less']
 })
 export class ActionMenuComponent {
-    @Input() items: any[];
+    @Input() items: ActionMenuItem[];
     @Input() visible = false;
     @Input() width = '200px';
     @Input() target = '.dx-state-hover .dx-link.dx-link-edit';
@@ -18,6 +19,18 @@ export class ActionMenuComponent {
     show(target: any) {
         if (this.actionsTooltip && this.actionsTooltip.instance) {
             this.actionsTooltip.instance.show(target);
+        }
+    }
+
+    toggle(target: any = null) {
+        if (this.actionsTooltip && this.actionsTooltip.instance) {
+            setTimeout(() => {
+                if (this.actionsTooltip.instance.option('visible')) {
+                    this.hide();
+                } else {
+                    this.show(target);
+                }
+            });
         }
     }
 

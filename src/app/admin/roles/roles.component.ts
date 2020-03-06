@@ -27,6 +27,8 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { AppService } from '@app/app.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 
 @Component({
     templateUrl: './roles.component.html',
@@ -41,7 +43,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     private selectedModule: ModuleType;
     private rootComponent: any;
     public formatting = AppConsts.formatting;
-    public actionMenuItems: any;
+    public actionMenuItems: ActionMenuItem[];
     public actionRecord: any;
     public headlineButtons: HeadlineButton[] = [
         {
@@ -266,12 +268,10 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    showActionsMenu(event) {
-        setTimeout(() => {
-            this.actionRecord = event.data;
-        }, this.actionRecord ? 500 : 0);
-        this.actionRecord = null;
-        event.cancel = true;
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionRecord).subscribe((actionRecord) => {
+            this.actionRecord = actionRecord;
+        });
     }
 
     onMenuItemClick($event) {

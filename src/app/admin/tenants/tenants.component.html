@@ -36,7 +36,7 @@
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="setGridDataLoaded()"
                                   (onCellClick)="editTenant($event)"
-                                  (onEditingStart)="showActionsMenu($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
                                   [dataSource]="dataSource">
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>

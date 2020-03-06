@@ -36,7 +36,7 @@
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="setGridDataLoaded()"
                                   (onCellClick)="editUser($event)"
-                                  (onEditingStart)="showActionsMenu($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"

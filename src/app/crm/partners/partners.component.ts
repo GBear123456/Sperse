@@ -83,6 +83,8 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -139,7 +141,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private organizationUnits: OrganizationUnitDto[];
 
     actionEvent: any;
-    actionMenuItems = [
+    actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),
             class: 'edit',
@@ -1110,12 +1112,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.hideHostElement();
     }
 
-    showActionsMenu(event) {
-        event.cancel = true;
-        this.actionEvent = null;
-        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
-            && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
-        setTimeout(() => this.actionEvent = event);
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
+            this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+                && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+            this.actionEvent = actionRecord;
+        });
     }
 
     onMenuItemClick(event) {

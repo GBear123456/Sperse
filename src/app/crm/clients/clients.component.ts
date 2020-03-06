@@ -104,6 +104,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -177,7 +179,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
 
     actionEvent: any;
-    actionMenuItems = [
+    actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),
             class: 'edit',
@@ -1225,12 +1227,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.hideHostElement();
     }
 
-    showActionsMenu(event) {
-        event.cancel = true;
-        this.actionEvent = null;
+    toggleActionsMenu(event) {
         this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
             && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
-        setTimeout(() => this.actionEvent = event);
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionEvent) => {
+            this.actionEvent = actionEvent;
+        });
     }
 
     onMenuItemClick(event) {

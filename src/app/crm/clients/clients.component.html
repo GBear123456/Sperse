@@ -60,7 +60,7 @@
                               (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)"
                               (onCellClick)="onCellClick($event)"
-                              (onEditingStart)="showActionsMenu($event)"
+                              (onEditingStart)="toggleActionsMenu($event)"
                               (onSelectionChanged)="onSelectionChanged($event)"
                               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                     <dxo-selection selectAllMode="page"

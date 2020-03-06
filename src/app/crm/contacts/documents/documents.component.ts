@@ -46,6 +46,7 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -70,7 +71,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public formatting = AppConsts.formatting;
     public dataSource: DocumentInfo[];
     public previewContent: string;
-    public actionMenuItems: any;
+    public actionMenuItems: ActionMenuItem[];
     public actionRecordData: any;
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
@@ -367,12 +368,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         }
     }
 
-    showActionsMenu(data, target) {
+    toggleActionsMenu(data, target) {
         this.actionRecordData = data;
         this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isEditSupportedByWopi;
-        setTimeout(() => {
-            this.actionMenu.show(target);
-        });
+        this.actionMenu.toggle(target);
     }
 
     onCellClick($event) {
@@ -381,7 +380,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         if ($event.rowType === 'data') {
             /** If user click on actions icon */
             if (target.closest('.dx-link.dx-link-edit')) {
-                this.showActionsMenu($event.data, target);
+                this.toggleActionsMenu($event.data, target);
             } else if (target.closest('.document-type')) {
                 /** If user click on document type */
                 this.clickedCellKey = $event.data.id;

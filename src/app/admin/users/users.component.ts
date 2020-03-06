@@ -35,6 +35,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 
 @Component({
     templateUrl: './users.component.html',
@@ -50,7 +52,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     role: number;
     group = UserGroup.Employee;
     isActive = true;
-    public actionMenuItems: any;
+    public actionMenuItems: ActionMenuItem[];
     public actionRecord: any;
     public headlineButtons: HeadlineButton[] = [
         {
@@ -604,12 +606,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    showActionsMenu(event) {
-        setTimeout(() => {
-            this.actionRecord = event.data;
-        }, this.actionRecord ? 500 : 0);
-        this.actionRecord = null;
-        event.cancel = true;
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionRecord).subscribe((actionRecord) => {
+            this.actionRecord = actionRecord;
+        });
     }
 
     onMenuItemClick($event) {

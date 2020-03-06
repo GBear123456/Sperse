@@ -92,6 +92,8 @@ import { MapService } from '@app/shared/common/slice/map/map.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -127,7 +129,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
     }
     actionEvent: any;
-    actionMenuItems = [
+    actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),
             class: 'edit',
@@ -1296,7 +1298,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onCellClick($event) {
         let col = $event.column;
-        if (col && col.command || col.dataField == "BankCode")
+        if (col && col.command || col.dataField == 'BankCode')
             return;
         this.showLeadDetails($event);
     }
@@ -1397,12 +1399,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
     }
 
-    showActionsMenu(event) {
-        event.cancel = true;
-        this.actionEvent = null;
-        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
-            && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
-        setTimeout(() => this.actionEvent = event);
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
+            this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+                && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+            this.actionEvent = actionRecord;
+        });
     }
 
     onMenuItemClick(event) {

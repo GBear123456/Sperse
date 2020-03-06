@@ -122,7 +122,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     if (this.dataGrid && this.dataGrid.instance) {
                         this.dataGrid.instance.cancelEditData();
                         this.dataGrid.instance.endCustomLoading();
-                        setTimeout(() => this.getElementRef().nativeElement.parentNode 
+                        setTimeout(() => this.getElementRef().nativeElement.parentNode
                             && this.dataGrid.instance.repaint());
                     }
                 },
@@ -148,9 +148,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    showActionsMenu(target) {
+    toggleActionMenu(target) {
         setTimeout(() => {
-            this.actionsTooltip.instance.show(target);
+            if (!this.actionsTooltip.instance.option('visible')) {
+                this.actionsTooltip.instance.show(target);
+            } else {
+                this.actionsTooltip.instance.hide();
+            }
         });
         this.actionsTooltip.instance.repaint();
     }
@@ -183,7 +187,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(event.data.InvoiceStatus) < 0;
                     this.actionRecordData = event.data;
-                    this.showActionsMenu(event.event.target);
+                    this.toggleActionMenu(event.event.target);
                 }
             }
         }

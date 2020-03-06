@@ -19,6 +19,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 
 @Component({
     templateUrl: './languages.component.html',
@@ -29,7 +31,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxTooltipComponent) tooltip: DxTooltipComponent;
     dataSource: DataSource;
-    public actionMenuItems: any;
+    public actionMenuItems: ActionMenuItem[];
     public actionRecord: any;
     public headlineButtons: HeadlineButton[] = [
         {
@@ -106,12 +108,10 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         ].filter(Boolean);
     }
 
-    showActionsMenu(event) {
-        setTimeout(() => {
-            this.actionRecord = event.data;
-        }, this.actionRecord ? 500 : 0);
-        this.actionRecord = null;
-        event.cancel = true;
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionRecord).subscribe((actionRecord) => {
+            this.actionRecord = actionRecord;
+        });
     }
 
     onMenuItemClick($event) {
