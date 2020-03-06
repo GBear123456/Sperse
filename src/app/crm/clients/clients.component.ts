@@ -1139,7 +1139,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onCellClick($event) {
         let col = $event.column;
-        if (col && (col.command || col.name == 'LinkToCFO'))
+        if (col && (col.command || col.name == 'LinkToCFO' || col.dataField == "BankCode"))
             return;
         this.showClientDetails($event);
     }
