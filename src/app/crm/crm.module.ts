@@ -194,7 +194,7 @@ export class CrmModule {
                     else
                         importLeadsService.stopImportCheck();
                 });
-            if (this.appStoreService.crmIsAllowed) {
+            if (this.permissionService.isGranted(AppPermissions.CRM)) {
                 this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
             }
         }
