@@ -22,7 +22,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                         value: item.id
                     },
                     {
-                        name: ['subscriptionFilters[' + index + '].HasSubscription'],
+                        name: ['subscriptionFilters[' + index + '].SubscriptionAvailability'],
                         value: (item.current ? SubscriptionAvailability.Current : 0) |
                                (item.past ? SubscriptionAvailability.Past : 0) |
                                (item.never ? SubscriptionAvailability.Never : 0)
