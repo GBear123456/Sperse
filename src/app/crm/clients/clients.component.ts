@@ -440,7 +440,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 },
                 onLoaded: (customers) => {
                     const userIds = [];
-                    customers.forEach((customer) => {
+                    customers && customers.forEach((customer) => {
                         if (customer.UserId) {
                             userIds.push(customer.UserId);
                         }
