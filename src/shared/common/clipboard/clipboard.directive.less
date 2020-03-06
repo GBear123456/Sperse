@@ -2,16 +2,16 @@
     .clipboard-holder {
         position: relative;
         padding-right: 25px!important;
-        &:hover i {
+        &:hover > i.save-to-clipboard {
             display: initial;
         }
-        i {
+        & > i.save-to-clipboard {
             display: none;
             cursor: pointer;
             position: absolute;
             top: calc((100% - 15px) / 2);            
         }
-        &.fixed-right i {
+        &.fixed-right > i.save-to-clipboard {
             right: 5px;
         }
     }
