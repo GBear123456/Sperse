@@ -66,8 +66,8 @@
                         cssClass="clipboard-holder"
                         [calculateDisplayValue]="customizeWtbFeeCell">
             </dxi-column>
-            <dxi-column dataField="total"
-                        [caption]="ls.l('Total')"
+            <dxi-column dataField="totalFee"
+                        [caption]="ls.l('TotalFee')"
                         cssClass="clipboard-holder"
                         [calculateDisplayValue]="customizeTotalCell">
             </dxi-column>
@@ -134,6 +134,11 @@
                 <dxi-column alignment="center"
                             dataField="starterKitCount"
                             [caption]="ls.l('StarterKit')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column alignment="center"
+                            dataField="totalCount"
+                            [caption]="ls.l('Total')"
                             cssClass="clipboard-holder">
                 </dxi-column>
             </dxi-column>

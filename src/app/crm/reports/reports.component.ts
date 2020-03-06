@@ -9,7 +9,6 @@ import DataSource from 'devextreme/data/data_source';
 import { Subject } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
@@ -21,9 +20,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     Currency,
     InvoiceSettings,
-    OrderSubscriptionServiceProxy,
-    SubscriptionsDetailedReportInfo,
-    SubscriptionsTotalsReportInfo
+    ReportServiceProxy,
+    SubscriberDailyStatsReportInfo,
+    SubscribersReportInfo
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -47,7 +46,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
         '../shared/styles/client-status.less',
         './reports.component.less'
     ],
-    providers: [ CurrencyPipe, DatePipe, PhoneFormatPipe ],
+    providers: [ CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit, AfterViewInit {
@@ -142,11 +141,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 this.isDataLoaded = false;
                 this.changeDetectorRef.detectChanges();
             }
-            return this.orderSubscription.getDetailedReport(
+            return this.reportService.getSubscribersReport(
                 this.filtersValues.sourceOrganizationUnits,
                 this.filtersValues.date.startDate,
                 this.filtersValues.date.endDate
-            ).toPromise().then((response: SubscriptionsDetailedReportInfo[]) => {
+            ).toPromise().then((response: SubscribersReportInfo[]) => {
                 this.totalCount = response.length;
                 return {
                     data: response,
@@ -155,23 +154,21 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             });
         }
     });
-    subscriptionsTotals: SubscriptionsTotalsReportInfo;
     statsDataSource = new DataSource({
         load: (options) => {
             if (!options.requireTotalCount) {
                 this.isDataLoaded = false;
                 this.changeDetectorRef.detectChanges();
             }
-            return this.orderSubscription.getTotalsReport(
+            return this.reportService.getSubscriberDailyStatsReport(
                 this.filtersValues.sourceOrganizationUnits,
                 this.filtersValues.date.startDate,
                 this.filtersValues.date.endDate
-            ).toPromise().then((response: SubscriptionsTotalsReportInfo) => {
-                this.subscriptionsTotals = response;
-                this.totalCount = response.groupedByDateTotals.length;
+            ).toPromise().then((response: SubscriberDailyStatsReportInfo[]) => {
+                this.totalCount = response.length;
                 return {
-                    data: response.groupedByDateTotals,
-                    totalCount: response.groupedByDateTotals.length
+                    data: response,
+                    totalCount: response.length
                 };
             });
         }
@@ -223,7 +220,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     constructor(
         private filtersService: FiltersService,
-        private orderSubscription: OrderSubscriptionServiceProxy,
+        private reportService: ReportServiceProxy,
         private store$: Store<CrmStore.State>,
         private loadingService: LoadingService,
         private exportService: ExportService,
@@ -311,21 +308,21 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         return DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
     }
 
-    customizeBankPassFeeCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
+    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
 
-    customizeBankVaultFeeCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankVaultFee');
+    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankVaultFee');
 
-    customizeWtbFeeCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'wtbFee');
+    customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'wtbFee');
 
-    customizeTotalCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'total');
+    customizeTotalCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'total');
 
-    customizeBankConnectAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankConnectAmount');
+    customizeBankConnectAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankConnectAmount');
 
-    customizeBankBeyondAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'bankBeyondAmount');
+    customizeBankBeyondAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankBeyondAmount');
 
-    customizeStarterKitAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'starterKitAmount');
+    customizeStarterKitAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'starterKitAmount');
 
-    customizeTotalAmountCell = (data: SubscriptionsDetailedReportInfo) => this.customizeAmountCell(data, 'totalAmount');
+    customizeTotalAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'totalAmount');
 
     customizeAmountCell(data: any, field: string) {
         return this.currencyPipe.transform(data[field], this.currency);
