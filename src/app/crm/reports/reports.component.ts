@@ -292,21 +292,13 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    customizePhoneCell = (data) => {
-        return this.phonePipe.transform(data.phone);
-    }
+    customizePhoneCell = (data) => this.phonePipe.transform(data.phone);
 
-    customizeStatusCell = (data) => {
-        return this.ls.l('Status' + data.status);
-    }
+    customizeStatusCell = (data) => this.ls.l('Status' + data.status);
 
-    customizeCreatedCell = (data) => {
-        return this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
-    }
+    customizeCreatedCell = (data) => this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
 
-    customizeDateCell = (data) => {
-        return DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
-    }
+    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
 
     customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
 
