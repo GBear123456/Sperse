@@ -1,7 +1,17 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Application imports */
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class AppUiCustomizationService {
+    showReload = !this.appSession.tenant || this.appSession.tenant.customLayoutType != LayoutType.AdvicePeriod;
+
+    constructor(
+        public appSession: AppSessionService
+    ) {}
 
     getTheme() {
       return  this.getSetting('App.UiManagement.Theme');

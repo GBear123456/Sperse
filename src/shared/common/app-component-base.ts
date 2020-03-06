@@ -33,7 +33,6 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { TitleService } from '@shared/common/title/title.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 
@@ -91,7 +90,6 @@ export abstract class AppComponentBase implements OnDestroy {
     public cacheHelper: CacheHelper;
     public loadingService: LoadingService;
     public defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
-    public showReload = true;
 
     constructor(
         private _injector: Injector
@@ -124,7 +122,6 @@ export abstract class AppComponentBase implements OnDestroy {
             .subscribe((isFullScreenMode: boolean) => {
                 this.isFullscreenMode = isFullScreenMode;
             });
-        this.showReload = !this.appSession.tenant || this.appSession.tenant.customLayoutType != LayoutType.AdvicePeriod;
     }
 
     getRootComponent() {

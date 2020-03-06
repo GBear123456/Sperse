@@ -63,12 +63,11 @@ export function appInitializerFactory(
             AppPreBootstrap.run(AppConsts.appBaseHref, (sessionCallback?) => {
                 appAuthService.startTokenCheck();
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
-                let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
                     (result) => {
                         //set og meta tags
                         sessionCallback && sessionCallback();
-                        updateMetadata(appSessionService.tenant, ui);
+                        updateMetadata(appSessionService.tenant, injector.get(AppUiCustomizationService));
                         bugsnagService.updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
