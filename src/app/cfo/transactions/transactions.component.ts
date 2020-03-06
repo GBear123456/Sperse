@@ -338,9 +338,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                sort: this.isAdvicePeriod ? [
-                    { selector: 'Date', desc: true }
-                ] : undefined,
+                sort: [{ selector: 'Date', desc: true }],
                 beforeSend: (request) => {
                     this.changeDetectionRef.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();

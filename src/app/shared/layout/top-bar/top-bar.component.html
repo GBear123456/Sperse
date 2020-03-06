@@ -6,7 +6,7 @@
         [items]="navbarItems"
         [hoverStateEnabled]="true"
         [selectedIndex]="selectedIndex"
-        [itemTemplate]="'navBarItem'"
+        itemTemplate="navBarItem"
         selectionMode="single"
         (onInitialized)="onNavBarInitialized()">
         <div *dxTemplate="let link of 'navBarItem'">
