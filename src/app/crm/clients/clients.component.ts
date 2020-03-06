@@ -262,7 +262,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'filter',
-                dataField: 'LeadDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'day',
                 showTotals: false

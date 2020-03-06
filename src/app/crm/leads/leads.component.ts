@@ -278,7 +278,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'LeadDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'day',
                 showTotals: false
