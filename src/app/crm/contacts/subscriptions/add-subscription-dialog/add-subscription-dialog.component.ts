@@ -114,10 +114,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             subscriptionInput.subscriptions.forEach((subscription: SubscriptionInput) => {
                 if (subscription.endDate) {
                     subscription.endDate = DateHelper.removeTimezoneOffset(
-                        new Date(subscription.endDate),
-                        false,
-                        'from'
-                    );
+                        new Date(subscription.endDate), true, 'to');
                 }
                 if (this.isBankCodeLayout && subscription.code === BankCodeServiceType.BANKVault) {
                     subscriptionInput.updateThirdParty = true;
