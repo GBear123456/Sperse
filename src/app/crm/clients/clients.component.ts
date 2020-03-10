@@ -271,10 +271,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'filter',
-                dataField: 'BankCode'
-            },
-            {
-                area: 'filter',
                 dataField: 'CompanyName'
             },
             {
