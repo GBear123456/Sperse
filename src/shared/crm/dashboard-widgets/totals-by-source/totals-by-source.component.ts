@@ -5,10 +5,12 @@ import {
     Component,
     ElementRef,
     OnDestroy,
-    OnInit
+    OnInit,
+    ViewChild
 } from '@angular/core';
 
 /** Third party imports */
+import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import {
     catchError,
@@ -46,6 +48,7 @@ import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
+    @ViewChild(DxPieChartComponent, { static: true }) chartComponent: DxPieChartComponent;
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
