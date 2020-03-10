@@ -5,6 +5,7 @@ import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angul
 import * as moment from 'moment-timezone';
 import { select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import * as addressParser from 'parse-address';
 import * as _ from 'underscore';
 
@@ -36,6 +37,7 @@ import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import pako from 'pako';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -563,8 +565,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     if (requestSize > this.MAX_REQUEST_SIZE) {
                         this.finishLoading(true);
                         this.message.info(this.l('LeadsImportSizeExceeds', requestSize, this.MAX_REQUEST_SIZE));
-                    } else
-                        this.importProxy.import(leadsInput).pipe(
+                    } else  {
+                        this.sendData(JSON.stringify(leadsInput)).pipe(
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId: number) => {
                             if (importId && !isNaN(importId))
@@ -587,10 +589,33 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                 }, 3000);
                             this.clearToolbarSelectedItems();
                         });
+                    }
                 }
             }
         );
     }
+
+    sendData(payload: string) {
+        return new Observable(subscriber => {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('POST', AppConsts.remoteServiceBaseUrl + '/api/services/CRM/Import/Import');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
+            xhr.setRequestHeader('Content-Encoding', 'gzip');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200)
+                    subscriber.next(JSON.parse(xhr.responseText).result);
+                else
+                    subscriber.error(xhr);
+                subscriber.complete();
+            });
+
+            xhr.send(pako.gzip(payload, { to: 'Uint8Array' }).buffer);
+        });
+    }
+
 
     createLeadsInput(data: any): ImportInput {
         let result = ImportInput.fromJS({
