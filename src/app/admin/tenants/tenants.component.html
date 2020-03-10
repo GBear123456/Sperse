@@ -2,7 +2,7 @@
     <app-headline [names]="[ l('Tenants') ]"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
@@ -14,10 +14,11 @@
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
                      width="220px"
-                     [visible]="actionRecord"
+                     [visible]="!!actionRecord"
                      (onItemClick)="onMenuItemClick($event)"
                      (onHidden)="actionRecord = null">
         </action-menu>
+
         <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <div>
@@ -36,7 +37,7 @@
                                       (onInitialized)="onInitialized($event)"
                                       (onContentReady)="setGridDataLoaded()"
                                       (onCellClick)="editTenant($event)"
-                                      (onEditingStart)="showActionsMenu($event)"
+                                      (onEditingStart)="toggleActionsMenu($event)"
                                       [dataSource]="dataSource">
                             <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
                             <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>

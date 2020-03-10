@@ -1,7 +1,7 @@
 <div [@routerTransition]>
     <app-headline [names]="[ l('AuditLogs') ]"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onReload)="invalidate()"

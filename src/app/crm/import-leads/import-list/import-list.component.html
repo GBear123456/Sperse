@@ -4,7 +4,7 @@
         <app-headline [names]="[ l('Import') ]"
                       icon="docs"
                       [buttons]="headlineButtons"
-                      [showReloadButton]="true"
+                      [showReloadButton]="ui.showReload"
                       (onReload)="invalidate()">
             <import-progress-bar></import-progress-bar>
         </app-headline>

@@ -41,6 +41,8 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available-bank-codes.interface';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { Param } from '@shared/common/odata/param.model';
+import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Component({
     selector: 'bank-pass',
@@ -220,13 +222,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
         }
     }
 
-    getQuickSearchParam() {
+    getQuickSearchParam(): Param {
         return this.searchValue ? { name: 'quickSearchString', value: this.searchValue } : null;
     }
 
-    getODataUrl(uri: string, filter?: Object, instanceData = null) {
+    getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null) {
         const searchParam = this.getQuickSearchParam();
-        const params = searchParam && [searchParam];
+        const params: Param[] = searchParam && [searchParam];
         return this.oDataService.getODataUrl(uri, filter, instanceData, params);
     }
 

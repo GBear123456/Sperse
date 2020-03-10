@@ -3,7 +3,7 @@
                   icon="people"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onReload)="invalidate()"
@@ -36,7 +36,7 @@
                                       (onInitialized)="onInitialized($event)"
                                       (onContentReady)="setGridDataLoaded()"
                                       (onCellClick)="editRole($event)"
-                                      (onEditingStart)="showActionsMenu($event)"
+                                      (onEditingStart)="toggleActionsMenu($event)"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-selection selectAllMode="page"
                                            showCheckBoxesMode="always"

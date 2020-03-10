@@ -19,7 +19,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivityServiceProxy, ActivityType } from '@shared/service-proxies/service-proxies';
+import { ActivityServiceProxy, ActivityType, PipelineDto } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -529,7 +529,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     activityStagesLoad() {
         this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity)
-            .subscribe(result => {
+            .subscribe((result: PipelineDto) => {
                 this.stages = result.stages.map((stage) => {
                     return {
                         id: stage.id,

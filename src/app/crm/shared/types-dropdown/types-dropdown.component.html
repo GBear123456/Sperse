@@ -1,0 +1,22 @@
+<dx-select-box *ngIf="items.length > 1; else text"
+               accessKey="types-dropdown"
+               displayExpr="text"
+               valueExpr="value"
+               [items]="items"
+               fieldTemplate="selectTemplate"
+               [value]="value"
+               (onValueChanged)="valueChanged($event)">
+    <div *dxTemplate="let data of 'selectTemplate'">
+        <div class="select-header">
+            <span>{{data.text}}</span>
+            <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+            <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
+        </div>
+    </div>
+</dx-select-box>
+<ng-template #text>
+    <div  class="select-header" *ngIf="items.length === 1">
+        <span>{{items[0].text}}</span>
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+    </div>
+</ng-template>

@@ -5,7 +5,7 @@
                   [showToggleCompactViewButton]="showDataGrid"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
@@ -21,15 +21,15 @@
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <app-static-list
-                [width]="'180px'"
-                [title]="l('Status')"
-                [showConfirmation]="false"
-                [selectedKeys]="selectedClientKeys"
-                [hideButtons]="true"
-                [filterModel]="filterModelStatus"
-                [targetSelector]="'[aria-label=Status]'"
-                [list]="statuses$ | async"
-                (onItemSelected)="updateClientStatuses($event)">
+            [width]="'180px'"
+            [title]="l('Status')"
+            [showConfirmation]="false"
+            [selectedKeys]="selectedClientKeys"
+            [hideButtons]="true"
+            [filterModel]="filterModelStatus"
+            [targetSelector]="'[aria-label=Status]'"
+            [list]="statuses$ | async"
+            (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
         <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
         <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
@@ -57,11 +57,11 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
-                                  [remoteOperations]="{ filtering: false }"
+                                  [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
-                                  (onEditingStart)="showActionsMenu($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
@@ -109,56 +109,56 @@
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <div *ngIf="appService.checkCFOClientAccessPermission()">
                                 <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
-                                <span>
-                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
-                                </span>
-                                </ng-container>
-                                <ng-template #verify>
-                                <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
-                                    <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
-                                </span>
-                                </ng-template>
+                                    <span>
+                                        <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
+                                    </span>
+                                    </ng-container>
+                                    <ng-template #verify>
+                                    <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
+                                        <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                    </span>
+                                    </ng-template>
+                                </div>
                             </div>
-                        </div>
-                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone }}
-                        </div>
-                        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                            {{cellData.value | phone}}
-                        </div>
+                            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                                {{cellData.value | date: formatting.dateTime : userTimezone }}
+                            </div>
+                            <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                                {{cellData.value | phone}}
+                            </div>
 
-                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                    </dx-data-grid>
+                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        </dx-data-grid>
                 </div>
             </div>
-        </div>
-        <div [hidden]="hidePivotGrid$ | async">
-            <slice-pivot-grid [storageKey]="sliceStorageKey"
-                              [isLoading]="pivotGridDataIsLoading"
-                              [height]="contentHeight$ | async">
-            </slice-pivot-grid>
-        </div>
-        <div [hidden]="hideChart$ | async">
-            <slice-chart [width]="contentWidth$ | async"
-                         [height]="contentHeight$ | async"
-                         [infoItems]="chartInfoItems"
-                         [itemsName]="l('Customers')"
-                         [title]="l('Customers') + ' ' + l('number')"
-                         argumentField="creationDate"
-                         valueField="count">
-            </slice-chart>
-        </div>
-        <div [hidden]="hideMap$ | async">
-            <slice-info [items]="mapInfoItems$ | async"></slice-info>
-            <slice-map [width]="contentWidth$ | async"
-                       [height]="mapHeight$ | async"
-                       [contactGroupText]="l('Customers').toLowerCase()"
-                       [dataIsLoading]="mapDataIsLoading"
-                       [data]="mapData$ | async">
-            </slice-map>
+            <div [hidden]="hidePivotGrid$ | async">
+                <slice-pivot-grid [storageKey]="sliceStorageKey"
+                                  [isLoading]="pivotGridDataIsLoading"
+                                  [height]="contentHeight$ | async">
+                </slice-pivot-grid>
+            </div>
+            <div [hidden]="hideChart$ | async">
+                <slice-chart [width]="contentWidth$ | async"
+                             [height]="contentHeight$ | async"
+                             [infoItems]="chartInfoItems"
+                             [itemsName]="l('Customers')"
+                             [title]="l('Customers') + ' ' + l('number')"
+                             argumentField="creationDate"
+                             valueField="count">
+                </slice-chart>
+            </div>
+            <div [hidden]="hideMap$ | async">
+                <slice-info [items]="mapInfoItems$ | async"></slice-info>
+                <slice-map [width]="contentWidth$ | async"
+                           [height]="mapHeight$ | async"
+                           [contactGroupText]="l('Customers').toLowerCase()"
+                           [dataIsLoading]="mapDataIsLoading"
+                           [data]="mapData$ | async">
+                </slice-map>
+            </div>
         </div>
     </div>
 </div>

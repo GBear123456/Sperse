@@ -88,12 +88,18 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.initModuleAttribute();
         this.appService.initModule();
 
+        this.appService.subscribeModuleChange(this.initModuleAttribute.bind(this));
         if (this.appSession.application) {
             SignalRHelper.initSignalR(() => { this.chatSignalrService.init(); });
         }
 
         this.installationMode = UrlHelper.isInstallUrl(location.href);
+    }
+
+    initModuleAttribute() {
+        document.body.setAttribute('module', this.appService.getModule());
     }
 }

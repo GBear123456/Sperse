@@ -5,7 +5,7 @@
                   [buttons]="headlineButtons"
                   [showToggleCompactViewButton]="showToggleCompactViewButton"
                   [showToggleFullScreenButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleTotalsButton]="true"
                   (onReload)="reload()"
@@ -23,7 +23,7 @@
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div class="main-wrapper" [ngClass]="{'expanded': categoriesShowed}">
-                <div class="categories">
+                <div class="categories" *ngIf="!isAdvicePeriod">
                     <categorization
                         [hidden]="!toggleTabContent"
                         [width]="'340px'"
@@ -50,13 +50,13 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
-                                  [columnMinWidth]="'125px'"
+                                  columnMinWidth="125px"
                                   [headerFilter]="{ allowSearch: true, visible: false }"
                                   [pager]="defaultGridPagerConfig"
                                   [loadPanel]="{ enabled: false }"
                                   [height]="gridHeight"
                                   [elementAttr]="{ class: 'with-custom-loader' }"
-                                  [columnResizingMode]="'widget'"
+                                  columnResizingMode="widget"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
@@ -72,11 +72,13 @@
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
+                        <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
 
                         <dxi-column dataField="Date"
                                     dataType="date"
                                     cssClass="tabular"
+                                    [sortIndex]="0"
+                                    sortOrder="desc"
                                     [caption]="l('Transactions_Date')"
                                     cellTemplate="dateCell">
                         </dxi-column>

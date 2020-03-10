@@ -41,6 +41,8 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
 import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
+import { InstanceModel } from '@shared/cfo/instance.model';
+import { Param } from '@shared/common/odata/param.model';
 
 @Component({
     selector: 'app-pipeline',
@@ -593,7 +595,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.stages && this.stages.some((stage: Stage) => stage.isLoading);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null, params = null) {
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData: InstanceModel = null, params: Param[] = null) {
         this.queryWithSearch = filters.map((filter) => {
             return getCheckCustom && getCheckCustom(filter) ||
                 filter.getODataFilterObject();

@@ -84,7 +84,7 @@ export class CompanyDialogComponent implements OnInit {
     manageAllowed = this.contactService.checkCGPermission(this.data.contactInfo.groupId);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
-    affiliateRegex = /^[a-zA-Z0-9_-]*$/;
+    affiliateRegex = AppConsts.regexPatterns.affiliateCode;
     currentDate = new Date();
     title: string;
     buttons: IDialogButton[] = [

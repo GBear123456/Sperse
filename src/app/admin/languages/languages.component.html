@@ -3,7 +3,7 @@
                   icon="flag"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
@@ -32,7 +32,7 @@
                       [pager]="defaultGridPagerConfig"
                       (onOptionChanged)="onGridOptionChanged($event)"
                       (onInitialized)="onInitialized($event)"
-                      (onEditingStart)="showActionsMenu($event)"
+                      (onEditingStart)="toggleActionsMenu($event)"
                       (onRowPrepared)="onRowPrepared($event)"
                       (onContentReady)="setGridDataLoaded()"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">

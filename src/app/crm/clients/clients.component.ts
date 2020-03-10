@@ -104,6 +104,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -177,7 +179,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
 
     actionEvent: any;
-    actionMenuItems = [
+    actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),
             class: 'edit',
@@ -200,7 +202,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                loadOptions
+                loadOptions,
+                /** @todo change to strict typing and handle typescript error */
+                this.subscriptionStatusFilter.items.element['getObjectValue']()
             ).then((data, additionalData) => {
                 this.totalCount = additionalData.totalCount;
                 return data;
@@ -260,7 +264,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 area: 'filter',
-                dataField: 'LeadDate',
+                dataField: this.dateField,
                 dataType: 'date',
                 groupInterval: 'day',
                 showTotals: false
@@ -329,7 +333,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,
-            this.dateField
+            this.dateField,
+            this.subscriptionStatusFilter.items.element['getObjectValue']()
         )),
         publishReplay(),
         refCount(),
@@ -345,7 +350,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 this.chartComponent.summaryBy.value,
-                this.dateField
+                this.dateField,
+                this.subscriptionStatusFilter.items.element['getObjectValue']()
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
                 this.totalCount = this.chartInfoItems[0].value;
@@ -375,8 +381,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             return subscriptions.map((subscription: ServiceTypeInfo) => {
                                 return {
                                     ...subscription,
-                                    checkbox1: null,
-                                    checkbox2: null
+                                    current: null,
+                                    past: null,
+                                    never: null
                                 };
                             });
                         })
@@ -435,7 +442,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 },
                 onLoaded: (customers) => {
                     const userIds = [];
-                    customers.forEach((customer) => {
+                    customers && customers.forEach((customer) => {
                         if (customer.UserId) {
                             userIds.push(customer.UserId);
                         }
@@ -1220,12 +1227,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.hideHostElement();
     }
 
-    showActionsMenu(event) {
-        event.cancel = true;
-        this.actionEvent = null;
+    toggleActionsMenu(event) {
         this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
             && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
-        setTimeout(() => this.actionEvent = event);
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionEvent) => {
+            this.actionEvent = actionEvent;
+        });
     }
 
     onMenuItemClick(event) {

@@ -3,27 +3,15 @@
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   (onToggleCompactView)="toggleContactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()">
-        <div class="order-types">
-            <dx-select-box accessKey="orderTypes"
-                           displayExpr="text"
-                           valueExpr="value"
-                           [items]="orderTypes"
-                           fieldTemplate="selectTemplate"
-                           [(value)]="selectedOrderType"
-                           (onValueChanged)="onContactGroupChanged($event)">
-                <div *dxTemplate="let data of 'selectTemplate'">
-                    <div class="select-header">
-                        <span>{{data.text}}</span>
-                        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
-                        <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
-                    </div>
-                </div>
-            </dx-select-box>
-        </div>
+        <types-dropdown [items]="orderTypes"
+                        [totalCount]="totalCount"
+                        [(value)]="selectedOrderType"
+                        (onValueChanged)="onOrderTypeChanged($event)">
+        </types-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <div [hidden]="selectedOrderType !== orderTypesEnum.Order">
@@ -56,7 +44,7 @@
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [loadPanel]="{ enabled: false }"
-                                          [remoteOperations]="{ filtering: false }"
+                                          [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
                                           [pager]="defaultGridPagerConfig"

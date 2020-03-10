@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
-import { filter, finalize, pluck, takeUntil, map } from 'rxjs/operators';
+import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -19,12 +19,10 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -35,12 +33,10 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { OrderServiceProxy, ServiceTypeInfo } from '@shared/service-proxies/service-proxies';
+import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
-import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
-import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -78,32 +74,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
-    private subscriptionStatusFilter = new FilterModel({
-        component: SubscriptionsFilterComponent,
-        caption: 'SubscriptionStatus',
-        field: 'ServiceTypeId',
-        items: {
-            element: new SubscriptionsFilterModel(
-                {
-                    dataSource$: this.store$.pipe(
-                        select(SubscriptionsStoreSelectors.getSubscriptions),
-                        filter(Boolean),
-                        map((subscriptions: ServiceTypeInfo[]) => {
-                            return subscriptions.map((subscription: ServiceTypeInfo) => {
-                                return {
-                                    ...subscription,
-                                    checkbox1: null,
-                                    checkbox2: null
-                                };
-                            });
-                        })
-                    ),
-                    dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: 'name',
-                    keyExpr: 'id'
-                })
-        }
-    });
+    private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
     private ordersFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -185,22 +156,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: 'Fee',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'Subscription',
-            field: 'ServiceTypeId',
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(
-                            select(SubscriptionsStoreSelectors.getSubscriptions)
-                        ),
-                        dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                        nameField: 'name',
-                        keyExpr: 'id'
-                    })
-            }
-        })
+        this.getSubscriptionsFilter('Subscription')
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
@@ -405,6 +361,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.selectedOrderType === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
 
+    private getSubscriptionsFilter(caption: string) {
+        return new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: caption,
+            field: 'ServiceTypeId',
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(select(SubscriptionsStoreSelectors.getSubscriptions)),
+                        dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        });
+    }
+
     initOrdersToolbarConfig() {
         this.ordersToolbarConfig = [
             {
@@ -577,10 +550,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
             } else {
-                this.setDataGridInstance(this.ordersGrid);
+                this.setDataGridInstance(this.dataGrid);
             }
         } else if (this.selectedOrderType === OrderType.Subscription) {
-            this.setDataGridInstance(this.subscriptionsGrid);
+            this.setDataGridInstance(this.dataGrid);
         }
     }
 
@@ -668,8 +641,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filters,
             this.filtersService.getCheckCustom,
             null,
-            this.subscriptionStatusFilter.items.element.value
+            this.getSubscriptionsParams()
         );
+    }
+
+    private getSubscriptionsParams() {
+        return this.subscriptionStatusFilter.items.element.value.map(item => ({
+            name: 'serviceTypeIds',
+            value: item
+        }));
     }
 
     searchValueChange(e: object) {
@@ -811,7 +791,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    onContactGroupChanged(event) {
+    onOrderTypeChanged(event) {
         if (event.previousValue != event.value) {
             this.totalCount = null;
             this.searchValue = '';

@@ -37,6 +37,9 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -44,11 +47,12 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     animations: [ appModuleAnimation() ]
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
 
     private editions: any = [];
     private filters: FilterModel[];
-    public actionMenuItems: any = [
+    public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('LoginAsThisTenant'),
             class: 'login',
@@ -358,12 +362,10 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         });
     }
 
-    showActionsMenu(event) {
-        setTimeout(() => {
-            this.actionRecord = event.data;
-        }, this.actionRecord ? 500 : 0);
-        this.actionRecord = null;
-        event.cancel = true;
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionRecord).subscribe((actionRecord) => {
+            this.actionRecord = actionRecord;
+        });
     }
 
     onMenuItemClick($event) {

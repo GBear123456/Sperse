@@ -69,6 +69,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { Period } from '@app/shared/common/period/period.enum';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -282,7 +283,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return this._categoriesShowed;
     }
     private syncAccounts: any;
-
+    isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
     private showDataGridToolbar = !AppConsts.isMobile;
@@ -305,7 +306,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        if (filtersService.fixed)
+        if (filtersService.fixed || this.isAdvicePeriod)
             this._categoriesShowed = false;
 
         this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
@@ -582,7 +583,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        visible: !this._cfoService.hasStaticInstance,
+                        visible: !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
                         action: () => {
                             this.filtersService.fixed =
                                 !this.filtersService.fixed;
@@ -675,7 +676,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         name: 'rowFilter',
                         action: DataGridService.enableFilteringRow.bind(this, this.dataGrid),
                         options: {
-                            checkPressed: DataGridService.getGridOption(this.dataGrid, 'filterRow.visible')
+                            checkPressed: () => DataGridService.getGridOption(this.dataGrid, 'filterRow.visible')
                         }
                     },
                     {

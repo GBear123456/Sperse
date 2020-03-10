@@ -10,10 +10,10 @@
         </div>
         &nbsp;<small>{{text}}</small><div class="transclude"></div>
     </div>
-    <div class="headline-content">
+    <div class="headline-content" [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>
     </div>
-    <div class="headline-buttons" [ngClass]="{ 'need-refresh': reloadIsNecessary }">
+    <div class="headline-buttons" [ngClass]="{'need-refresh': reloadIsNecessary}">
         <ng-template ngFor let-item [ngForOf]="buttons">
             <button *ngIf="item.enabled" [id]="item?.id" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action($event)">
                 <i class="icon-{{item.icon}}"></i> {{item.label}}

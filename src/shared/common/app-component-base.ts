@@ -34,6 +34,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { TitleService } from '@shared/common/title/title.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { InstanceModel } from '@shared/cfo/instance.model';
+import { Param } from '@shared/common/odata/param.model';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
@@ -215,13 +216,13 @@ export abstract class AppComponentBase implements OnDestroy {
             this.isDataLoaded = false;
     }
 
-    getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null, params = null) {
+    getODataUrl(uri: string, filter?: Object, instanceData: InstanceModel = null, params: Param[] = null) {
         const searchParam = this.getQuickSearchParam();
         params = (searchParam && [searchParam] || []).concat(params || []);
         return this.oDataService.getODataUrl(uri, filter, instanceData, params);
     }
 
-    processODataFilter(grid, uri, filters: FilterModel[], getCheckCustom, instanceData = null, params = null) {
+    processODataFilter(grid, uri, filters: FilterModel[], getCheckCustom, instanceData: InstanceModel = null, params: Param[] = null) {
         this.isDataLoaded = false;
         const searchParam = this.getQuickSearchParam();
         params = searchParam ? params && params.concat([searchParam]) || [searchParam] : params;

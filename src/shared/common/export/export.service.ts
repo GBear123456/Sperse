@@ -103,7 +103,7 @@ export class ExportService {
                 if (data.length > 0)
                     _headers = Object.keys(data[0]);
 
-                new Angular5Csv(data, this.getFileName(dataGrid, null, prefix), { headers: _headers, replaceNulls: true });
+                new Angular5Csv(data.map(dataItem => ({ ...dataItem})), this.getFileName(dataGrid, null, prefix), { headers: _headers, replaceNulls: true });
             });
         }
     }

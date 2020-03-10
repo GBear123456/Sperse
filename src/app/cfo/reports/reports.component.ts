@@ -376,7 +376,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if ($event.rowType === 'data') {
             /** If user click on actions icon */
             if (target.closest('.dx-link.dx-link-edit')) {
-                this.showActionsMenu($event.data, target);
+                this.toggleActionsMenu($event.data, target);
             } else {
                 this.currentReportInfo = $event.data;
                 /** Save sorted visible rows to get next and prev properly */
@@ -445,11 +445,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         });
     }
 
-    showActionsMenu(data, target) {
+    toggleActionsMenu(data, target) {
         this.actionRecordData = data;
-        setTimeout(() => {
-            this.actionMenu.show(target);
-        });
+        this.actionMenu.toggle(target);
     }
 
     hideActionsMenu() {

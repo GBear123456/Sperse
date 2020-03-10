@@ -4,7 +4,7 @@
                   [buttons]="headlineButtons"
                   [showToggleCompactViewButton]="showDataGrid"
                   [showToggleToolbarButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleFullScreenButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
@@ -90,13 +90,13 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
-                                  [remoteOperations]="{ filtering: false }"
+                                  [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                                   [loadPanel]="{ enabled: false }"
                                   [pager]="defaultGridPagerConfig"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
-                                  (onEditingStart)="showActionsMenu($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
@@ -148,38 +148,39 @@
                             <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
                         </div>
 
-                    <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
-                    <dxo-sorting mode="multiple"></dxo-sorting>
-                    <dxo-paging [pageSize]="20"></dxo-paging>
-                    <dxo-group-panel [visible]="true"></dxo-group-panel>
-                </dx-data-grid>
+                        <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                    </dx-data-grid>
+                </div>
             </div>
         </div>
-    </div>
-    <div [hidden]="hidePivotGrid$ | async">
-        <slice-pivot-grid [storageKey]="sliceStorageKey"
-                          [isLoading]="pivotGridDataIsLoading"
-                          [height]="contentHeight$ | async">
-        </slice-pivot-grid>
-    </div>
-    <div [hidden]="hideChart$ | async">
-        <slice-chart [width]="contentWidth$ | async"
-                     [height]="contentHeight$ | async"
-                     [infoItems]="chartInfoItems"
-                     [itemsName]="l('Partners')"
-                     [title]="l('PartnersNumber')"
-                     argumentField="creationDate"
-                     valueField="count">
-        </slice-chart>
-    </div>
-    <div [hidden]="hideMap$ | async">
-        <slice-info [items]="mapInfoItems$ | async"></slice-info>
-        <slice-map [width]="contentWidth$ | async"
-                   [height]="mapHeight$ | async"
-                   [contactGroupText]="l('Partners').toLowerCase()"
-                   [dataIsLoading]="mapDataIsLoading"
-                   [data]="mapData$ | async">
-        </slice-map>
+        <div [hidden]="hidePivotGrid$ | async">
+            <slice-pivot-grid [storageKey]="sliceStorageKey"
+                              [isLoading]="pivotGridDataIsLoading"
+                              [height]="contentHeight$ | async">
+            </slice-pivot-grid>
+        </div>
+        <div [hidden]="hideChart$ | async">
+            <slice-chart [width]="contentWidth$ | async"
+                         [height]="contentHeight$ | async"
+                         [infoItems]="chartInfoItems"
+                         [itemsName]="l('Partners')"
+                         [title]="l('PartnersNumber')"
+                         argumentField="creationDate"
+                         valueField="count">
+            </slice-chart>
+        </div>
+        <div [hidden]="hideMap$ | async">
+            <slice-info [items]="mapInfoItems$ | async"></slice-info>
+            <slice-map [width]="contentWidth$ | async"
+                       [height]="mapHeight$ | async"
+                       [contactGroupText]="l('Partners').toLowerCase()"
+                       [dataIsLoading]="mapDataIsLoading"
+                       [data]="mapData$ | async">
+            </slice-map>
+        </div>
     </div>
 </div>
 

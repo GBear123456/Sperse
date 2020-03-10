@@ -11,19 +11,20 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataSearchStrategy } from '@shared/AppEnums';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
+import { Param } from '@shared/common/odata/param.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ODataService {
-    private _dxRequestPool = {};
+    private dxRequestPool = {};
     private pivotGridInitialBeforeSend;
 
     constructor() {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
             let key = (options.url.match(/odata\/(\w+)[\?|$]/) || []).pop() + (options.headers.context || '');
-            return (this._dxRequestPool[key] = dxAjax.sendRequest(options));
+            return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
     }
 
@@ -32,8 +33,8 @@ export class ODataService {
         if (dataSource) {
             if (dataSource.isLoading() && dataSource['operationId'])
                 dataSource.cancel(dataSource['operationId']);
-            if (this._dxRequestPool[uri])
-                this._dxRequestPool[uri].abort();
+            if (this.dxRequestPool[uri])
+                this.dxRequestPool[uri].abort();
 
             if (url)
                 dataSource['_store']['_url'] = url;
@@ -43,7 +44,7 @@ export class ODataService {
         return promise;
     }
 
-    getODataUrl(uri: String, filter?: any, instanceData: InstanceModel = null, params: { name: string, value: string }[] = []) {
+    getODataUrl(uri: String, filter?: any, instanceData: InstanceModel = null, params: Param[] = []) {
         let url = AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
         if (instanceData) {
             url += (url.indexOf('?') == -1 ? '?' : '&');
@@ -72,7 +73,7 @@ export class ODataService {
         return filter ? buildQuery({ filter }) : '';
     }
 
-    private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string, instanceData = null, params = null) {
+    private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string, instanceData: InstanceModel = null, params: Param[] = null) {
         let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue)),
             url = this.getODataUrl(uri, queryWithSearch, instanceData, params);
 
@@ -100,8 +101,19 @@ export class ODataService {
         return queryWithSearch;
     }
 
-    processODataFilter(grid, uri, filters: FilterModel[], getCheckCustom, searchColumns: any[], searchValue: string, instanceData = null, params = null) {
-        return this.advancedODataFilter(grid, uri,
+    processODataFilter(
+        grid,
+        uri,
+        filters: FilterModel[],
+        getCheckCustom,
+        searchColumns: any[],
+        searchValue: string,
+        instanceData: InstanceModel = null,
+        params: Param[] = null
+    ) {
+        return this.advancedODataFilter(
+            grid,
+            uri,
             (filters || []).map((filter: FilterModel) => {
                 return getCheckCustom && getCheckCustom(filter) ||
                     filter.getODataFilterObject();

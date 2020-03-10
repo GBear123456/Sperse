@@ -2,7 +2,7 @@
               [names]="[ l('Cashflow_mainTitle') ]"
               iconSrc="assets/common/icons/chart-icon.svg"
               [reloadIsNecessary]="noRefreshedAfterSync"
-              [showReloadButton]="true"
+              [showReloadButton]="ui.showReload"
               [showToggleToolbarButton]="true"
               (onReload)="reload()"
               (onToggleToolbar)="toggleToolbar()">

@@ -1,7 +1,7 @@
 <div>
     <app-headline [names]="[ l('Statements') ]"
                   iconSrc="assets/common/icons/credit-card-icon.svg"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="!_cfoService.hasStaticInstance"
                   (onToggleCompactView)="toggleCompactView()"

@@ -1,38 +1,18 @@
 <div [@routerTransition]>
     <app-headline [buttons]="headlineButtons"
                   [showToggleCompactViewButton]="showPipeline || showDataGrid"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
                   (onReload)="refresh()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)">
-        <div class="contact-group">
-            <dx-select-box
-                    *ngIf="contactGroups.length > 1; else text"
-                    accessKey="contactGroup"
-                    displayExpr="text"
-                    valueExpr="value"
-                    [items]="contactGroups"
-                    fieldTemplate="selectTemplate"
-                    [(value)]="selectedContactGroup"
-                    (onValueChanged)="onContactGroupChanged($event)">
-                <div *dxTemplate="let data of 'selectTemplate'">
-                    <div class="select-header">
-                        <span>{{data.text}}</span>
-                        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
-                        <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
-                    </div>
-                </div>
-            </dx-select-box>
-            <ng-template #text>
-                <div  class="select-header" *ngIf="contactGroups.length === 1">
-                    <span>{{contactGroups[0].text}}</span>
-                    <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
-                </div>
-            </ng-template>
-        </div>
+        <types-dropdown [items]="contactGroups"
+                        [totalCount]="totalCount"
+                        [(value)]="selectedContactGroup"
+                        (onValueChanged)="onContactGroupChanged($event)">
+        </types-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
@@ -78,7 +58,7 @@
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [cacheEnabled]="false"
-                                [remoteOperations]="{ filtering: false }"
+                                [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
@@ -86,7 +66,7 @@
                                 (onOptionChanged)="onGridOptionChanged($event)"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
-                                (onEditingStart)="showActionsMenu($event)"
+                                (onEditingStart)="toggleActionsMenu($event)"
                                 (onSelectionChanged)="onSelectionChanged($event)"
                                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-selection
@@ -154,6 +134,7 @@
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                     </dx-data-grid>
+                    </div>
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
-                  [showReloadButton]="true"
+                  [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactRowHeight()"
@@ -33,7 +33,7 @@
                                   (onContentReady)="onContentReady()"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onCellClick)="openCreateOrEditDialog($event)"
-                                  (onEditingStart)="showActionsMenu($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
                                   [dataSource]="dataSource">
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [caption]="l('ModuleName')"
