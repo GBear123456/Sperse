@@ -22,7 +22,7 @@ export class SimulationGroupComponent {
     ];
 
     constructor(
-        private ls: AppLocalizationService
+        public ls: AppLocalizationService
     ) {}
 
     changingBalance(event) {

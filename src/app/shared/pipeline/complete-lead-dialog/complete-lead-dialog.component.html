@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ls.ls.l('A client without order will be created if an Order Stage is not specified')}}</h2>
+<h2 mat-dialog-title>{{ls.l('A client without order will be created if an Order Stage is not specified')}}</h2>
 <mat-dialog-content>
     <dx-select-box
         [dataSource]="orderStages"
@@ -10,7 +10,7 @@
     <dx-number-box
         [placeholder]="ls.l('Amount')"
         [format]="currency + ' #,##0.##'"
-        [(value)]="amount"  
+        [(value)]="amount"
         [disabled]="!orderStageId">
     </dx-number-box>
     <dx-text-area

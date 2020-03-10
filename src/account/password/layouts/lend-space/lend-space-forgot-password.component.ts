@@ -1,5 +1,5 @@
 /** Core imports */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
 /** Application imports */
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -12,5 +12,4 @@ import { HostForgotPasswordComponent } from '../host/host-forgot-password.compon
     ],
     animations: [accountModuleAnimation()]
 })
-export class LendSpaceForgotPasswordComponent extends HostForgotPasswordComponent {
-}
+export class LendSpaceForgotPasswordComponent extends HostForgotPasswordComponent {}
