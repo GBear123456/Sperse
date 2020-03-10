@@ -145,7 +145,7 @@
                       [columnAutoWidth]="true"
                       [pager]="defaultGridPagerConfig"
                       [hoverStateEnabled]="true"
-                      [remoteOperations]="{ filtering: false }"
+                      [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                       [allowColumnResizing]="true"
                       (onCellClick)="onCellClick($event, 'subscriptions')"
                       (onContentReady)="onContentReady($event)">

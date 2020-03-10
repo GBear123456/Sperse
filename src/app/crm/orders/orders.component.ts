@@ -646,7 +646,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        return this.subscriptionStatusFilter.items.element.value.map(item => ({
+        let value = this.subscriptionStatusFilter.items.element.value;
+        return value && value.map(item => ({
             name: 'serviceTypeIds',
             value: item
         }));
