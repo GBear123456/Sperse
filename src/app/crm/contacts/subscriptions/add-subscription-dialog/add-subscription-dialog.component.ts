@@ -32,7 +32,6 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -44,7 +43,7 @@ import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto
     ]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: true }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
     private slider: any;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);

@@ -31,7 +31,7 @@ import { AppService } from '@app/app.service';
     providers: [ ClassificationServiceProxy ]
 })
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxTreeListComponent, { static: true }) treeList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
 
     private lastRemovedItemID: number;
     private rootComponent: any;

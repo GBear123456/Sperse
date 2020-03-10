@@ -22,7 +22,6 @@ import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'area-navigation',
@@ -33,7 +32,7 @@ export class AreaNavigationComponent implements AfterViewInit, OnChanges, OnDest
     @Input() memberAreaLinks: MemberAreaLink[];
     @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
-    @ViewChild('linksList', { static: true }) linksList: ElementRef;
+    @ViewChild('linksList', { static: false }) linksList: ElementRef;
     responsiveMemberAreaLinks = [];
     inlineMemberAreaLinks: MemberAreaLink[] = [];
     resizeTimeout: any;

@@ -37,7 +37,7 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./subscriptions.component.less']
 })
 export class SubscriptionsComponent implements OnInit {
-    @ViewChild('mainGrid', { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild('mainGrid', { static: false }) dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto
     };

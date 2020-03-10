@@ -1,14 +1,15 @@
+/**  Core imports */
 import {
     Component,
     Directive,
-    Injector,
     Type,
     OnInit,
     ViewChild,
     ViewContainerRef,
     ComponentFactoryResolver
 } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+
+/** Application imports */
 import { SendPasswordResetCodeInput, LayoutType } from '@shared/service-proxies/service-proxies';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
@@ -17,7 +18,6 @@ import { LendSpaceForgotPasswordComponent } from './layouts/lend-space/lend-spac
 import { AdvicePeriodForgotPasswordComponent } from './layouts/advice-period/advice-period-forgot-password.component';
 import { BankCodeForgotPasswordComponent } from './layouts/bank-code/bank-code-forgot-password.component';
 import { HostForgotPasswordComponent } from '@root/account/password/layouts/host/host-forgot-password.component';
-import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-forgot-password-host]'
@@ -30,24 +30,20 @@ export class AdForgotPasswordHostDirective {
     templateUrl: './forgot-password.component.html',
     animations: [accountModuleAnimation()]
 })
-export class ForgotPasswordComponent extends AppComponentBase implements OnInit {
+export class ForgotPasswordComponent implements OnInit {
     @ViewChild(AdForgotPasswordHostDirective, { static: true }) adForgotPasswordHost: AdForgotPasswordHostDirective;
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
-
     saving = false;
 
     constructor (
-        injector: Injector,
-        private _loginService: LoginService,
-        private _appSession: AppSessionService,
-        private _componentFactoryResolver: ComponentFactoryResolver
-    ) {
-        super(injector);
-    }
+        private loginService: LoginService,
+        private appSession: AppSessionService,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {}
 
 
     ngOnInit() {
-        this.loadLayoutComponent(this.getLayoutComponent(this._appSession.tenant));
+        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
     }
 
     private getLayoutComponent(tenant) {
@@ -65,7 +61,7 @@ export class ForgotPasswordComponent extends AppComponentBase implements OnInit 
 
     private loadLayoutComponent(component: Type<HostForgotPasswordComponent>) {
         this.adForgotPasswordHost.viewContainerRef.createComponent(
-            this._componentFactoryResolver.resolveComponentFactory(component)
+            this.componentFactoryResolver.resolveComponentFactory(component)
         );
     }
 }

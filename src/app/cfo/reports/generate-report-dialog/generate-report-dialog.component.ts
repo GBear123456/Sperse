@@ -41,9 +41,9 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ DepartmentsServiceProxy, ReportsServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: true }) treeList: DxTreeListComponent;
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('notificationToEmailTextBox', { static: true }) notificationToEmailTextBox: DxTextBoxComponent;
+    @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild('notificationToEmailTextBox', { static: false }) notificationToEmailTextBox: DxTextBoxComponent;
 
     title = this.ls.l('SelectBusinessEntity');
     initButtons: IDialogButton[] = [

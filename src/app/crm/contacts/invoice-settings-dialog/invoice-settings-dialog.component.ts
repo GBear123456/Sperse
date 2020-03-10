@@ -21,7 +21,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
-    @ViewChild(EmailTemplateDialogComponent, { static: true }) modalDialog: EmailTemplateDialogComponent;
+    @ViewChild(EmailTemplateDialogComponent, { static: false }) modalDialog: EmailTemplateDialogComponent;
     settings = new InvoiceSettings();
     currencies = Object.keys(Currency).map(item => {
         return {

@@ -19,13 +19,11 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
     templateUrl: './organization-unit-members.component.html'
 })
 export class OrganizationUnitMembersComponent {
-
+    @ViewChild('addMemberModal', { static: false }) addMemberModal: AddMemberModalComponent;
+    @ViewChild('dataTable', { static: false }) dataTable: Table;
+    @ViewChild('paginator', { static: false }) paginator: Paginator;
     @Output() memberRemoved = new EventEmitter<IUserWithOrganizationUnit>();
     @Output() membersAdded = new EventEmitter<IUsersWithOrganizationUnit>();
-
-    @ViewChild('addMemberModal', { static: true }) addMemberModal: AddMemberModalComponent;
-    @ViewChild('dataTable', { static: true }) dataTable: Table;
-    @ViewChild('paginator', { static: true }) paginator: Paginator;
 
     public permissions = AppPermissions;
     private _organizationUnit: IBasicOrganizationUnitInfo = null;

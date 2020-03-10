@@ -25,16 +25,13 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     styleUrls: ['./organization-units-tree.component.less']
 })
 export class OrganizationUnitsTreeComponent implements OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: true }) organizationUnitsTree: DxTreeViewComponent;
-
+    @ViewChild(DxTreeViewComponent, { static: false }) organizationUnitsTree: DxTreeViewComponent;
     @Input() selectionMode = 'multiple';
 
     public oranizationUnitsDataSource: DataSource;
     public searchEnabled = false;
     public sortTreeDesc = false;
-
-    isEditAllowed = false;
-
+    public isEditAllowed: boolean = this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
     private userId: number;
     private organizationUnitsData: OrganizationUnitDto[];
     private lastSelectedItemId: number;
@@ -108,8 +105,6 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
             },
             this.ident
         );
-
-        this.isEditAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
     }
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], selectedOrgUnits: number[]) {

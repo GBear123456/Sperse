@@ -46,10 +46,10 @@ import { MessageService } from '@abp/message/message.service';
 })
 export class EditTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
-    @ViewChild('SubscriptionEndDateUtc', { static: true }) subscriptionEndDateUtc: ElementRef;
-    @ViewChild(ModulesEditionsSelectComponent, { static: true }) editionsSelect: ModulesEditionsSelectComponent;
-    @ViewChild(FeatureTreeComponent, { static: true }) featureTree: FeatureTreeComponent;
+    @ViewChild('nameInput', { static: false }) nameInput: ElementRef;
+    @ViewChild('SubscriptionEndDateUtc', { static: false }) subscriptionEndDateUtc: ElementRef;
+    @ViewChild(ModulesEditionsSelectComponent, { static: false }) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(FeatureTreeComponent, { static: false }) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;

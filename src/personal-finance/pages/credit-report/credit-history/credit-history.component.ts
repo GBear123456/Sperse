@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CreditReportServiceProxy, CreditReportDto } from '@shared/service-proxies/service-proxies';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import * as moment from 'moment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -10,7 +9,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./credit-history.component.less']
 })
 export class CreditHistoryComponent implements OnInit {
-    @ViewChild(DxChartComponent, { static: true }) chart: DxChartComponent;
     @Input() creditReport: CreditReportDto;
     public scoreHistory: ScoreHistory[];
     bureauColors = {
@@ -20,19 +18,18 @@ export class CreditHistoryComponent implements OnInit {
     };
 
     constructor(
-        private _creditReportService: CreditReportServiceProxy,
+        private creditReportService: CreditReportServiceProxy,
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
-        this._creditReportService.getCreditReportHistory(2, this.creditReport.creditReportId)
+        this.creditReportService.getCreditReportHistory(2, this.creditReport.creditReportId)
             .subscribe(result => {
                 if (result) {
                     this.scoreHistory = new Array<ScoreHistory>();
                     result.forEach((val) => {
                         val.value.forEach((scoreHisDto) => {
-                            var his = new ScoreHistory();
+                            let his = new ScoreHistory();
                             his.bureau = val.key;
                             his.scoreDate = scoreHisDto.scoreDate.toDate();
                             his.score = scoreHisDto.score;
@@ -62,9 +59,9 @@ export class CreditHistoryComponent implements OnInit {
 
     customizeTooltip = (args: any) => {
         return {
-            html: "<div><img src='assets/images/credit-report/" + args.seriesName.toLowerCase() + ".png' />" +
-                "<div><b>" + this.ls.l('CR_CreditHistoryTooltip_Score') + "</b>: " + args.value + "</div>" +
-                "<div><b>" + this.ls.l('CR_CreditHistoryTooltip_ScoreDate') + "</b>: " + this.formatDate(args.argument) + "</div></div>"
+            html: `<div><img src='assets/images/credit-report/${args.seriesName.toLowerCase()}.png'/>
+                   <div><b>${this.ls.l('CR_CreditHistoryTooltip_Score')}</b>: ${args.value}</div>
+                   <div><b>${this.ls.l('CR_CreditHistoryTooltip_ScoreDate')}</b>: ${this.formatDate(args.argument)}</div></div>`
         };
     }
 

@@ -25,11 +25,11 @@ import { Period } from '@app/shared/common/period/period.enum';
     animations: [appModuleAnimation()]
 })
 export class PortalDashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(AccountsComponent, { static: true }) accountsComponent: AccountsComponent;
-    @ViewChild(TotalsByPeriodComponent, { static: true }) totalsByPeriodComponent: TotalsByPeriodComponent;
-    @ViewChild(TrendByPeriodComponent, { static: true }) trendByPeriodComponent: TrendByPeriodComponent;
-    @ViewChild(TopSpendingCategoriesComponent, { static: true }) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
-    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(AccountsComponent, { static: false }) accountsComponent: AccountsComponent;
+    @ViewChild(TotalsByPeriodComponent, { static: false }) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent, { static: false }) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(TopSpendingCategoriesComponent, { static: false }) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
+    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
     linksTo: any = [

@@ -28,7 +28,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
     styleUrls: ['./visitors.component.less']
 })
 export class VisitorsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     @Input() dateFrom: moment;
     @Input() dateTo: moment;
@@ -40,7 +40,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     queryParamsSubscription: any;
 
     constructor(injector: Injector,
-        private _dialog: MatDialog
+        private dialog: MatDialog
     ) {
         super(injector);
         this.queryParamsSubscription = this._activatedRoute.queryParams.subscribe(params => {
@@ -162,8 +162,8 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid, true) },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    { name: 'showCompactRowsHeight', action: () => DataGridService.toggleCompactRowsHeight(this.dataGrid, true) },
+                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
                 ]
             },
             {
@@ -200,8 +200,8 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     }
 
     showCalendarDialog() {
-        this._dialog.closeAll();
-        this._dialog.open(CalendarDialogComponent, {
+        this.dialog.closeAll();
+        this.dialog.open(CalendarDialogComponent, {
             panelClass: [ 'slider' ],
             disableClose: false,
             hasBackdrop: false,
@@ -236,6 +236,6 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
 
     ngOnDestroy() {
         this.queryParamsSubscription.unsubscribe();
-        this._dialog.closeAll();
+        this.dialog.closeAll();
     }
 }

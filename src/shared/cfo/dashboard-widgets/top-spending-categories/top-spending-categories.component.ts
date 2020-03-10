@@ -1,5 +1,5 @@
 /** Core import */
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, HostBinding, Input } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, HostBinding, Input } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
 import { first, filter, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -33,7 +32,6 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
     providers: [ CurrencyPipe, DashboardServiceProxy, LifecycleSubjectsService ]
 })
 export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent, { static: true }) pieChart: DxPieChartComponent;
     @HostBinding('class.fullpage') @Input() fullpage = false;
 
     period$: Observable<DailyStatsPeriodModel> = this.dashboardService.dailyStatsPeriod$;

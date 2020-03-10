@@ -41,8 +41,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class CompanyDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxDateBoxComponent, { static: true }) calendarComponent: DxDateBoxComponent;
-    @ViewChild(DxSelectBoxComponent, { static: true }) companyTypesSelect: DxSelectBoxComponent;
+    @ViewChild(DxDateBoxComponent, { static: false }) calendarComponent: DxDateBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;
     countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));

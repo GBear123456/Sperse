@@ -28,7 +28,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     providers: [ LifecycleSubjectsService ]
 })
 export class TopBarComponent implements OnDestroy {
-    @ViewChild(DxNavBarComponent, { static: true }) navBar: DxNavBarComponent;
+    @ViewChild(DxNavBarComponent, { static: false }) navBar: DxNavBarComponent;
 
     config: any = {};
     selectedIndex: number;

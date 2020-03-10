@@ -1,16 +1,15 @@
-import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ProfileServiceProxy, VerifySmsCodeInputDto } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
+import { AppLocalizationService } from '../../common/localization/app-localization.service';
 
 @Component({
     selector: 'smsVerificationModal',
     templateUrl: './sms-verification-modal.component.html'
 })
-export class SmsVerificationModalComponent extends AppComponentBase {
-    @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
-    @ViewChild('smsVerificationModal', { static: true }) modal: ModalDirective;
+export class SmsVerificationModalComponent {
+    @ViewChild('smsVerificationModal', { static: false }) modal: ModalDirective;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
@@ -19,11 +18,9 @@ export class SmsVerificationModalComponent extends AppComponentBase {
     public verifyCode: VerifySmsCodeInputDto = new VerifySmsCodeInputDto();
 
     constructor(
-        injector: Injector,
-        private _profileService: ProfileServiceProxy
-    ) {
-        super(injector);
-    }
+        private profileService: ProfileServiceProxy,
+        public ls: AppLocalizationService
+    ) {}
 
     show(): void {
         this.active = true;
@@ -37,8 +34,8 @@ export class SmsVerificationModalComponent extends AppComponentBase {
 
     save(): void {
         this.saving = true;
-        this._profileService.verifySmsCode(this.verifyCode)
-            .pipe(finalize(() => { this.saving = false; }))
+        this.profileService.verifySmsCode(this.verifyCode)
+            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
                 this.close();
                 this.modalSave.emit(null);

@@ -28,9 +28,9 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     providers: [ CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy ]
 })
 export class RuleDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxTreeViewComponent, { static: true }) transactionTypesList: DxTreeViewComponent;
-    @ViewChild('attributesComponent', { static: true }) attributeList: DxDataGridComponent;
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
+    @ViewChild(DxTreeViewComponent, { static: false }) transactionTypesList: DxTreeViewComponent;
+    @ViewChild('attributesComponent', { static: false }) attributeList: DxDataGridComponent;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     showSelectedTransactions = false;
     minAmount: number;
     maxAmount: number;

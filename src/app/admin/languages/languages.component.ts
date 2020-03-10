@@ -5,7 +5,6 @@ import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -28,8 +27,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
     animations: [appModuleAnimation()]
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(DxTooltipComponent, { static: true }) tooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     dataSource: DataSource;
     public actionMenuItems: ActionMenuItem[];
     public actionRecord: any;

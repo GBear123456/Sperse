@@ -7,7 +7,6 @@ import {
     Injector,
     Inject,
     OnDestroy,
-    ViewChild,
     ChangeDetectorRef,
     ElementRef
 } from '@angular/core';
@@ -15,8 +14,7 @@ import { DOCUMENT, DecimalPipe } from '@angular/common';
 
 /** Third party imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
-import { BehaviorSubject, Observable, combineLatest, fromEvent, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, fromEvent, of } from 'rxjs';
 import {
     catchError,
     distinct,
@@ -42,11 +40,11 @@ import 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 import invert from 'lodash/invert';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { TotalsByPeriodModel } from './totals-by-period.model';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupByPeriod } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -57,6 +55,8 @@ import { Period } from '@app/shared/common/period/period.enum';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppLocalizationService } from '../../../../app/shared/common/localization/app-localization.service';
+import { LoadingService } from '../../../common/loading-service/loading.service';
 
 @Component({
     selector: 'totals-by-period',
@@ -65,8 +65,7 @@ import { ContactGroup } from '@shared/AppEnums';
     providers: [ DashboardServiceProxy, DecimalPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck, OnInit, OnDestroy {
-    @ViewChild(DxChartComponent, { static: true }) chartComponent: DxChartComponent;
+export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
@@ -97,11 +96,11 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
     ];
     selectItems = [
         {
-            name: this.l('NetLeadStageRatioAndMemberCount'),
+            name: this.ls.l('NetLeadStageRatioAndMemberCount'),
             value: false
         },
         {
-            name: this.l('CumulativeLeadStageRatioAndMemberCount'),
+            name: this.ls.l('CumulativeLeadStageRatioAndMemberCount'),
             value: true
         }
     ];
@@ -119,7 +118,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
         {
             type: 'spline',
             valueField: 'customerCount',
-            name: this.l('ClientsCount'),
+            name: this.ls.l('ClientsCount'),
             color: this.clientColor
         }
     ];
@@ -130,6 +129,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
     showFullLegend = false;
     startCase = startCase;
     widgetWidth: number;
+    private destroy: Subject<void> = new Subject<void>();
+    private destroy$: Observable<void> = this.destroy.asObservable();
 
     constructor(
         injector: Injector,
@@ -142,11 +143,11 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
         private sessionService: AbpSessionService,
         private decimalPipe: DecimalPipe,
         private layoutService: LayoutService,
+        public loadingService: LoadingService,
         public elementRef: ElementRef,
+        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: Document
-    ) {
-        super(injector);
-    }
+    ) {}
 
     ngOnInit() {
         this.totalsData$ = combineLatest(
@@ -155,11 +156,11 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
-            tap(() => this.startLoading()),
-            switchMap(([period, isCumulative, refresh]: [TotalsByPeriodModel, boolean, null]) => {
+            tap(() => this.loadingService.startLoading()),
+            switchMap(([period, isCumulative, ]: [TotalsByPeriodModel, boolean, null]) => {
                 return this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
                     catchError(() => of([])),
-                    finalize(() => { this.finishLoading(); })
+                    finalize(() => this.loadingService.finishLoading())
                 );
             }),
             publishReplay(),
@@ -274,7 +275,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
     }
 
     getPeriodBottomAxisCustomizer(period: string) {
-        return this[`get${this.capitalize(period)}BottomAxisCustomizer`];
+        return this[`get${capitalize(period)}BottomAxisCustomizer`];
     }
 
     /** Replace minus for the brackets */
@@ -356,6 +357,6 @@ export class TotalsByPeriodComponent extends AppComponentBase implements DoCheck
     }
 
     ngOnDestroy() {
-        super.ngOnDestroy();
+        this.destroy.next();
     }
 }

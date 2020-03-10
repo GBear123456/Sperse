@@ -19,7 +19,7 @@ import { AppPermissions } from '@shared/AppPermissions';
   providers: [ContactRatingsServiceProxy]
 })
 export class RatingComponent {
-    @ViewChild(AppRatingComponent, { static: true }) ratingComponent: AppRatingComponent;
+    @ViewChild(AppRatingComponent, { static: false }) ratingComponent: AppRatingComponent;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() ratingValue: number;
@@ -31,12 +31,11 @@ export class RatingComponent {
     @Output() onRatingUpdated: EventEmitter<any> = new EventEmitter();
 
     constructor(
-        private _notify: NotifyService,
-        private _ls: AppLocalizationService,
-        private _permission: AppPermissionService,
-        private _ratingService: ContactRatingsServiceProxy
-    ) {
-    }
+        private notify: NotifyService,
+        private ls: AppLocalizationService,
+        private permission: AppPermissionService,
+        private ratingService: ContactRatingsServiceProxy
+    ) {}
 
     toggle() {
         this.ratingComponent.toggle();
@@ -48,17 +47,17 @@ export class RatingComponent {
 
     onProcess(ratingValue) {
         if (this.bulkUpdateMode)
-            this._ratingService.rateContacts(RateContactsInput.fromJS({
+            this.ratingService.rateContacts(RateContactsInput.fromJS({
                 contactIds: this.selectedKeys,
                 ratingId: ratingValue
             })).pipe(finalize(() => {
                 this.ratingComponent.reset();
             })).subscribe((result) => {
                 this.onRatingUpdated.emit(ratingValue);
-                this._notify.success(this._ls.l('CustomersRated'));
+                this.notify.success(this.ls.l('CustomersRated'));
             });
         else
-            this._ratingService.rateContact(RateContactInput.fromJS({
+            this.ratingService.rateContact(RateContactInput.fromJS({
                 contactId: this.selectedKeys[0],
                 ratingId: ratingValue
             })).pipe(finalize(() => {
@@ -66,12 +65,12 @@ export class RatingComponent {
                     this.ratingComponent.reset();
             })).subscribe(() => {
                 this.onRatingUpdated.emit(ratingValue);
-                this._notify.success(this._ls.l('CustomersRated'));
+                this.notify.success(this.ls.l('CustomersRated'));
             });
     }
 
     checkPermissions() {
-        return this._permission.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
-            (!this.bulkUpdateMode || this._permission.isGranted(AppPermissions.CRMBulkUpdates));
+        return this.permission.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
+            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

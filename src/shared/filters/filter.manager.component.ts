@@ -9,7 +9,6 @@ import {
     ComponentFactoryResolver,
     ViewChild
 } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from './models/filter-component';
 import { FilterModel } from './models/filter.model';
 

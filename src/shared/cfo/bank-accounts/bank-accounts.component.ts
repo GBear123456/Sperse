@@ -24,7 +24,7 @@ import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-acco
     styleUrls: ['./bank-accounts.component.less']
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(BankAccountsWidgetComponent, { static: true }) bankAccountsWidget: BankAccountsWidgetComponent;
+    @ViewChild(BankAccountsWidgetComponent, { static: false }) bankAccountsWidget: BankAccountsWidgetComponent;
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
     syncAccounts;

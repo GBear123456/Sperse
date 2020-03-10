@@ -4,8 +4,7 @@ import {
     ChangeDetectionStrategy,
     EventEmitter,
     Inject,
-    Output,
-    ViewChild
+    Output
 } from '@angular/core';
 
 /** Third party imports */
@@ -21,7 +20,6 @@ import {
     NameValueDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 export interface ICommonLookupModalOptions {
     title?: string;
@@ -40,7 +38,6 @@ export interface ICommonLookupModalOptions {
 })
 export class CommonLookupModalComponent {
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     dataSource: DataSource;
     defaultOptions: ICommonLookupModalOptions = {
         filterText: '',

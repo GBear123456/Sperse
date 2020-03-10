@@ -46,9 +46,8 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTenantModalComponent implements OnInit {
-    @ViewChild('tenancyNameInput', { static: true }) tenancyNameInput: ElementRef;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(ModulesEditionsSelectComponent, { static: true }) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(ModulesEditionsSelectComponent, { static: false }) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     setRandomPassword = true;

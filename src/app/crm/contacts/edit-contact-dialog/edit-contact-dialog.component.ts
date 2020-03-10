@@ -36,7 +36,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     }
 })
 export class EditContactDialog {
-    @ViewChild('countryPhoneNumber', { static: true }) countryPhoneNumber;
+    @ViewChild('countryPhoneNumber', { static: false }) countryPhoneNumber;
     isValid = false;
     action: string = this.data.value ? 'Edit' : 'Create';
     types: any[] = [];

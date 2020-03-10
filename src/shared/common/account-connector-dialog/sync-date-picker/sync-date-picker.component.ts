@@ -15,7 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
   styleUrls: ['./sync-date-picker.component.less']
 })
 export class SyncDatePickerComponent {
-    @ViewChild(DxDateBoxComponent, { static: true }) dateBox: DxDateBoxComponent;
+    @ViewChild(DxDateBoxComponent, { static: false }) dateBox: DxDateBoxComponent;
     maxDate = moment();
     @HostListener('click') onClick() {
         this.dateBox.instance.open();
@@ -24,8 +24,7 @@ export class SyncDatePickerComponent {
     constructor(
         public syncService: SyncDatePickerService,
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 
     apply(event) {
         if (event.previousValue && moment(event.value).diff(event.previousValue, 'days'))

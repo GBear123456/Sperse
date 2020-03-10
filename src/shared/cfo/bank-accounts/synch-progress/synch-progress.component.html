@@ -47,7 +47,7 @@
                 <div class="scroll-zone">
                     <div class="row">
                         <div class="col-7">
-                            <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
+                            <dx-scroll-view [height]="calculateChartsScrollableHeight()">
                                 <ul class="list-of-synch-accounts">
                                     <li *ngFor="let acc of syncData.accountProgresses; let i = index" id="accountProgress{{i}}"
                                         (mouseenter)="accountProgressMouseEnter('accountProgress' + i, acc.syncStatusMessage)"

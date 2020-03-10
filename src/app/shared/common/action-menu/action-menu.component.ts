@@ -14,7 +14,7 @@ export class ActionMenuComponent {
     @Input() target = '.dx-state-hover .dx-link.dx-link-edit';
     @Output() onItemClick: EventEmitter<any> = new EventEmitter<any>();
     @Output() onHidden: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild(DxTooltipComponent, { static: true }) actionsTooltip: DxTooltipComponent;
+    @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
 
     show(target: any) {
         if (this.actionsTooltip && this.actionsTooltip.instance) {

@@ -25,7 +25,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreferencesDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     GeneralScope = GeneralScope;
     model: CashFlowGridSettingsDto;
     active = false;
@@ -67,7 +67,7 @@ export class PreferencesDialogComponent implements OnInit {
             action: () => {
                 if (this.rememberLastSettings) {
                     this.modalDialog.startLoading();
-                    this._cashflowService.saveCashFlowGridSettings(this.cfoService.instanceType as any, this.cfoService.instanceId, this.model)
+                    this.cashflowService.saveCashFlowGridSettings(this.cfoService.instanceType as any, this.cfoService.instanceId, this.model)
                         .pipe(finalize(() => this.modalDialog.finishLoading()))
                         .subscribe(() => {
                             this.closeSuccessful();
@@ -85,15 +85,15 @@ export class PreferencesDialogComponent implements OnInit {
             value: this.rememberLastSettings,
             onValueChanged: () => {
                 this.rememberLastSettings = !this.rememberLastSettings;
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             }
         }
     ];
     constructor(
-        private _cashflowService: CashflowServiceProxy,
+        private cashflowService: CashflowServiceProxy,
         public cfoService: CFOService,
-        private _dialogRef: MatDialogRef<PreferencesDialogComponent>,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private dialogRef: MatDialogRef<PreferencesDialogComponent>,
+        private changeDetectorRef: ChangeDetectorRef,
         public userPreferencesService: UserPreferencesService,
         public cfoPreferencesService: CfoPreferencesService,
         public ls: AppLocalizationService,
@@ -107,9 +107,9 @@ export class PreferencesDialogComponent implements OnInit {
         this.userPreferencesService.userPreferences$.subscribe(result => {
             this.model = result;
             this.active = true;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
-        this._dialogRef.afterClosed().subscribe(closeData => {
+        this.dialogRef.afterClosed().subscribe(closeData => {
             if (closeData && closeData.saveLocally) {
                 this.userPreferencesService.saveLocally(this.model);
             }

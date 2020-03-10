@@ -8,8 +8,7 @@ import * as moment from 'moment';
     `<input #DateRangePicker type='text' class='form-control' [disabled]='isDisabled'/>`
 })
 export class DateRangePickerComponent extends AppComponentBase implements AfterViewInit {
-
-    @ViewChild('DateRangePicker', { static: true }) dateRangePickerElement: ElementRef;
+    @ViewChild('DateRangePicker', { static: false }) dateRangePickerElement: ElementRef;
 
     _startDate: moment.Moment = moment().startOf('day');
     _endDate: moment.Moment = moment().startOf('day');

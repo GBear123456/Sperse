@@ -5,8 +5,7 @@ import {
     Component,
     Inject,
     ViewChild,
-    AfterViewInit,
-    ElementRef
+    AfterViewInit
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
@@ -30,7 +29,6 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class UploadPhotoDialogComponent implements AfterViewInit {
     @ViewChild('cropper', { static: false }) cropper: ImageCropperComponent;
-    @ViewChild('fileUrlInput', { static: true }) fileUrlInput: ElementRef;
 
     imageData: any = {};
     cropperSettings: CropperSettings = this.getCropperSetting();

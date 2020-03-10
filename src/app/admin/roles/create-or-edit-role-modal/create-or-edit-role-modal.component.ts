@@ -2,7 +2,6 @@
 import {
     AfterViewChecked,
     Component,
-    ElementRef,
     EventEmitter,
     Inject,
     Output,
@@ -34,8 +33,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('roleNameInput', { static: true }) roleNameInput: ElementRef;
-    @ViewChild('permissionTree', { static: true }) permissionTree: PermissionTreeComponent;
+    @ViewChild('permissionTree', { static: false }) permissionTree: PermissionTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;
@@ -50,23 +48,23 @@ export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit 
         }
     ];
     constructor(
-        private _roleService: RoleServiceProxy,
-        private _dialogRef: MatDialogRef<CreateOrEditRoleModalComponent>,
-        private _notifyService: NotifyService,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private roleService: RoleServiceProxy,
+        private dialogRef: MatDialogRef<CreateOrEditRoleModalComponent>,
+        private notifyService: NotifyService,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {}
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this._roleService.getRoleForEdit(this.data.roleId)
+        this.roleService.getRoleForEdit(this.data.roleId)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.role = result.role;
                 this.title = this.role.id ? this.ls.l('EditRole') + ': ' + this.role.displayName : this.ls.l('CreateNewRole');
                 this.editData = result;
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
     }
 
@@ -81,16 +79,16 @@ export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit 
         const input = new CreateOrUpdateRoleInput();
         input.role = this.role;
         input.grantedPermissionNames = this.permissionTree.getGrantedPermissionNames();
-        this._roleService.createOrUpdateRole(input)
+        this.roleService.createOrUpdateRole(input)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this._dialogRef.close();
+        this.dialogRef.close();
     }
 }

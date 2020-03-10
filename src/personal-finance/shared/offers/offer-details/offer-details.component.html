@@ -1,6 +1,6 @@
 <div class="container">
     <div class="mobileButtons" *ngIf="creditCards$ | async">
-        <button class="btn btn-secondary" (click)="toggleOffersList($event)">{{ ls.l('Offers_OpenOffersList') }}</button>
+        <button class="btn btn-secondary" (click)="toggleOffersList()">{{ ls.l('Offers_OpenOffersList') }}</button>
     </div>
     <div class="row">
         <div class="col-md-7 col-lg-4 leftBlock sm-hidden" #offersList>

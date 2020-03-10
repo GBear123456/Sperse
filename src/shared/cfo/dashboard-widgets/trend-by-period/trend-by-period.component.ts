@@ -5,7 +5,6 @@ import {
     OnInit,
     Injector,
     HostListener,
-    ViewChild,
     ChangeDetectorRef,
     OnDestroy
 } from '@angular/core';
@@ -13,7 +12,6 @@ import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { BehaviorSubject, Observable, asapScheduler, combineLatest, merge, from, of } from 'rxjs';
 import {
     catchError,
@@ -47,15 +45,8 @@ import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import {
-    CfoStore,
-    ForecastModelsStoreActions,
-    ForecastModelsStoreSelectors
-} from '@app/cfo/store';
-import {
-    RootStore,
-    CurrenciesStoreSelectors
-} from '@root/store';
+import { CfoStore, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
+import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -72,7 +63,6 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxChartComponent, { static: true }) chartComponent: DxChartComponent;
     bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     trendData$: Observable<Array<BankAccountDailyStatDto>>;
     trendData: Array<BankAccountDailyStatDto>;

@@ -45,13 +45,13 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     providers: [ OfferServiceProxy, OfferManagementServiceProxy ]
 })
 export class OffersComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(DxContextMenuComponent, { static: true }) pullContextComponent: DxContextMenuComponent;
-    @ViewChild('categoriesComponent', { static: true }) categoriesComponent: StaticListComponent;
-    @ViewChild('flagsComponent', { static: true }) flagsComponent: StaticListComponent;
-    @ViewChild('attributesComponent', { static: true }) attributesComponent: StaticListComponent;
-    @ViewChild('statusesComponent', { static: true }) statusesComponent: StaticListComponent;
-    @ViewChild(AppRatingComponent, { static: true }) ratingComponent: AppRatingComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) pullContextComponent: DxContextMenuComponent;
+    @ViewChild('categoriesComponent', { static: false }) categoriesComponent: StaticListComponent;
+    @ViewChild('flagsComponent', { static: false }) flagsComponent: StaticListComponent;
+    @ViewChild('attributesComponent', { static: false }) attributesComponent: StaticListComponent;
+    @ViewChild('statusesComponent', { static: false }) statusesComponent: StaticListComponent;
+    @ViewChild(AppRatingComponent, { static: false }) ratingComponent: AppRatingComponent;
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;

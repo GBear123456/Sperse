@@ -1,5 +1,5 @@
 import { Component, OnInit, Input,  ViewChild } from '@angular/core';
-import { CreditReportDto, InquiryDto } from '@shared/service-proxies/service-proxies';
+import { CreditBureauReportDto, CreditReportDto, InquiryDto } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -10,7 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class InquiriesComponent implements OnInit {
     @Input() creditReport: CreditReportDto;
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     inquiriesDataSource: InquiryData[] = [];
 
     constructor(
@@ -19,9 +19,9 @@ export class InquiriesComponent implements OnInit {
 
     ngOnInit() {
         this.creditReport.bureauReports.forEach(
-            (bureauDto, index, array) => {
+            (bureauDto: CreditBureauReportDto) => {
                 if (bureauDto && bureauDto.inquiries) {
-                    this.inquiriesDataSource = this.inquiriesDataSource.concat(bureauDto.inquiries.map((inquiry) => {
+                    this.inquiriesDataSource = this.inquiriesDataSource.concat(bureauDto.inquiries.map((inquiry: InquiryDto) => {
                         let data = new InquiryData(inquiry);
                         data.bureauName = bureauDto.bureau;
                         return data;
@@ -31,11 +31,10 @@ export class InquiriesComponent implements OnInit {
         );
     }
 
-    showGroupping(event, show: boolean) {
+    showGrouping(event, show: boolean) {
         if (show) {
             this.dataGrid.instance.columnOption('bureauName', 'groupIndex', '0');
-        }
-        else {
+        } else {
             this.dataGrid.instance.clearGrouping();
         }
 

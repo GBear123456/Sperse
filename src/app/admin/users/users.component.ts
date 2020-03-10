@@ -44,7 +44,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
     animations: [appModuleAnimation()]
 })
 export class UsersComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     //Filters
     private filters: FilterModel[];

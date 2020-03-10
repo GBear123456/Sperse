@@ -10,7 +10,6 @@ import {
     ViewContainerRef
 } from '@angular/core';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     AccountServiceProxy,
@@ -24,7 +23,6 @@ import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space
 import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advice-period-reset-password.component';
 import { BankCodeResetPasswordComponent } from './layouts/bank-code/bank-code-reset-password.component';
 import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
-import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Directive({
     selector: '[ad-reset-password-host]'
@@ -40,27 +38,24 @@ export class AdResetPasswordHostDirective {
         './reset-password.component.less'
     ],
 })
-export class ResetPasswordComponent extends AppComponentBase implements OnInit {
+export class ResetPasswordComponent implements OnInit {
     @ViewChild(AdResetPasswordHostDirective, { static: true }) adResetPasswordHost: AdResetPasswordHostDirective;
 
-    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.customLayoutType === LayoutType.LendSpace;
+    @HostBinding('class.lend-space') lendSpaceWrapper = this.appSessionService.tenant && this.appSessionService.tenant.customLayoutType === LayoutType.LendSpace;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;
 
     constructor(
-        injector: Injector,
-        private _accountService: AccountServiceProxy,
-        private _loginService: LoginService,
-        private _appSessionService: AppSessionService,
-        private _profileService: ProfileServiceProxy,
-        private _componentFactoryResolver: ComponentFactoryResolver
-    ) {
-        super(injector);
-    }
+        private accountService: AccountServiceProxy,
+        private loginService: LoginService,
+        private appSessionService: AppSessionService,
+        private profileService: ProfileServiceProxy,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {}
 
     ngOnInit(): void {
-        this.loadLayoutComponent(this.getLayoutComponent(this._appSessionService.tenant));
+        this.loadLayoutComponent(this.getLayoutComponent(this.appSessionService.tenant));
     }
 
     private getLayoutComponent(tenant) {
@@ -78,7 +73,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
 
     private loadLayoutComponent(component: Type<HostResetPasswordComponent>) {
         this.adResetPasswordHost.viewContainerRef.createComponent(
-            this._componentFactoryResolver.resolveComponentFactory(component)
+            this.componentFactoryResolver.resolveComponentFactory(component)
         );
     }
 }

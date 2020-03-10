@@ -1,22 +1,18 @@
 /** Core imports */
-import { Component, Injector, Input, ViewChild, OnDestroy } from '@angular/core';
-
-/** Third party imports */
-import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
+import { Component, Input, OnDestroy } from '@angular/core';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportWizardService } from '../import-wizard.service';
-import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
+import { MessageService } from '@abp/message/message.service';
+import { AppLocalizationService } from '../../localization/app-localization.service';
 
 @Component({
     selector: 'import-progress-bar',
     templateUrl: 'import-progress-bar.component.html',
     styleUrls: ['import-progress-bar.component.less']
 })
-export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxProgressBarComponent, { static: true }) progressComponent: DxProgressBarComponent;
+export class ImportProgressBarComponent implements OnDestroy {
     @Input() summaryTooltip = true;
     importStatuses = ImportStatus;
     progress = 100;
@@ -29,12 +25,11 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     private subscription: any;
 
     constructor(
-        injector: Injector,
-        private _importService: ImportWizardService
+        private importService: ImportWizardService,
+        private messageService: MessageService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
-
-        this.subscription = _importService.progressListen((data) => {
+        this.subscription = importService.progressListen((data) => {
             if (data && data.length) {
                 this.progress = 0;
                 this.list = data;
@@ -45,26 +40,26 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
                 });
                 this.progress = Math.round(this.progress / data.length);
                 if (this.progress >= 100)
-                    _importService.finishStatusCheck(true);
+                    importService.finishStatusCheck(true);
             } else {
                 this.progress = 100;
-                _importService.finishStatusCheck(true);
+                importService.finishStatusCheck(true);
             }
         });
     }
 
     showStatus = () => {
-        return this.progress + '% ' + this.l('ImportProgress');
+        return this.progress + '% ' + this.ls.l('ImportProgress');
     }
 
     cancelImport(importId?: number) {
         this.tooltipVisible = false;
-        this.message.confirm(
-            this.l('ImportCancelConfirmation'),
-            this.l(importId ? 'CancelImport' : 'CancelAllImports'),
+        this.messageService.confirm(
+            this.ls.l('ImportCancelConfirmation'),
+            this.ls.l(importId ? 'CancelImport' : 'CancelAllImports'),
             isConfirmed => {
                 if (isConfirmed)
-                    this._importService.cancelImport(importId ?
+                    this.importService.cancelImport(importId ?
                         [importId] : this.list.map((item) => item.id));
             }
         );

@@ -2,7 +2,6 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    ElementRef,
     EventEmitter,
     Inject,
     Output,
@@ -26,7 +25,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditTextModalComponent {
-    @ViewChild('targetValueInput', { static: true }) targetValueInput: ElementRef;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

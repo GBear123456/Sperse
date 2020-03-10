@@ -10,14 +10,13 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactListDialogComponent {
+    @ContentChild(TemplateRef, { static: false })
+    @Input() contactLayoutTemplate: TemplateRef<any>;
     displayList: any[];
     title = this.ls.l('RelatedContacts');
     addNewTitle = this.ls.l('AddRelatedContact');
     manageAllowed = false;
     photoType;
-
-    @ContentChild(TemplateRef, { static: true })
-    @Input() contactLayoutTemplate: TemplateRef<any>;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,

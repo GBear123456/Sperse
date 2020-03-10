@@ -1,10 +1,12 @@
+/** Core imports */
 import { Component, Injector, ViewChild } from '@angular/core';
 
+/** Third party imports */
 import { DxRadioGroupComponent } from 'devextreme-angular/ui/radio-group';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
-
 import * as _ from 'underscore';
 
+/** Application imports */
 import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 
@@ -14,20 +16,20 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
     styleUrls: ['confirm-cancellation-dialog.component.less']
 })
 export class EntityCancelDialogComponent extends ConfirmDialogComponent {
-    @ViewChild(DxRadioGroupComponent, { static: true }) radioComponent: DxRadioGroupComponent;
-    @ViewChild(DxTextAreaComponent, { static: true }) textComponent: DxTextAreaComponent;
+    @ViewChild(DxRadioGroupComponent, { static: false }) radioComponent: DxRadioGroupComponent;
+    @ViewChild(DxTextAreaComponent, { static: false }) textComponent: DxTextAreaComponent;
     reasons: any = [];
     comment: string;
     reasonId: string;
 
     constructor(
         injector: Injector,
-        private _leadService: LeadServiceProxy
+        private leadService: LeadServiceProxy
     ) {
         super(injector);
 
         if (this.data.showReasonField)
-            _leadService.getCancellationReasons().subscribe((result) => {
+            leadService.getCancellationReasons().subscribe((result) => {
                 this.reasons = result && result.items;
             });
     }

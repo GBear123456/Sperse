@@ -20,7 +20,7 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolBarComponent implements OnDestroy {
-    @ViewChild(DxToolbarComponent, { static: true }) toolbarComponent: DxToolbarComponent;
+    @ViewChild(DxToolbarComponent, { static: false }) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
     @Input()

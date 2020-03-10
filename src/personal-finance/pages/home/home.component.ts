@@ -1,8 +1,8 @@
 /** Core imports */
 import {
     Component,
-    ComponentFactoryResolver, Directive,
-    Injector,
+    ComponentFactoryResolver,
+    Directive,
     Inject,
     OnInit,
     ViewChild,
@@ -16,7 +16,6 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LendSpaceHomeComponent } from '@root/personal-finance/pages/home/layouts/lend-space/lend-space-home.component';
 import { HostHomeComponent } from '@root/personal-finance/pages/home/layouts/host/host-home.component';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Directive({
     selector: '[home-host]'
@@ -33,7 +32,6 @@ export class HomeHostDirective {
 export class HomeComponent implements OnInit {
     @ViewChild(HomeHostDirective, { static: true }) adHomeHost: HomeHostDirective;
     constructor(
-        injector: Injector,
         private featureService: FeatureCheckerService,
         private componentFactoryResolver: ComponentFactoryResolver,
         public appSession: AppSessionService,

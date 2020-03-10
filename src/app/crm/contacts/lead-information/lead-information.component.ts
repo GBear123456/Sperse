@@ -40,8 +40,8 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService, CurrencyPipe ]
 })
 export class LeadInformationComponent implements OnInit, OnDestroy {
-    @ViewChild(SourceContactListComponent, { static: true }) sourceComponent: SourceContactListComponent;
-    @ViewChild('loaderWrapper', { static: true }) loaderWrapper: ElementRef;
+    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild('loaderWrapper', { static: false }) loaderWrapper: ElementRef;
     data: {
         contactInfo: ContactInfoDto,
         leadInfo: LeadInfoDto

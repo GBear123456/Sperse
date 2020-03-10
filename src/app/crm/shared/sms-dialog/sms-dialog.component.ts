@@ -31,7 +31,7 @@ import { AppConsts } from '@root/shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SMSDialogComponent {
-    @ViewChild(DxValidationGroupComponent, { static: true }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(CountryPhoneNumberComponent, { static: false }) countryPhoneNumber: CountryPhoneNumberComponent;
     phoneNumber: string;
     phones: string[];
@@ -47,9 +47,9 @@ export class SMSDialogComponent {
         }
     ];
     tags: Record<Tags, string> = {
-        [Tags.LegalName]: "",
-        [Tags.ClientFirstName]: "",
-        [Tags.ClientLastName]: ""
+        [Tags.LegalName]: '',
+        [Tags.ClientFirstName]: '',
+        [Tags.ClientLastName]: ''
     };
 
     tagNames = Object.keys(this.tags).map(x => Tags[x]);

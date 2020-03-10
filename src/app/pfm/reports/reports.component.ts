@@ -28,10 +28,10 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     providers: [ DatePipe ]
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('offerStatsGrid', { static: true }) offerStatsGrid: DxDataGridComponent;
-    @ViewChild('visitorsGrid', { static: true }) visitorsGrid: DxDataGridComponent;
-    @ViewChild(SetupStepsComponent, { static: true }) setupStepsComponent: SetupStepsComponent;
-    @ViewChild('rightSection', { static: true }) rightSection: ElementRef;
+    @ViewChild('offerStatsGrid', { static: false }) offerStatsGrid: DxDataGridComponent;
+    @ViewChild('visitorsGrid', { static: false }) visitorsGrid: DxDataGridComponent;
+    @ViewChild(SetupStepsComponent, { static: false }) setupStepsComponent: SetupStepsComponent;
+    @ViewChild('rightSection', { static: false }) rightSection: ElementRef;
 
     private rootComponent: any;
     private _refresh: Subject<null> = new Subject<null>();

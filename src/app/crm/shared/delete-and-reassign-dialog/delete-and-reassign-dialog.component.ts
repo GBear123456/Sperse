@@ -1,8 +1,6 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-
-import { DxRadioGroupComponent } from 'devextreme-angular/ui/radio-group';
-
+import { Component, Injector, OnInit } from '@angular/core';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 
 @Component({
   selector: 'delete-and-reassign-dialog',
@@ -10,10 +8,10 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
   styleUrls: ['delete-and-reassign-dialog.component.less']
 })
 export class DeleteAndReassignDialogComponent extends ConfirmDialogComponent implements OnInit {
-    @ViewChild(DxRadioGroupComponent, { static: true }) itemsList: DxRadioGroupComponent;
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private notifyService: NotifyService
     ) {
         super(injector);
     }
@@ -24,7 +22,7 @@ export class DeleteAndReassignDialogComponent extends ConfirmDialogComponent imp
 
     confirm() {
         if (!this.data.deleteAllReferences && !this.data.reassignToItemId) {
-            return this.notify.error(this.l(this.data.entityPrefix + '_DeleteDialog_ShouldBeSelected'));
+            return this.notifyService.error(this.ls.l(this.data.entityPrefix + '_DeleteDialog_ShouldBeSelected'));
         }
         this.dialogRef.close(true);
     }

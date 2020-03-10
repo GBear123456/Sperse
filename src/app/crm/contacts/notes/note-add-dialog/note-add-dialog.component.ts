@@ -31,7 +31,6 @@ import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog
 import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 class PhoneNumber {
     id: any;
@@ -44,8 +43,8 @@ class PhoneNumber {
     providers: [ PhoneFormatPipe ]
 })
 export class NoteAddDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    @ViewChild('followUpDateBox', { static: true }) followUpDateBox: DxDateBoxComponent;
-    @ViewChild('currentDateBox', { static: true }) currentDateBox: DxDateBoxComponent;
+    @ViewChild('followUpDateBox', { static: false }) followUpDateBox: DxDateBoxComponent;
+    @ViewChild('currentDateBox', { static: false }) currentDateBox: DxDateBoxComponent;
 
     private slider: any;
     private _contactInfo: ContactInfoDto;
@@ -75,7 +74,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     constructor(
         injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: any,
         private dialog: MatDialog,
         private elementRef: ElementRef,
         private phoneFormatPipe: PhoneFormatPipe,
@@ -84,7 +82,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
         private clientService: ContactsService,
-        public dialogRef: MatDialogRef<NoteAddDialogComponent>
+        public dialogRef: MatDialogRef<NoteAddDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
 

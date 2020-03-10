@@ -44,14 +44,14 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(ImportWizardComponent, { static: true }) wizard: ImportWizardComponent;
-    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
+    @ViewChild(ImportWizardComponent, { static: false }) wizard: ImportWizardComponent;
+    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
+    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
 
     private readonly MAX_REQUEST_SIZE = 55;
 

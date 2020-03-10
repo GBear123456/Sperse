@@ -35,8 +35,8 @@ class EmailAttachment extends AttachmentDto {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxSelectBoxComponent, { static: true }) templateComponent: DxSelectBoxComponent;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
 
     ckEditor: any;
     showCC = false;

@@ -1,12 +1,11 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /** Third party imports */
 import * as moment from 'moment';
 
 /** Application imports */
 import { AppLocalizationService } from 'app/shared/common/localization/app-localization.service';
-import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
 
 @Component({
     templateUrl: './credit-score.component.html',
@@ -14,7 +13,6 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreditScoreComponent {
-    @ViewChild(OffersLayoutComponent, { static: true }) offersLayoutComponent: OffersLayoutComponent;
     bureauAmount = '3';
     logoes: string[] = [
         'transunion',

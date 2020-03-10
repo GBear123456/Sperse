@@ -52,9 +52,9 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('linearChart', { static: true }) private linearChart: DxChartComponent;
-    @ViewChild('barChart', { static: true }) private barChart: DxChartComponent;
-    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('linearChart', { static: false }) private linearChart: DxChartComponent;
+    @ViewChild('barChart', { static: false }) private barChart: DxChartComponent;
+    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(SetupStepComponent, { static: true }) setupStepComponent: SetupStepComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
@@ -226,7 +226,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => abp.ui.setBusy()),
-            switchMap(([currencyId, forecastModelId, requestFilter, refresh]: [string, number, StatsFilter, null]) => {
+            switchMap(([currencyId, forecastModelId, requestFilter, ]: [string, number, StatsFilter, null]) => {
                 return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,

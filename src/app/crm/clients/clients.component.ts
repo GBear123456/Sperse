@@ -124,16 +124,16 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
     //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
-    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent, { static: true }) statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: true }) pivotGridComponent: PivotGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent, { static: false }) statusComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, { static: true }) mapComponent: MapComponent;
+    @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Customer';
@@ -329,7 +329,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             first(),
             mapTo(data)
         )),
-        switchMap(([filter, mapArea, refresh]: [any, MapArea, null]) => this.mapService.loadSliceMapData(
+        switchMap(([filter, mapArea, ]: [any, MapArea, null]) => this.mapService.loadSliceMapData(
             this.getODataUrl(this.groupDataSourceURI),
             filter,
             mapArea,

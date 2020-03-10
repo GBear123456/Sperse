@@ -44,10 +44,10 @@ import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
     providers: [ PipelineService, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('ordersGrid', { static: true }) ordersGrid: DxDataGridComponent;
-    @ViewChild('subscriptionsGrid', { static: true }) subscriptionsGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
-    @ViewChild(StaticListComponent, { static: true }) stagesComponent: StaticListComponent;
+    @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
+    @ViewChild('subscriptionsGrid', { static: false }) subscriptionsGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
+    @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
     items: any;
     showPipeline = true;
     pipelineDataSource: any;
@@ -646,7 +646,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        return this.subscriptionStatusFilter.items.element.value.map(item => ({
+        return this.subscriptionStatusFilter.items.element.value && this.subscriptionStatusFilter.items.element.value.map(item => ({
             name: 'serviceTypeIds',
             value: item
         }));

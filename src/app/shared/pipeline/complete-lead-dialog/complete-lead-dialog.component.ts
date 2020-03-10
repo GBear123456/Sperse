@@ -1,10 +1,8 @@
 /** Core imports */
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
-import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
-import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
 import { first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -18,15 +16,14 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     styleUrls: ['complete-lead-dialog.component.less']
 })
 export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
-    @ViewChild(DxSelectBoxComponent, { static: true }) stageComponent: DxSelectBoxComponent;
-    @ViewChild(DxTextAreaComponent, { static: true }) textComponent: DxTextAreaComponent;
     orderStages: any = [];
     orderStageId: number;
     currency = '$';
     comment: string;
     amount: string;
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private invoicesService: InvoicesService
     ) {
         super(injector);

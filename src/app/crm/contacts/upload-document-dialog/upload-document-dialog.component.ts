@@ -17,7 +17,7 @@ import { AppLocalizationService } from '../../../shared/common/localization/app-
   providers: [DocumentTypeServiceProxy]
 })
 export class UploadDocumentDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DocumentTypesListComponent, { static: true }) documentTypesListComponent: DocumentTypesListComponent;
+    @ViewChild(DocumentTypesListComponent, { static: false }) documentTypesListComponent: DocumentTypesListComponent;
 
     public documentTypes = [];
     public file: File;

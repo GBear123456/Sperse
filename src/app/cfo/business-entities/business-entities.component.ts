@@ -18,7 +18,6 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'business-entities',
@@ -28,7 +27,7 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true,

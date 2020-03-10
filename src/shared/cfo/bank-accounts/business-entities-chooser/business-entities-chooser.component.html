@@ -13,9 +13,9 @@
                         width="100px"
                         [text]="ls.l('Select All')"
                         [value]="selectedAll"
-                        (onValueChanged)="onSelectAll($event, dataSource)">
+                        (onValueChanged)="onSelectAll($event)">
                     </dx-check-box>
-                    <span *ngIf="onFilterButtonClick.observers.length" class="accounts-filter" (click)="filterButtonClick($event)"></span>
+                    <span *ngIf="onFilterButtonClick.observers.length" class="accounts-filter" (click)="filterButtonClick()"></span>
                 </div>
                 <dx-tree-view
                     [expandAllEnabled]="true"

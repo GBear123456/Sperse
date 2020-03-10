@@ -31,8 +31,8 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class LinkedAccountsModalComponent {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('dataTable', { static: true }) dataTable: Table;
-    @ViewChild('paginator', { static: true }) paginator: Paginator;
+    @ViewChild('dataTable', { static: false }) dataTable: Table;
+    @ViewChild('paginator', { static: false }) paginator: Paginator;
     @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(

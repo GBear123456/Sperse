@@ -1,12 +1,12 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
-import { ActivationEnd } from '@angular/router';
+import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { ActivationEnd, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
-import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppConsts } from 'shared/AppConsts';
 import { environment } from 'environments/environment';
 import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
@@ -23,9 +23,9 @@ import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
     providers: [ ApplicationServiceProxy, LoginService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LendSpaceSignupComponent extends AppComponentBase {
-    @ViewChild('agreeWithTermsCheckBox', { static: true }) agreeWithTermsCheckBox: DxCheckBoxComponent;
-    @ViewChild('agreeToRecieveCallsCheckBox', { static: true }) agreeToRecieveCallsCheckBox: DxCheckBoxComponent;
+export class LendSpaceSignupComponent {
+    @ViewChild('agreeWithTermsCheckBox', { static: false}) agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToReceiveCallsCheckBox', { static: false }) agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
 
     patterns = {
         namePattern: AppConsts.regexPatterns.name,
@@ -44,13 +44,12 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     };
     isRoutProcessed = false;
     constructor(
-        injector: Injector,
-        public loginService: LoginService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private router: Router,
+        public loginService: LoginService
     ) {
-        super(injector);
         this.registerData.isUSCitizen = true;
-        this._router.events.subscribe((event) => {
+        this.router.events.subscribe((event) => {
             if (event instanceof ActivationEnd && !this.isRoutProcessed) {
                 let data = event.snapshot.params;
                 this.registerData = {
@@ -65,8 +64,8 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     }
 
     signUpMember() {
-        this.registerData.firstName = this.capitalize(this.registerData.firstName);
-        this.registerData.lastName = this.capitalize(this.registerData.lastName);
+        this.registerData.firstName = capitalize(this.registerData.firstName);
+        this.registerData.lastName = capitalize(this.registerData.lastName);
         this.loginService.signUpMember(this.registerData);
     }
 
@@ -84,7 +83,7 @@ export class LendSpaceSignupComponent extends AppComponentBase {
             this.loginService.externalAuthenticate(provider);
         else {
             this.agreeWithTermsCheckBox['validator'].instance.validate();
-            this.agreeToRecieveCallsCheckBox['validator'].instance.validate();
+            this.agreeToReceiveCallsCheckBox['validator'].instance.validate();
         }
     }
 }

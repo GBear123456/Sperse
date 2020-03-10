@@ -46,7 +46,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     animations: [appModuleAnimation()]
 })
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private filtersValues = {
         date: {

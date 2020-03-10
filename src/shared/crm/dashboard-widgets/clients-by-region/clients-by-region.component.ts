@@ -2,7 +2,6 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    ViewChild,
     OnInit,
     ElementRef,
     ChangeDetectorRef, OnDestroy
@@ -21,7 +20,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetContactsByRegionOutput } from '@shared/service-proxies/service-proxies';
-import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
@@ -34,7 +32,6 @@ import { LayoutService } from '@app/shared/layout/layout.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsByRegionComponent implements OnInit, OnDestroy {
-    @ViewChild(MapComponent, { static: true }) mapComponent: MapComponent;
     data$: Observable<MapData>;
     pipe: any = new DecimalPipe('en-US');
     palette: string[] = this.layoutService.getMapPalette();

@@ -1,7 +1,5 @@
-import { Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { RoleListDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'role-combo',
@@ -16,26 +14,20 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
             <option *ngFor="let role of roles" [value]="role.id">{{role.displayName}}</option>
     </select>`
 })
-export class RoleComboComponent extends AppComponentBase implements OnInit {
-
+export class RoleComboComponent implements OnInit {
     @ViewChild('RoleCombobox', { static: true }) roleComboboxElement: ElementRef;
-
+    @Input() selectedRole: string = undefined;
+    @Input() emptyText = '';
+    @Output() selectedRoleChange: EventEmitter<string> = new EventEmitter<string>();
     roles: RoleListDto[] = [];
 
-    @Input() selectedRole: string = undefined;
-    @Output() selectedRoleChange: EventEmitter<string> = new EventEmitter<string>();
-
-    @Input() emptyText = '';
-
     constructor(
-        private _roleService: RoleServiceProxy,
-        injector: Injector) {
-        super(injector);
-    }
+        private roleService: RoleServiceProxy,
+    ) {}
 
     ngOnInit(): void {
         const self = this;
-        this._roleService.getRoles(undefined, undefined).subscribe(result => {
+        this.roleService.getRoles(undefined, undefined).subscribe(result => {
             this.roles = result.items;
             setTimeout(() => {
                 $(self.roleComboboxElement.nativeElement).selectpicker('refresh');

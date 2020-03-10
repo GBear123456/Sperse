@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>{{l(data.entityPrefix + '_DeleteDialog_RemoveConfirmationTitle')}}</h2>
+<h2 mat-dialog-title>{{ls.l(data.entityPrefix + '_DeleteDialog_RemoveConfirmationTitle')}}</h2>
 <mat-dialog-content>
-    <dx-check-box class="delete-all-refs" [(value)]="data.deleteAllReferences" [text]="l(data.entityPrefix + '_DeleteDialog_DeleteAllReferences')" [width]="300"></dx-check-box>
+    <dx-check-box class="delete-all-refs" [(value)]="data.deleteAllReferences" [text]="ls.l(data.entityPrefix + '_DeleteDialog_DeleteAllReferences')" [width]="300"></dx-check-box>
 
     <div class="assignment-list" *ngIf="!data.deleteAllReferences">
-        <h3>{{l(data.entityPrefix + '_DeleteDialog_ReassignToFollowing')}}</h3>
+        <h3>{{ls.l(data.entityPrefix + '_DeleteDialog_ReassignToFollowing')}}</h3>
         <dx-radio-group
             width="420px"
             height="100%"
@@ -15,6 +15,6 @@
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button (click)="confirm()" class="button-layout button-primary">{{l('Confirm')}}</button>
+  <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+  <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
 </mat-dialog-actions>

@@ -11,7 +11,6 @@ import { finalize } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { AddInstanceUserDialogComponent } from './add-instance-user-dialog/add-instance-user-dialog.component';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { InstanceServiceProxy, AddUserInput } from '@shared/service-proxies/service-proxies';
@@ -24,7 +23,6 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 })
 export class InstanceUsersComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
-    @ViewChild('userAssignList', { static: true }) userAssignList: StaticListComponent;
     @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
 
     formatting = AppConsts.formatting;
@@ -32,7 +30,7 @@ export class InstanceUsersComponent extends CFOComponentBase implements OnInit, 
     toolbarConfig: ToolbarGroupModel[];
 
     constructor(
-        private injector: Injector,
+        injector: Injector,
         private dialog: MatDialog,
         private instanceProxy: InstanceServiceProxy,
         public appService: AppService

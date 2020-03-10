@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -8,13 +8,13 @@ import { catchError, finalize, switchMap, tap, distinctUntilChanged } from 'rxjs
 
 /** Application imports */
 import { DashboardServiceProxy, GetRecentlyCreatedCustomersOutput } from '@shared/service-proxies/service-proxies';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { AppConsts } from '@shared/AppConsts';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
+import { DateHelper } from '../../../helpers/DateHelper';
 
 @Component({
     selector: 'recent-clients',
@@ -24,7 +24,6 @@ import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-c
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecentClientsComponent implements OnInit {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
@@ -47,6 +46,7 @@ export class RecentClientsComponent implements OnInit {
 
     selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);
     selectedItem$: Observable<IRecentClientsSelectItem> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
+    userTimezone = DateHelper.getUserTimezone();
 
     constructor(
         private dashboardServiceProxy: DashboardServiceProxy,

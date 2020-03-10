@@ -22,13 +22,11 @@ import { filter, first, takeUntil, map } from 'rxjs/operators';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
-import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
-import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
@@ -38,7 +36,6 @@ import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -48,10 +45,8 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(ClientsByRegionComponent, { static: true }) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(RecentClientsComponent, { static: true }) recentClientsComponent: RecentClientsComponent;
-    @ViewChild(TotalsBySourceComponent, { static: true }) totalsBySource: TotalsBySourceComponent;
-    @ViewChild(PeriodComponent, { static: true }) periodComponent: PeriodComponent;
+    @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
+    @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
     private rootComponent: any;
     public headlineButtons: HeadlineButton[] = [
         {

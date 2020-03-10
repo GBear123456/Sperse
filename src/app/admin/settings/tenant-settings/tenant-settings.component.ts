@@ -53,11 +53,11 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('privacyInput', { static: true }) privacyInput: ElementRef;
-    @ViewChild('tosInput', { static: true }) tosInput: ElementRef;
-    @ViewChild('logoInput', { static: true }) logoInput: ElementRef;
-    @ViewChild('cssInput', { static: true }) cssInput: ElementRef;
-    @ViewChild('faviconInput', { static: true }) faviconInput: ElementRef;
+    @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
+    @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
+    @ViewChild('logoInput', { static: false }) logoInput: ElementRef;
+    @ViewChild('cssInput', { static: false }) cssInput: ElementRef;
+    @ViewChild('faviconInput', { static: false }) faviconInput: ElementRef;
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;
@@ -89,9 +89,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
-
     masks = AppConsts.masks;
-
     private rootComponent;
     headlineButtons: HeadlineButton[] = [
         {

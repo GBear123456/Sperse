@@ -3,7 +3,7 @@
         <form #roleForm="ngForm" novalidate (ngSubmit)="save()" *ngIf="active">
             <div class="modal-body">
                 <tabset class="tab-container tabbable-line">
-                    <tab heading="{{ls.l('EditionProperties')}}" customClass="m-tabs__item">
+                    <tab [heading]="ls.l('EditionProperties')" customClass="m-tabs__item">
                         <div class="form-group">
                             <label for="EditionDisplayName">{{ls.l("EditionName")}} *</label>
                             <input id="EditionDisplayName" #editionNameInput="ngModel" class="form-control" type="text" name="EditionDisplayName" [ngClass]="{'edited':edition.displayName}" [(ngModel)]="edition.displayName" required maxlength="64">

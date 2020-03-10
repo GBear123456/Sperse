@@ -57,7 +57,6 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -68,8 +67,8 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     providers: [ AppStoreService, DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(OperationsWidgetComponent, { static: true }) toolbarComponent: OperationsWidgetComponent;
-    @ViewChild(DetailsHeaderComponent, { static: true }) detailsHeaderComponent: DetailsHeaderComponent;
+    @ViewChild(OperationsWidgetComponent, { static: false }) toolbarComponent: OperationsWidgetComponent;
+    @ViewChild(DetailsHeaderComponent, { static: false }) detailsHeaderComponent: DetailsHeaderComponent;
 
     readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;

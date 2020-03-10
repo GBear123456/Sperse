@@ -1,7 +1,6 @@
-import { Component, Injector, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import DataSource from 'devextreme/data/data_source';
 
 @Component({
@@ -10,7 +9,6 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['key-phrases.component.less']
 })
 export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: true }) keyPhrasesList: DxTreeListComponent;
     @Input() width: string;
     @Input() height: string;
     @Output() filterByKey: EventEmitter<any> = new EventEmitter();

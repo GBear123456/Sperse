@@ -1,10 +1,8 @@
 /** Core imports */
-import { Component, Directive, Injector, OnInit, ViewContainerRef,
+import { Component, Directive, OnInit, ViewContainerRef,
     ComponentFactoryResolver, ViewChild, Type  } from '@angular/core';
 
 /** Application imports */
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostAutoLoginComponent } from './layouts/host/host-auto-login.component';
 import { LendSpaceAutoLoginComponent } from './layouts/lend-space/lend-space-auto-login.component';
@@ -29,13 +27,12 @@ export class AutoLoginComponent implements OnInit {
     @ViewChild(AdAutoLoginHostDirective, { static: true }) adLoginHost: AdAutoLoginHostDirective;
 
     constructor(
-        injector: Injector,
-        private _appSession: AppSessionService,
-        private _componentFactoryResolver: ComponentFactoryResolver
+        private appSession: AppSessionService,
+        private componentFactoryResolver: ComponentFactoryResolver
     ) { }
 
     ngOnInit(): void {
-        this.loadLayoutComponent(this.getLayoutComponent(this._appSession.tenant));
+        this.loadLayoutComponent(this.getLayoutComponent(this.appSession.tenant));
     }
 
     private getLayoutComponent(tenant) {
@@ -53,7 +50,7 @@ export class AutoLoginComponent implements OnInit {
 
     private loadLayoutComponent(component: Type<HostAutoLoginComponent>) {
         this.adLoginHost.viewContainerRef.createComponent(
-            this._componentFactoryResolver.resolveComponentFactory(component)
+            this.componentFactoryResolver.resolveComponentFactory(component)
         );
     }
 }

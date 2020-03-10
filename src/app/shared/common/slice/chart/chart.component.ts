@@ -27,7 +27,6 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { ExportService } from '@shared/common/export/export.service';
 import { ChartData } from '@app/shared/common/slice/chart/chart-data.model';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
-import { AdAutoLoginHostDirective } from '../../../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'slice-chart',
@@ -43,7 +42,7 @@ export class ChartComponent implements OnInit, OnChanges {
     @Input() width: number;
     @Input() height: number;
     @Input() infoItems: InfoItem[];
-    @ViewChild(DxChartComponent, { static: true }) chart: DxChartComponent;
+    @ViewChild(DxChartComponent, { static: false }) chart: DxChartComponent;
     chartHeight: number;
     chartWidth: number;
     summaryBy: BehaviorSubject<SummaryBy> = new BehaviorSubject<SummaryBy>(SummaryBy.Month);

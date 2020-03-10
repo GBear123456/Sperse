@@ -3,7 +3,6 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 
 /** Third party imports */
 import * as XLSX from 'xlsx';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { finalize } from 'rxjs/operators';
 
@@ -12,7 +11,6 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 import { SyncTypeIds } from '../../../shared/AppEnums';
 
 class UploadCategoryModel {
@@ -35,7 +33,6 @@ class UploadCategoryModel {
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
     override = false;
     syncTypeIds = SyncTypeIds;
 
@@ -59,10 +56,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         //    }
         //  }
         //};
-    }
-
-    locationColumn_calculateCellValue(rowData) {
-        return rowData.StateId + ', ' + rowData.CountryId;
     }
 
     downloadExcel() {

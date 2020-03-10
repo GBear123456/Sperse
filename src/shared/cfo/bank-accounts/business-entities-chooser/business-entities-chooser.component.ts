@@ -18,11 +18,12 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
     styleUrls: ['./business-entities-chooser.component.less']
 })
 export class BusinessEntitiesChooserComponent implements OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: true }) treeList: DxTreeViewComponent;
-    @ViewChild(DxDropDownBoxComponent, { static: true }) dropDown: DxDropDownBoxComponent;
+    @ViewChild(DxTreeViewComponent, { static: false }) treeList: DxTreeViewComponent;
+    @ViewChild(DxDropDownBoxComponent, { static: false }) dropDown: DxDropDownBoxComponent;
 
-    private _syncAccSub;
-    private _isFilterClick;
+    private syncAccSub = this.bankAccountsService.syncAccounts$.subscribe(
+        syncAccounts => this.syncAccounts = syncAccounts);
+    private isFilterClick;
 
     @Input() staticItemsText;
     @Input() applyFilter = true;
@@ -41,10 +42,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     constructor(
         private ls: AppLocalizationService,
         public bankAccountsService: BankAccountsService
-    ) {
-        this._syncAccSub = bankAccountsService.syncAccounts$.subscribe(
-            syncAccounts => this.syncAccounts = syncAccounts);
-    }
+    ) {}
 
     public selectedItemsChange() {
         setTimeout(() =>
@@ -85,7 +83,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
             this.treeList.instance.option('dataSource', data);
     }
 
-    onSelectAll(event, data) {
+    onSelectAll(event) {
         if (this.treeList && typeof(event.value) == 'boolean') {
             event.value ? this.treeList.instance.selectAll()
                 : this.treeList.instance.unselectAll();
@@ -127,9 +125,9 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
             }
         }
         this.onClosed.emit();
-        if (this._isFilterClick)
+        if (this.isFilterClick)
             this.onFilterButtonClick.emit(businessEntitiesIds);
-        this._isFilterClick = false;
+        this.isFilterClick = false;
     }
 
     /**
@@ -141,13 +139,13 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         return ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBusinessEntitiesIds, selectedBusinessEntitiesIds);
     }
 
-    filterButtonClick(event) {
-        this._isFilterClick = true;
+    filterButtonClick() {
+        this.isFilterClick = true;
         if (this.dropDown && this.dropDown.instance)
             this.dropDown.instance.close();
     }
 
     ngOnDestroy() {
-        this._syncAccSub.unsubscribe();
+        this.syncAccSub.unsubscribe();
     }
 }

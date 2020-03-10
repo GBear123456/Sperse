@@ -52,9 +52,9 @@ import { InstanceModel } from '@shared/cfo/instance.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(MatTabGroup, { static: true }) matTabGroup: MatTabGroup;
-    @ViewChild(DxoPagerComponent, { static: true }) pager: DxoPagerComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(MatTabGroup, { static: false }) matTabGroup: MatTabGroup;
+    @ViewChild(DxoPagerComponent, { static: false }) pager: DxoPagerComponent;
     dataIsLoading = true;
     gridInitialized = false;
     totalCount: number;

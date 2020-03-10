@@ -7,28 +7,25 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
     templateUrl: './calculator-widget.component.html',
     styleUrls: ['./calculator-widget.component.less']
 })
-
 export class CalculatorComponent extends CFOComponentBase implements OnChanges {
+    @ViewChild('calculatorInput', { static: false }) calculatorInputControl: ElementRef;
+    @ViewChild('calculatorHistoryEdit', { static: false }) calculatorHistoryEditControl: ElementRef;
+    @Input() parentEquation: string;
     input = '';
     historyEquation = '';
     lastOperation = '';
     openedBrackets = 0;
     closedBrackets = 0;
-
     calcHistory: CalcHistory[] = [];
-
     readonly allowedChars: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '.', '%'];
     readonly allowedOperators: string[] = ['+', '-', '*', '/'];
-
     isScientificMode = false;
     isEditHistoryEnabled = false;
-    @Input()
-    parentEquation: string;
 
-    @ViewChild('calculatorInput', { static: true }) calculatorInputControl: ElementRef;
-    @ViewChild('calculatorHistoryEdit', { static: true }) calculatorHistoryEditControl: ElementRef;
-
-    constructor(injector: Injector, public calculatorService: CalculatorService) {
+    constructor(
+        injector: Injector,
+        public calculatorService: CalculatorService
+    ) {
         super(injector);
         this.isScientificMode = this.calculatorService.isScientificModeEnabled;
         calculatorService.subscribePeriodChange((value) => {

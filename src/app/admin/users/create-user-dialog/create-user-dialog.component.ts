@@ -49,7 +49,7 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 })
 export class CreateUserDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
     @ViewChild('phoneNumber', { static: true }) phoneNumber: DxTextBoxComponent;
 
     user = new UserEditDto();

@@ -1,12 +1,5 @@
 /** Core imports */
-import {
-    ChangeDetectionStrategy, ChangeDetectorRef,
-    Component,
-    ElementRef,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
@@ -29,7 +22,6 @@ import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -47,7 +39,6 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HostDashboardComponent implements OnInit {
-    @ViewChild('DashboardDateRangePicker', { static: true }) dateRangePickerElement: ElementRef;
     selectedDateRange: BehaviorSubject<CalendarValuesModel>;
     selectedDateRange$: Observable<CalendarValuesModel>;
     calendarOptions = { allowFutureDates: true };

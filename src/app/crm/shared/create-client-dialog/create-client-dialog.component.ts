@@ -80,14 +80,14 @@ import { StatesService } from '@root/store/states-store/states.service';
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
-    @ViewChild(RatingComponent, { static: true }) ratingComponent: RatingComponent;
-    @ViewChild(TagsListComponent, { static: true }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: true }) listsComponent: ListsListComponent;
+    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
+    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
+    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(SourceContactListComponent, { static: true }) sourceComponent: SourceContactListComponent;
-    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();

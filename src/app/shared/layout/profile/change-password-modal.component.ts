@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ElementRef, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -20,7 +20,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class ChangePasswordModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('currentPasswordInput', { static: true }) currentPasswordInput: ElementRef;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     currentPassword = '';
     password = '';
@@ -34,20 +33,20 @@ export class ChangePasswordModalComponent implements OnInit {
     ];
     constructor(
         public dialog: MatDialog,
-        private _profileService: ProfileServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _notifyService: NotifyService,
-        private _dialogRef: MatDialogRef<ChangePasswordModalComponent>,
+        private profileService: ProfileServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef,
+        private notifyService: NotifyService,
+        private dialogRef: MatDialogRef<ChangePasswordModalComponent>,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this.modalDialog.startLoading()
-        this._profileService.getPasswordComplexitySetting()
+        this.modalDialog.startLoading();
+        this.profileService.getPasswordComplexitySetting()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.passwordComplexitySetting = result.setting;
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
     }
 
@@ -56,11 +55,11 @@ export class ChangePasswordModalComponent implements OnInit {
         let input = new ChangePasswordInput();
         input.currentPassword = this.currentPassword;
         input.newPassword = this.password;
-        this._profileService.changePassword(input)
+        this.profileService.changePassword(input)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._notifyService.info(this.ls.l('YourPasswordHasChangedSuccessfully'));
-                this._dialogRef.close();
+                this.notifyService.info(this.ls.l('YourPasswordHasChangedSuccessfully'));
+                this.dialogRef.close();
             });
     }
 }

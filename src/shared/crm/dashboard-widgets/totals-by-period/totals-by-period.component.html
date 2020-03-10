@@ -1,6 +1,6 @@
 <header>
     <div class="left-section">
-        <h2 class="title">{{ l('StatisticsByPeriodTitle') }}</h2>
+        <h2 class="title">{{ ls.l('StatisticsByPeriodTitle') }}</h2>
         <dx-select-box
             [items]="selectItems"
             [displayExpr]="'name'"
@@ -15,7 +15,7 @@
                         <span class="legendMarker" [ngStyle]="{'backgroundColor' : seria.color }"></span>
                     </li>
                 </ul>
-                <span class="legendText">{{ l('Legend') }}</span>
+                <span class="legendText">{{ ls.l('Legend') }}</span>
                 <i [class]="'fa fa-angle-' + (showFullLegend ? 'up' : 'down')" aria-hidden="true"></i>
             </div>
             <ul class="full legend-list" [hidden]="!showFullLegend">
@@ -71,4 +71,4 @@
         </dxo-tooltip>
     </dx-chart>
 </div>
-<app-no-data [hidden]="loading || (totalsData && totalsData.length)"></app-no-data>
+<app-no-data [hidden]="loadingService.loading || (totalsData && totalsData.length)"></app-no-data>

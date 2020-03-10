@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialogRef } from '@angular/material/dialog';
@@ -19,9 +19,8 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LinkAccountModalComponent implements AfterViewInit {
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('linkAccountForm', { static: true }) linkAccountForm;
-    @ViewChild('tenancyNameInput', { static: true }) tenancyNameInput: ElementRef;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild('linkAccountForm', { static: false }) linkAccountForm;
     linkUser: LinkToUserInput = new LinkToUserInput();
     buttons: IDialogButton[];
 

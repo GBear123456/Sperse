@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>{{l('Category remove confirmation')}}</h2>
+<h2 mat-dialog-title>{{ls.l('Category remove confirmation')}}</h2>
 <mat-dialog-content>
-    <dx-check-box [(value)]="data.deleteAllReferences" [text]="l('Delete all references')" [width]="300"></dx-check-box>
+    <dx-check-box [(value)]="data.deleteAllReferences" [text]="ls.l('Delete all references')" [width]="300"></dx-check-box>
 
     <div *ngIf="!data.deleteAllReferences">
-        <h3>{{l('Move transaction(s) to the following account')}}</h3>
+        <h3>{{ls.l('Move transaction(s) to the following account')}}</h3>
         <dx-tree-list
             width="420px"
             height="100%"
@@ -18,6 +18,6 @@
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-    <button md-button (click)="confirm()" class="button-layout button-primary">{{l('Confirm')}}</button>
+    <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
 </mat-dialog-actions>

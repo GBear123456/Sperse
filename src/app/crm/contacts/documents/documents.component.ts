@@ -54,11 +54,11 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
     providers: [ FileSizePipe, PrinterService ]
 })
 export class DocumentsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(ImageViewerComponent, { static: true }) imageViewer: ImageViewerComponent;
-    @ViewChild(ActionMenuComponent, { static: true }) actionMenu: ActionMenuComponent;
-    @ViewChild('xmlContainer', { static: true }) xmlContainerElementRef: ElementRef;
-    @ViewChild('documentViewContainer', { static: true }) documentViewContainerElementRef: ElementRef;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(ImageViewerComponent, { static: false }) imageViewer: ImageViewerComponent;
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild('xmlContainer', { static: false }) xmlContainerElementRef: ElementRef;
+    @ViewChild('documentViewContainer', { static: false }) documentViewContainerElementRef: ElementRef;
     private _frameHolderElementRef: HTMLElement;
     @ViewChildren('frameHolder') set frameHolderElements(elements: QueryList<ElementRef>) {
         this._frameHolderElementRef = elements.first && elements.first.nativeElement;
@@ -117,6 +117,18 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 this.documentService['data'] = undefined;
                 this.loadDocuments();
             }
+        });
+    }
+
+    ngOnInit() {
+        this.loadDocumentTypes();
+    }
+
+    ngAfterViewInit() {
+        this.clientService.contactInfoSubscribe(contactInfo => {
+            this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
+            this.initActionMenuItems();
+            this.loadDocuments();
         });
     }
 
@@ -280,18 +292,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
-    }
-
-    ngOnInit() {
-        this.loadDocumentTypes();
-    }
-
-    ngAfterViewInit() {
-        this.clientService.contactInfoSubscribe(contactInfo => {
-            this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
-            this.initActionMenuItems();
-            this.loadDocuments();
-        });
     }
 
     loadDocumentTypes() {

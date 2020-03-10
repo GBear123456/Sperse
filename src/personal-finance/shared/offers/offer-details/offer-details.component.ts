@@ -1,13 +1,11 @@
 /** Core imports */
 import {
-    ApplicationRef,
     Component,
     ChangeDetectionStrategy,
     ElementRef,
     OnInit,
     OnDestroy,
     ViewChild,
-    Injector,
     Inject,
     Renderer2,
     ChangeDetectorRef
@@ -51,10 +49,10 @@ import { CreditScoreInterface } from '@root/personal-finance/shared/offers/inter
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferDetailsComponent implements OnInit, OnDestroy {
-    @ViewChild('availableCards', { static: true }) availableCardsRef: ElementRef;
+    @ViewChild('availableCards', { static: false }) availableCardsRef: ElementRef;
     @ViewChild('creditCardsList', { static: true }) creditCardsListRef: ElementRef;
     @ViewChild('detailsContainer', { static: true }) detailsContainerRef: ElementRef;
-    @ViewChild('offersList', { static: true }) offersListRef: ElementRef;
+    @ViewChild('offersList', { static: false }) offersListRef: ElementRef;
     creditCards$: Observable<OfferDto[]>;
     cardsAmount: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
@@ -68,18 +66,16 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     buttonCaption = 'Apply';
     scrollHeight: number;
     constructor(
-        injector: Injector,
-        applicationRef: ApplicationRef,
-        public ls: AppLocalizationService,
         private route: ActivatedRoute,
         private router: Router,
         private location: Location,
-        public offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
         private renderer: Renderer2,
         private changeDetectorRef: ChangeDetectorRef,
+        public offersService: OffersService,
+        public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: Document
-    ) { }
+    ) {}
 
     ngOnInit() {
         this.activate();

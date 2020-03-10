@@ -17,7 +17,6 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { ConditionsType } from '@shared/AppEnums';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
 
 @Component({
     selector: 'signup-form',
@@ -29,9 +28,9 @@ import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignupFormComponent implements OnInit, OnDestroy {
-    @ViewChild('agreeWithTermsCheckBox', { static: true }) agreeWithTermsCheckBox: DxCheckBoxComponent;
-    @ViewChild('agreeToReceiveCallsCheckBox', { static: true }) agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
-    @ViewChild('zipValidator', { static: true }) zipValidator: DxValidatorComponent;
+    @ViewChild('agreeWithTermsCheckBox', { static: false }) agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToReceiveCallsCheckBox', { static: false }) agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
+    @ViewChild('zipValidator', { static: false }) zipValidator: DxValidatorComponent;
     showZipMask = true;
     defaultCountryCode: string;
     selectedCountryCode: string;
@@ -84,11 +83,6 @@ export class SignupFormComponent implements OnInit, OnDestroy {
 
     validateName(event) {
         if (!event.key.match(/^[a-zA-Z]+$/))
-            event.preventDefault();
-    }
-
-    validateNumber(event) {
-        if (!event.key.match(/^[0-9]+$/) && event.key.length == 1 && this.showZipMask)
             event.preventDefault();
     }
 

@@ -1,12 +1,10 @@
 /** Core imports */
 import {
-    ApplicationRef,
     ChangeDetectionStrategy,
     Component,
     OnInit,
     AfterViewInit,
     Inject,
-    Injector,
     OnDestroy,
     ElementRef,
     ViewChild,
@@ -102,9 +100,7 @@ enum CreditCardCategory {
 })
 export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('offersList', { static: true }) offersListRef: ElementRef;
-    @ViewChild('filtersSideBar', { static: true }) filtersSideBar: ElementRef;
-    @ViewChild('sortingSelect', { static: true }) sortingSelect: MatSelect;
-    @ViewChild('filterScroll', { static: true }) filterScroll: DxScrollViewComponent;
+    @ViewChild('filterScroll', { static: false }) filterScroll: DxScrollViewComponent;
     offers$: Observable<any>;
     displayedOffers$: Observable<any>;
 
@@ -486,8 +482,6 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     pagePrefix: any;
 
     constructor(
-        injector: Injector,
-        applicationRef: ApplicationRef,
         public ls: AppLocalizationService,
         private dialog: MatDialog,
         private router: Router,

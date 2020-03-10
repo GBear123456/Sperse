@@ -26,7 +26,7 @@ import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/
     styleUrls: ['./notes.component.less']
 })
 export class NotesComponent extends AppComponentBase implements OnInit {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     public data: {
         contactInfo: ContactInfoDto
@@ -34,16 +34,15 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
-        private _clientService: ContactsService,
-        private _notesService: NotesServiceProxy,
-        private _contactService: ContactServiceProxy,
+        private clientService: ContactsService,
+        private notesService: NotesServiceProxy,
+        private contactService: ContactServiceProxy,
         private dialog: MatDialog
     ) {
         super(injector);
-
-        _clientService.invalidateSubscribe((area) => {
+        clientService.invalidateSubscribe((area) => {
             if (area == 'notes') {
-                this.data = this._contactService['data'];
+                this.data = this.contactService['data'];
                 this.loadData().subscribe(
                     (notes: NoteInfoDto[]) => this.dataSource = notes
                 );
@@ -52,8 +51,8 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        let notesData = this._notesService['data'];
-        this.data = this._contactService['data'];
+        let notesData = this.notesService['data'];
+        this.data = this.contactService['data'];
         const dataSource$ = notesData && notesData.contactId == this.data.contactInfo.id
                             ? of(notesData.source)
                             : this.loadData();
@@ -72,9 +71,9 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
     loadData(): Observable<NoteInfoDto[]> {
         let contactId = this.data.contactInfo.id;
-        const notes$ = this._notesService.getNotes(contactId).pipe(publishReplay(), refCount());
+        const notes$ = this.notesService.getNotes(contactId).pipe(publishReplay(), refCount());
         notes$.subscribe((result: NoteInfoDto[]) => {
-            this._notesService['data'] = {
+            this.notesService['data'] = {
                 contactId: contactId,
                 source: result
             };
@@ -84,14 +83,14 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
     openNoteAddDialog() {
         if (this.data.contactInfo.personContactInfo)
-            this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
+            this.clientService.organizationContactInfo.pipe(first()).subscribe(() => {
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {
-                        contactInfo: this._contactService['data'].contactInfo
+                        contactInfo: this.contactService['data'].contactInfo
                     }
                 });
             });

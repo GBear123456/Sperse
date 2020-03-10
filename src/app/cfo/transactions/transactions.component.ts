@@ -79,9 +79,9 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
     providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy, LifecycleSubjectsService ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
-    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(CategorizationComponent, { static: false }) categorizationComponent: CategorizationComponent;
+    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;

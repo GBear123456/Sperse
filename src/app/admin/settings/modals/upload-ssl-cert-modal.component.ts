@@ -18,15 +18,14 @@ import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
     providers: [ TenantSslCertificateServiceProxy ]
 })
 export class UploadSSLCertificateModalComponent {
-    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
-    @ViewChild('uploader', { static: true }) uploader: DxFileUploaderComponent;
-
+    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
+    @ViewChild('uploader', { static: false }) uploader: DxFileUploaderComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;
     saving = false;
-
     model: AddTenantSslCertificateInput = new AddTenantSslCertificateInput();
+
     constructor(
         private sslService: TenantSslCertificateServiceProxy,
         private notify: NotifyService,
@@ -42,16 +41,13 @@ export class UploadSSLCertificateModalComponent {
     save(event): void {
         if (!this.validate(event)) return;
         this.saving = true;
-
         let file = this.uploader.value[0];
         let reader = new FileReader();
-
         reader.onloadend = () => {
             this.model.base64EncodedCertificate = btoa(reader.result as string);
-
             this.sslService.addTenantSslCertificate(this.model)
                 .pipe(finalize(() => { this.saving = false; }))
-                .subscribe(result => {
+                .subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.close();
                     this.modalSave.emit(null);

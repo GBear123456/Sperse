@@ -21,16 +21,13 @@ export interface IOrganizationUnitOnEdit {
     templateUrl: './create-or-edit-unit-modal.component.html'
 })
 export class CreateOrEditUnitModalComponent {
-
-    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
-    @ViewChild('organizationUnitDisplayName', { static: true }) organizationUnitDisplayNameInput: ElementRef;
-
+    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
+    @ViewChild('organizationUnitDisplayName', { static: false }) organizationUnitDisplayNameInput: ElementRef;
     @Output() unitCreated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
     @Output() unitUpdated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
 
     active = false;
     saving = false;
-
     organizationUnit: IOrganizationUnitOnEdit = {};
 
     constructor(

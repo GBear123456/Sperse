@@ -39,9 +39,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     public static readonly FieldLocalizationPrefix = 'Import';
 
     @ViewChild(MatHorizontalStepper, { static: false }) stepper: MatHorizontalStepper;
-    @ViewChild('mapGrid', { static: true }) mapGrid: DxDataGridComponent;
+    @ViewChild('mapGrid', { static: false }) mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid', { static: false }) reviewGrid: DxDataGridComponent;
-    @ViewChild(DxProgressBarComponent, { static: true }) reviewProgress: DxProgressBarComponent;
+    @ViewChild(DxProgressBarComponent, { static: false }) reviewProgress: DxProgressBarComponent;
 
     @Input() title: string;
     @Input() icon: string;
@@ -113,7 +113,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     reviewDataSource: any;
     mapDataSource: any;
     selectedMapRowKeys: number[] = [];
-    isNextButtonHiden = false;
+    isNextButtonHidden = false;
 
     selectModeItems = [
         { text: 'Affect on page items', mode: 'page' },
@@ -263,7 +263,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     initReviewDataSource(mappedFields) {
-        this.isNextButtonHiden = true;
+        this.isNextButtonHidden = true;
         this.emptyReviewData();
         setTimeout(() => {
             let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0 : 1),
@@ -305,7 +305,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     this.reviewDataSource = dataSource;
                     this.reviewProgress.instance.option('value', 100);
                     this.reviewProgress.instance.option('visible', false);
-                    this.isNextButtonHiden = false;
+                    this.isNextButtonHidden = false;
                 }
             };
 

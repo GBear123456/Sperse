@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitte
 import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'country-phone-number',
@@ -10,6 +9,8 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     styleUrls: ['./country-phone-number.component.less']
 })
 export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
+    @ViewChild(PhoneNumberComponent, { static: true }) intPhoneNumber;
+    @ViewChild('intPhoneNumberModel', { static: true }) model;
     @Input() phoneNumber: string;
     @Input() required = true;
     @Input() disabled = false;
@@ -17,9 +18,6 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
     @Output() onKeyUp = new EventEmitter();
-
-    @ViewChild(PhoneNumberComponent, { static: true }) intPhoneNumber;
-    @ViewChild('intPhoneNumberModel', { static: true }) model;
 
     value = '';
     focused = false;

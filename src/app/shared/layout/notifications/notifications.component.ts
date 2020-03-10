@@ -3,8 +3,6 @@ import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, OnIni
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -23,8 +21,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('dataTable', { static: true }) dataTable: Table;
-    @ViewChild('paginator', { static: true }) paginator: Paginator;
     notifications: IFormattedUserNotification[] = [];
     unreadNotificationCount = 0;
     readStateFilter = 'ALL';

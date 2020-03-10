@@ -37,9 +37,9 @@ import { NotifyService } from '@abp/notify/notify.service';
     providers: [ PhoneFormatPipe ]
 })
 export class UserInformationComponent implements OnInit, OnDestroy {
-    @ViewChild('emailAddress', { static: true }) emailAddressComponent: DxSelectBoxComponent;
-    @ViewChild('phoneNumber', { static: true }) phoneNumberComponent: DxSelectBoxComponent;
-    @ViewChild('inviteValidationGroup', { static: true }) inviteValidationComponent: DxValidationGroupComponent;
+    @ViewChild('emailAddress', { static: false }) emailAddressComponent: DxSelectBoxComponent;
+    @ViewChild('phoneNumber', { static: false }) phoneNumberComponent: DxSelectBoxComponent;
+    @ViewChild('inviteValidationGroup', { static: false }) inviteValidationComponent: DxValidationGroupComponent;
     data: any;
 
     readonly GENERAL_TAB_INDEX        = 0;

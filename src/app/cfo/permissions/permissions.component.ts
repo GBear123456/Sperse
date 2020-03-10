@@ -24,7 +24,6 @@ import {
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-permissions',
@@ -33,7 +32,7 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     providers: [ BankAccountsServiceProxy, SecurityManagementServiceProxy, UserServiceProxy ]
 })
 export class PermissionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     users: UserListDto[] = [];
     showenUsersIds: number[] = [];
@@ -86,7 +85,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     constructor(injector: Injector,
         private userServiceProxy: UserServiceProxy,
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
-        private securityManagmentServiceProxy: SecurityManagementServiceProxy,
+        private securityManagementServiceProxy: SecurityManagementServiceProxy,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -113,7 +112,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             0
         );
         const bankAccountsObservable = this.bankAccountsServiceProxy.getBankAccounts(instanceType, this.instanceId, 'USD');
-        const usersPermissionsObservable = this.securityManagmentServiceProxy.getBankAccountAssignedUsers(instanceType, this.instanceId);
+        const usersPermissionsObservable = this.securityManagementServiceProxy.getBankAccountAssignedUsers(instanceType, this.instanceId);
         forkJoin(
             usersObservable,
             bankAccountsObservable,
@@ -281,8 +280,8 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const permission = e.newData[userId];
         const instanceType = <any>this.instanceType;
         let methodObservable = permission ?
-                               this.securityManagmentServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permissions.All) :
-                               this.securityManagmentServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, userId, [e.oldData.accountId]);
+                               this.securityManagementServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permissions.All) :
+                               this.securityManagementServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, userId, [e.oldData.accountId]);
         methodObservable.subscribe(() => {
             this.notify.success(this.ls('Platform', 'AppliedSuccessfully'));
         });
@@ -348,7 +347,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         /** Revoke user permissions */
         const instanceType = <any>this.instanceType;
         const bankAccounts = this.bankAccountsUsers.map(bankAccount => bankAccount.bankAccountId);
-        this.securityManagmentServiceProxy
+        this.securityManagementServiceProxy
             .revokeBankAccountPermissions(instanceType, this.instanceId, userId, bankAccounts)
             .subscribe(() => {
                 const stringUserId: string = userId.toString();

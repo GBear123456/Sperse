@@ -19,10 +19,10 @@ import { NotifyService } from '@abp/notify/notify.service';
     templateUrl: './add-member-modal.component.html'
 })
 export class AddMemberModalComponent {
-    @Output() membersAdded: EventEmitter<IUsersWithOrganizationUnit> = new EventEmitter<IUsersWithOrganizationUnit>();
     @ViewChild('modal', { static: true }) modal: ModalDirective;
-    @ViewChild('dataTable', { static: true }) dataTable: Table;
-    @ViewChild('paginator', { static: true }) paginator: Paginator;
+    @ViewChild('dataTable', { static: false }) dataTable: Table;
+    @ViewChild('paginator', { static: false }) paginator: Paginator;
+    @Output() membersAdded: EventEmitter<IUsersWithOrganizationUnit> = new EventEmitter<IUsersWithOrganizationUnit>();
 
     organizationUnitId: number;
     isShown = false;

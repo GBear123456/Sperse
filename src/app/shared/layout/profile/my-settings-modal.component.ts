@@ -3,7 +3,6 @@ import {
     AfterViewChecked,
     Component,
     ChangeDetectionStrategy,
-    ElementRef,
     EventEmitter,
     Output,
     ViewChild,
@@ -41,8 +40,7 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
 })
 export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
-    @ViewChild('smsVerificationModal', { static: true }) smsVerificationModal: SmsVerificationModalComponent;
+    @ViewChild('smsVerificationModal', { static: false }) smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     public isGoogleAuthenticatorEnabled = false;
@@ -63,12 +61,12 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     ];
     constructor(
         private dialog: MatDialog,
-        private _profileService: ProfileServiceProxy,
-        private _appSessionService: AppSessionService,
-        private _notifyService: NotifyService,
-        private _messageService: MessageService,
-        private _settingService: SettingService,
-        private _changeDetectorRef: ChangeDetectorRef,
+        private profileService: ProfileServiceProxy,
+        private appSessionService: AppSessionService,
+        private notifyService: NotifyService,
+        private messageService: MessageService,
+        private settingService: SettingService,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
@@ -80,30 +78,30 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        this._profileService.getCurrentUserProfileForEdit()
+        this.profileService.getCurrentUserProfileForEdit()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe((result) => {
-                this.smsEnabled = this._settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
+                this.smsEnabled = this.settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
                 this.user = result;
                 this._initialTimezone = result.timezone;
                 this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
                 this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
                 this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
                 this.isPhoneNumberEmpty = result.phoneNumber === '';
-                this._changeDetectorRef.detectChanges();
+                this.changeDetectorRef.detectChanges();
             });
     }
 
     updateQrCodeSetupImageUrl(): void {
-        this._profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
+        this.profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
             this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
             this.isGoogleAuthenticatorEnabled = true;
-            this._changeDetectorRef.detectChanges();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
     smsVerify(): void {
-        this._profileService.sendVerificationSms()
+        this.profileService.sendVerificationSms()
             .subscribe(() => {
                 this.smsVerificationModal.show();
             });
@@ -111,23 +109,23 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
 
     changePhoneNumberToVerified(): void {
         this.isPhoneNumberConfirmed = true;
-        this._changeDetectorRef.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     save(): void {
-        this.modalDialog.startLoading()
-        this._profileService.updateCurrentUserProfile(this.user)
+        this.modalDialog.startLoading();
+        this.profileService.updateCurrentUserProfile(this.user)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this._appSessionService.user.name = this.user.name;
-                this._appSessionService.user.surname = this.user.surname;
-                this._appSessionService.user.userName = this.user.name;
-                this._appSessionService.user.emailAddress = this.user.emailAddress;
-                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.appSessionService.user.name = this.user.name;
+                this.appSessionService.user.surname = this.user.surname;
+                this.appSessionService.user.userName = this.user.name;
+                this.appSessionService.user.emailAddress = this.user.emailAddress;
+                this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.modalDialog.close(true);
                 this.modalSave.emit(null);
                 if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
-                    this._messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                    this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
                         window.location.reload();
                     });
                 }

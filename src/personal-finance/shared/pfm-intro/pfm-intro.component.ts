@@ -1,15 +1,13 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login.component';
 
 @Component({
     selector: 'app-pfm-intro',
@@ -22,7 +20,6 @@ import { AdAutoLoginHostDirective } from '../../../account/auto-login/auto-login
     animations: [ appModuleAnimation() ]
 })
 export class PfmIntroComponent {
-    @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
     readonly bankNames: string[] = [
         'PNC',
         'Fidelity',
@@ -37,9 +34,9 @@ export class PfmIntroComponent {
     ];
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        private dialogRef: MatDialogRef<PfmIntroComponent>,
         public ls: AppLocalizationService,
-        private dialogRef: MatDialogRef<PfmIntroComponent>
+        @Inject(MAT_DIALOG_DATA) public data: any,
     ) {}
 
     getBankLogoName(bankName: string): string {

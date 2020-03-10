@@ -1,12 +1,9 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    ElementRef,
     EventEmitter,
     Input,
-    OnInit,
-    Output,
-    ViewChild
+    Output
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
@@ -18,26 +15,20 @@ import {
 
 @Component({
     selector: 'timezone-combo',
-    template: `<select #TimeZoneCombobox
-                    class='form-control'
-                    [(ngModel)]='selectedTimeZone'
-                    (ngModelChange)='selectedTimeZoneChange.emit($event)'>
+    template: `<select class='form-control'
+                       [(ngModel)]='selectedTimeZone'
+                       (ngModelChange)='selectedTimeZoneChange.emit($event)'>
                         <option *ngFor='let timeZone of timeZones$ | async' [value]='timeZone.value'>{{timeZone.name}}</option>
                 </select>`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeZoneComboComponent implements OnInit {
-    @ViewChild('TimeZoneCombobox', { static: true }) timeZoneComboboxElement: ElementRef;
+export class TimeZoneComboComponent {
     @Input() selectedTimeZone: string = undefined;
     @Input() defaultTimezoneScope: SettingScopes;
     @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();
-    timeZones$: Observable<NameValueDto[]>;
+    timeZones$: Observable<NameValueDto[]> = this.timingService.getTimezones(this.defaultTimezoneScope).pipe(
+        pluck('items')
+    );
 
-    constructor(private _timingService: TimingServiceProxy) {}
-
-    ngOnInit() {
-        this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
-            pluck('items')
-        );
-    }
+    constructor(private timingService: TimingServiceProxy) {}
 }

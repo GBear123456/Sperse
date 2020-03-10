@@ -4,7 +4,6 @@ import { Component, Input, EventEmitter, Output, HostBinding, ViewChild } from '
 /** Third party imports */
 import { DxListComponent } from 'devextreme-angular/ui/list';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
-import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
@@ -22,7 +21,6 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 })
 export class StaticListComponent {
     @ViewChild('staticList', { static: true }) dxList: DxListComponent;
-    @ViewChild('customSearch', { static: true }) dxSearch: DxTextBoxComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
@@ -64,7 +62,6 @@ export class StaticListComponent {
 
     listComponent: any;
     tooltipVisible: boolean;
-    bottomInputValue: string;
     @Input() selectedItems: any = [];
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
     @HostBinding('class.disableHindmost') @Input() disableHindmost = false;
@@ -149,7 +146,7 @@ export class StaticListComponent {
         this.filtersService.change(this.filterModel);
     }
 
-    onContentReady($event) {
+    onContentReady() {
         if (this.selectedKeys && this.selectedKeys.length) {
             this.listComponent.option('selectedItemKeys', this.selectedKeys);
         }

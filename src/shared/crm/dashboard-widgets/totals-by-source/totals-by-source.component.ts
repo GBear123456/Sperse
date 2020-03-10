@@ -5,12 +5,10 @@ import {
     Component,
     ElementRef,
     OnDestroy,
-    OnInit,
-    ViewChild
+    OnInit
 } from '@angular/core';
 
 /** Third party imports */
-import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import {
     catchError,
@@ -48,7 +46,6 @@ import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent, { static: true }) chartComponent: DxPieChartComponent;
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
@@ -148,7 +145,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                 this.loading = true;
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
-            switchMap(([selectedTotal, period, refresh]: [ITotalOption, PeriodModel, null]) => selectedTotal.method.call(
+            switchMap(([selectedTotal, period, ]: [ITotalOption, PeriodModel, null]) => selectedTotal.method.call(
                 this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date()).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

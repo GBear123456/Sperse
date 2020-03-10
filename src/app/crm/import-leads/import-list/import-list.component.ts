@@ -22,7 +22,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
     providers: [ FileSizePipe ]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     private rootComponent: any;
     private readonly dataSourceURI = 'Import';
@@ -113,7 +113,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                             }, { type: 'downloadOptions' }]
                         }
                     },
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
                 ]
             }
         ];

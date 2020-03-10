@@ -2,7 +2,6 @@
 import {
     Component,
     Inject,
-    ViewChild,
     Injector,
     ViewChildren,
     QueryList,
@@ -17,7 +16,6 @@ import { Observable } from 'rxjs';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service';
 import { GetApplicationDetailsOutput } from '@shared/service-proxies/service-proxies';
@@ -30,7 +28,6 @@ import { GetApplicationDetailsOutput } from '@shared/service-proxies/service-pro
 })
 export class WizardRightSideComponent implements OnDestroy {
     private static readonly tabsNumber = 6;
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     private tabHeader: HTMLElement;
     @ViewChildren(MatTabGroup) set matTabGroup(elements: QueryList<MatTabGroup>) {
         if (elements.first && elements.first._elementRef) {
@@ -89,7 +86,7 @@ export class WizardRightSideComponent implements OnDestroy {
         this.offersWizardService.checkIfEmailChanged();
     }
 
-    calculateScrolableHeight() {
+    calculateScrollableHeight() {
         return window.innerHeight - 172;
     }
 

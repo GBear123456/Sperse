@@ -42,8 +42,8 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ InvoiceServiceProxy ]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxTooltipComponent, { static: true }) actionsTooltip: DxTooltipComponent;
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     private actionRecordData;
     private settings = new InvoiceSettings();

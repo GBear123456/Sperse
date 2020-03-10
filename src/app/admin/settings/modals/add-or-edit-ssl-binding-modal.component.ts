@@ -21,7 +21,7 @@ import { AppLocalizationService } from '../../../shared/common/localization/app-
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
 export class AddOrEditSSLBindingModal {
-    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
+    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
     @Input() hostTypes: any;
     @Input() orgUnits: any;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();

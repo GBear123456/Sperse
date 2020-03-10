@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
@@ -23,7 +23,6 @@ import {
 /** */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import {
     BankAccountsServiceProxy,
     GroupByPeriod,
@@ -52,7 +51,6 @@ import { Period } from '@app/shared/common/period/period.enum';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
-    @ViewChild(DxChartComponent, { static: true }) chartComponent: DxChartComponent;
     bankAccountIds$: Observable<number[]> = this.bankAccountService.selectedBankAccountsIds$;
     totalData$: Observable<TotalDataModel>;
     totalData: TotalDataModel;

@@ -23,8 +23,8 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
     providers: [ SyncAccountServiceProxy ]
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @Input() showSyncAccountButton = false;
     @ViewChild('accountProgressTooltip', { static: true }) accountProgressTooltip: DxTooltipComponent;
+    @Input() showSyncAccountButton = false;
     @Output() onComplete = new EventEmitter();
     @Output() onSyncStarted = new EventEmitter();
     createAccountAvailable: boolean;
@@ -43,10 +43,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     constructor(
         injector: Injector,
         private syncProgressService: SynchProgressService,
-        private _syncAccountServiceProxy: SyncAccountServiceProxy,
+        private syncAccountServiceProxy: SyncAccountServiceProxy,
     ) {
         super(injector);
-        this._syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
+        this.syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
             });
@@ -56,7 +56,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.activate();
     }
 
-    calculateChartsScrolableHeight() {
+    calculateChartsScrollableHeight() {
         return document.querySelector('.scroll-zone').clientHeight;
     }
 

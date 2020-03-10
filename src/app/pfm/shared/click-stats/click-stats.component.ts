@@ -1,10 +1,9 @@
 /** Core imports */
 import { ChangeDetectionStrategy, OnInit,
-    Component, Input, Injector, ViewChild, Output, EventEmitter } from '@angular/core';
+    Component, Input, Injector, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
@@ -24,8 +23,6 @@ import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClickStatsComponent extends AppComponentBase implements OnInit {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-
     @Output() onStatsClick: EventEmitter<any> = new EventEmitter<any>();
     @Input() refresh$: Observable<null>;
     @Input() campaignId;
@@ -51,14 +48,14 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _offerService: OfferServiceProxy
+        private offerService: OfferServiceProxy
     ) {
         super(injector);
 
         this.initTotalColumn();
         this.dataSource = new DataSource({
             load: () => {
-                return this._offerService.getOffersStats(
+                return this.offerService.getOffersStats(
                     GroupByPeriod.Daily,
                     this.campaignId,
                     moment.utc().year(this._year).startOf('year'),

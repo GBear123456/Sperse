@@ -17,17 +17,14 @@ import { ExternalLoginProvider, LoginService } from '../../login.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AdAutoLoginHostDirective } from '../../../auto-login/auto-login.component';
 
 @Component({
     templateUrl: './host-login.component.html',
-    styleUrls: [
-        './host-login.component.less'
-    ],
+    styleUrls: ['./host-login.component.less'],
     animations: [accountModuleAnimation()]
 })
 export class HostLoginComponent implements OnInit {
-    @ViewChild('loginForm', { static: true }) loginForm;
+    @ViewChild('loginForm', { static: false }) loginForm;
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
@@ -44,26 +41,6 @@ export class HostLoginComponent implements OnInit {
         public ls: AppLocalizationService
     ) {}
 
-    get multiTenancySideIsTeanant(): boolean {
-        return this.sessionService.tenantId > 0;
-    }
-
-    get isTenantSelfRegistrationAllowed(): boolean {
-        return this.setting.getBoolean('App.TenantManagement.AllowSelfRegistration');
-    }
-
-    get isSelfRegistrationAllowed(): boolean {
-        if (!this.sessionService.tenantId) {
-            return false;
-        }
-
-        return this.setting.getBoolean('App.UserManagement.AllowSelfRegistration');
-    }
-
-    get isTenantRegistrationAllowed(): boolean {
-        return this.setting.getBoolean('App.TenantManagement.AllowSelfRegistration');
-    }
-
     ngOnInit(): void {
         let tenant = this.appSession.tenant;
         if (tenant)
@@ -72,12 +49,10 @@ export class HostLoginComponent implements OnInit {
             this.sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {
                     const initialReturnUrl = UrlHelper.getReturnUrl();
-                    const returnUrl = initialReturnUrl + (initialReturnUrl.indexOf('?') >= 0 ? '&' : '?') +
+                    location.href = initialReturnUrl + (initialReturnUrl.indexOf('?') >= 0 ? '&' : '?') +
                         'accessToken=' + result.signInToken +
                         '&userId=' + result.encodedUserId +
                         '&tenantId=' + result.encodedTenantId;
-
-                    location.href = returnUrl;
                 });
         }
     }

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{l('CancelItemConfirmation')}}</h2>
+<h2 mat-dialog-title>{{ls.l('CancelItemConfirmation')}}</h2>
 <mat-dialog-content>
     <dx-radio-group
         *ngIf="data.showReasonField"
@@ -9,12 +9,12 @@
         (onValueChanged)="validateReason(comment)">
     </dx-radio-group>
     <dx-text-area
-        [placeholder]="l('Comment')"
+        [placeholder]="ls.l('Comment')"
         [(value)]="comment"
         (onKeyUp)="onCommentKeyUp($event)">
     </dx-text-area>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button (click)="confirm()" class="button-layout button-primary">{{l('Confirm')}}</button>
+  <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+  <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Confirm')}}</button>
 </mat-dialog-actions>

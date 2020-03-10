@@ -24,7 +24,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./permission-tree.component.less']
 })
 export class PermissionTreeComponent implements OnInit, OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: true }) permissionsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent, { static: false }) permissionsTree: DxTreeViewComponent;
 
     public data: any;
     public permissionsDataSource: DataSource;

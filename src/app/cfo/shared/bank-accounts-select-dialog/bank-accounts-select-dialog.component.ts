@@ -19,7 +19,7 @@ import { IBankAccountsSelectDialogData } from '@app/cfo/shared/bank-accounts-sel
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
 export class BankAccountsSelectDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     tooltipVisible: boolean;
     businessEntities = [];

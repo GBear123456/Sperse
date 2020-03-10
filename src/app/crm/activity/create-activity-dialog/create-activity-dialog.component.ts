@@ -46,14 +46,14 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 })
 export class CreateActivityDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList', { static: true }) stagesComponent: StaticListComponent;
-    @ViewChild('leadsList', { static: true }) leadsList: StaticListComponent;
-    @ViewChild('clientsList', { static: true }) clientsList: StaticListComponent;
-    @ViewChild(UserAssignmentComponent, { static: true }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(DxContextMenuComponent, { static: true }) saveContextComponent: DxContextMenuComponent;
-    @ViewChild(StarsListComponent, { static: true }) starsListComponent: StarsListComponent;
-    @ViewChild('startDateRef', { static: true }) startDateComponent: DxDateBoxComponent;
-    @ViewChild('endDateRef', { static: true }) endDateComponent: DxDateBoxComponent;
+    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
+    @ViewChild('leadsList', { static: false }) leadsList: StaticListComponent;
+    @ViewChild('clientsList', { static: false }) clientsList: StaticListComponent;
+    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
+    @ViewChild('startDateRef', { static: false }) startDateComponent: DxDateBoxComponent;
+    @ViewChild('endDateRef', { static: false }) endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private readonly SAVE_OPTION_DEFAULT = 1;

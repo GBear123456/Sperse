@@ -21,13 +21,13 @@
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <app-static-list
-            [width]="'180px'"
+            width="180px"
             [title]="l('Status')"
             [showConfirmation]="false"
             [selectedKeys]="selectedClientKeys"
             [hideButtons]="true"
             [filterModel]="filterModelStatus"
-            [targetSelector]="'[aria-label=Status]'"
+            targetSelector="[aria-label=Status]"
             [list]="statuses$ | async"
             (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
@@ -134,31 +134,31 @@
                         </dx-data-grid>
                 </div>
             </div>
-            <div [hidden]="hidePivotGrid$ | async">
-                <slice-pivot-grid [storageKey]="sliceStorageKey"
-                                  [isLoading]="pivotGridDataIsLoading"
-                                  [height]="contentHeight$ | async">
-                </slice-pivot-grid>
-            </div>
-            <div [hidden]="hideChart$ | async">
-                <slice-chart [width]="contentWidth$ | async"
-                             [height]="contentHeight$ | async"
-                             [infoItems]="chartInfoItems"
-                             [itemsName]="l('Customers')"
-                             [title]="l('Customers') + ' ' + l('number')"
-                             argumentField="creationDate"
-                             valueField="count">
-                </slice-chart>
-            </div>
-            <div [hidden]="hideMap$ | async">
-                <slice-info [items]="mapInfoItems$ | async"></slice-info>
-                <slice-map [width]="contentWidth$ | async"
-                           [height]="mapHeight$ | async"
-                           [contactGroupText]="l('Customers').toLowerCase()"
-                           [dataIsLoading]="mapDataIsLoading"
-                           [data]="mapData$ | async">
-                </slice-map>
-            </div>
+        </div>
+        <div [hidden]="hidePivotGrid$ | async">
+            <slice-pivot-grid [storageKey]="sliceStorageKey"
+                              [isLoading]="pivotGridDataIsLoading"
+                              [height]="contentHeight$ | async">
+            </slice-pivot-grid>
+        </div>
+        <div [hidden]="hideChart$ | async">
+            <slice-chart [width]="contentWidth$ | async"
+                         [height]="contentHeight$ | async"
+                         [infoItems]="chartInfoItems"
+                         [itemsName]="l('Customers')"
+                         [title]="l('Customers') + ' ' + l('number')"
+                         argumentField="creationDate"
+                         valueField="count">
+            </slice-chart>
+        </div>
+        <div [hidden]="hideMap$ | async">
+            <slice-info [items]="mapInfoItems$ | async"></slice-info>
+            <slice-map [width]="contentWidth$ | async"
+                       [height]="mapHeight$ | async"
+                       [contactGroupText]="l('Customers').toLowerCase()"
+                       [dataIsLoading]="mapDataIsLoading"
+                       [data]="mapData$ | async">
+            </slice-map>
         </div>
     </div>
 </div>

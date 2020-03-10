@@ -7,9 +7,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
   styleUrls: ['rule-delete-dialog.component.less']
 })
 export class RuleDeleteDialogComponent extends ConfirmDialogComponent implements OnInit {
-    constructor(
-        injector: Injector
-    ) {
+    constructor(injector: Injector) {
         super(injector);
     }
 

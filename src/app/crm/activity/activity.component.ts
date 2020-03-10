@@ -35,8 +35,8 @@ import { AppPermissions } from '@shared/AppPermissions';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxSchedulerComponent, { static: true }) schedulerComponent: DxSchedulerComponent;
-    @ViewChild(PipelineComponent, { static: true }) pipelineComponent: PipelineComponent;
+    @ViewChild(DxSchedulerComponent, { static: false }) schedulerComponent: DxSchedulerComponent;
+    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
     schedulerHeight$: Observable<number> = combineLatest(
         this.appService.toolbarIsHidden$,
         this.fullScreenService.isFullScreenMode$

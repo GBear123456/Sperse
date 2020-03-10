@@ -1,36 +1,31 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AccountServiceProxy } from '@shared/service-proxies/service-proxies';
 import { TenantChangeModalComponent } from './tenant-change-modal.component';
-import { AdAutoLoginHostDirective } from '../auto-login/auto-login.component';
+import { AppLocalizationService } from '../../app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'tenant-change',
     template:
     `<span *ngIf="isMultiTenancyEnabled">
-        {{l("CurrentTenant")}}: <span *ngIf="tenancyName" title="{{name}}"><strong>{{tenancyName}}</strong></span> <span *ngIf="!tenancyName">{{l("NotSelected")}}</span> (<a href="javascript:;" (click)="showChangeModal()">{{l("Change")}}</a>)
+        {{ls.l("CurrentTenant")}}: <span *ngIf="tenancyName" [title]="name"><strong>{{tenancyName}}</strong></span> <span *ngIf="!tenancyName">{{ls.l("NotSelected")}}</span> (<a href="javascript:;" (click)="showChangeModal()">{{ls.l("Change")}}</a>)
         <tenantChangeModal #tenantChangeModal></tenantChangeModal>
     </span>`
 })
-export class TenantChangeComponent extends AppComponentBase implements OnInit {
-
-    @ViewChild('tenantChangeModal', { static: true }) tenantChangeModal: TenantChangeModalComponent;
+export class TenantChangeComponent implements OnInit {
+    @ViewChild('tenantChangeModal', { static: false }) tenantChangeModal: TenantChangeModalComponent;
 
     tenancyName: string;
     name: string;
 
     constructor(
-        injector: Injector,
-        private _appSessionService: AppSessionService
-    ) {
-        super(injector);
-    }
+        private appSessionService: AppSessionService,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
-        if (this._appSessionService.tenant) {
-            this.tenancyName = this._appSessionService.tenant.tenancyName;
-            this.name = this._appSessionService.tenant.name;
+        if (this.appSessionService.tenant) {
+            this.tenancyName = this.appSessionService.tenant.tenancyName;
+            this.name = this.appSessionService.tenant.name;
         }
     }
 

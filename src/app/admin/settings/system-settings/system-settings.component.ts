@@ -28,10 +28,10 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
 export class SystemSettingsComponent implements OnInit {
-    @ViewChild('customDomainsGrid', { static: true }) customDomainsGrid: DxDataGridComponent;
-    @ViewChild('addOrEditSSLBindingModal', { static: true }) addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
-    @ViewChild('sslGrid', { static: true }) sslGrid: DxDataGridComponent;
-    @ViewChild('uploadSSLCertificateModal', { static: true }) uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
+    @ViewChild('customDomainsGrid', { static: false }) customDomainsGrid: DxDataGridComponent;
+    @ViewChild('addOrEditSSLBindingModal', { static: false }) addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
+    @ViewChild('sslGrid', { static: false }) sslGrid: DxDataGridComponent;
+    @ViewChild('uploadSSLCertificateModal', { static: false }) uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
     public sslGridDataSource: any;
     public sslBindingsDataSource: any;
 

@@ -59,8 +59,8 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
     providers: [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, LifecycleSubjectsService ]
 })
 export class StatementsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(SynchProgressComponent, { static: true }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
 
     private bankAccountCount = '';
     private filters: FilterModel[] = [];
@@ -157,7 +157,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             takeUntil(this.destroy$),
             switchMap(data => this.componentIsActivated ? of(data) : this.lifecycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.isDataLoaded = false),
-            switchMap(([forecastModelId, currencyId, requestFilter, refresh]:[number, string, StatsFilter, null]) => {
+            switchMap(([forecastModelId, currencyId, requestFilter, ]: [number, string, StatsFilter, null]) => {
                 return this.bankAccountService.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
@@ -303,11 +303,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     locateInMenu: 'auto',
                     items: [
                         {
-                            name: 'showCompactRowsHeight',
-                            visible: !this._cfoService.hasStaticInstance,
-                            action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid)
-                        },
-                        {
                             name: 'download',
                             widget: 'dxDropDownMenu',
                             options: {
@@ -372,7 +367,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     toggleCompactView() {
-        DataGridService.showColumnChooser(this.dataGrid);
+        DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
     }
 
     reload() {

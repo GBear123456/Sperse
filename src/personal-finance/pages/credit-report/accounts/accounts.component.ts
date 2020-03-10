@@ -10,7 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent implements AfterViewInit {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @Input() creditReport: CreditReportDto;
     selectionChangedRaised: boolean;
     creditReportId: any;
@@ -26,10 +26,9 @@ export class AccountsComponent implements AfterViewInit {
     ];
 
     constructor(
-        private _accountInfoService: CreditReportServiceProxy,
+        private accountInfoService: CreditReportServiceProxy,
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 
     ngAfterViewInit() {
         this.dataGrid.instance.filter(['state', '=', 0]);
@@ -132,7 +131,7 @@ export class AccountsComponent implements AfterViewInit {
     }
 
     getAccountInfo(creditReportId, accountsIds): void {
-        this._accountInfoService
+        this.accountInfoService
             .getAccountInfo(creditReportId, accountsIds)
             .subscribe(result => {
                 this.accountInfo = result;

@@ -34,13 +34,12 @@ export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     styleUrls: ['./organization-tree.component.less']
 })
 export class OrganizationTreeComponent implements AfterViewInit {
-
+    @ViewChild('tree', { static: false }) tree: ElementRef;
+    @ViewChild('createOrEditOrganizationUnitModal', { static: false }) createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
     @Output() ouSelected = new EventEmitter<IBasicOrganizationUnitInfo>();
-    @ViewChild('tree', { static: true }) tree: ElementRef;
-    @ViewChild('createOrEditOrganizationUnitModal', { static: true }) createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
 
-    private _$tree: JQuery;
-    private _updatingNode: any;
+    private $tree: JQuery;
+    private updatingNode: any;
     permissions = AppPermissions;
     organizationsListHeight = 'calc(100vh - 294px)';
 
@@ -63,7 +62,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         const self = this;
-        this._$tree = $(this.tree.nativeElement);
+        this.$tree = $(this.tree.nativeElement);
         this.getTreeDataFromServer(treeData => {
             this.totalUnitCount = treeData.length;
 
@@ -78,7 +77,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
                 jsTreePlugins.push('dnd');
             }
 
-            this._$tree
+            this.$tree
                 .on('changed.jstree', (e, data) => {
                     if (data.selected.length !== 1) {
                         this.selectedOu = null;
@@ -88,13 +87,13 @@ export class OrganizationTreeComponent implements AfterViewInit {
                 })
                 .on('move_node.jstree', (e, data) => {
                     if (!this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree)) {
-                        this._$tree.jstree('refresh'); //rollback
+                        this.$tree.jstree('refresh'); //rollback
                         return;
                     }
 
                     const parentNodeName = (!data.parent || data.parent === '#')
                         ? this.ls.l('Root')
-                        : this._$tree.jstree('get_node', data.parent).original.displayName;
+                        : this.$tree.jstree('get_node', data.parent).original.displayName;
 
                     this.message.confirm(
                         this.ls.l('OrganizationUnitMoveConfirmMessage', data.node.original.displayName, parentNodeName),
@@ -106,7 +105,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
                                 input.newParentId = (!data.parent || data.parent === '#') ? undefined : data.parent;
                                 this.organizationUnitService.moveOrganizationUnit(input)
                                     .pipe(catchError(error => {
-                                        this._$tree.jstree('refresh'); //rollback
+                                        this.$tree.jstree('refresh'); //rollback
                                         return observableThrowError(error);
                                     }))
                                     .subscribe(() => {
@@ -114,7 +113,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
                                         this.reload();
                                     });
                             } else {
-                                this._$tree.jstree('refresh'); //rollback
+                                this.$tree.jstree('refresh'); //rollback
                             }
                         }
                     );
@@ -146,12 +145,12 @@ export class OrganizationTreeComponent implements AfterViewInit {
                     plugins: jsTreePlugins
                 });
 
-            this._$tree.on('click', '.ou-text .fa-caret-down', function (e) {
+            this.$tree.on('click', '.ou-text .fa-caret-down', function (e) {
                 e.preventDefault();
 
                 const ouId = $(this).closest('.ou-text').attr('data-ou-id');
                 setTimeout(() => {
-                    self._$tree.jstree('show_contextmenu', ouId);
+                    self.$tree.jstree('show_contextmenu', ouId);
                 }, 100);
             });
         });
@@ -160,8 +159,8 @@ export class OrganizationTreeComponent implements AfterViewInit {
     reload(): void {
         this.getTreeDataFromServer(treeData => {
             this.totalUnitCount = treeData.length;
-            (<any>this._$tree.jstree(true)).settings.core.data = treeData;
-            this._$tree.jstree('refresh');
+            (<any>this.$tree.jstree(true)).settings.core.data = treeData;
+            this.$tree.jstree('refresh');
         });
     }
 
@@ -196,7 +195,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
                 label: self.ls.l('Edit'),
                 _disabled: !canManageOrganizationTree,
                 action: () => {
-                    self._updatingNode = node;
+                    self.updatingNode = node;
                     self.createOrEditOrganizationUnitModal.show({
                         id: node.id,
                         displayName: node.original.displayName
@@ -241,7 +240,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
     }
 
     unitCreated(ou: OrganizationUnitDto): void {
-        const instance = $.jstree.reference(this._$tree);
+        const instance = $.jstree.reference(this.$tree);
         instance.create_node(
             ou.parentId ? instance.get_node(ou.parentId) : '#',
             {
@@ -260,9 +259,9 @@ export class OrganizationTreeComponent implements AfterViewInit {
     }
 
     unitUpdated(ou: OrganizationUnitDto): void {
-        const instance = $.jstree.reference(this._$tree);
-        this._updatingNode.original.displayName = ou.displayName;
-        instance.rename_node(this._updatingNode, this.generateTextOnTree(ou));
+        const instance = $.jstree.reference(this.$tree);
+        this.updatingNode.original.displayName = ou.displayName;
+        instance.rename_node(this.updatingNode, this.generateTextOnTree(ou));
     }
 
     membersAdded(data: IUsersWithOrganizationUnit): void {
@@ -274,8 +273,8 @@ export class OrganizationTreeComponent implements AfterViewInit {
     }
 
     incrementMemberCount(ouId: number, incrementAmount: number): void {
-        const treeNode = this._$tree.jstree('get_node', ouId);
+        const treeNode = this.$tree.jstree('get_node', ouId);
         treeNode.original.memberCount = treeNode.original.memberCount + incrementAmount;
-        this._$tree.jstree('rename_node', treeNode, this.generateTextOnTree(treeNode.original));
+        this.$tree.jstree('rename_node', treeNode, this.generateTextOnTree(treeNode.original));
     }
 }

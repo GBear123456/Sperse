@@ -38,9 +38,9 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: true }) dataGrid: DxDataGridComponent;
-    @ViewChild(ActionMenuComponent, { static: true }) actionMenu: ActionMenuComponent;
-    @ViewChild(ImageViewerComponent, { static: true }) imageViewer: ImageViewerComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild(ImageViewerComponent, { static: false }) imageViewer: ImageViewerComponent;
 
     headlineButtons: HeadlineButton[] = [
         {

@@ -4,7 +4,7 @@
         <a href="//lendspace.com" class="url">www.lendspace.com</a>
         <a class="get-free-score" (click)="registerComponent.showRegisterPopup()">Your application is incomplete. Click here to continue...</a>
         <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>
-        <register></register>
+        <register #registerComponent></register>
     </div>
 </div>
 <div class="page-header navbar navbar-fixed-top navbar-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">

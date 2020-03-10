@@ -12,13 +12,12 @@ import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
-import { RegisterComponent } from '@root/shared/personal-finance-layout/register/register.component';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LayoutType, MyFinancesServiceProxy } from '../service-proxies/service-proxies';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
-import { AdAutoLoginHostDirective } from '../../account/auto-login/auto-login.component';
+import { DateHelper } from '../helpers/DateHelper';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -34,8 +33,7 @@ export class AdHeaderHostDirective {
     providers: [MyFinancesServiceProxy]
 })
 export class PersonalFinanceHeaderComponent {
-    @ViewChild(AdHeaderHostDirective, { static: true }) adHeaderHost: AdHeaderHostDirective;
-    @ViewChild(RegisterComponent, { static: true }) registerComponent: RegisterComponent;
+    @ViewChild(AdHeaderHostDirective, { static: false }) adHeaderHost: AdHeaderHostDirective;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
     @HostBinding('class.yellow') yellowTheme =
         environment.LENDSPACE_HEADER_THEME == 'yellow';
@@ -67,6 +65,7 @@ export class PersonalFinanceHeaderComponent {
         { name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false }
     ];
     applicationCompleteIsRequired$: Observable<Boolean>;
+    userTimezone = DateHelper.getUserTimezone();
 
     constructor(
         injector: Injector,
@@ -146,7 +145,7 @@ export class PersonalFinanceHeaderComponent {
     }
 
     get notificationEnabled(): boolean {
-        return (!this.abpSessionService.tenantId || this.featureService.isEnabled(AppFeatures.Notification));
+        return !this.abpSessionService.tenantId || this.featureService.isEnabled(AppFeatures.Notification);
     }
 
     private getAppAreaLinks() {
