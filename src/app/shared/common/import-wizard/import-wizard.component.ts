@@ -40,7 +40,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     @ViewChild(MatHorizontalStepper, { static: false }) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid', { static: true }) mapGrid: DxDataGridComponent;
-    @ViewChild('reviewGrid', { static: true }) reviewGrid: DxDataGridComponent;
+    @ViewChild('reviewGrid', { static: false }) reviewGrid: DxDataGridComponent;
     @ViewChild(DxProgressBarComponent, { static: true }) reviewProgress: DxProgressBarComponent;
 
     @Input() title: string;
