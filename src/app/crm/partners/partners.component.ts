@@ -252,10 +252,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             },
             {
                 area: 'filter',
-                dataField: 'BankCode'
-            },
-            {
-                area: 'filter',
                 dataField: 'CompanyName'
             },
             {
