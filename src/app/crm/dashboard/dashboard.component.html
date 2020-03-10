@@ -8,7 +8,7 @@
     <app-period (onChange)="periodChanged($event)"></app-period>
 </app-headline>
 <div [@routerTransition]>
-  <left-menu (openIntro)="openDialog()" [class.hidden]="leftMenuHidden" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
+  <left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
   <div class="widgets-wrapper">
       <div class="wrapper">
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
