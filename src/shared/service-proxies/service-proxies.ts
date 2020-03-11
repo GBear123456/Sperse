@@ -64784,17 +64784,19 @@ export interface IQuickBookConnectionLinkResult {
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {
-    name!: string | undefined;
-    email!: string | undefined;
-    phone!: string | undefined;
-    city!: string | undefined;
-    status!: string | undefined;
-    bankCode!: string | undefined;
-    created!: moment.Moment | undefined;
     bankPassFee!: number | undefined;
     bankVaultFee!: number | undefined;
     wtbFee!: number | undefined;
     totalFee!: number | undefined;
+    contactId!: number | undefined;
+    name!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+    city!: string | undefined;
+    statusId!: string | undefined;
+    status!: string | undefined;
+    bankCode!: string | undefined;
+    created!: moment.Moment | undefined;
 
     constructor(data?: ISubscribersReportInfo) {
         if (data) {
@@ -64807,17 +64809,19 @@ export class SubscribersReportInfo implements ISubscribersReportInfo {
 
     init(data?: any) {
         if (data) {
-            this.name = data["name"];
-            this.email = data["email"];
-            this.phone = data["phone"];
-            this.city = data["city"];
-            this.status = data["status"];
-            this.bankCode = data["bankCode"];
-            this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
             this.bankPassFee = data["bankPassFee"];
             this.bankVaultFee = data["bankVaultFee"];
             this.wtbFee = data["wtbFee"];
             this.totalFee = data["totalFee"];
+            this.contactId = data["contactId"];
+            this.name = data["name"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.city = data["city"];
+            this.statusId = data["statusId"];
+            this.status = data["status"];
+            this.bankCode = data["bankCode"];
+            this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
         }
     }
 
@@ -64830,33 +64834,37 @@ export class SubscribersReportInfo implements ISubscribersReportInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["email"] = this.email;
-        data["phone"] = this.phone;
-        data["city"] = this.city;
-        data["status"] = this.status;
-        data["bankCode"] = this.bankCode;
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         data["bankPassFee"] = this.bankPassFee;
         data["bankVaultFee"] = this.bankVaultFee;
         data["wtbFee"] = this.wtbFee;
         data["totalFee"] = this.totalFee;
+        data["contactId"] = this.contactId;
+        data["name"] = this.name;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["city"] = this.city;
+        data["statusId"] = this.statusId;
+        data["status"] = this.status;
+        data["bankCode"] = this.bankCode;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface ISubscribersReportInfo {
-    name: string | undefined;
-    email: string | undefined;
-    phone: string | undefined;
-    city: string | undefined;
-    status: string | undefined;
-    bankCode: string | undefined;
-    created: moment.Moment | undefined;
     bankPassFee: number | undefined;
     bankVaultFee: number | undefined;
     wtbFee: number | undefined;
     totalFee: number | undefined;
+    contactId: number | undefined;
+    name: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+    city: string | undefined;
+    statusId: string | undefined;
+    status: string | undefined;
+    bankCode: string | undefined;
+    created: moment.Moment | undefined;
 }
 
 export class SubscriberDailyStatsReportInfo implements ISubscriberDailyStatsReportInfo {

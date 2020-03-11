@@ -77,7 +77,6 @@
                         <dxi-column dataField="Date"
                                     dataType="date"
                                     cssClass="tabular"
-                                    [sortIndex]="0"
                                     sortOrder="desc"
                                     [caption]="l('Transactions_Date')"
                                     cellTemplate="dateCell">
@@ -181,8 +180,6 @@
                         <dxi-column dataField="Id"
                                     cssClass="tabular id-column clipboard-holder"
                                     [caption]="l('Transactions_Id')"
-                                    sortOrder="desc"
-                                    sortIndex="0"
                                     [visible]="false">
                         </dxi-column>
                         <dxi-column dataField="BankCode"
@@ -252,6 +249,7 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="Department"
+                                    dataType="string"
                                     cssClass="clipboard-holder"
                                     [caption]="l('Transactions_Department')"
                                     [visible]="departmentFeatureEnabled"

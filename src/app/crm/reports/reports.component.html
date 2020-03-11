@@ -47,6 +47,7 @@
                         [caption]="ls.l('BankCode')">
             </dxi-column>
             <dxi-column dataField="crated"
+                        sortOrder="desc"
                         [caption]="ls.l('Created')"
                         [calculateDisplayValue]="customizeCreatedCell"
                         cssClass="clipboard-holder">
@@ -104,6 +105,7 @@
             <dxo-paging [pageSize]="20"></dxo-paging>
             <dxi-column alignment="center"
                         dataField="date"
+                        sortOrder="desc"
                         [caption]="ls.l('Date')"
                         [calculateDisplayValue]="customizeDateCell"
                         cssClass="clipboard-holder">

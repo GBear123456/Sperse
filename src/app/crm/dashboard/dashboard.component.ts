@@ -48,14 +48,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
     private rootComponent: any;
-    public headlineButtons: HeadlineButton[] = [
-        {
-            enabled: true,
-            action: () => this.leftMenuHidden = !this.leftMenuHidden,
-            label: '',
-            class: 'toggle dx-button'
-        }
-    ];
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
     showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
@@ -64,7 +56,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     showLoadingSpinner = true;
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
-    leftMenuHidden = true;
     isGrantedCustomers = this.isGranted(AppPermissions.CRMCustomers);
     isGrantedOrders = this.isGranted(AppPermissions.CRMOrders);
     hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);

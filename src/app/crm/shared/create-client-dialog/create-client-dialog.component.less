@@ -182,27 +182,37 @@
             country-phone-number {
                 width: 300px;
                 vertical-align: top;
+                
                 .input-group {
                     height: 34px;
                 }
+                
                 .wrapper {
                     width: 340px!important;
                 }
+                
                 .flagInput .dropdown .btn {
                     height: 33px;
                 }
+                
                 .flagInput, .flagInput .dropdown .btn span, .dropdown-content .list-group a span {
-                    line-height: 32px;
+                    line-height: unset;
                     font-size: 12px;
                     margin: 0;
                     top: 0;
                 }
+                
                 .flagInput .dropdown .btn span.arrow-down {
                     margin-top: 5px;
                     margin-left: 2px;
                 }
-                .dropdown-content .list-group a span.country-name{
+                
+                .dropdown-content .list-group a span.country-name {
                     margin-left: 6px;
+                }
+                
+                .list-group .list-group-item span {
+                    vertical-align: middle;
                 }
             }
         }

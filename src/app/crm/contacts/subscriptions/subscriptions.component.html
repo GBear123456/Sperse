@@ -35,7 +35,7 @@
         <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>
     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-        {{cellData.value | date: formatting.date : userTimezone }}
+        <span title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone }}</span>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
