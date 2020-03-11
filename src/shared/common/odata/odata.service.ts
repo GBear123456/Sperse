@@ -36,7 +36,7 @@ export class ODataService {
             if (this.dxRequestPool[uri])
                 this.dxRequestPool[uri].abort();
 
-            if (url)
+            if (url && dataSource['_store'])
                 dataSource['_store']['_url'] = url;
             promise = dataSource.reload();
             dataSource['operationId'] = promise['operationId'];

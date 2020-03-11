@@ -221,10 +221,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filters,
                 loadOptions,
                 { contactGroupId: this.contactGroupId.value.toString() },
-            ).then((data, additionalData) => {
-                this.totalCount = additionalData.totalCount;
-                return data;
-            });
+            );
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -355,7 +352,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 { contactGroupId: this.contactGroupId.value.toString() }
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
-                this.totalCount = result.infoItems[0].value;
                 return result.items;
             });
         }
@@ -459,7 +455,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = null;
+                    this.totalCount = undefined;
                     request.params.contactGroupId = this.contactGroupId.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -505,6 +501,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.onStagesLoaded.bind(this);
         });
 
+        combineLatest(
+            this.odataFilter$,
+            this.refresh$,
+            this.contactGroupId$
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe(([filter, ]) => {
+            this.totalDataSource['_store']['_url'] = this.getODataUrl(
+                this.totalDataSourceURI,
+                filter
+            );
+            this.totalDataSource.load();
+        });
+
         this.queryParams$.pipe(
             pluck('action'),
             filter((action: string) => action === 'addNew')
@@ -529,13 +539,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             takeUntil(this.destroy$)
         ).subscribe(() => {
             this.crmService.handleModuleChange(this.dataLayoutType.value);
-        });
-
-        this.mapInfoItems$.pipe(
-            takeUntil(this.destroy$),
-            map((mapInfoItems) => mapInfoItems[0].value)
-        ).subscribe((totalCount: number) => {
-            this.totalCount = totalCount;
         });
     }
 
@@ -1186,7 +1189,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     );
                     if (this.showDataGrid) {
                         this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
-                        this.totalDataSource.load();
                     }
                 }
             });
@@ -1198,7 +1200,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.pipelineDataSource)
                 setTimeout(() => this.pipelineDataSource = cloneDeep(this.dataSource));
         } else if (this.showDataGrid) {
-            this.totalDataSource.load();
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1418,7 +1419,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
-            this.totalCount = null;
             this.contactGroupId.next(ContactGroup[event.value]);
             this.headlineButtons[0].label = this.getHeadlineButtonName();
             this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
@@ -1430,7 +1430,4 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    updateTotalCount(totalCount: number) {
-        this.totalCount = totalCount;
-    }
 }

@@ -158,8 +158,8 @@ export class CrmService {
         }).toPromise().then((result: any) => {
             const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
             let minGroupValue, maxGroupValue;
-            const data = result.data[0].items ? flatten(result.data.map(a => a.items)) : result.data;
-            const items = data.map(contact => {
+            const data = result.data[0] && result.data[0].items ? flatten(result.data.map(a => a.items)) : result.data;
+            const items = data && data.map(contact => {
                 minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
                 maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
                 return {

@@ -24,6 +24,7 @@ import {
     pluck,
     publishReplay,
     refCount,
+    skip,
     startWith,
     switchMap,
     takeUntil,
@@ -140,7 +141,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly totalDataSourceURI: string = 'Customer/$count';
     private readonly groupDataSourceURI: string = 'CustomerSlice';
     private readonly dateField = 'ContactDate';
-    private filters: FilterModel[];
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
@@ -205,10 +205,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 loadOptions,
                 /** @todo change to strict typing and handle typescript error */
                 this.subscriptionStatusFilter.items.element['getObjectValue']()
-            ).then((data, additionalData) => {
-                this.totalCount = additionalData.totalCount;
-                return data;
-            });
+            );
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -309,35 +306,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    odataFilter$: Observable<string> = this.filterChanged$.pipe(
-        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
-        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
-    );
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
-    clientsData$: Observable<any> = combineLatest(
-        this.odataFilter$,
-        this.selectedMapArea$,
-        this.refresh$
-    ).pipe(
-        tap(() => this.mapDataIsLoading = true),
-        switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
-            first(),
-            mapTo(data)
-        )),
-        switchMap(([filter, mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
-            this.getODataUrl(this.groupDataSourceURI),
-            filter,
-            mapArea,
-            this.dateField,
-            this.subscriptionStatusFilter.items.element['getObjectValue']()
-        )),
-        publishReplay(),
-        refCount(),
-        tap(() => this.mapDataIsLoading = false)
-    );
-    mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.clientsData$);
-    mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.clientsData$, this.selectedMapArea$);
     chartInfoItems: InfoItem[];
     chartDataSource = new DataSource({
         key: 'id',
@@ -350,13 +319,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.subscriptionStatusFilter.items.element['getObjectValue']()
             ).then((result) => {
                 this.chartInfoItems = result.infoItems;
-                this.totalCount = this.chartInfoItems[0].value;
                 return result.items;
             });
         }
     });
     sliceStorageKey = 'CRM_Clients_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
-    private filterChanged = false;
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
@@ -390,6 +357,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 })
         }
     });
+    private filters: FilterModel[] = this.getFilters();
+    odataFilter$: Observable<string> = this.filterChanged$.pipe(
+        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
+        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+    );
+    mapData$: Observable<MapData>;
+    mapInfoItems$: Observable<InfoItem[]>;
 
     constructor(
         injector: Injector,
@@ -418,6 +392,24 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 dataField: 'BankCode'
             });
         }
+        const clientsData$ = combineLatest(
+            this.listenForUpdate(DataLayoutType.Map),
+            this.selectedMapArea$
+        ).pipe(
+            tap(() => this.mapDataIsLoading = true),
+            switchMap(([[filter, ], mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
+                this.getODataUrl(this.groupDataSourceURI),
+                filter,
+                mapArea,
+                this.dateField,
+                this.subscriptionStatusFilter.items.element['getObjectValue']()
+            )),
+            publishReplay(),
+            refCount(),
+            tap(() => this.mapDataIsLoading = false)
+        );
+        this.mapData$ = this.mapService.getAdjustedMapData(clientsData$);
+        this.mapInfoItems$ = this.mapService.getMapInfoItems(clientsData$, this.selectedMapArea$);
     }
 
     ngOnInit() {
@@ -452,10 +444,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI),
+                url: this.getODataUrl(this.totalDataSourceURI, FiltersService.filterByStatus(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = null;
+                    this.totalCount = undefined;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -464,17 +456,35 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             })
         });
-        this.totalDataSource.load();
+        combineLatest(
+            this.odataFilter$,
+            this.refresh$
+        ).subscribe(([filter, ]) => {
+            this.totalDataSource['_store']['_url'] = this.getODataUrl(
+                this.totalDataSourceURI,
+                filter,
+                null,
+                this.subscriptionStatusFilter.items.element.value
+            );
+            this.totalDataSource.load();
+        });
+        this.listenForUpdate(DataLayoutType.DataGrid).pipe(skip(1)).subscribe(() => {
+            this.processFilterInternal();
+        });
+
+        this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
+            this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+            this.processFilterInternal();
+        });
         this.searchValue = '';
         this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
         combineLatest(
             this.chartComponent.summaryBy$,
-            this.filterChanged$.pipe(startWith(null))
+            this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            filter(() => this.showChart)
         ).subscribe(() => {
             this.chartDataSource.load();
         });
@@ -496,13 +506,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         ).subscribe((dataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
-        });
-
-        this.mapInfoItems$.pipe(
-            takeUntil(this.destroy$),
-            map((mapInfoItems) => mapInfoItems[0].value)
-        ).subscribe((totalCount: number) => {
-            this.totalCount = totalCount;
         });
     }
 
@@ -528,7 +531,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         setTimeout(() => this.createClient());
                     if (params['refresh']) {
                         this.refresh();
-                        this.filterChanged = true;
                     }
             });
     }
@@ -549,12 +551,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     refresh(refreshDashboard = true) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        if (this.showDataGrid || this.showPivotGrid) {
-            this.processFilterInternal();
-        }
-        if (this.showChart) {
-            this.chartDataSource.load();
-        }
         this._refresh.next(null);
         if (refreshDashboard) {
             (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
@@ -567,16 +563,27 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
+    private listenForUpdate(layoutType: DataLayoutType) {
+        return combineLatest(
+            this.odataFilter$,
+            this.refresh$
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap((data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
+                filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+                first(),
+                mapTo(data)
+            ))
+        );
+    }
+
     createClient() {
         this.dialog.open(CreateClientDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: () => {
-                    this.invalidate();
-                    this.filterChanged = true;
-                },
+                refreshParent: () => this.invalidate(),
                 customerType: ContactGroup.Client
             }
         }).afterClosed().subscribe(() => this.refresh());
@@ -603,146 +610,149 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filtersService.checkIfAnySelected();
         } else {
             this.filtersService.setup(
-                this.filters = [
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'startswith',
-                        caption: 'name',
-                        items: { Name: new FilterItemModel()}
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        caption: 'email',
-                        items: { Email: new FilterItemModel() }
-                    }),
-                    this.subscriptionStatusFilter,
-                    new FilterModel({
-                        component: FilterCalendarComponent,
-                        operator: {from: 'ge', to: 'le'},
-                        caption: 'creation',
-                        field: this.dateField,
-                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true}
-                    }),
-                    this.filterModelStatus,
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'phone',
-                        items: { Phone: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterStatesComponent,
-                        caption: 'states',
-                        items: {
-                            countryStates: new FilterStatesModel()
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'startswith',
-                        caption: 'city',
-                        items: { City: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'streetAddress',
-                        items: { StreetAddress: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'startswith',
-                        caption: 'zipCode',
-                        items: { ZipCode: new FilterItemModel() }
-                    }),
-                    this.filterModelAssignment = new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'assignedUser',
-                        field: 'AssignedUserId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(this.assignedUsersSelector),
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'OrganizationUnitId',
-                        field: 'OrganizationUnitId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                                    nameField: 'displayName',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
-                    this.filterModelLists = new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'List',
-                        field: 'ListId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
-                    this.filterModelTags = new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'Tag',
-                        field: 'TagId',
-                        items: {
-                            element: new FilterCheckBoxesModel({
-                                dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                        }
-                    }),
-                    this.filterModelRating = new FilterModel({
-                        component: FilterRangeComponent,
-                        operator: { from: 'ge', to: 'le' },
-                        caption: 'Rating',
-                        field: 'Rating',
-                        items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
-                    }),
-                    this.filterModelStar = new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'Star',
-                        field: 'StarId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
-                                    nameField: 'name',
-                                    keyExpr: 'id',
-                                    templateFunc: (itemData) => {
-                                        return `<div class="star-item">
-                                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
-                                                    <span>${this.l(itemData.name)}</span>
-                                                </div>`;
-                                    }
-                                })
-                        }
-                    })
-                ]
+                this.filters = this.getFilters()
             );
         }
 
         this.filtersService.apply(() => {
             this.selectedClientKeys = [];
-            this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
         });
+    }
+
+    private getFilters() {
+        return [
+            new FilterModel({
+                component: FilterInputsComponent,
+                operator: 'startswith',
+                caption: 'name',
+                items: { Name: new FilterItemModel()}
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                caption: 'email',
+                items: { Email: new FilterItemModel() }
+            }),
+            this.subscriptionStatusFilter,
+            new FilterModel({
+                component: FilterCalendarComponent,
+                operator: {from: 'ge', to: 'le'},
+                caption: 'creation',
+                field: this.dateField,
+                items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                options: {method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true}
+            }),
+            this.filterModelStatus,
+            new FilterModel({
+                component: FilterInputsComponent,
+                operator: 'contains',
+                caption: 'phone',
+                items: { Phone: new FilterItemModel() }
+            }),
+            new FilterModel({
+                component: FilterStatesComponent,
+                caption: 'states',
+                items: {
+                    countryStates: new FilterStatesModel()
+                }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                operator: 'startswith',
+                caption: 'city',
+                items: { City: new FilterItemModel() }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                operator: 'contains',
+                caption: 'streetAddress',
+                items: { StreetAddress: new FilterItemModel() }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                operator: 'startswith',
+                caption: 'zipCode',
+                items: { ZipCode: new FilterItemModel() }
+            }),
+            this.filterModelAssignment = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'assignedUser',
+                field: 'AssignedUserId',
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.store$.pipe(this.assignedUsersSelector),
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                }
+            }),
+            new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'OrganizationUnitId',
+                field: 'OrganizationUnitId',
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                            nameField: 'displayName',
+                            keyExpr: 'id'
+                        })
+                }
+            }),
+            this.filterModelLists = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'List',
+                field: 'ListId',
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                }
+            }),
+            this.filterModelTags = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'Tag',
+                field: 'TagId',
+                items: {
+                    element: new FilterCheckBoxesModel({
+                        dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+                }
+            }),
+            this.filterModelRating = new FilterModel({
+                component: FilterRangeComponent,
+                operator: { from: 'ge', to: 'le' },
+                caption: 'Rating',
+                field: 'Rating',
+                items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
+            }),
+            this.filterModelStar = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'Star',
+                field: 'StarId',
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                            nameField: 'name',
+                            keyExpr: 'id',
+                            templateFunc: (itemData) => {
+                                return `<div class="star-item">
+                                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                                    <span>${this.l(itemData.name)}</span>
+                                                </div>`;
+                            }
+                        })
+                }
+            })
+        ];
     }
 
     initToolbarConfig() {
@@ -756,9 +766,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
-                            checkPressed: () => {
-                                return this.filtersService.fixed;
-                            },
+                            checkPressed: () => this.filtersService.fixed,
                             mouseover: () => {
                                 this.filtersService.enable();
                             },
@@ -1025,24 +1033,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.showDataGrid) {
             this.repaintDataGrid();
         }
-        if (this.filterChanged) {
-            this.filterChanged = false;
-            setTimeout(() => {
-                if (this.showPivotGrid) {
-                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-                }
-                if (this.showChart) {
-                    this.chartDataSource.load();
-                } else {
-                    this.processFilterInternal();
-                }
-            });
-        }
     }
 
     initDataSource() {
         if (this.showDataGrid) {
-            this.totalDataSource.load();
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1086,33 +1080,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     searchValueChange(e: object) {
-        if (this.filterChanged = (this.searchValue != e['value'])) {
+        if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
-            this.processFilterInternal();
+            this._refresh.next(null);
         }
     }
 
     processFilterInternal() {
         if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
             || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
-            const params = this.subscriptionStatusFilter.items.element.value;
-            const filterQuery = this.processODataFilter(
+            this.processODataFilter(
                 this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom,
                 null,
-                params
+                this.subscriptionStatusFilter.items.element.value
             );
-            if (this.showDataGrid) {
-                this.totalDataSource['_store']['_url'] = this.getODataUrl(
-                    this.totalDataSourceURI,
-                    filterQuery,
-                    null,
-                    params
-                );
-                this.totalDataSource.load();
-            }
         }
     }
 
