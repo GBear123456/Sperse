@@ -33,7 +33,7 @@ export class EditTextModalComponent {
     model: UpdateLanguageTextInput = new UpdateLanguageTextInput(this.data);
     baseText: string = this.data.baseValue;
     baseLanguage: abp.localization.ILanguageInfo = this.findLanguage(this.data.baseLanguageName);
-    targetLanguage: abp.localization.ILanguageInfo = this.findLanguage(this.data.targetLanguageName);
+    targetLanguage: abp.localization.ILanguageInfo = this.findLanguage(this.data.languageName);
     active = false;
     title = this.ls.l('EditText');
     buttons: IDialogButton[] = [

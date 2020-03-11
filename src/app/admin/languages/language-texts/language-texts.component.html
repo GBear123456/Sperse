@@ -8,35 +8,33 @@
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
-                  (onReload)="refreshDataGrid()">
+                  (onReload)="invalidate()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 
     <div id="admin-languages-text" class="portlet light no-padding margin-bottom-0">
-        <div class="portlet-body">
-            <div>
-                <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                <dx-data-grid id="gridContainer"
-                              [allowColumnReordering]="true"
-                              [columnAutoWidth]="true"
-                              [allowColumnResizing]="true"
-                              [hoverStateEnabled]="true"
-                              [loadPanel]="{ enabled: false }"
-                              [pager]="defaultGridPagerConfig"
-                              [dataSource]="dataSource"
-                              (onContentReady)="contentReady()">
-                    <dxi-column [caption]="l('Key')" width="25%" dataField="key" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [caption]="l('BaseValue')" width="34%" dataField="baseValue" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [caption]="l('TargetValue')" width="34%" dataField="targetValue" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [caption]="l('Edit')" cellTemplate="editTemplate"></dxi-column>
-                    <ng-container *dxTemplate="let data of 'editTemplate'">
-                        <button class="btn btn-layout"
-                                (click)="openEditTextLanguageModal(data.data.key, data.data.baseValue, data.data.targetValue)">
-                            <i class="fa fa-edit"></i> {{l('Edit')}}
-                        </button>
-                    </ng-container>
-                </dx-data-grid>
-            </div>
-        </div>
+        <ghost-list [hidden]="isDataLoaded"></ghost-list>
+        <dx-data-grid id="gridContainer"
+                      class="main-component-view"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [pager]="defaultGridPagerConfig"
+                      [dataSource]="dataSource"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                      (onContentReady)="setGridDataLoaded()">
+            <dxi-column [caption]="l('Key')" width="25%" dataField="key" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [caption]="l('BaseValue')" width="34%" dataField="baseValue" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [caption]="l('TargetValue')" width="34%" dataField="targetValue" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [caption]="l('Edit')" cellTemplate="editTemplate"></dxi-column>
+            <ng-container *dxTemplate="let data of 'editTemplate'">
+                <button class="btn btn-layout"
+                        (click)="openEditTextLanguageModal(data.data.key, data.data.baseValue, data.data.targetValue)">
+                    <i class="fa fa-edit"></i> {{l('Edit')}}
+                </button>
+            </ng-container>
+        </dx-data-grid>
     </div>
 </div>

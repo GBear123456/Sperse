@@ -74,7 +74,7 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = true, syncType?: SyncTypeIds, syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
             .subscribe(() => {
