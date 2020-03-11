@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
@@ -125,7 +125,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.data.userId = userId;
                 if (userId) {
                     this.loadData();
-                    this.showOrgUnitsDialog();
+                    this.showOrgUnitsDialog().subscribe();
                     this.updateToolbarOptions();
                 } else
                     this.getPhonesAndEmails();
@@ -160,6 +160,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         setTimeout(() => this.contactsService.toolbarUpdate({
             optionButton: {
                 name: 'options',
+                accessKey: 'org-units-dialog',
                 action: this.showOrgUnitsDialog.bind(this)
             }
         }));
@@ -414,19 +415,22 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
-    showOrgUnitsDialog() {
-        setTimeout(() =>
-            this.dialog.open(OrganizationUnitsDialogComponent, {
-                panelClass: ['slider'],
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    title: this.ls.l('OrganizationUnits'),
-                    selectionMode: 'multiple'
-                }
-            })
-        );
+    showOrgUnitsDialog(): Observable<MatDialogRef<OrganizationUnitsDialogComponent>> {
+         return new Observable((subscriber) => {
+             setTimeout(() => {
+                 subscriber.next(this.dialog.open(OrganizationUnitsDialogComponent, {
+                     panelClass: ['slider'],
+                     disableClose: false,
+                     hasBackdrop: false,
+                     closeOnNavigation: true,
+                     data: {
+                         title: this.ls.l('OrganizationUnits'),
+                         selectionMode: 'multiple'
+                     }
+                 }));
+                 subscriber.complete();
+             });
+        });
     }
 
     ngOnDestroy() {

@@ -28,10 +28,11 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {
         this.contactsService.contactInfoSubscribe(() => {
-            this.personalDetailsService.showPersonalDetailsDialog();
+            this.personalDetailsService.showPersonalDetailsDialog().subscribe();
             setTimeout(() => this.contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
+                    accessKey: 'personal-details-dialog',
                     action: this.personalDetailsService.showPersonalDetailsDialog.bind(this)
                 }
             }));

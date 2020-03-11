@@ -1,8 +1,9 @@
 /** Core imports */
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { PersonalDetailsDialogComponent } from './personal-details-dialog/personal-details-dialog.component';
@@ -10,21 +11,23 @@ import { PersonalDetailsDialogComponent } from './personal-details-dialog/person
 @Injectable()
 export class PersonalDetailsService {
 
-    constructor(injector: Injector,
+    constructor(
         public dialog: MatDialog
     ) {}
 
-    showPersonalDetailsDialog() {
-        setTimeout(() => {
-            if (!this.dialog.getDialogById('personal-settings'))
-                this.dialog.open(PersonalDetailsDialogComponent, {
-                    id: 'personal-settings',
+    showPersonalDetailsDialog(): Observable<MatDialogRef<PersonalDetailsDialogComponent>> {
+        return new Observable((subscriber) => {
+            setTimeout(() => {
+                subscriber.next(this.dialog.open(PersonalDetailsDialogComponent, {
+                    id: 'personal-details-dialog',
                     panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {}
-                });
-        }, 600);
+                }));
+                subscriber.complete();
+            });
+        });
     }
 }
