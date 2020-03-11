@@ -13,7 +13,8 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onToggleTotals)="toggleDataGridToolbar()"
                   (onToggleToolbar)="toggleToolbar()">
-        <business-entities-chooser (onChanged)="applyTotalBankAccountFilter(true)"
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+        <business-entities-chooser class="accounts-chooser" (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">
         </business-entities-chooser>
         <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
@@ -44,13 +45,14 @@
                 <div class="transactions">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
-                                  class="main-component-view"
+                                  class="limitedPagerTotal main-component-view"
                                   [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
                                   columnMinWidth="125px"
+                                  [cacheEnabled]="false"
                                   [headerFilter]="{ allowSearch: true, visible: false }"
                                   [pager]="defaultGridPagerConfig"
                                   [loadPanel]="{ enabled: false }"

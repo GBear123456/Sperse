@@ -18,6 +18,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import 'devextreme/data/odata/store';
 import { BehaviorSubject, Observable, ReplaySubject, Subject, forkJoin, of } from 'rxjs';
 import { first, skip, switchMap, mapTo, map, takeUntil, pluck, publishReplay, refCount } from 'rxjs/operators';
@@ -102,6 +103,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     toggleTabContent = true;
 
     private readonly dataSourceURI = 'Transaction';
+    private readonly countDataSourceURI = 'Transaction/$count';
     private readonly totalDataSourceURI = 'TransactionTotal';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -122,6 +124,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private bankAccountFilter: FilterModel;
     private businessEntityFilter: FilterModel;
     public transactionsFilterQuery: any[];
+
+    public countDataSource: DataSource;
+    public totalCount: number;
 
     public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
     public dragInProgress = false;
@@ -355,6 +360,23 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                 }
             }
+        });
+
+        this.countDataSource = new DataSource({
+            paginate: false,
+            store: new ODataStore({
+                url: this.getODataUrl(this.countDataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: (request) => {
+                    this.totalCount = null;
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                onLoaded: (count: any) => {
+                    this.totalCount = count;
+                    this.changeDetectionRef.detectChanges();
+                }
+            })
         });
 
         this.totalDataSource = new DataSource({
@@ -992,6 +1014,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
         );
 
+        this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
+        this.countDataSource.load();
         this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
 
