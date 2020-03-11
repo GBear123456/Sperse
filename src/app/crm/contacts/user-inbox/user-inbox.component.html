@@ -26,7 +26,7 @@
                 </div>
         </dx-list>
     </div>
-    <div class="inbox-content">
+    <div class="inbox-content" *ngIf="activeEmail">
         <app-toolbar [config]="contentToolbar"></app-toolbar>        
         <div class="header">
             <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(activeEmail?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar"></div>  
@@ -48,4 +48,8 @@
             </div>
         </div>
     </div>
+    <app-no-data
+        [hidden]="activeEmail"
+        [showLink]="false">
+    </app-no-data>
 </div>

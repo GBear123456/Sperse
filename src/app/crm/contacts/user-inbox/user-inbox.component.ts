@@ -31,7 +31,20 @@ export class UserInboxComponent implements OnDestroy {
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
     formatting = AppConsts.formatting;
     status: CommunicationMessageStatus;
+    statuses = Object.keys(CommunicationMessageStatus).map(item => {
+        return {
+            id: CommunicationMessageStatus[item],
+            name: this.ls.l(item)
+        };
+    });
     isSendSmsAndEmailAllowed = false;
+    deliveryType: CommunicationMessageDeliveryType;
+    deliveryTypes = Object.keys(CommunicationMessageDeliveryType).map(item => {
+        return {
+            id: CommunicationMessageDeliveryType[item],
+            name: this.ls.l(item)
+        };
+    });
     userTimezone = '0000';
 
     constructor(
@@ -58,8 +71,33 @@ export class UserInboxComponent implements OnDestroy {
                 items: [{
                     widget: 'dxSelectBox',
                     options: {
-                        value: this.ls.l('Outbox'),
-                        dataSource: [this.ls.l('Outbox'), this.ls.l('Inbox')],
+                        valueExpr: 'id',
+                        displayExpr: 'name',
+                        showClearButton: true,
+                        value: this.deliveryType,
+                        placeholder: this.ls.l('Type'),
+                        dataSource: this.deliveryTypes,
+                        onValueChanged: event => {
+                            this.activeEmail = undefined;
+                            this.deliveryType = event.value || undefined;
+                            this.dataSource.reload();
+                        },
+                        inputAttr: {view: 'headline'}
+                    }
+                }, {
+                    widget: 'dxSelectBox',
+                    options: {
+                        valueExpr: 'id',
+                        displayExpr: 'name',
+                        value: this.status,
+                        showClearButton: true,
+                        placeholder: this.ls.l('Status'),
+                        dataSource: this.statuses,
+                        onValueChanged: event => {
+                            this.activeEmail = undefined;
+                            this.status = event.value || undefined;
+                            this.dataSource.reload();
+                        },
                         inputAttr: {view: 'headline'}
                     }
                 }]
@@ -152,17 +190,15 @@ export class UserInboxComponent implements OnDestroy {
                         undefined, /* filter by parent */
                         undefined, /* filter by user maybe add later */
                         loadOptions.searchValue || undefined,
-                        CommunicationMessageDeliveryType.Email,
+                        this.deliveryType || undefined,
                         this.status,
                         (loadOptions.sort || []).map((item) => {
                             return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                         }).join(','), loadOptions.take, loadOptions.skip
                     ).toPromise().then(response => {
                         this.initMainToolbar();
-                        if (this.activeEmail)
+                        if (this.activeEmail || !this.initActiveEmail(response.items[0]))
                             this.loadingService.finishLoading();
-                        else
-                            this.initActiveEmail(response.items[0]);
                         return {
                             data: response.items,
                             totalCount: response.totalCount

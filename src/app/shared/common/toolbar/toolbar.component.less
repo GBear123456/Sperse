@@ -238,9 +238,21 @@
 
         [view="headline"] {
             padding: 0;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 500;
             border-bottom: none;
+            &+.dx-placeholder {
+                font-size: 20px!important;
+                &:before {
+                    height: 30px;
+                    padding: 0px!important;
+                }
+            }
+            &[aria-controls] {
+                &+.dx-placeholder {
+                    top: 0px!important;
+                }
+            }
         }
 
         [role="checkbox"] {
