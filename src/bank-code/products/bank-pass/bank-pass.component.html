@@ -160,7 +160,7 @@
                             <div *dxTemplate="let data of 'location'">
                                 {{data.data.CountryId}} {{data.data.State}}
                             </div>
-                            <dxo-sorting mode="none"></dxo-sorting>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
                         </dx-data-grid>
                     </div>
                     <app-no-data [hidden]="dataIsLoading || totalCount > 0"
