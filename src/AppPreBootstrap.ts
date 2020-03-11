@@ -48,15 +48,15 @@ export class AppPreBootstrap {
     }
 
     private static processRegularBootstrap(queryStringObj, callback) {
-        let tenantId = queryStringObj.hasOwnProperty('tenantId');
-        if (tenantId) {
+        let tenantId = queryStringObj.tenantId;
+        if (tenantId && !queryStringObj['user-key']) {
             if (tenantId != abp.session.tenantId) {
                 window['generalInfo'] = undefined;
                 abp.auth.clearToken();
             }
             abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
         }
-        AppPreBootstrap.getUserConfiguration(callback).subscribe();
+        AppPreBootstrap.getUserConfiguration(callback, true, queryStringObj).subscribe();
     }
 
     private static updateAppConsts(appConfig) {
@@ -167,7 +167,7 @@ export class AppPreBootstrap {
         });
     }
 
-    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true): Observable<any> {
+    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true, queryStringObj = null): Observable<any> {
         let generalInfo = window['generalInfo'];
         if (generalInfo && generalInfo.userConfig) {
             return this.handleGetAll(generalInfo.userConfig, callback, loadThemeResources);
@@ -178,6 +178,10 @@ export class AppPreBootstrap {
             let requestHeaders = {
                 'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
             };
+
+            if (queryStringObj && queryStringObj['user-key']) {
+                requestHeaders['user-key'] = queryStringObj['user-key'];
+            }
 
             if (cookieLangValue) {
                 requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;

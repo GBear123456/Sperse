@@ -15,8 +15,8 @@ export class AppSessionService {
     private _application: ApplicationInfoDto;
 
     constructor(
-        private _sessionService: SessionServiceProxy,
-        private _abpMultiTenancyService: AbpMultiTenancyService
+        private sessionService: SessionServiceProxy,
+        private abpMultiTenancyService: AbpMultiTenancyService
     ) {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
             this.user.profileThumbnailId = thumbnailId;
@@ -61,7 +61,7 @@ export class AppSessionService {
 
     getShownLoginName(): string {
         const userName = this._user.userName;
-        if (!this._abpMultiTenancyService.isEnabled) {
+        if (!this.abpMultiTenancyService.isEnabled) {
             return userName;
         }
 
@@ -74,7 +74,7 @@ export class AppSessionService {
             email: this._user && this._user.emailAddress
         };
 
-        if (this._abpMultiTenancyService.isEnabled) {
+        if (this.abpMultiTenancyService.isEnabled) {
             info.tenantName = this.tenant ? this._tenant.name : 'Host';
         }
 
@@ -94,7 +94,7 @@ export class AppSessionService {
             if (generalInfo && generalInfo.loginInfo)
                 updateLoginInfo(generalInfo.loginInfo);
             else
-                this._sessionService.getCurrentLoginInformations().subscribe(updateLoginInfo.bind(this), (err) => {
+                this.sessionService.getCurrentLoginInformations().subscribe(updateLoginInfo.bind(this), (err) => {
                     reject(err);
                 });
         });
