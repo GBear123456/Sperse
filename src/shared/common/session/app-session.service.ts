@@ -10,9 +10,9 @@ import {
 
 @Injectable()
 export class AppSessionService {
-    private _user: UserLoginInfoDto;
-    private _tenant: TenantLoginInfoDto;
-    private _application: ApplicationInfoDto;
+    private user: UserLoginInfoDto;
+    private tenant: TenantLoginInfoDto;
+    private application: ApplicationInfoDto;
 
     constructor(
         private _sessionService: SessionServiceProxy,
@@ -27,28 +27,16 @@ export class AppSessionService {
         return this.user && this.user.userName == 'demo@lendspace.com';
     }
 
-    get application(): ApplicationInfoDto {
-        return this._application;
-    }
-
-    get user(): UserLoginInfoDto {
-        return this._user;
-    }
-
     get userId(): number {
         return this.user ? this.user.id : null;
     }
 
-    get tenant(): TenantLoginInfoDto {
-        return this._tenant;
-    }
-
     get tenantName(): string {
-        return this._tenant ? this.tenant.name : '';
+        return this.tenant ? this.tenant.name : '';
     }
 
     get tenancyName(): string {
-        return this._tenant ? this.tenant.tenancyName : '';
+        return this.tenant ? this.tenant.tenancyName : '';
     }
 
     get tenantId(): number {
@@ -60,22 +48,22 @@ export class AppSessionService {
     }
 
     getShownLoginName(): string {
-        const userName = this._user.userName;
+        const userName = this.user.userName;
         if (!this._abpMultiTenancyService.isEnabled) {
             return userName;
         }
 
-        return (this._tenant ? this._tenant.tenancyName : '.') + '\\' + userName;
+        return (this.tenant ? this.tenant.tenancyName : '.') + '\\' + userName;
     }
 
     getShownLoginInfo(): { fullName, email, tenantName?} {
         let info: { fullName, email, tenantName? } = {
-            fullName: this._user && (this._user.name + ' ' + this._user.surname),
-            email: this._user && this._user.emailAddress
+            fullName: this.user && (this.user.name + ' ' + this.user.surname),
+            email: this.user && this.user.emailAddress
         };
 
         if (this._abpMultiTenancyService.isEnabled) {
-            info.tenantName = this.tenant ? this._tenant.name : 'Host';
+            info.tenantName = this.tenant ? this.tenant.name : 'Host';
         }
 
         return info;
@@ -84,9 +72,9 @@ export class AppSessionService {
     init(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             let updateLoginInfo = (result) => {
-                this._application = result.application;
-                this._user = result.user;
-                this._tenant = result.tenant;
+                this.application = result.application;
+                this.user = result.user;
+                this.tenant = result.tenant;
                 resolve(true);
             };
 
