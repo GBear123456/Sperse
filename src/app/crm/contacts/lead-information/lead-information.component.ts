@@ -3,8 +3,9 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/co
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { finalize, filter, takeUntil, first } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
@@ -168,6 +169,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             setTimeout(() => contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
+                    accessKey: 'org-units-dialog',
                     action: this.showOrgUnitsDialog.bind(this)
                 }
             }));
@@ -331,19 +333,22 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.sourceComponent.toggle();
     }
 
-    showOrgUnitsDialog() {
-        setTimeout(() =>
-            this.dialog.open(OrganizationUnitsDialogComponent, {
-                panelClass: ['slider'],
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    title: this.ls.l('Owner'),
-                    selectionMode: 'single'
-                }
-            })
-        );
+    showOrgUnitsDialog(): Observable<MatDialogRef<OrganizationUnitsDialogComponent>> {
+        return new Observable((subscriber) => {
+            setTimeout(() => {
+                subscriber.next(this.dialog.open(OrganizationUnitsDialogComponent, {
+                    panelClass: ['slider'],
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: {
+                        title: this.ls.l('Owner'),
+                        selectionMode: 'single'
+                    }
+                }));
+                subscriber.complete();
+            });
+        });
     }
 
     saveToClipboard(event, value: string) {

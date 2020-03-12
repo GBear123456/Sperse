@@ -76,7 +76,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
             .pipe(takeUntil(this.destroy$))
             .subscribe(filtersValues => {
                 this.filtersValues = { ...this.filtersValues, ...filtersValues };
-                this.refreshDataGrid();
+                this.invalidate();
             });
     }
 
@@ -279,33 +279,23 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     searchValueChange(e: object) {
         this.searchText = e['value'];
-        this.refreshDataGrid();
-    }
-
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
+        this.invalidate();
     }
 
     openEditTextLanguageModal(key?, baseValue?, targetValue?) {
-        const dialogRef = this.dialog.open(EditTextModalComponent, {
+        this.dialog.open(EditTextModalComponent, {
             panelClass: 'slider',
             data: {
                 baseLanguageName: this.filtersValues.baseLanguageName,
-                targetLanguageName: this.filtersValues.targetLanguageName,
+                languageName: this.filtersValues.targetLanguageName,
                 sourceName: this.filtersValues.sourceName,
                 key: key,
                 baseValue: baseValue,
                 targetValue: targetValue,
             }
+        }).componentInstance.modalSave.subscribe(() => {
+            setTimeout(() => this.invalidate(), 600);
         });
-        dialogRef.componentInstance.modalSave.subscribe(() => {
-            this.refreshDataGrid();
-        });
-    }
-
-    contentReady() {
-        this.setGridDataLoaded();
     }
 
     ngOnDestroy() {

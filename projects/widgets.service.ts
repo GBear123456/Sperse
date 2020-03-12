@@ -25,7 +25,7 @@ export class WidgetsService {
                 }),
                 switchMap(() => {
                     return AppPreBootstrap.getUserConfiguration(
-                        () => { callback && callback(); },
+                        () => callback && callback(),
                         false
                     );
                 })
