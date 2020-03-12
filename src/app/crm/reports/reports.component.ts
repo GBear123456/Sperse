@@ -323,6 +323,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         return this.currencyPipe.transform(data[field], this.currency);
     }
 
+    getTotalText = () => this.ls.l('GrandTotal');
+
     customizeAmountSummary = (itemInfo) => this.currencyPipe.transform(itemInfo.value, this.currency);
 
     initDataSource() {
