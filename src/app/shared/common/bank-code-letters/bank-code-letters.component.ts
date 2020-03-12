@@ -27,10 +27,11 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersComponent implements OnChanges, OnDestroy {
-    @Input() bankCode: string;
-    @Input() showDescriptionsOnHover = false;
-    @Input() personId: number;
     @Input() key = '';
+    @Input() bankCode: string;
+    @Input() personId: number;
+    @Input() showDescriptionsOnHover = false;
+    @Input() showDescriptionsOnClick = false;
     @Input() showBankCodeDefinition = false;
     @Input() showReportLink = false;
     @Input() reportLinkType: 'Sales' | 'Profile';

@@ -5,6 +5,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 /** Third party imports */
 import { DragulaModule } from 'ng2-dragula';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { MatDialogModule } from '@angular/material/dialog';
 
 /** Application imports */
@@ -17,6 +18,7 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
     imports: [
         CommonModule,
         DxTooltipModule,
+        DxPopupModule,
         MatDialogModule,
         DragulaModule
     ],

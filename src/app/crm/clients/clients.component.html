@@ -101,7 +101,7 @@
                         </div>
                     </div>
                     <div *dxTemplate="let cellData of 'bankCodeCell'">
-                        <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                        <bank-code-letters [bankCode]="cellData.value" [showDescriptionsOnClick]="true"></bank-code-letters>
                     </div>
                     <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false"></dxi-column>
