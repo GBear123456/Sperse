@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
@@ -115,6 +116,19 @@ export class BankCodeService {
         }
     };
     readonly emptyBankCode = '????';
+    reportsLink = 'https://www.codebreakertech.com/reports/';
+    partnerCode = location.href.indexOf('successfactory.com') >= 0 ? 'SF' : '';
+
+    getBankCodeReportLink(
+        languageCode: string,
+        bankCode: string,
+        reportsFolder: 'sales' | 'prospects' = 'prospects',
+        reportType: 'sales' | 'profile' = 'profile',
+        resolution = ''
+    ) {
+        reportsFolder = this.partnerCode === 'SF' ? capitalize(reportsFolder) : reportsFolder;
+        return this.reportsLink + (this.partnerCode ? this.partnerCode + '/' : '') + languageCode + '/' + reportsFolder + '/' + bankCode + '-' + reportType.toUpperCase() + '-REPORT' + resolution + '.pdf';
+    }
 
     getColorsByLetter(bankCodeLetter: BankCodeLetter) {
         const colors = this.bankCodeConfig[bankCodeLetter];

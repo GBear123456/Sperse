@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BankCodeLettersEditorDialogComponent } from '@app/shared/common/bank-code-letters/bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'bank-code-letters',
@@ -44,12 +45,44 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
     editPopupIsOpened = false;
+    resolutions = [
+        {
+            text: this.ls.l('Standard'),
+            size: '3MB',
+            value: 'standard'
+        },
+        {
+            text: this.ls.l('Hi-Res'),
+            size: '30MB',
+            value: 'hires'
+        }
+    ];
+    selectedResolution = this.resolutions[0].value;
+    languages = [
+        {
+            code: 'EN',
+            text: this.ls.l('English')
+        },
+        {
+            code: 'AR',
+            text: this.ls.l('Arabic')
+        },
+        {
+            code: 'RU',
+            text: this.ls.l('Russian')
+        },
+        {
+            code: 'ES',
+            text: this.ls.l('Spanish')
+        }
+    ];
 
     constructor(
         private dialogService: DialogService,
         private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
-        public bankCodeService: BankCodeService
+        public bankCodeService: BankCodeService,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnChanges(change: SimpleChanges) {
@@ -61,6 +94,10 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             this.bankCode = this.bankCodeService.emptyBankCode;
             this.changeDetectorRef.detectChanges();
         }
+    }
+
+    get resolution() {
+        return this.selectedResolution === 'hires' ? '-' + this.selectedResolution.toUpperCase() : '';
     }
 
     showEditPopup(e) {
@@ -98,7 +135,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     }
 
     get reportIconSrc() {
-        return this.reportIconName || this.bankCode[0];
+        return './assets/common/images/bank-code/download-icon-' + (this.reportIconName || this.bankCode[0]) + '.png';
     }
 
     onLetterClick(e) {
