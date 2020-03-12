@@ -2,7 +2,6 @@
 import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef } from '@angular/material/dialog';
 import cloneDeep from 'lodash/cloneDeep';
 import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
 import * as _ from 'underscore';
@@ -36,7 +35,6 @@ export class ToolBarComponent implements OnDestroy {
     private subscription: any = this.filtersService.filterToggle$.subscribe((enabled) => {
         enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', this.filtersService.hasFilterSelected);
     });
-    openedDialogs: { [accessKey: string]: MatDialogRef<any> } = {};
 
     constructor(
         private filtersService: FiltersService,
@@ -293,23 +291,8 @@ export class ToolBarComponent implements OnDestroy {
     }
 
     private toolbarItemAction(item: ToolbarGroupModelItem, group: ToolbarGroupModel, event: any) {
-        if (item.action) {
-            /** Call action event */
-            const actionCall = item.action.call(this, event);
-            /** Handle toggling of right side dialogs */
-            if (item.name === 'options' && item.accessKey && actionCall.subscribe) {
-                if (!this.openedDialogs[item.accessKey]) {
-                    actionCall.subscribe((dialogRef: MatDialogRef<any>) => {
-                        this.openedDialogs[item.accessKey] = dialogRef;
-                        dialogRef.afterClosed().subscribe(() => {
-                            this.openedDialogs[item.accessKey] = null;
-                        });
-                    });
-                } else if (this.openedDialogs[item.accessKey] && this.openedDialogs[item.accessKey] instanceof MatDialogRef) {
-                    this.openedDialogs[item.accessKey].close();
-                }
-            }
-        }
+        if (item.action)
+            item.action.call(this, event);
         if (group.areItemsDependent)
             group.items.forEach(i => {
                 $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');

@@ -3,9 +3,8 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/co
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import { finalize, filter, takeUntil, first } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
@@ -169,7 +168,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             setTimeout(() => contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
-                    accessKey: 'org-units-dialog',
                     action: this.showOrgUnitsDialog.bind(this)
                 }
             }));
@@ -333,10 +331,11 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.sourceComponent.toggle();
     }
 
-    showOrgUnitsDialog(): Observable<MatDialogRef<OrganizationUnitsDialogComponent>> {
-        return new Observable((subscriber) => {
-            setTimeout(() => {
-                subscriber.next(this.dialog.open(OrganizationUnitsDialogComponent, {
+    showOrgUnitsDialog(): void {
+        setTimeout(() => {
+            if (!this.dialog.getDialogById('lead-organization-units-dialog')) {
+                this.dialog.open(OrganizationUnitsDialogComponent, {
+                    id: 'lead-organization-units-dialog',
                     panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
@@ -345,9 +344,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                         title: this.ls.l('Owner'),
                         selectionMode: 'single'
                     }
-                }));
-                subscriber.complete();
-            });
+                });
+            }
         });
     }
 

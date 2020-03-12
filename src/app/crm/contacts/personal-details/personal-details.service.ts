@@ -2,8 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { PersonalDetailsDialogComponent } from './personal-details-dialog/personal-details-dialog.component';
@@ -15,19 +14,18 @@ export class PersonalDetailsService {
         public dialog: MatDialog
     ) {}
 
-    showPersonalDetailsDialog(): Observable<MatDialogRef<PersonalDetailsDialogComponent>> {
-        return new Observable((subscriber) => {
-            setTimeout(() => {
-                subscriber.next(this.dialog.open(PersonalDetailsDialogComponent, {
-                    id: 'personal-details-dialog',
+    showPersonalDetailsDialog(dialogId: string = 'personal-details-dialog') {
+        setTimeout(() => {
+            if (!this.dialog.getDialogById(dialogId)) {
+                this.dialog.open(PersonalDetailsDialogComponent, {
+                    id: dialogId,
                     panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {}
-                }));
-                subscriber.complete();
-            });
+                });
+            }
         });
     }
 }
