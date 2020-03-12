@@ -48,7 +48,7 @@
                         </div>
                         <ul class="languages">
                             <li *ngFor="let language of languages">
-                                <a [href]="bankCodeService.getBankCodeReportLink(language.code, bankCode, 'sales', 'sales', resolution)"
+                                <a [href]="bankCodeService.getBankCodeReportLink(language.code, bankCode, 'Sales', 'sales', resolution)"
                                    target="_blank">
                                     <img [src]="reportIconSrc">
                                     <span>{{ ls.l('DownloadIn') }}</span>
