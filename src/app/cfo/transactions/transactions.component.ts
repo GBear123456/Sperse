@@ -613,8 +613,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             if (this.filtersService.fixed)
                                 this.categoriesShowed = false;
                             else
-                                this.categoriesShowed =
-                                    this._categoriesShowedBefore;
+                                this.categoriesShowed = this._categoriesShowedBefore;
                             this.filtersService.enable();
                         },
                         options: {

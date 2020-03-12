@@ -5,6 +5,7 @@ import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStr
 import { MatDialogRef } from '@angular/material/dialog';
 import cloneDeep from 'lodash/cloneDeep';
 import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
+import { Subscription } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -33,8 +34,11 @@ export class ToolBarComponent implements OnDestroy {
     @HostBinding('class.compact') @Input() compact = false;
     public items = [];
     public options = {};
-    private subscription: any = this.filtersService.filterToggle$.subscribe((enabled) => {
+    private subscription: Subscription = this.filtersService.filterToggle$.subscribe((enabled) => {
         enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', this.filtersService.hasFilterSelected);
+    });
+    private fixedSubscription: Subscription = this.filtersService.filterFixed$.subscribe((fixed) => {
+        this.updateToolbarItemAttribute('filters', 'button-pressed', fixed);
     });
     openedDialogs: { [accessKey: string]: MatDialogRef<any> } = {};
 
@@ -437,10 +441,13 @@ export class ToolBarComponent implements OnDestroy {
 
     updateToolbarItemAttribute(itemName: string, property: string, value: any) {
         const toolbarItemIndex = this.items.findIndex(item => item.name === itemName);
-        this.toolbarComponent && this.toolbarComponent.instance.option(`items[${toolbarItemIndex}].options.elementAttr.${property}`, value);
+        if (toolbarItemIndex !== -1 && this.toolbarComponent) {
+            this.toolbarComponent.instance.option(`items[${toolbarItemIndex}].options.elementAttr.${property}`, value);
+        }
     }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.fixedSubscription.unsubscribe();
     }
 }
