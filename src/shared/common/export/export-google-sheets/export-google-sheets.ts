@@ -72,9 +72,8 @@ export class ExportGoogleSheetService {
         });
     }
 
-    getHeaderRow(visibleColumns) {
+    getHeaderRows(visibleColumns) {
         let headerRow = { values: [] };
-
         _.each(visibleColumns, (col: any) => {
             if (col.allowExporting) {
                 headerRow.values.push({
@@ -91,7 +90,7 @@ export class ExportGoogleSheetService {
                 });
             }
         });
-        return headerRow;
+        return [headerRow];
     }
 
     getSerial(date: Date) {
@@ -117,7 +116,8 @@ export class ExportGoogleSheetService {
             cellData.userEnteredValue['boolValue'] = value;
         } else if (value instanceof Date) {
             cellData.userEnteredValue['numberValue'] = this.getSerial(value);
-            cellData.userEnteredFormat.numberFormat['type'] = 'DATE_TIME';
+            cellData.userEnteredFormat.numberFormat['type'] =
+                (col.dataType == 'date' ? 'DATE' : 'DATE_TIME');
         } else {
             cellData.userEnteredValue['stringValue'] = value;
         }

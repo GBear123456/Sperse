@@ -104,6 +104,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                                     this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
                                     this.exportService.exportToCSV(options, this.dataGrid);
                                 },
+                                visible: false,
                                 text: this.ls.l('Export to CSV'),
                                 icon: 'sheet'
                             },
