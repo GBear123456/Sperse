@@ -298,6 +298,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeCreatedCell = (data) => this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
 
+    calculateCreatedSortCell = (data) => data.created;
+
     customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
 
     customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
@@ -306,7 +308,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'wtbFee');
 
-    customizeTotalCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'total');
+    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'totalFee');
 
     customizeBankConnectAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankConnectAmount');
 
