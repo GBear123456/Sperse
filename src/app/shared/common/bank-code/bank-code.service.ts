@@ -115,6 +115,18 @@ export class BankCodeService {
         }
     };
     readonly emptyBankCode = '????';
+    reportsLink = 'https://www.codebreakertech.com/reports/';
+    partnerCode = location.href.indexOf('successfactory.com') >= 0 ? 'SF' : '';
+
+    getBankCodeReportLink(
+        languageCode: string,
+        bankCode: string,
+        reportsFolder: 'Sales' | 'Prospects' = 'Prospects',
+        reportType: 'sales' | 'profile' = 'profile',
+        resolution = ''
+    ) {
+        return this.reportsLink + (this.partnerCode ? this.partnerCode + '/' : '') + languageCode + '/' + reportsFolder + '/' + bankCode + '-' + reportType.toUpperCase() + '-REPORT' + resolution + '.pdf';
+    }
 
     getColorsByLetter(bankCodeLetter: BankCodeLetter) {
         const colors = this.bankCodeConfig[bankCodeLetter];

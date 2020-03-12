@@ -16,11 +16,48 @@
           [ngStyle]="{ color: bankCodeService.getBackgroundColorByLetter(bankCode[0])}">
         {{ bankCodeDefinition }}
     </span>
-    <a *ngIf="showReportLink"
-       class="reportLink"
-       [href]="'https://www.crackmycode.com/' + reportLinkType + 'ReportFiles/' + bankCode + reportLinkType + 'Report.pdf'"
-       target="_blank"
-       download>
-        <img src="./assets/common/images/bank-code/download-icon-{{reportIconSrc}}.png" [alt]="bankCodeDefinition">
-    </a>
+    <ng-container *ngIf="showReportLink">
+        <a  *ngIf="reportLinkType === 'Profile'; else salesReportButton"
+            class="reportLink"
+            [href]="bankCodeService.getBankCodeReportLink('EN', bankCode)"
+            target="_blank"
+            download>
+            <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
+        </a>
+        <ng-template #salesReportButton>
+            <a [id]="'salesReportButton-' + key">
+                <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
+            </a>
+            <dx-tooltip position="bottom" [target]="'#salesReportButton-' + key" showEvent="dxclick" hideEvent="dxoverend">
+                <div *dxTemplate="let data = data of 'content'">
+                    <div class="sales-report-tooltip">
+                        <div class="title">{{ ls.l('DownloadSalesReport') }}</div>
+                        <div class="options">
+                            <dx-radio-group
+                                    [items]="resolutions"
+                                    [(value)]="selectedResolution"
+                                    displayExpr="text"
+                                    valueExpr="value"
+                                    layout="horizontal">
+                                <div *dxTemplate="let res of 'item'">
+                                    <div class="text">{{ res.text }}</div>
+                                    <div class="size">({{ res.size }})</div>
+                                </div>
+                            </dx-radio-group>
+                        </div>
+                        <ul class="languages">
+                            <li *ngFor="let language of languages">
+                                <a [href]="bankCodeService.getBankCodeReportLink(language.code, bankCode, 'Sales', 'sales', resolution)"
+                                   target="_blank">
+                                    <img [src]="reportIconSrc">
+                                    <span>{{ ls.l('DownloadIn') }}</span>
+                                    <span class="language">{{ language.text }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </dx-tooltip>
+        </ng-template>
+    </ng-container>
 </ng-container>
