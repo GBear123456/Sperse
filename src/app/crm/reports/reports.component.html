@@ -74,7 +74,7 @@
                         [calculateDisplayValue]="customizeTotalFeeCell">
             </dxi-column>
             <div *dxTemplate="let cellData of 'bankCodeCell'">
-                <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                <bank-code-letters [bankCode]="cellData.value" [showDescriptionsOnClick]="true"></bank-code-letters>
             </div>
             <div *dxTemplate="let cellData of 'statusCell'">
                 <div [class]="'client-status ' + cellData.value | lowercase">
