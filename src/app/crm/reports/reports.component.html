@@ -172,53 +172,49 @@
                 </dxi-column>
             </dxi-column>
             <dxo-summary>
+                <dxo-texts sum="{0}"></dxo-texts>
+                <dxi-total-item alignment="center"
+                                column="date"
+                                [customizeText]="getTotalText">
+                </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="leadCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="clientCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="bankConnectCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="bankBeyondCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="starterKitCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="bankConnectAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="bankBeyondAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="starterKitAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="totalAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
             </dxo-summary>
