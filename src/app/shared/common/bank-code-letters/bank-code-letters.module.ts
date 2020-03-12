@@ -3,9 +3,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 
 /** Third party imports */
+import { MatDialogModule } from '@angular/material/dialog';
 import { DragulaModule } from 'ng2-dragula';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
-import { MatDialogModule } from '@angular/material/dialog';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 /** Application imports */
@@ -18,6 +20,8 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
     imports: [
         CommonModule,
         DxTooltipModule,
+        DxPopupModule,
+        DxRadioGroupModule,
         MatDialogModule,
         DragulaModule,
         DragDropModule

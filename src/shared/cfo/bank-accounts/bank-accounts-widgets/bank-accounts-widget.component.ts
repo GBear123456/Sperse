@@ -521,8 +521,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.syncAccountServiceProxy
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(() => {
+                this.onDataChange.emit();
                 this.notify.info(this.l('SuccessfullyDeleted'));
-                this.bankAccountsService.load(false).subscribe();
             });
     }
 

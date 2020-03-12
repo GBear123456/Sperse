@@ -104,11 +104,11 @@
                             </bank-code-letter>
                             <dx-tooltip #bankCodeTooltip
                                         [target]="'#bankCode' + entity.Id"
-                                        showEvent="dxhoverstart"
-                                        hideEvent="dxhoverend">
+                                        [hideEvent]="{name: 'dxhoverend', delay: 1000}"
+                                        showEvent="dxhoverstart">
                                 <div *dxTemplate="let data of 'content'">
                                     <div class="bank-code-tooltip">
-                                        <bank-code-letters [bankCode]="entity.BankCode"></bank-code-letters>
+                                        <bank-code-letters [bankCode]="entity.BankCode" [showDescriptionsOnClick]="true"></bank-code-letters>
                                     </div>
                                 </div>
                             </dx-tooltip>

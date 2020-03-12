@@ -16,7 +16,7 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
-                     [visible]="actionEvent"
+                     [visible]="!!actionEvent"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <app-static-list #statusesList
@@ -145,7 +145,7 @@
                             {{cellData.value | phone}}
                         </div>
                         <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                            <bank-code-letters [bankCode]="cellData.value" [showDescriptionsOnClick]="true"></bank-code-letters>
                         </div>
 
                         <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>

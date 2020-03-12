@@ -50,6 +50,7 @@
                         sortOrder="desc"
                         [caption]="ls.l('Created')"
                         [calculateDisplayValue]="customizeCreatedCell"
+                        [calculateSortValue]="calculateCreatedSortCell"
                         cssClass="clipboard-holder">
             </dxi-column>
             <dxi-column dataField="bankPassFee"
@@ -70,10 +71,10 @@
             <dxi-column dataField="totalFee"
                         [caption]="ls.l('TotalFee')"
                         cssClass="clipboard-holder"
-                        [calculateDisplayValue]="customizeTotalCell">
+                        [calculateDisplayValue]="customizeTotalFeeCell">
             </dxi-column>
             <div *dxTemplate="let cellData of 'bankCodeCell'">
-                <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                <bank-code-letters [bankCode]="cellData.value" [showDescriptionsOnClick]="true"></bank-code-letters>
             </div>
             <div *dxTemplate="let cellData of 'statusCell'">
                 <div [class]="'client-status ' + cellData.value | lowercase">
@@ -106,6 +107,7 @@
             <dxi-column alignment="center"
                         dataField="date"
                         sortOrder="desc"
+                        dataType="date"
                         [caption]="ls.l('Date')"
                         [calculateDisplayValue]="customizeDateCell"
                         cssClass="clipboard-holder">
@@ -171,53 +173,49 @@
                 </dxi-column>
             </dxi-column>
             <dxo-summary>
+                <dxo-texts sum="{0}"></dxo-texts>
+                <dxi-total-item alignment="center"
+                                column="date"
+                                [customizeText]="getTotalText">
+                </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="leadCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="clientCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="bankConnectCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="bankBeyondCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="starterKitCount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="bankConnectAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="bankBeyondAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="starterKitAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
                                 alignment="center"
                                 column="totalAmount"
-                                displayFormat="{0}"
                                 summaryType="sum">
                 </dxi-total-item>
             </dxo-summary>

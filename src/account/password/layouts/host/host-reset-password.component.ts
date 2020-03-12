@@ -96,4 +96,11 @@ export class HostResetPasswordComponent implements OnInit {
 
         return tenantId;
     }
+
+    togglePasswordVisibe(event, input) {
+        let native = input.valueAccessor._elementRef.nativeElement,
+            visible = native.type == 'text';
+        native.type = visible ? 'password' : 'text';
+        event.currentTarget.text = this.ls.l(visible ? 'Show' : 'Hide');
+    }
 }

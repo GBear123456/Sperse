@@ -119,9 +119,9 @@ export class ExportService {
 
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return this._exportGoogleSheetService.export(new Promise((resolve) => {
-            this.getDataFromGrid(dataGrid, (data) => {
+            this.getDataFromGrid(dataGrid, data => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
-                    rowData = [this._exportGoogleSheetService.getHeaderRow(visibleColumns)];
+                    rowData = this._exportGoogleSheetService.getHeaderRows(visibleColumns);
 
                 data.forEach((val: any) => {
                     let row = { values: [] };

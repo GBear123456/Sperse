@@ -105,6 +105,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                                     this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
                                     this.exportService.exportToCSV(options, this.dataGrid);
                                 },
+                                visible: false,
                                 text: this.ls.l('Export to CSV'),
                                 icon: 'sheet'
                             },
@@ -299,6 +300,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeCreatedCell = (data) => this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
 
+    calculateCreatedSortCell = (data) => data.created;
+
     customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
 
     customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
@@ -307,7 +310,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'wtbFee');
 
-    customizeTotalCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'total');
+    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'totalFee');
 
     customizeBankConnectAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankConnectAmount');
 
@@ -320,6 +323,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     customizeAmountCell(data: any, field: string) {
         return this.currencyPipe.transform(data[field], this.currency);
     }
+
+    getTotalText = () => this.ls.l('GrandTotal');
 
     customizeAmountSummary = (itemInfo) => this.currencyPipe.transform(itemInfo.value, this.currency);
 
