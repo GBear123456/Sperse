@@ -158,9 +158,7 @@
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"
                                                    [showDescriptionsOnClick]="true"
-                                                   [showReportLink]="true"
-                                                   [key]="cellData.rowIndex"
-                                                   reportLinkType="Sales">
+                                                   [showReportLink]="true">
                                 </bank-code-letters>
                             </div>
                             <div *dxTemplate="let data of 'location'">
