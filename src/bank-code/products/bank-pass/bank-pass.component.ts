@@ -73,6 +73,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
             'CountryId',
             'State',
             'BankCode',
+            'BankCodeDate',
             'LeadDate'
         ],
         sort: [{ selector: 'Id', desc: true }],
