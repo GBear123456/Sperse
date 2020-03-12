@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
@@ -121,10 +122,11 @@ export class BankCodeService {
     getBankCodeReportLink(
         languageCode: string,
         bankCode: string,
-        reportsFolder: 'Sales' | 'Prospects' = 'Prospects',
+        reportsFolder: 'sales' | 'prospects' = 'prospects',
         reportType: 'sales' | 'profile' = 'profile',
         resolution = ''
     ) {
+        reportsFolder = this.partnerCode === 'SF' ? capitalize(reportsFolder) : reportsFolder;
         return this.reportsLink + (this.partnerCode ? this.partnerCode + '/' : '') + languageCode + '/' + reportsFolder + '/' + bankCode + '-' + reportType.toUpperCase() + '-REPORT' + resolution + '.pdf';
     }
 
