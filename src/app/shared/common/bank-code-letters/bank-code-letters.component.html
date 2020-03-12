@@ -3,6 +3,7 @@
         <bank-code-letter [letter]="letter"
                           [key]="key"
                           [active]="active"
+                          [showDescriptionOnClick]="showDescriptionsOnClick"
                           [showDescriptionOnHover]="showDescriptionsOnHover && !editPopupIsOpened && bankCode !== bankCodeService.emptyBankCode"
                           (onClick)="onLetterClick($event)">
         </bank-code-letter>

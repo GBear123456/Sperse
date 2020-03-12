@@ -10,6 +10,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 })
 export class BankCodeLetterComponent {
     @Input() letter: BankCodeLetter;
+    @Input() showDescriptionOnClick = false;
     @Input() showDescriptionOnHover = false;
     @Input() allowEdit = false;
     @Input() key = '';
@@ -17,11 +18,16 @@ export class BankCodeLetterComponent {
     @Output() onClick: EventEmitter<null> = new EventEmitter<null>();
     letters = BankCodeLetter;
     showTooltip = false;
+    showPopup = false;
 
     constructor(private bankCodeService: BankCodeService) {}
 
-    click(e) {
-        this.onClick.emit(e);
+    click(event) {
+        if (this.showDescriptionOnClick) {
+            event.stopPropagation();
+            this.showPopup = true;
+        } else
+            this.onClick.emit(event);
     }
 
     toggleTooltip() {
@@ -30,12 +36,18 @@ export class BankCodeLetterComponent {
         }
     }
 
-    getColorsByLetter(letter) {
-        let colors = this.bankCodeService.getColorsByLetter(letter);
-        if (colors && colors.background && !this.active) {
-            colors['border'] = '1px solid ' + colors.background;
-            delete colors.background;
+    getStylesByLetter(letter) {
+        let styles: any = this.bankCodeService.getColorsByLetter(letter);
+        if (styles && styles.background && !this.active) {
+            styles['border'] = '1px solid ' + styles.background;
+            delete styles.background;
         }
-        return colors;
+        if (this.showDescriptionOnClick) {
+            styles = {
+                ...styles,
+                cursor: 'pointer'
+            };
+        }
+        return styles;
     }
 }

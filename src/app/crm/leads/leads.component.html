@@ -127,7 +127,7 @@
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
                         </div>
                         <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                            <bank-code-letters [bankCode]="cellData.value" [showDescriptionsOnClick]="true"></bank-code-letters>
                         </div>
                         <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
