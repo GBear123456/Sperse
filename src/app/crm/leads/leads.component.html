@@ -22,7 +22,7 @@
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <app-static-list
-                [width]="'210px'"
+                width="210px"
                 [title]="l('Stages')"
                 [selectedKeys]="selectedClientKeys"
                 [filterModel]="filterModelStages"
@@ -141,53 +141,53 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
-        <div class="portlet-body">
-            <div class="funnel-wrapper main-component-view">
-                <app-pipeline
-                    totalsURI="LeadCount"
-                    dragulaName="leadStages"
-                    [dataSource]="pipelineDataSource"
-                    [selectFields]="pipelineSelectFields"
-                    [pipelinePurposeId]="pipelinePurposeId"
-                    [filterModelStages]="filterModelStages"
-                    [(selectedEntities)]="selectedLeads"
-                    dateField="LeadDate"
-                    [contactGroupId]="contactGroupId.value"
-                    [moveDisabled]="manageDisabled"
-                    (onEntityStageChanged)="onLeadStageChanged($event)"
-                    (onStagesLoaded)="onStagesLoaded($event)"
-                    (onCardClick)="onCardClick($event)">
-                    Loading...
-                </app-pipeline>
+        <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div class="funnel-wrapper main-component-view">
+                    <app-pipeline
+                            totalsURI="LeadCount"
+                            dragulaName="leadStages"
+                            [dataSource]="pipelineDataSource"
+                            [selectFields]="pipelineSelectFields"
+                            [pipelinePurposeId]="pipelinePurposeId"
+                            [filterModelStages]="filterModelStages"
+                            [(selectedEntities)]="selectedLeads"
+                            dateField="LeadDate"
+                            [contactGroupId]="contactGroupId.value"
+                            [moveDisabled]="manageDisabled"
+                            (onEntityStageChanged)="onLeadStageChanged($event)"
+                            (onStagesLoaded)="onStagesLoaded($event)"
+                            (onCardClick)="onCardClick($event)">
+                        Loading...
+                    </app-pipeline>
+                </div>
             </div>
         </div>
-    </div>
-    <div [hidden]="hidePivotGrid$ | async">
-        <slice-pivot-grid [storageKey]="sliceStorageKey"
-                          [height]="contentHeight$ | async"
-                          [isLoading]="pivotGridDataIsLoading">
-        </slice-pivot-grid>
-    </div>
-    <div [hidden]="hideChart$ | async">
-        <slice-chart [width]="contentWidth$ | async"
-                     [height]="contentHeight$ | async"
-                     [infoItems]="chartInfoItems"
-                     [itemsName]="l('ContactGroup_' + selectedContactGroup)"
-                     [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
-                     argumentField="creationDate"
-                     valueField="count">
-        </slice-chart>
-    </div>
-    <div [hidden]="hideMap$ | async">
-        <slice-info [items]="mapInfoItems$ | async"></slice-info>
-        <slice-map [width]="contentWidth$ | async"
-                   [height]="mapHeight$ | async"
-                   [contactGroupText]="userGroupText$ | async"
-                   [dataIsLoading]="mapDataIsLoading"
-                   [data]="mapData$ | async">
-        </slice-map>
+        <div [hidden]="hidePivotGrid$ | async">
+            <slice-pivot-grid [storageKey]="sliceStorageKey"
+                              [height]="contentHeight$ | async"
+                              [isLoading]="pivotGridDataIsLoading">
+            </slice-pivot-grid>
+        </div>
+        <div [hidden]="hideChart$ | async">
+            <slice-chart [width]="contentWidth$ | async"
+                         [height]="contentHeight$ | async"
+                         [infoItems]="chartInfoItems"
+                         [itemsName]="l('ContactGroup_' + selectedContactGroup)"
+                         [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
+                         argumentField="creationDate"
+                         valueField="count">
+            </slice-chart>
+        </div>
+        <div [hidden]="hideMap$ | async">
+            <slice-info [items]="mapInfoItems$ | async"></slice-info>
+            <slice-map [width]="contentWidth$ | async"
+                       [height]="mapHeight$ | async"
+                       [contactGroupText]="userGroupText$ | async"
+                       [dataIsLoading]="mapDataIsLoading"
+                       [data]="mapData$ | async">
+            </slice-map>
+        </div>
     </div>
 </div>
 
