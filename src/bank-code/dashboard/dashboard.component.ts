@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map, withLatestFrom, skip } from 'rxjs/operators';
 import values from 'lodash/values';
 
 /** Application imports */
@@ -22,7 +22,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
-    bankCodeLevel$: Observable<number> = this.bankCodeService.bankCodeLevel$;
+    bankCodeLevel$: Observable<number> = this.bankCodeService.bankCodeLevel$.pipe(skip(1));
     bankCodeGroupsCounts$: Observable<number[]> = this.bankCodeService.getAvailableBankCodes().pipe(
         map((bankCodes: { [bankCode: string]: number }) => {
             let bankCodeGroups = {
