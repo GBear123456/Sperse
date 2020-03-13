@@ -14154,7 +14154,7 @@ export class EmailTemplateServiceProxy {
 }
 
 @Injectable()
-export class EventSubscriptionServiceProxy {
+export class EventServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -14168,8 +14168,8 @@ export class EventSubscriptionServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateEventSubscriptionInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/EventSubscription/Create";
+    create(body: CreateEventSubscriptionInput | null | undefined): Observable<CreateEventSubscriptionOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Event/Create";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -14180,6 +14180,7 @@ export class EventSubscriptionServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -14190,14 +14191,14 @@ export class EventSubscriptionServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<CreateEventSubscriptionOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<CreateEventSubscriptionOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<CreateEventSubscriptionOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14206,14 +14207,17 @@ export class EventSubscriptionServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateEventSubscriptionOutput.fromJS(resultData200) : new CreateEventSubscriptionOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<CreateEventSubscriptionOutput>(<any>null);
     }
 
     /**
@@ -14221,7 +14225,7 @@ export class EventSubscriptionServiceProxy {
      * @return Success
      */
     delete(id: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/EventSubscription/Delete?";
+        let url_ = this.baseUrl + "/api/services/Platform/Event/Delete?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -19061,240 +19065,6 @@ export class MemberSubscriptionServiceProxy {
             }));
         }
         return _observableOf<GetMemberInfoOutput>(<any>null);
-    }
-}
-
-@Injectable()
-export class MyFinancesServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getUserInstanceStatus(): Observable<GetStatusOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserInstanceStatus(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUserInstanceStatus(<any>response_);
-                } catch (e) {
-                    return <Observable<GetStatusOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetStatusOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUserInstanceStatus(response: HttpResponseBase): Observable<GetStatusOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetStatusOutput>(<any>null);
-    }
-
-    /**
-     * @accountingTreeType (optional) 
-     * @return Success
-     */
-    setupUserInstance(accountingTreeType: AccountingTreeType | null | undefined): Observable<SetupOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/SetupUserInstance?";
-        if (accountingTreeType !== undefined)
-            url_ += "accountingTreeType=" + encodeURIComponent("" + accountingTreeType) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSetupUserInstance(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSetupUserInstance(<any>response_);
-                } catch (e) {
-                    return <Observable<SetupOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SetupOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSetupUserInstance(response: HttpResponseBase): Observable<SetupOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SetupOutput>(<any>null);
-    }
-
-    /**
-     * @syncTypeId (optional) 
-     * @return Success
-     * @deprecated
-     */
-    createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
-        if (syncTypeId !== undefined)
-            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateUserInstanceProviderUIToken(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateUserInstanceProviderUIToken(<any>response_);
-                } catch (e) {
-                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateUserInstanceProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetProviderUITokenOutput>(<any>null);
-    }
-
-    /**
-     * @forcedSync (optional) 
-     * @newOnly (optional) 
-     * @return Success
-     * @deprecated
-     */
-    syncAllQuovoAccounts(forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined): Observable<SyncAllAccountsOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/SyncAllQuovoAccounts?";
-        if (forcedSync !== undefined)
-            url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
-        if (newOnly !== undefined)
-            url_ += "newOnly=" + encodeURIComponent("" + newOnly) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSyncAllQuovoAccounts(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSyncAllQuovoAccounts(<any>response_);
-                } catch (e) {
-                    return <Observable<SyncAllAccountsOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SyncAllAccountsOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSyncAllQuovoAccounts(response: HttpResponseBase): Observable<SyncAllAccountsOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SyncAllAccountsOutput.fromJS(resultData200) : new SyncAllAccountsOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SyncAllAccountsOutput>(<any>null);
     }
 }
 
@@ -24589,8 +24359,8 @@ export class QuestionnaireServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    importQuestionnaire(body: ImportQuestionnaireDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/ImportQuestionnaire";
+    submitQuestionsAndAnswers(body: SubmitQuestionsAndAnswersDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitQuestionsAndAnswers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -24605,11 +24375,11 @@ export class QuestionnaireServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processImportQuestionnaire(response_);
+            return this.processSubmitQuestionsAndAnswers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processImportQuestionnaire(<any>response_);
+                    return this.processSubmitQuestionsAndAnswers(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -24618,249 +24388,7 @@ export class QuestionnaireServiceProxy {
         }));
     }
 
-    protected processImportQuestionnaire(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class QuickBookServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @state (optional) 
-     * @code (optional) 
-     * @realmId (optional) 
-     * @return Success
-     */
-    processResult(state: string | null | undefined, code: string | null | undefined, realmId: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/QuickBook/ProcessResult?";
-        if (state !== undefined)
-            url_ += "State=" + encodeURIComponent("" + state) + "&"; 
-        if (code !== undefined)
-            url_ += "Code=" + encodeURIComponent("" + code) + "&"; 
-        if (realmId !== undefined)
-            url_ += "RealmId=" + encodeURIComponent("" + realmId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processProcessResult(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processProcessResult(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processProcessResult(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    getQuickBookConnectionLink(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<QuickBookConnectionLinkResult> {
-        let url_ = this.baseUrl + "/api/services/CFO/QuickBook/GetQuickBookConnectionLink?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetQuickBookConnectionLink(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetQuickBookConnectionLink(<any>response_);
-                } catch (e) {
-                    return <Observable<QuickBookConnectionLinkResult>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<QuickBookConnectionLinkResult>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetQuickBookConnectionLink(response: HttpResponseBase): Observable<QuickBookConnectionLinkResult> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? QuickBookConnectionLinkResult.fromJS(resultData200) : new QuickBookConnectionLinkResult();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<QuickBookConnectionLinkResult>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    checkToken(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/QuickBook/CheckToken?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCheckToken(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCheckToken(<any>response_);
-                } catch (e) {
-                    return <Observable<boolean>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<boolean>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCheckToken(response: HttpResponseBase): Observable<boolean> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<boolean>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @isOverride (optional) 
-     * @return Success
-     */
-    syncChartOfAccounts(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, isOverride: boolean | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/QuickBook/SyncChartOfAccounts?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (isOverride !== undefined)
-            url_ += "isOverride=" + encodeURIComponent("" + isOverride) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSyncChartOfAccounts(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSyncChartOfAccounts(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSyncChartOfAccounts(response: HttpResponseBase): Observable<void> {
+    protected processSubmitQuestionsAndAnswers(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -26228,70 +25756,7 @@ export class SyncServiceProxy {
      * @syncTypeId (optional) 
      * @return Success
      */
-    createProviderUIToken(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (syncTypeId !== undefined)
-            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateProviderUIToken(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateProviderUIToken(<any>response_);
-                } catch (e) {
-                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetProviderUITokenOutput>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @syncTypeId (optional) 
-     * @css (optional) 
-     * @errorPage (optional) 
-     * @return Success
-     */
-    getSetupAccountsLink(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined, css: string | null | undefined, errorPage: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -26299,10 +25764,6 @@ export class SyncServiceProxy {
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (syncTypeId !== undefined)
             url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
-        if (css !== undefined)
-            url_ += "css=" + encodeURIComponent("" + css) + "&"; 
-        if (errorPage !== undefined)
-            url_ += "errorPage=" + encodeURIComponent("" + errorPage) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -31073,6 +30534,68 @@ export class TransactionsServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @return Success
+     */
+    getCounterparties(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<CounterpartyDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetCounterparties?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCounterparties(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCounterparties(<any>response_);
+                } catch (e) {
+                    return <Observable<CounterpartyDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CounterpartyDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCounterparties(response: HttpResponseBase): Observable<CounterpartyDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CounterpartyDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CounterpartyDto[]>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @currencyId (optional) 
@@ -33582,66 +33105,6 @@ export class WorkflowEventsServiceProxy {
     }
 
     protected processTriggerRule(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class XeroServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getCertificate(): Observable<void> {
-        let url_ = this.baseUrl + "/api/Xero/GetCertificate";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCertificate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCertificate(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetCertificate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -51545,8 +51008,8 @@ export interface IUpdateEmailTemplateRequest {
 }
 
 export class CreateEventSubscriptionInput implements ICreateEventSubscriptionInput {
-    target_url!: string;
-    event!: string;
+    targetUrl!: string;
+    eventName!: string;
 
     constructor(data?: ICreateEventSubscriptionInput) {
         if (data) {
@@ -51559,8 +51022,8 @@ export class CreateEventSubscriptionInput implements ICreateEventSubscriptionInp
 
     init(data?: any) {
         if (data) {
-            this.target_url = data["target_url"];
-            this.event = data["event"];
+            this.targetUrl = data["targetUrl"];
+            this.eventName = data["eventName"];
         }
     }
 
@@ -51573,15 +51036,51 @@ export class CreateEventSubscriptionInput implements ICreateEventSubscriptionInp
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["target_url"] = this.target_url;
-        data["event"] = this.event;
+        data["targetUrl"] = this.targetUrl;
+        data["eventName"] = this.eventName;
         return data; 
     }
 }
 
 export interface ICreateEventSubscriptionInput {
-    target_url: string;
-    event: string;
+    targetUrl: string;
+    eventName: string;
+}
+
+export class CreateEventSubscriptionOutput implements ICreateEventSubscriptionOutput {
+    id!: number | undefined;
+
+    constructor(data?: ICreateEventSubscriptionOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateEventSubscriptionOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateEventSubscriptionOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateEventSubscriptionOutput {
+    id: number | undefined;
 }
 
 export enum DimentionName {
@@ -54130,6 +53629,7 @@ export class GetStatusOutput implements IGetStatusOutput {
     hasSyncAccounts!: boolean | undefined;
     hasTransactions!: boolean | undefined;
     hasAccountsAccess!: boolean | undefined;
+    hasCategorizationSupported!: boolean | undefined;
 
     constructor(data?: IGetStatusOutput) {
         if (data) {
@@ -54147,6 +53647,7 @@ export class GetStatusOutput implements IGetStatusOutput {
             this.hasSyncAccounts = data["hasSyncAccounts"];
             this.hasTransactions = data["hasTransactions"];
             this.hasAccountsAccess = data["hasAccountsAccess"];
+            this.hasCategorizationSupported = data["hasCategorizationSupported"];
         }
     }
 
@@ -54164,6 +53665,7 @@ export class GetStatusOutput implements IGetStatusOutput {
         data["hasSyncAccounts"] = this.hasSyncAccounts;
         data["hasTransactions"] = this.hasTransactions;
         data["hasAccountsAccess"] = this.hasAccountsAccess;
+        data["hasCategorizationSupported"] = this.hasCategorizationSupported;
         return data; 
     }
 }
@@ -54174,6 +53676,7 @@ export interface IGetStatusOutput {
     hasSyncAccounts: boolean | undefined;
     hasTransactions: boolean | undefined;
     hasAccountsAccess: boolean | undefined;
+    hasCategorizationSupported: boolean | undefined;
 }
 
 export enum AccountingTreeType {
@@ -55158,6 +54661,7 @@ export interface IUpdateInvoiceInput {
 export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
     id!: number;
     status!: InvoiceStatus;
+    emailId!: number | undefined;
 
     constructor(data?: IUpdateInvoiceStatusInput) {
         if (data) {
@@ -55172,6 +54676,7 @@ export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
         if (data) {
             this.id = data["id"];
             this.status = data["status"];
+            this.emailId = data["emailId"];
         }
     }
 
@@ -55186,6 +54691,7 @@ export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["status"] = this.status;
+        data["emailId"] = this.emailId;
         return data; 
     }
 }
@@ -55193,6 +54699,7 @@ export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
 export interface IUpdateInvoiceStatusInput {
     id: number;
     status: InvoiceStatus;
+    emailId: number | undefined;
 }
 
 export class GetNewInvoiceInfoOutput implements IGetNewInvoiceInfoOutput {
@@ -58261,82 +57768,6 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
 export interface IGetMemberInfoOutput {
     subscriptions: SubscriptionShortInfoOutput[] | undefined;
     userKey: string | undefined;
-}
-
-export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
-    token!: string | undefined;
-
-    constructor(data?: IGetProviderUITokenOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.token = data["token"];
-        }
-    }
-
-    static fromJS(data: any): GetProviderUITokenOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetProviderUITokenOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        return data; 
-    }
-}
-
-export interface IGetProviderUITokenOutput {
-    token: string | undefined;
-}
-
-export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
-    syncInProgressAccountsCount!: number | undefined;
-    failedSyncAccountsCount!: number | undefined;
-
-    constructor(data?: ISyncAllAccountsOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
-            this.failedSyncAccountsCount = data["failedSyncAccountsCount"];
-        }
-    }
-
-    static fromJS(data: any): SyncAllAccountsOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncAllAccountsOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
-        data["failedSyncAccountsCount"] = this.failedSyncAccountsCount;
-        return data; 
-    }
-}
-
-export interface ISyncAllAccountsOutput {
-    syncInProgressAccountsCount: number | undefined;
-    failedSyncAccountsCount: number | undefined;
 }
 
 export enum NoteType {
@@ -64591,12 +64022,12 @@ export interface IQuestionnaireResponseDto {
     answers: AnswerDto[] | undefined;
 }
 
-export class ImportOptionDto implements IImportOptionDto {
+export class SubmitAnswerDto implements ISubmitAnswerDto {
     xref!: string | undefined;
     sortOrder!: number | undefined;
     text!: string | undefined;
 
-    constructor(data?: IImportOptionDto) {
+    constructor(data?: ISubmitAnswerDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -64613,9 +64044,9 @@ export class ImportOptionDto implements IImportOptionDto {
         }
     }
 
-    static fromJS(data: any): ImportOptionDto {
+    static fromJS(data: any): SubmitAnswerDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ImportOptionDto();
+        let result = new SubmitAnswerDto();
         result.init(data);
         return result;
     }
@@ -64629,20 +64060,20 @@ export class ImportOptionDto implements IImportOptionDto {
     }
 }
 
-export interface IImportOptionDto {
+export interface ISubmitAnswerDto {
     xref: string | undefined;
     sortOrder: number | undefined;
     text: string | undefined;
 }
 
-export class ImportQuestionDto implements IImportQuestionDto {
+export class SubmitQuestionDto implements ISubmitQuestionDto {
     xref!: string | undefined;
     type!: QuestionType | undefined;
     text!: string | undefined;
     sortOrder!: number | undefined;
-    options!: ImportOptionDto[] | undefined;
+    answers!: SubmitAnswerDto[] | undefined;
 
-    constructor(data?: IImportQuestionDto) {
+    constructor(data?: ISubmitQuestionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -64657,17 +64088,17 @@ export class ImportQuestionDto implements IImportQuestionDto {
             this.type = data["type"];
             this.text = data["text"];
             this.sortOrder = data["sortOrder"];
-            if (data["options"] && data["options"].constructor === Array) {
-                this.options = [];
-                for (let item of data["options"])
-                    this.options.push(ImportOptionDto.fromJS(item));
+            if (data["answers"] && data["answers"].constructor === Array) {
+                this.answers = [];
+                for (let item of data["answers"])
+                    this.answers.push(SubmitAnswerDto.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): ImportQuestionDto {
+    static fromJS(data: any): SubmitQuestionDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ImportQuestionDto();
+        let result = new SubmitQuestionDto();
         result.init(data);
         return result;
     }
@@ -64678,29 +64109,29 @@ export class ImportQuestionDto implements IImportQuestionDto {
         data["type"] = this.type;
         data["text"] = this.text;
         data["sortOrder"] = this.sortOrder;
-        if (this.options && this.options.constructor === Array) {
-            data["options"] = [];
-            for (let item of this.options)
-                data["options"].push(item.toJSON());
+        if (this.answers && this.answers.constructor === Array) {
+            data["answers"] = [];
+            for (let item of this.answers)
+                data["answers"].push(item.toJSON());
         }
         return data; 
     }
 }
 
-export interface IImportQuestionDto {
+export interface ISubmitQuestionDto {
     xref: string | undefined;
     type: QuestionType | undefined;
     text: string | undefined;
     sortOrder: number | undefined;
-    options: ImportOptionDto[] | undefined;
+    answers: SubmitAnswerDto[] | undefined;
 }
 
-export class ImportQuestionnaireDto implements IImportQuestionnaireDto {
-    identifier!: string | undefined;
-    moduleId!: ModuleType | undefined;
-    questions!: ImportQuestionDto[] | undefined;
+export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersDto {
+    xref!: string | undefined;
+    name!: string | undefined;
+    questions!: SubmitQuestionDto[] | undefined;
 
-    constructor(data?: IImportQuestionnaireDto) {
+    constructor(data?: ISubmitQuestionsAndAnswersDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -64711,27 +64142,27 @@ export class ImportQuestionnaireDto implements IImportQuestionnaireDto {
 
     init(data?: any) {
         if (data) {
-            this.identifier = data["identifier"];
-            this.moduleId = data["moduleId"];
+            this.xref = data["xref"];
+            this.name = data["name"];
             if (data["questions"] && data["questions"].constructor === Array) {
                 this.questions = [];
                 for (let item of data["questions"])
-                    this.questions.push(ImportQuestionDto.fromJS(item));
+                    this.questions.push(SubmitQuestionDto.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): ImportQuestionnaireDto {
+    static fromJS(data: any): SubmitQuestionsAndAnswersDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ImportQuestionnaireDto();
+        let result = new SubmitQuestionsAndAnswersDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["identifier"] = this.identifier;
-        data["moduleId"] = this.moduleId;
+        data["xref"] = this.xref;
+        data["name"] = this.name;
         if (this.questions && this.questions.constructor === Array) {
             data["questions"] = [];
             for (let item of this.questions)
@@ -64741,46 +64172,10 @@ export class ImportQuestionnaireDto implements IImportQuestionnaireDto {
     }
 }
 
-export interface IImportQuestionnaireDto {
-    identifier: string | undefined;
-    moduleId: ModuleType | undefined;
-    questions: ImportQuestionDto[] | undefined;
-}
-
-export class QuickBookConnectionLinkResult implements IQuickBookConnectionLinkResult {
-    connectionLink!: string | undefined;
-
-    constructor(data?: IQuickBookConnectionLinkResult) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.connectionLink = data["connectionLink"];
-        }
-    }
-
-    static fromJS(data: any): QuickBookConnectionLinkResult {
-        data = typeof data === 'object' ? data : {};
-        let result = new QuickBookConnectionLinkResult();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["connectionLink"] = this.connectionLink;
-        return data; 
-    }
-}
-
-export interface IQuickBookConnectionLinkResult {
-    connectionLink: string | undefined;
+export interface ISubmitQuestionsAndAnswersDto {
+    xref: string | undefined;
+    name: string | undefined;
+    questions: SubmitQuestionDto[] | undefined;
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {
@@ -66219,6 +65614,46 @@ export interface IGetSetupAccountsLinkOutput {
     setupAccountsLink: string | undefined;
 }
 
+export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
+    syncInProgressAccountsCount!: number | undefined;
+    failedSyncAccountsCount!: number | undefined;
+
+    constructor(data?: ISyncAllAccountsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
+            this.failedSyncAccountsCount = data["failedSyncAccountsCount"];
+        }
+    }
+
+    static fromJS(data: any): SyncAllAccountsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncAllAccountsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
+        data["failedSyncAccountsCount"] = this.failedSyncAccountsCount;
+        return data; 
+    }
+}
+
+export interface ISyncAllAccountsOutput {
+    syncInProgressAccountsCount: number | undefined;
+    failedSyncAccountsCount: number | undefined;
+}
+
 export class SyncProgressDto implements ISyncProgressDto {
     accountId!: number | undefined;
     accountName!: string | undefined;
@@ -66369,8 +65804,6 @@ export interface ISyncAccountDto {
 
 export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
-    consumerKey!: string | undefined;
-    consumerSecret!: string | undefined;
     publicToken!: string | undefined;
     isSyncBankAccountsEnabled!: boolean | undefined;
 
@@ -66386,8 +65819,6 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     init(data?: any) {
         if (data) {
             this.typeId = data["typeId"];
-            this.consumerKey = data["consumerKey"];
-            this.consumerSecret = data["consumerSecret"];
             this.publicToken = data["publicToken"];
             this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
         }
@@ -66403,8 +65834,6 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["typeId"] = this.typeId;
-        data["consumerKey"] = this.consumerKey;
-        data["consumerSecret"] = this.consumerSecret;
         data["publicToken"] = this.publicToken;
         data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
         return data; 
@@ -66413,8 +65842,6 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
 
 export interface ICreateSyncAccountInput {
     typeId: string;
-    consumerKey: string | undefined;
-    consumerSecret: string | undefined;
     publicToken: string | undefined;
     isSyncBankAccountsEnabled: boolean | undefined;
 }
@@ -69442,6 +68869,46 @@ export interface IFiltersInitialData {
     cashflowTypes: StringFilterElementDto[] | undefined;
     currencies: StringFilterElementDto[] | undefined;
     businessEntities: Int32FilterElementDto[] | undefined;
+}
+
+export class CounterpartyDto implements ICounterpartyDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ICounterpartyDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CounterpartyDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CounterpartyDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICounterpartyDto {
+    id: string | undefined;
+    name: string | undefined;
 }
 
 export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto {

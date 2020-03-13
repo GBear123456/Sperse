@@ -11,7 +11,6 @@ import {
     SyncProgressStatus,
     SyncProgressOutput,
     SyncServiceProxy,
-    MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { HttpClient } from '@angular/common/http';
@@ -63,7 +62,6 @@ export class SynchProgressService {
         private cfoService: CFOService,
         private http: HttpClient,
         private syncServiceProxy: SyncServiceProxy,
-        private myFinanceService: MyFinancesServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration
     ) {
         this.subscribeToProgress();
@@ -94,24 +92,18 @@ export class SynchProgressService {
     }
 
     private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
-        const method: Observable<any> = this.cfoService.isForUser && syncType == SyncTypeIds.Quovo
-            ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
-            : (
-                syncAccountIds && syncAccountIds.length
-                ? this.syncServiceProxy.requestSyncForAccounts(
-                    InstanceType[this.cfoService.instanceType],
-                    this.cfoService.instanceId,
-                    false,
-                    syncAccountIds
-                )
-                : this.syncServiceProxy.syncAllAccounts(
-                    InstanceType[this.cfoService.instanceType],
-                    this.cfoService.instanceId,
-                    forcedSync,
-                    newOnly,
-                    syncType
-                )
-            );
+        const method: Observable<any> = syncAccountIds && syncAccountIds.length ?
+            this.syncServiceProxy.requestSyncForAccounts(
+                InstanceType[this.cfoService.instanceType],
+                this.cfoService.instanceId,
+                false,
+                syncAccountIds) :
+            this.syncServiceProxy.syncAllAccounts(
+                InstanceType[this.cfoService.instanceType],
+                this.cfoService.instanceId,
+                forcedSync,
+                newOnly,
+                syncType);
 
         return method.pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;

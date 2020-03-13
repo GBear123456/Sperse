@@ -28,7 +28,6 @@ export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
 
     syncTypeConfigs = {
         [SyncTypeIds.Plaid]: { name: 'plaid', icon: 'plaid.png', caption: 'Plaid' },
-        [SyncTypeIds.Quovo]: { name: 'quovo', icon: 'quovo.png', caption: 'Quovo' },
         [SyncTypeIds.QuickBook]: { name: 'quick-book', icon: 'quick-book.png', caption: 'QuickBook' },
         [SyncTypeIds.XeroOAuth2]: { name: 'xero', icon: 'xero.svg', caption: 'Xero' }
     };

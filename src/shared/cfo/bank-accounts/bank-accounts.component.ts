@@ -10,12 +10,11 @@ import { finalize, first, filter, takeUntil } from 'rxjs/operators';
 /** Application imports */
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
-import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
-import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
+import { AccountConnectors } from '@shared/AppEnums';
 import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-widget.component';
 
 @Component({
@@ -31,7 +30,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
 
     constructor(
         injector: Injector,
-        private quovoService: QuovoService,
         private synchProgress: SynchProgressService,
         private bankAccountsGeneralService: BankAccountsGeneralService,
         private dialog: MatDialog,
@@ -45,9 +43,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     ngOnInit() {
         this.activate();
         this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
-        this.quovoService.quovoSynced$.subscribe(() => {
-            this.bankAccountsService.load();
-        });
         /** Redirect user to the start page if instance isn't initialized */
         this._cfoService.initialized$.pipe(
             filter((initialized: boolean) => !initialized),
@@ -90,9 +85,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
 
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
             data: {
-                connector: syncAccount.syncTypeId === SyncTypeIds.Quovo ? AccountConnectors.Quovo : AccountConnectors.XeroOAuth2,
+                connector: AccountConnectors.XeroOAuth2,
                 config: {
-                    accountId: syncAccount.syncTypeId === SyncTypeIds.Quovo ? syncAccount.syncRef : syncAccount.syncAccountId,
+                    accountId: syncAccount.syncAccountId,
                 },
                 operationType: 'update',
                 instanceType: this.instanceType,

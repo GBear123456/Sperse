@@ -37,9 +37,7 @@ export class QuickBookLoginComponent implements OnInit {
             switchMap(() => this.syncServiceProxy.getSetupAccountsLink(
                 <any>this.cfoService.instanceType,
                 this.cfoService.instanceId,
-                SyncTypeIds.QuickBook,
-                null,
-                null
+                SyncTypeIds.QuickBook
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))
             ))

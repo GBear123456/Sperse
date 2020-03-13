@@ -18,12 +18,6 @@
             (onComplete)="complete()">
         </quick-book-login>
     </ng-template>
-    <ng-template [ngIf]="selectedConnector === accountConnectors.Quovo">
-        <quovo-login [loadingContainerElement]="data?.loadingContainerElement"
-            [accountId]="data?.config?.accountId"
-            (onClose)="closeDialog($event)">
-        </quovo-login>
-    </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.XeroOAuth2">
         <xero-oauth2-login [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()">
