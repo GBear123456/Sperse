@@ -210,12 +210,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
         }
     }
 
-    getSubTitle(goal): Observable<string> {
-        return goal.currentNumber$.pipe(map((value: number) => {
-            return String(value || 0);
-        }));
-    }
-
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         this.currentTabIndex = tabChangeEvent.index;
         if (this.currentTabIndex === 2) {

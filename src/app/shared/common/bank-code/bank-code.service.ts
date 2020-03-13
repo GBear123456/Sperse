@@ -1,6 +1,5 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
@@ -22,13 +21,20 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 export class BankCodeService {
     bankCodeBadges: number[] = [ 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000 ];
     bankCodeClientsCount$: Observable<number> = this.getClientsBankCodesTotalCount().pipe(
-        startWith(0),
-        map((count: string) => this.decimalPipe.transform(count))
+        startWith(0)
     );
     bankCodeLevel$: Observable<number> = this.bankCodeClientsCount$.pipe(
-        map((currentBankCodeClientsCount: number) => this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
-            return currentBankCodeClientsCount <= bankCodeBadgeCount;
-        })),
+        map((currentBankCodeClientsCount: number) => {
+            let level: number;
+            if (currentBankCodeClientsCount >= this.bankCodeBadges[this.bankCodeBadges.length - 1]) {
+                level = 10;
+            } else {
+                level = this.bankCodeBadges.findIndex((bankCodeBadgeCount: number) => {
+                    return currentBankCodeClientsCount < bankCodeBadgeCount;
+                });
+            }
+            return level;
+        }),
         publishReplay(),
         refCount()
     );
@@ -83,7 +89,6 @@ export class BankCodeService {
         }
     ];
     constructor(
-        private decimalPipe: DecimalPipe,
         private ls: AppLocalizationService,
         private httpClient: HttpClient
     ) {}
@@ -195,8 +200,7 @@ export class BankCodeService {
             filter = this.getFilterFromTime(time);
         }
         return this.getClientsBankCodesTotalCount(filter).pipe(
-            startWith(''),
-            map((count: string) => this.decimalPipe.transform(count))
+            startWith('')
         );
     }
 
