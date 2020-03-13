@@ -71,7 +71,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     types: any[];
     sources: any[];
     sourceContacts = [];
-    sourceContactId: number;
     sourceContactName: string;
     layoutColumns: any[] = [
         {
@@ -189,13 +188,11 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.contactsService.contactInfoSubscribe(() => {
-            this.data = this.contactProxy['data'];
-        });
         this.contactsService.leadInfoSubscribe(leadInfo => {
-            this.sourceContactId = leadInfo.sourceContactId;
+            this.updateSourceContactName();
         });
         this.contactsService.contactInfoSubscribe(contactInfo => {
+            this.data = this.contactProxy['data'];
             this.data.contactInfo = contactInfo;
             this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
@@ -295,9 +292,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     updateSourceContactName() {
         let contact = this.sourceContacts.find(item =>
-            item.id == this.sourceContactId);
-        if (contact)
-            this.sourceContactName = contact.name;
+            item.id == this.data.leadInfo.sourceContactId);
+        this.sourceContactName = contact && contact.name;
     }
 
     onSourceContactLoaded(contacts) {
@@ -306,7 +302,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     }
 
     onSourceContactChanged(event) {
-        if (this.sourceContactId == event.id)
+        if (this.data.leadInfo.sourceContactId == event.id)
             event = {id: undefined, name: undefined};
 
         let prevName = this.sourceContactName;
@@ -322,7 +318,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 selectedOrgUnits: [response.newSourceOrganizationUnitId]
             });
 
-            this.sourceContactId = event.id;
+            this.data.leadInfo.sourceContactId = event.id;
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         }, () => {
             this.sourceContactName = prevName;
