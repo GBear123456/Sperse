@@ -9,10 +9,10 @@
             pageLoadMode="scrollBottom"
             [searchTimeout]="500"
             [dataSource]="dataSource"
-            [selectedItemKeys]="[activeEmail?.id]"
+            [selectedItemKeys]="[activeMessage?.id]"
             [searchEditorOptions]="{placeholder: ls.l('SearchMessage')}"
             [searchEnabled]="true"
-            (onItemClick)="initActiveEmail($event.itemData)">
+            (onItemClick)="initactiveMessage($event.itemData)">
                 <div *dxTemplate="let item of 'item'">
                     <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(item?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
@@ -26,30 +26,57 @@
                 </div>
         </dx-list>
     </div>
-    <div class="inbox-content" *ngIf="activeEmail">
-        <app-toolbar [config]="contentToolbar"></app-toolbar>        
-        <div class="header">
-            <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(activeEmail?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar"></div>  
-            <div class="details">
-                <span class="from">{{activeEmail?.from}}</span>
-                <span class="subject">{{activeEmail?.subject}}</span>
-                <span class="to">{{ls.l('to')}} {{activeEmail?.to}}</span>
-            </div>
-            <div class="date">{{activeEmail?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
-        </div>
-        <div class="content">
+    <div class="inbox-content" *ngIf="activeMessage">
+        <app-toolbar [config]="contentToolbar"></app-toolbar>
+        <ng-container [ngSwitch]="activeMessage.deliveryType">
+            <ng-container *ngSwitchCase="'SMS'">                
+                <div class="header sms">
+                    <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(activeMessage?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar"></div>  
+                    <div class="details">
+                        <span class="from">{{activeMessage?.fromUserName}}</span>
+                        <span class="to">{{activeMessage?.to}}</span>
+                    </div>
+                    <div class="date">{{activeMessage?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
+                </div>                
+            </ng-container>
+            <ng-container *ngSwitchCase="'Email'">                
+                <div class="header">
+                    <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(activeMessage?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar"></div>  
+                    <div class="details">
+                        <span class="from">{{activeMessage?.fromUserName}}</span>
+                        <span class="subject">{{activeMessage?.subject}}</span>
+                        <span class="to">{{ls.l('to')}} {{activeMessage?.to}}</span>
+                    </div>
+                    <div class="date">{{activeMessage?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
+                </div>
+            </ng-container>
+        </ng-container>
+        <div class="content {{activeMessage.deliveryType | lowercase}}">
             <dx-scroll-view showScrollbar="onHover">
-                <div class="body" [innerHtml]="activeEmail?.body"></div>
+                <div class="body" [innerHtml]="activeMessage?.body"></div>
             </dx-scroll-view>
             <div class="attachments">
-                <div *ngFor="let attachment of activeEmail?.attachments" class="attachment">
+                <div *ngFor="let attachment of activeMessage?.attachments" class="attachment">
                     <a [download]="attachment.name" href="javascript:void(0)" class="name" (click)="openAttachment(attachment)">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
                 </div>
+            </div>
+            <div class="input-form">                  
+                <img src="assets/common/icons/page.svg" class="page" (click)="extendMessage()">
+                <img src="assets/common/icons/attach.svg" class="attach">
+                <div class="delimiter"></div>
+                <dx-text-box
+                    width="95%"
+                    height="44px"
+                    [placeholder]="ls.l('Type your message here...')"
+                    [stylingMode]="'outlined'"
+                    [(value)]="instantMessageText">
+                </dx-text-box>
+                <img src="assets/common/icons/send-blue.svg" class="send">
             </div>
         </div>
     </div>
     <app-no-data
-        [hidden]="activeEmail"
+        [hidden]="activeMessage"
         [showLink]="false">
     </app-no-data>
 </div>

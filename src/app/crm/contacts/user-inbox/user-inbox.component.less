@@ -6,7 +6,7 @@
     .inbox-user-form {
         display: flex;
         overflow: hidden;
-        height: calc(100% - 5px);
+        height: 100%;
 
         .avatar {
             width: 49px;
@@ -17,6 +17,9 @@
             width: 30%;
             border-right: 1px solid #dfdfdf;
             ::ng-deep dx-list {
+                .dx-scrollable-container {
+                    overflow: visible;
+                }
                 .dx-placeholder {
                     font-size: 14px;
                     font-weight: 300;
@@ -34,7 +37,18 @@
                 }
                 .dx-list-item {
                     border-top: none;
+                    overflow: visible;
                     border-bottom: 1px solid #ddd;
+                    &.dx-list-item-selected:after {
+                        content: '';
+                        top: -6px;  
+                        left: -10px;
+                        display: block;
+                        position: relative;
+                        border-top: 10px solid transparent;
+                        border-bottom: 10px solid transparent;
+                        border-right: 11px solid #ffffff;
+                    }
                 }
                 .email {
                     display: flex;
@@ -100,6 +114,9 @@
                 display: flex;
                 flex-flow: column;
                 height: calc(100vh - 420px);
+                &.sms {
+                    height: calc(100vh - 390px);
+                }
                 .attachments {
                     margin: 15px;
                     align-self: flex-end;
@@ -113,6 +130,64 @@
                         float: right;
                     }
                 }
+                .input-form {
+                    width: 100%;
+                    padding: 20px 0;
+                    align-self: flex-end;
+                    border-top: 1px solid #dedede;
+                    text-align: center;
+                    ::ng-deep dx-text-box {
+                        display: inline-block;
+                        background-color: #f9fbfc;
+                        input {
+                            padding-left: 85px;
+                            padding-right: 40px;
+                            border: 1px solid #dfdfdf;
+                            border-radius: 5px;
+                            font-size: 14px;
+                            font-weight: normal;
+                            font-stretch: normal;
+                            font-style: normal;
+                            letter-spacing: 0.28px;
+                        }        
+                        .dx-placeholder {
+                            padding-left: 80px;
+                            font-size: 14px;
+                            font-weight: normal;
+                            font-stretch: normal;
+                            font-style: normal;
+                            letter-spacing: 0.28px;
+                            color: #677380;
+                        }
+                        &.dx-state-focused .dx-placeholder {
+                            top: -15px;
+                            font-size: 10px;
+                        }
+                    }    
+                    img {
+                        z-index: 1;
+                        cursor: pointer;
+                        position: relative;
+                        &.send {
+                            right: 30px;
+                        }
+                        &.page {
+                            left: 40px;
+                        }
+                        &.attach {
+                            left: 60px;
+                        }
+                    }
+                    .delimiter {
+                        display: inline-block;
+                        position: relative;
+                        width: 1px;
+                        height: 30px;
+                        background: #e5e9ec;
+                        top: 10px;
+                        left: 75px;
+                    }
+                }
             }
           
             .header {
@@ -121,6 +196,12 @@
                 min-height: 100px;
                 border-bottom: 1px solid #dfdfdf;
                 padding-bottom: 20px;
+                &.sms {
+                    min-height: auto;
+                    .details {
+                        height: 45px;
+                    }
+                }
                 .details {
                     display: flex;
                     flex-flow: column;

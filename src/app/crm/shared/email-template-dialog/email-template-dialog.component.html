@@ -143,7 +143,7 @@
                     <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)"></ckeditor>
                     <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                            <a href="javascript:void(0);" (click)="openFileSelector()">{{ls.l('Add attachment')}}</a>
+                            <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
                         </ng-template>
                     </ngx-file-drop>
                 </div>

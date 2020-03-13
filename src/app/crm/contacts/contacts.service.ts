@@ -35,6 +35,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
+import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 
 @Injectable()
 export class ContactsService {
@@ -335,5 +336,18 @@ export class ContactsService {
             closeOnNavigation: false,
             data: {}
         }).afterClosed();
+    }
+
+    showSMSDialog(data) {
+        this.dialog.closeAll();
+        this.dialog.open(SMSDialogComponent, {
+            id: 'permanent',
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: data
+        }).afterClosed().subscribe(res => {
+            res && this.invalidate('user-inbox');
+        });
     }
 }

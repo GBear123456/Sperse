@@ -73,6 +73,8 @@ export class SMSDialogComponent {
         if (primary)
             this.phoneNumber = primary.phoneNumber;
 
+        this.smsText = data.body;
+        this.phoneNumber = data.phoneNumber;
         this.tags[Tags.LegalName] = appSession.tenant ? appSession.tenant.name : AppConsts.defaultTenantName;
         this.tags[Tags.ClientFirstName] = person.person.firstName;
         this.tags[Tags.ClientLastName] = person.person.lastName;
@@ -88,14 +90,15 @@ export class SMSDialogComponent {
                 this.loadingService.startLoading(this.validationGroup.instance.element());
                 this.contactCommunicationServiceProxy.sendSMS(new SendSMSInput({
                     contactId: this.data.contact.id,
-                    parentId: undefined,
+                    parentId: this.data.parentId,
                     message: this.smsText,
                     phoneNumber: this.phoneNumber
                 })).pipe(
                     finalize(() => this.loadingService.finishLoading(this.validationGroup.instance.element()))
-                ).subscribe(
-                    () => this.notifyService.success(this.ls.l('MessageSuccessfullySent'))
-                );
+                ).subscribe(() => {
+                    this.dialogRef.close(true);
+                    this.notifyService.success(this.ls.l('MessageSuccessfullySent'));
+                });
             }
         });
     }

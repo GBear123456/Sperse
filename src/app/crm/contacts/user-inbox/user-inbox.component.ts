@@ -13,7 +13,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CommunicationMessageDeliveryType, ContactCommunicationServiceProxy,
-    CommunicationMessageStatus } from '@shared/service-proxies/service-proxies';
+    CommunicationMessageStatus, MessageDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 
 @Component({
@@ -24,13 +24,15 @@ import { ContactsService } from '../contacts.service';
 export class UserInboxComponent implements OnDestroy {
     @ViewChild(DxListComponent, { static: false }) listComponent: DxListComponent;
 
-    activeEmail;
-    contactId: number;
     contentToolbar = [];
+    contactId: number;
     dataSource: DataSource;
-    noPhotoUrl = AppConsts.imageUrls.noPhoto;
+    activeMessage: MessageDto;
+    instantMessageText: string;
+    contactInfo: ContactInfoDto;
     formatting = AppConsts.formatting;
     status: CommunicationMessageStatus;
+    noPhotoUrl = AppConsts.imageUrls.noPhoto;
     statuses = Object.keys(CommunicationMessageStatus).map(item => {
         return {
             id: CommunicationMessageStatus[item],
@@ -55,7 +57,11 @@ export class UserInboxComponent implements OnDestroy {
         public ls: AppLocalizationService,
         public profileService: ProfileService
     ) {
+        contactsService.invalidateSubscribe(() => {
+            this.invalidate();
+        }, this.constructor.name);
         contactsService.contactInfoSubscribe(res => {
+            this.contactInfo = res;
             this.contactId = res.id;
             this.isSendSmsAndEmailAllowed = this.contactsService.checkCGPermission(
                 res.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
@@ -78,7 +84,7 @@ export class UserInboxComponent implements OnDestroy {
                         placeholder: this.ls.l('Type'),
                         dataSource: this.deliveryTypes,
                         onValueChanged: event => {
-                            this.activeEmail = undefined;
+                            this.activeMessage = undefined;
                             this.deliveryType = event.value || undefined;
                             this.dataSource.reload();
                         },
@@ -94,7 +100,7 @@ export class UserInboxComponent implements OnDestroy {
                         placeholder: this.ls.l('Status'),
                         dataSource: this.statuses,
                         onValueChanged: event => {
-                            this.activeEmail = undefined;
+                            this.activeMessage = undefined;
                             this.status = event.value || undefined;
                             this.dataSource.reload();
                         },
@@ -137,6 +143,7 @@ export class UserInboxComponent implements OnDestroy {
                 },
                 {
                     name: 'status',
+                    visible: this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email,
                     action: Function()
                 },
                 {
@@ -161,6 +168,7 @@ export class UserInboxComponent implements OnDestroy {
             ]
         }, {
             location: 'after',
+            visible: this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email,
             locateInMenu: 'auto',
             items: [
                 {
@@ -197,7 +205,7 @@ export class UserInboxComponent implements OnDestroy {
                         }).join(','), loadOptions.take, loadOptions.skip
                     ).toPromise().then(response => {
                         this.initMainToolbar();
-                        if (this.activeEmail || !this.initActiveEmail(response.items[0]))
+                        if (this.activeMessage || !this.initactiveMessage(response.items[0]))
                             this.loadingService.finishLoading();
                         return {
                             data: response.items,
@@ -209,14 +217,13 @@ export class UserInboxComponent implements OnDestroy {
         });
     }
 
-    initActiveEmail(record) {
+    initactiveMessage(record) {
         if (record) {
             this.loadingService.startLoading();
             this.communicationService.getMessage(record.id, this.contactId).pipe(
                 finalize(() => this.loadingService.finishLoading())
             ).subscribe(res => {
-                this.activeEmail = res;
-                this.activeEmail.from = record.fromUserName;
+                this.activeMessage = res;
                 this.initContentToolbar();
             });
             return true;
@@ -230,23 +237,23 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     isActiveFirstItem(): boolean {
-        return this.activeEmail && this.activeEmail.id == this.getVisibleList()[0].id;
+        return this.activeMessage && this.activeMessage.id == this.getVisibleList()[0].id;
     }
 
     isActiveLastItem(): boolean {
         let visibleItems = this.getVisibleList();
-        return this.activeEmail && this.activeEmail.id == visibleItems[visibleItems.length - 1].id;
+        return this.activeMessage && this.activeMessage.id == visibleItems[visibleItems.length - 1].id;
     }
 
     moveSelectedItem(shift) {
         let visibleList = this.getVisibleList();
-        if (this.activeEmail)
+        if (this.activeMessage)
             visibleList.some((item, index) => {
-                if (item.id == this.activeEmail.id)
-                    return this.initActiveEmail(visibleList[index + shift]);
+                if (item.id == this.activeMessage.id)
+                    return this.initactiveMessage(visibleList[index + shift]);
             });
         else
-            this.initActiveEmail(visibleList[0]);
+            this.initactiveMessage(visibleList[0]);
     }
 
     getVisibleList() {
@@ -255,22 +262,22 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     reply() {
-        this.showNewEmailDialog('Reply', this.activeEmail);
+        this.showNewEmailDialog('Reply', this.activeMessage);
     }
 
     forward() {
-        this.showNewEmailDialog('Forward', this.activeEmail);
+        this.showNewEmailDialog('Forward', this.activeMessage);
     }
 
     replyToAll() {
-        this.showNewEmailDialog('ReplyToAll', this.activeEmail);
+        this.showNewEmailDialog('ReplyToAll', this.activeMessage);
     }
 
     showNewEmailDialog(title = 'NewEmail', data = {}) {
         data['contactId'] = this.contactId;
         data['switchTemplate'] = true;
         this.contactsService.showEmailDialog(data, title)
-            .subscribe(res => isNaN(res) || this.invalidate());
+            .subscribe(res => isNaN(res) || setTimeout(() => this.invalidate(), 1000));
     }
 
     openAttachment(attachment) {
@@ -278,6 +285,24 @@ export class UserInboxComponent implements OnDestroy {
         this.communicationService.getAttachmentLink(attachment.id).pipe(
             finalize(() => this.loadingService.finishLoading())
         ).subscribe(res => window.open(res, '_blank'));
+    }
+
+    extendMessage() {
+        if (this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email)
+            this.showNewEmailDialog(undefined, {
+                parentId: this.activeMessage.parentId,
+                subject: this.activeMessage.subject,
+                body: this.instantMessageText,
+                to: this.activeMessage.to.join ?
+                    this.activeMessage.to : [this.activeMessage.to]
+            });
+        else
+            this.contactsService.showSMSDialog({
+                parentId: this.activeMessage.parentId,
+                body: this.instantMessageText,
+                phoneNumber: this.activeMessage.to,
+                contact: this.contactInfo
+            });
     }
 
     ngOnDestroy() {
