@@ -104,7 +104,7 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column cssClass="stars" [width]="40" [fixed]="true" [fixedPosition]="'left'"
+                        <dxi-column cssClass="stars" [width]="40"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                         <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
@@ -150,8 +150,6 @@
                                                [showReportLink]="true">
                             </bank-code-letters>
                         </div>
-
-                        <dxi-column [fixed]="true" fixedPosition="right" [showInColumnChooser]="false"></dxi-column>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

@@ -69,13 +69,22 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-                        <dxi-column [width]="40" cssClass="stars" [fixed]="true" [fixedPosition]="'left'"
-                                    [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column cssClass="stars"
+                                    [width]="40"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false">
+                        </dxi-column>
                         <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                         <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId" caption="" cellTemplate="photoTemplate"
-                                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                                    [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="PhotoPublicId"
+                                    caption=""
+                                    cellTemplate="photoTemplate"
+                                    [width]="50"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowGrouping]="false"
+                                    [allowSorting]="false">
+                        </dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
@@ -108,7 +117,14 @@
                             </bank-code-letters>
                         </div>
                         <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false"></dxi-column>
+                        <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled"
+                                    name="LinkToCFO"
+                                    cellTemplate="linkToCFOTemplate"
+                                    [width]="80"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false"
+                                    [allowEditing]="false">
+                        </dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <div *ngIf="appService.checkCFOClientAccessPermission()">
                                 <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
@@ -129,8 +145,6 @@
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
                         </div>
-
-                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

@@ -1,12 +1,5 @@
 /** Core imports */
-import {
-    Component,
-    OnInit,
-    AfterViewInit,
-    OnDestroy,
-    Injector,
-    ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Params, RouteReuseStrategy } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -15,20 +8,20 @@ import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, of, merge } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
 import {
-    first,
     filter,
-    startWith,
-    tap,
-    switchMap,
+    first,
     map,
     mapTo,
-    takeUntil,
     pluck,
     publishReplay,
-    refCount
+    refCount,
+    startWith,
+    switchMap,
+    takeUntil,
+    tap
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import invert from 'lodash/invert';
@@ -39,14 +32,18 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
-    ContactAssignedUsersStoreSelectors,
     AppStore,
-    TagsStoreSelectors,
+    ContactAssignedUsersStoreSelectors,
     ListsStoreSelectors,
+    RatingsStoreSelectors,
     StarsStoreSelectors,
-    RatingsStoreSelectors
+    TagsStoreSelectors
 } from '@app/store';
-import { OrganizationUnitsStoreSelectors, PipelinesStoreSelectors } from '@app/crm/store';
+import {
+    OrganizationUnitsStoreActions,
+    OrganizationUnitsStoreSelectors,
+    PipelinesStoreSelectors
+} from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -59,7 +56,12 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { LeadServiceProxy, ContactServiceProxy, OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
+import {
+    ContactServiceProxy,
+    LeadServiceProxy,
+    OrganizationUnitDto,
+    PipelineDto
+} from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -78,7 +80,6 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { OrganizationUnitsStoreActions } from '@app/crm/store';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
@@ -200,7 +201,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly groupDataSourceURI = 'LeadSlice';
     private readonly dateField = 'LeadDate';
     private filters: FilterModel[];
-    private filterChanged = false;
     formatting = AppConsts.formatting;
 
     public headlineButtons: HeadlineButton[] = [
@@ -367,31 +367,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
-    contactsData$: Observable<any> = combineLatest(
-        this.contactGroupId$,
-        this.odataFilter$,
-        this.selectedMapArea$,
-        this.refresh$
-    ).pipe(
-        tap(() => this.mapDataIsLoading = true),
-        switchMap((data) => this.showMap ? of(data) : this.dataLayoutType$.pipe(
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Map),
-            first(),
-            mapTo(data)
-        )),
-        switchMap(([contactGroupId, filter, mapArea, refresh]: [ContactGroup, any, MapArea, null]) => this.mapService.loadSliceMapData(
-            this.getODataUrl(this.groupDataSourceURI),
-            filter,
-            mapArea,
-            this.dateField,
-            { contactGroupId: contactGroupId.toString() }
-        )),
-        publishReplay(),
-        refCount(),
-        tap(() => this.mapDataIsLoading = false)
-    );
-    mapData$: Observable<MapData> = this.mapService.getAdjustedMapData(this.contactsData$);
-    mapInfoItems$: Observable<InfoItem[]> = this.mapService.getMapInfoItems(this.contactsData$, this.selectedMapArea$);
+    mapData$: Observable<MapData>;
+    mapInfoItems$: Observable<InfoItem[]>;
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
     private organizationUnits: OrganizationUnitDto[];
@@ -473,34 +450,28 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
             this.pipelineSelectFields.push('BankCode');
         }
+        const contactsData$: Observable<any> = this.getContactsData();
+        this.mapData$ = this.mapService.getAdjustedMapData(contactsData$);
+        this.mapInfoItems$ = this.mapService.getMapInfoItems(contactsData$, this.selectedMapArea$);
     }
 
     ngOnInit() {
         this.loadOrganizationUnits();
-        combineLatest(
-            this.chartComponent.summaryBy$,
-            this.filterChanged$.pipe(startWith(null))
-        ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-            filter(() => this.showChart)
-        ).subscribe(() => {
-            this.chartDataSource.load();
-        });
+        this.handleTotalCountUpdates();
+        this.handlePipelineUpdates();
+        this.handleDataGridUpdates();
+        this.handlePivotGridUpdates();
+        this.handleChartUpdates();
+        this.handleQueryParams();
+        this.handleModuleChange();
+        this.activate();
+    }
 
-        const queryDataLayoutType$ = this.queryParams$.pipe(
-            pluck('dataLayoutType'),
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
-        );
-        queryDataLayoutType$.subscribe((dataLayoutType) => {
-            this.toggleDataLayout(+dataLayoutType);
-        });
-        queryDataLayoutType$.pipe(
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType == DataLayoutType.DataGrid),
-            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId))
-        ).subscribe(() => {
-            this.onStagesLoaded.bind(this);
-        });
+    ngAfterViewInit() {
+        this.initDataSource();
+    }
 
+    private handleTotalCountUpdates() {
         combineLatest(
             this.odataFilter$,
             this.refresh$,
@@ -513,6 +484,62 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 filter
             );
             this.totalDataSource.load();
+        });
+    }
+
+    private handlePipelineUpdates() {
+        this.listenForUpdate(DataLayoutType.Pipeline).subscribe(() => {
+            this.processFilterInternal();
+        });
+    }
+
+    private handleDataGridUpdates() {
+        this.listenForUpdate(DataLayoutType.DataGrid).subscribe(() => {
+            this.processFilterInternal();
+        });
+    }
+
+    private handlePivotGridUpdates() {
+        this.listenForUpdate(DataLayoutType.PivotGrid).subscribe(() => {
+            this.processFilterInternal();
+        });
+    }
+
+    private handleChartUpdates() {
+        combineLatest(
+            this.chartComponent.summaryBy$,
+            this.listenForUpdate(DataLayoutType.Chart)
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe(() => {
+            this.chartDataSource.load();
+        });
+    }
+
+    private handleModuleChange() {
+        merge(
+            this.dataLayoutType$,
+            this.lifeCycleSubjectsService.activate$
+        ).pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
+    }
+
+    private handleQueryParams() {
+        const queryDataLayoutType$ = this.queryParams$.pipe(
+            pluck('dataLayoutType'),
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
+        );
+        queryDataLayoutType$.subscribe((dataLayoutType) => {
+            this.toggleDataLayout(+dataLayoutType);
+        });
+        queryDataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType == DataLayoutType.DataGrid),
+            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId))
+        ).subscribe((pipelineDefinition: PipelineDto) => {
+            this.onStagesLoaded({ stages: pipelineDefinition.stages });
         });
 
         this.queryParams$.pipe(
@@ -527,23 +554,41 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             filter(Boolean)
         ).subscribe(() => {
             this.refresh();
-            this.filterChanged = true;
-        });
-
-        this.activate();
-
-        merge(
-            this.dataLayoutType$,
-            this.lifeCycleSubjectsService.activate$
-        ).pipe(
-            takeUntil(this.destroy$)
-        ).subscribe(() => {
-            this.crmService.handleModuleChange(this.dataLayoutType.value);
         });
     }
 
-    ngAfterViewInit() {
-        this.initDataSource();
+    private listenForUpdate(layoutType: DataLayoutType) {
+        return combineLatest(
+            this.odataFilter$,
+            this.refresh$
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap((data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
+                filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+                first(),
+                mapTo(data)
+            ))
+        );
+    }
+
+    private getContactsData(): Observable<any> {
+        return combineLatest(
+            this.contactGroupId$,
+            this.selectedMapArea$,
+            this.listenForUpdate(DataLayoutType.Map)
+        ).pipe(
+            tap(() => this.mapDataIsLoading = true),
+            switchMap(([contactGroupId, mapArea, [filter, ] ]: [ContactGroup, MapArea, [any, null]]) => this.mapService.loadSliceMapData(
+                this.getODataUrl(this.groupDataSourceURI),
+                filter,
+                mapArea,
+                this.dateField,
+                { contactGroupId: contactGroupId.toString() }
+            )),
+            publishReplay(),
+            refCount(),
+            tap(() => this.mapDataIsLoading = false)
+        );
     }
 
     private loadOrganizationUnits() {
@@ -622,15 +667,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    refresh(invalidateDashboard = true, allViews = false) {
-        if (this.showPipeline || this.showPivotGrid || this.showDataGrid) {
-            setTimeout(() => {
-                this.processFilterInternal(allViews ? [ this.pipelineComponent, this ] : undefined);
-            });
-        }
-        if (this.showChart) {
-            this.chartDataSource.load();
-        }
+    refresh(invalidateDashboard = true) {
         this._refresh.next(null);
         if (invalidateDashboard) {
             (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
@@ -639,7 +676,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     invalidate(quiet = false, stageId?: number) {
         this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
-            this.refresh(false, true);
+            this.refresh(false);
         });
     }
 
@@ -653,21 +690,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineComponent.deselectAllCards();
             if (this.showDataGrid) {
                 setTimeout(() => this.dataGrid.instance.repaint());
-            }
-        }
-        if (this.filterChanged) {
-            this.filterChanged = false;
-            if (!this.showPipeline) {
-                setTimeout(() => {
-                    if (this.showPivotGrid) {
-                        this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-                    }
-                    if (this.showChart) {
-                        this.chartDataSource.load();
-                    } else {
-                        this.processFilterInternal();
-                    }
-                });
             }
         }
     }
@@ -827,9 +849,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         this.filtersService.apply(() => {
             this.selectedClientKeys = [];
-            this.filterChanged = true;
             this.initToolbarConfig();
-            this.processFilterInternal();
         });
     }
 
@@ -1164,14 +1184,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     searchValueChange(e: object) {
-        if (this.filterChanged = (this.searchValue != e['value'])) {
+        if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
-            this.processFilterInternal();
+            this._refresh.next(null);
         }
     }
 
     processFilterInternal(cxts?: any[]) {
-        if (this.showPipeline) {
+        if (this.showPipeline && this.pipelineComponent) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
@@ -1232,10 +1252,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: () => {
-                    this.refresh();
-                    this.filterChanged = true;
-                },
+                refreshParent: () => this.refresh(),
                 isInLeadMode: true,
                 customerType: ContactGroup[this.selectedContactGroup]
             }
@@ -1267,15 +1284,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.selectedLeads,
                 $event.name
             ).subscribe((declinedList) => {
-                this.filterChanged = true;
-                if (this.showPipeline)
-                    this.pipelineComponent.refresh();
-                else {
+                if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
                         gridInstance.selectRows(declinedList.map(item => item.Id), false);
                     else
                         gridInstance.clearSelection();
+                } else {
+                    this._refresh.next(null);
                 }
                 this.notify.success(this.l('StageSuccessfullyUpdated'));
             });
@@ -1346,9 +1362,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         request.subscribe(() => {
             this.refresh();
-            this.dataGrid.instance.deselectAll();
+            if (this.dataGrid && this.dataGrid.instance) {
+                this.dataGrid.instance.deselectAll();
+            }
             this.notify.success(this.l('SuccessfullyDeleted'));
-            this.filterChanged = true;
         });
     }
 
@@ -1423,10 +1440,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.headlineButtons[0].label = this.getHeadlineButtonName();
             this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
             this.createButtonEnabledSet();
-            this.filterChanged = true;
             this.initToolbarConfig();
-            if (!this.showPipeline)
-                this.refresh(false);
         }
     }
 

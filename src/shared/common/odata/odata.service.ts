@@ -81,8 +81,9 @@ export class ODataService {
         if (grid.NAME === 'dxPivotGrid') {
             const filter = queryWithSearch ? buildQuery({ filter: queryWithSearch }) : '';
             if (filter) {
+                const store = grid.getDataSource()._store;
                 if (!this.pivotGridInitialBeforeSend) {
-                    this.pivotGridInitialBeforeSend = grid.getDataSource()._store._dataSource._store._beforeSend;
+                    this.pivotGridInitialBeforeSend = store && store._dataSource._store._beforeSend;
                 }
                 const newBeforeSend = (request) => {
                     const filterIndex = request.url.indexOf('?$filter');
@@ -92,7 +93,9 @@ export class ODataService {
                     request.params['$filter'] = filter.slice('?$filter='.length);
                     this.pivotGridInitialBeforeSend(request);
                 };
-                grid.getDataSource()._store._dataSource._store._beforeSend = newBeforeSend;
+                if (store) {
+                    store._dataSource._store._beforeSend = newBeforeSend;
+                }
             }
         }
 
