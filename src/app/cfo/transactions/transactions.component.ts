@@ -274,10 +274,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     });
 
-    private _categoriesShowedBefore = !AppConsts.isMobile;
-    private _categoriesShowed = this._categoriesShowedBefore;
+    private categoriesShowedBefore = !AppConsts.isMobile;
+    private _categoriesShowed = this.categoriesShowedBefore;
     public set categoriesShowed(value: boolean) {
-        this._categoriesShowedBefore = this._categoriesShowed;
+        this.categoriesShowedBefore = this._categoriesShowed;
         if (this._categoriesShowed = value) {
             this.filtersService.fixed = false;
             this.filtersService.disable();
@@ -608,12 +608,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         name: 'filters',
                         visible: !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
                         action: () => {
-                            this.filtersService.fixed =
-                                !this.filtersService.fixed;
-                            if (this.filtersService.fixed)
-                                this.categoriesShowed = false;
-                            else
-                                this.categoriesShowed = this._categoriesShowedBefore;
+                            this.filtersService.fixed = !this.filtersService.fixed;
                             this.filtersService.enable();
                         },
                         options: {
