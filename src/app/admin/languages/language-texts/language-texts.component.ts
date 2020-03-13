@@ -258,7 +258,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
                 ]
             }
         ];

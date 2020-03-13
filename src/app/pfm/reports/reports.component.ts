@@ -213,7 +213,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'columnChooser',
                         visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
-                        action: DataGridService.showColumnChooser.bind(this, this.openedGrid)
+                        action: () => DataGridService.showColumnChooser(this.openedGrid)
                     },
                     {
                         widget: 'dxButton',

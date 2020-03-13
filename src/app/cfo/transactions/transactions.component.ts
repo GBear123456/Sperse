@@ -731,7 +731,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     {
                         name: 'columnChooser',
                         visible: !this._cfoService.hasStaticInstance,
-                        action: DataGridService.showColumnChooser.bind(this, this.dataGrid)
+                        action: () => DataGridService.showColumnChooser(this.dataGrid)
                     }
                 ]
             }

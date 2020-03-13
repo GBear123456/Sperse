@@ -320,7 +320,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 ]
                             }
                         },
-                        { name: 'columnChooser', action: DataGridService.showColumnChooser.bind(this, this.dataGrid) }
+                        { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
                     ]
                 }
             ];
