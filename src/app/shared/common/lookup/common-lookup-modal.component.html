@@ -14,15 +14,13 @@
                 [columnAutoWidth]="true"
                 [allowColumnResizing]="false"
                 [hoverStateEnabled]="true">
-
-                <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                <dxi-column caption="{{ls.l('Select')}}" cellTemplate="selectCell"></dxi-column>
-                <dxi-column dataField="name" caption="{{ls.l('Name')}}" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [caption]="ls.l('Select')" cellTemplate="selectCell"></dxi-column>
+                <dxi-column dataField="name" [caption]="ls.l('Name')" cssClass="clipboard-holder"></dxi-column>
 
                 <div *dxTemplate="let record of 'selectCell'">
                     <button class="btn btn-metal m-btn m-btn--icon m-btn--icon-only"
                             (click)="selectItem(record.data)"
-                            title="{{ls.l('Select')}}">
+                            [title]="ls.l('Select')">
                         <i class="la la-chevron-circle-right" [attr.aria-label]="ls.l('Select')"></i>
                     </button>
                 </div>
@@ -30,8 +28,8 @@
                     [allowedPageSizes]="[20, 100, 500, 1000]"
                     [showPageSizeSelector]="true"
                     [showInfo]="true"
-                    [visible]="true"
-                ></dxo-pager>
+                    [visible]="true">
+                </dxo-pager>
                 <dxo-paging [pageSize]="20"></dxo-paging>
             </dx-data-grid>
         </div>
