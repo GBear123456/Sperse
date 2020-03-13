@@ -26,10 +26,10 @@
             <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
         </a>
         <ng-template #salesReportButton>
-            <a [id]="'salesReportButton-' + key">
+            <a (click)="salesButtonClick($event)" #salesReportButton>
                 <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
             </a>
-            <dx-tooltip position="bottom" [target]="'#salesReportButton-' + key" showEvent="dxclick" hideEvent="dxoverend">
+            <dx-tooltip [(visible)]="showTooltip" [target]="salesReportButton" position="bottom" hideEvent="dxoverend">
                 <div *dxTemplate="let data = data of 'content'">
                     <div class="sales-report-tooltip">
                         <div class="title">{{ ls.l('DownloadSalesReport') }}</div>

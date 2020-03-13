@@ -1,6 +1,7 @@
 /** Core imports */
 import {
-    ChangeDetectionStrategy, ChangeDetectorRef,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     HostBinding,
@@ -35,7 +36,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() showDescriptionsOnClick = false;
     @Input() showBankCodeDefinition = false;
     @Input() showReportLink = false;
-    @Input() reportLinkType: 'Sales' | 'Profile';
+    @Input() reportLinkType: 'Sales' | 'Profile' = 'Sales';
     @Input() reportIconName: string;
     @Input() editDialogPosition: { x?: number, y?: number };
     @Input() closeAfterEdit = false;
@@ -76,6 +77,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             text: this.ls.l('Spanish')
         }
     ];
+    showTooltip = false;
 
     constructor(
         private dialogService: DialogService,
@@ -149,6 +151,12 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
         if (dialog) {
             dialog.close();
         }
+    }
+
+    salesButtonClick(e) {
+        this.showTooltip = !this.showTooltip;
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     ngOnDestroy(): void {

@@ -107,11 +107,10 @@ export class PersonalDetailsComponent implements OnDestroy {
             setTimeout(() => this.contactsService.toolbarUpdate({
                 optionButton: {
                     name: 'options',
-                    accessKey: 'personal-details-dialog',
-                    action: this.personalDetailsService.showPersonalDetailsDialog.bind(this)
+                    action: () => this.personalDetailsService.showPersonalDetailsDialog()
                 }
             }));
-            this.personalDetailsService.showPersonalDetailsDialog().subscribe();
+            this.personalDetailsService.showPersonalDetailsDialog();
             this.changeDetector.markForCheck();
         }, this.constructor.name);
 

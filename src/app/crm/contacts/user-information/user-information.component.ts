@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
@@ -125,7 +125,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.data.userId = userId;
                 if (userId) {
                     this.loadData();
-                    this.showOrgUnitsDialog().subscribe();
+                    this.showOrgUnitsDialog();
                     this.updateToolbarOptions();
                 } else
                     this.getPhonesAndEmails();
@@ -160,7 +160,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         setTimeout(() => this.contactsService.toolbarUpdate({
             optionButton: {
                 name: 'options',
-                accessKey: 'org-units-dialog',
                 action: this.showOrgUnitsDialog.bind(this)
             }
         }));
@@ -415,10 +414,11 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
-    showOrgUnitsDialog(): Observable<MatDialogRef<OrganizationUnitsDialogComponent>> {
-         return new Observable((subscriber) => {
-             setTimeout(() => {
-                 subscriber.next(this.dialog.open(OrganizationUnitsDialogComponent, {
+    showOrgUnitsDialog(): void {
+         setTimeout(() => {
+             if (!this.dialog.getDialogById('user-organization-units-dialog')) {
+                 this.dialog.open(OrganizationUnitsDialogComponent, {
+                     id: 'user-organization-units-dialog',
                      panelClass: ['slider'],
                      disableClose: false,
                      hasBackdrop: false,
@@ -427,10 +427,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                          title: this.ls.l('OrganizationUnits'),
                          selectionMode: 'multiple'
                      }
-                 }));
-                 subscriber.complete();
-             });
-        });
+                 });
+             }
+         });
     }
 
     ngOnDestroy() {

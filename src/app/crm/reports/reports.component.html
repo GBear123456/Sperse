@@ -74,7 +74,10 @@
                         [calculateDisplayValue]="customizeTotalFeeCell">
             </dxi-column>
             <div *dxTemplate="let cellData of 'bankCodeCell'">
-                <bank-code-letters [bankCode]="cellData.value" [showDescriptionsOnClick]="true"></bank-code-letters>
+                <bank-code-letters [bankCode]="cellData.value"
+                                   [showDescriptionsOnClick]="true"
+                                   [showReportLink]="true">
+                </bank-code-letters>
             </div>
             <div *dxTemplate="let cellData of 'statusCell'">
                 <div [class]="'client-status ' + cellData.value | lowercase">
@@ -196,6 +199,10 @@
                 </dxi-total-item>
                 <dxi-total-item alignment="center"
                                 column="starterKitCount"
+                                summaryType="sum">
+                </dxi-total-item>
+                <dxi-total-item alignment="center"
+                                column="totalCount"
                                 summaryType="sum">
                 </dxi-total-item>
                 <dxi-total-item [customizeText]="customizeAmountSummary"
