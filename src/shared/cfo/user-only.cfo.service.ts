@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CFOServiceBase } from './cfo-service-base';
-import { InstanceType, InstanceStatus, MyFinancesServiceProxy } from 'shared/service-proxies/service-proxies';
+import { InstanceType } from 'shared/service-proxies/service-proxies';
 import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+// import { map } from 'rxjs/operators';
 
 @Injectable()
 export class UserOnlyCFOService extends CFOServiceBase {
@@ -12,7 +12,6 @@ export class UserOnlyCFOService extends CFOServiceBase {
     set instanceType(val: InstanceType) { }
 
     constructor(
-        private myFinancesService: MyFinancesServiceProxy
     ) {
         super();
 
@@ -26,7 +25,7 @@ export class UserOnlyCFOService extends CFOServiceBase {
         this.statusActive = new BehaviorSubject(false);
     }
 
-    instanceChangeProcess(invalidateServerCache: boolean = false) {
+    /*instanceChangeProcess(invalidateServerCache: boolean = false) {
         return this.myFinancesService.getUserInstanceStatus().pipe(map(data => {
             const statusActive = data.status == InstanceStatus.Active;
             this.statusActive.next(statusActive);
@@ -34,5 +33,5 @@ export class UserOnlyCFOService extends CFOServiceBase {
             this.hasTransactions = this.initialized && data.hasTransactions;
             return this.hasTransactions;
         }));
-    }
+    }*/
 }

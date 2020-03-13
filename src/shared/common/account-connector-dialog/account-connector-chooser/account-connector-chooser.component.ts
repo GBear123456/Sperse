@@ -30,17 +30,10 @@ export class AccountConnectorChooserComponent implements OnInit {
     ngOnInit() {
         this.connectors = [
             {
-                name: AccountConnectors.Quovo,
-                iconName: 'quovo-connector',
-                title: this.ls.l('QuovoConnectorTitle'),
-                description: this.ls.l('QuovoConnectorDescription'),
-                disabled: true
-            },
-            {
                 name: AccountConnectors.Plaid,
-                iconName: 'quovo-connector',
-                title: this.ls.l('QuovoConnectorTitle'),
-                description: this.ls.l('QuovoConnectorDescription'),
+                iconName: 'plaid-connector',
+                title: this.ls.l('PlaidConnectorTitle'),
+                description: this.ls.l('PlaidConnectorDescription'),
                 disabled: false
                 // disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
             },
@@ -59,7 +52,7 @@ export class AccountConnectorChooserComponent implements OnInit {
                 disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.XeroOAuth2))
             }
         ];
-        /** Select quovo by default */
+        /** Select connector by default */
         this.selectConnector(this.connectors[1]);
     }
 

@@ -38,9 +38,7 @@ export class XeroOauth2LoginComponent implements OnInit {
             switchMap(() => this.syncServiceProxy.getSetupAccountsLink(
                 <any>this.cfoService.instanceType,
                 this.cfoService.instanceId,
-                SyncTypeIds.XeroOAuth2,
-                null,
-                null
+                SyncTypeIds.XeroOAuth2
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))
             ))

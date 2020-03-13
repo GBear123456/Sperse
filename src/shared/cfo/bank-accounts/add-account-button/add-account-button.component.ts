@@ -1,6 +1,5 @@
 import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService } from '../quovo/QuovoService';
 import { SyncAccountServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +16,6 @@ export class AddAccountButtonComponent extends CFOComponentBase {
     createAccountAvailable: boolean;
     constructor(
         injector: Injector,
-        private quovoService: QuovoService,
         private cfoService: CFOService,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private dialog: MatDialog

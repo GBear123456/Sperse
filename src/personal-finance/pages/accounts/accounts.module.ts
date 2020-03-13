@@ -12,9 +12,8 @@ import { StickyModule } from 'ng2-sticky-kit';
 /** Application imports */
 import { AccountsComponent } from '@root/personal-finance/pages/accounts/accounts.component';
 import { FinancePageComponent } from '@root/personal-finance/pages/accounts/finance-page/finance-page.component';
-import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
+import { SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { UserOnlyCFOService } from '@shared/cfo/user-only.cfo.service';
@@ -50,10 +49,8 @@ import { IdleCountdownDialog } from './idle-countdown-dialog/idle-countdown-dial
         ])
     ],
     providers: [
-        QuovoService,
         SyncServiceProxy,
         SynchProgressService,
-        MyFinancesServiceProxy,
         {
             provide: CFOService,
             useClass: UserOnlyCFOService

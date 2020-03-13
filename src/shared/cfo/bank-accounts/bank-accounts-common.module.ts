@@ -31,16 +31,11 @@ import {
     ContactServiceProxy,
     BankAccountsServiceProxy,
     BusinessEntityServiceProxy,
-    MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from './helpers/bank-accounts.service';
 import { BankAccountsComponent } from './bank-accounts.component';
 import { BankAccountsWidgetComponent } from './bank-accounts-widgets/bank-accounts-widget.component';
-import { BankAccountsQuovoComponent } from './bank-accounts-quovo/bank-accounts-quovo.component';
-import { QuovoPfmComponent } from './quovo-pfm/quovo-pfm.component';
 import { AddAccountButtonComponent } from './add-account-button/add-account-button.component';
-import { QuovoService } from './quovo/QuovoService';
-import { AddQuovoAccountButtonComponent } from './quovo/add-quovo-account-button/add-quovo-account-button.component';
 import { ImportChartOfAccountsButtonComponent } from './chart-of-accounts/import-chart-of-accounts-button/import-chart-of-accounts-button.component';
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
@@ -85,12 +80,9 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         BankAccountsComponent,
         BusinessEntitiesChooserComponent,
         BankAccountsWidgetComponent,
-        BankAccountsQuovoComponent,
-        QuovoPfmComponent,
         AddAccountButtonComponent,
         ImportChartOfAccountsButtonComponent,
         ChooseAccountComponent,
-        AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
         SynchProgressComponent
@@ -99,12 +91,9 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         BankAccountsComponent,
         BusinessEntitiesChooserComponent,
         BankAccountsWidgetComponent,
-        BankAccountsQuovoComponent,
-        QuovoPfmComponent,
         AddAccountButtonComponent,
         ImportChartOfAccountsButtonComponent,
         ChooseAccountComponent,
-        AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
         SynchProgressComponent
@@ -113,8 +102,6 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         ChooseAccountComponent
     ],
     providers: [
-        QuovoService,
-        MyFinancesServiceProxy,
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,

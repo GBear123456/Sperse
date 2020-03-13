@@ -35,10 +35,11 @@ export class InvoicesService {
             });
     }
 
-    updateStatus(invoiceId: number, status: InvoiceStatus) {
+    updateStatus(invoiceId: number, status: InvoiceStatus, emailId?: number) {
         return this.invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
             id: invoiceId,
-            status: InvoiceStatus[status]
+            status: InvoiceStatus[status],
+            emailId: emailId
         }));
     }
 }

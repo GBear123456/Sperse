@@ -15,7 +15,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { LayoutType, MyFinancesServiceProxy } from '../service-proxies/service-proxies';
+import { LayoutType } from '../service-proxies/service-proxies';
 import { MemberAreaLink } from '@shared/common/area-navigation/member-area-link.enum';
 import { DateHelper } from '../helpers/DateHelper';
 
@@ -29,8 +29,7 @@ export class AdHeaderHostDirective {
 @Component({
     templateUrl: 'personal-finance-header.component.html',
     styleUrls: ['personal-finance-header.component.less'],
-    selector: 'personal-finance-header',
-    providers: [MyFinancesServiceProxy]
+    selector: 'personal-finance-header'
 })
 export class PersonalFinanceHeaderComponent {
     @ViewChild(AdHeaderHostDirective, { static: false }) adHeaderHost: AdHeaderHostDirective;
@@ -72,7 +71,6 @@ export class PersonalFinanceHeaderComponent {
         private pfmLayoutService: PersonalFinanceLayoutService,
         private abpSessionService: AbpSessionService,
         private featureService: FeatureCheckerService,
-        private myFinancesService: MyFinancesServiceProxy,
         private router: Router,
         private ls: AppLocalizationService,
         public appSession: AppSessionService
@@ -129,15 +127,6 @@ export class PersonalFinanceHeaderComponent {
                         }
                     ]
                 });
-
-            if (abp.session.userId) {
-                this.myFinancesService.getUserInstanceStatus().subscribe(result => {
-                    if (result.hasSyncAccounts) {
-                        this.showMyFinancesLink = true;
-                        this.appAreaLinks = this.getAppAreaLinks();
-                    }
-                });
-            }
         }
 
         this.hasPfmAppFeature = this.featureService.isEnabled(AppFeatures.PFMApplications) && this.appSession.tenant.customLayoutType == LayoutType.LendSpace;
