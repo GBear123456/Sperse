@@ -230,7 +230,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             this.userData = data;
         } else {
             this.selectedOrgUnits = (
-                this.contactInfoData.contactInfo.personContactInfo.orgRelations || []
+                (this.contactInfoData.contactInfo.personContactInfo
+                && this.contactInfoData.contactInfo.personContactInfo.orgRelations)
+                || []
             ).map(item => {
                 return item.organization && item.organization.rootOrganizationUnitId;
             }).filter(Boolean);
