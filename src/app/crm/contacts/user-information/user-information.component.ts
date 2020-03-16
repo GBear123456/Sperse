@@ -125,10 +125,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.data.userId = userId;
                 if (userId) {
                     this.loadData();
-                    this.showOrgUnitsDialog();
-                    this.updateToolbarOptions();
                 } else
                     this.getPhonesAndEmails();
+                this.showOrgUnitsDialog();
+                this.updateToolbarOptions();
             },
             this.constructor.name
         );
@@ -416,11 +416,12 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
     showOrgUnitsDialog(): void {
          setTimeout(() => {
-             if (!this.dialog.getDialogById('user-organization-units-dialog')) {
+             const dialog = this.dialog.getDialogById('user-organization-units-dialog');
+             if (!dialog) {
                  this.dialog.open(OrganizationUnitsDialogComponent, {
                      id: 'user-organization-units-dialog',
                      panelClass: ['slider'],
-                     disableClose: false,
+                     disableClose: true,
                      hasBackdrop: false,
                      closeOnNavigation: true,
                      data: {
@@ -428,12 +429,15 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                          selectionMode: 'multiple'
                      }
                  });
+             } else {
+                 dialog.close();
              }
          });
     }
 
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
+        this.dialog.closeAll();
         this.contactsService.unsubscribe(this.constructor.name);
         if (this.dependencyChanged)
             this.contactsService.invalidate();

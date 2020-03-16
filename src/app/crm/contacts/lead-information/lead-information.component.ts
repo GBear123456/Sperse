@@ -333,7 +333,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 this.dialog.open(OrganizationUnitsDialogComponent, {
                     id: 'lead-organization-units-dialog',
                     panelClass: ['slider'],
-                    disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {

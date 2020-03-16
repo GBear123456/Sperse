@@ -1,7 +1,5 @@
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentTypesListComponent } from '../document-types-list/document-types-list.component';

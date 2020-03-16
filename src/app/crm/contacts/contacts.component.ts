@@ -57,6 +57,7 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -640,10 +641,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     closeEditDialogs(event) {
-        if (document.body.contains(event.target) && !this.dialog.getDialogById('permanent') &&
+        if (document.body.contains(event.target) &&
             !event.target.closest('.mat-dialog-container, .dx-popup-wrapper, .swal-modal')
-        )
-            this.dialog.closeAll();
+        ) {
+            this.dialog.openDialogs.forEach((dialog: MatDialogRef<any>) => {
+                if (!dialog.disableClose) {
+                    dialog.close();
+                }
+            });
+        }
     }
 
     printMainArea() {
@@ -780,7 +786,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     showSMSDialog() {
         this.dialog.closeAll();
         this.dialog.open(SMSDialogComponent, {
-            id: 'permanent',
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
