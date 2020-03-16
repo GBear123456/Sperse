@@ -8,6 +8,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -50,6 +51,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     bankCodeServiceTypes = values(BankCodeServiceType);
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
+        leadId: this.data.leadId,
         orderNumber: this.data.orderNumber,
         systemType: this.data.systemType || (this.isBankCodeLayout ? 'BANKCODE' : undefined),
         subscriptions: [
@@ -74,6 +76,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
         private invoicesService: InvoicesService,
+        private route: ActivatedRoute,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any

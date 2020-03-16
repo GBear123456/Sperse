@@ -15,7 +15,8 @@ import {
     ContactInfoDto,
     NameValueDto,
     CommonLookupServiceProxy,
-    CancelOrderSubscriptionInput
+    CancelOrderSubscriptionInput,
+    LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
@@ -30,6 +31,7 @@ import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptio
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'subscriptions',
@@ -39,7 +41,8 @@ import { AppConsts } from '@shared/AppConsts';
 export class SubscriptionsComponent implements OnInit {
     @ViewChild('mainGrid', { static: false }) dataGrid: DxDataGridComponent;
     public data: {
-        contactInfo: ContactInfoDto
+        contactInfo: ContactInfoDto,
+        leadInfo: LeadInfoDto
     };
     pagerConfig = DataGridService.defaultGridPagerConfig;
 
@@ -60,6 +63,7 @@ export class SubscriptionsComponent implements OnInit {
         private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
         private dialog: MatDialog,
+        private route: ActivatedRoute,
         public permission: PermissionCheckerService,
         public ls: AppLocalizationService
     ) {
@@ -171,7 +175,12 @@ export class SubscriptionsComponent implements OnInit {
 
     openSubscriptionDialog(e?: any) {
         this.dialog.closeAll();
-        let data: any = { contactId: this.data.contactInfo.id };
+
+        var leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
+            this.data.leadInfo.id :
+            null;
+
+        let data: any = { contactId: this.data.contactInfo.id, leadId: leadId };
         if (e && e.data) {
             const subscription: OrderSubscriptionDto = e.data;
             data = {
