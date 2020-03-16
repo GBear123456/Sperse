@@ -45,7 +45,7 @@ export class ContactsService {
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
     private organizationUnitsSave: Subject<any> = new Subject<any>();
     private invalidateSubject: Subject<any> = new Subject<any>();
-    private loadLeadInfoSubject: Subject<any> =  new Subject<any>();
+    private loadLeadInfoSubject: Subject<any> =  new ReplaySubject<any>(1);
     private leadInfoSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
     private contactInfo: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
