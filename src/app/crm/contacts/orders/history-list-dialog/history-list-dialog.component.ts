@@ -6,7 +6,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OrderHistoryInfo, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ObservableInput } from '@node_modules/rxjs';
@@ -31,7 +30,6 @@ export class HistoryListDialogComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
-        this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
         this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');

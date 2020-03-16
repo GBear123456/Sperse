@@ -37,7 +37,6 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
     }
 
     ngOnInit() {
-        this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
         this.slider.classList.add('hide');
         this.dialogRef.updateSize('0px', '0px');

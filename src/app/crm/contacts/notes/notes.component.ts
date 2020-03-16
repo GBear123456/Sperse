@@ -86,7 +86,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
             this.clientService.organizationContactInfo.pipe(first()).subscribe(() => {
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: ['slider'],
-                    disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {

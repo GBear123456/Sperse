@@ -60,4 +60,8 @@ export class TotalCodesCrackedComponent implements OnChanges {
         }
     }
 
+    get badgeImageName() {
+        return (this.level === 0 ? 1 : this.level) + '-' + (this.level === 0 ? '0' : '1');
+    }
+
 }

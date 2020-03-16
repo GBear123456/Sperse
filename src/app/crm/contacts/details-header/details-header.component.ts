@@ -464,7 +464,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.dialog.open(UploadDocumentsDialogComponent, {
                     panelClass: 'slider',
-                    disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {
@@ -476,7 +475,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: 'slider',
-                    disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {

@@ -281,7 +281,6 @@ export class ContactsService {
             });
 
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
-            id: 'permanent',
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
@@ -330,7 +329,6 @@ export class ContactsService {
 
     showInvoiceSettingsDialog() {
         return this.dialog.open(InvoiceSettingsDialogComponent, {
-            id: 'permanent',
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,

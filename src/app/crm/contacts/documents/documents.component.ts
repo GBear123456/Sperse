@@ -337,7 +337,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     openDocumentAddAddDialog() {
         this.dialog.open(UploadDocumentsDialogComponent, {
             panelClass: ['slider'],
-            disableClose: false,
             hasBackdrop: false,
             closeOnNavigation: true,
             data: {

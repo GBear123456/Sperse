@@ -1,6 +1,6 @@
 <source-contact-list
     [leadId]="data?.leadInfo?.id"
-    [selectedKey]="sourceContactId"
+    [selectedKey]="data?.leadInfo?.sourceContactId"
     [targetSelector]="'#contactSourceLink'"
     (onDataLoaded)="onSourceContactLoaded($event)"
     (onItemSelected)="onSourceContactChanged($event)">                                            
@@ -19,7 +19,7 @@
                                     <ng-container *ngSwitchCase="'partnerSource'">
                                         <a id="contactSourceLink"
                                            class="clipboard-holder"
-                                           [class.selected]="sourceContactName"
+                                           [class.selected]="!!sourceContactName"
                                            [class.disabled]="!isCGManageAllowed"
                                            (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed ? ls.l('SelectAnItem') : '')}}
                                             <i class="save-to-clipboard" [hidden]="!sourceContactName" (click)="saveToClipboard($event, sourceContactName)"></i>

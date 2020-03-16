@@ -2,8 +2,8 @@
     <dx-scroll-view showScrollbar="onHover">
         <dx-validation-group #inviteValidationGroup>
             <div class="row">
-                <div class="invite-user-info col-md-6" *ngIf="emails || phones">
-                    <dx-select-box #emailAddress 
+                <div class="invite-user-info col-md-4" *ngIf="emails || phones">
+                    <dx-select-box #emailAddress
                         width="300px"
                         name="emailAddress"
                         [placeholder]="ls.l('EmailAddress')"
@@ -89,7 +89,7 @@
                     <dx-check-box [(value)]="inviteData.changePasswordOnNextLogin" [text]="ls.l('ShouldChangePasswordOnNextLogin')"></dx-check-box>
                     <dx-check-box [(value)]="inviteData.sendActivationEmail" [text]="ls.l('SendActivationEmail')"></dx-check-box>
                 </div>
-                <div class="col-md-4 offset-md-2">
+                <div class="col-md-4">
                     <span>{{ls.l('Roles')}}:</span>
                     <ul class="items-list">
                         <li *ngFor="let role of roles">
@@ -110,7 +110,7 @@
     <mat-tab label="General">
         <dx-scroll-view showScrollbar="onHover">
             <div class="user-info row" #row>
-                <div class="col-md-7" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                <div class="col-md-4" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
                     <div class="section-item clearfix">
                         <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
                         <inplace-edit #InPlaceEmail
@@ -151,7 +151,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <div class="title">
                         {{ls.l('Roles') + ':'}}
                     </div>

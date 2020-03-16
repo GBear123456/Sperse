@@ -185,7 +185,6 @@ export class SubscriptionsComponent implements OnInit {
         }
         this.dialog.open(AddSubscriptionDialogComponent, {
             panelClass: ['slider'],
-            disableClose: false,
             hasBackdrop: false,
             closeOnNavigation: true,
             data: data
