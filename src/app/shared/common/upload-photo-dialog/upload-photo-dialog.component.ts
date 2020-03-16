@@ -208,6 +208,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
                         pictureBase64 => {
                             const image = new Image();
                             image.src = 'data:image/jpeg;base64,' + pictureBase64;
+                            image.crossOrigin = 'Anonymous';
                             image.onload = () => {
                                 this.cropper.setImage(image);
                                 this.changeDetectorRef.detectChanges();
