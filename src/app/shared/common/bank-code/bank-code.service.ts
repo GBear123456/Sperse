@@ -174,9 +174,9 @@ export class BankCodeService {
         );
     }
 
-    getClientsBankCodesTotalCount(filters = []): Observable<string> {
+    getClientsBankCodesTotalCount(filters = []): Observable<number> {
         return this.getClientsBankCodesData(filters).pipe(
-            map((result: any) => result && result.totalCount && result.totalCount.toString())
+            map((result: any) => result && result.totalCount)
         );
     }
 
@@ -194,13 +194,13 @@ export class BankCodeService {
         );
     }
 
-    getBankCodesNumber(time?: BankCodeTime): Observable<string> {
+    getBankCodesNumber(time?: BankCodeTime): Observable<number> {
         let filter;
         if (time) {
             filter = this.getFilterFromTime(time);
         }
         return this.getClientsBankCodesTotalCount(filter).pipe(
-            startWith('')
+            startWith(0)
         );
     }
 

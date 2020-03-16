@@ -392,28 +392,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 dataField: 'BankCode'
             });
         }
-        const clientsData$ = combineLatest(
-            this.listenForUpdate(DataLayoutType.Map),
-            this.selectedMapArea$
-        ).pipe(
-            tap(() => this.mapDataIsLoading = true),
-            switchMap(([[filter, ], mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
-                this.getODataUrl(this.groupDataSourceURI),
-                filter,
-                mapArea,
-                this.dateField,
-                this.subscriptionStatusFilter.items.element['getObjectValue']()
-            )),
-            publishReplay(),
-            refCount(),
-            tap(() => this.mapDataIsLoading = false)
-        );
-        this.mapData$ = this.mapService.getAdjustedMapData(clientsData$);
-        this.mapInfoItems$ = this.mapService.getMapInfoItems(clientsData$, this.selectedMapArea$);
-    }
-
-    ngOnInit() {
-        this.filterModelStatus.updateCaptions();
         this.dataSource = new DataSource({
             store: {
                 key: 'Id',
@@ -456,6 +434,28 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             })
         });
+        this.searchValue = '';
+    }
+
+    ngOnInit() {
+        this.filterModelStatus.updateCaptions();
+        this.handleTotalCountUpdate();
+        this.handleDataGridUpdate();
+        this.handlePivotGridUpdate();
+        this.handleChartUpdate();
+        this.handleMapUpdate();
+        this.handleStageChange();
+        this.getOrganizationUnits();
+        this.activate();
+        this.handleModuleChange();
+        this.handleDataLayoutTypeInQuery();
+    }
+
+    get isSlice() {
+        return this.appService.getModule() === 'slice';
+    }
+
+    private handleTotalCountUpdate(): void {
         combineLatest(
             this.odataFilter$,
             this.refresh$
@@ -468,28 +468,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             );
             this.totalDataSource.load();
         });
+    }
+
+    private handleDataGridUpdate(): void {
         this.listenForUpdate(DataLayoutType.DataGrid).pipe(skip(1)).subscribe(() => {
             this.processFilterInternal();
         });
+    }
 
+    private handlePivotGridUpdate(): void {
         this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
             this.pivotGridComponent.pivotGrid.instance.updateDimensions();
             this.processFilterInternal();
         });
-        this.searchValue = '';
-        this.pipelineService.stageChange$.subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
-        });
-        combineLatest(
-            this.chartComponent.summaryBy$,
-            this.listenForUpdate(DataLayoutType.Chart)
-        ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(() => {
-            this.chartDataSource.load();
-        });
-        this.getOrganizationUnits();
-        this.activate();
+    }
+
+    private handleModuleChange() {
         merge(
             this.dataLayoutType$,
             this.lifeCycleSubjectsService.activate$
@@ -498,7 +492,47 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).subscribe(() => {
             this.crmService.handleModuleChange(this.dataLayoutType.value);
         });
+    }
 
+    private handleChartUpdate() {
+        combineLatest(
+            this.chartComponent.summaryBy$,
+            this.listenForUpdate(DataLayoutType.Chart)
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe(() => {
+            this.chartDataSource.load();
+        });
+    }
+
+    private handleMapUpdate() {
+        const clientsData$ = combineLatest(
+            this.listenForUpdate(DataLayoutType.Map),
+            this.selectedMapArea$
+        ).pipe(
+            tap(() => this.mapDataIsLoading = true),
+            switchMap(([[filter, ], mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
+                this.getODataUrl(this.groupDataSourceURI),
+                filter,
+                mapArea,
+                this.dateField,
+                this.subscriptionStatusFilter.items.element['getObjectValue']()
+            )),
+            publishReplay(),
+            refCount(),
+            tap(() => this.mapDataIsLoading = false)
+        );
+        this.mapData$ = this.mapService.getAdjustedMapData(clientsData$);
+        this.mapInfoItems$ = this.mapService.getMapInfoItems(clientsData$, this.selectedMapArea$);
+    }
+
+    private handleStageChange() {
+        this.pipelineService.stageChange$.subscribe((lead) => {
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
+        });
+    }
+
+    private handleDataLayoutTypeInQuery() {
         this._activatedRoute.queryParams.pipe(
             takeUntil(this.destroy$),
             filter(() => this.componentIsActivated),
@@ -507,10 +541,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).subscribe((dataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
-    }
-
-    get isSlice() {
-        return this.appService.getModule() === 'slice';
     }
 
     private getOrganizationUnits() {

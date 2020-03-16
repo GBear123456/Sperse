@@ -450,18 +450,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
             this.pipelineSelectFields.push('BankCode');
         }
-        const contactsData$: Observable<any> = this.getContactsData();
-        this.mapData$ = this.mapService.getAdjustedMapData(contactsData$);
-        this.mapInfoItems$ = this.mapService.getMapInfoItems(contactsData$, this.selectedMapArea$);
     }
 
     ngOnInit() {
         this.loadOrganizationUnits();
-        this.handleTotalCountUpdates();
-        this.handlePipelineUpdates();
-        this.handleDataGridUpdates();
-        this.handlePivotGridUpdates();
-        this.handleChartUpdates();
+        this.handleTotalCountUpdate();
+        this.handlePipelineUpdate();
+        this.handleDataGridUpdate();
+        this.handlePivotGridUpdate();
+        this.handleChartUpdate();
+        this.handleMapUpdate();
         this.handleQueryParams();
         this.handleModuleChange();
         this.activate();
@@ -471,7 +469,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initDataSource();
     }
 
-    private handleTotalCountUpdates() {
+    private handleTotalCountUpdate() {
         combineLatest(
             this.odataFilter$,
             this.refresh$,
@@ -487,25 +485,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    private handlePipelineUpdates() {
+    private handlePipelineUpdate() {
         this.listenForUpdate(DataLayoutType.Pipeline).subscribe(() => {
             this.processFilterInternal();
         });
     }
 
-    private handleDataGridUpdates() {
+    private handleDataGridUpdate() {
         this.listenForUpdate(DataLayoutType.DataGrid).subscribe(() => {
             this.processFilterInternal();
         });
     }
 
-    private handlePivotGridUpdates() {
+    private handlePivotGridUpdate() {
         this.listenForUpdate(DataLayoutType.PivotGrid).subscribe(() => {
             this.processFilterInternal();
         });
     }
 
-    private handleChartUpdates() {
+    private handleChartUpdate() {
         combineLatest(
             this.chartComponent.summaryBy$,
             this.listenForUpdate(DataLayoutType.Chart)
@@ -514,6 +512,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).subscribe(() => {
             this.chartDataSource.load();
         });
+    }
+
+    private handleMapUpdate() {
+        const contactsData$: Observable<any> = this.getContactsData();
+        this.mapData$ = this.mapService.getAdjustedMapData(contactsData$);
+        this.mapInfoItems$ = this.mapService.getMapInfoItems(contactsData$, this.selectedMapArea$);
     }
 
     private handleModuleChange() {

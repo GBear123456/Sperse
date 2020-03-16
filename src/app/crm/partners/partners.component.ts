@@ -358,21 +358,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 dataField: 'BankCode'
             });
         }
-        const partnersData$: Observable<any> = combineLatest(
-            this.listenForUpdate(DataLayoutType.Map),
-            this.selectedMapArea$
-        ).pipe(
-            tap(() => this.mapDataIsLoading = true),
-            switchMap(([[filter, ], mapArea]: [[any, null], MapArea]) => this.mapService.loadSliceMapData(
-                this.getODataUrl(this.groupDataSourceURI),
-                filter,
-                mapArea,
-                this.dateField
-            )),
-            publishReplay(),
-            refCount(),
-            tap(() => this.mapDataIsLoading = false)
-        );
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
@@ -388,61 +373,20 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             })
         });
-        this.mapData$ = this.mapService.getAdjustedMapData(partnersData$);
-        this.mapInfoItems$ = this.mapService.getMapInfoItems(partnersData$, this.selectedMapArea$);
     }
 
     ngOnInit() {
         this.getStatuses();
         this.getPartnerTypes();
         this.getOrganizationUnits();
-        combineLatest(
-            this.chartComponent.summaryBy$,
-            this.listenForUpdate(DataLayoutType.Chart)
-        ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(() => {
-            this.chartDataSource.load();
-        });
         this.activate();
-        merge(
-            this.dataLayoutType$,
-            this.lifeCycleSubjectsService.activate$
-        ).pipe(
-            takeUntil(this.destroy$)
-        ).subscribe(() => {
-            this.crmService.handleModuleChange(this.dataLayoutType.value);
-        });
-        combineLatest(
-            this.odataFilter$,
-            this.refresh$
-        ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([filter, ]) => {
-            this.totalDataSource['_store']['_url'] = this.getODataUrl(
-                this.totalDataSourceURI,
-                filter
-            );
-            this.totalDataSource.load();
-        });
-
-        this.listenForUpdate(DataLayoutType.DataGrid).pipe(skip(1)).subscribe(() => {
-            this.processFilterInternal();
-        });
-
-        this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
-            this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-            this.processFilterInternal();
-        });
-
-        this._activatedRoute.queryParams.pipe(
-            takeUntil(this.destroy$),
-            filter(() => this.componentIsActivated),
-            pluck('dataLayoutType'),
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
-        ).subscribe((dataLayoutType) => {
-            this.toggleDataLayout(+dataLayoutType);
-        });
+        this.handleModuleChange();
+        this.handleTotalCountUpdate();
+        this.handleDataGridUpdate();
+        this.handlePivotGridUpdate();
+        this.handleChartUpdate();
+        this.handleMapUpdate();
+        this.handleDataLayoutTypeInQuery();
     }
 
     private listenForUpdate(layoutType: DataLayoutType) {
@@ -457,6 +401,87 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 mapTo(data)
             ))
         );
+    }
+
+    private handleDataGridUpdate() {
+        this.listenForUpdate(DataLayoutType.DataGrid).pipe(skip(1)).subscribe(() => {
+            this.processFilterInternal();
+        });
+    }
+
+    private handleTotalCountUpdate() {
+        combineLatest(
+            this.odataFilter$,
+            this.refresh$
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe(([filter, ]) => {
+            this.totalDataSource['_store']['_url'] = this.getODataUrl(
+                this.totalDataSourceURI,
+                filter
+            );
+            this.totalDataSource.load();
+        });
+    }
+
+    private handleModuleChange() {
+        merge(
+            this.dataLayoutType$,
+            this.lifeCycleSubjectsService.activate$
+        ).pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.crmService.handleModuleChange(this.dataLayoutType.value);
+        });
+    }
+
+    private handlePivotGridUpdate() {
+        this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
+            this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+            this.processFilterInternal();
+        });
+    }
+
+    private handleChartUpdate() {
+        combineLatest(
+            this.chartComponent.summaryBy$,
+            this.listenForUpdate(DataLayoutType.Chart)
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe(() => {
+            this.chartDataSource.load();
+        });
+    }
+
+    private handleMapUpdate() {
+        const partnersData$: Observable<any> = combineLatest(
+            this.listenForUpdate(DataLayoutType.Map),
+            this.selectedMapArea$
+        ).pipe(
+            tap(() => this.mapDataIsLoading = true),
+            switchMap(([[filter, ], mapArea]: [[any, null], MapArea]) => this.mapService.loadSliceMapData(
+                this.getODataUrl(this.groupDataSourceURI),
+                filter,
+                mapArea,
+                this.dateField
+            )),
+            publishReplay(),
+            refCount(),
+            tap(() => this.mapDataIsLoading = false)
+        );
+        this.mapData$ = this.mapService.getAdjustedMapData(partnersData$);
+        this.mapInfoItems$ = this.mapService.getMapInfoItems(partnersData$, this.selectedMapArea$);
+    }
+
+    private handleDataLayoutTypeInQuery() {
+        this._activatedRoute.queryParams.pipe(
+            takeUntil(this.destroy$),
+            filter(() => this.componentIsActivated),
+            pluck('dataLayoutType'),
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
+        ).subscribe((dataLayoutType) => {
+            this.toggleDataLayout(+dataLayoutType);
+        });
     }
 
     toggleToolbar() {
