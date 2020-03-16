@@ -115,7 +115,7 @@
                                 [totalsURI]="'OrderCount'"
                                 [dragulaName]="'orderStages'"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId']"
                                 dateField="OrderDate"
                                 [pipelinePurposeId]="pipelinePurposeId"
                                 [filterModelStages]="filterModelStages"
@@ -146,7 +146,14 @@
                           [columnAutoWidth]="true"
                           [pager]="defaultGridPagerConfig"
                           [hoverStateEnabled]="true"
-                      [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
+                          [remoteOperations]="{
+                              filtering: false,
+                              grouping: true,
+                              groupPaging: true,
+                              paging: true,
+                              sorting: true,
+                              summary: true
+                          }"
                           [allowColumnResizing]="true"
                           (onCellClick)="onCellClick($event, 'subscriptions')"
                           (onContentReady)="onContentReady($event)">
