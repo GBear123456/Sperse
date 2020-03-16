@@ -267,7 +267,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         setTimeout(() =>
             this.dialog.open(HistoryListDialogComponent, {
                 panelClass: ['slider'],
-                disableClose: false,
                 hasBackdrop: false,
                 closeOnNavigation: true,
                 data: { Id: this.actionRecordData.OrderId }
@@ -328,7 +327,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     markAsPaidDialog() {
         this.dialog.open(MarkAsPaidDialogComponent, {
-            disableClose: true,
             closeOnNavigation: false,
             data: {
                 stages$: this.stages$,
