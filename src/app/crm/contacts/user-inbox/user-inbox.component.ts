@@ -293,7 +293,7 @@ export class UserInboxComponent implements OnDestroy {
                 parentId: this.activeMessage.parentId,
                 subject: this.activeMessage.subject,
                 body: this.instantMessageText,
-                to: this.activeMessage.to.join ?
+                to: this.activeMessage.to['join'] ?
                     this.activeMessage.to : [this.activeMessage.to]
             });
         else
