@@ -305,7 +305,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.contactInfo.statusId == ContactStatus.Prospective,
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },
-            { name: 'subscriptions', label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage() },
+            { name: 'subscriptions', label: 'Subscriptions', route: 'subscriptions', hidden: !contact.userId && !this.isClientDetailPage() },
             { name: 'payment-information', label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage() },
             { name: 'lead-information', label: 'Lead Information', route: 'lead-information' },
             {
