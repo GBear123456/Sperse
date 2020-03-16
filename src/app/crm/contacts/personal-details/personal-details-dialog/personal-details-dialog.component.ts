@@ -50,8 +50,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
         },
         {
             type: 'stringLength',
-            min: 4,
-            message: this.ls.l('MinLengthIs', 4)
+            min: 2,
+            message: this.ls.l('MinLengthIs', 2)
         },
         {
             type: 'stringLength',
