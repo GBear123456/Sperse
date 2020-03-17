@@ -244,17 +244,20 @@ export class ContactsService {
     }
 
     updateLocation(contactId?, leadId?, companyId?, userId?) {
-        this.location.replaceState(
-            this.router.createUrlTree(
-                ['app/' + (userId ? 'admin' : 'crm')].concat(
-                    contactId ? ['contact', contactId] : [],
-                    leadId ? ['lead', leadId] : [],
-                    companyId ? ['company', companyId] : [],
-                    userId ? ['user', userId, 'user-information'] : []
-                )
-            ).toString(),
-            location.search
-        );
+        this.router.navigate(
+            ['app/' + (userId ? 'admin' : 'crm')].concat(
+                contactId ? ['contact', contactId] : [],
+                leadId ? ['lead', leadId] : [],
+                companyId ? ['company', companyId] : [],
+                userId ? ['user', userId] : [],
+                location.pathname.split('/').pop()
+            ), {
+            queryParams : location.search.slice(1).split('&').reduce((acc, item) => {
+                let parts = item.split('=');
+                acc[parts[0]] = decodeURIComponent(parts[1]);
+                return acc;
+            }, {})
+        });
     }
 
     getContactInfo(contactId): Observable<any> {

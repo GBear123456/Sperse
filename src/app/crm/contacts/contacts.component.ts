@@ -138,9 +138,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this._activatedRoute.params.pipe(
             takeUntil(this.destroy$),
             switchMap((params: Params) => this.loadContactInfo(params))
-        ).subscribe(() => {
-            this.initNavButtons();
-        });
+        ).subscribe(() => this.initNavButtons());
         this._activatedRoute.queryParams
             .pipe(takeUntil(this.destroy$))
             .subscribe((params: Params) => this.queryParams = params);
@@ -201,12 +199,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     initNavButtons() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
-
         this.initNavigatorProperties();
         const itemKeyField = this.dataSourceURI == 'User' ? 'id' : 'Id',
               itemDistinctField = this.dataSourceURI == 'Order' ? 'ContactId' : itemKeyField;
-        this.targetEntity$.pipe(
+        let subscription = this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
+            takeUntil(this.destroy$),
             debounceTime(100),
             tap(() => {
                 if (this.toolbarComponent) {
@@ -221,32 +219,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 itemKeyField,
                 itemDistinctField
             ).pipe(
-                finalize(() => this.finishLoading(true)))
-            )
+                finalize(() => this.finishLoading(true))
+            ))
         ).subscribe((itemFullInfo: ItemFullInfo) => {
-            let res$ = of(null);
             if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemKeyField]) {
-                /** New current item Id */
-                res$ = this.reloadCurrentSection({
-                    userId: this.dataSourceURI === 'User'
-                            ? itemFullInfo.itemData[itemKeyField]
-                            : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
-                    contactId: ['Customer', 'Partner'].indexOf(this.dataSourceURI) >= 0 ? itemFullInfo.itemData[itemKeyField] :
-                        this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : itemFullInfo.itemData.ContactId,
-                    customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
-                    leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemKeyField] : undefined,
-                    companyId: itemFullInfo.itemData.OrganizationId
-                }).pipe(tap(() => this.currentItemId = itemFullInfo.itemData[itemKeyField]));
+                subscription.unsubscribe();
+                this.targetEntity.next(TargetDirectionEnum.Current);
                 this.updateLocation(itemFullInfo);
-            }
-            res$.subscribe(() => {
+            } else
                 if (this.toolbarComponent) {
                     this.toolbarComponent.updateNavButtons(
                         !itemFullInfo || itemFullInfo.isFirstOnList,
                         !itemFullInfo || itemFullInfo.isLastOnList
                     );
                 }
-            });
         });
     }
 
@@ -793,14 +779,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 contact: this.contactInfo
             }
         }).afterClosed().subscribe();
-    }
-
-    reloadCurrentSection(params = this.params) {
-        let area = this._router.url.split('?').shift().split('/').pop();
-        const loading$ = this.loadContactInfo(params);
-        if (area == 'lead-information') this.leadInfo = undefined;
-        this.contactsService.invalidate(area);
-        return loading$;
     }
 
     loadTargetEntity(event, direction) {
