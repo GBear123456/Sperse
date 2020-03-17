@@ -720,6 +720,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private selectedGroupByIndex = 0;
     private bankAccountCount: string;
     public toolbarConfig: ToolbarGroupModel[];
+    gridIsEmpty = false;
 
     constructor(injector: Injector,
         private cashflowServiceProxy: CashflowServiceProxy,
@@ -1918,6 +1919,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param event
      */
     onContentReady(event) {
+        this.gridIsEmpty = event.component.getDataSource().getData().isEmptyGrandTotalColumn[0];
 
         if (this.expandBeforeIndex !== null) {
             this.startLoading();
@@ -1965,7 +1967,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** update dimensions as cells font sizes might be changed in user preferences and cells widths don't correspond
          *  to the new font sizes */
         if (!this.contentReady) {
-            setTimeout(() => { this.pivotGrid.instance.updateDimensions(); }, 0);
+            setTimeout(() => this.pivotGrid.instance.updateDimensions(), 0);
         }
 
         this.contentReady = true;
@@ -2498,7 +2500,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        if (this.cashflowService.filterBy && this.cashflowService.filterBy.length && e.area === 'row' && e.cell.text && e.cell.isLast) {
+        if (this.cashflowService.filterBy
+            && this.cashflowService.filterBy.length
+            && e.area === 'row'
+            && e.cell.text
+            && e.cell.isLast
+        ) {
             this.highlightFilteredResult(e);
         }
     }
@@ -4749,7 +4756,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate, false);
                             this.getCellOptionsFromCell.cache = {};
                             this.pivotGrid.instance.getDataSource().reload()
-                                .then(() => { abp.ui.clearBusy(); });
+                                .then(() => abp.ui.clearBusy());
                             this.statsDetailResult.every((v, index) => {
                                 if (v.forecastId == record.forecastId) {
                                     this.statsDetailResult.splice(index, 1);

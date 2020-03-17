@@ -1177,12 +1177,19 @@ export class CashflowService {
             if (value) {
                 const key = value.slice(2);
                 const prefix: any = value.slice(0, 2);
-                const dataSource = this.getNamesSourceLink(prefix);
+                let dataSource = this.getNamesSourceLink(prefix);
+                let customizedFieldText = this.customizeFieldText({ value: value }).toLowerCase();
                 if (dataSource) {
-                    for (let i = 0; i < dataSource.length; i++) {
-                        let customizedFieldText = this.customizeFieldText({value: value}).toLowerCase();
-                        if (customizedFieldText && customizedFieldText.indexOf(filter) >= 0 && key == dataSource[i].id)
-                            return true;
+                    if (dataSource.length === undefined) {
+                        for (let k in dataSource) {
+                            if (customizedFieldText && customizedFieldText.indexOf(filter) >= 0 && key == k)
+                                return true;
+                        }
+                    } else {
+                        for (let i = 0; i < dataSource.length; i++) {
+                            if (customizedFieldText && customizedFieldText.indexOf(filter) >= 0 && key == dataSource[i].id)
+                                return true;
+                        }
                     }
                 } else
                     return key.toLowerCase().indexOf(filter) >= 0;

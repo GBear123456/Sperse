@@ -14,7 +14,7 @@
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 
-<div class="main-wrapper">
+<div class="main-wrapper" [ngClass]="{ 'grid-is-empty': gridIsEmpty }">
     <div class="cashflow" *ngIf="cashflowService.cashflowData && cashflowService.cashflowData.length">
         <div class="sort-options" [hidden]="!contentReady">
             <app-toolbar [config]="categoryToolbarConfig" [compact]="true"></app-toolbar>
@@ -272,8 +272,8 @@
                 class="cashflow-scroll"
                 (onScroll)="onScroll()"
                 [ngClass]="{
-            'withCashflowFooterToolbar' : cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar
-        }">
+                    'withCashflowFooterToolbar' : cashflowService.cashflowGridSettings?.visualPreferences?.showFooterBar
+                }">
             <div class="pivot-grid-wrapper">
                 <dx-pivot-grid id="operations"
                                class="pivot-grid invisible"
@@ -321,7 +321,7 @@
     </div>
 
     <app-no-data
-            *ngIf="!loading && cashflowService.cashflowData && !cashflowService.cashflowData.length"
+            *ngIf="gridIsEmpty || (!loading && cashflowService.cashflowData && !cashflowService.cashflowData.length)"
             text=""
             [linkUrl]="instanceUri + 'start'"
             [showLink]="!filteredLoad"
