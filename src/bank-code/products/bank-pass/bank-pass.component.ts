@@ -128,13 +128,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
         },
         {
             type: 'stringLength',
-            min: 2,
-            message: this.ls.l('MinLengthIs', 2)
-        },
-        {
-            type: 'stringLength',
-            max: 30,
-            message: this.ls.l('MaxLengthIs', 30)
+            max: AppConsts.maxAffiliateCodeLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
         }
     ];
     goalTypes: GoalType[] = this.bankCodeService.goalTypes;
