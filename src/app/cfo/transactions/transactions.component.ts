@@ -6,6 +6,7 @@ import {
     OnDestroy,
     Injector,
     ViewChild,
+    ElementRef,
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
@@ -83,6 +84,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(CategorizationComponent, { static: false }) categorizationComponent: CategorizationComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('becFilter', { static: false }) businessEntitiesChooser: ElementRef;
+
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;
@@ -282,6 +285,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.filtersService.fixed = false;
             this.filtersService.disable();
         }
+    }
+
+    public get isHeaderFilterVisible() {
+        return DataGridService.getGridOption(this.dataGrid, 'filterRow.visible');
     }
 
     public get categoriesShowed(): boolean {
@@ -691,9 +698,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 items: [
                     {
                         name: 'rowFilter',
-                        action: DataGridService.enableFilteringRow.bind(this, this.dataGrid),
+                        action: event => {
+                            if (this.isHeaderFilterVisible)
+                                this.getElementRef().nativeElement.appendChild(
+                                    this.businessEntitiesChooser.nativeElement
+                                );
+                            DataGridService.enableFilteringRow(this.dataGrid, event);
+                        },
                         options: {
-                            checkPressed: () => DataGridService.getGridOption(this.dataGrid, 'filterRow.visible')
+                            checkPressed: () => this.isHeaderFilterVisible
                         }
                     },
                     {
@@ -1168,7 +1181,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onCellPrepared($event) {
-        if ($event.rowType === 'data') {
+        if ($event.rowType === 'filter') {
+            if ($event.column.dataField == 'BusinessEntityId') {
+                $event.cellElement.innerHTML = '';
+                $event.cellElement.appendChild(this.businessEntitiesChooser.nativeElement);
+            }
+        } else if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
                 let parentRow = <HTMLTableRowElement>$event.cellElement.parentElement;
                 if (parentRow) {
