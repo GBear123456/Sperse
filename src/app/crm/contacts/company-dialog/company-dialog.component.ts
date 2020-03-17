@@ -84,6 +84,7 @@ export class CompanyDialogComponent implements OnInit {
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     affiliateRegex = AppConsts.regexPatterns.affiliateCode;
+    maxAffiliateCodeLength = AppConsts.maxAffiliateCodeLength;
     currentDate = new Date();
     title: string;
     buttons: IDialogButton[] = [

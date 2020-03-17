@@ -135,4 +135,5 @@ export class AppConsts {
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;
 
+    static readonly maxAffiliateCodeLength = 50;
 }

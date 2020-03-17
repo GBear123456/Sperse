@@ -115,7 +115,7 @@
                                      [inputAttr]="{ id: 'affiliateCode' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.affiliateCode"
-                                     (onInput)="onInput($event, 50)">
+                                     (onInput)="onInput($event, maxAffiliateCodeLength)">
                             <dx-validator>
                                 <dxi-validation-rule type="pattern" [pattern]="affiliateRegex" message="{{ls.l('InvalidAffiliateCode')}}."></dxi-validation-rule>
                             </dx-validator>

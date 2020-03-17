@@ -74,13 +74,8 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         },
         {
             type: 'stringLength',
-            min: 2,
-            message: this.ls.l('MinLengthIs', 2)
-        },
-        {
-            type: 'stringLength',
-            max: 30,
-            message: this.ls.l('MaxLengthIs', 30)
+            max: AppConsts.maxAffiliateCodeLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
         }
     ];
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
