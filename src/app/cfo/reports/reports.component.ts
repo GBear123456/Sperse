@@ -30,6 +30,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { AppService } from '@app/app.service';
+import { DataGridService } from '../../shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -544,6 +545,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 this.viewReport(NavigationState.Next, event);
             }
         }
+    }
+
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
     }
 
     ngOnDestroy() {

@@ -1,7 +1,9 @@
 <app-headline [names]="[ l('REPORTS') ]"
               iconSrc="assets/common/icons/credit-card-icon.svg"
               [buttons]="headlineButtons"
-              [showToggleToolbarButton]="true">
+              [showToggleToolbarButton]="true"
+              [showToggleCompactViewButton]="true"
+              (onToggleCompactView)="toggleCompactView()">
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
