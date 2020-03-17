@@ -564,6 +564,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
             this.odataFilter$,
+            this.contactGroupId$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -577,12 +578,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private getContactsData(): Observable<any> {
         return combineLatest(
-            this.contactGroupId$,
             this.selectedMapArea$,
             this.listenForUpdate(DataLayoutType.Map)
         ).pipe(
             tap(() => this.mapDataIsLoading = true),
-            switchMap(([contactGroupId, mapArea, [filter, ] ]: [ContactGroup, MapArea, [any, null]]) => this.mapService.loadSliceMapData(
+            switchMap(([mapArea, [filter, contactGroupId, ] ]: [MapArea, [any, ContactGroup, null]]) => this.mapService.loadSliceMapData(
                 this.getODataUrl(this.groupDataSourceURI),
                 filter,
                 mapArea,

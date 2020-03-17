@@ -19,7 +19,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { Observable, from, of } from 'rxjs';
-import { finalize, flatMap, tap, pluck, map } from 'rxjs/operators';
+import { first, finalize, flatMap, tap, pluck, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
 import values from 'lodash/values';
@@ -112,12 +112,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     ) {
         super(injector);
         this.data = this.contactService['data'];
-        clientService.invalidateSubscribe((area) => {
-            if (area == 'documents') {
+        clientService.invalidateSubscribe(
+            () => {
                 this.documentService['data'] = undefined;
                 this.loadDocuments();
-            }
-        });
+            },
+            'documents'
+        );
     }
 
     ngOnInit() {
@@ -125,7 +126,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit() {
-        this.clientService.contactInfoSubscribe(contactInfo => {
+        this.clientService.contactInfo$.pipe(
+            first()
+        ).subscribe(contactInfo => {
             this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();
             this.loadDocuments();
@@ -361,6 +364,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnDestroy() {
+        this.clientService.unsubscribe('documents');
         this.clientService.toolbarUpdate();
         if (this.openDocumentMode) {
             this.closeDocument();

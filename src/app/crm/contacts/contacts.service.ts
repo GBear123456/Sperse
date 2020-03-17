@@ -46,7 +46,7 @@ export class ContactsService {
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
     private organizationUnitsSave: Subject<any> = new Subject<any>();
     private invalidateSubject: Subject<any> = new Subject<any>();
-    private loadLeadInfoSubject: Subject<any> =  new Subject<any>();
+    private loadLeadInfoSubject: Subject<any> =  new ReplaySubject<any>(1);
     private leadInfoSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
     private contactInfo: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
@@ -179,11 +179,13 @@ export class ContactsService {
 
     unsubscribe(ident = 'common') {
         let list = this.subscribers[ident];
-        list.forEach((sub) => {
-            if (!sub.closed)
-                sub.unsubscribe();
-        });
-        list.length = 0;
+        if (list) {
+            list.forEach((sub) => {
+                if (!sub.closed)
+                    sub.unsubscribe();
+            });
+            list.length = 0;
+        }
     }
 
     addCompanyDialog(event, contactInfo, shiftX?, shiftY?): Observable<CreatePersonOrgRelationOutput> {

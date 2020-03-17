@@ -162,16 +162,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         private currencyPipe: CurrencyPipe,
         public ls: AppLocalizationService
     ) {
-        contactsService.contactInfoSubscribe(() => {
-            this.showOrgUnitsDialog();
-            setTimeout(() => contactsService.toolbarUpdate({
-                optionButton: {
-                    name: 'options',
-                    action: this.showOrgUnitsDialog.bind(this)
-                }
-            }));
-        }, this.constructor.name);
-
         this.contactsService.loadLeadInfo();
         contactsService.orgUnitsSaveSubscribe((data) => {
             let orgUnitId = data.length ? data[0] : undefined;
@@ -190,10 +180,12 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.updateSourceContactName();
-        });
+        }, this.constructor.name);
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data = this.contactProxy['data'];
             this.data.contactInfo = contactInfo;
+            this.initToolbarInfo();
+            this.showOrgUnitsDialog();
             this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
@@ -203,6 +195,15 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
         });
+    }
+
+    initToolbarInfo() {
+        setTimeout(() => this.contactsService.toolbarUpdate({
+            optionButton: {
+                name: 'options',
+                action: this.showOrgUnitsDialog.bind(this)
+            }
+        }));
     }
 
     private loadOrganizationUnits() {

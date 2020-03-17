@@ -56,7 +56,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
         private setupStepsService: SetupStepsService
     ) {
         super(injector);
-        this.subscription = setupStepsService.collapsed$.subscribe(collapsed => {
+        this.subscription = setupStepsService.collapsed$.subscribe((collapsed: boolean) => {
             this.collapsed = collapsed;
         });
     }

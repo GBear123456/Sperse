@@ -11,7 +11,8 @@
                 <h3 >{{ls.l('Company Info')}}<a (click)="showBankSettingsDialog()" href="javascript:void(0)">{{ls.l('InvoiceEmail_BankTransferSettings')}}</a></h3>
                 <dx-text-box 
                     [placeholder]="ls.l('LegalName')"
-                    [(value)]="settings.legalName">
+                    [(value)]="settings.legalName"
+                    [maxLength]="150">
                 </dx-text-box>
                 <dx-text-area 
                     height="135px"

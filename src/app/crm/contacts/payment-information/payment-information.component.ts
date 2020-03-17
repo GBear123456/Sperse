@@ -28,6 +28,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LoadingService } from '../../../../shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'payment-information',
@@ -56,6 +57,7 @@ export class PaymentInformationComponent implements OnInit {
         private paymentServiceProxy: PaymentServiceProxy,
         private contactService: ContactServiceProxy,
         private contactsService: ContactsService,
+        private loadingService: LoadingService,
         public ls: AppLocalizationService
     ) {
         invoicesService.settings$.pipe(first()).subscribe(
@@ -77,7 +79,7 @@ export class PaymentInformationComponent implements OnInit {
         });
 
         this.payments$ = this.refresh.pipe(
-            tap(() => abp.ui.setBusy(this.paymentsContainer.nativeElement)),
+            tap(() => this.loadingService.startLoading(this.paymentsContainer.nativeElement)),
             switchMap(
                 (refresh: boolean) => {
                     const contactId = this.contactService['data'].contactInfo.id;
@@ -92,7 +94,7 @@ export class PaymentInformationComponent implements OnInit {
                                 this.paymentServiceProxy['data'][contactId].lastPaymentDate = paymentInfo.lastPaymentDate && paymentInfo.lastPaymentDate.utc().format('MMM D');
                             }),
                             map(paymentInfo => paymentInfo.payments)
-                        )).pipe(finalize(() => {abp.ui.clearBusy(this.paymentsContainer.nativeElement); }));
+                        )).pipe(finalize(() => this.loadingService.finishLoading(this.paymentsContainer.nativeElement)));
                 }
             ),
             tap(() => {
@@ -140,7 +142,7 @@ export class PaymentInformationComponent implements OnInit {
     }
 
     private createPaymentsCache(contactId: number) {
-        if (!this.paymentServiceProxy['data']) {
+        if (!this.paymentServiceProxy['data'] || !this.paymentServiceProxy['data'][contactId]) {
             this.paymentServiceProxy['data'] = {
                 [contactId]: { payments: null, lastPaymentAmount: null, lastPaymentDate: null, paymentMethods: null }
             };

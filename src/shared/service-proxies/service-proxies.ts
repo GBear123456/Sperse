@@ -14168,8 +14168,8 @@ export class EventServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateEventSubscriptionInput | null | undefined): Observable<CreateEventSubscriptionOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/Event/Create";
+    subscribe(body: SubscribeForEventInput | null | undefined): Observable<SubscribeForEventOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Event/Subscribe";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -14185,20 +14185,20 @@ export class EventServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
+            return this.processSubscribe(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreate(<any>response_);
+                    return this.processSubscribe(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateEventSubscriptionOutput>><any>_observableThrow(e);
+                    return <Observable<SubscribeForEventOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateEventSubscriptionOutput>><any>_observableThrow(response_);
+                return <Observable<SubscribeForEventOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<CreateEventSubscriptionOutput> {
+    protected processSubscribe(response: HttpResponseBase): Observable<SubscribeForEventOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14209,7 +14209,7 @@ export class EventServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateEventSubscriptionOutput.fromJS(resultData200) : new CreateEventSubscriptionOutput();
+            result200 = resultData200 ? SubscribeForEventOutput.fromJS(resultData200) : new SubscribeForEventOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -14217,15 +14217,15 @@ export class EventServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateEventSubscriptionOutput>(<any>null);
+        return _observableOf<SubscribeForEventOutput>(<any>null);
     }
 
     /**
      * @id (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Event/Delete?";
+    unsubscribe(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Event/Unsubscribe?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14238,12 +14238,12 @@ export class EventServiceProxy {
             })
         };
 
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnsubscribe(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processDelete(<any>response_);
+                    return this.processUnsubscribe(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -14252,7 +14252,7 @@ export class EventServiceProxy {
         }));
     }
 
-    protected processDelete(response: HttpResponseBase): Observable<void> {
+    protected processUnsubscribe(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -42880,10 +42880,10 @@ export interface IContactShortInfo {
 }
 
 export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
-    contactId!: number;
+    contactId!: number | undefined;
     emailAddress!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -42927,20 +42927,20 @@ export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailI
 }
 
 export interface ICreateContactEmailInputWithoutCheck {
-    contactId: number;
+    contactId: number | undefined;
     emailAddress: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
 
 export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneInputWithoutCheck {
-    contactId!: number;
+    contactId!: number | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -42986,17 +42986,17 @@ export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneI
 }
 
 export interface ICreateContactPhoneInputWithoutCheck {
-    contactId: number;
+    contactId: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
 
 export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
-    contactId!: number;
+    contactId!: number | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -43005,8 +43005,8 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
@@ -43067,7 +43067,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
 }
 
 export interface ICreateContactAddressInputWithoutCheck {
-    contactId: number;
+    contactId: number | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -43076,21 +43076,21 @@ export interface ICreateContactAddressInputWithoutCheck {
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
     ownershipTypeId: string | undefined;
 }
 
 export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInputWithoutCheck {
-    contactId!: number;
+    contactId!: number | undefined;
     url!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
-    isCompany!: boolean;
+    isCompany!: boolean | undefined;
 
     constructor(data?: ICreateContactLinkInputWithoutCheck) {
         if (data) {
@@ -43134,13 +43134,13 @@ export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInp
 }
 
 export interface ICreateContactLinkInputWithoutCheck {
-    contactId: number;
+    contactId: number | undefined;
     url: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     linkTypeId: string | undefined;
-    isCompany: boolean;
+    isCompany: boolean | undefined;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -44202,7 +44202,7 @@ export interface IUpdateContactXrefInput {
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
-    contactId!: number;
+    contactId!: number | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -44211,8 +44211,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
@@ -44273,7 +44273,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
 }
 
 export interface ICreateContactAddressInput {
-    contactId: number;
+    contactId: number | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -44282,8 +44282,8 @@ export interface ICreateContactAddressInput {
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
     ownershipTypeId: string | undefined;
@@ -44327,7 +44327,7 @@ export interface ICreateContactAddressOutput {
 
 export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     id!: number;
-    contactId!: number;
+    contactId!: number | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -44336,8 +44336,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
@@ -44401,7 +44401,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
 
 export interface IUpdateContactAddressInput {
     id: number;
-    contactId: number;
+    contactId: number | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -44410,8 +44410,8 @@ export interface IUpdateContactAddressInput {
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
     ownershipTypeId: string | undefined;
@@ -45965,10 +45965,10 @@ export interface ISendSMSInput {
 }
 
 export class CreateContactEmailInput implements ICreateContactEmailInput {
-    contactId!: number;
+    contactId!: number | undefined;
     emailAddress!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -46012,10 +46012,10 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
 }
 
 export interface ICreateContactEmailInput {
-    contactId: number;
+    contactId: number | undefined;
     emailAddress: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -46058,10 +46058,10 @@ export interface ICreateContactEmailOutput {
 
 export class UpdateContactEmailInput implements IUpdateContactEmailInput {
     id!: number;
-    contactId!: number;
+    contactId!: number | undefined;
     emailAddress!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -46108,10 +46108,10 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
 
 export interface IUpdateContactEmailInput {
     id: number;
-    contactId: number;
+    contactId: number | undefined;
     emailAddress: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -46205,13 +46205,13 @@ export interface IEmailUsageTypeDtoListResultDto {
 }
 
 export class CreateContactLinkInput implements ICreateContactLinkInput {
-    contactId!: number;
+    contactId!: number | undefined;
     url!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
-    isCompany!: boolean;
+    isCompany!: boolean | undefined;
 
     constructor(data?: ICreateContactLinkInput) {
         if (data) {
@@ -46255,13 +46255,13 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
 }
 
 export interface ICreateContactLinkInput {
-    contactId: number;
+    contactId: number | undefined;
     url: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     linkTypeId: string | undefined;
-    isCompany: boolean;
+    isCompany: boolean | undefined;
 }
 
 export class CreateContactLinkOutput implements ICreateContactLinkOutput {
@@ -46302,13 +46302,13 @@ export interface ICreateContactLinkOutput {
 
 export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     id!: number;
-    contactId!: number;
+    contactId!: number | undefined;
     url!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
-    isCompany!: boolean;
+    isCompany!: boolean | undefined;
 
     constructor(data?: IUpdateContactLinkInput) {
         if (data) {
@@ -46355,13 +46355,13 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
 
 export interface IUpdateContactLinkInput {
     id: number;
-    contactId: number;
+    contactId: number | undefined;
     url: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     linkTypeId: string | undefined;
-    isCompany: boolean;
+    isCompany: boolean | undefined;
 }
 
 export class ContactLinkTypeDto implements IContactLinkTypeDto {
@@ -46597,11 +46597,11 @@ export interface IUpdateContactListInput {
 }
 
 export class CreateContactPhoneInput implements ICreateContactPhoneInput {
-    contactId!: number;
+    contactId!: number | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -46647,11 +46647,11 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
 }
 
 export interface ICreateContactPhoneInput {
-    contactId: number;
+    contactId: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -46694,11 +46694,11 @@ export interface ICreateContactPhoneOutput {
 
 export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
     id!: number;
-    contactId!: number;
+    contactId!: number | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -46747,11 +46747,11 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
 
 export interface IUpdateContactPhoneInput {
     id: number;
-    contactId: number;
+    contactId: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -51007,11 +51007,11 @@ export interface IUpdateEmailTemplateRequest {
     body: string;
 }
 
-export class CreateEventSubscriptionInput implements ICreateEventSubscriptionInput {
-    targetUrl!: string;
+export class SubscribeForEventInput implements ISubscribeForEventInput {
     eventName!: string;
+    targetUrl!: string;
 
-    constructor(data?: ICreateEventSubscriptionInput) {
+    constructor(data?: ISubscribeForEventInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51022,35 +51022,35 @@ export class CreateEventSubscriptionInput implements ICreateEventSubscriptionInp
 
     init(data?: any) {
         if (data) {
-            this.targetUrl = data["targetUrl"];
             this.eventName = data["eventName"];
+            this.targetUrl = data["targetUrl"];
         }
     }
 
-    static fromJS(data: any): CreateEventSubscriptionInput {
+    static fromJS(data: any): SubscribeForEventInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateEventSubscriptionInput();
+        let result = new SubscribeForEventInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["targetUrl"] = this.targetUrl;
         data["eventName"] = this.eventName;
+        data["targetUrl"] = this.targetUrl;
         return data; 
     }
 }
 
-export interface ICreateEventSubscriptionInput {
-    targetUrl: string;
+export interface ISubscribeForEventInput {
     eventName: string;
+    targetUrl: string;
 }
 
-export class CreateEventSubscriptionOutput implements ICreateEventSubscriptionOutput {
+export class SubscribeForEventOutput implements ISubscribeForEventOutput {
     id!: number | undefined;
 
-    constructor(data?: ICreateEventSubscriptionOutput) {
+    constructor(data?: ISubscribeForEventOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51065,9 +51065,9 @@ export class CreateEventSubscriptionOutput implements ICreateEventSubscriptionOu
         }
     }
 
-    static fromJS(data: any): CreateEventSubscriptionOutput {
+    static fromJS(data: any): SubscribeForEventOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateEventSubscriptionOutput();
+        let result = new SubscribeForEventOutput();
         result.init(data);
         return result;
     }
@@ -51079,7 +51079,7 @@ export class CreateEventSubscriptionOutput implements ICreateEventSubscriptionOu
     }
 }
 
-export interface ICreateEventSubscriptionOutput {
+export interface ISubscribeForEventOutput {
     id: number | undefined;
 }
 
@@ -60665,6 +60665,7 @@ export interface ISubscriptionInput {
 
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
     contactId!: number;
+    leadId!: number | undefined;
     orderNumber!: string | undefined;
     systemType!: string;
     subscriptions!: SubscriptionInput[];
@@ -60685,6 +60686,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.leadId = data["leadId"];
             this.orderNumber = data["orderNumber"];
             this.systemType = data["systemType"];
             if (data["subscriptions"] && data["subscriptions"].constructor === Array) {
@@ -60706,6 +60708,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["leadId"] = this.leadId;
         data["orderNumber"] = this.orderNumber;
         data["systemType"] = this.systemType;
         if (this.subscriptions && this.subscriptions.constructor === Array) {
@@ -60720,6 +60723,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
 
 export interface IUpdateOrderSubscriptionInput {
     contactId: number;
+    leadId: number | undefined;
     orderNumber: string | undefined;
     systemType: string;
     subscriptions: SubscriptionInput[];

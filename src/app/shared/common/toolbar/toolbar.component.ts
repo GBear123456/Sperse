@@ -5,6 +5,7 @@ import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStr
 import cloneDeep from 'lodash/cloneDeep';
 import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
 import { Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -36,7 +37,9 @@ export class ToolBarComponent implements OnDestroy {
     private subscription: Subscription = this.filtersService.filterToggle$.subscribe((enabled) => {
         enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', this.filtersService.hasFilterSelected);
     });
-    private fixedSubscription: Subscription = this.filtersService.filterFixed$.subscribe((fixed) => {
+    private fixedSubscription: Subscription = this.filtersService.filterFixed$.pipe(
+        delay(100)
+    ).subscribe((fixed: boolean) => {
         this.updateToolbarItemAttribute('filters', 'button-pressed', fixed);
     });
 
@@ -425,7 +428,10 @@ export class ToolBarComponent implements OnDestroy {
     updateToolbarItemAttribute(itemName: string, property: string, value: any) {
         const toolbarItemIndex = this.items.findIndex(item => item.name === itemName);
         if (toolbarItemIndex !== -1 && this.toolbarComponent) {
-            this.toolbarComponent.instance.option(`items[${toolbarItemIndex}].options.elementAttr.${property}`, value);
+            this.toolbarComponent.instance.option(
+                `items[${toolbarItemIndex}].options.elementAttr.${property}`,
+                value
+            );
         }
     }
 
