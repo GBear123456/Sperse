@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -18,6 +19,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { SetupStepsService } from '../shared/common/setup-steps/setup-steps.service';
 
 @Component({
     selector: 'business-entities',
@@ -40,11 +42,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
+    contentWidth$: Observable<number> = this.setupStepsService.collapsed$.pipe(
+        map((collapsed: boolean) => window.innerWidth - (collapsed ? 0 : 324 ))
+    );
 
     constructor(
         injector: Injector,
         private businessEntityService: BusinessEntityServiceProxy,
         private bankAccountsService: BankAccountsService,
+        private setupStepsService: SetupStepsService,
         public dialog: MatDialog
     ) {
         super(injector);

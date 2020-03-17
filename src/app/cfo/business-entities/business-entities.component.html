@@ -7,7 +7,7 @@
     </app-headline>
     <div class="content-wrap">
         <setup-steps SelectedStepIndex="1"></setup-steps>
-        <dx-scroll-view showScrollbar="onHover">
+        <dx-scroll-view showScrollbar="onHover" [width]="contentWidth$ | async">
             <div class="grid-wrapper">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid id="gridContainer"
