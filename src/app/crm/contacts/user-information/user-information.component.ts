@@ -272,6 +272,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                         organizationUnitIds: this.selectedOrgUnits
                     })).pipe(finalize(() => this.loadingService.finishLoading())).subscribe(() => {
                         this.contactsService.invalidate();
+                        this.showOrgUnitsDialog();
                     });
                 }
             }

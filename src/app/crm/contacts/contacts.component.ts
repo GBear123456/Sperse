@@ -502,7 +502,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     loadLeadData(personContactInfo?: any, lastLeadCallback?) {
         let contactInfo = this.contactService['data'].contactInfo,
             leadInfo = this.contactService['data'].leadInfo;
-        if ((!this.leadInfo && contactInfo && leadInfo) || lastLeadCallback) {
+        if ((contactInfo && leadInfo && (!this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
             !lastLeadCallback && this.startLoading(true);
             let leadId = leadInfo.id,
                 leadInfo$ = leadId && !lastLeadCallback
