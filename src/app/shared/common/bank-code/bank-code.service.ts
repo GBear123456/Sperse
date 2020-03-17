@@ -200,7 +200,7 @@ export class BankCodeService {
             filter = this.getFilterFromTime(time);
         }
         return this.getClientsBankCodesTotalCount(filter).pipe(
-            startWith('')
+            startWith(0)
         );
     }
 
