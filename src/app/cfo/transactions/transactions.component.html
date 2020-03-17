@@ -1,3 +1,8 @@
+<div #becFilter [hidden]="!isHeaderFilterVisible" class="bec-filter">
+    <business-entities-chooser
+        (onChanged)="applyTotalBankAccountFilter(true)">
+    </business-entities-chooser>
+</div>
 <div [@routerTransition]>
     <app-headline [names]="[ l('Transactions') ]"
                   [reloadIsNecessary]="noRefreshedAfterSync"
@@ -84,13 +89,7 @@
                                     cellTemplate="dateCell">
                         </dxi-column>
                         <dxi-column dataField="BusinessEntityId"
-                                    [caption]="l('Transactions_BusinessEntity')"
-                                    [lookup]="{
-                                        allowClearing: false,
-                                        dataSource: filtersInitialData?.businessEntities,
-                                        displayExpr: 'name',
-                                        valueExpr: 'id'
-                                    }">
+                                    [caption]="l('Transactions_BusinessEntity')">
                         </dxi-column>
                         <dxi-column [caption]="l('Transactions_CashflowCategoryName')"
                                     dataField="CashflowCategoryName"
