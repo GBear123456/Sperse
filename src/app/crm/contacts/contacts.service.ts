@@ -179,11 +179,13 @@ export class ContactsService {
 
     unsubscribe(ident = 'common') {
         let list = this.subscribers[ident];
-        list.forEach((sub) => {
-            if (!sub.closed)
-                sub.unsubscribe();
-        });
-        list.length = 0;
+        if (list) {
+            list.forEach((sub) => {
+                if (!sub.closed)
+                    sub.unsubscribe();
+            });
+            list.length = 0;
+        }
     }
 
     addCompanyDialog(event, contactInfo, shiftX?, shiftY?): Observable<CreatePersonOrgRelationOutput> {
