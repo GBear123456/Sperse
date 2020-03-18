@@ -8,6 +8,7 @@
         <details-header [data]="contactInfo"
                         [personContactInfo]="personContactInfo"
                         [ratingId]="ratingId"
+                        (onInvalidate)="reloadCurrentSection($event)"
                         (onContactSelected)="onContactSelected($event)">
         </details-header>
     </ng-container>
