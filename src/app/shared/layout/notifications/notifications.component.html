@@ -35,7 +35,13 @@
                     <div class="m-scrollable" data-scrollable="true">
                         <div class="m-list-timeline m-list-timeline--skin-light m-nav">
                             <div class="m-list-timeline__items" [ngClass]="{'empty':!notifications.length}">
-                                <div *ngFor="let notification of notifications" class="m-list-timeline__item user-notification-item" (click)="gotoUrl(notification.url)" [ngClass]="{'user-notification-item-clickable': notification.url,'user-notification-item-unread': notification.isUnread}">
+                                <div *ngFor="let notification of notifications"
+                                     class="m-list-timeline__item user-notification-item"
+                                     [ngClass]="{
+                                         'user-notification-item-clickable': notification.url,
+                                         'user-notification-item-unread': notification.isUnread
+                                     }"
+                                     (click)="gotoUrl(notification.url)">
                                     <span class="m-list-timeline__badge m-list-timeline__badge--success"></span>
                                     <span class="m-list-timeline__icon {{notification.icon}}"></span>
                                     <span class="m-list-timeline__text">

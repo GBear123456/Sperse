@@ -157,7 +157,7 @@ export class HeaderNotificationsComponent implements OnInit {
         this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
-    gotoUrl(url): void {
+    gotoUrl(url: string): void {
         if (url) {
             this.router.navigateByUrl(url);
         }

@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
+import { Params } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -52,7 +53,40 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     role: number;
     group = UserGroup.Employee;
     isActive = true;
-    public actionMenuItems: ActionMenuItem[];
+    public actionMenuItems: ActionMenuItem[] = [
+        {
+            text: this.l('LoginAsThisUser'),
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+            class: 'login',
+            action: () => {
+                this.impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
+            }
+        },
+        {
+            text: this.l('Edit'),
+            class: 'edit',
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersEdit),
+            action: () => {
+                this.openUserDetails(this.actionRecord.id);
+            }
+        },
+        {
+            text: this.l('Unlock'),
+            class: 'unlock',
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles),
+            action: () => {
+                this.unlockUser(this.actionRecord);
+            }
+        },
+        {
+            text: this.l('Delete'),
+            class: 'delete',
+            visible: this.permission.isGranted(AppPermissions.AdministrationUsersDelete),
+            action: () => {
+                this.deleteUser(this.actionRecord);
+            }
+        }
+    ].filter(Boolean);
     public actionRecord: any;
     public headlineButtons: HeadlineButton[] = [
         {
@@ -81,41 +115,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         public dialog: MatDialog
     ) {
         super(injector);
-        this.actionMenuItems = [
-            {
-                text: this.l('LoginAsThisUser'),
-                visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-                class: 'login',
-                action: () => {
-                    this.impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
-                }
-            },
-            {
-                text: this.l('Edit'),
-                class: 'edit',
-                visible: this.permission.isGranted(AppPermissions.AdministrationUsersEdit),
-                action: () => {
-                    this.openUserDetails(this.actionRecord.id);
-                }
-            },
-            {
-                text: this.l('Unlock'),
-                class: 'unlock',
-                visible: this.permission.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles),
-                action: () => {
-                    this.unlockUser(this.actionRecord);
-                }
-            },
-            {
-                text: this.l('Delete'),
-                class: 'delete',
-                visible: this.permission.isGranted(AppPermissions.AdministrationUsersDelete),
-                action: () => {
-                    this.deleteUser(this.actionRecord);
-                }
-            }
-        ].filter(Boolean);
-
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
@@ -201,7 +200,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.group || this.isActive != undefined)) ? true : false,
+                            'filter-selected': (this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.group || this.isActive != undefined) ? true : false,
                             'custaccesskey': 'search-container'
                         }
                     }
@@ -561,16 +560,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     activate() {
         super.activate();
-
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
         this.showHostElement();
-
         this.registerToEvents();
     }
 
@@ -585,11 +580,16 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private paramsSubscribe() {
         this._activatedRoute.queryParams
             .pipe(takeUntil(this.deactivate$))
-            .subscribe(params => {
+            .subscribe((params: Params) => {
                 if (params['refresh'])
                     this.invalidate();
-                if (params['filterText'] && AppConsts.regexPatterns.email.test(params['filterText']))
+                if (params['filterText'] && AppConsts.regexPatterns.email.test(params['filterText'])) {
+                    this.group = undefined;
+                    this.isActive = undefined;
+                    this.searchClear = false;
                     this.searchValue = params['filterText'];
+                    this.invalidate();
+                }
             });
     }
 
