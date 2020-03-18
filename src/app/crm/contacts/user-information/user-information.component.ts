@@ -268,9 +268,11 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.personContactServiceProxy.createUserForContact(extend(clone(this.inviteData), {
                         phoneNumber: phoneNumber && phoneNumber.replace(/[^0-9\+]/g, ''),
                         organizationUnitIds: this.selectedOrgUnits
-                    })).pipe(finalize(() => this.loadingService.finishLoading())).subscribe(() => {
+                    })).pipe(
+                        finalize(() => this.loadingService.finishLoading())
+                    ).subscribe(() => {
                         this.contactsService.invalidate();
-                        this.showOrgUnitsDialog();
+                        this.showOrgUnitsDialog(1000);
                     });
                 }
             }
@@ -415,25 +417,28 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
-    showOrgUnitsDialog(): void {
-         setTimeout(() => {
-             const dialog = this.dialog.getDialogById('user-organization-units-dialog');
-             if (!dialog) {
-                 this.dialog.open(OrganizationUnitsDialogComponent, {
-                     id: 'user-organization-units-dialog',
-                     panelClass: ['slider'],
-                     disableClose: true,
-                     hasBackdrop: false,
-                     closeOnNavigation: true,
-                     data: {
-                         title: this.ls.l('OrganizationUnits'),
-                         selectionMode: 'multiple'
-                     }
-                 });
-             } else {
-                 dialog.close();
-             }
-         });
+    showOrgUnitsDialog(timeout = 0): void {
+         setTimeout(
+             () => {
+                 const dialog = this.dialog.getDialogById('user-organization-units-dialog');
+                 if (!dialog) {
+                     this.dialog.open(OrganizationUnitsDialogComponent, {
+                         id: 'user-organization-units-dialog',
+                         panelClass: ['slider'],
+                         disableClose: true,
+                         hasBackdrop: false,
+                         closeOnNavigation: true,
+                         data: {
+                             title: this.ls.l('OrganizationUnits'),
+                             selectionMode: 'multiple'
+                         }
+                     });
+                 } else {
+                     dialog.close();
+                 }
+             },
+             timeout
+         );
     }
 
     ngOnDestroy() {
