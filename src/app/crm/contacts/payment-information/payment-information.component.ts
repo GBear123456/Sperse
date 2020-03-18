@@ -28,7 +28,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { LoadingService } from '../../../../shared/common/loading-service/loading.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'payment-information',
@@ -45,7 +45,7 @@ export class PaymentInformationComponent implements OnInit {
     amountCurrency = '$';
     balanceAmount$: Observable<number>;
     payments$: Observable<MonthlyPaymentInfo[]>;
-    dispayedPayments$: Observable<MonthlyPaymentInfo[]>;
+    displayedPayments$: Observable<MonthlyPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
     paymentMethodsTypes = PaymentInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
@@ -106,7 +106,7 @@ export class PaymentInformationComponent implements OnInit {
             refCount()
         );
 
-        this.dispayedPayments$ = combineLatest(
+        this.displayedPayments$ = combineLatest(
             this.payments$,
             this.paymentsDisplayLimit$
         ).pipe(

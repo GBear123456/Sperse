@@ -16,7 +16,7 @@
                 <img src="./assets/common/icons/automatic-payments.svg">
                 {{ ls.l('AutomaticPayments') }}
             </li>
-            <li *ngIf="(dispayedPayments$ | async) && lastPaymentDate">
+            <li *ngIf="(displayedPayments$ | async) && lastPaymentDate">
                 <img src="./assets/common/icons/last-payment.svg">
                 {{ ls.l('LastPayment', lastPaymentDate, '', lastPaymentAmount | currency:amountCurrency:'symbol': '1.2-2') }}
             </li>
@@ -26,7 +26,7 @@
         <div class="transactions" #paymentsContainer>
             <h3>{{ ls.l('Transactions') }}</h3>
             <dx-scroll-view [height]="paymentsScrollHeight()" [showScrollbar]="'never'">
-                <div *ngIf="(dispayedPayments$ | async) as displayedPayments;">
+                <div *ngIf="(displayedPayments$ | async) as displayedPayments;">
                     <ul>
                         <li *ngFor="let payment of displayedPayments">
                             <span class="date">{{ formatDate(payment.startDate) + ' - ' + formatDate(payment.endDate) }}</span>
