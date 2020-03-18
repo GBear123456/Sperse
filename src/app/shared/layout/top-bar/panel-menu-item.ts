@@ -12,6 +12,7 @@ export class PanelMenuItem {
     disabled = false;
     items: PanelMenuItem[];
     host: string;
+    width: number;
 
     constructor(
         text: string,

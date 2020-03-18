@@ -51,22 +51,21 @@ export class TopBarComponent implements OnDestroy {
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
     ) {
-        this.router.events
-            .pipe(
-                takeUntil(this.lifecycleService.destroy$),
-                filter(event => event instanceof NavigationEnd)
-            ).subscribe((event: any) => {
-                let currModuleName = (this.config.name || '').toLowerCase();
-                if (currModuleName && currModuleName != appService.getModule())
-                    appService.initModule();
-                setTimeout(() => {
-                    let route = event.urlAfterRedirects.split('?').shift();
-                    this.menu.items.forEach((item, i) => {
-                        if (route === item.route || _.contains(item.alterRoutes, route))
-                            this.selectedIndex = i;
-                    });
+        this.router.events.pipe(
+            takeUntil(this.lifecycleService.destroy$),
+            filter(event => event instanceof NavigationEnd)
+        ).subscribe((event: any) => {
+            let currModuleName = (this.config.name || '').toLowerCase();
+            if (currModuleName && currModuleName != appService.getModule())
+                appService.initModule();
+            setTimeout(() => {
+                let route = event.urlAfterRedirects.split('?').shift();
+                this.menu.items.forEach((item, i) => {
+                    if (route === item.route || _.contains(item.alterRoutes, route))
+                        this.selectedIndex = i;
                 });
             });
+        });
         this.appService.subscribeModuleChange((config) => {
             this.config = config;
             this.menu = new PanelMenu(
@@ -152,7 +151,7 @@ export class TopBarComponent implements OnDestroy {
                     let switchItemIndex,
                         availableWidth = this.getAvailableWidth();
 
-                    if (this.menu.items.every((item, index) => {
+                    if (this.menu.items.every((item: PanelMenuItem, index: number) => {
                         switchItemIndex = index;
                         if (item.visible)
                             availableWidth -= item['width'];
@@ -196,7 +195,7 @@ export class TopBarComponent implements OnDestroy {
     calculateItemsWidth() {
         let items = this.getNavBarElement().querySelectorAll('div.dx-tab.dx-nav-item');
         Array.prototype.forEach.call(items, (elm, index) => {
-            this.menu.items[index]['width'] = elm.offsetWidth + 20;
+            this.menu.items[index].width = elm.offsetWidth + 20;
         });
     }
 
