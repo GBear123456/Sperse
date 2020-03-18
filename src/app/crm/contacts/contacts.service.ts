@@ -19,7 +19,10 @@ import {
     UserServiceProxy,
     ContactServiceProxy,
     ContactCommunicationServiceProxy,
+    ISendEmailInput,
     SendEmailInput,
+    ISendSMSInput,
+    SendSMSInput,
     CreatePersonOrgRelationOutput,
     CreateContactPhotoInput,
     ContactPhotoServiceProxy,
@@ -60,7 +63,7 @@ export class ContactsService {
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
-        private emailProxy: ContactCommunicationServiceProxy,
+        private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
         private dialogService: DialogService,
@@ -305,9 +308,8 @@ export class ContactsService {
         return dialogComponent.onSave.pipe(
             switchMap(res => {
                 dialogComponent.startLoading();
-                return this.emailProxy.sendEmail(new SendEmailInput(res)).pipe(
-                    finalize(() => dialogComponent.finishLoading()),
-                    catchError(error => of(error))
+                return this.sendEmail(res).pipe(
+                    finalize(() => dialogComponent.finishLoading())
                 );
             }),
             tap(res => {
@@ -316,6 +318,18 @@ export class ContactsService {
                     dialogComponent.close();
                 }
             })
+        );
+    }
+
+    sendEmail(input: ISendEmailInput) {
+        return this.communicationProxy.sendEmail(new SendEmailInput(input)).pipe(
+            catchError(error => of(error))
+        );
+    }
+
+    sendSMS(input: ISendSMSInput) {
+        return this.communicationProxy.sendSMS(new SendSMSInput(input)).pipe(
+            catchError(error => of(error))
         );
     }
 

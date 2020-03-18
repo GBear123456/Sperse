@@ -17,6 +17,18 @@
             width: 30%;
             border-right: 1px solid #dfdfdf;
             ::ng-deep dx-list {
+                &.dx-list-collapsible-groups {
+                    .dx-list-group-header {
+                        border-bottom: 1px solid #ddd;
+                        padding: 0px;
+                        &:before {
+                            top: 40px;
+                            right: 10px;
+                            z-index: 1;
+                            position: relative;
+                        }
+                    }
+                }
                 .dx-scrollable-container {
                     overflow: visible;
                 }
@@ -39,12 +51,36 @@
                     border-top: none;
                     overflow: visible;
                     border-bottom: 1px solid #ddd;
-                    &.dx-list-item-selected:after {
+                }
+                .dx-list-group-body {
+                    overflow: visible;
+                }
+                .group-item {
+                    z-index: 2;
+                    background: #fff;
+                    position: relative;
+                    padding: 10px;
+                    &:hover {
+                        background: #eeeeee;
+                    }
+                    &.has-children {
+                        z-index: 0;
+                    }
+                }
+                .sub-item {
+                    overflow: visible;
+                    position: relative;
+                    padding-left: 25px;
+                    background: #c9d5da2e;
+                }
+                .selected {
+                    background: #dfdfdf;
+                    &:after {
                         content: '';
-                        top: -6px;  
-                        left: -10px;
+                        top: 23px;
+                        right: -1px;
                         display: block;
-                        position: relative;
+                        position: absolute;
                         border-top: 10px solid transparent;
                         border-bottom: 10px solid transparent;
                         border-right: 11px solid #ffffff;
@@ -177,6 +213,11 @@
                         &.attach {
                             left: 60px;
                         }
+                        &.disabled {
+                            pointer-events: none;
+                            cursor: default;
+                            opacity: 0.5;
+                        }
                     }
                     .delimiter {
                         display: inline-block;
@@ -255,7 +296,7 @@
             }
             .body {
                 display: block;
-                padding: 20px 40px;
+                padding: 20px;
                 font-size: 14px;
                 font-weight: 300;
                 font-style: normal;
@@ -264,6 +305,18 @@
                 letter-spacing: 0.28px;
                 text-align: left;
                 color: #424c56;
+                width: 70%;
+                border-radius: 10px;
+                margin-bottom: 5px;
+                &.from {
+                    background: #f3f7fa;
+                    margin-left: 50px;
+                }
+                &.to {
+                    background: rgba(0, 174, 239, 0.1);
+                    margin-right: 50px;
+                    margin-left: auto;
+                }
             }
         }
     }

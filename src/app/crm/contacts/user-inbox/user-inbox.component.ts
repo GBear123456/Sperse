@@ -6,9 +6,11 @@ import { DxListComponent } from 'devextreme-angular/ui/list';
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { NotifyService } from '@abp/notify/notify.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -29,6 +31,7 @@ export class UserInboxComponent implements OnDestroy {
     dataSource: DataSource;
     activeMessage: MessageDto;
     instantMessageText: string;
+    instantMessageAttachments = [];
     contactInfo: ContactInfoDto;
     formatting = AppConsts.formatting;
     status: CommunicationMessageStatus;
@@ -53,13 +56,14 @@ export class UserInboxComponent implements OnDestroy {
         private loadingService: LoadingService,
         private communicationService: ContactCommunicationServiceProxy,
         private contactsService: ContactsService,
+        private notifyService: NotifyService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         public profileService: ProfileService
     ) {
-        contactsService.invalidateSubscribe(() => {
-            this.invalidate();
-        }, this.constructor.name);
+        contactsService.invalidateSubscribe(
+            () => this.invalidate(), this.constructor.name
+        );
         contactsService.contactInfoSubscribe(res => {
             this.contactInfo = res;
             this.contactId = res.id;
@@ -133,6 +137,7 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     initContentToolbar() {
+        let isEmail = this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
         this.contentToolbar = [{
             location: 'before',
             locateInMenu: 'auto',
@@ -143,7 +148,7 @@ export class UserInboxComponent implements OnDestroy {
                 },
                 {
                     name: 'status',
-                    visible: this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email,
+                    visible: isEmail,
                     action: Function()
                 },
                 {
@@ -168,19 +173,21 @@ export class UserInboxComponent implements OnDestroy {
             ]
         }, {
             location: 'after',
-            visible: this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email,
             locateInMenu: 'auto',
             items: [
                 {
                     name: 'reply',
+                    visible: isEmail,
                     action: this.reply.bind(this)
                 },
                 {
                     name: 'replyToAll',
+                    visible: isEmail,
                     action: this.replyToAll.bind(this)
                 },
                 {
                     name: 'forward',
+                    visible: isEmail,
                     action: this.forward.bind(this)
                 }
             ]
@@ -205,7 +212,7 @@ export class UserInboxComponent implements OnDestroy {
                         }).join(','), loadOptions.take, loadOptions.skip
                     ).toPromise().then(response => {
                         this.initMainToolbar();
-                        if (this.activeMessage || !this.initactiveMessage(response.items[0]))
+                        if (this.activeMessage || !this.initActiveMessage(response.items[0]))
                             this.loadingService.finishLoading();
                         return {
                             data: response.items,
@@ -217,15 +224,28 @@ export class UserInboxComponent implements OnDestroy {
         });
     }
 
-    initactiveMessage(record) {
-        if (record) {
-            this.loadingService.startLoading();
-            this.communicationService.getMessage(record.id, this.contactId).pipe(
-                finalize(() => this.loadingService.finishLoading())
-            ).subscribe(res => {
-                this.activeMessage = res;
-                this.initContentToolbar();
-            });
+    initActiveMessage(record, event?) {
+        if (event)
+            event.stopPropagation();
+        if (record && !this.activeMessage || record.id != this.activeMessage.id) {
+            if (record.message)
+                this.activeMessage = record.message;
+            else {
+                this.loadingService.startLoading();
+                forkJoin(
+                    this.communicationService.getMessage(record.id, this.contactId),
+                    this.communicationService.getMessages(this.contactId,
+                        record.id, undefined, undefined, undefined,
+                        undefined, undefined, undefined, undefined)
+                ).pipe(
+                    finalize(() => this.loadingService.finishLoading())
+                ).subscribe(([message, children]) => {
+                    message['items'] = record.items = children.items;
+                    record.message = this.activeMessage = message;
+                    this.listComponent.instance.repaint();
+                    this.initContentToolbar();
+                });
+            }
             return true;
         }
     }
@@ -250,10 +270,10 @@ export class UserInboxComponent implements OnDestroy {
         if (this.activeMessage)
             visibleList.some((item, index) => {
                 if (item.id == this.activeMessage.id)
-                    return this.initactiveMessage(visibleList[index + shift]);
+                    return this.initActiveMessage(visibleList[index + shift]);
             });
         else
-            this.initactiveMessage(visibleList[0]);
+            this.initActiveMessage(visibleList[0]);
     }
 
     getVisibleList() {
@@ -302,6 +322,41 @@ export class UserInboxComponent implements OnDestroy {
                 body: this.instantMessageText,
                 phoneNumber: this.activeMessage.to,
                 contact: this.contactInfo
+            });
+    }
+
+    instantMessageSend(event) {
+        if (!this.instantMessageText)
+            return;
+
+        if (this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email)
+            this.contactsService.sendEmail({
+                contactId: this.contactId,
+                parentId: this.activeMessage.id,
+                to: [this.activeMessage.to],
+                replyTo: undefined,
+                cc: undefined,
+                bcc: undefined,
+                subject: 'Re: ' + this.activeMessage.subject,
+                body: this.instantMessageText,
+                attachments: this.instantMessageAttachments
+            }).subscribe(res => {
+                if (!isNaN(res)) {
+                    this.instantMessageText = '';
+                    this.notifyService.success(this.ls.l('MailSent'));
+                }
+            });
+        else
+            this.contactsService.sendSMS({
+                contactId: this.contactId,
+                parentId: this.activeMessage.id,
+                message: this.instantMessageText,
+                phoneNumber: this.activeMessage.to
+            }).subscribe(res => {
+                if (!isNaN(res)) {
+                    this.instantMessageText = '';
+                    this.notifyService.success(this.ls.l('MessageSuccessfullySent'));
+                }
             });
     }
 

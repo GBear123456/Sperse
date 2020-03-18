@@ -1,25 +1,38 @@
 <div class="inbox-user-form" >
     <div class="inbox-list">
-        <dx-list 
+        <dx-list
             width="100%"
             height="100%"
+            keyExpr="id"
             searchExpr="Name"
             searchMode="contains"
             selectionMode="single"
             pageLoadMode="scrollBottom"
+            [grouped]="true"
             [searchTimeout]="500"
             [dataSource]="dataSource"
+            [collapsibleGroups]="true"
+            [activeStateEnabled]="false"
             [selectedItemKeys]="[activeMessage?.id]"
             [searchEditorOptions]="{placeholder: ls.l('SearchMessage')}"
             [searchEnabled]="true"
-            (onItemClick)="initactiveMessage($event.itemData)">
-                <div *dxTemplate="let item of 'item'">
+            (onItemClick)="initActiveMessage($event.itemData)">
+                <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren}" (click)="initActiveMessage(item, $event)">
                     <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(item?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
                             <span class="subject">{{item.subject}}</span>
-                            <span class="body">{{item.body}}</span>
+                        </div>
+                        <div class="date">{{item.creationTime | date: formatting.monthDay : userTimezone}}</div>
+                    </div>
+                </div>
+                <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
+                    <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
+                        <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(item?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
+                        <div class="details">
+                            <span class="from">{{item.fromUserName}}</span>
+                            <span class="subject">{{item.subject}}</span>
                         </div>
                         <div class="date">{{item.creationTime | date: formatting.monthDay : userTimezone}}</div>
                     </div>
@@ -53,7 +66,10 @@
         </ng-container>
         <div class="content {{activeMessage.deliveryType | lowercase}}">
             <dx-scroll-view showScrollbar="onHover">
-                <div class="body" [innerHtml]="activeMessage?.body"></div>
+                <div class="body from" [innerHtml]="activeMessage?.body"></div>
+                <div *ngFor="let child of activeMessage?.items">
+                    <div class="body" [ngClass]="{from: activeMessage?.from == child.from, to: activeMessage?.from == child.to}" [innerHtml]="child.body"></div>
+                </div>                
             </dx-scroll-view>
             <div class="attachments">
                 <div *ngFor="let attachment of activeMessage?.attachments" class="attachment">
@@ -62,16 +78,18 @@
             </div>
             <div class="input-form">                  
                 <img src="assets/common/icons/page.svg" class="page" (click)="extendMessage()">
-                <img src="assets/common/icons/attach.svg" class="attach">
+                <img src="assets/common/icons/attach.svg" class="attach" [ngClass]="{disabled: activeMessage.deliveryType == 'SMS'}">
                 <div class="delimiter"></div>
                 <dx-text-box
                     width="95%"
                     height="44px"
+                    [maxLength]="150"
+                    valueChangeEvent="keyup"
                     [placeholder]="ls.l('Type your message here...')"
                     [stylingMode]="'outlined'"
                     [(value)]="instantMessageText">
                 </dx-text-box>
-                <img src="assets/common/icons/send-blue.svg" class="send">
+                <img src="assets/common/icons/send-blue.svg" class="send" [ngClass]="{disabled: !instantMessageText}" (click)="instantMessageSend($event)">
             </div>
         </div>
     </div>

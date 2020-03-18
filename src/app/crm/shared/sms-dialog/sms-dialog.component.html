@@ -62,7 +62,7 @@
                 </dx-validator>
             </dx-text-area>
             <div class="footer-wrapper">
-                <div class="number-of-symbols">{{ (smsMaxLength - smsText.length) + ' ' + ls.l('CharactersLeft') }}</div><a id="insertTag" (mouseover)="tags.instance.option('visible', true)">{{ls.l('InsertTag')}}</a>
+                <div class="number-of-symbols">{{ (smsMaxLength - smsText?.length) + ' ' + ls.l('CharactersLeft') }}</div><a id="insertTag" (mouseover)="tags.instance.option('visible', true)">{{ls.l('InsertTag')}}</a>
             </div>
         </div>
     </dx-validation-group>
