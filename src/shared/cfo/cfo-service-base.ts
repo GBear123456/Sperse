@@ -7,6 +7,7 @@ export abstract class CFOServiceBase {
     instanceId: number;
     instanceType: InstanceType;
     initialized: boolean;
+    hasCategorizationSupported: boolean;
     protected _initialized: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     initialized$: Observable<boolean> = this._initialized.asObservable();
     hasTransactions: boolean;

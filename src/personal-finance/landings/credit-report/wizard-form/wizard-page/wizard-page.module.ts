@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
-import { AngularGooglePlaceModule } from '@node_modules/angular-google-place';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
