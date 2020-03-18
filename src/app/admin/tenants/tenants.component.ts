@@ -319,7 +319,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             } else if (filter.field == 'productId')
                 this.productId = filter.items.element.value;
 
-            this.dataSource.load();
+            this.dataGrid.instance.refresh();
         });
     }
 
