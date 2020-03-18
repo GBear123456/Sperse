@@ -1,6 +1,15 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Injector, AfterViewInit,
-    Input, EventEmitter, Output, HostBinding, OnDestroy } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    HostBinding,
+    Injector,
+    Input,
+    OnDestroy,
+    Output
+} from '@angular/core';
 
 /** Third party imports */
 import { Subscription } from 'rxjs';
@@ -26,12 +35,43 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
     @HostBinding('style.visibility') visibility = 'hidden';
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
-        { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false, visible: this._cfoService.accessAllDepartments },
-        { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true, visible: this._cfoService.accessAllDepartments },
-        { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
-        { caption: 'Rules', component: '/rules', isAlwaysActive: false, visible: this.appSessionService.tenant && this.appSessionService.tenant.customLayoutType == LayoutType.AdvicePeriod ? false : this._cfoService.accessAllDepartments},
-        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin && this.instanceType == InstanceType.Main, isAlwaysActive: false },
-        { caption: 'InvitedUsers', component: '/users', visible: this._cfoService.instanceId && this._cfoService.isMemberAccessManage }
+        {
+            caption: 'FinancialAccounts',
+            component: '/linkaccounts',
+            isAlwaysActive: false,
+            visible: this._cfoService.accessAllDepartments
+        },
+        {
+            caption: 'BusinessEntity',
+            component: '/business-entities',
+            isAlwaysActive: true,
+            visible: this._cfoService.accessAllDepartments
+        },
+        {
+            caption: 'Chart',
+            component: '/chart-of-accounts',
+            isAlwaysActive: true
+        },
+        {
+            caption: 'Rules',
+            component: '/rules',
+            isAlwaysActive: false,
+            visible: this.appSessionService.tenant
+                     && this.appSessionService.tenant.customLayoutType == LayoutType.AdvicePeriod
+                        ? false
+                        : this._cfoService.hasCategorizationSupported && this._cfoService.accessAllDepartments
+        },
+        {
+            caption: 'Permissions',
+            component: '/permissions',
+            visible: this.isInstanceAdmin && this.instanceType == InstanceType.Main,
+            isAlwaysActive: false
+        },
+        {
+            caption: 'InvitedUsers',
+            component: '/users',
+            visible: this._cfoService.instanceId && this._cfoService.isMemberAccessManage
+        }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';

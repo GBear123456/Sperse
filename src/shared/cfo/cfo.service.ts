@@ -170,6 +170,7 @@ export class CFOService extends CFOServiceBase {
                         const status = data.status == InstanceStatus.Active;
                         this.statusActive.next(status);
                         this.initialized = status && data.hasSyncAccounts;
+                        this.hasCategorizationSupported = data.hasCategorizationSupported;
                         this._initialized.next(this.initialized);
                         this.hasTransactions = this.initialized && data.hasTransactions;
                         this.hasAccountsAccess.next(data.hasAccountsAccess);
