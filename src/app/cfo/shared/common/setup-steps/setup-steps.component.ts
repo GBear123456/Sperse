@@ -43,7 +43,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnDestroy, A
 
     get showIntroTour(): boolean {
         let tenant = this.appSessionService.tenant;
-        return !tenant || tenant.customLayoutType == LayoutType.Default;
+        return !tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default;
     }
 
     private dialogConfig = new MatDialogConfig();

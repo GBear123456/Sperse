@@ -23,7 +23,7 @@ export class DashboardMenuComponent {
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     get showIntroTour(): boolean {
         let tenant = this.appSessionService.tenant;
-        return !tenant || tenant.customLayoutType == LayoutType.Default;
+        return !tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default;
     }
     items = [];
     constructor(
