@@ -781,6 +781,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }).afterClosed().subscribe();
     }
 
+    reloadCurrentSection(params = this.params) {
+        let area = this._router.url.split('?').shift().split('/').pop();
+        const loading$ = this.loadContactInfo(params);
+        if (area == 'lead-information') this.leadInfo = undefined;
+        this.contactsService.invalidate(area);
+        return loading$;
+    }
+
     loadTargetEntity(event, direction) {
         this.targetEntity.next(direction);
     }
