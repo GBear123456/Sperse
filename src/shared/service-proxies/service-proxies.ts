@@ -45591,6 +45591,7 @@ export class MessageDto implements IMessageDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageStatus | undefined;
+    hasChildren!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageDto) {
@@ -45622,6 +45623,7 @@ export class MessageDto implements IMessageDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            this.hasChildren = data["hasChildren"];
             this.id = data["id"];
         }
     }
@@ -45653,6 +45655,7 @@ export class MessageDto implements IMessageDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        data["hasChildren"] = this.hasChildren;
         data["id"] = this.id;
         return data; 
     }
@@ -45673,6 +45676,7 @@ export interface IMessageDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageStatus | undefined;
+    hasChildren: boolean | undefined;
     id: number | undefined;
 }
 
@@ -45689,6 +45693,7 @@ export class MessageListDto implements IMessageListDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageStatus | undefined;
+    hasChildren!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageListDto) {
@@ -45714,6 +45719,7 @@ export class MessageListDto implements IMessageListDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            this.hasChildren = data["hasChildren"];
             this.id = data["id"];
         }
     }
@@ -45739,6 +45745,7 @@ export class MessageListDto implements IMessageListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        data["hasChildren"] = this.hasChildren;
         data["id"] = this.id;
         return data; 
     }
@@ -45757,6 +45764,7 @@ export interface IMessageListDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageStatus | undefined;
+    hasChildren: boolean | undefined;
     id: number | undefined;
 }
 
@@ -45811,7 +45819,7 @@ export interface IMessageListDtoPagedResultDto {
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
-    to!: string[] | undefined;
+    to!: string[];
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
@@ -45825,6 +45833,9 @@ export class SendEmailInput implements ISendEmailInput {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.to = [];
         }
     }
 
@@ -45907,7 +45918,7 @@ export class SendEmailInput implements ISendEmailInput {
 export interface ISendEmailInput {
     contactId: number;
     parentId: number | undefined;
-    to: string[] | undefined;
+    to: string[];
     replyTo: string[] | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
