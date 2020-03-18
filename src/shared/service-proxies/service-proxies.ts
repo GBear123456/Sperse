@@ -44963,6 +44963,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
+    website!: string | undefined;
     address!: AddressInfo | undefined;
     photo!: ContactPhotoInfo | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
@@ -45016,6 +45017,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.website = data["website"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
@@ -45093,6 +45095,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["website"] = this.website;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
@@ -45163,6 +45166,7 @@ export interface IOrganizationBusinessInfo {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
+    website: string | undefined;
     address: AddressInfo | undefined;
     photo: ContactPhotoInfo | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
@@ -54164,6 +54168,7 @@ export class InvoiceInfo implements IInvoiceInfo {
     shippingAddress!: InvoiceAddressInfo | undefined;
     description!: string | undefined;
     note!: string | undefined;
+    validationErrors!: string | undefined;
     lines!: InvoiceLineInfo[] | undefined;
 
     constructor(data?: IInvoiceInfo) {
@@ -54191,6 +54196,7 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.shippingAddress = data["shippingAddress"] ? InvoiceAddressInfo.fromJS(data["shippingAddress"]) : <any>undefined;
             this.description = data["description"];
             this.note = data["note"];
+            this.validationErrors = data["validationErrors"];
             if (data["lines"] && data["lines"].constructor === Array) {
                 this.lines = [];
                 for (let item of data["lines"])
@@ -54222,6 +54228,7 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["shippingAddress"] = this.shippingAddress ? this.shippingAddress.toJSON() : <any>undefined;
         data["description"] = this.description;
         data["note"] = this.note;
+        data["validationErrors"] = this.validationErrors;
         if (this.lines && this.lines.constructor === Array) {
             data["lines"] = [];
             for (let item of this.lines)
@@ -54246,6 +54253,7 @@ export interface IInvoiceInfo {
     shippingAddress: InvoiceAddressInfo | undefined;
     description: string | undefined;
     note: string | undefined;
+    validationErrors: string | undefined;
     lines: InvoiceLineInfo[] | undefined;
 }
 
@@ -54253,9 +54261,9 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
     countryId!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
-    city!: string;
+    city!: string | undefined;
     zip!: string | undefined;
-    address1!: string;
+    address1!: string | undefined;
     address2!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -54318,9 +54326,9 @@ export interface IInvoiceAddressInput {
     countryId: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
-    city: string;
+    city: string | undefined;
     zip: string | undefined;
-    address1: string;
+    address1: string | undefined;
     address2: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -64037,8 +64045,96 @@ export interface IQuestionnaireResponseDto {
     answers: AnswerDto[] | undefined;
 }
 
+export class SubmitQuestionnaireDto implements ISubmitQuestionnaireDto {
+    xref!: string;
+    name!: string | undefined;
+
+    constructor(data?: ISubmitQuestionnaireDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.xref = data["xref"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): SubmitQuestionnaireDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitQuestionnaireDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["xref"] = this.xref;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ISubmitQuestionnaireDto {
+    xref: string;
+    name: string | undefined;
+}
+
+export class SubmitQuestionDto implements ISubmitQuestionDto {
+    xref!: string;
+    type!: QuestionType;
+    text!: string | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: ISubmitQuestionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.xref = data["xref"];
+            this.type = data["type"];
+            this.text = data["text"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): SubmitQuestionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitQuestionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["xref"] = this.xref;
+        data["type"] = this.type;
+        data["text"] = this.text;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ISubmitQuestionDto {
+    xref: string;
+    type: QuestionType;
+    text: string | undefined;
+    sortOrder: number | undefined;
+}
+
 export class SubmitAnswerDto implements ISubmitAnswerDto {
-    xref!: string | undefined;
+    xref!: string;
     sortOrder!: number | undefined;
     text!: string | undefined;
 
@@ -64076,33 +64172,31 @@ export class SubmitAnswerDto implements ISubmitAnswerDto {
 }
 
 export interface ISubmitAnswerDto {
-    xref: string | undefined;
+    xref: string;
     sortOrder: number | undefined;
     text: string | undefined;
 }
 
-export class SubmitQuestionDto implements ISubmitQuestionDto {
-    xref!: string | undefined;
-    type!: QuestionType | undefined;
-    text!: string | undefined;
-    sortOrder!: number | undefined;
-    answers!: SubmitAnswerDto[] | undefined;
+export class SubmitQuestionAndAnswersDto implements ISubmitQuestionAndAnswersDto {
+    question!: SubmitQuestionDto;
+    answers!: SubmitAnswerDto[];
 
-    constructor(data?: ISubmitQuestionDto) {
+    constructor(data?: ISubmitQuestionAndAnswersDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.question = new SubmitQuestionDto();
+            this.answers = [];
+        }
     }
 
     init(data?: any) {
         if (data) {
-            this.xref = data["xref"];
-            this.type = data["type"];
-            this.text = data["text"];
-            this.sortOrder = data["sortOrder"];
+            this.question = data["question"] ? SubmitQuestionDto.fromJS(data["question"]) : new SubmitQuestionDto();
             if (data["answers"] && data["answers"].constructor === Array) {
                 this.answers = [];
                 for (let item of data["answers"])
@@ -64111,19 +64205,16 @@ export class SubmitQuestionDto implements ISubmitQuestionDto {
         }
     }
 
-    static fromJS(data: any): SubmitQuestionDto {
+    static fromJS(data: any): SubmitQuestionAndAnswersDto {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitQuestionDto();
+        let result = new SubmitQuestionAndAnswersDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["xref"] = this.xref;
-        data["type"] = this.type;
-        data["text"] = this.text;
-        data["sortOrder"] = this.sortOrder;
+        data["question"] = this.question ? this.question.toJSON() : <any>undefined;
         if (this.answers && this.answers.constructor === Array) {
             data["answers"] = [];
             for (let item of this.answers)
@@ -64133,18 +64224,14 @@ export class SubmitQuestionDto implements ISubmitQuestionDto {
     }
 }
 
-export interface ISubmitQuestionDto {
-    xref: string | undefined;
-    type: QuestionType | undefined;
-    text: string | undefined;
-    sortOrder: number | undefined;
-    answers: SubmitAnswerDto[] | undefined;
+export interface ISubmitQuestionAndAnswersDto {
+    question: SubmitQuestionDto;
+    answers: SubmitAnswerDto[];
 }
 
 export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersDto {
-    xref!: string | undefined;
-    name!: string | undefined;
-    questions!: SubmitQuestionDto[] | undefined;
+    questionnaire!: SubmitQuestionnaireDto;
+    questionsAndAnswers!: SubmitQuestionAndAnswersDto[];
 
     constructor(data?: ISubmitQuestionsAndAnswersDto) {
         if (data) {
@@ -64153,16 +64240,19 @@ export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersD
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.questionnaire = new SubmitQuestionnaireDto();
+            this.questionsAndAnswers = [];
+        }
     }
 
     init(data?: any) {
         if (data) {
-            this.xref = data["xref"];
-            this.name = data["name"];
-            if (data["questions"] && data["questions"].constructor === Array) {
-                this.questions = [];
-                for (let item of data["questions"])
-                    this.questions.push(SubmitQuestionDto.fromJS(item));
+            this.questionnaire = data["questionnaire"] ? SubmitQuestionnaireDto.fromJS(data["questionnaire"]) : new SubmitQuestionnaireDto();
+            if (data["questionsAndAnswers"] && data["questionsAndAnswers"].constructor === Array) {
+                this.questionsAndAnswers = [];
+                for (let item of data["questionsAndAnswers"])
+                    this.questionsAndAnswers.push(SubmitQuestionAndAnswersDto.fromJS(item));
             }
         }
     }
@@ -64176,21 +64266,19 @@ export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersD
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["xref"] = this.xref;
-        data["name"] = this.name;
-        if (this.questions && this.questions.constructor === Array) {
-            data["questions"] = [];
-            for (let item of this.questions)
-                data["questions"].push(item.toJSON());
+        data["questionnaire"] = this.questionnaire ? this.questionnaire.toJSON() : <any>undefined;
+        if (this.questionsAndAnswers && this.questionsAndAnswers.constructor === Array) {
+            data["questionsAndAnswers"] = [];
+            for (let item of this.questionsAndAnswers)
+                data["questionsAndAnswers"].push(item.toJSON());
         }
         return data; 
     }
 }
 
 export interface ISubmitQuestionsAndAnswersDto {
-    xref: string | undefined;
-    name: string | undefined;
-    questions: SubmitQuestionDto[] | undefined;
+    questionnaire: SubmitQuestionnaireDto;
+    questionsAndAnswers: SubmitQuestionAndAnswersDto[];
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {
@@ -69769,6 +69857,7 @@ export interface IUserListDtoPagedResultDto {
 
 export class UserEditDto implements IUserEditDto {
     id!: number | undefined;
+    group!: UserGroup | undefined;
     name!: string;
     surname!: string;
     userName!: string;
@@ -69792,6 +69881,7 @@ export class UserEditDto implements IUserEditDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.group = data["group"];
             this.name = data["name"];
             this.surname = data["surname"];
             this.userName = data["userName"];
@@ -69815,6 +69905,7 @@ export class UserEditDto implements IUserEditDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["group"] = this.group;
         data["name"] = this.name;
         data["surname"] = this.surname;
         data["userName"] = this.userName;
@@ -69831,6 +69922,7 @@ export class UserEditDto implements IUserEditDto {
 
 export interface IUserEditDto {
     id: number | undefined;
+    group: UserGroup | undefined;
     name: string;
     surname: string;
     userName: string;
