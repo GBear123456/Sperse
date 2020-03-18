@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +36,7 @@ export class NotificationsComponent implements OnInit {
         private notificationService: NotificationServiceProxy,
         private userNotificationHelper: UserNotificationHelper,
         private changeDetectorRef: ChangeDetectorRef,
+        private router: Router,
         public ls: AppLocalizationService
     ) {}
 
@@ -92,9 +94,9 @@ export class NotificationsComponent implements OnInit {
         this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
-    gotoUrl(url): void {
+    gotoUrl(url: string): void {
         if (url) {
-            location.href = url;
+            this.router.navigateByUrl(url);
         }
     }
 }

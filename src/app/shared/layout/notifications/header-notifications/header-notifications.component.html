@@ -48,14 +48,25 @@
                         <a (click)="openAllNotifications($event)" href="javascript:;">{{ls.l("SeeAllNotifications")}}</a>
                     </div>
                     <div class="text-right col-md-6">
-                        <a href="javascript:;" class="text-right" (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();" *ngIf="unreadNotificationCount">{{ls.l("SetAllAsRead")}}</a>
+                        <a *ngIf="unreadNotificationCount"
+                           href="javascript:;"
+                           class="text-right"
+                           (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();">
+                            {{ls.l("SetAllAsRead")}}
+                        </a>
                     </div>
                 </div>
                 <hr />
                 <div class="m-scrollable" data-scrollable="true">
                     <div class="m-list-timeline m-list-timeline--skin-light m-nav">
                         <div class="m-list-timeline__items" [ngClass]="{'empty':!notifications.length}">
-                            <div *ngFor="let notification of notifications" class="m-list-timeline__item user-notification-item" (click)="gotoUrl(notification.url)" [ngClass]="{'user-notification-item-clickable': notification.url,'user-notification-item-unread': notification.isUnread}">
+                            <div *ngFor="let notification of notifications"
+                                 class="m-list-timeline__item user-notification-item"
+                                 [ngClass]="{
+                                     'user-notification-item-clickable': notification.url,
+                                     'user-notification-item-unread': notification.isUnread
+                                 }"
+                                 (click)="gotoUrl(notification.url)">
                                 <span class="m-list-timeline__badge m-list-timeline__badge--success"></span>
                                 <span class="m-list-timeline__icon {{notification.icon}}"></span>
                                 <span class="m-list-timeline__text">
