@@ -55,6 +55,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         if (this.data.source) {
             let image: any = new Image();
             image.src = this.data.source;
+            image.crossOrigin = 'Anonymous';
             image.onload = () => {
                 this.cropper.setImage(image);
                 this.clearDisabled = false;
@@ -122,7 +123,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
                 resolve();
             };
             image.src = this.imageData.image;
-
+            image.crossOrigin = 'Anonymous';
         });
     }
 
@@ -162,6 +163,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         let image = new Image();
         reader.onload = (loadEvent: any) => {
             image.src = loadEvent.target.result;
+            image.crossOrigin = 'Anonymous';
             image.onload = () => {
                 this.cropper.setImage(image);
             };
