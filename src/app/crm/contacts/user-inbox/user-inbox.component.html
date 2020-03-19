@@ -12,12 +12,13 @@
             [searchTimeout]="500"
             [dataSource]="dataSource"
             [collapsibleGroups]="true"
+            [focusStateEnabled]="false"
             [activeStateEnabled]="false"
             [selectedItemKeys]="[activeMessage?.id]"
             [searchEditorOptions]="{placeholder: ls.l('SearchMessage')}"
             [searchEnabled]="true"
             (onItemClick)="initActiveMessage($event.itemData)">
-                <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren}" (click)="initActiveMessage(item, $event)">
+                <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren}" (click)="initActiveMessage(item)">
                     <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(item?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
                         <div class="details">
@@ -68,7 +69,7 @@
             <dx-scroll-view showScrollbar="onHover">
                 <div class="body from" [innerHtml]="activeMessage?.body"></div>
                 <div *ngFor="let child of activeMessage?.items">
-                    <div class="body" [ngClass]="{from: activeMessage?.from == child.from, to: activeMessage?.from == child.to}" [innerHtml]="child.body"></div>
+                    <div class="body" [ngClass]="{from: activeMessage?.from == child.from, to: activeMessage?.from == child.to}" [innerHtml]="child.body || child.subject"></div>
                 </div>                
             </dx-scroll-view>
             <div class="attachments">

@@ -52,8 +52,17 @@
                     overflow: visible;
                     border-bottom: 1px solid #ddd;
                 }
-                .dx-list-group-body {
-                    overflow: visible;
+                .dx-list-group {
+                    &:last-child {
+                        &.dx-list-group-collapsed {
+                            .dx-list-group-body {
+                                display: none;
+                            }
+                        }
+                    }
+                    .dx-list-group-body {
+                        overflow: visible;
+                    }
                 }
                 .group-item {
                     z-index: 2;

@@ -224,9 +224,7 @@ export class UserInboxComponent implements OnDestroy {
         });
     }
 
-    initActiveMessage(record, event?) {
-        if (event)
-            event.stopPropagation();
+    initActiveMessage(record) {
         if (record && !this.activeMessage || record.id != this.activeMessage.id) {
             if (record.message)
                 this.activeMessage = record.message;
