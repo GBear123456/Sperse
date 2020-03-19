@@ -17,11 +17,13 @@
                 <dx-text-area 
                     height="135px"
                     [placeholder]="ls.l('Address')"
-                    [(value)]="settings.address">
+                    [(value)]="settings.address"
+                    [maxLength]="500">
                 </dx-text-area>
                 <dx-text-box 
                     [placeholder]="ls.l('Tax/VatNo')"
-                    [(value)]="settings.taxVatNo">
+                    [(value)]="settings.taxVatNo"
+                    [maxLength]="150">
                 </dx-text-box>    
             </div>
             <div class="right-side">
