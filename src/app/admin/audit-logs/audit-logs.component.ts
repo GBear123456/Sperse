@@ -153,7 +153,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             this.appService.toolbarIsHidden$,
             this.fullScreenService.isFullScreenMode$
         ).pipe(takeUntil(this.destroy$)).subscribe(
-            () => this.changeDetectorRef.detectChanges()
+            () => changeDetectorRef.markForCheck()
         );
 
         this.initFilterConfig();
