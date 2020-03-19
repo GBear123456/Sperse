@@ -222,47 +222,22 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         action: () => {
                             this.filterByGroup(undefined);
                         }
-                    },
-                    {
-                        name: 'Employees',
-                        widget: 'dxButton',
-                        options: {
-                            text: this.l('Employees'),
-                            checkPressed: () => {
-                                return this.group == UserGroup.Employee;
-                            }
-                        },
-                        action: () => {
-                            this.filterByGroup(UserGroup.Employee);
-                        }
-                    },
-                    {
-                        name: 'Members',
-                        widget: 'dxButton',
-                        options: {
-                            text: this.l('Members'),
-                            checkPressed: () => {
-                                return this.group == UserGroup.Member;
-                            }
-                        },
-                        action: () => {
-                            this.filterByGroup(UserGroup.Member);
-                        }
-                    },
-                    {
-                        name: 'Partners',
-                        widget: 'dxButton',
-                        options: {
-                            text: this.l('Partners'),
-                            checkPressed: () => {
-                                return this.group == UserGroup.Partner;
-                            }
-                        },
-                        action: () => {
-                            this.filterByGroup(UserGroup.Partner);
-                        }
                     }
-                ]
+                ].concat(Object.keys(UserGroup).map(key => {
+                    return {
+                        name: key,
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l(key + 's'),
+                            checkPressed: () => {
+                                return this.group == UserGroup[key];
+                            }
+                        },
+                        action: () => {
+                            this.filterByGroup(UserGroup[key]);
+                        }
+                    };
+                }))
             },
             {
                 location: 'after',

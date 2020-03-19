@@ -12,6 +12,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import {
+    UserGroup,
     UserServiceProxy,
     ProfileServiceProxy,
     UserEditDto,
@@ -62,6 +63,8 @@ export class CreateUserDialogComponent implements OnInit {
     sendActivationEmail = true;
     setRandomPassword = false;
     passwordComplexityInfo = '';
+    userGroups = Object.keys(UserGroup);
+    userGroup = this.userGroups[0];
 
     isTwoFactorEnabled: boolean = this.settingService.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
     isLockoutEnabled: boolean = this.settingService.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
@@ -241,11 +244,12 @@ export class CreateUserDialogComponent implements OnInit {
         let input = new CreateOrUpdateUserInput();
 
         input.user = this.user;
+        input.user.group = UserGroup[this.userGroup];
         input.user.userName = this.user.emailAddress;
         input.setRandomPassword = this.setRandomPassword;
         input.sendActivationEmail = this.sendActivationEmail;
         input.assignedRoleNames = this.roles.filter((role: UserRoleDto) => role.isAssigned)
-                                            .map((role: UserRoleDto) => role.roleName);
+            .map((role: UserRoleDto) => role.roleName);
 
         input.organizationUnits = this.selectedOrganizationsIds;
         input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
