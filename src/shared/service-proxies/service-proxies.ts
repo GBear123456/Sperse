@@ -4949,7 +4949,7 @@ export class CategoryTreeServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    sync(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, isOverride: boolean | null | undefined, body: SyncDto | null | undefined): Observable<void> {
+    sync(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, isOverride: boolean | null | undefined, body: SyncDto | null | undefined): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Sync?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4967,6 +4967,7 @@ export class CategoryTreeServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -4977,14 +4978,14 @@ export class CategoryTreeServiceProxy {
                 try {
                     return this.processSync(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<boolean>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<boolean>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSync(response: HttpResponseBase): Observable<void> {
+    protected processSync(response: HttpResponseBase): Observable<boolean> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4993,14 +4994,17 @@ export class CategoryTreeServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<boolean>(<any>null);
     }
 
     /**
@@ -11934,8 +11938,8 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getCustomersByCompanySize(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCustomersByCompanySizeOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByCompanySize?";
+    getContactsByCompanySize(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetContactsByCompanySizeOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByCompanySize?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -11952,20 +11956,20 @@ export class DashboardServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomersByCompanySize(response_);
+            return this.processGetContactsByCompanySize(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCustomersByCompanySize(<any>response_);
+                    return this.processGetContactsByCompanySize(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCustomersByCompanySizeOutput[]>><any>_observableThrow(e);
+                    return <Observable<GetContactsByCompanySizeOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCustomersByCompanySizeOutput[]>><any>_observableThrow(response_);
+                return <Observable<GetContactsByCompanySizeOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCustomersByCompanySize(response: HttpResponseBase): Observable<GetCustomersByCompanySizeOutput[]> {
+    protected processGetContactsByCompanySize(response: HttpResponseBase): Observable<GetContactsByCompanySizeOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -11979,7 +11983,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(GetCustomersByCompanySizeOutput.fromJS(item));
+                    result200.push(GetContactsByCompanySizeOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -11988,7 +11992,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCustomersByCompanySizeOutput[]>(<any>null);
+        return _observableOf<GetContactsByCompanySizeOutput[]>(<any>null);
     }
 
     /**
@@ -12058,8 +12062,8 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getContactsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<ContactsCountAgeRangeGetCountOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsCountByAge?";
+    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<LeadsCountAgeRangeGetCountOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByAge?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -12076,20 +12080,20 @@ export class DashboardServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetContactsCountByAge(response_);
+            return this.processGetLeadsCountByAge(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetContactsCountByAge(<any>response_);
+                    return this.processGetLeadsCountByAge(<any>response_);
                 } catch (e) {
-                    return <Observable<ContactsCountAgeRangeGetCountOutput[]>><any>_observableThrow(e);
+                    return <Observable<LeadsCountAgeRangeGetCountOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ContactsCountAgeRangeGetCountOutput[]>><any>_observableThrow(response_);
+                return <Observable<LeadsCountAgeRangeGetCountOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactsCountByAge(response: HttpResponseBase): Observable<ContactsCountAgeRangeGetCountOutput[]> {
+    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<LeadsCountAgeRangeGetCountOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12103,7 +12107,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(ContactsCountAgeRangeGetCountOutput.fromJS(item));
+                    result200.push(LeadsCountAgeRangeGetCountOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -12112,7 +12116,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ContactsCountAgeRangeGetCountOutput[]>(<any>null);
+        return _observableOf<LeadsCountAgeRangeGetCountOutput[]>(<any>null);
     }
 
     /**
@@ -12182,8 +12186,8 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getCustomersByRating(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByRating?";
+    getContactsByRating(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByRating?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -12200,11 +12204,11 @@ export class DashboardServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomersByRating(response_);
+            return this.processGetContactsByRating(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCustomersByRating(<any>response_);
+                    return this.processGetContactsByRating(<any>response_);
                 } catch (e) {
                     return <Observable<GetCountOutput[]>><any>_observableThrow(e);
                 }
@@ -12213,7 +12217,7 @@ export class DashboardServiceProxy {
         }));
     }
 
-    protected processGetCustomersByRating(response: HttpResponseBase): Observable<GetCountOutput[]> {
+    protected processGetContactsByRating(response: HttpResponseBase): Observable<GetCountOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12244,8 +12248,8 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getCustomersByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountByStarOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByStar?";
+    getContactsByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCountByStarOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByStar?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -12262,11 +12266,11 @@ export class DashboardServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomersByStar(response_);
+            return this.processGetContactsByStar(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCustomersByStar(<any>response_);
+                    return this.processGetContactsByStar(<any>response_);
                 } catch (e) {
                     return <Observable<GetCountByStarOutput[]>><any>_observableThrow(e);
                 }
@@ -12275,7 +12279,7 @@ export class DashboardServiceProxy {
         }));
     }
 
-    protected processGetCustomersByStar(response: HttpResponseBase): Observable<GetCountByStarOutput[]> {
+    protected processGetContactsByStar(response: HttpResponseBase): Observable<GetCountByStarOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -49352,11 +49356,11 @@ export interface IGetRecentlyCreatedLeadsOutput {
     creationTime: moment.Moment | undefined;
 }
 
-export class GetCustomersByCompanySizeOutput implements IGetCustomersByCompanySizeOutput {
-    customerCount!: number | undefined;
+export class GetContactsByCompanySizeOutput implements IGetContactsByCompanySizeOutput {
+    contactCount!: number | undefined;
     companySizeRange!: string | undefined;
 
-    constructor(data?: IGetCustomersByCompanySizeOutput) {
+    constructor(data?: IGetContactsByCompanySizeOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -49367,28 +49371,28 @@ export class GetCustomersByCompanySizeOutput implements IGetCustomersByCompanySi
 
     init(data?: any) {
         if (data) {
-            this.customerCount = data["customerCount"];
+            this.contactCount = data["contactCount"];
             this.companySizeRange = data["companySizeRange"];
         }
     }
 
-    static fromJS(data: any): GetCustomersByCompanySizeOutput {
+    static fromJS(data: any): GetContactsByCompanySizeOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetCustomersByCompanySizeOutput();
+        let result = new GetContactsByCompanySizeOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerCount"] = this.customerCount;
+        data["contactCount"] = this.contactCount;
         data["companySizeRange"] = this.companySizeRange;
         return data; 
     }
 }
 
-export interface IGetCustomersByCompanySizeOutput {
-    customerCount: number | undefined;
+export interface IGetContactsByCompanySizeOutput {
+    contactCount: number | undefined;
     companySizeRange: string | undefined;
 }
 
@@ -49436,7 +49440,7 @@ export interface IGetContactsByRegionOutput {
     count: number | undefined;
 }
 
-export enum ContactsCountAgeRange {
+export enum LeadsCountAgeRange {
     UpTo30Days = "UpTo30Days", 
     UpTo60Days = "UpTo60Days", 
     UpTo90Days = "UpTo90Days", 
@@ -49445,11 +49449,11 @@ export enum ContactsCountAgeRange {
     MoreThanYear = "MoreThanYear", 
 }
 
-export class ContactsCountAgeRangeGetCountOutput implements IContactsCountAgeRangeGetCountOutput {
-    key!: ContactsCountAgeRange | undefined;
+export class LeadsCountAgeRangeGetCountOutput implements ILeadsCountAgeRangeGetCountOutput {
+    key!: LeadsCountAgeRange | undefined;
     count!: number | undefined;
 
-    constructor(data?: IContactsCountAgeRangeGetCountOutput) {
+    constructor(data?: ILeadsCountAgeRangeGetCountOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -49465,9 +49469,9 @@ export class ContactsCountAgeRangeGetCountOutput implements IContactsCountAgeRan
         }
     }
 
-    static fromJS(data: any): ContactsCountAgeRangeGetCountOutput {
+    static fromJS(data: any): LeadsCountAgeRangeGetCountOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new ContactsCountAgeRangeGetCountOutput();
+        let result = new LeadsCountAgeRangeGetCountOutput();
         result.init(data);
         return result;
     }
@@ -49480,8 +49484,8 @@ export class ContactsCountAgeRangeGetCountOutput implements IContactsCountAgeRan
     }
 }
 
-export interface IContactsCountAgeRangeGetCountOutput {
-    key: ContactsCountAgeRange | undefined;
+export interface ILeadsCountAgeRangeGetCountOutput {
+    key: LeadsCountAgeRange | undefined;
     count: number | undefined;
 }
 
@@ -70335,6 +70339,7 @@ export interface ICreateOrUpdateUserInput {
 }
 
 export class InviteUserInput implements IInviteUserInput {
+    group!: UserGroup | undefined;
     name!: string;
     surname!: string;
     emailAddress!: string;
@@ -70355,6 +70360,7 @@ export class InviteUserInput implements IInviteUserInput {
 
     init(data?: any) {
         if (data) {
+            this.group = data["group"];
             this.name = data["name"];
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
@@ -70376,6 +70382,7 @@ export class InviteUserInput implements IInviteUserInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["group"] = this.group;
         data["name"] = this.name;
         data["surname"] = this.surname;
         data["emailAddress"] = this.emailAddress;
@@ -70390,6 +70397,7 @@ export class InviteUserInput implements IInviteUserInput {
 }
 
 export interface IInviteUserInput {
+    group: UserGroup | undefined;
     name: string;
     surname: string;
     emailAddress: string;
