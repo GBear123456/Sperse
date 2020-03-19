@@ -385,9 +385,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactService['data'].contactInfo = {
             id: this.customerId = contactId
         };
-        this.contactService['data'].leadInfo = {
-            id: this.leadId = leadId
-        };
+        if (this.leadId != leadId)
+            this.contactService['data'].leadInfo = {
+                id: this.leadId = leadId
+            };
         return userId
                ? this.loadContactInfoForUser(userId, companyId)
                : this.loadContactInfoForClient(contactId, leadId, companyId);
