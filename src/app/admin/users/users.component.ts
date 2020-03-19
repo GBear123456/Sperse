@@ -38,6 +38,12 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import {
+    FlatPermissionWithLevelDto,
+    FlatPermissionWithLevelDtoListResultDto,
+    RoleListDto,
+    RoleListDtoListResultDto
+} from '../../../shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './users.component.html',
@@ -349,74 +355,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         forkJoin(
             this.permissionService.getAllPermissions(false),
             this.roleService.getRoles(undefined, undefined)
-        ).subscribe((res) => {
-            this.filtersService.setup(
-                this.filters = [
-                    new FilterModel({
-                        component: FilterTreeListComponent,
-                        caption: 'permission',
-                        items: {
-                            element: new FilterTreeListModel({
-                                value: this.selectedPermissions,
-                                list: res[0].items.map((item) => {
-                                    return {
-                                        id: item.name,
-                                        parent: item.parentName,
-                                        name: item.displayName,
-                                        displayName: item.displayName
-                                    };
-                                })
-                            })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterRadioGroupComponent,
-                        caption: 'role',
-                        items: {
-                            element: new FilterRadioGroupModel({
-                                value: this.role,
-                                list: res[1].items.map((item) => {
-                                    return {
-                                        id: item.id,
-                                        name: item.displayName
-                                    };
-                                })
-                            })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterRadioGroupComponent,
-                        caption: 'group',
-                        items: {
-                            element: new FilterRadioGroupModel({
-                                value: this.group,
-                                list: [UserGroup.Employee, UserGroup.Member, UserGroup.Partner].map((item) => {
-                                    return {
-                                        id: item,
-                                        name: this.l(item)
-                                    };
-                                })
-                            })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterRadioGroupComponent,
-                        caption: 'isActive',
-                        items: {
-                            element: new FilterNullableRadioGroupModel({
-                                value: this.isActive,
-                                list: [
-                                    { id: true, name: this.l('Active')},
-                                    { id: false, name: this.l('Inactive')}
-                                ]
-                            })
-                        }
-                    })
-                ]
-            );
-
-            this.updateGroupFilter(this.group);
-            this.updateIsActiveFilter(this.isActive);
+        ).subscribe(([permissions, roles]: [FlatPermissionWithLevelDtoListResultDto, RoleListDtoListResultDto]) => {
+            this.setupFilters(permissions.items, roles.items);
         });
 
         this.filtersService.apply((filter) => {
@@ -439,6 +379,73 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
+    private setupFilters(permissions: FlatPermissionWithLevelDto[], roles: RoleListDto[]) {
+        this.filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterTreeListComponent,
+                    caption: 'permission',
+                    items: {
+                        element: new FilterTreeListModel({
+                            value: this.selectedPermissions,
+                            list: permissions.map((item: FlatPermissionWithLevelDto) => {
+                                return {
+                                    id: item.name,
+                                    parent: item.parentName,
+                                    name: item.displayName,
+                                    displayName: item.displayName
+                                };
+                            })
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterRadioGroupComponent,
+                    caption: 'role',
+                    items: {
+                        element: new FilterRadioGroupModel({
+                            value: this.role,
+                            list: roles.map((item: RoleListDto) => {
+                                return {
+                                    id: item.id,
+                                    name: item.displayName
+                                };
+                            })
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterRadioGroupComponent,
+                    caption: 'group',
+                    items: {
+                        element: new FilterRadioGroupModel({
+                            value: this.group,
+                            list: [UserGroup.Employee, UserGroup.Member, UserGroup.Partner].map((item) => {
+                                return {
+                                    id: item,
+                                    name: this.l(item)
+                                };
+                            })
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterRadioGroupComponent,
+                    caption: 'isActive',
+                    items: {
+                        element: new FilterNullableRadioGroupModel({
+                            value: this.isActive,
+                            list: [
+                                { id: true, name: this.l('Active')},
+                                { id: false, name: this.l('Inactive')}
+                            ]
+                        })
+                    }
+                })
+            ]
+        );
+    }
+
     filterByGroup(group: UserGroup) {
         this.group = group;
 
@@ -452,7 +459,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     filterByIsActive(isActive: boolean) {
         this.isActive = isActive;
-
         this.initToolbarConfig();
         this.updateIsActiveFilter(isActive);
     }
