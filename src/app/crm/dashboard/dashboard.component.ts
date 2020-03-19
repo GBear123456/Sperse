@@ -9,7 +9,7 @@ import {
     OnDestroy,
     ChangeDetectorRef
 } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -19,7 +19,12 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { filter, first, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { RootStore, StatesStoreActions } from '@root/store';
@@ -44,10 +49,10 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
+export class DashboardComponent implements AfterViewInit, OnInit {
     @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
-    private rootComponent: any;
+
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
     showDefaultSection$: Observable<boolean> = this.showWelcomeSection$.pipe(
@@ -56,14 +61,16 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     showLoadingSpinner = true;
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
-    isGrantedCustomers = this.isGranted(AppPermissions.CRMCustomers);
-    isGrantedOrders = this.isGranted(AppPermissions.CRMOrders);
+    isGrantedCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
+    isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
     hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
     hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
     hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
+    localization = AppConsts.localization.CRMLocalizationSourceName;
 
     constructor(
         injector: Injector,
+        private router: Router,
         private appService: AppService,
         private appSessionService: AppSessionService,
         private dashboardWidgetsService: DashboardWidgetsService,
@@ -74,9 +81,13 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private cacheService: CacheService,
         private lifeCycleSubject: LifecycleSubjectsService,
         private dashboardServiceProxy: DashboardServiceProxy,
+        private activatedRoute: ActivatedRoute,
+        public ui: AppUiCustomizationService,
+        public permission: AppPermissionService,
+        public cacheHelper: CacheHelper,
+        public ls: AppLocalizationService,
         public dialog: MatDialog
     ) {
-        super(injector);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 
@@ -92,8 +103,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     ngAfterViewInit(): void {
         this.activate();
-        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
-        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     refresh(refreshLeadsAndClients = true) {
@@ -113,7 +122,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     addClient() {
-        this._router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
+        this.router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
     }
 
     private loadStatus() {
@@ -121,13 +130,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });
-    }
-
-    ngOnDestroy() {
-        super.ngOnDestroy();
-        this.deactivate();
-        this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
-        this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     openDialog() {
@@ -157,8 +159,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             panelClass: ['payment-wizard', 'setup'],
             data: {
                 module: this.appService.getModuleSubscription(ModuleType.CRM).module,
-                title: this.ls(
-                    'Platform',
+                title: this.ls.ls(
+                    AppConsts.localization.defaultLocalizationSourceName,
                     'UpgradeYourSubscription',
                     this.appService.getSubscriptionName(ModuleType.CRM)
                 )
@@ -167,25 +169,21 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     activate() {
-        super.activate();
         this.loadStatus();
         this.lifeCycleSubject.activate.next();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
         this.subscribeToRefreshParam();
-        this.showHostElement(() => {
-            if (this.clientsByRegion && this.clientsByRegion.mapComponent)
-                this.clientsByRegion.mapComponent.vectorMapComponent.instance.render();
-            if (this.totalsBySource && this.totalsBySource.chartComponent)
-                this.totalsBySource.chartComponent.instance.render();
-            this.changeDetectorRef.detectChanges();
-        });
+
+        if (this.clientsByRegion && this.clientsByRegion.mapComponent)
+            this.clientsByRegion.mapComponent.vectorMapComponent.instance.render();
+        if (this.totalsBySource && this.totalsBySource.chartComponent)
+            this.totalsBySource.chartComponent.instance.render();
+        this.changeDetectorRef.detectChanges();
     }
 
     subscribeToRefreshParam() {
-        this._activatedRoute.queryParams
+        this.activatedRoute.queryParams
             .pipe(
-                takeUntil(this.deactivate$),
+                takeUntil(this.lifeCycleSubject.deactivate$),
                 filter(params => !!params['refresh'])
             )
             .subscribe(() => this.refresh() );
@@ -198,10 +196,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     deactivate() {
-        super.deactivate();
-        if (this.rootComponent) {
-            this.rootComponent.overflowHidden();
-        }
-        this.hideHostElement();
+        this.lifeCycleSubject.deactivate.next();
     }
 }

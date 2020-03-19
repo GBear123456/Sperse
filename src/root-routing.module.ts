@@ -89,6 +89,11 @@ const routes: Routes = [
         canActivateChild: [ RouteGuard, LocalizationResolver ],
         children: [
             {
+                path: '',
+                redirectTo: 'app',
+                pathMatch: 'full'
+            },
+            {
                 path: 'account',
                 loadChildren: () => import('account/account.module').then(m => m.AccountModule), //Lazy load account module
             },
