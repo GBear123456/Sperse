@@ -40,6 +40,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { ToolBarComponent } from '../../shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -48,7 +49,7 @@ import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild(ToolBarComponent, { static: false }) toolbarComponent: ToolBarComponent;
 
     private editions: any = [];
     private filters: FilterModel[];
@@ -95,6 +96,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     ].filter(Boolean);
 
     tenantName: string = this.route.snapshot.queryParams.name;
+    searchValue: string = this.tenantName;
     productId = '-1';
     creationDateStart: moment;
     creationDateEnd: moment;
@@ -170,7 +172,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             pluck('name'),
             filter((tenantName: string) => tenantName && this.tenantName !== tenantName)
         ).subscribe((tenantName: string) => {
-            this.tenantName = this.tenantNameFilter.items.name.value = tenantName;
+            this.searchValue = this.tenantName = this.tenantNameFilter.items.name.value = tenantName;
             this.tenantNameFilter.updateCaptions();
             this.filtersService.change(this.tenantNameFilter);
         });

@@ -160,6 +160,7 @@ export class HeaderNotificationsComponent implements OnInit {
     gotoUrl(url: string): void {
         if (url) {
             this.router.navigateByUrl(url);
+            this.hideDropDown();
         }
     }
 

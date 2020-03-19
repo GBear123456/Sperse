@@ -97,6 +97,7 @@ export class NotificationsComponent implements OnInit {
     gotoUrl(url: string): void {
         if (url) {
             this.router.navigateByUrl(url);
+            this.dialog.closeAll();
         }
     }
 }
