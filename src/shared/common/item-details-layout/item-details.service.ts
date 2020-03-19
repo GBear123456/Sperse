@@ -1,8 +1,13 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
-import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+
+/** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { Observable, of, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+
+/** Application imports */
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 

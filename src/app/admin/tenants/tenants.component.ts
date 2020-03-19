@@ -174,6 +174,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         ).subscribe((tenantName: string) => {
             this.searchValue = this.tenantName = this.tenantNameFilter.items.name.value = tenantName;
             this.tenantNameFilter.updateCaptions();
+            this.initFilterConfig();
             this.filtersService.change(this.tenantNameFilter);
         });
     }
@@ -274,7 +275,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     }
 
     initFilterConfig() {
-        const anyFilterAppied = this.filtersService.setup(
+        const anyFilterApplied = this.filtersService.setup(
             this.filters = [
                 this.tenantNameFilter,
                 new FilterModel({
@@ -306,7 +307,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                 })
             ]
         );
-        if (anyFilterAppied) {
+        if (anyFilterApplied) {
             this.initToolbarConfig();
         }
 
