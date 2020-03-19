@@ -42,9 +42,9 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 export class LeadInformationComponent implements OnInit, OnDestroy {
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild('loaderWrapper', { static: false }) loaderWrapper: ElementRef;
-    data: {
-        contactInfo: ContactInfoDto,
-        leadInfo: LeadInfoDto
+    data = {
+        contactInfo: new ContactInfoDto(),
+        leadInfo: new LeadInfoDto()
     };
     application: any;
     showApplicationAllowed = false;
@@ -179,10 +179,10 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
+            this.data.leadInfo = leadInfo;
             this.updateSourceContactName();
         }, this.constructor.name);
         this.contactsService.contactInfoSubscribe(contactInfo => {
-            this.data = this.contactProxy['data'];
             this.data.contactInfo = contactInfo;
             this.initToolbarInfo();
             this.showOrgUnitsDialog();

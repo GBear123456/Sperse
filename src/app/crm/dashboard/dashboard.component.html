@@ -1,5 +1,5 @@
-<app-headline [names]="[ l('Dashboard') ]"
-              [text]="l('statistics and reports')"
+<app-headline [names]="[ ls.ls(localization, 'Dashboard') ]"
+              [text]="ls.ls(localization, 'statistics and reports')"
               icon="globe"
               [showReloadButton]="ui.showReload"
               (onReload)="refresh()">
@@ -13,21 +13,21 @@
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
               <div>
                   <img class="logo-crm" alt="CRM Logo" src="./assets/common/icons/cfo.png" />
-                  <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
+                  <span class="sperse-crm big-gray-text">{{ls.ls(localization, 'CRM')}}</span>
               </div>
-              <p class="second-line big-gray-text">{{l('CRM_Long')}}</p>
-              <p class="welcome-crm">{{l('CRMDashboard_WelcomeText')}}</p>
-              <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
+              <p class="second-line big-gray-text">{{ls.ls(localization, 'CRM_Long')}}</p>
+              <p class="welcome-crm">{{ls.ls(localization, 'CRMDashboard_WelcomeText')}}</p>
+              <p class="text-crm">{{ls.ls(localization, 'CRMDashboard_StartText')}}</p>
               <p class="manage-crm" *ngIf="hasCustomersPermission || hasOrdersPermission">
-                  {{l('CRMDashboard_ManageText')}}
+                  {{ls.ls(localization, 'CRMDashboard_ManageText')}}
                   <ng-container *ngIf="hasCustomersPermission">
-                      <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a>
+                      <a [routerLink]="['/app/crm/leads']">{{ls.ls(localization, 'Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'Clients')}}</a>
                   </ng-container>
                   <ng-container *ngIf="hasCustomersPermission && hasOrdersPermission"> and </ng-container>
-                  <a *ngIf="hasOrdersPermission" [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a>
+                  <a *ngIf="hasOrdersPermission" [routerLink]="['/app/crm/orders']">{{ls.ls(localization, 'Orders')}}</a>
               </p>
-              <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
-              <button *ngIf="hasPermissionToAddClient" (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
+              <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'CRMDashboard_AddContact')}}</a> | {{ls.ls(localization, 'CRMDashboard_ImportContact')}}</p -->
+              <button *ngIf="hasPermissionToAddClient" (click)="addClient()" class="btn btn-layout add-client">{{ ls.ls(localization, 'CRMDashboard_AddClient') }}</button>
           </div>
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">

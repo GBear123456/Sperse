@@ -6,7 +6,7 @@
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
                 <div class="form-group clearfix">
                     <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></p>
-                    <div *ngIf="!isLinkSent && detectedTenancies.length">
+                    <div *ngIf="!isLinkSent && detectedTenancies.length > 1">
                         <p>{{ls.l('SelectTenant_Information')}}</p>
                         <div class="list-group">
                             <a class="list-group-item list-group-item-action" *ngFor="let tenant of detectedTenancies" (click)="sendloginLink(tenant.id)">
@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="submit" [hidden]="isLinkSent || detectedTenancies.length">
+                    <button type="submit" class="submit" [hidden]="isLinkSent || detectedTenancies.length > 1">
                         {{ls.l("Auto Login")}}
                         <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
                     </button>

@@ -669,16 +669,18 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     onDocumentTypeSelected(documentTypeId, data) {
-        this.documentService.updateType(UpdateTypeInput.fromJS({
-            documentId: data.id,
-            typeId: documentTypeId
-        })).subscribe(() => {
-            this.clickedCellKey = undefined;
-            data.typeId = documentTypeId;
-            data.typeName = documentTypeId ?
-                this.documentTypes.find(item => item.id == documentTypeId).name :
-                undefined;
-        });
+        setTimeout(() => {
+            this.documentService.updateType(UpdateTypeInput.fromJS({
+                documentId: data.id,
+                typeId: documentTypeId
+            })).subscribe(() => {
+                this.clickedCellKey = undefined;
+                data.typeId = documentTypeId;
+                data.typeName = documentTypeId ?
+                    this.documentTypes.find(item => item.id == documentTypeId).name :
+                    undefined;
+            });
+        }, 300);
     }
 
     hideActionsMenu() {
