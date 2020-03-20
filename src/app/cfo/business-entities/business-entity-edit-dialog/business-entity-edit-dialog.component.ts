@@ -186,8 +186,8 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         return this.store$.pipe(
             select(StatesStoreSelectors.getCountryStates, { countryCode: this.address.countryCode }),
             tap((states: CountryStateDto[]) => {
-                if (states && states.length && !this.businessEntity.stateName && this.businessEntity.stateId) {
-                    const state = states.find((state: CountryStateDto) => state.code === this.businessEntity.stateId);
+                if (states && states.length && this.businessEntity.stateId && !this.businessEntity.stateName) {
+                    const state = states.find((state: CountryStateDto) => state.code === this.businessEntity.stateId.replace(/\s/g, ''));
                     this.businessEntity.stateName = state.name;
                 }
             }),
@@ -201,15 +201,17 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     stateChanged(e) {
-        this.store$.pipe(
-            select(StatesStoreSelectors.getStateCodeFromStateName, {
-                countryCode: this.address.countryCode,
-                stateName: e.value
-            }),
-            first()
-        ).subscribe((stateCode: string) => {
-            this.businessEntity.stateId = stateCode;
-        });
+        if (e.value) {
+            this.store$.pipe(
+                select(StatesStoreSelectors.getStateCodeFromStateName, {
+                    countryCode: this.address.countryCode,
+                    stateName: e.value
+                }),
+                first()
+            ).subscribe((stateCode: string) => {
+                this.businessEntity.stateId = stateCode;
+            });
+        }
     }
 
     onCustomStateCreate(e) {

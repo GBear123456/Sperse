@@ -132,6 +132,7 @@
                     <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false" cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns && showAccountType"></dxi-column>
                     <dxi-column dataField="businessEntityId" [allowEditing]="allowEditing" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
                     <dxi-column dataField="isActive" [allowEditing]="allowEditing" [visible]="false"></dxi-column>
+                    <dxi-column dataField="lastSyncDate" [width]="150" alignment="left" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
                     <dxi-column dataField="balance" cssClass="tabular balance" [minWidth]="70" [width]="balanceColumnWidth" alignment="right" cellTemplate="amountTemplate" [visible]="accessAllDepartments && showAdvancedColumns" [allowEditing]="false"></dxi-column>
                     <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance" cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                     <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
@@ -176,6 +177,15 @@
                                        [(value)]="cell.value"
                                        (onValueChanged)="cell.setValue($event.value)">
                         </dx-select-box>
+                    </div>
+                    <div *dxTemplate="let cell of 'syncDateTemplate'">
+                        <ng-container *ngIf="(cell.text)">
+                            <div class="sync-date clipboard-holder"
+                                 title="Last good sync: {{cell.data.lastGoodSyncDate | date: 'MMM d, y ' : userTimezone}}" >
+                                {{cell.text | date: 'MMM d, y ' : userTimezone}}
+                                <span class="syncStatus" [title]="cell.data.syncStatus" [style.background-color]="getStatusColor(cell.data.syncStatus)"></span>
+                            </div>
+                        </ng-container>
                     </div>
                 </dx-data-grid>
             </div>
