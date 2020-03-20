@@ -148,7 +148,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             id: SubscriptionsStatus[status],
                             name: status
                         })),
-                        value: [ SubscriptionsStatus.Active ],
+                        value: [ SubscriptionsStatus.Current ],
                         nameField: 'name',
                         keyExpr: 'id'
                     })
