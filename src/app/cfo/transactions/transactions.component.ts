@@ -924,33 +924,31 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initFiltering() {
-        if (!this.isAdvicePeriod) {
-            this.filtersService.apply(filter => {
-                if (filter) {
-                    let filterName = filter.caption.toLowerCase();
-                    if (filterName == 'businessentity' || filterName == 'account') {
-                        this.bankAccountsService.changeSelectedBusinessEntities(
-                            this.businessEntityFilter.items.element.value);
-                        this.bankAccountsService.applyFilter();
-                    }
-
-                    if (filterName == 'classified') {
-                        if (this.selectedCashflowCategoryKeys && filter.items['no'].value === true && filter.items['yes'].value !== true) {
-                            this.clearCategoriesFilters();
-                            this.categorizationComponent.clearSelection();
-                            this.selectedCashflowCategoryKeys = null;
-                        }
-                    }
-                } else {
-                    this.selectAllAccounts();
-                    this.dataGrid.instance.clearFilter();
+        this.filtersService.apply(filter => {
+            if (filter) {
+                let filterName = filter.caption.toLowerCase();
+                if (filterName == 'businessentity' || filterName == 'account') {
+                    this.bankAccountsService.changeSelectedBusinessEntities(
+                        this.businessEntityFilter.items.element.value);
+                    this.bankAccountsService.applyFilter();
                 }
 
-                this.initToolbarConfig();
-                this.processFilterInternal();
-            });
-            this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams);
-        }
+                if (filterName == 'classified') {
+                    if (this.selectedCashflowCategoryKeys && filter.items['no'].value === true && filter.items['yes'].value !== true) {
+                        this.clearCategoriesFilters();
+                        this.categorizationComponent.clearSelection();
+                        this.selectedCashflowCategoryKeys = null;
+                    }
+                }
+            } else {
+                this.selectAllAccounts();
+                this.dataGrid.instance.clearFilter();
+            }
+
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
+        this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams);
     }
 
     setDataSource() {
