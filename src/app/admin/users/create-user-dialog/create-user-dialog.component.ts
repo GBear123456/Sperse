@@ -116,6 +116,8 @@ export class CreateUserDialogComponent implements OnInit {
             { text: this.ls.l('SaveAndAddNew'), selected: false },
             { text: this.ls.l('SaveAndClose'), selected: false }
         ];
+        if (this.data.userGroup)
+            this.userGroup = this.data.userGroup;
     }
 
     ngOnInit() {

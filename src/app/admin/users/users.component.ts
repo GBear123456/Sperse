@@ -500,7 +500,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: { refreshParent: this.invalidate.bind(this) }
+            data: { 
+                userGroup: this.group,
+                refreshParent: this.invalidate.bind(this)
+            }
         }).afterClosed().pipe(filter(Boolean)).subscribe(() => this.invalidate());
     }
 
