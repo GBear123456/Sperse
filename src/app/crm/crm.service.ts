@@ -32,7 +32,7 @@ export class CrmService {
         this.appService.toolbarIsHidden$,
         this.fullScreenService.isFullScreenMode$,
         this.windowResize$
-    ).pipe(map(([toolbarIsHidden, isFullScreenMode, resize]: [boolean, boolean, any]) => {
+    ).pipe(map(([toolbarIsHidden, isFullScreenMode, ]: [boolean, boolean, any]) => {
         let height: number;
         if (isFullScreenMode) {
             height = window.innerHeight - 60;

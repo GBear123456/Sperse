@@ -17,6 +17,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'odata_LeadSlice',
         'odata_CustomerSlice',
         'odata_PartnerSlice',
+        'odata_SubscriptionSlice',
         'Localization_GetLocalizationSource'
     ];
 

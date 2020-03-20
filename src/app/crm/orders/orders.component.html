@@ -30,7 +30,7 @@
                     [list]="stages"
                     (onItemSelected)="updateOrdersStage($event)">
             </app-static-list>
-            <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
+            <div [hidden]="isDataLoaded && !totalRowCount || showOrdersPipeline" class="portlet light no-padding margin-bottom-0">
                 <div class="portlet-body">
                     <div>
                         <div id="ClientsTable">
@@ -108,7 +108,7 @@
                     </div>
                 </div>
             </div>
-            <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
+            <div [hidden]="!showOrdersPipeline" class="portlet light no-padding margin-bottom-0">
                 <div class="portlet-body">
                     <div class="funnel-wrapper main-component-view">
                         <app-pipeline
@@ -135,66 +135,73 @@
     <div [hidden]="selectedOrderType !== orderTypesEnum.Subscription">
         <app-toolbar [config]="subscriptionsToolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
         <div class="main-wrapper">
-            <ghost-list *ngIf="!isDataLoaded"></ghost-list>
-            <dx-data-grid #subscriptionsGrid
-                          id="gridContainer"
-                          class="main-component-view"
-                          accesskey="narrowHeaderPanel"
-                          keyExpr="id"
-                          [loadPanel]="{ enabled: false }"
-                          [allowColumnReordering]="true"
-                          [columnAutoWidth]="true"
-                          [pager]="defaultGridPagerConfig"
-                          [hoverStateEnabled]="true"
-                          [remoteOperations]="{
-                              filtering: false,
-                              grouping: true,
-                              groupPaging: true,
-                              paging: true,
-                              sorting: true,
-                              summary: true
-                          }"
-                          [allowColumnResizing]="true"
-                          (onCellClick)="onCellClick($event, 'subscriptions')"
-                          (onContentReady)="onContentReady($event)">
-                <dxo-sorting mode="multiple"></dxo-sorting>
-                <dxo-group-panel [visible]="true"></dxo-group-panel>
-                <dxo-selection selectAllMode="page"
-                               showCheckBoxesMode="always"
-                               mode="multiple">
-                </dxo-selection>
-                <dxi-column dataField="Id" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
-                <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
-                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                    [allowGrouping]="false" [allowSorting]="false"></dxi-column>
-                <dxi-column dataField="ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <dxi-column dataField="FirstName" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="LastName" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="EmailAddress" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="PhoneNumber" [caption]="l('Contact.Phone')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <dxi-column dataField="StateName" [caption]="l('Contact.State')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <dxi-column dataField="Zip" [caption]="l('Contact.Zip')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <dxi-column dataField="CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <dxi-column dataField="ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="ServiceType" [caption]="l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
-                <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate" alignment="left"></dxi-column>
-                <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                <div *dxTemplate="let data of 'photoTemplate'">
-                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
-                </div>
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | date: formatting.date : userTimezone }}
-                </div>
-                <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                    <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
-                </div>
-            </dx-data-grid>
+            <div [hidden]="subscriptionsDataLayoutType !== layoutTypes.DataGrid">
+                <ghost-list *ngIf="!isDataLoaded"></ghost-list>
+                <dx-data-grid #subscriptionsGrid
+                              id="gridContainer"
+                              class="main-component-view"
+                              accesskey="narrowHeaderPanel"
+                              keyExpr="id"
+                              [loadPanel]="{ enabled: false }"
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [pager]="defaultGridPagerConfig"
+                              [hoverStateEnabled]="true"
+                              [remoteOperations]="{
+	                              filtering: false,
+	                              grouping: true,
+	                              groupPaging: true,
+	                              paging: true,
+	                              sorting: true,
+	                              summary: true
+	                          }"
+                              [allowColumnResizing]="true"
+                              (onCellClick)="onCellClick($event, 'subscriptions')"
+                              (onContentReady)="onContentReady($event)">
+                    <dxo-sorting mode="multiple"></dxo-sorting>
+                    <dxo-group-panel [visible]="true"></dxo-group-panel>
+                    <dxo-selection selectAllMode="page"
+                                   showCheckBoxesMode="always"
+                                   mode="multiple">
+                    </dxo-selection>
+                    <dxi-column dataField="Id" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
+                    <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                                [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                                [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                    <dxi-column dataField="ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="FirstName" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="LastName" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="EmailAddress" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="PhoneNumber" [caption]="l('Contact.Phone')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="StateName" [caption]="l('Contact.State')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="Zip" [caption]="l('Contact.Zip')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column dataField="ServiceType" [caption]="l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate" alignment="left"></dxi-column>
+                    <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <div *dxTemplate="let data of 'photoTemplate'">
+                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
+                    </div>
+                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                        {{cellData.value | date: formatting.date : userTimezone }}
+                    </div>
+                    <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
+                        <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+                    </div>
+                </dx-data-grid>
+            </div>
+            <slice-pivot-grid [hidden]="subscriptionsDataLayoutType !== layoutTypes.PivotGrid"
+                              [storageKey]="sliceStorageKey"
+                              [isLoading]="pivotGridDataIsLoading"
+                              [height]="contentHeight$ | async">
+            </slice-pivot-grid>
         </div>
     </div>
 </div>
