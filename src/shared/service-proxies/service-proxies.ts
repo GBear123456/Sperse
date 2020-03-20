@@ -36156,6 +36156,15 @@ export interface IEntityPropertyChangeDto {
     id: number | undefined;
 }
 
+export enum SyncProgressStatus {
+    InProgress = "InProgress", 
+    ActionRequired = "ActionRequired", 
+    SyncPending = "SyncPending", 
+    Unavailable = "Unavailable", 
+    Completed = "Completed", 
+    Failed = "Failed", 
+}
+
 export class BankAccountDto implements IBankAccountDto {
     id!: number | undefined;
     typeId!: string | undefined;
@@ -36171,6 +36180,9 @@ export class BankAccountDto implements IBankAccountDto {
     utilized!: number | undefined;
     syncAccountId!: number | undefined;
     isUsed!: boolean | undefined;
+    lastSyncDate!: moment.Moment | undefined;
+    lastGoodSyncDate!: moment.Moment | undefined;
+    syncStatus!: SyncProgressStatus | undefined;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -36197,6 +36209,9 @@ export class BankAccountDto implements IBankAccountDto {
             this.utilized = data["utilized"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
+            this.syncStatus = data["syncStatus"];
         }
     }
 
@@ -36223,6 +36238,9 @@ export class BankAccountDto implements IBankAccountDto {
         data["utilized"] = this.utilized;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
+        data["syncStatus"] = this.syncStatus;
         return data; 
     }
 }
@@ -36242,14 +36260,9 @@ export interface IBankAccountDto {
     utilized: number | undefined;
     syncAccountId: number | undefined;
     isUsed: boolean | undefined;
-}
-
-export enum SyncProgressStatus {
-    InProgress = "InProgress", 
-    ActionRequired = "ActionRequired", 
-    SyncPending = "SyncPending", 
-    Unavailable = "Unavailable", 
-    Completed = "Completed", 
+    lastSyncDate: moment.Moment | undefined;
+    lastGoodSyncDate: moment.Moment | undefined;
+    syncStatus: SyncProgressStatus | undefined;
 }
 
 export class SyncAccountBankDto implements ISyncAccountBankDto {
@@ -36258,6 +36271,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     name!: string | undefined;
     balance!: number | undefined;
     lastSyncDate!: moment.Moment | undefined;
+    lastGoodSyncDate!: moment.Moment | undefined;
     bankAccounts!: BankAccountDto[] | undefined;
     syncAccountStatus!: SyncProgressStatus | undefined;
     syncRef!: string | undefined;
@@ -36279,6 +36293,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.name = data["name"];
             this.balance = data["balance"];
             this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -36304,6 +36319,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["name"] = this.name;
         data["balance"] = this.balance;
         data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -36322,6 +36338,7 @@ export interface ISyncAccountBankDto {
     name: string | undefined;
     balance: number | undefined;
     lastSyncDate: moment.Moment | undefined;
+    lastGoodSyncDate: moment.Moment | undefined;
     bankAccounts: BankAccountDto[] | undefined;
     syncAccountStatus: SyncProgressStatus | undefined;
     syncRef: string | undefined;
