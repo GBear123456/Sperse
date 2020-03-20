@@ -472,7 +472,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                 /** filter all widgets by new data if change is on this component */
                 if (this.componentIsActivated) {
-                    this.applyTotalBankAccountFilter();
+                    this.applyTotalBankAccountFilter(true);
                 } else {
                     /** if change is on another component - mark this for future update */
                     this.updateAfterActivation = true;
