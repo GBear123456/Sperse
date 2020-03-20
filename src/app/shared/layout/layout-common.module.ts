@@ -9,6 +9,7 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -68,7 +69,8 @@ let COMPONENTS = [
         PaginatorModule,
         DxScrollViewModule,
         DxSelectBoxModule,
-        DxCheckBoxModule
+        DxCheckBoxModule,
+        DxDataGridModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

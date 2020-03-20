@@ -1,9 +1,10 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import DataSource from 'devextreme/data/data_source';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -12,6 +13,9 @@ import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-p
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { GetNotificationsOutput } from '../../../../shared/service-proxies/service-proxies';
+import { DataGridService } from '../../common/data-grid.service/data-grid.service';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
     templateUrl: './notifications.component.html',
@@ -22,7 +26,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    notifications: IFormattedUserNotification[] = [];
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     unreadNotificationCount = 0;
     readStateFilter = 'ALL';
     loading = false;
@@ -30,33 +34,45 @@ export class NotificationsComponent implements OnInit {
         { value: 'ALL', text: this.ls.l('All') },
         { value: 'UNREAD', text: this.ls.l('Unread') }
     ];
+    notificationsDataSource = new DataSource({
+        key: 'userNotificationId',
+        load: (loadOptions) => {
+            this.modalDialog.startLoading();
+            return this.notificationService.getUserNotifications(
+                undefined,
+                loadOptions.take,
+                loadOptions.skip
+            ).pipe(
+                finalize(() => this.modalDialog.finishLoading()),
+            ).toPromise().then((notificationsOutput: GetNotificationsOutput) => {
+                let notifications = [];
+                this.unreadNotificationCount = notificationsOutput.unreadCount;
+                notificationsOutput.items.forEach((item: UserNotificationDto) => {
+                    notifications.push(this.userNotificationHelper.format(<any>item, false));
+                });
+                return {
+                    data: notifications,
+                    totalCount: notificationsOutput.totalCount
+                };
+            });
+        }
+    });
+    defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
         private userNotificationHelper: UserNotificationHelper,
-        private changeDetectorRef: ChangeDetectorRef,
         private router: Router,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this.loadNotifications();
         this.registerToEvents();
     }
 
     loadNotifications(): void {
-        this.modalDialog.startLoading();
-        this.notificationService.getUserNotifications(undefined, 3, 0)
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(result => {
-                this.unreadNotificationCount = result.unreadCount;
-                this.notifications = [];
-                $.each(result.items, (index, item: UserNotificationDto) => {
-                    this.notifications.push(this.userNotificationHelper.format(<any>item, false));
-                });
-                this.changeDetectorRef.detectChanges();
-            });
+        this.notificationsDataSource.load();
     }
 
     registerToEvents() {
@@ -69,20 +85,20 @@ export class NotificationsComponent implements OnInit {
             this.loadNotifications();
         });
 
-        abp.event.on('app.notifications.read', userNotificationId => {
-            for (let i = 0; i < this.notifications.length; i++) {
-                if (this.notifications[i].userNotificationId === userNotificationId) {
-                    this.notifications[i].state = 'READ';
-                }
-            }
-
+        abp.event.on('app.notifications.read', (userNotificationId: number) => {
+            this.dataGrid.instance.cellValue(
+                this.dataGrid.instance.getRowIndexByKey(userNotificationId),
+                'state',
+                'READ'
+            );
             this.unreadNotificationCount -= 1;
-            this.changeDetectorRef.detectChanges();
         });
     }
 
-    setAllNotificationsAsRead(): void {
+    setAllNotificationsAsRead(e): void {
         this.userNotificationHelper.setAllAsRead();
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     openNotificationSettingsModal(e): void {
@@ -90,8 +106,14 @@ export class NotificationsComponent implements OnInit {
         this.userNotificationHelper.openSettingsModal(e);
     }
 
-    setNotificationAsRead(userNotification: IFormattedUserNotification): void {
+    setNotificationAsRead(e, userNotification: IFormattedUserNotification): void {
         this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    notificationClick(e) {
+        this.gotoUrl(e.data.url);
     }
 
     gotoUrl(url: string): void {

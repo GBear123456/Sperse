@@ -16,14 +16,11 @@
 
 .tab-content {
     width: 890px !important;
-    
     .m-subheader {
         padding-left: 30px;
     }
-    
     .links{
         padding-top: 15px;
-        
         a {
             display: inline-block;
             padding: 0 5px;
@@ -31,7 +28,34 @@
     }
 }
 
-.m-portlet {
-    box-shadow: none;
-    border: 0;
+#gridContainer.notificationGrid {
+    i.fa {
+        position: relative;
+        padding-left: 15px;
+        color: #ced5db;
+        &:after {
+            content: '';
+            background-color: #34bfa3;
+            position: absolute;
+            display: block;
+            width: 7px;
+            height: 7px;
+            left: 0;
+            top: 50%;
+            margin-top: -3.5px;
+            border-radius: 100%;
+        }
+    }
+
+    .dx-datagrid-rowsview .dx-data-row .dx-cell-modified .dx-highlight-outline::after {
+        border: none;
+    }
+
+    a.set-notification-as-read {
+        color: #58a3dc !important;
+        background-color: transparent;
+    }
+    .dx-column-lines {
+        cursor: pointer;
+    }
 }

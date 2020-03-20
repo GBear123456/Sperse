@@ -69,7 +69,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'star',
             label: this.ls.l('TotalsByStar/CreditRating'),
-            method: this.dashboardServiceProxy.getCustomersByStar,
+            method: this.dashboardServiceProxy.getContactsByRating,
             argumentField: 'key',
             valueField: 'count',
             getColor: (item) => {
@@ -90,14 +90,14 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'ageDistribution',
             label: this.ls.l('TotalsByLeadAgeDistribution'),
-            method: this.dashboardServiceProxy.getContactsCountByAge,
+            method: this.dashboardServiceProxy.getLeadsCountByAge,
             argumentField: 'key',
             valueField: 'count'
         },
         {
             key: 'companySize',
             label: this.ls.l('TotalsByCompanySize'),
-            method: this.dashboardServiceProxy.getCustomersByCompanySize,
+            method: this.dashboardServiceProxy.getContactsByCompanySize,
             argumentField: 'companySizeRange',
             valueField: 'customerCount',
             sorting: (a, b) => {
@@ -107,7 +107,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'rating',
             label: this.ls.l('TotalsByRating'),
-            method: this.dashboardServiceProxy.getCustomersByRating,
+            method: this.dashboardServiceProxy.getContactsByRating,
             argumentField: 'key',
             valueField: 'count'
         }
