@@ -12062,7 +12062,7 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<LeadsAgeRangeGetCountOutput[]> {
+    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<LeadAgeRangeGetCountOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByAge?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
@@ -12086,14 +12086,14 @@ export class DashboardServiceProxy {
                 try {
                     return this.processGetLeadsCountByAge(<any>response_);
                 } catch (e) {
-                    return <Observable<LeadsAgeRangeGetCountOutput[]>><any>_observableThrow(e);
+                    return <Observable<LeadAgeRangeGetCountOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LeadsAgeRangeGetCountOutput[]>><any>_observableThrow(response_);
+                return <Observable<LeadAgeRangeGetCountOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<LeadsAgeRangeGetCountOutput[]> {
+    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<LeadAgeRangeGetCountOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12107,7 +12107,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(LeadsAgeRangeGetCountOutput.fromJS(item));
+                    result200.push(LeadAgeRangeGetCountOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -12116,7 +12116,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LeadsAgeRangeGetCountOutput[]>(<any>null);
+        return _observableOf<LeadAgeRangeGetCountOutput[]>(<any>null);
     }
 
     /**
@@ -49457,7 +49457,7 @@ export interface IGetContactsByRegionOutput {
     count: number | undefined;
 }
 
-export enum LeadsAgeRange {
+export enum LeadAgeRange {
     UpTo30Days = "UpTo30Days", 
     UpTo60Days = "UpTo60Days", 
     UpTo90Days = "UpTo90Days", 
@@ -49466,11 +49466,11 @@ export enum LeadsAgeRange {
     MoreThanYear = "MoreThanYear", 
 }
 
-export class LeadsAgeRangeGetCountOutput implements ILeadsAgeRangeGetCountOutput {
-    key!: LeadsAgeRange | undefined;
+export class LeadAgeRangeGetCountOutput implements ILeadAgeRangeGetCountOutput {
+    key!: LeadAgeRange | undefined;
     count!: number | undefined;
 
-    constructor(data?: ILeadsAgeRangeGetCountOutput) {
+    constructor(data?: ILeadAgeRangeGetCountOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -49486,9 +49486,9 @@ export class LeadsAgeRangeGetCountOutput implements ILeadsAgeRangeGetCountOutput
         }
     }
 
-    static fromJS(data: any): LeadsAgeRangeGetCountOutput {
+    static fromJS(data: any): LeadAgeRangeGetCountOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new LeadsAgeRangeGetCountOutput();
+        let result = new LeadAgeRangeGetCountOutput();
         result.init(data);
         return result;
     }
@@ -49501,8 +49501,8 @@ export class LeadsAgeRangeGetCountOutput implements ILeadsAgeRangeGetCountOutput
     }
 }
 
-export interface ILeadsAgeRangeGetCountOutput {
-    key: LeadsAgeRange | undefined;
+export interface ILeadAgeRangeGetCountOutput {
+    key: LeadAgeRange | undefined;
     count: number | undefined;
 }
 
