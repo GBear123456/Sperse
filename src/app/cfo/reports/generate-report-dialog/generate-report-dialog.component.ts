@@ -8,7 +8,7 @@ import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
 import { forkJoin, Observable } from 'rxjs';
-import { first, switchMap, tap, finalize } from 'rxjs/operators';
+import { first, switchMap, tap, map, finalize } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 
 /** Application imports */
@@ -68,6 +68,9 @@ export class GenerateReportDialogComponent implements OnInit {
     currentStep = GenerateReportStep.Step1;
     generateReportSteps = GenerateReportStep;
     selectedBusinessEntityIds: any = [];
+    selectedBusinessEntities$ = this.bankAccountsService.businessEntities$.pipe(
+        map(entities => entities.filter(item => this.selectedBusinessEntityIds.indexOf(item.id) >= 0))
+    );
     dateFrom = moment.utc().subtract(1, 'month').startOf('month');
     dateTo = moment.utc().subtract(1, 'month').endOf('month');
     calendarData = {
