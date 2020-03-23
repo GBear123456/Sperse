@@ -622,6 +622,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 return '#f45a34';
             case SyncProgressStatus.InProgress:
                 return '#f9af47';
+            case SyncProgressStatus.InProgress:
+                return '#f9af47';
+            case SyncProgressStatus.SyncPending:
+                return '#6ab4ff';
             default:
                 return '#424c56';
         }

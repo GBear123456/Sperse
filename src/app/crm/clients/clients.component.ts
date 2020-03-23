@@ -137,8 +137,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
-    private readonly dataSourceURI: string = 'Customer';
-    private readonly totalDataSourceURI: string = 'Customer/$count';
+    private readonly dataSourceURI: string = 'Contact';
+    private readonly totalDataSourceURI: string = 'Contact/$count';
     private readonly groupDataSourceURI: string = 'CustomerSlice';
     private readonly dateField = 'ContactDate';
     private rootComponent: any;

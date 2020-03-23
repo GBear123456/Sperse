@@ -31,6 +31,7 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
 })
 export class HeaderComponent implements OnInit {
 
+    origin = location.origin;
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;

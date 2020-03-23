@@ -97,7 +97,7 @@ export class ProfileService {
         if (publicId) {
             let actionName = isThumbnail ? 'thumbnail' : 'photo';
             let tenantId = this.appSession.tenantId || 0;
-            return AppConsts.remoteServiceBaseUrl + '/api/contact/' + actionName + '/' + tenantId + '/' + publicId;
+            return AppConsts.remoteServiceBaseUrl + '/api/contactPhoto/' + actionName + '/' + tenantId + '/' + publicId;
         }
 
         const tenant = this.appSession.tenant;
