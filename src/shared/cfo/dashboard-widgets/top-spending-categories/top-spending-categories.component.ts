@@ -6,8 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party import */
 import { select, Store } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
-import { first, filter, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { DxPieChartComponent } from 'devextreme-angular/ui/pie-chart';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -25,6 +26,8 @@ import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/da
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
+import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '../../../helpers/DateHelper';
 
 @Component({
     selector: 'top-spending-categories',
@@ -36,7 +39,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent, { static: true }) pieChart: DxPieChartComponent;
     @HostBinding('class.fullpage') @Input() fullpage = false;
 
-    period$: Observable<DailyStatsPeriodModel> = this.dashboardService.dailyStatsPeriod$;
+    period$: Observable<CalendarValuesModel> = this.cfoPreferences.dateRange$;
     currencyId: string;
     topSpendingCategories: GetSpendingCategoriesOutput[];
     topSpendingCategories$: Observable<GetSpendingCategoriesOutput[]> = combineLatest(
@@ -46,16 +49,21 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         this.dashboardService.refresh$
     ).pipe(
         tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-        switchMap(([selectedBankAccountsIds, currencyId, period, refresh]: [number[], string, DailyStatsPeriodModel, null]) => {
+        switchMap(([selectedBankAccountsIds, currencyId, period, ]: [number[], string, CalendarValuesModel, null]) => {
             this.currencyId = currencyId;
+            const periodTo = DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.to.value)));
             return this.dashboardServiceProxy.getSpendingCategories(
                 this.cfoService.instanceType as InstanceType,
                 this.cfoService.instanceId,
                 5,
                 selectedBankAccountsIds,
                 currencyId,
-                period.startDate,
-                period.endDate
+                period.from.value
+                    ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.from.value)))
+                    : undefined,
+                period.to.value
+                    ? (periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo)
+                    : moment.utc().startOf('day')
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             );
@@ -98,20 +106,15 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     }
 
     private redirectToTransactions(categoryId: number) {
-        this.dashboardService.period$.pipe(
-            first()
-        ).subscribe((period: PeriodModel) => {
-            this.router.navigate(
-                ['../transactions'],
-                {
-                    queryParams: {
-                        categoryIds: [ categoryId ],
-                        period: period.period
-                    },
-                    relativeTo: this.route
-                }
-            );
-        });
+        this.router.navigate(
+            ['../transactions'],
+            {
+                queryParams: {
+                    categoryIds: [ categoryId ]
+                },
+                relativeTo: this.route
+            }
+        );
     }
 
     ngOnDestroy() {

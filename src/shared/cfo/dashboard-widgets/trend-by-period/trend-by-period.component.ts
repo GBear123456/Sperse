@@ -54,6 +54,9 @@ import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/ch
 import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
+import { Period } from '../../../../app/shared/common/period/period.enum';
+import { DateHelper } from '../../../helpers/DateHelper';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -148,20 +151,22 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     ];
     selectedPeriod: TrendByPeriodModel = this.periods.find(period => period.name === 'month');
     refresh$: Observable<null> = this.dashboardService.refresh$;
-    period$ = this.dashboardService.period$.pipe(
-        map((period: PeriodModel) => {
-            let periodName = period.name;
-            if (periodName === 'year' || periodName === 'quarter' || periodName === 'all') {
-                periodName = 'month';
-            } else {
+    period$ = this.cfoPreferencesService.dateRange$.pipe(
+        map((calendarValues: CalendarValuesModel) => {
+            let periodName = 'month';
+            if (calendarValues.period === Period.Today || periodName === Period.Yesterday) {
                 periodName = 'day';
             }
 
             this.selectedPeriod = this.periods.find((obj) => {
                 return (obj.name === periodName);
             });
-            this.selectedPeriod['startDate'] = period.from ? period.from.startOf('day') : null;
-            this.selectedPeriod['endDate'] = period.to ? period.to.startOf('day') : null;
+            this.selectedPeriod.startDate = calendarValues.from.value
+                ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(calendarValues.from.value)))
+                : undefined;
+            this.selectedPeriod.endDate = calendarValues.to.value
+                ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(calendarValues.to.value), false, 'from'))
+                : undefined;
             return this.selectedPeriod;
         })
     );
@@ -328,7 +333,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         ).pipe(
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.startLoading()),
-            switchMap(([, period, currencyId, forecastModelId, bankAccountIds]: [null, TrendByPeriodModel, string, number, number[]]) => this.bankAccountServiceProxy.getStats(
+            switchMap(([, period, currencyId, forecastModelId, bankAccountIds]: [null, TrendByPeriodModel, string, number, number[]]) => {
+                return this.bankAccountServiceProxy.getStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     currencyId,
@@ -340,8 +346,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
                 ).pipe(
                     catchError(() => of([])),
                     finalize(() => this.finishLoading())
-                )
-            ),
+                );
+            }),
             filter(Boolean),
             map((stats: BankAccountDailyStatDto[]) => {
                 let historical = [], forecast = [];

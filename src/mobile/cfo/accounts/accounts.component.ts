@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { CFOComponentBase } from '../shared/common/cfo-component-base';
 
 @Component({
@@ -6,7 +6,7 @@ import { CFOComponentBase } from '../shared/common/cfo-component-base';
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.less']
 })
-export class AccountsComponent extends CFOComponentBase implements OnInit  {
+export class AccountsComponent extends CFOComponentBase {
     sourceUrl: any;
 
     constructor(
@@ -15,6 +15,4 @@ export class AccountsComponent extends CFOComponentBase implements OnInit  {
         super(injector);
     }
 
-    ngOnInit() {
-    }
 }
