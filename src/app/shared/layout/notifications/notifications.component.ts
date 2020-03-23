@@ -13,7 +13,7 @@ import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-p
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { GetNotificationsOutput } from '../../../../shared/service-proxies/service-proxies';
+import { GetNotificationsOutput, UserNotificationState } from '../../../../shared/service-proxies/service-proxies';
 import { DataGridService } from '../../common/data-grid.service/data-grid.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 
@@ -28,18 +28,19 @@ export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     unreadNotificationCount = 0;
-    readStateFilter = 'ALL';
+    readStateFilter: UserNotificationState;
     loading = false;
     selectBoxList = [
-        { value: 'ALL', text: this.ls.l('All') },
-        { value: 'UNREAD', text: this.ls.l('Unread') }
+        { value: undefined, text: this.ls.l('All') },
+        { value: UserNotificationState._0, text: this.ls.l('Unread') },
+        { value: UserNotificationState._1, text: this.ls.l('Read') }
     ];
     notificationsDataSource = new DataSource({
         key: 'userNotificationId',
         load: (loadOptions) => {
             this.modalDialog.startLoading();
             return this.notificationService.getUserNotifications(
-                undefined,
+                this.readStateFilter,
                 loadOptions.take,
                 loadOptions.skip
             ).pipe(
@@ -72,7 +73,7 @@ export class NotificationsComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationsDataSource.load();
+        this.dataGrid.instance.refresh();
     }
 
     registerToEvents() {
@@ -86,12 +87,18 @@ export class NotificationsComponent implements OnInit {
         });
 
         abp.event.on('app.notifications.read', (userNotificationId: number) => {
-            this.dataGrid.instance.cellValue(
-                this.dataGrid.instance.getRowIndexByKey(userNotificationId),
-                'state',
-                'READ'
-            );
-            this.unreadNotificationCount -= 1;
+            /** If we show only unread - then reload list */
+            if (this.readStateFilter === UserNotificationState._0) {
+                this.loadNotifications();
+            } else {
+                /** Else just mark grid row as read */
+                this.dataGrid.instance.cellValue(
+                    this.dataGrid.instance.getRowIndexByKey(userNotificationId),
+                    'state',
+                    'READ'
+                );
+                this.unreadNotificationCount -= 1;
+            }
         });
     }
 

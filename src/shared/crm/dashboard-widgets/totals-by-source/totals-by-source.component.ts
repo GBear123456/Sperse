@@ -69,7 +69,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
         {
             key: 'star',
             label: this.ls.l('TotalsByStar/CreditRating'),
-            method: this.dashboardServiceProxy.getContactsByRating,
+            method: this.dashboardServiceProxy.getContactsByStar,
             argumentField: 'key',
             valueField: 'count',
             getColor: (item) => {

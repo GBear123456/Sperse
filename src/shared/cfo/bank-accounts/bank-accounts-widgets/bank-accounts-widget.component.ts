@@ -33,7 +33,8 @@ import {
     RenameSyncAccountInput,
     BankAccountDto,
     SyncProgressOutput,
-    InstanceType
+    InstanceType,
+    SyncProgressStatus
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -610,6 +611,24 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         else if (ratio > 30) return '#ed9d1a';
         else if (ratio > 15) return '#f7d930';
         else return '#34be75';
+    }
+
+    getStatusColor(value: SyncProgressStatus) : string
+    {
+        switch (value) {
+            case SyncProgressStatus.Completed:
+                return '#37d749';    
+            case SyncProgressStatus.Failed:
+                return '#f45a34';
+            case SyncProgressStatus.InProgress:
+                return '#f9af47';
+            case SyncProgressStatus.InProgress:
+                return '#f9af47';
+            case SyncProgressStatus.SyncPending:
+                return '#6ab4ff';
+            default:
+                return '#424c56';
+        }
     }
 
     searchChanged(searchValue: string) {

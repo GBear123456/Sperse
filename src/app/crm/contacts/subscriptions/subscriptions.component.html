@@ -30,7 +30,7 @@
     <dxi-column caption="" [width]="220" cellTemplate="actionsTemplate"></dxi-column>
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.tenantId && permission.isGranted(permissions.TenantsImpersonation)"
-           (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal($event, cell.data)">{{ls.l('LoginAsThisTenant')}}</a>
+           (click)="cell.data.statusCode === 'A' && showUserImpersonateLookUpModal($event, cell.data)">{{ls.l('LoginAsThisTenant')}}</a>
         <!-- <br /> -->
         <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>

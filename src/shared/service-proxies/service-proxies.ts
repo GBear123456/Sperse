@@ -12062,7 +12062,7 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<LeadsCountAgeRangeGetCountOutput[]> {
+    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<LeadAgeRangeGetCountOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByAge?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
@@ -12086,14 +12086,14 @@ export class DashboardServiceProxy {
                 try {
                     return this.processGetLeadsCountByAge(<any>response_);
                 } catch (e) {
-                    return <Observable<LeadsCountAgeRangeGetCountOutput[]>><any>_observableThrow(e);
+                    return <Observable<LeadAgeRangeGetCountOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LeadsCountAgeRangeGetCountOutput[]>><any>_observableThrow(response_);
+                return <Observable<LeadAgeRangeGetCountOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<LeadsCountAgeRangeGetCountOutput[]> {
+    protected processGetLeadsCountByAge(response: HttpResponseBase): Observable<LeadAgeRangeGetCountOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12107,7 +12107,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(LeadsCountAgeRangeGetCountOutput.fromJS(item));
+                    result200.push(LeadAgeRangeGetCountOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -12116,7 +12116,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LeadsCountAgeRangeGetCountOutput[]>(<any>null);
+        return _observableOf<LeadAgeRangeGetCountOutput[]>(<any>null);
     }
 
     /**
@@ -36156,6 +36156,15 @@ export interface IEntityPropertyChangeDto {
     id: number | undefined;
 }
 
+export enum SyncProgressStatus {
+    InProgress = "InProgress", 
+    ActionRequired = "ActionRequired", 
+    SyncPending = "SyncPending", 
+    Unavailable = "Unavailable", 
+    Completed = "Completed", 
+    Failed = "Failed", 
+}
+
 export class BankAccountDto implements IBankAccountDto {
     id!: number | undefined;
     typeId!: string | undefined;
@@ -36171,6 +36180,9 @@ export class BankAccountDto implements IBankAccountDto {
     utilized!: number | undefined;
     syncAccountId!: number | undefined;
     isUsed!: boolean | undefined;
+    lastSyncDate!: moment.Moment | undefined;
+    lastGoodSyncDate!: moment.Moment | undefined;
+    syncStatus!: SyncProgressStatus | undefined;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -36197,6 +36209,9 @@ export class BankAccountDto implements IBankAccountDto {
             this.utilized = data["utilized"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
+            this.syncStatus = data["syncStatus"];
         }
     }
 
@@ -36223,6 +36238,9 @@ export class BankAccountDto implements IBankAccountDto {
         data["utilized"] = this.utilized;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
+        data["syncStatus"] = this.syncStatus;
         return data; 
     }
 }
@@ -36242,14 +36260,9 @@ export interface IBankAccountDto {
     utilized: number | undefined;
     syncAccountId: number | undefined;
     isUsed: boolean | undefined;
-}
-
-export enum SyncProgressStatus {
-    InProgress = "InProgress", 
-    ActionRequired = "ActionRequired", 
-    SyncPending = "SyncPending", 
-    Unavailable = "Unavailable", 
-    Completed = "Completed", 
+    lastSyncDate: moment.Moment | undefined;
+    lastGoodSyncDate: moment.Moment | undefined;
+    syncStatus: SyncProgressStatus | undefined;
 }
 
 export class SyncAccountBankDto implements ISyncAccountBankDto {
@@ -36258,6 +36271,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     name!: string | undefined;
     balance!: number | undefined;
     lastSyncDate!: moment.Moment | undefined;
+    lastGoodSyncDate!: moment.Moment | undefined;
     bankAccounts!: BankAccountDto[] | undefined;
     syncAccountStatus!: SyncProgressStatus | undefined;
     syncRef!: string | undefined;
@@ -36279,6 +36293,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.name = data["name"];
             this.balance = data["balance"];
             this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -36304,6 +36319,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["name"] = this.name;
         data["balance"] = this.balance;
         data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -36322,6 +36338,7 @@ export interface ISyncAccountBankDto {
     name: string | undefined;
     balance: number | undefined;
     lastSyncDate: moment.Moment | undefined;
+    lastGoodSyncDate: moment.Moment | undefined;
     bankAccounts: BankAccountDto[] | undefined;
     syncAccountStatus: SyncProgressStatus | undefined;
     syncRef: string | undefined;
@@ -49440,7 +49457,7 @@ export interface IGetContactsByRegionOutput {
     count: number | undefined;
 }
 
-export enum LeadsCountAgeRange {
+export enum LeadAgeRange {
     UpTo30Days = "UpTo30Days", 
     UpTo60Days = "UpTo60Days", 
     UpTo90Days = "UpTo90Days", 
@@ -49449,11 +49466,11 @@ export enum LeadsCountAgeRange {
     MoreThanYear = "MoreThanYear", 
 }
 
-export class LeadsCountAgeRangeGetCountOutput implements ILeadsCountAgeRangeGetCountOutput {
-    key!: LeadsCountAgeRange | undefined;
+export class LeadAgeRangeGetCountOutput implements ILeadAgeRangeGetCountOutput {
+    key!: LeadAgeRange | undefined;
     count!: number | undefined;
 
-    constructor(data?: ILeadsCountAgeRangeGetCountOutput) {
+    constructor(data?: ILeadAgeRangeGetCountOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -49469,9 +49486,9 @@ export class LeadsCountAgeRangeGetCountOutput implements ILeadsCountAgeRangeGetC
         }
     }
 
-    static fromJS(data: any): LeadsCountAgeRangeGetCountOutput {
+    static fromJS(data: any): LeadAgeRangeGetCountOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new LeadsCountAgeRangeGetCountOutput();
+        let result = new LeadAgeRangeGetCountOutput();
         result.init(data);
         return result;
     }
@@ -49484,8 +49501,8 @@ export class LeadsCountAgeRangeGetCountOutput implements ILeadsCountAgeRangeGetC
     }
 }
 
-export interface ILeadsCountAgeRangeGetCountOutput {
-    key: LeadsCountAgeRange | undefined;
+export interface ILeadAgeRangeGetCountOutput {
+    key: LeadAgeRange | undefined;
     count: number | undefined;
 }
 

@@ -5,12 +5,13 @@
     <div class="tab-content">
         <div class="row">
             <div class="col-xl-6">
-                <div class="form-group" [hidden]="true">
+                <div class="form-group">
                     <dx-select-box
                         [items]="selectBoxList"
                         [(value)]="readStateFilter"
                         displayExpr="text"
-                        valueExpr="value">
+                        valueExpr="value"
+                        (onValueChanged)="loadNotifications()">
                     </dx-select-box>
                 </div>
             </div>
@@ -32,7 +33,7 @@
                           [elementAttr]="{ class: 'notificationGrid' }"
                           [dataSource]="notificationsDataSource"
                           sorting="none"
-                          height="calc(100vh - 132px)"
+                          height="calc(100vh - 158px)"
                           [remoteOperations]="true"
                           [hoverStateEnabled]="true"
                           [pager]="defaultGridPagerConfig"
