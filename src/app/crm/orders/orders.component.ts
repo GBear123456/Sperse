@@ -75,7 +75,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     layoutTypes = DataLayoutType;
     private rootComponent: any;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
-    private subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
+    public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
