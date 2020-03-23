@@ -183,7 +183,7 @@
                             <div class="sync-date clipboard-holder"
                                  title="Last good sync: {{cell.data.lastGoodSyncDate | date: 'MMM d, y ' : userTimezone}}" >
                                 {{cell.text | date: 'MMM d, y ' : userTimezone}}
-                                <span class="syncStatus" [title]="cell.data.syncStatus" [style.background-color]="getStatusColor(cell.data.syncStatus)"></span>
+                                <span class="syncStatus" [title]="l('SyncStatus_' + cell.data.syncStatus)" [style.background-color]="getStatusColor(cell.data.syncStatus)"></span>
                             </div>
                         </ng-container>
                     </div>
