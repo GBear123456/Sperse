@@ -8,6 +8,7 @@ import { DragulaModule } from 'ng2-dragula';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxPopupModule } from 'devextreme-angular/ui/popup';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 
 /** Application imports */
 import { BankCodeLetterComponent } from '@app/shared/common/bank-code-letters/bank-code-letter/bank-code-letter.component';
@@ -21,6 +22,7 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
         DxTooltipModule,
         DxPopupModule,
         DxRadioGroupModule,
+        DxSelectBoxModule,
         MatDialogModule,
         DragulaModule
     ],
