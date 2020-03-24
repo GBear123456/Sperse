@@ -321,6 +321,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.changeDetectorRef.markForCheck();
                 }
             }
+        }, res => {
+            this.attachments = this.attachments.filter(item => item.name != file.name);
+            this.notifyService.error(res.error.message);
+            this.changeDetectorRef.markForCheck();
         });
         this.attachments.push(attachment);
     }

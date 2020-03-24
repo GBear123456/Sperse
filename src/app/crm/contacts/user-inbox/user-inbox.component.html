@@ -18,7 +18,7 @@
             [searchEditorOptions]="{placeholder: ls.l('SearchMessage')}"
             [searchEnabled]="true"
             (onItemClick)="initActiveMessage($event.itemData)">
-                <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren}" (click)="initActiveMessage(item)">
+                <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren, expanded: item.expanded}" (click)="expandGroup(item)">
                     <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(item?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle"></div>
                         <div class="details">

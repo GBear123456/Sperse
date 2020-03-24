@@ -6,7 +6,7 @@ import { DxListComponent } from 'devextreme-angular/ui/list';
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -43,7 +43,7 @@ export class UserInboxComponent implements OnDestroy {
         };
     });
     isSendSmsAndEmailAllowed = false;
-    deliveryType: CommunicationMessageDeliveryType;
+    deliveryType = CommunicationMessageDeliveryType.Email;
     deliveryTypes = Object.keys(CommunicationMessageDeliveryType).map(item => {
         return {
             id: CommunicationMessageDeliveryType[item],
@@ -65,11 +65,15 @@ export class UserInboxComponent implements OnDestroy {
             () => this.invalidate(), this.constructor.name
         );
         contactsService.contactInfoSubscribe(res => {
+            let contactId = this.contactId;
             this.contactInfo = res;
             this.contactId = res.id;
             this.isSendSmsAndEmailAllowed = this.contactsService.checkCGPermission(
                 res.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
-            this.initDataSource();
+            if (!this.dataSource || contactId != this.contactId)
+                this.initDataSource();
+            else
+                this.initMainToolbar();
         }, this.constructor.name);
     }
 
@@ -212,7 +216,7 @@ export class UserInboxComponent implements OnDestroy {
                         }).join(','), loadOptions.take, loadOptions.skip
                     ).toPromise().then(response => {
                         this.initMainToolbar();
-                        if (this.activeMessage || !this.initActiveMessage(response.items[0]))
+                        if (this.activeMessage || !this.initActiveMessage(response && response.items[0]))
                             this.loadingService.finishLoading();
                         return {
                             data: response.items,
@@ -224,27 +228,46 @@ export class UserInboxComponent implements OnDestroy {
         });
     }
 
+    expandGroup(item) {
+        item.expanded = !item.expanded;
+        this.initActiveMessage(item);
+    }
+
     initActiveMessage(record) {
-        if (record && !this.activeMessage || record.id != this.activeMessage.id) {
-            if (record.message)
-                this.activeMessage = record.message;
-            else {
+        if (record && (!this.activeMessage || record.id != this.activeMessage.id || (record.hasChildren && !record.items))) {
+            if (record.message && (!record.hasChildren || record.items)) {
+                this.setActiveMessage(record, record.message);
+            } else {
                 this.loadingService.startLoading();
                 forkJoin(
                     this.communicationService.getMessage(record.id, this.contactId),
-                    this.communicationService.getMessages(this.contactId,
-                        record.id, undefined, undefined, undefined,
-                        undefined, undefined, undefined, undefined)
+                    record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
+                        undefined, undefined, undefined, undefined, undefined, undefined, undefined) : of({items: null})
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading())
                 ).subscribe(([message, children]) => {
-                    message['items'] = record.items = children.items;
-                    record.message = this.activeMessage = message;
-                    this.listComponent.instance.repaint();
-                    this.initContentToolbar();
+                    this.setActiveMessage(record, message, children);
                 });
             }
             return true;
+        }
+    }
+
+    setActiveMessage(record, message, children?) {
+        let component = this.listComponent && this.listComponent.instance;
+        if (component) {
+            if (record.hasChildren && children && children.items) {
+                message.items = record.items = children.items;
+                if (record.expanded == undefined)
+                    record.expanded = true;
+                component.repaint();
+                this.getVisibleList().forEach((item, index) =>
+                    component[(item.expanded ? 'expand' : 'collapse') + 'Group'](index)
+                );
+            }
+            this.activeMessage =
+            record.message = message;
+            this.initContentToolbar();
         }
     }
 
