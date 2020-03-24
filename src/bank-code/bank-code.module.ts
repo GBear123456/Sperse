@@ -5,9 +5,6 @@ import * as ngCommon from '@angular/common';
 /** Third party modules */
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
-import { ChartModule } from 'angular2-chartjs';
-import 'chartjs-plugin-labels';
-import { NgCircleProgressModule } from 'ng-circle-progress';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
 
 /** Application imports */
@@ -22,10 +19,8 @@ import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.componen
 import { ResourcesComponent } from '@root/bank-code/resources/resources.component';
 import { WelcomeVideoComponent } from './dashboard/welcome-video/welcome-video.component';
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
-import { TotalCodesCrackedComponent } from './dashboard/total-codes-cracked/total-codes-cracked.component';
-import { GoalsCrackedComponent } from './dashboard/goals-cracked/goals-cracked.component';
-import { CountersComponent } from './dashboard/counters/counters.component';
 import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 
 @NgModule({
     declarations: [
@@ -33,39 +28,17 @@ import { MemberSubscriptionServiceProxy } from '@shared/service-proxies/service-
         BankCodeComponent,
         ResourcesComponent,
         WelcomeVideoComponent,
-        AnnouncementsComponent,
-        TotalCodesCrackedComponent,
-        GoalsCrackedComponent,
-        CountersComponent
+        AnnouncementsComponent
     ],
     imports: [
         ngCommon.CommonModule,
         CommonModule,
+        BankCodeCommonModule,
         BankCodeLayoutModule,
         BankCodeRoutingModule,
         DxScrollViewModule,
         DxProgressBarModule,
-        ChartModule,
         NgxPageScrollModule,
-
-        NgCircleProgressModule.forRoot({
-            // defaults config
-            radius: 40,
-            space: -7,
-            outerStrokeGradient: false,
-            outerStrokeWidth: 7,
-            innerStrokeWidth: 7,
-            showUnits: false,
-            showBackground: false,
-            titleFontSize: '18',
-            subtitleFontSize: '12.3',
-            titleFontWeight: '700',
-            subtitleFontWeight: '700',
-            startFromZero: false,
-            animation: false,
-            animateTitle: false,
-            animationDuration: 0
-        })
     ],
     providers: [ MemberSubscriptionServiceProxy ]
 })

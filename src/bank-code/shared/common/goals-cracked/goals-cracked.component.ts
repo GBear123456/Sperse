@@ -6,7 +6,10 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
 @Component({
     selector: 'bank-code-goals-cracked',
     templateUrl: './goals-cracked.component.html',
-    styleUrls: ['./goals-cracked.component.less']
+    styleUrls: [
+        '../styles/card-title.less',
+        './goals-cracked.component.less'
+    ]
 })
 export class GoalsCrackedComponent {
     goalTypes: GoalType[] = this.bankCodeService.goalTypes;

@@ -281,7 +281,7 @@ export class FiltersService {
     }
 
     getCheckCustom = (filter: FilterModel) => {
-        let filterMethod = FiltersService['filterBy' + capitalize(filter.caption)];
+        let filterMethod = filter.filterMethod || FiltersService['filterBy' + capitalize(filter.caption)];
         if (filterMethod)
             return filterMethod.call(this, filter);
     }

@@ -21,6 +21,7 @@ export class FilterModelBase<T extends FilterItemModel> {
     options?: any;
     hidden?: boolean;
     isSelected = false;
+    filterMethod?: (filter: FilterModelBase<any>) => any;
 
     public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);

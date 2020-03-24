@@ -6,7 +6,11 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 @Component({
     selector: 'bank-code-total-codes-cracked',
     templateUrl: './total-codes-cracked.component.html',
-    styleUrls: ['./total-codes-cracked.component.less']
+    styleUrls: [
+        '../styles/card-title.less',
+        '../styles/card-text-footer.less',
+        './total-codes-cracked.component.less'
+    ]
 })
 export class TotalCodesCrackedComponent implements OnChanges {
     @Input() level: number;
