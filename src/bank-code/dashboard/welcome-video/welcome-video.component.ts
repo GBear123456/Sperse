@@ -4,7 +4,11 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 @Component({
     selector: 'bank-code-welcome-video',
     templateUrl: './welcome-video.component.html',
-    styleUrls: ['./welcome-video.component.less']
+    styleUrls: [
+        '../../shared/common/styles/card-body.less',
+        '../../shared/common/styles/card-header.less',
+        './welcome-video.component.less'
+    ]
 })
 export class WelcomeVideoComponent {
 

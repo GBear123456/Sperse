@@ -6,7 +6,11 @@ import range from 'lodash/range';
 @Component({
     selector: 'bank-code-counters',
     templateUrl: './counters.component.html',
-    styleUrls: ['./counters.component.less'],
+    styleUrls: [
+        '../styles/card-body.less',
+        '../styles/card-title.less',
+        './counters.component.less'
+    ],
     providers: [ DecimalPipe ]
 })
 export class CountersComponent implements OnChanges {

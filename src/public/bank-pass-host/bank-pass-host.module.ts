@@ -26,11 +26,13 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { MemberSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponent } from './app.component';
+import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 
 @NgModule({
     imports: [
         AccessCodeInstructionsModule,
         CommonModule,
+        BankCodeCommonModule,
         DxDataGridModule,
         DxTextBoxModule,
         DxSelectBoxModule,
@@ -43,19 +45,21 @@ import { AppComponent } from './app.component';
         InplaceEditModule,
         NgCircleProgressModule.forRoot({
             // defaults config
-            radius: 32,
-            space: -5,
+            radius: 40,
+            space: -7,
             outerStrokeGradient: false,
-            outerStrokeWidth: 5,
-            innerStrokeWidth: 5,
-            animation: false,
-            animateTitle: false,
-            animationDuration: 0,
+            outerStrokeWidth: 7,
+            innerStrokeWidth: 7,
             showUnits: false,
             showBackground: false,
-            clockwise: false,
-            titleFontSize: '13',
-            startFromZero: false
+            titleFontSize: '18',
+            subtitleFontSize: '12.3',
+            titleFontWeight: '700',
+            subtitleFontWeight: '700',
+            startFromZero: false,
+            animation: false,
+            animateTitle: false,
+            animationDuration: 0
         })
     ],
     exports: [],
@@ -67,7 +71,8 @@ import { AppComponent } from './app.component';
         AppUrlService,
         CacheHelper,
         ClipboardService,
-        LoadingService
+        LoadingService,
+        { provide: 'showAdditionalWidgets', useValue: true }
     ]
 })
 export class BankPassHostModule {}
