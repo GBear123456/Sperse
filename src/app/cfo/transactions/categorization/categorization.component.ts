@@ -48,12 +48,20 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input() height: string;
     @Input() showTitle: boolean;
     @Input() showHeader: boolean;
-    @Input() showClearSelection: boolean;
-    @Input() showFilterIcon: boolean;
+    @Input() showSearch = false;
+    @Input() addingAllowed = true;
     @Input() showAddEntity: boolean;
+    @Input() showFilterIcon: boolean;
+    @Input() showClearSelection: boolean;
     @Input() includeNonCashflowNodes = true;
     @Input() categoryId: number;
-    @Input() filteredRowsData: Category[] = [];
+    @Input() set filteredRowsData(values: Category[]) {
+        this._filteredRowsData = values;
+        this.applyFilteredRowsSelection();
+    }
+    get filteredRowsData(): Category[] {
+        return this._filteredRowsData;
+    }
     @Input('dragMode')
     set dragMode(value: boolean) {
         if (this.categoryList.instance)
@@ -76,6 +84,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         this.refreshTransactionsCountDataSource();
     }
     private _transactionsFilterQuery: any[];
+    private _filteredRowsData: Category[];
 
     categories: Category[] = [];
     types = [
@@ -84,7 +93,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     ];
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
-    showSearch = false;
     noDataText: string;
 
     transactionsCountDataSource: DataSource;
@@ -147,7 +155,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     ngAfterViewInit(): void {
         if (this.isInstanceAdmin) {
-            this.categoryList.editing.allowAdding = true;
+            this.categoryList.editing.allowAdding = this.addingAllowed;
             this.categoryList.editing.allowUpdating = true;
             this.categoryList.instance.refresh();
         }
@@ -433,16 +441,18 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
-        if (this.filteredRowsData && this.filteredRowsData.length) {
-            const filteredRowsKeys = this.filteredRowsData.map((row: Category) => row.key);
-            filteredRowsKeys.forEach(filteredRowKey => {
-                let rowIndex = this.categoryList.instance.getRowIndexByKey(filteredRowKey);
+        this.applyFilteredRowsSelection();
+    }
+
+    applyFilteredRowsSelection() {
+        if (this.filteredRowsData && this.filteredRowsData.length && this.categoryList && this.categoryList.instance)
+            this.filteredRowsData.forEach((row: Category) => {
+                let rowIndex = this.categoryList.instance.getRowIndexByKey(row.key);
                 if (rowIndex !== -1) {
                     let row = this.categoryList.instance.getRowElement(rowIndex) || [];
                     if (row[0]) row[0].classList.add('filtered-category');
                 }
             });
-        }
     }
 
     initDragAndDropEvents($event) {
@@ -807,12 +817,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 this.addActionButton('filter', $event.cellElement, () => {
                     const category: Category = $event.data;
                     let wrapper = $event.cellElement.parentElement;
-                    if (!this.clearSelection(wrapper, category.key)) {
-                        wrapper.classList.add('filtered-category');
-                        /** We can select only one category for now */
-                        this.filteredRowsData = [category];
-                        this.onFilterSelected.emit(this.filteredRowsData);
-                    }
+                    if (!this.clearSelection(wrapper, category.key))
+                        this.filteredRowsData.push(category);
+                    this.onFilterSelected.emit(this.filteredRowsData);
                 });
         }
     }
@@ -949,47 +956,53 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     onRowClick($event) {
-        if (this._selectedKeys.indexOf($event.key) >= 0)
-            this.categoryList.instance.deselectRows([$event.key]);
-        this.categoryList.instance.cancelEditData();
-        this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
-        if (this.isInstanceAdmin && $event.level >= 0) {
-            let nowDate = new Date();
-            if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
-                $event.event.originalEvent.preventDefault();
-                $event.event.originalEvent.stopPropagation();
-                let focusOverlay = $event.element.querySelector('.dx-treelist-focus-overlay');
-                if (focusOverlay)
-                    focusOverlay.style.display = 'none';
-                $event.component.editRow($event.rowIndex);
+        if (this.addingAllowed) {
+            if (this._selectedKeys.indexOf($event.key) >= 0)
+                this.categoryList.instance.deselectRows([$event.key]);
+            this.categoryList.instance.cancelEditData();
+            this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
+            if (this.isInstanceAdmin && $event.level >= 0) {
+                let nowDate = new Date();
+                if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
+                    $event.event.originalEvent.preventDefault();
+                    $event.event.originalEvent.stopPropagation();
+                    let focusOverlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+                    if (focusOverlay)
+                        focusOverlay.style.display = 'none';
+                    $event.component.editRow($event.rowIndex);
+                }
+                this._prevClickDate = nowDate;
             }
-            this._prevClickDate = nowDate;
+        } else if (this.showFilterIcon) {
+            if (!this.clearSelection($event.rowElement, $event.data.key))
+                this.filteredRowsData.push($event.data);
+            this.onFilterSelected.emit(this.filteredRowsData);
         }
     }
 
     clearSelection(wrapper?: HTMLElement, clearedItemKey?: number): boolean {
         let clearFilter = true;
         this.categoryList.instance.deselectAll();
-        if (this.filteredRowsData && this.filteredRowsData.length) {
-            let filterItemIndex;
-            if (clearedItemKey) {
-                filterItemIndex = this.filteredRowsData.findIndex((category: Category) => category.key === clearedItemKey);
-            }
-            if (filterItemIndex && filterItemIndex !== -1) {
-                this.filteredRowsData.splice(filterItemIndex, 1);
-            } else {
-                this.filteredRowsData = [];
-            }
-        }
         if (wrapper) {
             clearFilter = wrapper.classList.contains('filtered-category');
-            if (clearFilter) {
+            if (clearFilter)
                 wrapper.classList.remove('filtered-category');
+            else
+                wrapper.classList.add('filtered-category');
+
+            if (this.filteredRowsData && this.filteredRowsData.length) {
+                let filterItemIndex;
+                if (clearFilter && clearedItemKey) {
+                    filterItemIndex = this.filteredRowsData.findIndex(
+                        (category: Category) => category.key === clearedItemKey
+                    );
+                    if (filterItemIndex !== -1)
+                        this.filteredRowsData.splice(filterItemIndex, 1);
+                }
             }
         } else {
+            this.filteredRowsData = [];
             $('.filtered-category').removeClass('filtered-category');
-        }
-        if (clearFilter) {
             this.onFilterSelected.emit(this.filteredRowsData);
         }
         return clearFilter;
@@ -1027,7 +1040,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     toogleSearchInput(event) {
-        if (event.target.tagName != 'INPUT')
+        if (this.showHeader && event.target.tagName != 'INPUT')
             this.showSearch = false;
     }
 

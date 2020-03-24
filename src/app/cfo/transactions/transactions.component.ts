@@ -81,10 +81,11 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
     providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy, LifecycleSubjectsService ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(CategorizationComponent, { static: false }) categorizationComponent: CategorizationComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
     @ViewChild('becFilter', { static: false }) businessEntitiesChooser: ElementRef;
+    @ViewChild('categoryFilter', { static: false }) categoryChooser: ElementRef;
 
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
@@ -689,10 +690,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     {
                         name: 'rowFilter',
                         action: event => {
-                            if (this.isHeaderFilterVisible)
-                                this.getElementRef().nativeElement.appendChild(
-                                    this.businessEntitiesChooser.nativeElement
-                                );
+                            if (this.isHeaderFilterVisible) {
+                                let hostElement = this.getElementRef().nativeElement;
+                                hostElement.appendChild(this.businessEntitiesChooser.nativeElement);
+                                hostElement.appendChild(this.categoryChooser.nativeElement);
+                            }
                             DataGridService.enableFilteringRow(this.dataGrid, event);
                         },
                         options: {
@@ -1045,7 +1047,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowCategories(categories: Category[]) {
+    filterByCashflowCategories(categories: Category[], event?) {
         this.clearCategoriesFilters();
         if (Array.isArray(categories)) {
             if (categories.length === 1 && !this.isCategory(categories[0])) {
@@ -1075,6 +1077,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.processFilterInternal();
         }
 
+        this.categoriesRowsData = categories.slice();
         this.selectedCashflowCategoryKeys = categories && categories.map((category: Category) => {
             return category.key;
         });
@@ -1173,6 +1176,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             if ($event.column.dataField == 'BusinessEntityId') {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.businessEntitiesChooser.nativeElement);
+            } else if ($event.column.dataField == 'CashflowCategoryName') {
+                $event.cellElement.innerHTML = '';
+                $event.cellElement.appendChild(this.categoryChooser.nativeElement);
             }
         } else if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
