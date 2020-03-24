@@ -17,7 +17,7 @@ import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
+import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest, ContactCommunicationServiceProxy,
     UpdateEmailTemplateRequest, GetTemplateReponse, AttachmentDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
@@ -86,6 +86,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
+        private communicationProxy: ContactCommunicationServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -98,6 +99,10 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.dialogRef.afterClosed().subscribe(() => {
+            if (this.attachments.length && !this.data.attachments)
+                this.attachments.forEach(item => this.removeAttachment(item));
+        });
         this.showCC = this.templateEditMode || this.data.cc && this.data.cc.length;
         this.showBCC = this.templateEditMode || this.data.bcc && this.data.bcc.length;
         this.changeDetectorRef.markForCheck();
@@ -296,9 +301,15 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
     }
 
-    removeAttachment(attachment: Partial<EmailAttachment>, index) {
-        attachment.loader.unsubscribe();
-        this.attachments.splice(index, 1);
+    removeAttachment(attachment: Partial<EmailAttachment>, index?) {
+        if (index != undefined) {
+            this.attachments.splice(index, 1);
+            this.changeDetectorRef.markForCheck();
+        }
+        if (attachment.id)
+            this.communicationProxy.deleteAttachment(attachment.id).subscribe();
+        else
+            attachment.loader.unsubscribe();        
     }
 
     uploadFile(file) {
