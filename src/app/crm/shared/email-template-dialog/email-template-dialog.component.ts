@@ -342,10 +342,11 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
 
             xhr.addEventListener('load', () => {
+                let responce = JSON.parse(xhr.responseText);
                 if (xhr.status === 200)
-                    subscriber.next(JSON.parse(xhr.responseText));
+                    subscriber.next(responce);
                 else
-                    subscriber.error(xhr);
+                    subscriber.error(responce);
                 subscriber.complete();
             });
             xhr.send(formData);
