@@ -4,9 +4,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
+import { map, publishReplay, refCount, startWith, withLatestFrom } from 'rxjs/operators';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';
+import values from 'lodash/values';
 
 /** Application imports */
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
@@ -88,11 +89,6 @@ export class BankCodeService {
             outerColor: '#b142ab'
         }
     ];
-    constructor(
-        private ls: AppLocalizationService,
-        private httpClient: HttpClient
-    ) {}
-
     bankCodeConfig = {
         [BankCodeLetter.A]: {
             name: 'action',
@@ -122,6 +118,37 @@ export class BankCodeService {
     readonly emptyBankCode = '????';
     reportsLink = 'https://www.codebreakertech.com/reports';
     partnerCode = location.href.indexOf('successfactory.com') >= 0 ? 'SF' : 'CB';
+    bankCodeGroupsCounts$ = this.getAvailableBankCodes().pipe(
+        map((bankCodes: { [bankCode: string]: number }) => {
+            let bankCodeGroups = {
+                'B': 0,
+                'A': 0,
+                'N': 0,
+                'K': 0
+            };
+            for (let bankCode in bankCodes) {
+                bankCodeGroups[bankCode[0]] += bankCodes[bankCode];
+            }
+            return values(bankCodeGroups);
+        })
+    );
+    bankCodesGroupsCountsWithPercents$ = this.bankCodeGroupsCounts$.pipe(
+        withLatestFrom(this.bankCodeClientsCount$),
+        map(([bankCodeGroupsCounts, total]: [number[], number]) => {
+            return bankCodeGroupsCounts.map((groupCount: number) => ({
+                percent: total ? groupCount / total * 100 : 0,
+                count: groupCount
+            }));
+        })
+    );
+    bankCodeTotalCount$: Observable<string> = this.bankCodeClientsCount$.pipe(
+        map((count) => count.toString())
+    );
+
+    constructor(
+        private ls: AppLocalizationService,
+        private httpClient: HttpClient
+    ) {}
 
     getBankCodeReportLink(
         languageCode: string,

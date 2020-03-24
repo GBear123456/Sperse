@@ -6,6 +6,7 @@ import {
     Inject,
     OnDestroy,
     OnInit,
+    Optional,
     Renderer2,
     ViewChild
 } from '@angular/core';
@@ -155,6 +156,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
             return showAi && showAi === 'true';
         })
     );
+    bankCodesGroupsCountsWithPercents$ = this.bankCodeService.bankCodesGroupsCountsWithPercents$;
+    bankCodeLevel$ = this.bankCodeService.bankCodeLevel$;
+    bankCodeTotalCount$: Observable<string> = this.bankCodeService.bankCodeTotalCount$;
 
     constructor(
         private oDataService: ODataService,
@@ -170,7 +174,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
-        @Inject(DOCUMENT) private document: any
+        @Inject(DOCUMENT) private document: any,
+        @Inject('showAdditionalWidgets') @Optional() public showAdditionalWidgets?: boolean
     ) {}
 
     ngOnInit() {
@@ -260,7 +265,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     getBadgeImageName(index: number): Observable<string> {
-        return this.bankCodeService.bankCodeLevel$.pipe(
+        return this.bankCodeLevel$.pipe(
             map((bankCodeLevel: number) => (index + 1) + '-' + ((index + 1) <= bankCodeLevel ? '1' : '0'))
         );
     }

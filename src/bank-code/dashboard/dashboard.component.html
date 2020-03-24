@@ -1,7 +1,7 @@
 <!--<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 70px)'">-->
     <div class="container dashboard">
 <!--        <h1>{{ ls.l('Home') }}</h1>-->
-        <section class="">
+        <section>
             <div class="row ">
                 <div class="col-lg-6 d-flex align-items-stretch mb-5">
                     <div class="card">
@@ -15,43 +15,22 @@
                 </div>
             </div>
         </section>
-
         <ng-container *ngIf="hasSubscription$ | async">
             <section class="charts mb-5">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h2><img src="./assets/common/images/bank-code/chart.svg">At a glance</h2>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <bank-code-total-codes-cracked [level]="bankCodeLevel$ | async"
-                                                                       [values]="bankCodeGroupsCounts$ | async"
-                                                                       [total]="bankCodeService.bankCodeClientsCount$ | async">
-                                        </bank-code-total-codes-cracked>
-                                    </div>
-                                    <div class="col-lg-5 offset-lg-1">
-                                        <bank-code-goals-cracked></bank-code-goals-cracked>
-                                    </div>
-                                </div>
-                            </div>
+                            <glance></glance>
                         </div>
                     </div>
                 </div>
             </section>
-
             <section class="counters mb-5">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-body pb-lg-0 ">
-                                <bank-code-counters [crackedCodesNumbers]="bankCodesGroupsCountsWithPercents$ | async"
-                                                    [totalCrackedCodesNumber]="bankCodeTotalCount$ | async">
-                                </bank-code-counters>
-                            </div>
-                        </div>
+                        <bank-code-counters [crackedCodesNumbers]="bankCodesGroupsCountsWithPercents$ | async"
+                                            [totalCrackedCodesNumber]="bankCodeTotalCount$ | async">
+                        </bank-code-counters>
                     </div>
                 </div>
             </section>

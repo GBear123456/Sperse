@@ -30,11 +30,13 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
+import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 
 @NgModule({
     imports: [
         AccessCodeInstructionsModule,
         CommonModule,
+        BankCodeCommonModule,
         ProductsRoutingModule,
         SidebarModule,
         DxDataGridModule,

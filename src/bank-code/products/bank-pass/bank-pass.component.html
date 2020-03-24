@@ -24,6 +24,9 @@
         <mat-tab-group (selectedTabChange)="tabChanged($event)">
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
+                <div class="at-a-glance" *ngIf="showAdditionalWidgets">
+                    <glance></glance>
+                </div>
                 <div class="bank-pass-achievements">
                     <h2>{{ ls.l('BankPassAchievements') }}</h2>
                     <div class="achievements-content">
@@ -104,6 +107,11 @@
                             </circle-progress>
                         </div>
                     </div>
+                </div>
+                <div class="counters" *ngIf="showAdditionalWidgets">
+                    <bank-code-counters [crackedCodesNumbers]="bankCodesGroupsCountsWithPercents$ | async"
+                                        [totalCrackedCodesNumber]="bankCodeTotalCount$ | async">
+                    </bank-code-counters>
                 </div>
             </mat-tab>
             <mat-tab [label]="ls.l('My Leads').toUpperCase()">

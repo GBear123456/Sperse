@@ -4,7 +4,7 @@
         <chart *ngIf="values" [type]="type" [data]="data" [options]="options">
             <canvas width="300" height="300"></canvas>
         </chart>
-        <p class="card-text-footer glance mt-4">{{ls.l('BankCode_TotalCodeCracked')}}</p>
+        <p class="card-text-footer mt-4">{{ls.l('BankCode_TotalCodeCracked')}}</p>
     </div>
     <div class="col-md-{{ total ? '6' : '12' }} p-md-5">
         <ng-container >
@@ -13,6 +13,6 @@
                  src="./assets/common/images/bank-code/badges/L{{ badgeImageName }}@2x.png"
                  alt="Codebreaker">
         </ng-container>
-        <p class="card-text-footer glance mt-4">{{ls.l('BankCode_CurrentBadgeLvl')}}</p>
+        <p class="card-text-footer mt-4">{{ls.l('BankCode_CurrentBadgeLvl')}}</p>
     </div>
 </div>
