@@ -25,7 +25,8 @@ import {
     OfferServiceProxy,
     PayFrequency,
     SettingScopes,
-    SubmitApplicationInput, SubmitApplicationOutput,
+    SubmitApplicationInput,
+    SubmitApplicationOutput,
     TimeOfDay,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';

@@ -16,6 +16,14 @@
         }
     }
 
+    &.toolbarIsHidden {
+        top: 75px !important;
+    }
+
+    &.toolbarIsHidden.fullscreen {
+        top: 0 !important;
+    }
+
     ::ng-deep * {
         .dx-checkbox-icon {
             width: 20px;
@@ -86,7 +94,7 @@
     }
 
     .sidebar-filter-links {
-        border: 1px solid #e5e9ec;
+        border-right: 1px solid #e5e9ec;
         width: 341px;
         height: calc(~"100vh - 148px");
         background-color: #fff;

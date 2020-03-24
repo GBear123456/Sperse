@@ -42,6 +42,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TotalDataModel } from '@shared/cfo/dashboard-widgets/totals-by-period/total-data.model';
 import { Period } from '@app/shared/common/period/period.enum';
+import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '../../../helpers/DateHelper';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -59,8 +61,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     loading = true;
     allPeriodLocalizationValue = this.l('All_Periods');
     currentPeriod: string;
-    period$: Observable<any> = this.dashboardService.period$.pipe(
-        map((period: PeriodModel) => {
+    period$: Observable<any> = this.cfoPreferencesService.dateRange$.pipe(
+        map((period: CalendarValuesModel) => {
             let groupBy;
             switch (period.period) {
                 case Period.Today:
@@ -80,8 +82,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     break;
             }
             return {
-                startDate: period.from ? period.from.startOf('day') : null,
-                endDate: period.to ? period.to.startOf('day') : null,
+                startDate: period.from.value ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.from.value))) : undefined,
+                endDate: period.to.value ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.to.value), false, 'from')) : undefined,
                 selectedPeriod: String(GroupByPeriod[groupBy]).toLowerCase(),
             };
         })
@@ -112,14 +114,14 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
 
     private loadStatsData() {
         this.totalData$ = combineLatest(
-            this.refresh$,
             this.period$,
             this.currencyId$,
-            this.bankAccountIds$
+            this.bankAccountIds$,
+            this.refresh$
         ).pipe(
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.startLoading()),
-            switchMap(([, period, currencyId, bankAccountIds]: [null, any, string, number[]]) => this.bankAccountServiceProxy.getStats(
+            switchMap(([period, currencyId, bankAccountIds, ]: [any, string, number[], null]) => this.bankAccountServiceProxy.getStats(
                 InstanceType[this.instanceType],
                 this.instanceId,
                 currencyId,

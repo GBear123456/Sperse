@@ -3,7 +3,11 @@
 <div class="clearfix"></div>
 <div class="page-container">
     <div class="page-sidebar-wrapper" [ngClass]="{'show-sidebar-wrapper': filtersService.enabled}">
-        <side-bar></side-bar>
+        <side-bar [ngClass]="{
+            fullscreen: isFullscreenMode,
+            toolbarIsHidden: appService.toolbarIsHidden$ | async
+        }">
+        </side-bar>
     </div>
 
     <div class="page-content-wrapper">

@@ -117,11 +117,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         caption: 'Date',
         field: 'Date',
         items$: this.cfoPreferencesService.dateRange$.pipe(
-                map((dateRange: CalendarValuesModel) => ({
-                    from: new FilterItemModel(dateRange.from.value),
-                    to: new FilterItemModel(dateRange.to.value)
-                }))
-        ),
+            map((dateRange: CalendarValuesModel) => ({
+                from: new FilterItemModel(dateRange.from.value),
+                to: new FilterItemModel(dateRange.to.value)
+            })
+        )),
         options: { method: 'getFilterByDate' }
     });
     private bankAccountFilter: FilterModel;
@@ -543,16 +543,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             /** Update selected currency id with the currency id from cashflow preferences */
             this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(currencyId));
         }
-        const startDate = params.get('startDate');
-        const endDate = params.get('endDate');
-        const period = params.get('period');
-        if (startDate || endDate || period) {
-            this.cfoPreferencesService.dateRange.next({
-                from: { value: startDate ? new Date(startDate) : undefined },
-                to: { value: endDate ? new Date(endDate) : undefined },
-                period: period as Period
-            });
-        }
 
         const categoryIdsString: string = params.get('categoryIds');
         if (categoryIdsString) {
@@ -580,7 +570,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         const businessEntitiesIds: string = params.get('selectedBusinessEntitiesIds');
         const bankAccountsIds: string = params.get('selectedBankAccountIds');
         const externalFilter = !!(businessEntitiesIds || bankAccountsIds ||
-            currencyId || startDate || endDate || categoryIdsString ||
+            currencyId || categoryIdsString ||
             departments || transactionIdToOpen || cashflowTypeIds);
         if (externalFilter) {
             const state: BankAccountsState = {

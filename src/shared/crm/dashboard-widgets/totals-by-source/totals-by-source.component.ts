@@ -99,7 +99,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             label: this.ls.l('TotalsByCompanySize'),
             method: this.dashboardServiceProxy.getContactsByCompanySize,
             argumentField: 'companySizeRange',
-            valueField: 'customerCount',
+            valueField: 'contactCount',
             sorting: (a, b) => {
                 return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
             }

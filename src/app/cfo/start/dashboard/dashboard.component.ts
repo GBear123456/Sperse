@@ -85,10 +85,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         setTimeout(() => this.trendByPeriodComponent.updateWidth());
     }
 
-    periodChanged(period: Period) {
-        this.dashboardService.periodChanged(period);
-    }
-
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         if (this.accessAllDepartments) {

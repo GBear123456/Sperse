@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import capitalize from 'underscore.string/capitalize';
@@ -21,11 +21,11 @@ import { AppService } from '@app/app.service';
     selector: 'side-bar',
     host: {
         '(document:click)': 'hideFilterDialog($event)',
-        '(mouseover)': 'preventFilterDisable($event)',
+        '(mouseover)': 'preventFilterDisable()',
         '(mouseout)': 'checkFilterDisable($event)'
     }
 })
-export class SideBarComponent {
+export class SideBarComponent implements OnDestroy {
     filters: FilterModel[] = [];
     activeFilter: FilterModel;
     disableFilterScroll: boolean;
@@ -104,7 +104,7 @@ export class SideBarComponent {
         }
     }
 
-    preventFilterDisable($event) {
+    preventFilterDisable() {
         this.filtersService.preventDisable();
     }
 
@@ -129,5 +129,9 @@ export class SideBarComponent {
             container.classList.remove('show-all-elements');
             event.target.text = '+' + (filter.displayElements.length - 2) + ' more';
         }
+    }
+
+    ngOnDestroy() {
+        this.filtersService.unsubscribe();
     }
 }
