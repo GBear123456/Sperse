@@ -107,6 +107,7 @@ import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscripti
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -154,6 +155,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelStatus: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'status',
+        filterMethod: FilterHelpers.filterByCustomerStatus,
         field: 'StatusId',
         isSelected: true,
         items: {
@@ -398,7 +400,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 type: 'odata',
                 url: this.getODataUrl(
                     this.dataSourceURI,
-                    FiltersService.filterByStatus(this.filterModelStatus)
+                    this.filterModelStatus.filterMethod(this.filterModelStatus)
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -422,7 +424,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI, FiltersService.filterByStatus(this.filterModelStatus)),
+                url: this.getODataUrl(this.totalDataSourceURI, this.filterModelStatus.filterMethod(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;

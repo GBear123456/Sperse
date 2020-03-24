@@ -87,4 +87,15 @@ export class FilterHelpers {
         });
         return data;
     }
+
+    static filterByCustomerStatus(filter: FilterModel) {
+        let filterValues = FilterHelpers.filterBySetOfValues(filter);
+        if (!filterValues['or'].length) {
+            filterValues['or'] = [
+                { statusId: 'A' },
+                { statusId: 'I' }
+            ];
+        }
+        return filterValues;
+    }
 }
