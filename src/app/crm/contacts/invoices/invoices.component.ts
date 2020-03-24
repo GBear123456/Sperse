@@ -26,7 +26,8 @@ import {
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
-    InvoiceSettings
+    InvoiceSettings,
+    UpdateInvoiceStatusInput
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
@@ -244,7 +245,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 return this.clientService.showInvoiceEmailDialog(
                     this.actionRecordData.InvoiceId, data);
             })
-        ).subscribe(() => this.updateStatus(InvoiceStatus.Sent));
+        ).subscribe(emailId => this.updateStatus(InvoiceStatus.Sent, emailId));
     }
 
     onMenuItemClick(action) {
@@ -256,9 +257,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    updateStatus(newStatus: InvoiceStatus) {
+    updateStatus(newStatus: InvoiceStatus, emailId?: number) {
         this.startLoading(true);
-        this.invoicesService.updateStatus(this.actionRecordData.InvoiceId, newStatus).pipe(
+        this.invoicesService.updateStatus(
+            this.actionRecordData.InvoiceId, newStatus, emailId
+        ).pipe(
             finalize(() => this.finishLoading(true))
         ).subscribe(() => this.invalidate());
     }
