@@ -13,6 +13,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     private readonly EXCEPTION_KEYS = [
         'CFO_BankAccounts_GetStats',
         'CFO_Dashboard_GetCategorizationStatus',
+        'CRM_ContactCommunication_GetMessages',
         'CRM_Country_GetCountryStates',
         'odata_LeadSlice',
         'odata_CustomerSlice',

@@ -1,12 +1,14 @@
 /** Core imports */
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 /** Third party imports */
+import { Observable, of, forkJoin, Subscription } from 'rxjs';
 import { DxListComponent } from 'devextreme-angular/ui/list';
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
+import { NgxFileDropEntry } from 'ngx-file-drop';
 import { finalize } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -14,9 +16,20 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CommunicationMessageDeliveryType, ContactCommunicationServiceProxy,
+import { CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto,
     CommunicationMessageStatus, MessageDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
+
+class Message extends MessageDto {
+    items: MessageDto[];
+    loaded: boolean;
+}
+
+class EmailAttachment extends AttachmentDto {
+    progress!: number;
+    loader!: Subscription;
+    url!: SafeResourceUrl;
+}
 
 @Component({
     selector: 'user-inbox',
@@ -25,11 +38,12 @@ import { ContactsService } from '../contacts.service';
 })
 export class UserInboxComponent implements OnDestroy {
     @ViewChild(DxListComponent, { static: false }) listComponent: DxListComponent;
+    @ViewChild('contentView', { static: false }) contentView: ElementRef;
 
-    contentToolbar = [];
     contactId: number;
+    contentToolbar = [];
     dataSource: DataSource;
-    activeMessage: MessageDto;
+    activeMessage: Partial<Message>;
     instantMessageText: string;
     instantMessageAttachments = [];
     contactInfo: ContactInfoDto;
@@ -53,6 +67,7 @@ export class UserInboxComponent implements OnDestroy {
     userTimezone = '0000';
 
     constructor(
+        private domSanitizer: DomSanitizer,
         private loadingService: LoadingService,
         private communicationService: ContactCommunicationServiceProxy,
         private contactsService: ContactsService,
@@ -215,9 +230,15 @@ export class UserInboxComponent implements OnDestroy {
                             return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                         }).join(','), loadOptions.take, loadOptions.skip
                     ).toPromise().then(response => {
+                        let record;
                         this.initMainToolbar();
-                        if (this.activeMessage || !this.initActiveMessage(response && response.items[0]))
-                            this.loadingService.finishLoading();
+                        if (this.activeMessage) {
+                            let lookupId = this.activeMessage.parentId || this.activeMessage.id;
+                            response.items.some(item => (record = item).id == lookupId);
+                        } else
+                            record = response && response.items[0];
+                        this.loadingService.finishLoading();
+                        this.initActiveMessage(record);
                         return {
                             data: response.items,
                             totalCount: response.totalCount
@@ -238,13 +259,13 @@ export class UserInboxComponent implements OnDestroy {
             if (record.message && (!record.hasChildren || record.items)) {
                 this.setActiveMessage(record, record.message);
             } else {
-                this.loadingService.startLoading();
+                this.loadingService.startLoading(this.contentView.nativeElement);
                 forkJoin(
                     this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
                         undefined, undefined, undefined, undefined, undefined, undefined, undefined) : of({items: null})
                 ).pipe(
-                    finalize(() => this.loadingService.finishLoading())
+                    finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
                 ).subscribe(([message, children]) => {
                     this.setActiveMessage(record, message, children);
                 });
@@ -256,8 +277,13 @@ export class UserInboxComponent implements OnDestroy {
     setActiveMessage(record, message, children?) {
         let component = this.listComponent && this.listComponent.instance;
         if (component) {
+            this.activeMessage = record.message = message;
             if (record.hasChildren && children && children.items) {
-                message.items = record.items = children.items;
+                record.items = children.items;
+                if (message.deliveryType == CommunicationMessageDeliveryType.Email)
+                    this.loadOneMoreChild(record);
+                else
+                    message.items = children.items.reverse();
                 if (record.expanded == undefined)
                     record.expanded = true;
                 component.repaint();
@@ -265,8 +291,6 @@ export class UserInboxComponent implements OnDestroy {
                     component[(item.expanded ? 'expand' : 'collapse') + 'Group'](index)
                 );
             }
-            this.activeMessage =
-            record.message = message;
             this.initContentToolbar();
         }
     }
@@ -329,56 +353,145 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     extendMessage() {
+        let parentId = this.activeMessage.parentId || this.activeMessage.id;
         if (this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email)
             this.showNewEmailDialog(undefined, {
-                parentId: this.activeMessage.parentId,
-                subject: this.activeMessage.subject,
+                parentId: parentId,
+                subject: 'Re: ' + this.activeMessage.subject,
                 body: this.instantMessageText,
                 to: this.activeMessage.to['join'] ?
                     this.activeMessage.to : [this.activeMessage.to]
             });
         else
             this.contactsService.showSMSDialog({
-                parentId: this.activeMessage.parentId,
+                parentId: parentId,
                 body: this.instantMessageText,
                 phoneNumber: this.activeMessage.to,
                 contact: this.contactInfo
             });
     }
 
-    instantMessageSend(event) {
+    instantMessageSend() {
         if (!this.instantMessageText)
             return;
 
-        if (this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email)
-            this.contactsService.sendEmail({
+        let parentId = this.activeMessage.parentId || this.activeMessage.id,
+            isEmail = this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
+
+        (isEmail ? this.contactsService.sendEmail({
                 contactId: this.contactId,
-                parentId: this.activeMessage.id,
+                parentId: parentId,
                 to: [this.activeMessage.to],
                 replyTo: undefined,
                 cc: undefined,
                 bcc: undefined,
                 subject: 'Re: ' + this.activeMessage.subject,
                 body: this.instantMessageText,
-                attachments: this.instantMessageAttachments
-            }).subscribe(res => {
-                if (!isNaN(res)) {
-                    this.instantMessageText = '';
-                    this.notifyService.success(this.ls.l('MailSent'));
-                }
-            });
-        else
-            this.contactsService.sendSMS({
+                attachments: this.instantMessageAttachments.map(item => item.id)
+            }) : this.contactsService.sendSMS({
                 contactId: this.contactId,
-                parentId: this.activeMessage.id,
+                parentId: parentId,
                 message: this.instantMessageText,
                 phoneNumber: this.activeMessage.to
-            }).subscribe(res => {
-                if (!isNaN(res)) {
-                    this.instantMessageText = '';
-                    this.notifyService.success(this.ls.l('MessageSuccessfullySent'));
+            })
+        ).subscribe(res => {
+            if (!isNaN(res)) {
+                this.invalidate();
+                this.notifyService.success(this.ls.l(
+                    isEmail ? 'MailSent' : 'MessageSuccessfullySent'
+                ));
+            }
+        });
+        this.instantMessageAttachments = [];
+        this.instantMessageText = '';
+    }
+
+    loadChild(parent) {
+        if (!this.activeMessage.items)
+            this.activeMessage.items = [];
+        let item = parent.items[this.activeMessage.items.length];
+        if (item) {
+            this.loadingService.startLoading(this.contentView.nativeElement);
+            this.communicationService.getMessage(item.id, this.contactId).pipe(
+                finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
+            ).subscribe(child => {
+                this.activeMessage.items.unshift(child);
+                this.activeMessage.loaded = this.activeMessage.items.length == parent.items.length;
+            });
+        } else
+            this.activeMessage.loaded = true;
+    }
+
+    loadOneMoreChild(record?) {
+        if (record)
+            this.loadChild(record);
+        else
+            this.getVisibleList().some(item => {
+                if (this.activeMessage.id == item.id) {
+                    this.loadChild(item);
+                    return true;
                 }
             });
+    }
+
+    addAttachments(files: NgxFileDropEntry[]) {
+        if (files.length)
+            files.forEach(file => {
+                if (file.fileEntry)
+                    file.fileEntry['file'](this.uploadFile.bind(this));
+                else
+                    this.uploadFile(file);
+            });
+    }
+
+    uploadFile(file) {
+        if (file.size > 5 * 1024 * 1024)
+            return this.notifyService.warn(this.ls.l('FilesizeLimitWarn', 5));
+
+        let attachment: Partial<EmailAttachment> = {
+            name: file.name,
+            size: file.size
+        };
+
+        attachment.url = this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));
+        attachment.loader = this.sendAttachment(file).subscribe((res: any) => {
+            if (res) {
+                if (res.result)
+                    attachment.id = res.result;
+                else {
+                    attachment.progress = res.loaded == res.total ? 0 :
+                        Math.round(res.loaded / res.total * 100);
+                }
+            }
+        }, res => {
+            this.instantMessageAttachments = this.instantMessageAttachments.filter(item => item.name != file.name);
+            this.notifyService.error(res.error.message);
+        });
+        this.instantMessageAttachments.push(attachment);
+    }
+
+    sendAttachment(file) {
+        return new Observable(subscriber => {
+            let xhr = new XMLHttpRequest(),
+                formData = new FormData();
+            formData.append('file', file);
+            xhr.open('POST', AppConsts.remoteServiceBaseUrl + '/api/services/CRM/ContactCommunication/SaveAttachment');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
+
+            xhr.addEventListener('progress', event => {
+                subscriber.next(event);
+            });
+
+            xhr.addEventListener('load', () => {
+                let responce = JSON.parse(xhr.responseText);
+                if (xhr.status === 200)
+                    subscriber.next(responce);
+                else
+                    subscriber.error(responce);
+                subscriber.complete();
+            });
+            xhr.send(formData);
+        });
     }
 
     ngOnDestroy() {

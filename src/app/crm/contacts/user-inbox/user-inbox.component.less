@@ -15,22 +15,34 @@
 
         .inbox-list {
             width: 30%;
-            border-right: 1px solid #dfdfdf;
             ::ng-deep dx-list {
                 &.dx-list-collapsible-groups {
                     .dx-list-group-header {
                         border-bottom: 1px solid #ddd;
                         padding: 0px;
                         &:before {
-                            top: 40px;
-                            right: 10px;
-                            z-index: 1;
-                            position: relative;
+                            display: none;
                         }
                     }
                 }
-                .dx-scrollable-container {
-                    overflow: visible;
+                .dx-scrollable-content {
+                    display: flex;
+                    flex-flow: column;
+                    height: 100%;
+                    &:after {
+                        flex: 0 1 auto;
+                        display: block;
+                        height: 100%;
+                        border-right: 1px solid #dfdfdf;
+                    }
+                    .dx-empty-message {
+                        border-right: 1px solid #dfdfdf;
+                    }
+                }
+                .dx-list-search {
+                    border-right: 1px solid #dfdfdf;
+                    margin-bottom: 0px;
+                    border-radius: 0px;
                 }
                 .dx-placeholder {
                     font-size: 14px;
@@ -48,26 +60,15 @@
                     }
                 }
                 .dx-list-item {
-                    border-top: none;
                     overflow: visible;
+                    border-top: none;
                     border-bottom: 1px solid #ddd;
-                }
-                .dx-list-group {
-                    &:last-child {
-                        &.dx-list-group-collapsed {
-                            .dx-list-group-body {
-                                display: none;
-                            }
-                        }
-                    }
-                    .dx-list-group-body {
-                        overflow: visible;
-                    }
+                    border-right: 1px solid #dfdfdf;
                 }
                 .group-item {
-                    z-index: 2;
                     background: #fff;
                     position: relative;
+                    border-right: 1px solid #dfdfdf;
                     padding: 10px;
                     &:hover {
                         background: #eeeeee;
@@ -101,6 +102,7 @@
                         content: '';
                         top: 23px;
                         right: -1px;
+                        z-index: 1;
                         display: block;
                         position: absolute;
                         border-top: 10px solid transparent;
@@ -162,8 +164,10 @@
                 }
             }
         }
+        .content-view {
+            width: 70%;
+        }
         .inbox-content {
-            width: 70%; 
             ::ng-deep app-toolbar dx-toolbar {
                 border-bottom: none !important;
             }
@@ -187,6 +191,22 @@
                         text-align: right;
                         float: right;
                     }
+                }
+                .instant-attachments {
+                    text-align: right;
+                    padding: 0px 15px;
+                    .attachment {
+                        display: inline-block;
+                        padding: 5px;
+                    }                    
+                }
+                .body-attachments {
+                    text-align: right;
+                    .attachment {
+                        font-size: 12px;
+                        display: inline-block;
+                        padding: 5px;
+                    }                    
                 }
                 .input-form {
                     width: 100%;
@@ -233,6 +253,7 @@
                             left: 40px;
                         }
                         &.attach {
+                            top: 4px;
                             left: 60px;
                         }
                         &.disabled {
@@ -249,6 +270,22 @@
                         background: #e5e9ec;
                         top: 10px;
                         left: 75px;
+                    }
+                    ::ng-deep ngx-file-drop {
+                        display: inline-block;
+                        .ngx-file-drop__drop-zone {
+                            height: 15px;
+                            width: 10px;
+                            margin: 0px;
+                            border: none;
+                            display: block;
+                            .ngx-file-drop__content {
+                                height: 0px;
+                                input {
+                                    display: none;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -318,6 +355,7 @@
             }
             .body {
                 display: block;
+                position: relative;
                 padding: 20px;
                 font-size: 14px;
                 font-weight: 300;
@@ -333,11 +371,33 @@
                 &.from {
                     background: #f3f7fa;
                     margin-left: 50px;
+                    &.date:after {
+                        right: 0px;
+                    }
                 }
                 &.to {
                     background: rgba(0, 174, 239, 0.1);
                     margin-right: 50px;
                     margin-left: auto;
+                }
+                &.separator {
+                    padding: 0px 20px;
+                    font-size: 20px;
+                    text-align: right;                      
+                }
+                &.date {
+                    margin-bottom: 25px;
+                    &:after {
+                        content: attr(date);
+                        position: absolute;
+                        display: block;
+                        bottom: -25px;
+                        font-weight: normal;
+                        font-size: 11px;
+                        line-height: 2.18;
+                        letter-spacing: 0.22px;
+                        color: #677380;
+                    }
                 }
             }
         }
