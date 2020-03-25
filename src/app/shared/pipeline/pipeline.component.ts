@@ -17,6 +17,7 @@ import * as moment from 'moment';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -123,6 +124,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private _contactGroupId: ContactGroup;
     stageWidths = StageWidth;
     stageColumnWidths: string[] = Object.keys(StageWidth);
+    private readonly COLUMN_WIDTHS_CACHE_KEY = 'COLUMN_WIDTHS';
 
     constructor(
         injector: Injector,
@@ -133,6 +135,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private changeDetector: ChangeDetectorRef,
         private filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
+        private cacheService: CacheService,
         public userManagementService: UserManagementService,
         public dialog: MatDialog
     ) {
@@ -176,7 +179,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
             this.stages = pipeline.stages.map((stage: StageDto) => {
-                const sameStageOldData = this.stages && this.stages.find((oldStage: Stage) => oldStage.id === stage.id);
+                const columnWidthsCache = this.cacheService.get(this.getColumnWidthsCacheKey());
                 return new Stage({
                     ...stage,
                     entities: [],
@@ -186,9 +189,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     stageIndex: undefined,
                     total: undefined,
                     lastStageIndex: undefined,
-                    width: sameStageOldData && sameStageOldData.width
-                        ? sameStageOldData.width
-                        : (stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium)
+                    width: columnWidthsCache && columnWidthsCache[stage.id]
+                        ? columnWidthsCache[stage.id]
+                        : stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium
                 });
             });
 
@@ -554,10 +557,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (res && res.length) {
                         let stages = res.pop();
                         this.allStagesEntitiesTotal = 0;
+                        const columnWidthsCache = this.cacheService.get(this.getColumnWidthsCacheKey());
                         stages && this.stages.forEach((stage) => {
                             stage.total = stages[stage.id] || 0;
                             stage.isFull = stage.total <= stage.entities.length;
-                            stage.width = stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium;
+                            stage.width = columnWidthsCache && columnWidthsCache[stage.id]
+                                ? columnWidthsCache[stage.id]
+                                : (stage.sortOrder === 0 ? StageWidth.Wide : StageWidth.Medium);
                             this._dataSources[stage.name]['total'] = stage.total;
                             this.allStagesEntitiesTotal += stage.total;
                             this.detectChanges();
@@ -885,10 +891,26 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return topPosition;
     }
 
+    getColumnWidthsCacheKey(): string {
+        return this.cacheHelper.getCacheKey(
+            this.COLUMN_WIDTHS_CACHE_KEY,
+            this.pipelinePurposeId + ( this.contactGroupId ? '_' + this.contactGroupId : '')
+        );
+    }
+
     changeWidth(stage: Stage, direction: -1 | 1) {
         const stageWidths = this.stageColumnWidths.filter(key => !isNaN(+key));
         const currentWidthIndex = stageWidths.indexOf(stage.width.toString());
         stage.width = currentWidthIndex + direction + 1;
+        let stagesWidths = {};
+        this.stages.forEach((stage: Stage) => {
+            stagesWidths[stage.id] = stage.width;
+        });
+        const cacheKey = this.getColumnWidthsCacheKey();
+        this.cacheService.set(
+            cacheKey,
+            stagesWidths
+        );
         setTimeout(() => this.changeDetector.detectChanges());
     }
 
