@@ -32,7 +32,15 @@
             <dx-tooltip [(visible)]="showTooltip" [target]="salesReportButton" position="bottom" hideEvent="dxoverend">
                 <div *dxTemplate="let data = data of 'content'">
                     <div class="sales-report-tooltip">
-                        <div class="title">{{ ls.l('DownloadSalesReport') }}</div>
+                        <div class="title">{{ ls.l('DownloadReport') }}</div>
+                        <div class="report-type">
+                            <dx-select-box [items]="reportTypes"
+                                           displayExpr="displayName"
+                                           [width]="193"
+                                           [height]="35"
+                                           [(value)]="selectedReportType">
+                            </dx-select-box>
+                        </div>
                         <div class="options">
                             <dx-radio-group
                                     [items]="resolutions"
@@ -48,7 +56,7 @@
                         </div>
                         <ul class="languages">
                             <li *ngFor="let language of languages">
-                                <a [href]="bankCodeService.getBankCodeReportLink(language.code, bankCode, 'Sales', 'sales', resolution)"
+                                <a [href]="bankCodeService.getBankCodeReportLink(language.code, bankCode, selectedReportType.folder, selectedReportType.type, resolution)"
                                    target="_blank">
                                     <img [src]="reportIconSrc">
                                     <span>{{ ls.l('DownloadIn') }}</span>
