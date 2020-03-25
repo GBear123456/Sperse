@@ -149,9 +149,45 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     formatting = AppConsts.formatting;
     statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
-    filterModelLists: FilterModel;
-    filterModelTags: FilterModel;
-    filterModelAssignment: FilterModel;
+    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
+    filterModelLists: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'List',
+        field: 'ListId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+        }
+    });
+    filterModelTags: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Tag',
+        field: 'TagId',
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        }
+    });
+    filterModelAssignment: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'assignedUser',
+        field: 'AssignedUserId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(this.assignedUsersSelector),
+                    nameField: 'name',
+                    keyExpr: 'id'
+                })
+        }
+    });
     filterModelStatus: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'status',
@@ -167,9 +203,46 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             })
         }
     });
-    filterModelRating: FilterModel;
-    filterModelStar: FilterModel;
-    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
+    filterModelGroup: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        filterMethod: FilterHelpers.filterBySetOfValues,
+        caption: 'group',
+        field: 'GroupId',
+        isSelected: true,
+        hidden: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource: [ 'C' ],
+                value: 'C'
+            })
+        }
+    });
+    filterModelRating: FilterModel = new FilterModel({
+        component: FilterRangeComponent,
+        operator: { from: 'ge', to: 'le' },
+        caption: 'Rating',
+        field: 'Rating',
+        items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
+    });
+    filterModelStar: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Star',
+        field: 'StarId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    templateFunc: (itemData) => {
+                        return `<div class="star-item">
+                                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                                    <span>${this.l(itemData.name)}</span>
+                                                </div>`;
+                    }
+                })
+        }
+    });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
     headlineButtons: HeadlineButton[] = [
@@ -400,7 +473,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 type: 'odata',
                 url: this.getODataUrl(
                     this.dataSourceURI,
-                    this.filterModelStatus.filterMethod(this.filterModelStatus)
+                    [
+                        this.filterModelStatus.filterMethod(this.filterModelStatus),
+                        this.filterModelGroup.filterMethod(this.filterModelGroup)
+                    ]
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -424,7 +500,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI, this.filterModelStatus.filterMethod(this.filterModelStatus)),
+                url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;
@@ -707,19 +783,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 caption: 'zipCode',
                 items: { ZipCode: new FilterItemModel() }
             }),
-            this.filterModelAssignment = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'assignedUser',
-                field: 'AssignedUserId',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(this.assignedUsersSelector),
-                            nameField: 'name',
-                            keyExpr: 'id'
-                        })
-                }
-            }),
+            this.filterModelAssignment,
             new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'OrganizationUnitId',
@@ -733,57 +797,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         })
                 }
             }),
-            this.filterModelLists = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'List',
-                field: 'ListId',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
-                            nameField: 'name',
-                            keyExpr: 'id'
-                        })
-                }
-            }),
-            this.filterModelTags = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Tag',
-                field: 'TagId',
-                items: {
-                    element: new FilterCheckBoxesModel({
-                        dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
-                        nameField: 'name',
-                        keyExpr: 'id'
-                    })
-                }
-            }),
-            this.filterModelRating = new FilterModel({
-                component: FilterRangeComponent,
-                operator: { from: 'ge', to: 'le' },
-                caption: 'Rating',
-                field: 'Rating',
-                items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
-            }),
-            this.filterModelStar = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'Star',
-                field: 'StarId',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
-                            nameField: 'name',
-                            keyExpr: 'id',
-                            templateFunc: (itemData) => {
-                                return `<div class="star-item">
-                                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
-                                                    <span>${this.l(itemData.name)}</span>
-                                                </div>`;
-                            }
-                        })
-                }
-            })
+            this.filterModelLists,
+            this.filterModelTags,
+            this.filterModelRating,
+            this.filterModelStar,
+            this.filterModelGroup
         ];
     }
 
