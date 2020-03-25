@@ -565,7 +565,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     if (requestSize > this.MAX_REQUEST_SIZE) {
                         this.finishLoading(true);
                         this.message.info(this.l('LeadsImportSizeExceeds', requestSize, this.MAX_REQUEST_SIZE));
-                    } else  {
+                    } else {
                         this.sendData(JSON.stringify(leadsInput)).pipe(
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId: number) => {

@@ -6,7 +6,6 @@ import {
     Inject,
     OnDestroy,
     OnInit,
-    Optional,
     Renderer2,
     ViewChild
 } from '@angular/core';
@@ -169,8 +168,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
-        @Inject(DOCUMENT) private document: any,
-        @Inject('showAdditionalWidgets') @Optional() public showAdditionalWidgets?: boolean
+        @Inject(DOCUMENT) private document: any
     ) {}
 
     ngOnInit() {

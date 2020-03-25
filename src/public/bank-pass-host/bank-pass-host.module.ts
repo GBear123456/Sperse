@@ -71,8 +71,7 @@ import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/comm
         AppUrlService,
         CacheHelper,
         ClipboardService,
-        LoadingService,
-        { provide: 'showAdditionalWidgets', useValue: true }
+        LoadingService
     ]
 })
 export class BankPassHostModule {}

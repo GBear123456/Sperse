@@ -3,13 +3,13 @@
 </div>
 <div class="card-body">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-7 col-xl-6">
             <bank-code-total-codes-cracked [level]="bankCodeLevel$ | async"
                                            [values]="bankCodeGroupsCounts$ | async"
                                            [total]="bankCodeClientsCount$ | async">
             </bank-code-total-codes-cracked>
         </div>
-        <div class="col-lg-5 offset-lg-1">
+        <div class="col-lg-5 offset-xl-1">
             <bank-code-goals-cracked></bank-code-goals-cracked>
         </div>
     </div>

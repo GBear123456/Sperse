@@ -78,6 +78,19 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
         }
     ];
     showTooltip = false;
+    reportTypes = [
+        {
+            displayName: this.ls.l('Sales'),
+            type: 'sales',
+            folder: 'Sales'
+        },
+        {
+            displayName: this.ls.l('Profile'),
+            type: 'profile',
+            folder: 'Prospects'
+        }
+    ];
+    selectedReportType = this.reportTypes[0];
 
     constructor(
         private dialogService: DialogService,

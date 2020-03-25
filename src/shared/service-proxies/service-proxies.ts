@@ -44678,82 +44678,6 @@ export interface IContactBusinessInfo {
     comment: string | undefined;
 }
 
-export class AddressInfo implements IAddressInfo {
-    id!: number | undefined;
-    streetAddress!: string | undefined;
-    city!: string | undefined;
-    stateId!: string | undefined;
-    stateName!: string | undefined;
-    zip!: string | undefined;
-    countryId!: string | undefined;
-    countryName!: string | undefined;
-    usageTypeId!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    ownershipTypeId!: string | undefined;
-
-    constructor(data?: IAddressInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.stateId = data["stateId"];
-            this.stateName = data["stateName"];
-            this.zip = data["zip"];
-            this.countryId = data["countryId"];
-            this.countryName = data["countryName"];
-            this.usageTypeId = data["usageTypeId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.ownershipTypeId = data["ownershipTypeId"];
-        }
-    }
-
-    static fromJS(data: any): AddressInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddressInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["stateId"] = this.stateId;
-        data["stateName"] = this.stateName;
-        data["zip"] = this.zip;
-        data["countryId"] = this.countryId;
-        data["countryName"] = this.countryName;
-        data["usageTypeId"] = this.usageTypeId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["ownershipTypeId"] = this.ownershipTypeId;
-        return data; 
-    }
-}
-
-export interface IAddressInfo {
-    id: number | undefined;
-    streetAddress: string | undefined;
-    city: string | undefined;
-    stateId: string | undefined;
-    stateName: string | undefined;
-    zip: string | undefined;
-    countryId: string | undefined;
-    countryName: string | undefined;
-    usageTypeId: string | undefined;
-    startDate: moment.Moment | undefined;
-    ownershipTypeId: string | undefined;
-}
-
 export class ContactEmailInfo implements IContactEmailInfo {
     id!: number | undefined;
     emailAddress!: string | undefined;
@@ -44848,6 +44772,82 @@ export interface IContactPhoneInfo {
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     usageTypeId: string | undefined;
+}
+
+export class AddressInfo implements IAddressInfo {
+    id!: number | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+    countryName!: string | undefined;
+    usageTypeId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    ownershipTypeId!: string | undefined;
+
+    constructor(data?: IAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
+            this.usageTypeId = data["usageTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): AddressInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
+        data["usageTypeId"] = this.usageTypeId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface IAddressInfo {
+    id: number | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+    countryName: string | undefined;
+    usageTypeId: string | undefined;
+    startDate: moment.Moment | undefined;
+    ownershipTypeId: string | undefined;
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
@@ -44981,11 +44981,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     businessSicCode!: number | undefined;
     note!: string | undefined;
     contactId!: number | undefined;
-    emailAddress!: string | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    website!: string | undefined;
-    address!: AddressInfo | undefined;
     photo!: ContactPhotoInfo | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
@@ -45035,11 +45030,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.businessSicCode = data["businessSicCode"];
             this.note = data["note"];
             this.contactId = data["contactId"];
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.website = data["website"];
-            this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
                 this.contactEmails = [];
@@ -45113,11 +45103,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["businessSicCode"] = this.businessSicCode;
         data["note"] = this.note;
         data["contactId"] = this.contactId;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["website"] = this.website;
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
             data["contactEmails"] = [];
@@ -45184,11 +45169,6 @@ export interface IOrganizationBusinessInfo {
     businessSicCode: number | undefined;
     note: string | undefined;
     contactId: number | undefined;
-    emailAddress: string | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    website: string | undefined;
-    address: AddressInfo | undefined;
     photo: ContactPhotoInfo | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;

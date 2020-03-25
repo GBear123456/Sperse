@@ -180,7 +180,7 @@ export class BankCodeService {
             group: '[{"selector":"BankCode","isExpanded":false}]',
             contactGroupId: ContactGroup.Client
         };
-        filters.push({ 'BankCode': { 'ne': null }});
+        filters.push({ 'BankCode': { 'ne': null }}, { 'BankCode': { 'ne': '' }});
         let filter = buildQuery({
             filter: filters
         });
