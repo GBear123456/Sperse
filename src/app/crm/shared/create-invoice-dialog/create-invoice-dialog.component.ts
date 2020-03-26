@@ -413,12 +413,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    updateStatus(status?: InvoiceStatus) {
+    updateStatus(status?: InvoiceStatus, emailId?: number) {
         if (status)
             this.status = status;
         if (this.status != this.data.status) {
             status || this.modalDialog.startLoading();
-            this.invoicesService.updateStatus(this.invoiceId, this.status)
+            this.invoicesService.updateStatus(this.invoiceId, this.status, emailId)
                 .pipe(finalize(() => status || this.modalDialog.finishLoading()))
                 .subscribe(() => {
                     if (status)
@@ -449,8 +449,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                   data['templateId'] = this.invoiceSettings.defaultTemplateId;
                   return this.contactsService.showInvoiceEmailDialog(this.invoiceId, data);
               })
-        ).subscribe(() => {
-            this.updateStatus(InvoiceStatus.Sent);
+        ).subscribe(emailId => {
+            this.updateStatus(InvoiceStatus.Sent, emailId);
             this.dialog.closeAll();
         });
     }
