@@ -139,7 +139,8 @@ export enum ImportStatus {
     Cancelled = 'A',
     Completed = 'C',
     InProgress = 'I',
-    New = 'N'
+    New = 'N',
+    Failed = 'F'
 }
 
 export enum AccountConnectors {
