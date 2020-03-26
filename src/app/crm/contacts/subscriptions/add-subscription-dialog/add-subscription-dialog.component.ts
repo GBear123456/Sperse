@@ -71,7 +71,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
 
     constructor(
         private elementRef: ElementRef,
-        private orderSubscriptionService: OrderSubscriptionServiceProxy,
+        private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
@@ -113,16 +113,15 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (this.validationGroup.instance.validate().isValid) {
             const subscriptionInput = new UpdateOrderSubscriptionInput(this.subscription);
             subscriptionInput.updateThirdParty = false;
-            subscriptionInput.subscriptions.forEach((subscription: SubscriptionInput) => {
-                if (subscription.endDate) {
-                    subscription.endDate = DateHelper.removeTimezoneOffset(
-                        new Date(subscription.endDate), true, 'to');
-                }
-                if (this.isBankCodeLayout && subscription.code === BankCodeServiceType.BANKVault) {
+            subscriptionInput.subscriptions = subscriptionInput.subscriptions.map((subscription: SubscriptionInput) => {
+                let sub = new SubscriptionInput(subscription);
+                if (sub.endDate)
+                    sub.endDate = DateHelper.removeTimezoneOffset(new Date(sub.endDate), true, 'to');
+                if (this.isBankCodeLayout && sub.code === BankCodeServiceType.BANKVault)
                     subscriptionInput.updateThirdParty = true;
-                }
+                return sub;
             });
-            this.orderSubscriptionService.update(subscriptionInput).subscribe(() => {
+            this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.contactsService.invalidate('subscriptions');
                 this.dialogRef.close();
