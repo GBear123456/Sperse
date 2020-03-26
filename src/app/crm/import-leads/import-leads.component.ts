@@ -2,6 +2,7 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import pako from 'pako';
 import * as moment from 'moment-timezone';
 import { select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
@@ -37,7 +38,6 @@ import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import pako from 'pako';
 
 @Component({
     templateUrl: 'import-leads.component.html',
