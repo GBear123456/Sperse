@@ -300,28 +300,26 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeCreatedCell = (data) => this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
 
-    calculateCreatedSortCell = (data) => data.created;
-
     customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
 
-    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankPassFee');
+    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data. bankPassFee);
 
-    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankVaultFee');
+    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data. bankVaultFee);
 
-    customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'wtbFee');
+    customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.wtbFee);
 
-    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'totalFee');
+    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data. totalFee);
 
-    customizeBankConnectAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankConnectAmount');
+    customizeBankConnectAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data. bankConnectAmount);
 
-    customizeBankBeyondAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'bankBeyondAmount');
+    customizeBankBeyondAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data. bankBeyondAmount);
 
-    customizeStarterKitAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'starterKitAmount');
+    customizeStarterKitAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.starterKitAmount);
 
-    customizeTotalAmountCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data, 'totalAmount');
+    customizeTotalAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.totalAmount);
 
-    customizeAmountCell(data: any, field: string) {
-        return this.currencyPipe.transform(data[field], this.currency);
+    customizeAmountCell(value: any) {
+        return this.currencyPipe.transform(value, this.currency);
     }
 
     getTotalText = () => this.ls.l('GrandTotal');

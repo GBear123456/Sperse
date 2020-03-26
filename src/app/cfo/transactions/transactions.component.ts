@@ -10,6 +10,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
@@ -72,13 +73,22 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { Period } from '@app/shared/common/period/period.enum';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { BankAccountDto } from '../../../shared/service-proxies/service-proxies';
+import { PdfExportHeader } from '../../../shared/common/export/pdf-export-header.interface';
 
 @Component({
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy, LifecycleSubjectsService ]
+    providers: [
+        TransactionsServiceProxy,
+        ClassificationServiceProxy,
+        BankAccountsServiceProxy,
+        LifecycleSubjectsService,
+        DatePipe,
+        CurrencyPipe
+    ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
@@ -139,7 +149,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public bankAccountCount;
     public bankAccounts: number[];
-    public bankAccountsLookup = [];
+    public bankAccountsLookup: BankAccountDto[] = [];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
     public creditClassifiedTransactionCount = 0;
@@ -303,6 +313,42 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
     toolbarConfig: ToolbarGroupModel[];
+    amountCustomizer = (value) => {
+        return this.currencyPipe.transform(
+            value,
+            this.cfoPreferencesService.selectedCurrencyId,
+            this.cfoPreferencesService.selectedCurrencySymbol,
+            '1.2-2'
+        ) || '';
+    }
+    exportToPdfHeadersConfig: { [name: string]: Omit<PdfExportHeader, 'name'>} = {
+        'BusinessEntityId': {
+            calculateDisplayValue: (data) => {
+                let businessEntityName = '';
+                if (this.filtersInitialData && this.filtersInitialData.businessEntities) {
+                    const businessEntity = this.filtersInitialData.businessEntities.find((businessEntity) => {
+                        return businessEntity.id === data.BusinessEntityId;
+                    });
+                    if (businessEntity) {
+                        businessEntityName = businessEntity.name;
+                    }
+                }
+                return businessEntityName;
+            }
+        },
+        // 'BankAccountId': {
+        //     calculateDisplayValue: (data) => {
+        //         let accountName = '';
+        //         if (this.bankAccountsLookup) {
+        //             const account = this.bankAccountsLookup.find((account) => account.id === data.BankAccountId);
+        //             if (account) {
+        //                 accountName = account.accountName;
+        //             }
+        //         }
+        //         return accountName;
+        //     }
+        // }
+    };
 
     constructor(injector: Injector,
         private transactionsServiceProxy: TransactionsServiceProxy,
@@ -312,6 +358,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private lifecycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
         private route: ActivatedRoute,
+        private datePipe: DatePipe,
+        private currencyPipe: CurrencyPipe,
         public appService: AppService,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
@@ -637,8 +685,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             value: this.searchValue,
                             width: AppConsts.isMobile ? '215' : '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' '
-                            + this.l('Transactions').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Transactions').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -708,7 +755,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             hint: this.l('Download'),
                             items: [
                                 {
-                                    action: Function(),
+                                    action: (option) => {
+                                        this.exportService.exportToPDF(option, this.dataGrid);
+                                    },
                                     text: this.l('Save as PDF'),
                                     icon: 'pdf',
                                 },
@@ -1436,6 +1485,22 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : 150)) -
             (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
+
+    calculateTransactionsAmountDisplayValue = (data) => this.amountCustomizer(data['Amount']);
+
+    calculateTransactionsDebitDisplayValue = (data) => this.amountCustomizer(data['Debit']);
+
+    calculateTransactionsCreditDisplayValue = (data) => this.amountCustomizer(data['Credit']);
+
+    calculateEndingBalanceDisplayValue = (data) => this.amountCustomizer(data['EndingBalance']);
+
+    calculateCashflowCategoryNameDisplayValue = (data) => data.CashflowCategoryName || this.l('Unclassified');
+
+    calculateDateDisplayValue = (data) => this.datePipe.transform(data.Date, 'MM/dd/yyyy');
+
+    calculateMonthYearDisplayValue = (data) => this.datePipe.transform(data.Date, 'MMM yyyy');
+
+    calculateIsPendingDisplayValue = (data) => this.l(data.isPendingTemplate ? 'Transactions_Pending' : 'Transactions_Settled')
 
     toggleDataGridToolbar() {
         this.showDataGridToolbar = !this.showDataGridToolbar;

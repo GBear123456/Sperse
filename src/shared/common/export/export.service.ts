@@ -6,11 +6,14 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { ExportGoogleSheetService } from './export-google-sheets/export-google-sheets';
 import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
+import DevExpress from 'devextreme/bundles/dx.all';
 import capitalize from 'underscore.string/capitalize';
 import * as moment from 'moment';
 import { exportFromMarkup } from 'devextreme/viz/export';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import * as jsPDF from 'jspdf';
+import { PdfExportHeader } from './pdf-export-header.interface';
 
 @Injectable()
 export class ExportService {
@@ -90,6 +93,10 @@ export class ExportService {
 
     exportToCSV(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
         return this.exportTo(option, 'CSV', dataGrid, prefix);
+    }
+
+    exportToPDF(option, dataGrid: DxDataGridComponent, prefix?: string) {
+        return this.exportTo(option, 'PDF', dataGrid, prefix);
     }
 
     exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
@@ -178,6 +185,37 @@ export class ExportService {
         });
     }
 
+    private exportToPDFInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+        const visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns()
+            .filter((column: DevExpress.ui.dxDataGridColumn) => column.dataField);
+        function getHeaders(columns: DevExpress.ui.dxDataGridColumn[]): PdfExportHeader[]  {
+            let result = [];
+            columns.forEach((column: DevExpress.ui.dxDataGridColumn) => {
+                result.push({
+                    id: column.dataField,
+                    name: column.dataField,
+                    prompt: column.caption,
+                    width: (390 / columns.length),
+                    align: 'center',
+                    padding: 0,
+                    calculateDisplayValue: column.calculateDisplayValue,
+                    lookup: column.lookup
+                });
+            });
+            return result;
+        }
+        return new Promise((resolve) => {
+            this.getDataFromGrid(
+                dataGrid,
+                (data) => {
+                    this.moveItemsToPDF(data, dataGrid, getHeaders(visibleColumns), prefix);
+                    resolve();
+                },
+                exportAllData
+            );
+        });
+    }
+
     /**
      * Download the charts into file
      * @param ImageFormat format
@@ -192,6 +230,41 @@ export class ExportService {
                 backgroundColor: '#fff'
             });
         });
+    }
+
+    private moveItemsToPDF(data, dataGrid, headers: PdfExportHeader[], prefix) {
+        const items = data.map((item) => {
+            let newItem = {};
+            for (let key in item) {
+                if (item.hasOwnProperty(key)) {
+                    const header = headers.find((header: PdfExportHeader) => header.name === key);
+                    if (header) {
+                        if (header.lookup && header.lookup.calculateCellValue) {
+                            newItem[key] = header.lookup.calculateCellValue(item[key]);
+                        } else if (header.calculateDisplayValue) {
+                            newItem[key] = header.calculateDisplayValue(item);
+                        } else {
+                            newItem[key] = item[key] ? item[key].toString() : '';
+                        }
+                    }
+                }
+            }
+            return newItem;
+        });
+        if (headers) {
+            let doc = new jsPDF('landscape').table(1, 1,
+                items,
+                headers,
+                {
+                    printHeaders: true,
+                    autoSize: false,
+                    fontSize: 8,
+                    padding: 0,
+                    headerBackgroundColor: '#f3f7fa'
+                }
+            );
+            doc.save(this.getFileName(dataGrid, null, prefix));
+        }
     }
 
 }
