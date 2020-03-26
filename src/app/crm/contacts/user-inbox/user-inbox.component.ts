@@ -116,6 +116,7 @@ export class UserInboxComponent implements OnDestroy {
                 }, {
                     widget: 'dxSelectBox',
                     options: {
+                        width: '180px',
                         valueExpr: 'id',
                         displayExpr: 'name',
                         value: this.status,
