@@ -255,7 +255,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.contactsService.updateLocation(null, null, null, itemFullInfo.itemData.id);
                 break;
             case 'orders':
-                this.contactsService.updateLocation(itemFullInfo.itemData.ContactId);
+                this.contactsService.updateLocation(itemFullInfo.itemData.ContactId, itemFullInfo.itemData.LeadId);
                 break;
             default:
                 break;
