@@ -342,6 +342,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             {
                 area: 'filter',
                 dataField: 'ZipCode'
+            },
+            {
+                area: 'filter',
+                dataField: 'PartnerSource'
             }
         ]
     };
@@ -770,6 +774,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 items: { ZipCode: new FilterItemModel() }
             }),
             this.filterModelAssignment,
+            new FilterModel({
+                component: FilterInputsComponent,
+                caption: 'PartnerSource',
+                items: { PartnerSource: new FilterItemModel() }
+            }),
             new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'OrganizationUnitId',

@@ -99,7 +99,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         nameField: 'name',
                         parentExpr: 'parentId',
                         keyExpr: 'id'
-                    })
+                    }),
             }
         }),
         new FilterModel({
@@ -109,7 +109,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: 'Amount',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.subscriptionStatusFilter
+        this.subscriptionStatusFilter,
+        new FilterModel({
+            component: FilterInputsComponent,
+            caption: 'PartnerSource',
+            items: { PartnerSource: new FilterItemModel() }
+        })
     ];
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
@@ -322,6 +327,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 area: 'filter',
                 dataField: 'City'
+            },
+            {
+                area: 'filter',
+                dataField: 'PartnerSource'
             }
         ]
     };

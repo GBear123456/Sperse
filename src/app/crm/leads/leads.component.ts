@@ -316,7 +316,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'SourceCode'
+                dataField: 'PartnerSource'
             },
             {
                 area: 'filter',
@@ -762,11 +762,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
-                    caption: 'SourceCode',
-                    items: { SourceCode: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
                     operator: 'startswith',
                     caption: 'Industry',
                     items: { Industry: new FilterItemModel() }
@@ -783,6 +778,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 keyExpr: 'id'
                             })
                     }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    caption: 'PartnerSource',
+                    items: { PartnerSource: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
