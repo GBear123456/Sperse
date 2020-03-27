@@ -20,9 +20,29 @@
                 [showClearSelection]="true"
                 [filteredRowsData]="categoriesRowsData"
                 [transactionsFilter]="transactionsFilterQuery"
-                (onFilterSelected)="filterByCashflowCategories($event, data)"
-                (onCategoriesChanged)="refreshDataGrid()">
+                (onFilterSelected)="filterByCashflowCategories($event, data)">
             </categorization>
+        </div>
+    </dx-drop-down-box>
+</div>
+<div #counterpartyFilter [hidden]="!isHeaderFilterVisible" class="counterparty-filter">
+    <dx-drop-down-box
+        width="340px"
+        [value]=""
+        [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'">
+        <div *dxTemplate="let data of 'content'" style="padding-bottom: 20px;">
+            <dx-list
+                width="340px"
+                keyExpr="id"
+                searchExpr="name"
+                displayExpr="name"
+                selectionMode="multiple"
+                [searchEnabled]="true"
+                [showSelectionControls]="true"                
+                [dataSource]="counterparties$ | async"
+                (onInitialized)="onCounterpartiesInitialized($event)"
+                (onSelectionChanged)="onCounterpartiesChanged($event)">
+            </dx-list>
         </div>
     </dx-drop-down-box>
 </div>  
