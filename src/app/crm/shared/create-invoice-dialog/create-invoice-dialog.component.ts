@@ -384,6 +384,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new CreateInvoiceInput();
             this.setRequestCommonFields(data);
             data.contactId = this.contactId;
+            if (!this.orderNumber && this.data && this.data.contactInfo && this.data.contactInfo.leadId) {
+                data.leadId = this.data.contactInfo.leadId;
+            }
             data.orderId = this.orderId;
             data.grandTotal = this.total;
             data.status = InvoiceStatus[this.status];
