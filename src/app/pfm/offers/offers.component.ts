@@ -71,7 +71,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
     filterModelStatuses: FilterModel;
-    filterModelRank: FilterModel;
     pullContextMenuItems = [
         { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
     ];
@@ -134,14 +133,14 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 })
             }
         }),
-        this.filterModelRank = new FilterModel({
+        new FilterModel({
             component: FilterRangeComponent,
             operator: {from: 'ge', to: 'le'},
             caption: 'Rank',
             field: 'Rank',
             items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
         }),
-        this.filterModelRank = new FilterModel({
+        new FilterModel({
             caption: 'TrafficSource',
             hidden: true
         })
@@ -169,7 +168,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI,
-                    [this.filterByStatus(this.filterModelStatuses), this.filterByTrafficSource()]),
+                    [FiltersService.filterByStatus(this.filterModelStatuses), FiltersService.filterByTrafficSource()]),
                 deserializeDates: false,
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
@@ -351,33 +350,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.processFilterInternal();
     }
 
-    filterByCategory(filter) {
-        let data = {};
-        if (filter.items.element && filter.items.element.value) {
-            let filterData = [];
-            filter.items.element.value.forEach(category => {
-                filterData.push({ or: [{ Categories: { any: { CampaignCategory: category } } }] });
-            });
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
-    }
-
-    filterByStatus(filter) {
-        return FilterHelpers.filterBySetOfValues(filter);
-    }
-
-    filterByRank(filter: FilterModel) {
-        return FilterHelpers.filterByRating(filter);
-    }
-
-    filterByTrafficSource() {
-        return {'TrafficSource': {'ne': 'Decline'}};
-    }
-
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
     }
@@ -394,12 +366,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             this.dataGrid.instance,
             this.dataSourceURI,
             this.filters,
-            (filter) => {
-                let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                if (filterMethod)
-                    return filterMethod.call(this, filter);
-            },
+            this.filtersService.getCheckCustom,
             null,
             this.getCustomFiltersParams()
         );

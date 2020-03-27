@@ -12,6 +12,7 @@ import each from 'lodash/each';
 import { FilterModel } from './models/filter.model';
 import { FilterHelpers as CrmFilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { FilterHelpers as CfoFilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
+import { FilterHelpers as PfmFilterHelpers } from '@app/pfm/shared/helpers/filter.helper';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 @Injectable()
@@ -53,6 +54,18 @@ export class FiltersService {
             return filtersValues;
         })
     );
+
+    static filterByCategory(filter: FilterModel) {
+        return PfmFilterHelpers.filterByCategory(filter);
+    }
+
+    static filterByRank(filter: FilterModel) {
+        return CrmFilterHelpers.filterByRating(filter);
+    }
+
+    static filterByTrafficSource() {
+        return PfmFilterHelpers.filterByTrafficSource();
+    }
 
     static filterByStates(filter: FilterModel) {
         return CrmFilterHelpers.filterByStates(filter);
@@ -188,6 +201,10 @@ export class FiltersService {
 
     static filterByTransactionType(filter: FilterModel) {
         return CfoFilterHelpers.filterByExcludeElement(filter);
+    }
+
+    static filterByGroupId() {
+        return CrmFilterHelpers.filterByGroupId();
     }
 
     setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true): boolean {

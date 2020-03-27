@@ -129,7 +129,8 @@
                                     cssClass="tabular"
                                     sortOrder="desc"
                                     [caption]="l('Transactions_Date')"
-                                    cellTemplate="dateCell">
+                                    cellTemplate="dateCell"
+                                    [calculateDisplayValue]="calculateDateDisplayValue">
                         </dxi-column>
                         <dxi-column dataField="BusinessEntityId"
                                     [caption]="l('Transactions_BusinessEntity')"
@@ -144,6 +145,7 @@
                                     dataField="CashflowCategoryName"
                                     dataType="string"
                                     cellTemplate="CashflowCategoryNameTemplate"
+                                    [calculateDisplayValue]="calculateCashflowCategoryNameDisplayValue"
                                     cssClass="category">
                         </dxi-column>
                         <dxi-column dataField="CounterpartyName"
@@ -162,7 +164,9 @@
                                     cssClass="tabular"
                                     name="Amount"
                                     [caption]="l('Transactions_Amount')"
-                                    cellTemplate="amountTemplate">
+                                    cellTemplate="amountTemplate"
+                                    calculateSortValue="Amount"
+                                    [calculateDisplayValue]="calculateTransactionsAmountDisplayValue">
                         </dxi-column>
                         <dxi-column dataField="BankAccountId"
                                     cssClass="tabular clipboard-holder"
@@ -198,6 +202,8 @@
                                     cssClass="tabular"
                                     [caption]="l('Transactions_EndingBalance')"
                                     cellTemplate="endBalanceTemplate"
+                                    [calculateDisplayValue]="calculateEndingBalanceDisplayValue"
+                                    calculateSortValue="EndingBalance"
                                     [visible]="false">
                         </dxi-column>
                         <dxi-column dataField="CashFlowTypeName"
@@ -241,6 +247,7 @@
                         <dxi-column dataField="IsPending"
                                     [caption]="l('Transactions_IsPending')"
                                     [visible]="false"
+                                    [calculateDisplayValue]="calculateIsPendingDisplayValue"
                                     cellTemplate="isPendingTemplate">
                         </dxi-column>
                         <dxi-column dataField="MonthYear"
@@ -248,6 +255,7 @@
                                     cellTemplate="dateMonthYear"
                                     groupCellTemplate="dateMonthYear"
                                     calculateSortValue="Date"
+                                    [calculateDisplayValue]="calculateMonthYearDisplayValue"
                                     [visible]="false">
                         </dxi-column>
                         <dxi-column dataField="Debit"
@@ -255,6 +263,8 @@
                                     cssClass="tabular"
                                     name="Debit"
                                     [caption]="l('Transactions_Debit')"
+                                    [calculateDisplayValue]="calculateTransactionsDebitDisplayValue"
+                                    calculateSortValue="Debit"
                                     cellTemplate="amountTemplate"
                                     [visible]="false">
                         </dxi-column>
@@ -263,6 +273,8 @@
                                     cssClass="tabular"
                                     name="Credit"
                                     [caption]="l('Transactions_Credit')"
+                                    calculateSortValue="Credit"
+                                    [calculateDisplayValue]="calculateTransactionsCreditDisplayValue"
                                     cellTemplate="amountTemplate"
                                     [visible]="false">
                         </dxi-column>
@@ -307,25 +319,25 @@
                         </dxi-column>
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
-                            <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
-                                <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative' : 'positive') + '-values'"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
+                            <ng-container *ngIf="cell.text && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
+                                <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative' : 'positive') + '-values'"> {{ cell.text }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'isPendingTemplate'">
-                            <span class="clipboard-holder"> {{ l(cell.value ? 'Transactions_Pending' : 'Transactions_Settled') }} </span>
+                            <span class="clipboard-holder">{{ cell.text }}</span>
                         </div>
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
                             <ng-container *ngIf="cell.text">
-                                <span class="clipboard-holder end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
+                                <span class="clipboard-holder end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'descriptionTemplate'">
-                            <span class="clipboard-holder fixed-right transaction-target" id="transactionDetailTarget-{{cell.data.Id}}" title="{{cell.text}}">{{cell.text}}</span>
+                            <span class="clipboard-holder fixed-right transaction-target" id="transactionDetailTarget-{{cell.data.Id}}" [title]="cell.text">{{cell.text}}</span>
                         </div>
 
                         <div *dxTemplate="let data of 'CashflowCategoryNameTemplate'">
                             <span [ngClass]="{'uncategorized': !data.value}">
-                                <span class="clipboard-holder clickable-item"> {{ data.value || l('Unclassified') }} </span>
+                                <span class="clipboard-holder clickable-item"> {{ data.text }} </span>
                             </span>
                         </div>
 
@@ -334,11 +346,11 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: 'MM/dd/yyyy'}}
+                            {{cellData.text }}
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateMonthYear'" class="clipboard-holder">
-                            {{cellData.value | date: 'MMM yyyy'}}
+                            {{cellData.text }}
                         </div>
 
                         <div *dxTemplate="let data of 'startBalanceTotal'">

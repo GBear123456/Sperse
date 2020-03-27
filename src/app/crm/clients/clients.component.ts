@@ -203,20 +203,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             })
         }
     });
-    filterModelGroup: FilterModel = new FilterModel({
-        component: FilterCheckBoxesComponent,
-        filterMethod: FilterHelpers.filterBySetOfValues,
-        caption: 'group',
-        field: 'GroupId',
-        isSelected: true,
-        hidden: true,
-        items: {
-            element: new FilterCheckBoxesModel({
-                dataSource: [ 'C' ],
-                value: 'C'
-            })
-        }
-    });
     filterModelRating: FilterModel = new FilterModel({
         component: FilterRangeComponent,
         operator: { from: 'ge', to: 'le' },
@@ -475,7 +461,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.dataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        this.filterModelGroup.filterMethod(this.filterModelGroup)
+                        FiltersService.filterByGroupId()
                     ]
                 ),
                 version: AppConsts.ODataVersion,
@@ -801,7 +787,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterModelTags,
             this.filterModelRating,
             this.filterModelStar,
-            this.filterModelGroup
+            new FilterModel({
+                caption: 'groupId',
+                hidden: true
+            })
         ];
     }
 

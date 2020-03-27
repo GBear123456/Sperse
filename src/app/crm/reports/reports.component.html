@@ -50,27 +50,31 @@
                         sortOrder="desc"
                         [caption]="ls.l('Created')"
                         [calculateDisplayValue]="customizeCreatedCell"
-                        [calculateSortValue]="calculateCreatedSortCell"
+                        calculateSortValue="created"
                         cssClass="clipboard-holder">
             </dxi-column>
             <dxi-column dataField="bankPassFee"
                         [caption]="ls.l('BankPassFee')"
                         cssClass="clipboard-holder"
+                        calculateSortValue="bankPassFee"
                         [calculateDisplayValue]="customizeBankPassFeeCell">
             </dxi-column>
             <dxi-column dataField="bankVaultFee"
                         [caption]="ls.l('BankVaultFee')"
                         cssClass="clipboard-holder"
+                        calculateSortValue="bankVaultFee"
                         [calculateDisplayValue]="customizeBankVaultFeeCell">
             </dxi-column>
             <dxi-column dataField="wtbFee"
                         [caption]="ls.l('WtbFee')"
                         cssClass="clipboard-holder"
+                        calculateSortValue="wtbFee"
                         [calculateDisplayValue]="customizeWtbFeeCell">
             </dxi-column>
             <dxi-column dataField="totalFee"
                         [caption]="ls.l('TotalFee')"
                         cssClass="clipboard-holder"
+                        calculateSortValue="totalFee"
                         [calculateDisplayValue]="customizeTotalFeeCell">
             </dxi-column>
             <div *dxTemplate="let cellData of 'bankCodeCell'">
@@ -154,24 +158,28 @@
                             dataField="bankConnectAmount"
                             [caption]="ls.l('Connect')"
                             [calculateDisplayValue]="customizeBankConnectAmountCell"
+                            calculateSortValue="bankConnectAmount"
                             cssClass="clipboard-holder">
                 </dxi-column>
                 <dxi-column alignment="center"
                             dataField="bankBeyondAmount"
                             [caption]="ls.l('Beyond')"
                             [calculateDisplayValue]="customizeBankBeyondAmountCell"
+                            calculateSortValue="bankBeyondAmount"
                             cssClass="clipboard-holder">
                 </dxi-column>
                 <dxi-column alignment="center"
                             dataField="starterKitAmount"
                             [caption]="ls.l('StarterKit')"
                             [calculateDisplayValue]="customizeStarterKitAmountCell"
+                            calculateSortValue="starterKitAmount"
                             cssClass="clipboard-holder">
                 </dxi-column>
                 <dxi-column alignment="center"
                             dataField="totalAmount"
                             [caption]="ls.l('Total')"
                             [calculateDisplayValue]="customizeTotalAmountCell"
+                            calculateSortValue="totalAmount"
                             cssClass="clipboard-holder">
                 </dxi-column>
             </dxi-column>
