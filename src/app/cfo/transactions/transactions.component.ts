@@ -33,6 +33,7 @@ import { AppService } from '@app/app.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 import {
+    CounterpartyDto,
     TransactionsServiceProxy,
     InstanceType,
     ClassificationServiceProxy,
@@ -94,6 +95,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
+    @ViewChild('counterpartyFilter', { static: false }) counterpartyChooser: ElementRef;
     @ViewChild('becFilter', { static: false }) businessEntitiesChooser: ElementRef;
     @ViewChild('categoryFilter', { static: false }) categoryChooser: ElementRef;
 
@@ -104,6 +106,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     dataGridStateTimeout: any;
     filtersInitialData: FiltersInitialData;
+    counterpartiesFilter: FilterModel;
+    counterparties$: Observable<CounterpartyDto[]> = this.transactionsServiceProxy.getCounterparties(this.instanceType, this.instanceId);
     filtersInitialData$: Observable<FiltersInitialData> = this.transactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId).pipe(
         publishReplay(),
         refCount()
@@ -1049,8 +1053,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let filterQuery = this.processODataFilter(
             this.dataGrid.instance,
             this.dataSourceURI,
-            this.cashFlowCategoryFilter.concat(this.filters),
-            (filter) => {
+            this.filters.concat(
+                this.cashFlowCategoryFilter, 
+                this.counterpartiesFilter || []
+            ), (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account')
                     this.bankAccountsService.applyFilter();
 
@@ -1228,6 +1234,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             } else if ($event.column.dataField == 'CashflowCategoryName') {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.categoryChooser.nativeElement);
+            } else if ($event.column.dataField == 'CounterpartyName') {
+                $event.cellElement.innerHTML = '';
+                $event.cellElement.appendChild(this.counterpartyChooser.nativeElement);
             }
         } else if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
@@ -1505,6 +1514,26 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     toggleDataGridToolbar() {
         this.showDataGridToolbar = !this.showDataGridToolbar;
         this.repaintDataGrid();
+    }
+
+    onCounterpartiesInitialized(event) {
+        this.counterpartiesFilter = new FilterModel({
+            field: 'CounterpartyId',
+            options: { method: 'filterMethod' },
+            filterMethod: () => {
+                return {
+                    or: event.component.option('selectedItems').map(item => {
+                        return {CounterpartyId: item.id};
+                    }
+                )};
+            }
+        });
+    }
+
+    onCounterpartiesChanged(event) {
+        this.counterpartiesFilter.isSelected = 
+            event.component.option('selectedItems').length;
+        this.processFilterInternal();
     }
 
     ngOnDestroy() {

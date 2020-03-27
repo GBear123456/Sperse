@@ -296,6 +296,21 @@ export class UserInboxComponent implements OnDestroy {
         }
     }
 
+    onContentReady(event) {
+        if (this.activeMessage) {
+            let index = 0;
+            this.getVisibleList().some(item => {
+                if (item.id == this.activeMessage.id)
+                    return true;
+                if (item.hasChildren && item.expanded) {
+                    index += item.items.length;
+                } else
+                    index++;
+            }),
+            event.component.scrollTo(65 * index);
+        }
+    }
+
     invalidate() {
         if (this.listComponent && this.listComponent.instance)
             this.listComponent.instance.reload();
