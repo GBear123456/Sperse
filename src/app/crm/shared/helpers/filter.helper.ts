@@ -98,4 +98,8 @@ export class FilterHelpers {
         }
         return filterValues;
     }
+
+    static filterByGroupId() {
+        return {'GroupId': {'eq': 'C'}};
+    }
 }
