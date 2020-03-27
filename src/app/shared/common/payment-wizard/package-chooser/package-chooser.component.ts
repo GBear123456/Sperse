@@ -2257,18 +2257,20 @@ export class PackageChooserComponent implements OnInit {
     }
 
     private getDefaultUserAmount(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): number {
-        let usersAmount: number;
-        if (this.tenantSubscriptionIsTrial || this.tenantSubscriptionIsFree) {
-            usersAmount = this.defaultUsersAmount;
-        } else {
-            usersAmount = this.round(
-                currentSubscriptionInfo &&
-                (
-                    currentSubscriptionInfo.maxUserCount ||
-                    (this.currentEdition && this.currentEdition.maxUserCount)
-                ) ||
-                this.defaultUsersAmount
-            );
+        let usersAmount: number = this.defaultUsersAmount;
+        if (!this.tenantSubscriptionIsTrial && !this.tenantSubscriptionIsFree) {
+            if (currentSubscriptionInfo) {
+                const currentEditionMaxUserCount = this.currentEdition && this.currentEdition.maxUserCount;
+                /** If both are available - then exclude case when current subscription value is bigger then in new packages*/
+                if (currentSubscriptionInfo.maxUserCount && currentEditionMaxUserCount) {
+                    usersAmount = currentSubscriptionInfo.maxUserCount > currentEditionMaxUserCount
+                        ? currentEditionMaxUserCount
+                        : currentSubscriptionInfo.maxUserCount;
+                } else if (currentSubscriptionInfo.maxUserCount || currentEditionMaxUserCount) {
+                    usersAmount = currentSubscriptionInfo.maxUserCount || currentEditionMaxUserCount;
+                }
+            }
+            usersAmount = this.round(usersAmount);
             usersAmount = usersAmount > this.sliderInitialMaxValue || usersAmount < this.sliderInitialMinValue
                 ? this.sliderInitialMaxValue
                 : usersAmount;
