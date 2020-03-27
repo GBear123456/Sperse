@@ -4,7 +4,8 @@
               <div>
                     <div id="InvoicesTable">
                         <dx-tooltip width="300px"
-                                    height="265px">
+                                    height="265px"
+                                    (onContentReady)="onTooltipReady($event)">
                             <div *dxTemplate="let data of 'content'">
                                 <div class="invoice-actions-container">
                                     <div class="list">

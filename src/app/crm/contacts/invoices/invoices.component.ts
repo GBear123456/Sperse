@@ -348,6 +348,12 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             .some(item => data.value == item.name && item.isFinal));
     }
 
+    onTooltipReady(e) {
+        const contentElement = e.component.content();
+        contentElement.style.padding = '0';
+        contentElement.style.width = '100%';
+    }
+
     ngOnDestroy() {
         this.clientService.unsubscribe(this.constructor.name);
     }
