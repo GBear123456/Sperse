@@ -505,6 +505,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet'
+                                },
+                                {
+                                    type: 'downloadOptions',
+                                    visible: this.ordersDataLayoutType === DataLayoutType.DataGrid
                                 }
                             ]
                         }
@@ -716,10 +720,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     initDataSource() {
         if (this.selectedOrderType === OrderType.Order) {
             if (this.showOrdersPipeline) {
-                if (!this.pipelineDataSource)
+                if (!this.pipelineDataSource) {
                     setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
-            } else {
-                this.setDataGridInstance(this.dataGrid);
+                    this.setDataGridInstance(this.dataGrid);
+                }
             }
         } else if (this.selectedOrderType === OrderType.Subscription) {
             if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
