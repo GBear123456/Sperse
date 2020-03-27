@@ -89,11 +89,11 @@
         <dxi-column dataField="id" [visible]="false" sortOrder="desc" cssClass="clipboard-holder"></dxi-column>
         <dxi-column dataField="selected" caption="" [width]="44" [visible]="showCheckboxes" cssClass="checkbox clipboard-holder" alignment="center" dataType="boolean"></dxi-column>
         <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="accountNumber bold clipboard-holder"></dxi-column>
-        <dxi-column dataField="syncAccountStatus" [visible]="showStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
-        <dxi-column alignment="right" [visible]="!accessAllDepartments"></dxi-column>
-        <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
         <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns && showAccountsCount" [width]="70" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
+        <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
+        <dxi-column dataField="syncAccountStatus" [visible]="showStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
         <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns && showAccountsCount" cellTemplate="expandTemplate"></dxi-column>
+        <dxi-column alignment="right" [visible]="!accessAllDepartments"></dxi-column>
         <dxi-column dataField="balance" cssClass="balance" [minWidth]="70" [width]="balanceColumnWidth" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [calculateDisplayValue]="calculateBalanceDisplayValue" [visible]="accessAllDepartments"></dxi-column>
         <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false"
                     [visible]="allowUpdateAccount && (contextMenuItems && contextMenuItems.length)" cellTemplate="actionsTemplate"></dxi-column>
