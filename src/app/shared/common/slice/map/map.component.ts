@@ -44,7 +44,7 @@ export class MapComponent implements OnChanges {
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
     @Input() contactGroupText = '';
-    @ViewChild(DxVectorMapComponent, { static: true }) vectorMapComponent: DxVectorMapComponent;
+    @ViewChild(DxVectorMapComponent, { static: false }) vectorMapComponent: DxVectorMapComponent;
     @HostBinding('style.height') get componentHeight() {
         return this.height + 'px';
     }
