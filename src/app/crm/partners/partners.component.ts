@@ -574,7 +574,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.filtersService.apply(() => {
             this.selectedPartnerKeys = [];
             this.initToolbarConfig();
-            this.processFilterInternal();
         });
     }
 
