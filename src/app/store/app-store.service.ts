@@ -42,16 +42,16 @@ export class AppStoreService {
         private permission: AppPermissionService
     ) {}
 
-    dispatchUserAssignmentsActions(keyList) {
+    dispatchUserAssignmentsActions(keyList, forced?: boolean) {
         if (keyList.length) {
             let contactGroup = keyList.pop(),
-                groupId = ContactGroup[contactGroup];
+                groupId = <string>ContactGroup[contactGroup];
             if (this.permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments' as AppPermissions)) {
-                this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(groupId));
+                this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction({contactGroup: groupId, forced: forced}));
                 this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
-                    .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList), 100));
+                    .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList, forced), 100));
             } else
-                this.dispatchUserAssignmentsActions(keyList);
+                this.dispatchUserAssignmentsActions(keyList, forced);
         }
     }
 

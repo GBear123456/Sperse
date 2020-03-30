@@ -1,10 +1,10 @@
 /** Core imports */
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { first, filter, finalize } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { filter, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -25,7 +25,7 @@ import { NotifyService } from '@abp/notify/notify.service';
     templateUrl: './user-assignment-list.component.html',
     styleUrls: ['./user-assignment-list.component.less']
 })
-export class UserAssignmentComponent {
+export class UserAssignmentComponent implements OnDestroy {
     @Input() multiSelection = false;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
@@ -53,6 +53,7 @@ export class UserAssignmentComponent {
     listComponent: any;
     tooltipVisible = false;
     isRelatedUser = false;
+    subscription: Subscription;
 
     constructor(
         private appStoreService: AppStoreService,
@@ -151,8 +152,8 @@ export class UserAssignmentComponent {
     }
 
     refreshList(assignedUsersSelector) {
-        this.store$.pipe(assignedUsersSelector)
-            .pipe(filter(Boolean), first())
+        this.subscription = this.store$.pipe(assignedUsersSelector)
+            .pipe(filter(Boolean))
             .subscribe((result) => {
                 if (this.selectedKeys && this.selectedKeys.length && this.selectedKeys[0] && result && this.proxyService)
                     this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
@@ -229,5 +230,9 @@ export class UserAssignmentComponent {
     checkPermissions() {
         return this.permissionService.isGranted(this.permissionKey) &&
             (!this.bulkUpdateMode || this.permissionService.isGranted(AppPermissions.CRMBulkUpdates));
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 }

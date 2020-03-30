@@ -30,8 +30,8 @@ export class ContactAssignedUsersStoreEffects {
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<assignedUsersActions.LoadRequestAction>(assignedUsersActions.ActionTypes.LOAD_REQUEST),
         filter(action => this.permissionCheckerService.isGranted(AppPermissions.AdministrationUsers) ||
-            this.permissionCheckerService.isGranted(ContactGroupPermission[invert(ContactGroup)[action.payload]] + '.ManageAssignments' as AppPermissions)),
-        mergeMap(action => zip(of(action.payload), this.store$.pipe(select(getContactGroupAssignedUsers, { contactGroup: action.payload })))),
+            this.permissionCheckerService.isGranted(ContactGroupPermission[invert(ContactGroup)[action.payload.contactGroup]] + '.ManageAssignments' as AppPermissions)),
+        mergeMap(action => zip(of(action.payload.contactGroup), action.payload.forced ? of([]) : this.store$.pipe(select(getContactGroupAssignedUsers, { contactGroup: action.payload.contactGroup })))),
         exhaustMap(([payload, assignedUsers]) => {
             if (assignedUsers && assignedUsers.length)
                 return empty();

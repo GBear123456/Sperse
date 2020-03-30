@@ -9,7 +9,10 @@ export enum ActionTypes {
 
 export class LoadRequestAction implements Action {
     readonly type = ActionTypes.LOAD_REQUEST;
-    constructor(public payload: string) {}
+    constructor(public payload: {
+        contactGroup: string,
+        forced: boolean
+    }) {}
 }
 
 export class LoadFailureAction implements Action {
