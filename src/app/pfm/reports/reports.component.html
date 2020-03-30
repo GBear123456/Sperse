@@ -9,7 +9,7 @@
         </dx-select-box>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
-    <div class="main-wrapper wrapper portlet light">
+    <div class="wrapper portlet light">
         <setup-steps-common [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps-common>
         <div #rightSection>
             <div [hidden]="section != 'clicks'">
