@@ -71,7 +71,7 @@
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
                   [showColumnHeaders]="showColumnHeaders"
-                  [columnAutoWidth]="true"
+                  [columnAutoWidth]="false"
                   [showBorders]="false"
                   [showColumnLines]="false"
                   [showRowLines]="false"
@@ -82,7 +82,6 @@
                   (onContentReady)="contentReady()"
                   (onRowClick)="dataRowClick($event)"
                   (onCellClick)="dataCellClick($event)">
-
         <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
         <dxo-paging [enabled]="false"></dxo-paging>
         <dxo-filter-row [visible]="false"></dxo-filter-row>
@@ -103,7 +102,7 @@
                     [caption]="l('Account')"
                     [sortIndex]="0"
                     sortOrder="asc"
-                    [width]="nameColumnWidth"
+                    [width]="nameColumnWidth || (wide ? 600 : 200)"
                     alignment="left"
                     [allowEditing]="false"
                     cssClass="accountNumber bold clipboard-holder">
@@ -121,7 +120,7 @@
         <dxi-column dataField="lastSyncDate"
                     alignment="right"
                     [caption]="l('BankAccountsWidget_Last_sync')"
-                    [width]="510"
+                    [width]="200"
                     [allowEditing]="false"
                     cellTemplate="syncDateTemplate"
                     [visible]="showSyncDate">
@@ -129,7 +128,7 @@
         <dxi-column dataField="syncAccountStatus"
                     [visible]="showStatus"
                     [caption]="l('BankAccountsWidget_Sync_status')"
-                    [width]="showStatusText ? 200 : 20"
+                    [width]="showStatusText ? 170 : 20"
                     alignment="center"
                     sortOrder="asc"
                     [sortIndex]="2"
@@ -171,8 +170,9 @@
                               width="100%"
                               [showColumnLines]="false"
                               [showRowLines]="false"
-                              [columnAutoWidth]="true"
+                              [columnAutoWidth]="false"
                               [selectionFilter]="['selected', '=', true]"
+                              [showColumnHeaders]="false"
                               (onRowPrepared)="rowPrepared($event)"
                               (onCellClick)="detailCellClick($event)"
                               (onEditingStart)="editingStart($event)"
@@ -202,14 +202,14 @@
                                 cssClass="checkbox clipboard-holder"
                                 [visibleIndex]="0"
                                 [allowEditing]="false"
-                                [width]="wide ? 44 : 25"
+                                [width]="44"
                                 alignment="left"
                                 dataType="boolean"
                                 caption="">
                     </dxi-column>
                     <dxi-column dataField="accountName"
                                 [visibleIndex]="1"
-                                [width]="nameColumnWidth"
+                                [width]="nameColumnWidth || (wide ? 300 : 250)"
                                 alignment="left"
                                 [allowEditing]="allowEditing"
                                 cellTemplate="withClipboardLink">
@@ -219,35 +219,37 @@
                                 [visibleIndex]="2"
                                 cssClass="accountNumber tabular"
                                 cellTemplate="withClipboardLink"
-                                [width]="166"
+                                [width]="wide ? 150 : 100"
                                 alignment="left"
                                 [allowEditing]="allowEditing"
                                 [editorOptions]="{ disabled: true }">
                     </dxi-column>
                     <dxi-column dataField="typeName"
                                 cssClass="type-container"
-                                [width]="160"
+                                [width]="wide ? 150 : 100"
                                 alignment="left"
                                 [allowEditing]="false"
                                 cellTemplate="typeTemplate"
                                 [visible]="showAdvancedColumns && showAccountType">
                     </dxi-column>
+                    <dxi-column [width]="70" [visible]="wide"></dxi-column>
                     <dxi-column dataField="lastSyncDate"
-                                [width]="150"
-                                alignment="left"
+                                [width]="200"
+                                alignment="right"
                                 [allowEditing]="false"
                                 cellTemplate="syncDateTemplate"
                                 [visible]="showSyncDate">
                     </dxi-column>
                     <dxi-column dataField="syncStatus"
-                                [visible]="showStatus"
+                                [visible]="showBankAccountsStatus"
                                 [caption]="l('BankAccountsWidget_Sync_status')"
-                                [width]="showStatusText ? 200 : 20"
+                                [width]="showStatusText ? 170 : 20"
                                 alignment="center"
                                 sortOrder="asc"
                                 cellTemplate="statusTemplate"
                                 [allowEditing]="false">
                     </dxi-column>
+                    <dxi-column [width]="30"></dxi-column>
                     <dxi-column alignment="right"
                                 [visible]="!accessAllDepartments"
                                 [allowEditing]="false">
@@ -263,8 +265,7 @@
                     </dxi-column>
                     <dxi-column dataField="balance"
                                 cssClass="tabular balance"
-                                [minWidth]="70"
-                                [width]="balanceColumnWidth"
+                                width="auto"
                                 alignment="right"
                                 cellTemplate="amountTemplate"
                                 [visible]="accessAllDepartments && showAdvancedColumns"
@@ -330,7 +331,7 @@
                     </div>
                     <div *dxTemplate="let cell of 'syncDateTemplate'">
                         <div *ngIf="cell.text"
-                             class="sync-date text-left clipboard-holder"
+                             class="sync-date clipboard-holder"
                              title="Last good sync: {{cell.data.lastGoodSyncDate | date: 'MMM d, y ' : userTimezone}}">
                             {{cell.text | date: 'MMM d, y ' : userTimezone}}
                         </div>
@@ -369,7 +370,6 @@
                 </div>
             </ng-container>
         </div>
-
         <div *dxTemplate="let cell of 'expandTemplate'">
             <div class="expand-div"></div>
         </div>

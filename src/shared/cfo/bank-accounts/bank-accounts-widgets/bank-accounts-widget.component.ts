@@ -58,7 +58,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() saveChangesInCache = true;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
-    @Input() nameColumnWidth = 350;
+    @Input() nameColumnWidth;
     @Input() balanceColumnWidth;
     @Input() height;
     @Input() showColumnHeaders = false;
@@ -67,6 +67,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showCreditInfo = false;
     @Input() showBusinessEntitiesFilter = true;
     @Input() showStatus = true;
+    @Input() showBankAccountsStatus = false;
     @Input() showStatusText = AppConsts.isMobile ? false : true;
     @Input() showAddAccountButton = true;
     @Input() searchInputWidth = 279;
