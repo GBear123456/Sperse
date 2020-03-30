@@ -1213,6 +1213,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     );
                     if (this.showDataGrid) {
                         this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                        this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
                     }
                 }
             });
