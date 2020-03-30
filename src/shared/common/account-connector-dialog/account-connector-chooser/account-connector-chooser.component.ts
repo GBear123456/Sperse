@@ -53,7 +53,7 @@ export class AccountConnectorChooserComponent implements OnInit {
             }
         ];
         /** Select connector by default */
-        this.selectConnector(this.connectors[1]);
+        this.selectConnector(this.connectors.find((connector: AccountConnector) => !connector.disabled));
     }
 
     selectConnector(connector: AccountConnector, next = false) {
