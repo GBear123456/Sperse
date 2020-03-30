@@ -71,6 +71,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
     filterModelStatuses: FilterModel;
+    filterModelRank: FilterModel;
     pullContextMenuItems = [
         { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
     ];
@@ -133,7 +134,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 })
             }
         }),
-        new FilterModel({
+        this.filterModelRank = new FilterModel({
             component: FilterRangeComponent,
             operator: {from: 'ge', to: 'le'},
             caption: 'Rank',
