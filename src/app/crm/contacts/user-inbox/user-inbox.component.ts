@@ -94,7 +94,8 @@ export class UserInboxComponent implements OnDestroy {
 
     initMainToolbar() {
         setTimeout(() => {
-            let visibleCount = this.getVisibleList().length;
+            let visibleCount = this.getVisibleList().length,
+                isEmail = this.deliveryType == CommunicationMessageDeliveryType.Email;
             this.contactsService.toolbarUpdate({ customToolbar: [{
                 location: 'before',
                 items: [{
@@ -149,8 +150,15 @@ export class UserInboxComponent implements OnDestroy {
                     options: {
                         text: '+ ' + this.ls.l('NewEmail')
                     },
-                    visible: this.isSendSmsAndEmailAllowed,
+                    visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
                     action: () => this.showNewEmailDialog()
+                }, {
+                    widget: 'dxButton',
+                    options: {
+                        text: '+ ' + this.ls.l('NewSms')
+                    },
+                    visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
+                    action: () => this.showNewSMSDialog()
                 }]
             }]});
         });
@@ -359,6 +367,12 @@ export class UserInboxComponent implements OnDestroy {
         data['switchTemplate'] = true;
         this.contactsService.showEmailDialog(data, title)
             .subscribe(res => isNaN(res) || setTimeout(() => this.invalidate(), 1000));
+    }
+
+    showNewSMSDialog() {
+        this.contactsService.showSMSDialog({
+            contact: this.contactInfo
+        });
     }
 
     openAttachment(attachment) {
