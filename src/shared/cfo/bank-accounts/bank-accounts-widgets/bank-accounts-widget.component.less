@@ -81,7 +81,6 @@
                     max-width: 50%;
                     .row > div {
                         border-left: 1px solid @border-color;
-                        
                         &.col-sm-6:first-child {
                             padding-left: 48px;
                         }
@@ -382,7 +381,6 @@
         line-height: 1.42;
         letter-spacing: 0.2px;
         color: #afb4bb;
-        text-align: center;
     }
 
     .highlight-used-rows {
@@ -410,28 +408,16 @@
     }
 
     &.wide {
-        ::ng-deep table.dx-datagrid-table {
-            .dx-row {
-                &.dx-data-row,
-                &.dx-header-row {
-                    td.balance {
-                        padding-right: 91px !important;
-
-                        .clipboard-holder {
-                            padding-right: 0 !important;
-                        }
-                    }
-                }
-            }
-        }
-
         ::ng-deep .dx-master-detail-row {
             table.dx-datagrid-table {
                 .dx-row {
                     &.dx-data-row,
                     &.dx-header-row {
                         td.balance {
-                            padding-right: 131px !important;
+                            padding-right: 48px !important;
+                        }
+                        td .account-status {
+                            font-size: 12px;
                         }
                     }
                 }
