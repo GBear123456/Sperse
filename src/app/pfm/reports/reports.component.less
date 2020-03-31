@@ -27,44 +27,11 @@
         display: flex;
         border-bottom: 0;
 
-        ::ng-deeppfm-click-stats {
+        ::ng-deep pfm-click-stats {
             top: 0;
 
             dx-data-grid {
                 height: calc(100vh - 250px);
-            }
-        }   
-
-        .offers-section{
-            ::ng-deep #gridContainer {
-                &.grid-compact-view {
-                    .logo-url {
-                        height: 20px;
-                    }
-                }
-
-                .logo-url {
-                    max-width: 140px;
-                    height: 40px;
-                    background-position: center;
-                    background-size: contain;
-                    background-repeat: no-repeat;
-                    margin: auto;
-                }
-
-                .clicksCount {
-                    padding-right: 43px;
-                    cursor: pointer;
-                    text-decoration: underline;
-                }
-
-                .dx-datagrid-rowsview {
-                    .dx-column-lines {
-                        td {
-                            font-weight: 500;
-                        }
-                    }
-                }
             }
         }
     }

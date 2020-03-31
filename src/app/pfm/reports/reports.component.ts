@@ -1,13 +1,10 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, Observable } from 'rxjs';
 import * as moment from 'moment-timezone';
-import DataSource from 'devextreme/data/data_source';
-import { DxDataGridComponent } from 'devextreme-angular';
 import range from 'lodash/range';
 
 /** Application imports */
@@ -21,17 +18,18 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { CFOService } from '@shared/cfo/cfo.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { OfferStatsComponent } from './offer-stats/offer-stats.component';
+import { VisitorsStatsComponent } from './visitors-stats/visitors-stats.component';
 
 @Component({
     templateUrl: './reports.component.html',
-    styleUrls: ['./reports.component.less'],
-    providers: [ DatePipe ]
+    styleUrls: ['./reports.component.less']
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('offerStatsGrid', { static: false }) offerStatsGrid: DxDataGridComponent;
-    @ViewChild('visitorsGrid', { static: false }) visitorsGrid: DxDataGridComponent;
     @ViewChild(SetupStepsComponent, { static: false }) setupStepsComponent: SetupStepsComponent;
     @ViewChild('rightSection', { static: false }) rightSection: ElementRef;
+    @ViewChild(OfferStatsComponent, { static: true }) offerStatsComponent: OfferStatsComponent;
+    @ViewChild(VisitorsStatsComponent, { static: true }) visitorsStatsComponent: VisitorsStatsComponent;
 
     private rootComponent: any;
     private _refresh: Subject<null> = new Subject<null>();
@@ -39,12 +37,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     section: 'clicks' | 'offers' | 'visitors' = 'clicks';
     dateFrom: moment;
     dateTo: moment;
-    offerStatsDataSource: DataSource;
-    offersStaticFilter = { 'RequestCount': { gt: 0 } };
-    offersQuickSearch: string;
-    visitorsDataSource: DataSource;
-    visitorsCampaignId: number;
-    visitorsQuickSearch: string;
 
     clickStatsYear: number = moment().year();
     years: number[] = range(2018, this.clickStatsYear + 1);
@@ -76,7 +68,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         injector: Injector,
         private dialog: MatDialog,
         private cfoService: CFOService,
-        private datePipe: DatePipe,
         public appService: AppService
     ) {
         super(injector);
@@ -86,42 +77,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         this.initConfigs();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
-        this.offerStatsDataSource = new DataSource({
-            store: {
-                type: 'odata',
-                url: this.getODataUrl('Offer', this.offersStaticFilter),
-                deserializeDates: false,
-                version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                }
-            },
-            select: [
-                'CampaignId',
-                'LogoUrl',
-                'Name',
-                'Categories',
-                'RequestCount'
-            ],
-            sort: [
-                { selector: 'Created', desc: true }
-            ]
-        });
-
-        this.visitorsDataSource = new DataSource({
-            store: {
-                key: 'Id',
-                type: 'odata',
-                url: this.getODataUrl('PfmOfferRequest'),
-                version: AppConsts.ODataVersion,
-                deserializeDates: false,
-                beforeSend: (request) => {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                }
-            }
-        });
     }
 
     initConfigs() {
@@ -152,17 +107,17 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'search',
                         widget: 'dxTextBox',
                         options: {
-                            value: this.section == 'offers' ? this.offersQuickSearch : this.visitorsQuickSearch,
+                            value: this.section == 'offers' ? this.offerStatsComponent.quickSearch : this.visitorsStatsComponent.quickSearch,
                             width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                                 + this.l(this.section == 'offers' ? 'Offers' : 'Customers').toLowerCase(),
                             onValueChanged: (e) => {
                                 if (this.section == 'offers') {
-                                    this.offersQuickSearch = e.value;
+                                    this.offerStatsComponent.quickSearch = e.value;
                                     this.refreshOfferStats();
                                 } else {
-                                    this.visitorsQuickSearch = e.value;
+                                    this.visitorsStatsComponent.quickSearch = e.value;
                                     this.refreshVisitors();
                                 }
                             }
@@ -220,12 +175,12 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                         options: {
                             text: 'Show all',
                             onClick: () => {
-                                this.visitorsCampaignId = null;
+                                this.visitorsStatsComponent.campaignId = null;
                                 this.refreshVisitors();
                                 this.initToolbarConfig();
                             }
                         },
-                        visible: this.section == 'visitors' && !!this.visitorsCampaignId
+                        visible: this.section == 'visitors' && !!this.visitorsStatsComponent.campaignId
                     }
                 ]
             },
@@ -234,7 +189,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     onStatsClick(event) {
         this.onPeriodChanged(new Date(event.from), new Date(event.to));
-        this.offersQuickSearch = null;
+        this.offerStatsComponent.quickSearch = null;
         this.setSection('offers', false);
         this.setupStepsComponent.setSelectedIndex(1);
         this.refreshOfferStats();
@@ -247,9 +202,9 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
     get openedGrid() {
         let openedGrid = null;
         if (this.section === 'offers') {
-            openedGrid = this.offerStatsGrid;
+            openedGrid = this.offerStatsComponent.dataGrid;
         } else if (this.section === 'visitors') {
-            openedGrid = this.visitorsGrid;
+            openedGrid = this.visitorsStatsComponent.dataGrid;
         }
         return openedGrid;
     }
@@ -258,40 +213,28 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.section == section)
             return;
 
-        this.loadingService.startLoading(this.rightSection.nativeElement);
         this.section = section;
         this.initConfigs();
         if (repaint) {
             setTimeout(() => {
                 if (section == 'offers')
-                    this.offerStatsGrid.instance.repaint();
+                    this.offerStatsComponent.repaint();
                 else if (section == 'visitors')
-                    this.visitorsGrid.instance.repaint();
-                this.loadingService.finishLoading(this.rightSection.nativeElement);
+                    this.visitorsStatsComponent.repaint();
             });
-        } else {
-            this.loadingService.finishLoading(this.rightSection.nativeElement);
         }
     }
 
-    onOfferClicksClick(field) {
-        this.visitorsCampaignId = field.data.CampaignId;
-        this.visitorsQuickSearch = null;
+    offerClicksClick(field) {
+        this.visitorsStatsComponent.campaignId = field.data.CampaignId;
+        this.visitorsStatsComponent.quickSearch = null;
         this.setSection('visitors', false);
         this.setupStepsComponent.setSelectedIndex(2);
         this.refreshVisitors();
     }
 
     refreshOfferStats() {
-        let customFilter = [];
-        if (this.dateFrom)
-            customFilter.push({ name: 'RequestDateFrom', value: this.dateFrom.toDate().toJSON() });
-        if (this.dateTo)
-            customFilter.push({ name: 'RequestDateTo', value: this.dateTo.toDate().toJSON() });
-        let filters: any[] = [this.offersStaticFilter];
-        if (this.offersQuickSearch)
-            filters.push({ 'Name': { contains: this.offersQuickSearch } });
-        this.processODataFilter(this.offerStatsGrid.instance, 'Offer', filters, (filter) => filter, null, customFilter);
+        this.offerStatsComponent.refresh(this.dateFrom, this.dateTo);
     }
 
     onPeriodChanged(from: Date, to: Date): boolean {
@@ -313,27 +256,18 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         return false;
     }
 
-    onVisitorCellClick(event) {
-        this._router.navigate(['app/pfm/user', event.data.ApplicantUserId],
-            { queryParams: { referrer: location.pathname } });
-    }
-
     refreshVisitors() {
         let visitorsFilter = [];
         if (this.dateFrom)
             visitorsFilter.push({ Date: { gt: this.dateFrom.toDate() } });
         if (this.dateTo)
             visitorsFilter.push({ Date: { lt: this.dateTo.toDate() } });
-        if (this.visitorsCampaignId)
-            visitorsFilter.push({ CampaignId: this.visitorsCampaignId });
-        if (this.visitorsQuickSearch)
-            visitorsFilter.push(this.getSearchFilter(['FirstName', 'LastName', 'Email', 'PhoneNumber'], this.visitorsQuickSearch));
+        if (this.visitorsStatsComponent.campaignId)
+            visitorsFilter.push({ CampaignId: this.visitorsStatsComponent.campaignId });
+        if (this.visitorsStatsComponent.quickSearch)
+            visitorsFilter.push(this.getSearchFilter(['FirstName', 'LastName', 'Email', 'PhoneNumber'], this.visitorsStatsComponent.quickSearch));
 
-        this.processODataFilter(this.visitorsGrid.instance, 'PfmOfferRequest', visitorsFilter, (filter) => filter);
-    }
-
-    getCategoryValue(data) {
-        return data.Categories.map(item => item.Name).join(', ');
+        this.processODataFilter(this.visitorsStatsComponent.dataGrid.instance, 'PfmOfferRequest', visitorsFilter, (filter) => filter);
     }
 
     yearSelectionChanged() {
@@ -377,11 +311,4 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         this.rootComponent.overflowHidden();
     }
 
-    getVisitorFullName = (e) => {
-        return e.FirstName + ' ' + e.LastName;
-    }
-
-    getCreatedDate = (e) => {
-        return this.datePipe.transform(e.Date, AppConsts.formatting.dateTime, this.userTimezone);
-    }
 }

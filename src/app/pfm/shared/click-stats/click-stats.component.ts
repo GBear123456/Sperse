@@ -1,6 +1,9 @@
 /** Core imports */
-import { ChangeDetectionStrategy, OnInit,
-    Component, Input, Injector, Output, EventEmitter } from '@angular/core';
+import {
+    ChangeDetectionStrategy, OnInit,
+    Component, Input, Injector, Output, EventEmitter, ViewChild, ChangeDetectorRef
+} from '@angular/core';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -23,6 +26,7 @@ import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClickStatsComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @Output() onStatsClick: EventEmitter<any> = new EventEmitter<any>();
     @Input() refresh$: Observable<null>;
     @Input() campaignId;
@@ -48,13 +52,15 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private offerService: OfferServiceProxy
+        private offerService: OfferServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
-
         this.initTotalColumn();
         this.dataSource = new DataSource({
             load: () => {
+                this.isDataLoaded = false;
+                this.changeDetectorRef.detectChanges();
                 return this.offerService.getOffersStats(
                     GroupByPeriod.Daily,
                     this.campaignId,
@@ -123,6 +129,7 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
     onContentReady(event) {
         this.freezeFirstRow(event.element);
+        this.setGridDataLoaded();
     }
 
     getQueryStringDate(day, month) {

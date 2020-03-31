@@ -72,17 +72,20 @@
         </app-rating>
 
         <div class="portlet light no-padding margin-bottom-0">
+            <ghost-list [hidden]="isDataLoaded"></ghost-list>
             <dx-data-grid id="gridContainer"
                       accesskey="narrowHeaderPanel"
                       [dataSource]="dataSource"
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
+                      [loadPanel]="{ enabled: false }"
                       [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
                       [pager]="defaultGridPagerConfig"
                       (onSelectionChanged)="onSelectionChanged($event)"
-                      (onRowClick)="openOfferEdit($event)">
+                      (onRowClick)="openOfferEdit($event)"
+                      (onContentReady)="contentReady($event)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
                            mode="multiple">

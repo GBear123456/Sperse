@@ -42,6 +42,8 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
 import { ClickStatsComponent } from './shared/click-stats/click-stats.component';
 import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
 import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
+import { OfferStatsComponent } from './reports/offer-stats/offer-stats.component';
+import { VisitorsStatsComponent } from './reports/visitors-stats/visitors-stats.component';
 
 @NgModule({
     imports: [
@@ -83,7 +85,9 @@ import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dia
         FromToFieldComponent,
         GroupFieldComponent,
         ClickStatsComponent,
-        VisitorsComponent
+        VisitorsComponent,
+        OfferStatsComponent,
+        VisitorsStatsComponent
     ],
     entryComponents: [
         OfferNotifyDialogComponent

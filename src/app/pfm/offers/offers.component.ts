@@ -172,7 +172,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     [FiltersService.filterByStatus(this.filterModelStatuses), FiltersService.filterByTrafficSource()]),
                 deserializeDates: false,
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             },
@@ -182,6 +183,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             ]
         });
         this.activate();
+    }
+
+    contentReady() {
+        this.setGridDataLoaded();
     }
 
     toggleToolbar() {
@@ -352,6 +357,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     refreshDataGrid() {
+        this.isDataLoaded = false;
         this.dataGrid.instance.refresh();
     }
 
