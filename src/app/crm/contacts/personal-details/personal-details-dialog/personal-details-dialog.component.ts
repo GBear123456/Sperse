@@ -124,6 +124,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
         });
     }
 
+    getTabContentHeight() {
+        return innerHeight - 250 + 'px';
+    }
+
     initVerificationChecklist(): void {
         let person = this.contactInfo.personContactInfo.person;
         let contactDetails = this.contactInfo.personContactInfo.details;
