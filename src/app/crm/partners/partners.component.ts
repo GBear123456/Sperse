@@ -743,6 +743,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         name: 'filters',
                         action: () => {
                             this.repaintDataGrid(1000);
+                            setTimeout(() => this.pivotGridComponent.pivotGrid.instance.updateDimensions(), 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {

@@ -810,6 +810,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'filters',
                         action: () => {
                             this.repaintDataGrid(1000);
+                            setTimeout(() => this.pivotGridComponent.pivotGrid.instance.updateDimensions(), 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
