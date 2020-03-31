@@ -61,9 +61,11 @@ export class HostAutoLoginComponent {
         })).pipe(
             finalize(() => abp.ui.clearBusy())
         ).subscribe(res => {
-            if (res && res.detectedTenancies && res.detectedTenancies.length)
+            if (res && res.detectedTenancies && res.detectedTenancies.length) {
                 this.detectedTenancies = res.detectedTenancies;
-            this.isLinkSent = !isNaN(tenantId);
+                this.isLinkSent = res.detectedTenancies.length == 1;
+            } else
+                this.isLinkSent = !isNaN(tenantId);
         });
     }
 
