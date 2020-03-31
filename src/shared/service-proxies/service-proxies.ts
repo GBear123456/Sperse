@@ -42881,7 +42881,7 @@ export interface ICreateContactLinkInputWithoutCheck {
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
-    original!: string;
+    original!: string | undefined;
     thumbnail!: string | undefined;
     source!: string | undefined;
     comment!: string | undefined;
@@ -42922,7 +42922,7 @@ export class ContactPhotoInput implements IContactPhotoInput {
 }
 
 export interface IContactPhotoInput {
-    original: string;
+    original: string | undefined;
     thumbnail: string | undefined;
     source: string | undefined;
     comment: string | undefined;
@@ -45712,7 +45712,7 @@ export interface IPhoneUsageTypeDtoListResultDto {
 
 export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     contactId!: number;
-    original!: string;
+    original!: string | undefined;
     thumbnail!: string | undefined;
     source!: string | undefined;
     comment!: string | undefined;
@@ -45756,7 +45756,7 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
 
 export interface ICreateContactPhotoInput {
     contactId: number;
-    original: string;
+    original: string | undefined;
     thumbnail: string | undefined;
     source: string | undefined;
     comment: string | undefined;
@@ -64608,6 +64608,54 @@ export interface ISyncAllAccountsOutput {
     failedSyncAccountsCount: number | undefined;
 }
 
+export class BankAccountProgress implements IBankAccountProgress {
+    id!: number | undefined;
+    syncStatus!: SyncProgressStatus | undefined;
+    lastSyncDate!: moment.Moment | undefined;
+    lastGoodSyncDate!: moment.Moment | undefined;
+
+    constructor(data?: IBankAccountProgress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): BankAccountProgress {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankAccountProgress();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IBankAccountProgress {
+    id: number | undefined;
+    syncStatus: SyncProgressStatus | undefined;
+    lastSyncDate: moment.Moment | undefined;
+    lastGoodSyncDate: moment.Moment | undefined;
+}
+
 export class SyncProgressDto implements ISyncProgressDto {
     accountId!: number | undefined;
     accountName!: string | undefined;
@@ -64615,6 +64663,7 @@ export class SyncProgressDto implements ISyncProgressDto {
     progressPercent!: number | undefined;
     syncStatus!: SyncProgressStatus | undefined;
     lastSyncDate!: moment.Moment | undefined;
+    bankAccounts!: BankAccountProgress[] | undefined;
 
     constructor(data?: ISyncProgressDto) {
         if (data) {
@@ -64633,6 +64682,11 @@ export class SyncProgressDto implements ISyncProgressDto {
             this.progressPercent = data["progressPercent"];
             this.syncStatus = data["syncStatus"];
             this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountProgress.fromJS(item));
+            }
         }
     }
 
@@ -64651,6 +64705,11 @@ export class SyncProgressDto implements ISyncProgressDto {
         data["progressPercent"] = this.progressPercent;
         data["syncStatus"] = this.syncStatus;
         data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -64662,6 +64721,7 @@ export interface ISyncProgressDto {
     progressPercent: number | undefined;
     syncStatus: SyncProgressStatus | undefined;
     lastSyncDate: moment.Moment | undefined;
+    bankAccounts: BankAccountProgress[] | undefined;
 }
 
 export class SyncProgressOutput implements ISyncProgressOutput {

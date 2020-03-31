@@ -34,7 +34,7 @@ export class GhostListComponent implements OnChanges {
     ).pipe(
         startWith(true),
         map(([toolbarIsHidden, isFullScreenMode]: [boolean, boolean]) => {
-            return `calc(100vh - ${(toolbarIsHidden ? 150 : 212) - (isFullScreenMode ? 150 : 0)}px)`;
+            return `calc(100vh - ${(toolbarIsHidden ? 150 : 212) - (isFullScreenMode ? 151 : 0)}px)`;
         })
     );
 
