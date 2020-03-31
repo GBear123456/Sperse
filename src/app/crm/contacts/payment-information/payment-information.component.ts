@@ -129,7 +129,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
             })
         );
 
-        this.contactsService.invalidateSubscribe((area) => {
+        this.contactsService.invalidateSubscribe(() => {
             this._refresh.next(true);
         }, 'payment-information');
     }

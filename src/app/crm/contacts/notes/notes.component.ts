@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild, OnDestroy } from '@angular/core';
 import { formatDate } from '@angular/common';
 
 /** Third party imports */
@@ -25,7 +25,7 @@ import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/
     templateUrl: './notes.component.html',
     styleUrls: ['./notes.component.less']
 })
-export class NotesComponent extends AppComponentBase implements OnInit {
+export class NotesComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     public data: {
@@ -40,14 +40,12 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         private dialog: MatDialog
     ) {
         super(injector);
-        clientService.invalidateSubscribe((area) => {
-            if (area == 'notes') {
-                this.data = this.contactService['data'];
-                this.loadData().subscribe(
-                    (notes: NoteInfoDto[]) => this.dataSource = notes
-                );
-            }
-        });
+        clientService.invalidateSubscribe(() => {
+            this.data = this.contactService['data'];
+            this.loadData().subscribe(
+                (notes: NoteInfoDto[]) => this.dataSource = notes
+            );
+        }, 'notes');
     }
 
     ngOnInit() {
@@ -105,5 +103,9 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
     calculateDateCellValue = (data) => {
         return formatDate(data.dateTime, this.formatting.dateTime, abp.localization.currentLanguage.name);
+    }
+
+    ngOnDestroy() {
+        this.clientService.unsubscribe('notes');
     }
 }

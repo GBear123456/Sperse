@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Inject, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { CacheService } from 'ng2-cache-service';
@@ -22,7 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
     templateUrl: 'personal-details-dialog.html',
     styleUrls: ['personal-details-dialog.less']
 })
-export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
+export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;
@@ -211,5 +211,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit {
 
     close() {
         this.dialogRef.close();
+    }
+
+    ngOnDestroy() {
+        this.contactsService.unsubscribe(this.constructor.name);
     }
 }
