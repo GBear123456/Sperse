@@ -176,7 +176,7 @@ export class SubscriptionsComponent implements OnInit {
     openSubscriptionDialog(e?: any) {
         this.dialog.closeAll();
 
-        var leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
+        let leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
             this.data.leadInfo.id :
             null;
 

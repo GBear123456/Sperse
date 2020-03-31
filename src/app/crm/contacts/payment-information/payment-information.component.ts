@@ -1,8 +1,8 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
+import { BehaviorSubject, Subscription, Observable, of, combineLatest } from 'rxjs';
 import {
     distinctUntilChanged,
     publishReplay,
@@ -36,7 +36,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     styleUrls: ['./payment-information.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentInformationComponent implements OnInit {
+export class PaymentInformationComponent implements OnInit, OnDestroy {
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
     warningMessage$: Observable<string>;
@@ -51,7 +51,7 @@ export class PaymentInformationComponent implements OnInit {
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
     private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
     refresh: Observable<boolean> = this._refresh.asObservable();
-    groupId$: Observable<number>;
+    contactInfoSubscription: Subscription;
     constructor(
         private invoicesService: InvoicesService,
         private paymentServiceProxy: PaymentServiceProxy,
@@ -67,17 +67,16 @@ export class PaymentInformationComponent implements OnInit {
 
     ngOnInit() {
         this.balanceAmount$ = of(0);
-        this.groupId$ = this.contactsService.contactInfo$.pipe(
+        this.contactInfoSubscription = this.contactsService.contactInfo$.pipe(
             map(contactInfo => contactInfo.id),
             distinctUntilChanged()
-        );
-        this.groupId$.subscribe(groupId => {
+        ).subscribe(groupId => {
             /** Create data prop if not exists */
             this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
                 ? this.paymentServiceProxy['data']
                 : { [groupId]: { payments: null, paymentMethods: null } };
+            this._refresh.next(true);
         });
-
         this.payments$ = this.refresh.pipe(
             tap(() => this.loadingService.startLoading(this.paymentsContainer.nativeElement)),
             switchMap(
@@ -131,10 +130,8 @@ export class PaymentInformationComponent implements OnInit {
         );
 
         this.contactsService.invalidateSubscribe((area) => {
-            if (area == 'payment-information') {
-                this._refresh.next(true);
-            }
-        });
+            this._refresh.next(true);
+        }, 'payment-information');
     }
 
     formatDate(date: moment.Moment) {
@@ -172,5 +169,10 @@ export class PaymentInformationComponent implements OnInit {
 
     paymentMethodsScrollHeight() {
         return document.body.clientHeight - this.paymentMethodsContainer.nativeElement.querySelector('.title').getBoundingClientRect().bottom;
+    }
+
+    ngOnDestroy() {
+        this.contactsService.unsubscribe('payment-information');
+        this.contactInfoSubscription.unsubscribe();
     }
 }
