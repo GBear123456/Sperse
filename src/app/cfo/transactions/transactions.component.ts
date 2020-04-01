@@ -575,9 +575,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.refreshDataGrid();
-        }
+        this.refreshDataGrid();
     }
 
     private getIdsFromString(ids: string): number[] {

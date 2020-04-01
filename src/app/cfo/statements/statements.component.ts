@@ -371,9 +371,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.invalidate();
-        }
+        this.invalidate();
     }
 
     toggleToolbar() {

@@ -108,6 +108,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     readonly RESERVED_TIME_SECONDS = 30;
     toolbarConfig: ToolbarGroupModel[];
+    showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
 
     constructor(
         private injector: Injector,

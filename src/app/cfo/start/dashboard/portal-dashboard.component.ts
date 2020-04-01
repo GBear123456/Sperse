@@ -59,9 +59,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.invalidate();
-        }
+        this.invalidate();
     }
 
     toggleLeftMenu() {
