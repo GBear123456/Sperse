@@ -176,7 +176,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         if (this.clientsByRegion && this.clientsByRegion.mapComponent)
             this.clientsByRegion.mapComponent.vectorMapComponent.instance.render();
         if (this.totalsBySource && this.totalsBySource.chartComponent)
-            this.totalsBySource.chartComponent.instance.render();
+            this.totalsBySource.chartComponent.instance.refresh();
         this.changeDetectorRef.detectChanges();
     }
 

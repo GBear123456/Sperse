@@ -79,8 +79,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.accountProgressTooltipVisible = true;
         this.accountProgressTooltipTarget = '#' + elementId;
         this.accountProgressTooltipText = message;
-
-        setTimeout(() => this.accountProgressTooltip.instance.repaint());
     }
 
     syncAll(toggleComponent = false) {
