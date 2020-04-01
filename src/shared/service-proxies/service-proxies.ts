@@ -42330,6 +42330,7 @@ export interface IPersonContactInfoDto {
 
 export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
+    typeId!: string | undefined;
     statusId!: string | undefined;
     groupId!: string | undefined;
     assignedUserId!: number | undefined;
@@ -42353,6 +42354,7 @@ export class ContactInfoDto implements IContactInfoDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.typeId = data["typeId"];
             this.statusId = data["statusId"];
             this.groupId = data["groupId"];
             this.assignedUserId = data["assignedUserId"];
@@ -42384,6 +42386,7 @@ export class ContactInfoDto implements IContactInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["typeId"] = this.typeId;
         data["statusId"] = this.statusId;
         data["groupId"] = this.groupId;
         data["assignedUserId"] = this.assignedUserId;
@@ -42408,6 +42411,7 @@ export class ContactInfoDto implements IContactInfoDto {
 
 export interface IContactInfoDto {
     id: number | undefined;
+    typeId: string | undefined;
     statusId: string | undefined;
     groupId: string | undefined;
     assignedUserId: number | undefined;
