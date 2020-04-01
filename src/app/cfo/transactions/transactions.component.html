@@ -123,7 +123,7 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
-
+                        <dxo-export [enabled]="true" [customizeExcelCell]="customizeExcelCell"></dxo-export>
                         <dxi-column dataField="Date"
                                     dataType="date"
                                     cssClass="tabular"

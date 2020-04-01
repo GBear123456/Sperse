@@ -1533,6 +1533,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.processFilterInternal();
     }
 
+    customizeExcelCell(e) {
+        if (e.gridCell.rowType === 'header' && e.gridCell.column.dataField === 'Description') {
+            e.value = 'Description';
+        }
+    }
+
     ngOnDestroy() {
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
