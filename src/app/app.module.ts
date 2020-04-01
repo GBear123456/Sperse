@@ -26,6 +26,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
+import { AppStoreService } from '@app/store/app-store.service';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -53,6 +54,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     ],
     providers: [
         AppService,
+        AppStoreService,
         ImpersonationService,
         ngxZendeskWebwidgetService,
         InstanceServiceProxy,

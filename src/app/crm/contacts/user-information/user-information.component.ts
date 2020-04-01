@@ -29,6 +29,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AppStoreService } from '@app/store/app-store.service';
 
 @Component({
     selector: 'user-information',
@@ -101,6 +102,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     constructor(
+        private appStoreService: AppStoreService,
         private userService: UserServiceProxy,
         private contactsService: ContactsService,
         private personContactServiceProxy: PersonContactServiceProxy,
@@ -326,8 +328,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
         this.loadingService.startLoading(this.elementRef.nativeElement);
         sub.pipe(finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))).subscribe(
-            () => { this.notify.info(this.ls.l('SavedSuccessfully')); },
-            () => { role.isAssigned = !role.isAssigned; }
+            () => {
+                this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
+                this.notify.info(this.ls.l('SavedSuccessfully'));
+            }, () => { role.isAssigned = !role.isAssigned; }
         );
     }
 

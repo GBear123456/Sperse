@@ -161,7 +161,6 @@ import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dro
         TypesDropdownComponent
     ],
     providers: [
-        AppStoreService,
         ImportServiceProxy,
         ImportLeadsService,
         DataSourceService

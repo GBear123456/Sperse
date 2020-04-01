@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { filter } from 'rxjs/operators';
+import { first, filter, skip } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -48,8 +48,9 @@ export class AppStoreService {
                 groupId = <string>ContactGroup[contactGroup];
             if (this.permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments' as AppPermissions)) {
                 this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction({contactGroup: groupId, forced: forced}));
-                this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
-                    .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList, forced), 100));
+                this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }),
+                    skip(1), filter(Boolean), first()
+                ).subscribe(data => this.dispatchUserAssignmentsActions(keyList, forced));
             } else
                 this.dispatchUserAssignmentsActions(keyList, forced);
         }

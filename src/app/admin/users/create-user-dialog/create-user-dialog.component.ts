@@ -24,6 +24,7 @@ import {
     OrganizationUnitDto
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { ContactGroup } from '@shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -36,6 +37,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
+import { AppStoreService } from '@app/store/app-store.service';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
@@ -97,6 +99,7 @@ export class CreateUserDialogComponent implements OnInit {
     ];
 
     constructor(
+        private appStoreService: AppStoreService,
         private userService: UserServiceProxy,
         private profileService: ProfileServiceProxy,
         private cacheService: CacheService,
@@ -263,6 +266,7 @@ export class CreateUserDialogComponent implements OnInit {
                 saveButton.disabled = false;
                 this.modalDialog.finishLoading();
                 this.changeDetectorRef.detectChanges();
+                this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
             }))
             .subscribe(() => this.afterSave());
     }
