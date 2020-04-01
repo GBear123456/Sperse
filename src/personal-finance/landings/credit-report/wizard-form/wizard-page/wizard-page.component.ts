@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -43,6 +43,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class CreditWizardPageComponent implements OnInit {
     @ViewChild(WizardComponent, { static: true }) mWizard: WizardComponent;
     @ViewChild(PaymentInfoComponent, { static: true }) paymentInfo: PaymentInfoComponent;
+    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
 
     private readonly WIZARD_MEMBER_INFO_STEP_INDEX = 0;
     private readonly WIZARD_PAYMENT_STEP_INDEX = 1;
@@ -280,7 +281,8 @@ export class CreditWizardPageComponent implements OnInit {
         this.model.address.stateId = this.googlePlaceService.getStateCode(event.address_components);
         this.model.address.stateName = this.googlePlaceService.getStateName(event.address_components);
         this.model.address.city = this.googlePlaceService.getCity(event.address_components);
-        this.model.address.streetAddress = this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
+        this.model.address.streetAddress = this.payment.bankCard.billingAddress = this.addressInput.nativeElement.value
+            = number ? (number + ' ' + street) : street;
         const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
         if (this.countryCode !== countryCode) {
             this.model.address.countryId = this.countryCode = countryCode;

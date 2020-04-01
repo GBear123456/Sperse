@@ -1,7 +1,16 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, ViewChild } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    OnInit,
+    Inject,
+    ViewChild,
+    ElementRef
+} from '@angular/core';
 
 /** Third party imports */
+import { AngularGooglePlaceService } from 'angular-google-place';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -36,6 +45,7 @@ import { StatesService } from '@root/store/states-store/states.service';
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
+    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
     businessEntities$: Observable<BusinessEntityDto[]> = this.businessEntityService.getBusinessEntities(this.cfoService.instanceType as any, this.cfoService.instanceId).pipe(
         map((businessEntities: BusinessEntityDto[]) => {
             if (!this.isNew)
@@ -77,6 +87,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     ];
 
     constructor(
+        private angularGooglePlaceService: AngularGooglePlaceService,
         private businessEntityService: BusinessEntityServiceProxy,
         private notifyService: NotifyService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -299,6 +310,8 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     onAddressChanged(event) {
+        const number = this.angularGooglePlaceService.street_number(event.address_components);
+        const street = this.googlePlaceService.getStreet(event.address_components);
         const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
         const stateCode = this.googlePlaceService.getStateCode(event.address_components);
         const stateName = this.googlePlaceService.getStateName(event.address_components);
@@ -307,5 +320,6 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         this.businessEntity.stateName = stateName;
         this.address.countryCode = countryCode;
         this.businessEntity.city = this.googlePlaceService.getCity(event.address_components);
+        this.address.address = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
     }
 }

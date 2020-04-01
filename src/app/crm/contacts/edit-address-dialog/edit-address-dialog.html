@@ -34,13 +34,16 @@
 
             <div>
                 <label>{{ls.l('Address')}}</label>
-                <input *ngIf="!googleAutoComplete" type="text"
+                <input *ngIf="!googleAutoComplete"
+                       type="text"
                        name="Address"
                        placeholder=""
                        [(ngModel)]="address"
                        class="dx-texteditor-input"
                        [disabled]="!isEditAllowed"/>
-                <input *ngIf="googleAutoComplete" type="text"
+                <input *ngIf="googleAutoComplete"
+                       #addressInput
+                       type="text"
                        name="Address"
                        placeholder=""
                        [(ngModel)]="address"

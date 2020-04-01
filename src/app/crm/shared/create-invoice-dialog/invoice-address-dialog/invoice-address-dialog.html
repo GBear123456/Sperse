@@ -64,14 +64,14 @@
                     (phoneNumberChange)="onPhoneNumberChange($event, phoneComponent)">
                 </country-phone-number>
                 <dx-tooltip #phoneTooltip
-                    width="200px"                    
-                    position="right" 
+                    width="200px"
+                    position="right"
                     target="#togglePhone"
                     [disabled]="data.viewMode"
-                    showEvent="dxclick" 
+                    showEvent="dxclick"
                     hideEvent="dxoverend">
                     <div *dxTemplate="let data of 'content'">
-                        <dx-list 
+                        <dx-list
                             [dataSource]="phones"
                             (onItemClick)="selectPhoneNumber($event, phoneTooltip, phoneComponent)">
                         </dx-list>
@@ -80,7 +80,7 @@
             </div>
             <div>
                 <label>{{ls.l('Address')}}</label>
-                <input *ngIf="!googleAutoComplete" 
+                <input *ngIf="!googleAutoComplete"
                        id="toggleAddress"
                        type="text"
                        name="Address"
@@ -88,12 +88,13 @@
                        [disabled]="data.viewMode"
                        [(ngModel)]="address"
                        class="dx-texteditor-input"/>
-                <input *ngIf="googleAutoComplete"
-                       id="toggleAddress" 
+                <input #addressInput
+                       *ngIf="googleAutoComplete"
+                       id="toggleAddress"
                        type="text"
                        name="Address"
                        placeholder=""
-                       [(ngModel)]="address"
+                       [ngModel]="address"
                        class="dx-texteditor-input"
                        [disabled]="data.viewMode"
                        (street_number)='data.streetNumber=$event'
@@ -103,13 +104,13 @@
                        angularGooglePlace/>
                 <dx-tooltip #addressTooltip
                     width="300px"
-                    position="right" 
-                    target="#toggleAddress" 
+                    position="right"
+                    target="#toggleAddress"
                     showEvent="dxclick"
                     [disabled]="data.viewMode"
                     hideEvent="dxoverend">
                     <div *dxTemplate="let data of 'content'">
-                        <dx-list 
+                        <dx-list
                             [dataSource]="addresses"
                             itemTemplate="addressType"
                             (onItemClick)="onAddressSelected($event, addressTooltip)">

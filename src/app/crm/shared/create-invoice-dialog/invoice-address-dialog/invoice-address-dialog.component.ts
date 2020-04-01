@@ -1,5 +1,5 @@
 /** Application imports */
-import { Component, Inject, ElementRef } from '@angular/core';
+import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -26,12 +26,13 @@ import { StatesService } from '@root/store/states-store/states.service';
         '../../../contacts/addresses/addresses.styles.less'
     ],
     host: {
-        '(document:mouseup)': 'mouseUp($event)',
+        '(document:mouseup)': 'mouseUp()',
         '(document:mousemove)': 'mouseMove($event)'
     },
     providers: [ GooglePlaceService ]
 })
 export class InvoiceAddressDialog {
+    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
     validator: any;
     address: any;
     movePos: any;
@@ -120,7 +121,7 @@ export class InvoiceAddressDialog {
         this.data.countryId = GooglePlaceService.getCountryCode(event.address_components);
         this.statesService.updateState(this.data.countryId, this.data.stateId, this.data.stateName);
         this.data.city = this.googlePlaceService.getCity(event.address_components);
-        this.address = number ? (number + ' ' + street) : street;
+        this.address = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
     }
 
     getCountryStates(): Observable<CountryStateDto[]> {
@@ -167,7 +168,7 @@ export class InvoiceAddressDialog {
         };
     }
 
-    mouseUp(event) {
+    mouseUp() {
         this.movePos = null;
     }
 

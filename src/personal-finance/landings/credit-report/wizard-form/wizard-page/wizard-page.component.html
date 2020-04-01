@@ -196,7 +196,9 @@
                                            [placeholder]="ls.l('AddressPlaceholder')"
                                            [(ngModel)]="model.address.streetAddress"
                                            class="dx-texteditor-input" />
-                                    <input *ngIf="googleAutoComplete" type="text"
+                                    <input *ngIf="googleAutoComplete"
+                                           #addressInput
+                                           type="text"
                                            name="Address"
                                            [placeholder]="ls.l('AddressPlaceholder')"
                                            [(ngModel)]="model.address.streetAddress"

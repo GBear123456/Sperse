@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +26,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class PaymentInfoComponent {
     @Input() paymentAuthorizationRequired = true;
+    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
 
     validationGroup: any;
     expirationDate: string;
@@ -57,7 +58,7 @@ export class PaymentInfoComponent {
     onAddressChanged(event) {
         let number = event.address_components[0]['long_name'];
         let street = event.address_components[1]['long_name'];
-        this.bankCard.billingAddress = number ? (number + ' ' + street) : street;
+        this.bankCard.billingAddress = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
         this.bankCard.billingCity = this.googlePlaceService.getCity(event.address_components);
         this.bankCard.billingStateCode = this.googlePlaceService.getStateCode(event.address_components);
         this.bankCard.billingState = this.googlePlaceService.getStateName(event.address_components);

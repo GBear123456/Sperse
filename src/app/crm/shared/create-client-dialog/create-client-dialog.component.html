@@ -353,6 +353,7 @@
                                        [(ngModel)]="address['address']"
                                        class="dx-texteditor-input"/>
                                 <input *ngIf="googleAutoComplete" type="text"
+                                       #addressInput
                                        name="Address"
                                        [placeholder]="ls.l('Street')"
                                        [(ngModel)]="address['address']"
