@@ -474,16 +474,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
-                onLoaded: (customers) => {
-                    const userIds = [];
-                    customers && customers.forEach((customer) => {
-                        if (customer.UserId) {
-                            userIds.push(customer.UserId);
-                        }
-                    });
-                    if (this.appService.isCfoLinkOrVerifyEnabled) {
-                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
-                    }
+                onLoaded: (records) => {
+                    if (this.appService.isCfoLinkOrVerifyEnabled)
+                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(this.getUserIds(records));
                 }
             }
         });
@@ -521,6 +514,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     get isSlice() {
         return this.appService.getModule() === 'slice';
+    }
+
+    private getUserIds(records) {
+        return records.reduce((ids, item) => {
+            if (item.items)
+                Array.prototype.push.apply(ids,
+                    this.getUserIds(item.items)
+                );
+            else if (item.UserId)
+                ids.push(item.UserId);
+            return ids;
+        }, []);
     }
 
     private handleTotalCountUpdate(): void {
