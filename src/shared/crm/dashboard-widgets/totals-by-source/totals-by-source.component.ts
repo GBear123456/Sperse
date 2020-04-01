@@ -48,7 +48,7 @@ import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent, { static: true }) chartComponent: DxPieChartComponent;
+    @ViewChild(DxPieChartComponent, { static: false }) chartComponent: DxPieChartComponent;
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
@@ -201,16 +201,20 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     onDrawn(e) {
-        this.updatePieChartTopPositions(e);
+        setTimeout(() => {
+            this.updatePieChartTopPositions(e);
+        }, 600);
     }
 
     private updatePieChartTopPositions(e) {
         const componentTop = this.elementRef.nativeElement.getBoundingClientRect().top;
-        const circleBoundingRect = e.component.getAllSeries()[0]._group.element.getBoundingClientRect();
-        const circleTop = circleBoundingRect.top;
-        const circleCenterY = circleTop - componentTop + circleBoundingRect.height / 2;
-        this.totalNumbersTop = circleCenterY - 55 + 'px';
-        this.changeDetectorRef.detectChanges();
+        if (componentTop) {
+            const circleBoundingRect = e.element.getBoundingClientRect();
+            const circleTop = circleBoundingRect.top;
+            const circleCenterY = circleTop - componentTop + circleBoundingRect.height / 2;
+            this.totalNumbersTop = circleCenterY - 70 + 'px';
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     ngOnDestroy() {
