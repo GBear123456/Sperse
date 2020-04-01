@@ -222,9 +222,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     keyExpr: 'id',
                     templateFunc: (itemData) => {
                         return `<div class="star-item">
-                                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
-                                                    <span>${this.l(itemData.name)}</span>
-                                                </div>`;
+                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                    <span>${this.l(itemData.name)}</span>
+                                </div>`;
                     }
                 })
         }
