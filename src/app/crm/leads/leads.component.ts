@@ -865,10 +865,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                                this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-                            }, 1000);
+                            setTimeout(() => this.dataGrid.instance.repaint(), 1000);
+                            setTimeout(() => this.pivotGridComponent.pivotGrid.instance.updateDimensions(), 1200);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
