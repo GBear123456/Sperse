@@ -102,13 +102,16 @@
                 <div class="dx-fieldset with-bg">
                     <div class="row dx-field">
                         <div class="col-sm-12 with-icon fullAddress">
-                            <input *ngIf="!googleAutoComplete" type="text"
+                            <input *ngIf="!googleAutoComplete"
+                                   type="text"
                                    name="Address"
                                    [placeholder]="ls.l('AddressPlaceholder')"
                                    [(ngModel)]="bankCard.billingAddress"
                                    class="dx-texteditor-input"
                                    [disabled]="!paymentAuthorizationRequired" />
-                            <input *ngIf="googleAutoComplete" type="text"
+                            <input *ngIf="googleAutoComplete"
+                                   #addressInput
+                                   type="text"
                                    name="Address"
                                    [placeholder]="ls.l('AddressPlaceholder')"
                                    [(ngModel)]="bankCard.billingAddress"

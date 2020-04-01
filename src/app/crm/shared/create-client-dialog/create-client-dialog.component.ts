@@ -4,9 +4,12 @@ import {
     ChangeDetectionStrategy,
     OnInit,
     ViewChild,
+    ViewChildren,
     Inject,
     OnDestroy,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    ElementRef,
+    QueryList
 } from '@angular/core';
 
 /** Third party imports */
@@ -88,6 +91,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
+    @ViewChildren('addressInput') addressInputs: QueryList<ElementRef>;
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();
@@ -551,7 +555,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.statesService.updateState(countryCode, stateCode, stateName);
         this.contacts.addresses[i].stateCode = stateCode;
         this.contacts.addresses[i].stateName = stateName;
-        this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
+        this.contacts.addresses[i].address = this.addressInputs.toArray()[i].nativeElement.value = number ? (number + ' ' + street) : street;
         this.contacts.addresses[i].city = this.googlePlaceService.getCity(event.address_components);
         this.changeDetectorRef.detectChanges();
     }

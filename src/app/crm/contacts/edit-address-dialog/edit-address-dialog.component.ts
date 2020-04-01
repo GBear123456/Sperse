@@ -1,5 +1,5 @@
 /** Application imports */
-import { ChangeDetectionStrategy, Component, ElementRef, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
@@ -36,6 +36,7 @@ import { StatesService } from '@root/store/states-store/states.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditAddressDialog {
+    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
     types: any[] = [];
     validator: any;
     action: string;
@@ -105,7 +106,7 @@ export class EditAddressDialog {
         this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
         this.data.countryCode = countryCode;
         this.data.city = this.googlePlaceService.getCity(event.address_components);
-        this.address = number ? (number + ' ' + street) : street;
+        this.address = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
     }
 
     updateCountryInfo(countryName: string) {

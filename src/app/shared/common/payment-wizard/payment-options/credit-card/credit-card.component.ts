@@ -82,7 +82,7 @@ export class CreditCardComponent implements OnInit {
 
     private filterStates(name: string): CountryStateDto[] {
         const filterValue = name.toLowerCase();
-        return this.states && this.states.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+        return this.states && this.states.filter(option => option && option.name && option.name.toLowerCase().indexOf(filterValue) === 0);
     }
 
     updateCountryInfo(countryName: string) {

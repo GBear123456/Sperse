@@ -149,7 +149,9 @@
                              [width]="'360px'"
                              (onKeyUp)="onKeyUp($event, 'address')">
                 </dx-text-box>
-                <input *ngIf="googleAutoComplete" type="text"
+                <input *ngIf="googleAutoComplete"
+                       #addressInput
+                       type="text"
                        name="Address"
                        placeholder=""
                        [(value)]="address.address"
