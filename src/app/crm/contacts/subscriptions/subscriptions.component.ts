@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -31,14 +32,13 @@ import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptio
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'subscriptions',
     templateUrl: './subscriptions.component.html',
     styleUrls: ['./subscriptions.component.less']
 })
-export class SubscriptionsComponent implements OnInit {
+export class SubscriptionsComponent implements OnInit, OnDestroy {
     @ViewChild('mainGrid', { static: false }) dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto,
@@ -67,11 +67,9 @@ export class SubscriptionsComponent implements OnInit {
         public permission: PermissionCheckerService,
         public ls: AppLocalizationService
     ) {
-        contactsService.invalidateSubscribe(area => {
-            if (area == 'subscriptions') {
-                this.refreshData(true);
-            }
-        });
+        contactsService.invalidateSubscribe(() => {
+            this.refreshData(true);
+        }, 'subscriptions');
         invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
@@ -80,7 +78,7 @@ export class SubscriptionsComponent implements OnInit {
             this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             this.data = this.contactService['data'];
             this.refreshData();
-        });
+        }, this.constructor.name);
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {
@@ -199,5 +197,10 @@ export class SubscriptionsComponent implements OnInit {
             data: data
         });
         e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();
+    }
+
+    ngOnDestroy() {
+        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe('subscriptions');
     }
 }

@@ -2,38 +2,36 @@
 
 :host {
     display: block;
-    
+
     .with-bg {
         background-image: url(../../../../assets/common/images/pfm-cc/car-loans-bg@3x.jpg);
     }
-    
+
     .list-wrap {
         .row {
             width: calc(~"100% + 30px");
         }
-        
+
         .list-item {
             cursor: pointer;
         }
     }
-    
+
     .stars {
         text-align: right;
-        
+
         ::ng-deep .fa {
             font-size: 1.6rem;
-    
+
             @media all and (max-width: 576px) {
                 font-size: 1.2rem;
             }
         }
     }
-    
-    
-    
+
     .zip-form {
         display: flex;
-        
+
         ::ng-deep input {
             border-radius: 2px 0 0 2px;
             border: 1px solid #dfdfdf;
@@ -45,7 +43,7 @@
             color: #4a4a4a;
             outline: none;
         }
-        
+
         .submit {
             display: block;
             width: 45%;
@@ -56,7 +54,7 @@
             border-radius: 0 2px 2px 0;
             text-transform: uppercase;
             text-decoration: none;
-    
+
             max-width: 415px;
             box-shadow: none;
             border: 0;
@@ -64,28 +62,28 @@
             color: #fff;
             transition: 0.3s;
             background: #fe8600 none no-repeat right 20px center;
-            
+
             &:hover {
                 background-color: lighten(#fe8600, 8%);
             }
         }
     }
-    
+
     @media all and (max-width: 992px) {
         .recommended-block {
             margin: 0 auto;
         }
     }
-    
+
     @media all and (max-width: 576px) {
         padding: 0 15px;
-        
+
         .recommended-lenders {
             input {
                 width: 60%;
                 font-size: 12px;
             }
-            
+
             button {
                 width: 40%;
                 font-size: 12px;
