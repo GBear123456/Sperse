@@ -404,7 +404,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.changeDetectionRef.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$orderby = (request.params.$orderby ? request.params.$orderby + ',' : '') + 'Id desc';
                     if (request.params.$filter && request.url.indexOf('$filter')) {
@@ -576,9 +575,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.refreshDataGrid();
-        }
+        this.refreshDataGrid();
     }
 
     private getIdsFromString(ids: string): number[] {
@@ -1054,7 +1051,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.dataGrid.instance,
             this.dataSourceURI,
             this.filters.concat(
-                this.cashFlowCategoryFilter, 
+                this.cashFlowCategoryFilter,
                 this.counterpartiesFilter || []
             ), (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account')
@@ -1509,7 +1506,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     calculateMonthYearDisplayValue = (data) => this.datePipe.transform(data.Date, 'MMM yyyy');
 
-    calculateIsPendingDisplayValue = (data) => this.l(data.isPendingTemplate ? 'Transactions_Pending' : 'Transactions_Settled')
+    calculateIsPendingDisplayValue = (data) => this.l(data.isPendingTemplate ? 'Transactions_Pending' : 'Transactions_Settled');
 
     toggleDataGridToolbar() {
         this.showDataGridToolbar = !this.showDataGridToolbar;
@@ -1531,9 +1528,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onCounterpartiesChanged(event) {
-        this.counterpartiesFilter.isSelected = 
+        this.counterpartiesFilter.isSelected =
             event.component.option('selectedItems').length;
         this.processFilterInternal();
+    }
+
+    customizeExcelCell(e) {
+        if (e.gridCell.rowType === 'header' && e.gridCell.column.dataField === 'Description') {
+            e.value = 'Description';
+        }
     }
 
     ngOnDestroy() {

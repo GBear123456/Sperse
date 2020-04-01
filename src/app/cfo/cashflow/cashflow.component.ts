@@ -980,9 +980,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.refreshDataGrid();
-        }
+        this.refreshDataGrid();
     }
 
     toggleToolbar() {

@@ -9,7 +9,7 @@
         [value]=""
         [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'">
         <div *dxTemplate="let data of 'content'">
-            <categorization 
+            <categorization
                 width="340px"
                 height="100%"
                 [dragMode]="false"
@@ -38,14 +38,14 @@
                 displayExpr="name"
                 selectionMode="multiple"
                 [searchEnabled]="true"
-                [showSelectionControls]="true"                
+                [showSelectionControls]="true"
                 [dataSource]="counterparties$ | async"
                 (onInitialized)="onCounterpartiesInitialized($event)"
                 (onSelectionChanged)="onCounterpartiesChanged($event)">
             </dx-list>
         </div>
     </dx-drop-down-box>
-</div>  
+</div>
 <div [@routerTransition]>
     <app-headline [names]="[ l('Transactions') ]"
                   [reloadIsNecessary]="noRefreshedAfterSync"
@@ -99,7 +99,7 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
-                                  columnMinWidth="125px"
+                                  [hidden]="!isDataLoaded"
                                   [cacheEnabled]="false"
                                   [headerFilter]="{ allowSearch: true, visible: false }"
                                   [pager]="defaultGridPagerConfig"
@@ -123,7 +123,7 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
-
+                        <dxo-export [enabled]="true" [customizeExcelCell]="customizeExcelCell"></dxo-export>
                         <dxi-column dataField="Date"
                                     dataType="date"
                                     cssClass="tabular"
@@ -183,7 +183,6 @@
                                     [caption]="l('Transactions_Comments')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-
                         <dxi-column dataField="CategoryName"
                                     dataType="string"
                                     [caption]="l('Transactions_CategoryName')"

@@ -60,9 +60,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.invalidate();
-        }
+        this.invalidate();
     }
 
     invalidate() {

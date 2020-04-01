@@ -220,7 +220,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         combineLatest(
             this.currencyId$,
             this.selectedForecastModelId$,
-            this.requestFilter$,
+            !this._cfoService.hasStaticInstance ? this.requestFilter$ : of(new StatsFilter()),
             this.refresh$
         ).pipe(
             takeUntil(this.destroy$),
@@ -440,9 +440,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.getUpdatedDataSource();
-        }
+        this.getUpdatedDataSource();
     }
 
     toggleToolbar() {

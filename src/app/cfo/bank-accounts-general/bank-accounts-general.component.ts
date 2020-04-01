@@ -67,9 +67,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     }
 
     reload() {
-        if (!this._cfoService.hasStaticInstance) {
-            this.refresh();
-        }
+        this.refresh();
     }
 
     refresh() {

@@ -194,7 +194,7 @@ export class ExportService {
                 result.push({
                     id: column.dataField,
                     name: column.dataField,
-                    prompt: column.caption,
+                    prompt: column.dataField === 'Description' ? column.dataField : column.caption,
                     width: (390 / columns.length),
                     align: 'center',
                     padding: 0,
@@ -240,7 +240,7 @@ export class ExportService {
                     const header = headers.find((header: PdfExportHeader) => header.name === key);
                     if (header) {
                         if (header.lookup && header.lookup.calculateCellValue) {
-                            newItem[key] = header.lookup.calculateCellValue(item[key]);
+                            newItem[key] = header.lookup.calculateCellValue(item[key]) || '';
                         } else if (header.calculateDisplayValue) {
                             newItem[key] = header.calculateDisplayValue(item);
                         } else {
