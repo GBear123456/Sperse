@@ -111,8 +111,10 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
     freezeFirstRow(elm) {
         let header = elm.querySelector('.dx-datagrid-headers table');
-        if (header.lastChild.classList.contains('dx-row'))
-            header.removeChild(header.lastChild);
+        Array.prototype.forEach.call(header.children, node => {
+            if (node.classList.contains('dx-row'))
+            header.removeChild(node);
+        });
         header.appendChild(
             elm.querySelector('.dx-datagrid-rowsview tr:first-child')
         );
