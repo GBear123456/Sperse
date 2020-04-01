@@ -99,6 +99,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        delete this.data.attachments;
         this.dialogRef.afterClosed().subscribe(() => {
             if (this.attachments.length && !this.data.attachments)
                 this.attachments.forEach(item => this.removeAttachment(item));
@@ -309,7 +310,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (attachment.id)
             this.communicationProxy.deleteAttachment(attachment.id).subscribe();
         else
-            attachment.loader.unsubscribe();        
+            attachment.loader.unsubscribe();
     }
 
     uploadFile(file) {
