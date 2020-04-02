@@ -303,6 +303,70 @@ export class AccountServiceProxy {
     }
 
     /**
+     * @tenantId (optional) 
+     * @userId (optional) 
+     * @resetCode (optional) 
+     * @c (optional) 
+     * @return Success
+     */
+    getResetCodeInfo(tenantId: number | null | undefined, userId: number | null | undefined, resetCode: string | null | undefined, c: string | null | undefined): Observable<GetResetCodeInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/GetResetCodeInfo?";
+        if (tenantId !== undefined)
+            url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
+        if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
+        if (resetCode !== undefined)
+            url_ += "ResetCode=" + encodeURIComponent("" + resetCode) + "&"; 
+        if (c !== undefined)
+            url_ += "c=" + encodeURIComponent("" + c) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetResetCodeInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetResetCodeInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetResetCodeInfoOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetResetCodeInfoOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetResetCodeInfo(response: HttpResponseBase): Observable<GetResetCodeInfoOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetResetCodeInfoOutput.fromJS(resultData200) : new GetResetCodeInfoOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetResetCodeInfoOutput>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -33299,6 +33363,46 @@ export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput
 
 export interface ISendPasswordResetCodeOutput {
     detectedTenancies: TenantModel[] | undefined;
+}
+
+export class GetResetCodeInfoOutput implements IGetResetCodeInfoOutput {
+    tenantId!: number | undefined;
+    isValid!: boolean | undefined;
+
+    constructor(data?: IGetResetCodeInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.isValid = data["isValid"];
+        }
+    }
+
+    static fromJS(data: any): GetResetCodeInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetResetCodeInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["isValid"] = this.isValid;
+        return data; 
+    }
+}
+
+export interface IGetResetCodeInfoOutput {
+    tenantId: number | undefined;
+    isValid: boolean | undefined;
 }
 
 export class ResetPasswordInput implements IResetPasswordInput {
