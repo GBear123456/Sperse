@@ -290,7 +290,7 @@
                         }
 
                         &.tRow {
-                            td, td span {
+                            td, td span:not(.dx-expand) {
                                 color: @totalsTextColor !important;
                             }
                         }
@@ -306,7 +306,7 @@
 
             & > tr:nth-child(3) {
                 position: fixed;
-                z-index: 2;
+                z-index: 3;
                 border-top: 1px solid @tableBorderColor;
                 margin-top: -1px;
                 background: #fff;
@@ -553,23 +553,27 @@
                                     position: relative;
                                     cursor: pointer;
 
-                                    &:before {
-                                        content: url('../../../assets/common/icons/collapse-icon.svg');
+                                    span:before {
+                                        content: '-';
                                         position: absolute;
-                                        left: 16px;
-                                        width: 16px;
-                                        top: 7px;
-                                        z-index: 1
+                                        top: 0;
+                                        bottom: 0;
+                                        margin: auto;
+                                        z-index: 1;
+                                        text-align: center;
+                                        line-height: 11px;
+                                        width: 100%;
+                                        height: 100%;
                                     }
 
                                     &:after {
                                         content: '';
                                         position: absolute;
-                                        top: 22px;
+                                        top: 23px;
                                         left: 23px;
                                         display: block;
                                         border-right: 2px solid @expendedLineColor;
-                                        height: calc(~"100%" - 5px);
+                                        height: calc(~"100%" - 7px);
                                         z-index: 1;
                                     }
 
@@ -601,15 +605,12 @@
                                     margin-right: 10px;
                                     float: left;
 
-                                    .dx-expand {
-
-                                        &::before {
-                                            top: auto;
-                                            left: auto;
-                                            position: relative;
-                                            width: auto;
-                                            margin: auto;
-                                        }
+                                    .dx-expand::before {
+                                        top: auto;
+                                        left: auto;
+                                        position: relative;
+                                        width: auto;
+                                        margin: auto;
                                     }
 
                                     &:before {
@@ -617,21 +618,49 @@
                                     }
                                 }
 
-                                &.dx-pivotgrid-collapsed {
-                                    .dx-expand:before {
-                                        content: url('../../../assets/common/icons/expand-icon.svg');
-                                    }
+                                .dx-expand-icon-container > span, &.dx-white-space-column > span {
+                                    border: 1px solid @expendedLineColor;
+                                    border-radius: 3px;
+                                    width: 15px;
+                                    height: 15px;
+                                    top: 1px;
+                                    position: relative;
+                                    display: block;
+                                    font-size: 17px;
+                                    font-family: Montserrat;
+                                    font-weight: 500;
+                                    color: #000;
+                                    background: #fff;
+                                    z-index: 2 !important;
+                                }
+
+                                &.dx-white-space-column > span {
+                                    display: inline-block;
+                                    left: 16px;
+                                    top: 8px;
+                                    z-index: 1;
+                                }
+
+                                &.dx-pivotgrid-collapsed .dx-expand:before {
+                                    content: '+';
+                                    height: 100%;
+                                    width: 100%;
+                                    line-height: 13px;
                                 }
 
                                 &.dx-pivotgrid-expanded {
                                     position: relative;
-
-                                    .dx-expand:before {
-                                        content: '';
-                                        width: 7px;
-                                        border-bottom: 2px solid @expendedLineColor;
-                                        margin-left: 7px;
-                                        top: -6px;
+                                    .dx-expand {
+                                        border: none;
+                                        background: transparent;
+                                        left: 0;
+                                        &:before {
+                                            content: '';
+                                            width: 7px;
+                                            border-bottom: 2px solid @expendedLineColor;
+                                            margin-left: 7px;
+                                            top: 7px;
+                                        }
                                     }
 
                                     .dx-expand-icon-container {
@@ -652,37 +681,51 @@
                             }
 
                             &.iRow, &.incomeChildRow, &.eRow, &.expensesChildRow {
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                                    span {
-                                        width: 15px;
-                                        height: 15px;
-                                        display: inline-block;
-                                        transform: rotate(-90deg);
+                                .dx-pivotgrid-collapsed .dx-expand-icon-container span {
+                                    content: '';
+                                    display: inline-block;
+                                    transform: rotate(-90deg);
 
-                                        &:before {
-                                            bottom: 7px;
-                                        }
-
-                                        background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
+                                    &:before {
+                                        content: '';
+                                        display: block;
+                                        position: absolute;
+                                        top: 1px;
+                                        bottom: 0;
+                                        right: 0;
+                                        left: 0;
+                                        margin: auto;
+                                        width: 9px;
+                                        height: 4px;
+                                        line-height: 0;
                                     }
                                 }
                             }
 
                             &.incomeChildRow, &.expensesChildRow {
                                 .dx-white-space-column {
-                                    span {
-                                        width: 10px;
-                                        height: 10px;
-                                        display: inline-block;
-                                        position: relative;
-                                        left: 19px;
-                                        top: 11px;
-                                        z-index: 1;
-                                    }
-
                                     &:before {
-                                        content: url('../../../assets/common/icons/rectangle.svg');
+                                        content: '';
+                                        border: none;
                                     }
+                                    span {
+                                        &:before {
+                                            content: '';
+                                            display: block;
+                                            position: absolute;
+                                            top: 0;
+                                            bottom: 0;
+                                            right: 0;
+                                            left: 0;
+                                            margin: auto;
+                                            width: 9px;
+                                            height: 4px;
+                                        }
+                                    }
+                                }
+
+                                &:before {
+                                    display: none;
                                 }
                             }
 
@@ -701,12 +744,8 @@
                                     }
                                 }
 
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                                    span {
-                                        &:before {
-                                            content: url('../../../assets/common/icons/arrow-down-green.svg');
-                                        }
-                                    }
+                                .dx-pivotgrid-collapsed .dx-expand-icon-container span:before {
+                                    background-image: url('../../../assets/common/icons/arrow-down-green.svg');
                                 }
                             }
 
@@ -716,7 +755,7 @@
                                         border-right: 2px solid #61c670 !important;
                                     }
 
-                                    span {
+                                    span:before {
                                         background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
                                     }
                                 }
@@ -737,12 +776,8 @@
                                     }
                                 }
 
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                                    span {
-                                        &:before {
-                                            content: url('../../../assets/common/icons/arrow-down-red.svg');
-                                        }
-                                    }
+                                .dx-pivotgrid-collapsed .dx-expand-icon-container span:before {
+                                    background: url('../../../assets/common/icons/arrow-down-red.svg');
                                 }
                             }
 
@@ -752,7 +787,7 @@
                                         border-right: 2px solid #e7326a !important;
                                     }
 
-                                    span {
+                                    span:before {
                                         background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
                                     }
                                 }
