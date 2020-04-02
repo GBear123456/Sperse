@@ -40,12 +40,14 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         private dialog: MatDialog
     ) {
         super(injector);
-        clientService.invalidateSubscribe(() => {
-            this.data = this.contactService['data'];
-            this.loadData().subscribe(
-                (notes: NoteInfoDto[]) => this.dataSource = notes
-            );
-        }, 'notes');
+        clientService.invalidateSubscribe((area: string) => {
+            if (area === 'notes') {
+                this.data = this.contactService['data'];
+                this.loadData().subscribe(
+                    (notes: NoteInfoDto[]) => this.dataSource = notes
+                );
+            }
+        }, this.constructor.name);
     }
 
     ngOnInit() {
@@ -106,6 +108,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     ngOnDestroy() {
-        this.clientService.unsubscribe('notes');
+        this.clientService.unsubscribe(this.constructor.name);
     }
 }

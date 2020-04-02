@@ -77,7 +77,7 @@ export class UserInboxComponent implements OnDestroy {
         public profileService: ProfileService
     ) {
         contactsService.invalidateSubscribe(
-            () => this.invalidate(), 'user-inbox'
+            () => this.invalidate(), this.constructor.name
         );
         contactsService.contactInfoSubscribe(res => {
             let contactId = this.contactId;
@@ -527,6 +527,5 @@ export class UserInboxComponent implements OnDestroy {
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.constructor.name);
-        this.contactsService.unsubscribe('user-inbox');
     }
 }

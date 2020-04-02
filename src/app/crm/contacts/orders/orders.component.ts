@@ -44,13 +44,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     ) {
         super(injector);
         this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
-        clientService.invalidateSubscribe((area) => {
-            this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
-            const dataSource = this.dataGrid.instance.getDataSource();
-            if (dataSource) {
-                dataSource.load();
+        clientService.invalidateSubscribe((area: string) => {
+            if (area === 'orders') {
+                this.dataSource = this.getDataSource(+this.contactService['data'].contactInfo.id);
+                const dataSource = this.dataGrid.instance.getDataSource();
+                if (dataSource) {
+                    dataSource.load();
+                }
             }
-        }, 'orders');
+        }, this.constructor.name);
         invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
@@ -117,6 +119,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     ngOnDestroy() {
-        this.clientService.unsubscribe('orders');
+        this.clientService.unsubscribe(this.constructor.name);
     }
 }

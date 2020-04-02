@@ -129,9 +129,11 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
             })
         );
 
-        this.contactsService.invalidateSubscribe(() => {
-            this._refresh.next(true);
-        }, 'payment-information');
+        this.contactsService.invalidateSubscribe((area: string) => {
+            if (area === 'payment-information') {
+                this._refresh.next(true);
+            }
+        }, this.constructor.name);
     }
 
     formatDate(date: moment.Moment) {
@@ -172,7 +174,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe('payment-information');
+        this.contactsService.unsubscribe(this.constructor.name);
         this.contactInfoSubscription.unsubscribe();
     }
 }
