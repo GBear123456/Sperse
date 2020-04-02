@@ -1,5 +1,13 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit, ViewChild } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    HostBinding,
+    Input,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -74,10 +82,14 @@ export class PivotGridComponent implements OnInit {
         }
     }
 
-    onContentReady(e) {
+    onContentReady() {
         this.contentShown.next(this.isLoading !== undefined);
+        this.updateTotalCellsSizes();
+    }
+
+    updateTotalCellsSizes() {
         setTimeout(() => {
-            e.element.querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach(grandTotalCell => {
+            this.pivotGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach((grandTotalCell: HTMLTableCellElement) => {
                 if (grandTotalCell.parentElement.previousSibling &&
                     (grandTotalCell.parentElement.style.position === 'fixed'
                         || grandTotalCell.getBoundingClientRect().bottom > window.innerHeight)
@@ -86,8 +98,8 @@ export class PivotGridComponent implements OnInit {
                     grandTotalCell.parentElement.style.bottom = '0';
                     /** Get width and height of cell from previous row */
                     const cellIndex = grandTotalCell.cellIndex;
-                    const sameElementFromPrevRow = grandTotalCell.parentElement.previousSibling.children[cellIndex];
-                    grandTotalCell.style.width = (sameElementFromPrevRow.clientWidth - 20) + 'px';
+                    const sameElementFromPrevRow = grandTotalCell.parentElement.previousSibling['children'][cellIndex];
+                    grandTotalCell.style.width = (sameElementFromPrevRow.getBoundingClientRect().width - 20) + 'px';
                     if (!grandTotalCell.closest('.dx-pivotgrid-vertical-headers')) {
                         grandTotalCell.style.height = grandTotalCell.parentElement.clientHeight + 'px';
                     }

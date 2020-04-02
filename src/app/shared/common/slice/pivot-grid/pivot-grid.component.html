@@ -7,7 +7,7 @@
                [allowSortingBySummary]="true"
                [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
-               (onContentReady)="onContentReady($event)"
+               (onContentReady)="onContentReady()"
                (onContextMenuPreparing)="prepareContextMenu($event)">
     <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
     <dxo-field-panel [visible]="true"></dxo-field-panel>
