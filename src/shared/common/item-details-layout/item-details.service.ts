@@ -48,7 +48,7 @@ export class ItemDetailsService {
         return dataSource$.pipe(switchMap(dataSource => {
             let fullInfo$ = of(null);
             if (dataSource) {
-                let items = dataSource['entities'] || dataSource.items(),
+                let items = dataSource['entities'] || this.getItemsByDataSourceItems(dataSource.items()),
                     itemIndex = this.getDistinctItemIndex(items, itemId, itemDirection, itemKeyField, itemDistinctField),
                     itemData = items[itemIndex];
                 const isFirstOnPage = itemIndex === 0;
@@ -71,7 +71,7 @@ export class ItemDetailsService {
                                 dataSource.pageIndex(dataSource.pageIndex() - 1);
                                 fullInfo$ = from(dataSource.reload()).pipe(
                                     switchMap(() => {
-                                        const newItems = dataSource.items();
+                                        const newItems = this.getItemsByDataSourceItems(dataSource.items());
                                         const newItemId = newItems[newItems.length - 1][itemKeyField];
                                         /** Get data of the last item from the previous page */
                                         return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
@@ -95,7 +95,7 @@ export class ItemDetailsService {
                                     let entities = dataSource['entities'],
                                         newItemId = entities
                                             ? entities[entities.length - dataSource.pageSize() - 1][itemKeyField]
-                                            : dataSource.items()[0][itemKeyField];
+                                            : this.getItemsByDataSourceItems(dataSource.items())[0][itemKeyField];
                                     /** Get data of the first item from the next page */
                                     return this.getItemFullInfo(itemType, newItemId, entities ? TargetDirectionEnum.Next : TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
                                 })
@@ -108,6 +108,14 @@ export class ItemDetailsService {
             }
             return fullInfo$;
         }));
+    }
+
+    private getItemsByDataSourceItems(items) {
+        return items.reduce((acc, item) => {
+            Array.prototype.push.apply(acc, item.items ?
+                this.getItemsByDataSourceItems(item.items) : [item]);
+            return acc;
+        }, []);
     }
 
     private getDistinctItemIndex(items: any[], itemId: number, itemDirection: TargetDirectionEnum, itemKeyField: string, itemDistinctField: string): any {

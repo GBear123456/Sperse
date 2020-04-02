@@ -1254,7 +1254,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.dataGrid) {
             this.itemDetailsService.setItemsSource(
                 ItemTypeEnum.Customer,
-                this.dataGrid.instance.getDataSource()
+                this.dataSource
             );
         }
         this.hideHostElement();
