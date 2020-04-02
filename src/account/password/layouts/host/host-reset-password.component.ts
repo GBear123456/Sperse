@@ -13,7 +13,8 @@ import {
     PasswordComplexitySetting,
     ProfileServiceProxy,
     ResetPasswordOutput,
-    ResolveTenantIdInput
+    ResolveTenantIdInput,
+    GetResetCodeInfoOutput
 } from '@shared/service-proxies/service-proxies';
 import { LoginService } from 'account/login/login.service';
 import { ResetPasswordModel } from '../../reset-password.model';
@@ -40,28 +41,33 @@ export class HostResetPasswordComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        let tenantId: number;
         if (this.activatedRoute.snapshot.queryParams['c']) {
             this.model.c = this.activatedRoute.snapshot.queryParams['c'];
-
-            this.accountService.resolveTenantId(new ResolveTenantIdInput({c: this.model.c})).subscribe((tenantId: number) => {
-                if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
-
-                this.appSessionService.changeTenantIfNeeded(
-                    tenantId, false
-                );
-
-                this.profileService.getPasswordComplexitySetting().subscribe(result => {
-                    this.passwordComplexitySetting = result.setting;
-                });
-            });
         } else {
             this.model.userId = this.activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
-            let tenantId = this.activatedRoute.snapshot.queryParams['tenantId'];
-            tenantId && this.appSessionService.changeTenantIfNeeded(
-                this.parseTenantId(tenantId), false
-            );
+            let tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
+            tenantId = this.parseTenantId(tenantIdStr);
         }
+
+        this.accountService.getResetCodeInfo(tenantId, this.model.userId, this.model.resetCode, this.model.c).subscribe((result: GetResetCodeInfoOutput) => {
+            this.appSessionService.changeTenantIfNeeded(
+                result.tenantId, false
+            );
+
+            if (!result.isValid)
+            {
+                abp.message.error(this.ls.l("InvalidPasswordResetCode_Detail"), this.ls.l("InvalidPasswordResetCode")).done(() => {
+                    this.router.navigate(['account/login']);
+                });
+                return;
+            }
+
+            this.profileService.getPasswordComplexitySetting().subscribe(result => {
+                this.passwordComplexitySetting = result.setting;
+            });
+        });
     }
 
     save(): void {
