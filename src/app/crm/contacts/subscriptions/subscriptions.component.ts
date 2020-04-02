@@ -67,9 +67,11 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         public permission: PermissionCheckerService,
         public ls: AppLocalizationService
     ) {
-        contactsService.invalidateSubscribe(() => {
-            this.refreshData(true);
-        }, 'subscriptions');
+        contactsService.invalidateSubscribe((area: string) => {
+            if (area === 'subscriptions') {
+                this.refreshData(true);
+            }
+        }, this.constructor.name);
         invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
@@ -201,6 +203,5 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.contactsService.unsubscribe(this.constructor.name);
-        this.contactsService.unsubscribe('subscriptions');
     }
 }

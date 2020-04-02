@@ -80,9 +80,11 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private invoiceProxy: InvoiceServiceProxy
     ) {
         super(injector);
-        this.clientService.invalidateSubscribe(() => {
-            this.dataSource = this.getDataSource();
-        }, 'invoices');
+        this.clientService.invalidateSubscribe((area: string) => {
+            if (area === 'invoices') {
+                this.dataSource = this.getDataSource();
+            }
+        }, this.constructor.name);
 
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
             if (!this.contactId || data.id != this.contactId) {
@@ -355,6 +357,5 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         this.clientService.unsubscribe(this.constructor.name);
-        this.clientService.unsubscribe('invoices');
     }
 }

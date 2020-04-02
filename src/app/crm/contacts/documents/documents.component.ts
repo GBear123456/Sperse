@@ -113,11 +113,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         super(injector);
         this.data = this.contactService['data'];
         clientService.invalidateSubscribe(
-            () => {
-                this.documentService['data'] = undefined;
-                this.loadDocuments();
+            (area: string) => {
+                if (area === 'documents') {
+                    this.documentService['data'] = undefined;
+                    this.loadDocuments();
+                }
             },
-            'documents'
+            this.constructor.name
         );
     }
 
@@ -361,14 +363,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     onContentReady() {
         this.setGridDataLoaded();
-    }
-
-    ngOnDestroy() {
-        this.clientService.unsubscribe('documents');
-        this.clientService.toolbarUpdate();
-        if (this.openDocumentMode) {
-            this.closeDocument();
-        }
     }
 
     toggleActionsMenu(data, target) {
@@ -689,5 +683,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     onTypeListUpdated(list) {
         this.documentTypeService['data'] = this.documentTypes = list;
+    }
+
+    ngOnDestroy() {
+        this.clientService.unsubscribe(this.constructor.name);
+        this.clientService.toolbarUpdate();
+        if (this.openDocumentMode) {
+            this.closeDocument();
+        }
     }
 }
