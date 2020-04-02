@@ -50,7 +50,7 @@ export class AppStoreService {
                 this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction({contactGroup: groupId, forced: forced}));
                 this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }),
                     skip(1), filter(Boolean), first()
-                ).subscribe(data => this.dispatchUserAssignmentsActions(keyList, forced));
+                ).subscribe(data => setTimeout(() => this.dispatchUserAssignmentsActions(keyList, forced), 100));
             } else
                 this.dispatchUserAssignmentsActions(keyList, forced);
         }

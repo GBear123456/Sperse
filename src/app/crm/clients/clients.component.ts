@@ -475,8 +475,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (records) => {
-                    if (this.appService.isCfoLinkOrVerifyEnabled)
-                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(this.getUserIds(records));
+                    let userIds = this.getUserIds(records);
+                    if (this.appService.isCfoLinkOrVerifyEnabled && userIds.length)
+                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
                 }
             }
         });
@@ -1257,7 +1258,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.dataGrid) {
             this.itemDetailsService.setItemsSource(
                 ItemTypeEnum.Customer,
-                this.dataGrid.instance.getDataSource()
+                this.dataSource
             );
         }
         this.hideHostElement();

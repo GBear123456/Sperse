@@ -249,7 +249,7 @@ export class ContactsService {
         return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + company.primaryPhoto } : {};
     }
 
-    updateLocation(contactId?, leadId?, companyId?, userId?) {
+    updateLocation(contactId?, leadId?, companyId?, userId?, queryParams?) {
         this.router.navigate(
             ['app/' + (userId ? 'admin' : 'crm')].concat(
                 contactId ? ['contact', contactId] : [],
@@ -258,7 +258,7 @@ export class ContactsService {
                 userId ? ['user', userId] : [],
                 location.pathname.split('/').pop()
             ), {
-            queryParams : location.search.slice(1).split('&').reduce((acc, item) => {
+            queryParams: queryParams || location.search.slice(1).split('&').reduce((acc, item) => {
                 let parts = item.split('=');
                 acc[parts[0]] = decodeURIComponent(parts[1]);
                 return acc;
