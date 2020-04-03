@@ -43,6 +43,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { AppConsts } from '@shared/AppConsts';
+import { SyncTypeIds } from '@shared/AppEnums';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { SynchProgressService } from '../helpers/synch-progress.service';
 import { BankAccountProgress, SyncProgressDto } from '../../../service-proxies/service-proxies';
@@ -585,6 +586,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     openActionsMenu(cellObj) {
         this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] = cellObj.data.syncTypeId === 'Q';
+        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'update')]['hide'] = (cellObj.data.syncTypeId != SyncTypeIds.Plaid && cellObj.data.syncTypeId != SyncTypeIds.QuickBook && cellObj.data.syncTypeId != SyncTypeIds.XeroOAuth2);
         this.syncAccount = cellObj.data;
         this.syncRef = cellObj.text;
         this.syncAccountId = cellObj.data.syncAccountId;

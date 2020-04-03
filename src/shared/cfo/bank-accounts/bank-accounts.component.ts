@@ -14,7 +14,7 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
-import { AccountConnectors } from '@shared/AppEnums';
+import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-widget.component';
 
 @Component({
@@ -83,9 +83,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         if (!this.isInstanceAdmin && !this.isMemberAccessManage)
             return;
 
+        let syncTypeId = syncAccount.syncTypeId;
+        let syncTypeKey = Object.keys(SyncTypeIds).find((v) => SyncTypeIds[v] == syncTypeId);
+        let connector: AccountConnectors = AccountConnectors[syncTypeKey];
+
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
             data: {
-                connector: AccountConnectors.XeroOAuth2,
+                connector: connector,
                 config: {
                     accountId: syncAccount.syncAccountId,
                 },
