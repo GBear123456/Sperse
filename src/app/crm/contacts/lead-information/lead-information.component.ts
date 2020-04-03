@@ -217,10 +217,10 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             this.contactsService.leadInfoSubscribe(leadInfo => {
                 this.isEditAllowed = leadInfo && leadInfo.id && this.isCGManageAllowed;
                 this.contactsService.orgUnitsUpdate({
-                    allOrganizationUnits: organizationUnits,
-                    selectedOrgUnits: [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
+                    allOrganizationUnits: leadInfo ? organizationUnits : [],
+                    selectedOrgUnits: leadInfo ? [organizationUnits.find((organizationUnit: OrganizationUnitShortDto) => {
                         return organizationUnit.id === (leadInfo.sourceOrganizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
-                    })].filter(Boolean).map(item => item.id)
+                    })].filter(Boolean).map(item => item.id) : []
                 });
             }, this.constructor.name);
         });
