@@ -155,6 +155,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
     userGroupText$: Observable<string> = this.contactGroupId$.pipe(
         map((contactGroupId: ContactGroup) => {
+            this.initAssignedUsersSelector();
             return this.getUserGroup(invert(ContactGroup)[contactGroupId.toString()]).toLowerCase();
         })
     );
@@ -380,10 +381,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
-    assignedUsersSelector = select(
-        ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
-        { contactGroup: ContactGroup.Client }
-    );
+    assignedUsersSelector;
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
 
@@ -450,6 +448,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
             this.pipelineSelectFields.push('BankCode');
         }
+        this.initAssignedUsersSelector();
     }
 
     ngOnInit() {
@@ -467,6 +466,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngAfterViewInit() {
         this.initDataSource();
+    }
+
+    private initAssignedUsersSelector() {
+        this.assignedUsersSelector = select(
+            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+            { contactGroup: this.contactGroupId.value }
+        );
     }
 
     private handleTotalCountUpdate() {

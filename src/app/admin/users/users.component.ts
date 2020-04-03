@@ -16,6 +16,7 @@ import {
     PermissionServiceProxy, UserGroup
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -44,6 +45,7 @@ import {
     RoleListDto,
     RoleListDtoListResultDto
 } from '../../../shared/service-proxies/service-proxies';
+import { AppStoreService } from '@app/store/app-store.service';
 
 @Component({
     templateUrl: './users.component.html',
@@ -109,6 +111,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     constructor(
         injector: Injector,
+        private appStoreService: AppStoreService,
         private filtersService: FiltersService,
         private userServiceProxy: UserServiceProxy,
         private notifyService: NotifyService,
@@ -521,6 +524,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this.userServiceProxy.deleteUser(user.id)
                         .subscribe(() => {
                             this.invalidate();
+                            this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
                             this.notify.success(this.l('SuccessfullyDeleted'));
                         });
                 }
