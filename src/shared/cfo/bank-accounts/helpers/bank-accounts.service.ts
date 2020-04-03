@@ -118,7 +118,7 @@ export class BankAccountsService {
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
         private businessEntityService: BusinessEntityServiceProxy,
         private cacheService: CacheService,
-        private _filtersService: FiltersService,
+        private filtersService: FiltersService,
         private localizationService: AppLocalizationService,
         private cfoPreferencesService: CfoPreferencesService,
         private ls: AppLocalizationService
@@ -467,6 +467,16 @@ export class BankAccountsService {
         return combinedRequest;
     }
 
+    getBankAccountsFromSyncAccounts(syncAccounts: SyncAccountBankDto[]): BankAccountDto[] {
+        let bankAccounts = [];
+        syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
+            syncAccount.bankAccounts.forEach((bankAccount: BankAccountDto) => {
+                bankAccounts.push(bankAccount);
+            });
+        });
+        return bankAccounts;
+    }
+
     private getFilteredSyncAccounts(
         syncAccounts$: Observable<SyncAccountBankDto[]>,
         selectedBankAccountTypes$: Observable<string[]>,
@@ -784,7 +794,7 @@ export class BankAccountsService {
     setBankAccountsFilter(filters, syncAccounts, emitFilterChange = false) {
         let accountFilter: FilterModel = _.find(filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         accountFilter = this.changeAndGetBankAccountFilter(accountFilter, this.state, syncAccounts);
-        emitFilterChange && this._filtersService.change(accountFilter);
+        emitFilterChange && this.filtersService.change(accountFilter);
         this.applyFilter();
     }
 

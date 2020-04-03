@@ -303,25 +303,17 @@ export class AccountServiceProxy {
     }
 
     /**
-     * @tenantId (optional) 
-     * @userId (optional) 
-     * @resetCode (optional) 
-     * @c (optional) 
+     * @body (optional) 
      * @return Success
      */
-    getResetCodeInfo(tenantId: number | null | undefined, userId: number | null | undefined, resetCode: string | null | undefined, c: string | null | undefined): Observable<GetResetCodeInfoOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/Account/GetResetCodeInfo?";
-        if (tenantId !== undefined)
-            url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
-        if (userId !== undefined)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
-        if (resetCode !== undefined)
-            url_ += "ResetCode=" + encodeURIComponent("" + resetCode) + "&"; 
-        if (c !== undefined)
-            url_ += "c=" + encodeURIComponent("" + c) + "&"; 
+    getResetPasswordCodeInfo(body: GetResetPasswordCodeInfoInput | null | undefined): Observable<GetResetPasswordCodeInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/GetResetPasswordCodeInfo";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -330,21 +322,21 @@ export class AccountServiceProxy {
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetResetCodeInfo(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetResetPasswordCodeInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetResetCodeInfo(<any>response_);
+                    return this.processGetResetPasswordCodeInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<GetResetCodeInfoOutput>><any>_observableThrow(e);
+                    return <Observable<GetResetPasswordCodeInfoOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetResetCodeInfoOutput>><any>_observableThrow(response_);
+                return <Observable<GetResetPasswordCodeInfoOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetResetCodeInfo(response: HttpResponseBase): Observable<GetResetCodeInfoOutput> {
+    protected processGetResetPasswordCodeInfo(response: HttpResponseBase): Observable<GetResetPasswordCodeInfoOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -355,7 +347,7 @@ export class AccountServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetResetCodeInfoOutput.fromJS(resultData200) : new GetResetCodeInfoOutput();
+            result200 = resultData200 ? GetResetPasswordCodeInfoOutput.fromJS(resultData200) : new GetResetPasswordCodeInfoOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -363,7 +355,7 @@ export class AccountServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetResetCodeInfoOutput>(<any>null);
+        return _observableOf<GetResetPasswordCodeInfoOutput>(<any>null);
     }
 
     /**
@@ -33365,11 +33357,55 @@ export interface ISendPasswordResetCodeOutput {
     detectedTenancies: TenantModel[] | undefined;
 }
 
-export class GetResetCodeInfoOutput implements IGetResetCodeInfoOutput {
+export class GetResetPasswordCodeInfoInput implements IGetResetPasswordCodeInfoInput {
+    userId!: number | undefined;
+    resetCode!: string | undefined;
+    c!: string | undefined;
+
+    constructor(data?: IGetResetPasswordCodeInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.resetCode = data["resetCode"];
+            this.c = data["c"];
+        }
+    }
+
+    static fromJS(data: any): GetResetPasswordCodeInfoInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetResetPasswordCodeInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["resetCode"] = this.resetCode;
+        data["c"] = this.c;
+        return data; 
+    }
+}
+
+export interface IGetResetPasswordCodeInfoInput {
+    userId: number | undefined;
+    resetCode: string | undefined;
+    c: string | undefined;
+}
+
+export class GetResetPasswordCodeInfoOutput implements IGetResetPasswordCodeInfoOutput {
     tenantId!: number | undefined;
     isValid!: boolean | undefined;
 
-    constructor(data?: IGetResetCodeInfoOutput) {
+    constructor(data?: IGetResetPasswordCodeInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -33385,9 +33421,9 @@ export class GetResetCodeInfoOutput implements IGetResetCodeInfoOutput {
         }
     }
 
-    static fromJS(data: any): GetResetCodeInfoOutput {
+    static fromJS(data: any): GetResetPasswordCodeInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetResetCodeInfoOutput();
+        let result = new GetResetPasswordCodeInfoOutput();
         result.init(data);
         return result;
     }
@@ -33400,17 +33436,17 @@ export class GetResetCodeInfoOutput implements IGetResetCodeInfoOutput {
     }
 }
 
-export interface IGetResetCodeInfoOutput {
+export interface IGetResetPasswordCodeInfoOutput {
     tenantId: number | undefined;
     isValid: boolean | undefined;
 }
 
 export class ResetPasswordInput implements IResetPasswordInput {
-    userId!: number | undefined;
-    resetCode!: string | undefined;
     password!: string | undefined;
     returnUrl!: string | undefined;
     singleSignIn!: string | undefined;
+    userId!: number | undefined;
+    resetCode!: string | undefined;
     c!: string | undefined;
 
     constructor(data?: IResetPasswordInput) {
@@ -33424,11 +33460,11 @@ export class ResetPasswordInput implements IResetPasswordInput {
 
     init(data?: any) {
         if (data) {
-            this.userId = data["userId"];
-            this.resetCode = data["resetCode"];
             this.password = data["password"];
             this.returnUrl = data["returnUrl"];
             this.singleSignIn = data["singleSignIn"];
+            this.userId = data["userId"];
+            this.resetCode = data["resetCode"];
             this.c = data["c"];
         }
     }
@@ -33442,22 +33478,22 @@ export class ResetPasswordInput implements IResetPasswordInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["resetCode"] = this.resetCode;
         data["password"] = this.password;
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
+        data["userId"] = this.userId;
+        data["resetCode"] = this.resetCode;
         data["c"] = this.c;
         return data; 
     }
 }
 
 export interface IResetPasswordInput {
-    userId: number | undefined;
-    resetCode: string | undefined;
     password: string | undefined;
     returnUrl: string | undefined;
     singleSignIn: string | undefined;
+    userId: number | undefined;
+    resetCode: string | undefined;
     c: string | undefined;
 }
 
@@ -53928,7 +53964,7 @@ export class BankCardInput implements IBankCardInput {
     expirationMonth!: string;
     expirationYear!: string;
     billingAddress!: string | undefined;
-    billingZip!: string;
+    billingZip!: string | undefined;
     billingCity!: string | undefined;
     billingStateCode!: string | undefined;
     billingCountryCode!: string | undefined;
@@ -53984,7 +54020,7 @@ export interface IBankCardInput {
     expirationMonth: string;
     expirationYear: string;
     billingAddress: string | undefined;
-    billingZip: string;
+    billingZip: string | undefined;
     billingCity: string | undefined;
     billingStateCode: string | undefined;
     billingCountryCode: string | undefined;

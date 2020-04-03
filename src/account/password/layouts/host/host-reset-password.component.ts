@@ -13,8 +13,8 @@ import {
     PasswordComplexitySetting,
     ProfileServiceProxy,
     ResetPasswordOutput,
-    ResolveTenantIdInput,
-    GetResetCodeInfoOutput
+    GetResetPasswordCodeInfoInput,
+    GetResetPasswordCodeInfoOutput
 } from '@shared/service-proxies/service-proxies';
 import { LoginService } from 'account/login/login.service';
 import { ResetPasswordModel } from '../../reset-password.model';
@@ -49,9 +49,17 @@ export class HostResetPasswordComponent implements OnInit {
             this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
             let tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
             tenantId = this.parseTenantId(tenantIdStr);
+            this.appSessionService.changeTenantIfNeeded(
+                tenantId, false
+            );
         }
 
-        this.accountService.getResetCodeInfo(tenantId, this.model.userId, this.model.resetCode, this.model.c).subscribe((result: GetResetCodeInfoOutput) => {
+        let infoInput = new GetResetPasswordCodeInfoInput({
+            userId: this.model.userId,
+            resetCode: this.model.resetCode,
+            c: this.model.c
+        });
+        this.accountService.getResetPasswordCodeInfo(infoInput).subscribe((result: GetResetPasswordCodeInfoOutput) => {
             this.appSessionService.changeTenantIfNeeded(
                 result.tenantId, false
             );

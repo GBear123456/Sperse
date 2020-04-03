@@ -11,7 +11,8 @@ import {
     EventEmitter,
     ElementRef,
     SimpleChanges,
-    HostBinding
+    HostBinding,
+    ChangeDetectorRef
 } from '@angular/core';
 
 /** Third party imports */
@@ -43,6 +44,8 @@ import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { AppConsts } from '@shared/AppConsts';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { SynchProgressService } from '../helpers/synch-progress.service';
+import { BankAccountProgress, SyncProgressDto } from '../../../service-proxies/service-proxies';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -72,7 +75,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showAddAccountButton = true;
     @Input() searchInputWidth = 279;
     @Input() additionalActionsAllowed = false;
-    dataSource: any;
     @Input() allowBankAccountsEditing = false;
     @Input() showHeader = true;
     @Input() showCheckboxes = true;
@@ -87,6 +89,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
     @HostBinding('class.wide') @Input() wide = false;
+    dataSource: SyncAccountBankDto[];
     allowEditing = false;
     editingStarted = false;
     accessAllDepartments = true;
@@ -164,6 +167,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         private businessEntityService: BusinessEntityServiceProxy,
         private syncAccountServiceProxy: SyncAccountServiceProxy,
         private syncServiceProxy: SyncServiceProxy,
+        private syncProgressService: SynchProgressService,
+        private changeDetectorRef: ChangeDetectorRef,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
@@ -192,6 +197,24 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         ).subscribe(syncData => {
             this.syncData = syncData;
         });
+        /** Update statuses of bank-accounts */
+        if (this.showBankAccountsStatus) {
+            this.syncProgressService.syncData$.pipe(
+                takeUntil(this.destroy$)
+            ).subscribe((syncData: SyncProgressOutput) => {
+                /** Update status of bank accounts whose status has changed */
+                syncData.accountProgresses.forEach(((accountProgress: SyncProgressDto) => {
+                    accountProgress.bankAccounts && accountProgress.bankAccounts.forEach((bankAccount: BankAccountProgress) => {
+                        const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.dataSource);
+                        const bankAccountInDataSource = syncAccounts.find(account => account.id === bankAccount.id);
+                        if (bankAccountInDataSource && bankAccount.syncStatus !== bankAccountInDataSource.syncStatus) {
+                            bankAccountInDataSource.syncStatus = bankAccount.syncStatus;
+                            this.changeDetectorRef.detectChanges();
+                        }
+                    });
+                }));
+            });
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
