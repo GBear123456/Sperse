@@ -158,6 +158,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     bankCodesGroupsCountsWithPercents$ = this.bankCodeService.bankCodesGroupsCountsWithPercents$;
     bankCodeLevel$ = this.bankCodeService.bankCodeLevel$;
     bankCodeTotalCount$: Observable<string> = this.bankCodeService.bankCodeTotalCount$;
+    bankFunnelLink = 'https://www.dropbox.com/s/bktc65pq15d513t/BANKPASS%20Swipe%20Copy.pdf';
 
     constructor(
         private oDataService: ODataService,
