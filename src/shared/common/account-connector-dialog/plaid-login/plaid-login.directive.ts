@@ -53,12 +53,14 @@ export class PlaidLoginDirective {
                 },
                 onSuccess: (public_token) => {
                     handler.exit();
-                    this.onComplete.emit();
                     this.syncAccount.create(this.cfoService.instanceType, this.cfoService.instanceId, new CreateSyncAccountInput({
                         isSyncBankAccountsEnabled: true,
                         typeId: SyncTypeIds.Plaid,
                         publicToken: public_token
-                    })).subscribe(() => this.syncProgressService.runSynchProgress());
+                    })).subscribe(() => {
+                        this.onComplete.emit();
+                        this.syncProgressService.runSynchProgress();
+                    });
                 }
             }), plaidIframe = this.document.querySelector('[id^="plaid-link-iframe-"]:last-child');
             handler.open();
