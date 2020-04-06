@@ -40,6 +40,7 @@ import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 import { AppSessionService } from '../../../shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '../../shared/common/slice/pivot-grid/pivot-grid.component';
+import { OrganizationUnitsStoreSelectors } from '@app/crm/store';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -110,11 +111,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
         this.subscriptionStatusFilter,
-        new FilterModel({
-            component: FilterInputsComponent,
-            caption: 'PartnerSource',
-            items: { PartnerSource: new FilterItemModel() }
-        })
+        this.getSourceOrganizationUnitFilter()
     ];
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
@@ -166,7 +163,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: 'Fee',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.getSubscriptionsFilter('Subscription')
+        this.getSubscriptionsFilter('Subscription'),
+        this.getSourceOrganizationUnitFilter()
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
@@ -327,10 +325,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 area: 'filter',
                 dataField: 'City'
-            },
-            {
-                area: 'filter',
-                dataField: 'PartnerSource'
             }
         ]
     };
@@ -395,6 +389,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         dataSource$: this.store$.pipe(select(SubscriptionsStoreSelectors.getSubscriptions)),
                         dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
                         nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        });
+    }
+
+    private getSourceOrganizationUnitFilter() {
+        return new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'SourceOrganizationUnitId',
+            field: 'SourceOrganizationUnitId',
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                        nameField: 'displayName',
                         keyExpr: 'id'
                     })
             }

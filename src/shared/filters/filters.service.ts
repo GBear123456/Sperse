@@ -91,7 +91,7 @@ export class FiltersService {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }
 
-    static filterByOrganizationUnitId(filter: FilterModel) {
+    static filterBySourceOrganizationUnitId(filter: FilterModel) {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }
 

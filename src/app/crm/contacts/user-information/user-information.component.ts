@@ -329,7 +329,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         sub.pipe(finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))).subscribe(
             () => {
-                this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
+                if (this.roles.filter(item => item.id == role.roleId && item.moduleId == AppConsts.modules.CRMModule).length)
+                    this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
                 this.notify.info(this.ls.l('SavedSuccessfully'));
             }, () => { role.isAssigned = !role.isAssigned; }
         );

@@ -342,10 +342,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             {
                 area: 'filter',
                 dataField: 'ZipCode'
-            },
-            {
-                area: 'filter',
-                dataField: 'PartnerSource'
             }
         ]
     };
@@ -780,14 +776,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }),
             this.filterModelAssignment,
             new FilterModel({
-                component: FilterInputsComponent,
-                caption: 'PartnerSource',
-                items: { PartnerSource: new FilterItemModel() }
-            }),
-            new FilterModel({
                 component: FilterCheckBoxesComponent,
-                caption: 'OrganizationUnitId',
-                field: 'OrganizationUnitId',
+                caption: 'SourceOrganizationUnitId',
+                field: 'SourceOrganizationUnitId',
                 items: {
                     element: new FilterCheckBoxesModel(
                         {

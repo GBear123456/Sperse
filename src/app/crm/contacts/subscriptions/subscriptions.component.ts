@@ -77,7 +77,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.contactsService.contactInfoSubscribe(contactInfo => {
-            this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+            this.manageAllowed = this.permission.isGranted(AppPermissions.CRMOrdersManage)
+                && this.contactsService.checkCGPermission(contactInfo.groupId);
             this.data = this.contactService['data'];
             this.refreshData();
         }, this.constructor.name);
