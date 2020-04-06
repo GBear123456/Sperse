@@ -274,10 +274,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             {
                 area: 'filter',
                 dataField: 'ZipCode'
-            },
-            {
-                area: 'filter',
-                dataField: 'PartnerSource'
             }
         ]
     };
@@ -669,14 +665,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }),
             new FilterModel({
-                component: FilterInputsComponent,
-                caption: 'PartnerSource',
-                items: { PartnerSource: new FilterItemModel() }
-            }),
-            new FilterModel({
                 component: FilterCheckBoxesComponent,
-                caption: 'OrganizationUnitId',
-                field: 'OrganizationUnitId',
+                caption: 'SourceOrganizationUnitId',
+                field: 'SourceOrganizationUnitId',
                 items: {
                     element: new FilterCheckBoxesModel(
                         {
