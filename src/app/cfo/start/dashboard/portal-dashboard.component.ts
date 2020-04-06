@@ -33,9 +33,9 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
 
     private rootComponent: any;
     linksTo: any = [
-        {name: 'View_Cash_Flow_Report', route: '../cashflow'},
-        {name: 'View_Transaction_Details', route: '../transactions'},
-        {name: 'Last Quarter and Month Report', route: '../reports'}
+        { name: 'View_Cash_Flow_Report', route: '../cashflow' },
+        { name: 'View_Transaction_Details', route: '../transactions' },
+        { name: 'Last Quarter and Month Report', route: '../reports' }
     ];
 
     constructor(

@@ -6,7 +6,7 @@
                   (onReload)="refreshDataGrid()">
     </app-headline>
     <div class="content-wrap">
-        <setup-steps SelectedStepIndex="1"></setup-steps>
+        <cfo-left-menu [selectedItemIndex]="1"></cfo-left-menu>
         <dx-scroll-view showScrollbar="onHover" [width]="contentWidth$ | async">
             <div class="grid-wrapper">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>

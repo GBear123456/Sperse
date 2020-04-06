@@ -44,6 +44,7 @@ import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
 import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
 import { OfferStatsComponent } from './reports/offer-stats/offer-stats.component';
 import { VisitorsStatsComponent } from './reports/visitors-stats/visitors-stats.component';
+import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
 
 @NgModule({
     imports: [
@@ -93,7 +94,8 @@ import { VisitorsStatsComponent } from './reports/visitors-stats/visitors-stats.
         OfferNotifyDialogComponent
     ],
     providers: [
-        DataSourceService
+        DataSourceService,
+        LeftMenuService
     ]
 })
 

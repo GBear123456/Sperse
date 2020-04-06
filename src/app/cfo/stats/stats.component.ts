@@ -40,10 +40,11 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
+import { LeftMenuComponent } from '@app/cfo/shared/common/left-menu/left-menu.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { LeftMenuItem } from '../../shared/common/left-menu/left-menu-item.interface';
 
 @Component({
     'selector': 'app-stats',
@@ -55,7 +56,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild('linearChart', { static: false }) private linearChart: DxChartComponent;
     @ViewChild('barChart', { static: false }) private barChart: DxChartComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
-    @ViewChild(SetupStepComponent, { static: true }) setupStepComponent: SetupStepComponent;
+    @ViewChild(LeftMenuComponent, { static: false }) leftMenuComponent: LeftMenuComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
@@ -145,10 +146,22 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_endingBalance')
         }
     ];
-    leftSideBarItems = [
-        { caption: 'leftSideBarMonthlyTrendCharts' },
-        { caption: 'leftSideBarDailyTrendCharts' },
-        { caption: 'leftKeyMetricsKPI' }
+    leftSideBarItems: LeftMenuItem[] = [
+        {
+            caption: this.l('SetupStep_leftSideBarMonthlyTrendCharts'),
+            disabled: true,
+            iconSrc: './assets/common/icons/stats/monthly-trend-charts.svg'
+        },
+        {
+            caption: this.l('SetupStep_leftSideBarDailyTrendCharts'),
+            disabled: true,
+            iconSrc: './assets/common/icons/stats/daily-trend-charts.svg'
+        },
+        {
+            caption: this.l('SetupStep_leftKeyMetricsKPI'),
+            disabled: true,
+            iconSrc: './assets/common/icons/stats/summaries&kpis.svg'
+        }
     ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -472,7 +485,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 390;
         this.chartsHeight = chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth - (window.innerWidth < 768 || this.setupStepComponent.collapsed ? 40 : 371);
+        this.chartsWidth = window.innerWidth - (window.innerWidth < 768 || this.leftMenuComponent.collapsed ? 40 : 371);
     }
 
     /** Calculates the height of the charts scrollable height after resizing */

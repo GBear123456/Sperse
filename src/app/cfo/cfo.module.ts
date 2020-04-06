@@ -57,7 +57,7 @@ import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accou
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
-import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
+import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
 import { RulesComponent } from './rules/rules.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
@@ -94,7 +94,7 @@ import { ReportsComponent } from './reports/reports.component';
 import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
-import { SetupStepsService } from '@app/cfo/shared/common/setup-steps/setup-steps.service';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 let COMPONENTS = [
@@ -107,7 +107,7 @@ let COMPONENTS = [
     BankAccountsGeneralComponent,
     TransactionsComponent,
     CategorizationComponent,
-    SetupStepComponent,
+    LeftMenuComponent,
     CurrenciesDropdownComponent,
     CashflowComponent,
     PreferencesDialogComponent,
@@ -210,7 +210,7 @@ let COMPONENTS = [
         DashboardComponent
     ],
     providers: [
-        SetupStepsService,
+        LeftMenuService,
         CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,

@@ -1,10 +1,11 @@
 <div [@routerTransition]>
     <app-headline [names]="[ l('Setup_Title'), l('SetupStep_Chart') ]"
-                  iconSrc="assets/common/icons/magic-stick-icon.svg"></app-headline>
+                  iconSrc="assets/common/icons/magic-stick-icon.svg">
+    </app-headline>
     <div class="content-wrap">
-        <setup-steps #setupStep SelectedStepIndex="2"></setup-steps>
+        <cfo-left-menu #leftMenu [selectedItemIndex]="2"></cfo-left-menu>
         <div class="grid-wrapper" [ngStyle]="{ flex: isInstanceAdmin ? 'unset': 1 }">
-            <categorization [width]="'calc(100vw - ' + (setupStep.collapsed ? 420 : 744) + 'px)'"
+            <categorization [width]="'calc(100vw - ' + (leftMenu.collapsed || isMobile ? 420 : 744) + 'px)'"
                             [height]="'calc(100vh - 218px)'"
                             [showTitle]="false"
                             [showHeader]="true"

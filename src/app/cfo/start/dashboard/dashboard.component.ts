@@ -17,6 +17,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { Period } from '@app/shared/common/period/period.enum';
+import { LeftMenuComponent } from '../../shared/common/left-menu/left-menu.component';
 
 @Component({
     selector: 'dashboard',
@@ -30,6 +31,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     @ViewChild(TotalsByPeriodComponent, { static: false }) totalsByPeriodComponent: TotalsByPeriodComponent;
     @ViewChild(TrendByPeriodComponent, { static: false }) trendByPeriodComponent: TrendByPeriodComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('leftMenu', { static: false }) leftMenu: LeftMenuComponent;
 
     private rootComponent: any;
     accessAllDepartments = this._cfoService.accessAllDepartments;

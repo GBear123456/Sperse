@@ -7,7 +7,7 @@
     <app-period (onChange)="periodChanged($event)"></app-period>
 </app-headline>
 <div [@routerTransition]>
-  <left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
+  <crm-left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></crm-left-menu>
   <div class="widgets-wrapper">
       <div class="wrapper">
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">

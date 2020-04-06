@@ -25,6 +25,8 @@ export class CFOService extends CFOServiceBase {
     instance: ReplaySubject<InstanceModel> = new ReplaySubject<InstanceModel>(1);
     instance$: Observable<InstanceModel> = this.instance.asObservable();
     instanceStatus$: Observable<boolean>;
+    currentInstanceStatus: ReplaySubject<GetStatusOutput> = new ReplaySubject<GetStatusOutput>(1);
+    currentInstanceStatus$: Observable<GetStatusOutput> = this.currentInstanceStatus.asObservable();
     constructor(
         private router: Router,
         private appService: AppService,
@@ -161,6 +163,7 @@ export class CFOService extends CFOServiceBase {
                 .pipe(
                     finalize(() => this.instanceStatus$ = undefined),
                     map((data: GetStatusOutput) => {
+                        this.currentInstanceStatus.next(data);
                         this.userId = data.userId;
                         if (this.instanceId && data.userId && data.userId != abp.session.userId) {
                             this.appService.setContactInfoVisibility(true);

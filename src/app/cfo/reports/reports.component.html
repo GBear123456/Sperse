@@ -9,7 +9,12 @@
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 
 <div class="main-wrapper">
-    <setup-steps [SetupSteps]="menuItems" [SelectedStepIndex]="0" [HeaderTitle]="''"></setup-steps>
+    <cfo-left-menu [items]="menuItems"
+                   [showToggleButton]="true"
+                   [selectedItemIndex]="0"
+                   headerTitle=""
+                   (onToggle)="onLeftMenuToggle()">
+    </cfo-left-menu>
     <action-menu [items]="actionMenuItems"
                  (onItemClick)="onMenuItemClick($event)">
     </action-menu>

@@ -12,6 +12,7 @@ import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, Catego
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import { SyncTypeIds } from '../../../shared/AppEnums';
+import { AppConsts } from '../../../shared/AppConsts';
 
 class UploadCategoryModel {
     'Cashflow Type': string;
@@ -35,6 +36,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
     override = false;
     syncTypeIds = SyncTypeIds;
+    isMobile = AppConsts.isMobile;
 
     constructor(
         injector: Injector,

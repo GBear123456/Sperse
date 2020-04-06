@@ -4,14 +4,16 @@
     .content {
         display: flex;
     }
-    
-    ::ng-deep.setup-steps {
-        border-right: 1px solid #dfdfdf;
+
+    ::ng-deep .left-menu .items-progress:before {
+        border-left: 3px solid #00aeef;
     }
-    
+
     iframe {
-        width: calc(~"100% - 320px");
         height: calc(~"100vh - 150px");
         position: relative;
+        @media (min-width: 1200px) {
+            width: calc(~"100% - 320px");
+        }
     }
 }

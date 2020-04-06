@@ -9,9 +9,9 @@
     </app-headline>
 
     <div class="content" #content>
-        <setup-steps [showIntroductionTourLink]="true"
-                     (onToggle)="toggleLeftMenu()">
-        </setup-steps>
+        <cfo-left-menu [showIntroductionTourLink]="true"
+                       (onToggle)="toggleLeftMenu()">
+        </cfo-left-menu>
         <div class="right">
             <dx-scroll-view [useNative]="false" [showScrollbar]="dashboard.offsetHeight > content.offsetHeight ? 'onHover' : 'Never'">
                 <div #dashboard class="dashboard-wrapper">

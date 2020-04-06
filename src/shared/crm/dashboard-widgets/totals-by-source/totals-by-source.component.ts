@@ -209,10 +209,10 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     private updatePieChartTopPositions(e) {
         const componentTop = this.elementRef.nativeElement.getBoundingClientRect().top;
         if (componentTop) {
-            const circleBoundingRect = e.element.getBoundingClientRect();
+            const circleBoundingRect = e.element.querySelector('.dxc-series').getBoundingClientRect();
             const circleTop = circleBoundingRect.top;
-            const circleCenterY = circleTop - componentTop + circleBoundingRect.height / 2;
-            this.totalNumbersTop = circleCenterY - 70 + 'px';
+            const circleCenterY = circleTop - componentTop + (circleBoundingRect.height) / 2;
+            this.totalNumbersTop = circleCenterY - 55 + 'px';
             this.changeDetectorRef.detectChanges();
         }
     }

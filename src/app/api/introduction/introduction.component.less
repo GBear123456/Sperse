@@ -3,21 +3,21 @@
     display: block;
     height: 100%;
 
-    ::ng-deep.setup-steps {
+    ::ng-deep .left-menu {
         border-right: 1px solid #dfdfdf;
 
-        ::ng-deep.steps-progress {
+        ::ng-deep .items-progress {
             &:before {
                 border-left: 3px solid #f3f6fa !important;
             }
 
-            .steps-progress-item:after {
+            .items-progress-item:after {
                 border: 2px solid #f3f6fa !important;
                 background-color: #f3f6fa !important;
             }
         }
     }
-    
+
     .info-tooltip {
         position: absolute;
         right: 20px;
@@ -91,11 +91,11 @@
 
 ::ng-deep .tooltip-data {
     text-align: left;
-    
+
     * {
         white-space: normal;
     }
-    
+
     ul {
         padding-left: 0;
         list-style-position: inside;

@@ -19,7 +19,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { SetupStepsService } from '../shared/common/setup-steps/setup-steps.service';
+import { LeftMenuService } from '../shared/common/left-menu/left-menu.service';
 
 @Component({
     selector: 'business-entities',
@@ -42,15 +42,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
-    contentWidth$: Observable<number> = this.setupStepsService.collapsed$.pipe(
-        map((collapsed: boolean) => window.innerWidth - (collapsed ? 0 : 324 ))
+    contentWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
+        map((collapsed: boolean) => window.innerWidth - (collapsed || AppConsts.isMobile ? 0 : 324 ))
     );
 
     constructor(
         injector: Injector,
         private businessEntityService: BusinessEntityServiceProxy,
         private bankAccountsService: BankAccountsService,
-        private setupStepsService: SetupStepsService,
+        private leftMenuService: LeftMenuService,
         public dialog: MatDialog
     ) {
         super(injector);

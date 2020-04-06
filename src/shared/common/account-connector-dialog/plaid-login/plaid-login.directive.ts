@@ -10,7 +10,7 @@ import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
-import { SetupStepsService } from '@app/cfo/shared/common/setup-steps/setup-steps.service';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Directive({
     selector: 'plaid-login',
@@ -24,7 +24,7 @@ export class PlaidLoginDirective {
         private cfoService: CFOService,
         private syncAccount: SyncAccountServiceProxy,
         private syncProgressService: SynchProgressService,
-        private setupStepsService: SetupStepsService,
+        private leftMenuService: LeftMenuService,
         private renderer: Renderer2,
         @Inject(DOCUMENT) private document
     ) {
@@ -62,7 +62,7 @@ export class PlaidLoginDirective {
                 }
             }), plaidIframe = this.document.querySelector('[id^="plaid-link-iframe-"]:last-child');
             handler.open();
-            this.setupStepsService.collapsed$.pipe(
+            this.leftMenuService.collapsed$.pipe(
                 first(),
                 filter((collapsed: boolean) => !collapsed)
             ).subscribe(() => {

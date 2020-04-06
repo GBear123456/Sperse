@@ -18,9 +18,10 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { ApiRoutingModule } from './api-routing.module';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { IntroductionComponent } from './introduction/introduction.component';
-import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
+import { LeftMenuComponent } from './shared/left-menu/left-menu.component';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
 import { ApiWelcomeComponent } from './introduction/api-welcome/api-welcome.component';
+import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
 
 @NgModule({
     imports: [
@@ -40,12 +41,15 @@ import { ApiWelcomeComponent } from './introduction/api-welcome/api-welcome.comp
     declarations: [
         SwaggerComponent,
         IntroductionComponent,
-        SetupStepComponent,
+        LeftMenuComponent,
         EditKeyDialog,
         ApiWelcomeComponent
     ],
     entryComponents: [
         EditKeyDialog
+    ],
+    providers: [
+        LeftMenuService
     ]
 })
 

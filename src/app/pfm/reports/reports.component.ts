@@ -13,20 +13,21 @@ import { AppService } from '@app/app.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@root/shared/helpers/DateHelper';
 import { AppConsts } from '@root/shared/AppConsts';
-import { SetupStepsComponent } from '@app/shared/common/setup-steps/setup-steps.component';
+import { LeftMenuComponent } from '@app/shared/common/left-menu/left-menu.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OfferStatsComponent } from './offer-stats/offer-stats.component';
 import { VisitorsStatsComponent } from './visitors-stats/visitors-stats.component';
+import { LeftMenuItem } from '../../shared/common/left-menu/left-menu-item.interface';
 
 @Component({
     templateUrl: './reports.component.html',
     styleUrls: ['./reports.component.less']
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(SetupStepsComponent, { static: false }) setupStepsComponent: SetupStepsComponent;
+    @ViewChild(LeftMenuComponent, { static: false }) leftMenuComponent: LeftMenuComponent;
     @ViewChild('rightSection', { static: false }) rightSection: ElementRef;
     @ViewChild(OfferStatsComponent, { static: true }) offerStatsComponent: OfferStatsComponent;
     @ViewChild(VisitorsStatsComponent, { static: true }) visitorsStatsComponent: VisitorsStatsComponent;
@@ -40,24 +41,23 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
 
     clickStatsYear: number = moment().year();
     years: number[] = range(2018, this.clickStatsYear + 1);
-
-    menuItems = [
+    leftMenuItems: LeftMenuItem[] = [
         {
-            section: 'clicks',
+            name: 'clicks',
             caption: this.l('ClickStats'),
-            img: 'statistics',
+            iconSrc: './assets/common/icons/statistics.svg',
             onClick: this.onMenuClick.bind(this)
         },
         {
-            section: 'offers',
+            name: 'offers',
             caption: this.l('OfferStats'),
-            img: 'document',
+            iconSrc: './assets/common/icons/document.svg',
             onClick: this.onMenuClick.bind(this)
         },
         {
-            section: 'visitors',
+            name: 'visitors',
             caption: this.l('VisitorStats'),
-            img: 'person',
+            iconSrc: './assets/common/icons/person.svg',
             onClick: this.onMenuClick.bind(this)
         }
     ];
@@ -191,12 +191,12 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         this.onPeriodChanged(new Date(event.from), new Date(event.to));
         this.offerStatsComponent.quickSearch = null;
         this.setSection('offers', false);
-        this.setupStepsComponent.setSelectedIndex(1);
+        this.leftMenuComponent.setSelectedIndex(1);
         this.refreshOfferStats();
     }
 
-    onMenuClick(item) {
-        this.setSection(item.section);
+    onMenuClick(item: LeftMenuItem) {
+        this.setSection(item.name);
     }
 
     get openedGrid() {
@@ -229,7 +229,7 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         this.visitorsStatsComponent.campaignId = field.data.CampaignId;
         this.visitorsStatsComponent.quickSearch = null;
         this.setSection('visitors', false);
-        this.setupStepsComponent.setSelectedIndex(2);
+        this.leftMenuComponent.setSelectedIndex(2);
         this.refreshVisitors();
     }
 

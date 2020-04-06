@@ -5,7 +5,9 @@
 
     .margin-left {
         margin-top: 1px;
-        margin-left: 321px;
+        @media(min-width: 1200px) {
+            margin-left: 321px;
+        }
     }
 
     ::ng-deep app-headline {

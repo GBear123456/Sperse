@@ -31,6 +31,7 @@ import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { AppService } from '@app/app.service';
 import { DataGridService } from '../../shared/common/data-grid.service/data-grid.service';
+import { LeftMenuItem } from '../../shared/common/left-menu/left-menu-item.interface';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -50,23 +51,29 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             enabled: this.isInstanceAdmin || this.isMemberAccessManage
         }
     ];
-    menuItems = [
+    menuItems: LeftMenuItem[] = [
         {
-            caption: 'MonthlyReports',
-            period: ReportPeriod.Monthly,
-            isAlwaysActive: true,
+            caption: this.l('MonthlyReports'),
+            data: {
+                period: ReportPeriod.Monthly
+            },
+            iconSrc: './assets/common/icons/reports/monthly-reports.svg',
             onClick: this.onMenuClick.bind(this)
         },
         {
-            caption: 'QuarterlyReports',
-            period: ReportPeriod.Quarterly,
-            isAlwaysActive: true,
+            caption: this.l('QuarterlyReports'),
+            data: {
+                period: ReportPeriod.Quarterly,
+            },
+            iconSrc: './assets/common/icons/reports/monthly-reports.svg',
             onClick: this.onMenuClick.bind(this)
         },
         {
-            caption: 'AnnualReports',
-            period: ReportPeriod.Annual,
-            isAlwaysActive: true,
+            data: {
+                period: ReportPeriod.Annual
+            },
+            iconSrc: './assets/common/icons/reports/annual-reports.svg',
+            caption: this.l('AnnualReports'),
             onClick: this.onMenuClick.bind(this)
         }
     ];
@@ -519,8 +526,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         );
     }
 
-    onMenuClick(item) {
-        this.selectedPeriod = item.period;
+    onMenuClick(item: LeftMenuItem) {
+        this.selectedPeriod = item.data.period;
         this.dataGrid.instance.clearFilter();
         this.processFilterInternal();
         this.dataGrid.instance.repaint();
@@ -550,6 +557,12 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     toggleCompactView() {
         DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+    }
+
+    onLeftMenuToggle() {
+        if (this.dataGrid) {
+            setTimeout(() => this.dataGrid.instance.updateDimensions(), 1001);
+        }
     }
 
     ngOnDestroy() {

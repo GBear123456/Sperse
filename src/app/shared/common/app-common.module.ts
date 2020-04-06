@@ -95,7 +95,7 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
-import { SetupStepsComponent } from './setup-steps/setup-steps.component';
+import { LeftMenuComponent } from './left-menu/left-menu.component';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 
 @NgModule({
@@ -199,7 +199,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        SetupStepsComponent
+        LeftMenuComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -227,7 +227,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        SetupStepsComponent
+        LeftMenuComponent
     ],
     providers: [
         ImportWizardService

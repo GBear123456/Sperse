@@ -10,9 +10,7 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper portlet light no-padding margin-bottom-0">
-        <setup-steps SelectedStepIndex="3"
-            [collapsed]="filtersService.fixed">
-        </setup-steps>
+        <cfo-left-menu [selectedItemIndex]="3" [collapsed]="filtersService.fixed"></cfo-left-menu>
         <div class="portlet-body">
             <dx-tree-list height="100%"
                           [noDataText]="''"

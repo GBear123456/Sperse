@@ -53,7 +53,7 @@ import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
+import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
@@ -83,6 +83,7 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
+import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
 
 @NgModule({
     imports: [
@@ -148,7 +149,7 @@ import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dro
         OrdersComponent,
         ReportsComponent,
         DashboardComponent,
-        DashboardMenuComponent,
+        LeftMenuComponent,
         ImportListComponent,
         ImportLeadsComponent,
         DeleteAndReassignDialogComponent,
@@ -163,7 +164,8 @@ import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dro
     providers: [
         ImportServiceProxy,
         ImportLeadsService,
-        DataSourceService
+        DataSourceService,
+        LeftMenuService
     ],
     entryComponents: [
         BankSettingsDialogComponent,

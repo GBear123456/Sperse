@@ -12,11 +12,11 @@
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 <div [hidden]="!statsData || !statsData.length" class="main-wrapper">
     <div class="mainStatsView">
-        <setup-steps
-            [SetupSteps]="leftSideBarItems"
-            SelectedStepIndex="0"
-            HeaderTitle=""
-            (onToggle)="calculateChartsSize()"></setup-steps>
+        <cfo-left-menu [items]="leftSideBarItems"
+                       [selectedItemIndex]="0"
+                       headerTitle=""
+                       (onToggle)="calculateChartsSize()">
+        </cfo-left-menu>
         <source-data [ngClass]="{'showen': showSourceData}"
                      (onClose)="hideSourceDataWidget()"
                      [historicalSourceData]="historicalSourceData"
