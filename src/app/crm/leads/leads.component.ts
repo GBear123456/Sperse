@@ -285,15 +285,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'AffiliateCode'
+                dataField: 'SourceAffiliateCode'
             },
             {
                 area: 'filter',
-                dataField: 'CampaignCode'
+                dataField: 'SourceCampaignCode'
             },
             {
                 area: 'filter',
-                dataField: 'ChannelCode'
+                dataField: 'SourceChannelCode'
             },
             {
                 area: 'filter',
@@ -314,10 +314,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 area: 'filter',
                 dataField: 'Rating'
-            },
-            {
-                area: 'filter',
-                dataField: 'PartnerSource'
             },
             {
                 area: 'filter',
@@ -786,14 +782,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 }),
                 new FilterModel({
-                    component: FilterInputsComponent,
-                    caption: 'PartnerSource',
-                    items: { PartnerSource: new FilterItemModel() }
-                }),
-                new FilterModel({
                     component: FilterCheckBoxesComponent,
-                    caption: 'OrganizationUnitId',
-                    field: 'OrganizationUnitId',
+                    caption: 'SourceOrganizationUnitId',
+                    field: 'SourceOrganizationUnitId',
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
@@ -806,8 +797,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterInputsComponent,
                     caption: 'Campaign',
-                    field: 'CampaignCode',
-                    items: { CampaignCode: new FilterItemModel() }
+                    field: 'SourceCampaignCode',
+                    items: { SourceCampaignCode: new FilterItemModel() }
                 }),
                 this.filterModelLists = new FilterModel({
                     component: FilterCheckBoxesComponent,

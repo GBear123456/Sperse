@@ -77,7 +77,7 @@
                             <dxo-editing mode="popup" [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" [allowUpdating]="true"></dxo-editing>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
-                            <dxi-column dataField="OrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
+                            <dxi-column dataField="SourceOrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
                             <dxi-column dataField="PhotoPublicId"
                                         caption=""
                                         cellTemplate="photoTemplate"
@@ -107,9 +107,9 @@
                             </ng-container>
 
                         <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="SourceAffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="SourceCampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="SourceChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>

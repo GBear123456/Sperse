@@ -178,7 +178,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     filters = [
         new FilterModel({
             component: FilterCheckBoxesComponent,
-            caption: 'OrganizationUnitId',
+            caption: 'SourceOrganizationUnitId',
             field: 'sourceOrganizationUnits',
             items: {
                 element: new FilterCheckBoxesModel(
