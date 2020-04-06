@@ -181,8 +181,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
             if (this.hasOverflowClass) {
                 this.renderer.removeClass(this.document.body, 'overflow-hidden');
             }
+            this.totalDataSource.load();
         });
-        this.totalDataSource.load();
     }
 
     private transformRequest(request) {
