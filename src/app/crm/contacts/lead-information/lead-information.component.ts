@@ -293,7 +293,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     updateSourceContactName() {
         let contact = this.sourceContacts.find(item =>
-            item.id == this.data.leadInfo.sourceContactId);
+            item.id == (this.data && this.data.leadInfo && this.data.leadInfo.sourceContactId));
         this.sourceContactName = contact && contact.name;
     }
 
