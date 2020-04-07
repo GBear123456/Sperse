@@ -117,6 +117,12 @@
                     [calculateDisplayValue]="calculateSyncAccountDisplayValue"
                     [allowEditing]="false">
         </dxi-column>
+        <dxi-column [width]="wide ? 30 : 50"
+                    alignment="right"
+                    [allowEditing]="false"
+                    [visible]="showAdvancedColumns && showAccountsCount"
+                    cellTemplate="expandTemplate">
+        </dxi-column>
         <dxi-column dataField="lastSyncDate"
                     alignment="right"
                     [caption]="l('BankAccountsWidget_Last_sync')"
@@ -134,12 +140,6 @@
                     [sortIndex]="2"
                     cellTemplate="statusTemplate"
                     [allowEditing]="false">
-        </dxi-column>
-        <dxi-column [width]="30"
-                    alignment="right"
-                    [allowEditing]="false"
-                    [visible]="showAdvancedColumns && showAccountsCount"
-                    cellTemplate="expandTemplate">
         </dxi-column>
         <dxi-column alignment="right"
                     [visible]="!accessAllDepartments">
@@ -232,9 +232,9 @@
                                 cellTemplate="typeTemplate"
                                 [visible]="showAdvancedColumns && showAccountType">
                     </dxi-column>
-                    <dxi-column [width]="70" [visible]="wide"></dxi-column>
+                    <dxi-column [width]="100" [visible]="wide"></dxi-column>
                     <dxi-column dataField="lastSyncDate"
-                                [width]="200"
+                                [width]="wide ? 200 : 120"
                                 alignment="right"
                                 [allowEditing]="false"
                                 cellTemplate="syncDateTemplate"
@@ -249,7 +249,6 @@
                                 cellTemplate="statusTemplate"
                                 [allowEditing]="false">
                     </dxi-column>
-                    <dxi-column [width]="30" [visible]="showAdvancedColumns"></dxi-column>
                     <dxi-column alignment="right"
                                 [visible]="!accessAllDepartments"
                                 [allowEditing]="false">

@@ -46,16 +46,19 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             this.synchProgress.startSynchronization();
         });
         this.syncAccountServiceProxy.createIsAllowed(this._cfoService.instanceType as InstanceType, this.instanceId)
-            .subscribe((result) => {
+            .subscribe((result: boolean) => {
                 this.createAccountAvailable = result;
             });
     }
 
     ngOnInit() {
-        const selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
-        selectedCurrencyId$.pipe(
+        this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId)).pipe(
             skip(1),
-            switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            switchMap((data) => {
+                return this.componentIsActivated
+                    ? of(data)
+                    : this.lifeCycleService.activate$.pipe(first(), mapTo(data));
+            }),
         ).subscribe(() => {
             this.refresh();
         });
@@ -72,6 +75,10 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     refresh() {
         this.bankAccountsGeneralService.refreshBankAccounts();
+    }
+
+    repaint() {
+        this.bankAccountsGeneralService.repaintAccountGrid();
     }
 
     activate() {

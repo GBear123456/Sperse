@@ -243,6 +243,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             });
     }
 
+    repaint() {
+        this.mainDataGrid.instance.repaint();
+    }
+
     changeSorting(sorting: ISortItem) {
         const mainGrid = this.mainDataGrid.instance;
         mainGrid.clearSorting();

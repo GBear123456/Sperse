@@ -1,4 +1,4 @@
-import {Component, OnInit, Injector, OnDestroy} from '@angular/core';
+import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '../../shared/common/cfo-component-base';
 
@@ -27,7 +27,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
 
     onStart(): void {
         this.isDisabled = true;
-        this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).subscribe((data) => {
+        this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).subscribe(() => {
             this._cfoService.instanceChangeProcess();
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
         });
