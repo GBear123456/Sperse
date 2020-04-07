@@ -507,10 +507,26 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.activate();
         this.handleModuleChange();
         this.handleDataLayoutTypeInQuery();
+        this.handleFiltersPining();
     }
 
     get isSlice() {
         return this.appService.getModule() === 'slice';
+    }
+
+    private handleFiltersPining() {
+        this.filtersService.filterFixed$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            this.repaintDataGrid(1000);
+            if (this.pivotGridComponent) {
+                setTimeout(() => {
+                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.updateTotalCellsSizes();
+                }, 1001);
+            }
+        });
     }
 
     private getUserIds(records) {
@@ -806,11 +822,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'filters',
                         action: () => {
-                            this.repaintDataGrid(1000);
-                            setTimeout(() => {
-                                this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-                                this.pivotGridComponent.updateTotalCellsSizes();
-                            }, 1200);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
@@ -1034,7 +1045,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     repaintDataGrid(delay = 0) {
-        setTimeout(() => this.dataGrid.instance.repaint(), delay);
+        if (this.dataGrid) {
+            setTimeout(() => this.dataGrid.instance.repaint(), delay);
+        }
     }
 
     toggleCompactView() {

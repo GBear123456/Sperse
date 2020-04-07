@@ -387,6 +387,22 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.handleChartUpdate();
         this.handleMapUpdate();
         this.handleDataLayoutTypeInQuery();
+        this.handleFiltersPining();
+    }
+
+    private handleFiltersPining() {
+        this.filtersService.filterFixed$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            this.repaintDataGrid(1000);
+            if (this.pivotGridComponent) {
+                setTimeout(() => {
+                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.updateTotalCellsSizes();
+                }, 1001);
+            }
+        });
     }
 
     private listenForUpdate(layoutType: DataLayoutType) {
@@ -733,11 +749,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'filters',
                         action: () => {
-                            this.repaintDataGrid(1000);
-                            setTimeout(() => {
-                                this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-                                this.pivotGridComponent.updateTotalCellsSizes();
-                            }, 1200);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
