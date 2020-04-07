@@ -2,8 +2,8 @@
     <mat-tab label="PFM">
         <div class="wrapper">
             <div class="grid-view">
-                <dx-data-grid id="gridContainer"
-                              height="100%"
+                <dx-data-grid height="calc(100% - 100px)"
+                              class="main-component-view"
                               [dataSource]="dataSource"
                               [allowColumnReordering]="true"
                               [columnAutoWidth]="true"
