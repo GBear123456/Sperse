@@ -31,7 +31,8 @@ import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-t
                     },
                     {
                         path: 'bankpass',
-                        component: BankPassComponent
+                        component: BankPassComponent,
+                        data: { showBankFunnels: true }
                     },
                     {
                         path: 'bankvault',
