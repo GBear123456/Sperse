@@ -1,8 +1,4 @@
 :host {
-    h2 {
-        padding: 20px;
-    }
-    
     &.fullscreen .documentView {
         width: 100%;
         textarea {
@@ -28,7 +24,15 @@
             height: 100%;
             
             ::ng-deep dx-data-grid {
-                
+                .dx-toolbar-after {
+                    margin: 0px!important;
+                }
+                .dx-datagrid-search-panel input {
+                    border-bottom: 0px;
+                }
+                .dx-datagrid-header-panel {
+                    height: 48px;
+                }
                 .dx-data-row {
                     cursor: pointer;
                 }
