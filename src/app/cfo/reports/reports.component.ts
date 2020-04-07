@@ -561,7 +561,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     onLeftMenuToggle() {
         if (this.dataGrid) {
-            setTimeout(() => this.dataGrid.instance.updateDimensions(), 1001);
+            setTimeout(() => this.dataGrid.instance.repaint(), 1001);
         }
     }
 
