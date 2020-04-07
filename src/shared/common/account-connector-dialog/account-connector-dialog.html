@@ -19,7 +19,9 @@
         </quick-book-login>
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.XeroOAuth2">
-        <xero-oauth2-login [loadingContainerElement]="data?.loadingContainerElement"
+        <xero-oauth2-login
+            [reconnect]="data?.reconnect"
+            [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()">
         </xero-oauth2-login>
     </ng-template>

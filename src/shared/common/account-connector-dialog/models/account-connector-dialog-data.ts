@@ -10,4 +10,5 @@ export interface AccountConnectorDialogData {
     loadingContainerElement?: Element;
     instanceType?: InstanceType;
     instanceId?: number;
+    reconnect?: boolean;
 }

@@ -17,6 +17,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class XeroOauth2LoginComponent implements OnInit {
     @Input() loadingContainerElement: Element;
+    @Input() reconnect = false;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
     constructor(
@@ -55,7 +56,10 @@ export class XeroOauth2LoginComponent implements OnInit {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
                                 this.syncProgressService.startSynchronization(true, true);
                             });
-                        }
+                        } else if (this.reconnect) {
+                            this.syncProgressService.startSynchronization(true, true);
+                        } // need found the way to detect closing the dialog without login
+
                         clearInterval(interval);
                         this.onComplete.emit();
                     }
