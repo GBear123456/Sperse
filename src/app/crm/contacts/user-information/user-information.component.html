@@ -16,13 +16,7 @@
                         [value]="inviteData.emailAddress"
                         (onCustomItemCreating)="onCustomItemCreating($event, 'emailAddress')"
                         (onValueChanged)="onValueChanged($event)"
-                        fieldTemplate="emailTemplate"
                         itemTemplate="emailItemTemplate">
-                        <div *dxTemplate="let item of 'emailTemplate'">
-                            <div class="email-wrapper">
-                                <dx-text-box [value]="item?.emailAddress"></dx-text-box>
-                            </div>
-                        </div>
                         <div *dxTemplate="let item of 'emailItemTemplate'">
                             <div class="email-item-wrapper">
                                 <span>{{item?.emailAddress}}</span>
@@ -46,15 +40,7 @@
                         [value]="inviteData.phoneNumber"
                         (onCustomItemCreating)="onCustomItemCreating($event, 'phoneNumber')"
                         (onValueChanged)="onValueChanged($event)"
-                        fieldTemplate="phoneTemplate"
                         itemTemplate="phoneItemTemplate">
-                        <div *dxTemplate="let item of 'phoneTemplate'">
-                            <div class="phone-wrapper">
-                                <dx-text-box
-                                    [value]="phoneFormatPipe.transform(item?.phoneNumber)">
-                            </dx-text-box>
-                            </div>
-                        </div>
                         <div *dxTemplate="let item of 'phoneItemTemplate'">
                             <div class="phone-item-wrapper">
                                 <span>{{phoneFormatPipe.transform(item?.phoneNumber)}}</span>
@@ -110,7 +96,7 @@
     <mat-tab label="General">
         <dx-scroll-view showScrollbar="onHover">
             <div class="user-info row" #row>
-                <div class="col-md-4" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                <div class="col-md-5" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
                     <div class="section-item clearfix">
                         <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
                         <inplace-edit #InPlaceEmail

@@ -68,7 +68,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     contactInfoData: any;
     inviteData = CreateUserForContactInput.fromJS({
         contactId: undefined,
-        emailAddress: '',
+        emailAddress: undefined,
         phoneNumber: undefined,
         password: undefined,
         sendActivationEmail: true,
