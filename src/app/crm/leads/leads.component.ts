@@ -18,6 +18,7 @@ import {
     pluck,
     publishReplay,
     refCount,
+    skip,
     startWith,
     switchMap,
     takeUntil,
@@ -458,6 +459,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.handleQueryParams();
         this.handleModuleChange();
         this.activate();
+        this.handleFiltersPining();
     }
 
     ngAfterViewInit() {
@@ -470,6 +472,22 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             { contactGroup: this.contactGroupId.value }
         );
     }
+
+    private handleFiltersPining() {
+        this.filtersService.filterFixed$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            this.repaintDataGrid(1000);
+            if (this.pivotGridComponent) {
+                setTimeout(() => {
+                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.updateTotalCellsSizes();
+                }, 1001);
+            }
+        });
+    }
+
 
     private handleTotalCountUpdate() {
         combineLatest(
@@ -693,7 +711,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);
         this.initDataSource();
         if (!this.showPipeline) {
-            this.pipelineComponent.deselectAllCards();
+            if (this.pipelineComponent) {
+                this.pipelineComponent.deselectAllCards();
+            }
             if (this.showDataGrid) {
                 setTimeout(() => this.dataGrid.instance.repaint());
             }
@@ -862,11 +882,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'filters',
                         action: () => {
-                            setTimeout(() => this.dataGrid.instance.repaint(), 1000);
-                            setTimeout(() => {
-                                this.pivotGridComponent.pivotGrid.instance.updateDimensions();
-                                this.pivotGridComponent.updateTotalCellsSizes();
-                            }, 1200);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
                         options: {
