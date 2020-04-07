@@ -215,7 +215,6 @@
                 .dx-datagrid {
                     background-color: #f3f7fa;
                 }
-
                 table.dx-datagrid-table {
                     border-collapse: collapse !important;
                     border-spacing: 0 0 !important;
@@ -229,6 +228,9 @@
                             padding: 3px 8px;
                             font-weight: 500;
                             color: #67737f;
+                            &.balance {
+                                padding-right: 48px !important;
+                            }
                         }
                     }
                 }
@@ -414,9 +416,6 @@
                 .dx-row {
                     &.dx-data-row,
                     &.dx-header-row {
-                        td.balance {
-                            padding-right: 48px !important;
-                        }
                         td .account-status {
                             font-size: 12px;
                         }

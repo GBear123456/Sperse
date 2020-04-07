@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-import { finalize, first, filter, takeUntil } from 'rxjs/operators';
+import { Subscription, Observable } from 'rxjs';
+import { first, filter, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
@@ -16,6 +16,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-widget.component';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     selector: 'bank-accounts-component',
@@ -26,7 +27,12 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(BankAccountsWidgetComponent, { static: false }) bankAccountsWidget: BankAccountsWidgetComponent;
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
+    repaintSubscription: Subscription;
     syncAccounts;
+    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
+    nameColumnWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
+        map((collapsed: boolean) => collapsed ? null : 250)
+    );
 
     constructor(
         injector: Injector,
@@ -34,6 +40,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         private bankAccountsGeneralService: BankAccountsGeneralService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
+        private leftMenuService: LeftMenuService,
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
@@ -67,11 +74,21 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
             .subscribe( () => {
                 this.refresh();
             });
+        this.repaintSubscription = this.bankAccountsGeneralService.repaint$.pipe(takeUntil(this.deactivate$))
+            .subscribe( () => {
+                setTimeout(() => this.repaint(), 1001);
+            });
     }
 
     refresh() {
         if (this.bankAccountsWidget) {
             this.bankAccountsWidget.refresh();
+        }
+    }
+
+    repaint() {
+        if (this.bankAccountsWidget) {
+            this.bankAccountsWidget.repaint();
         }
     }
 

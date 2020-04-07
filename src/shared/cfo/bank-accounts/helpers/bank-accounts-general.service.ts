@@ -7,7 +7,14 @@ export class BankAccountsGeneralService {
     private refresh = new Subject<string>();
     refresh$ = this.refresh.asObservable();
 
+    private repaint = new Subject<string>();
+    repaint$ = this.repaint.asObservable();
+
     constructor() { }
+
+    repaintAccountGrid() {
+        this.repaint.next();
+    }
 
     refreshBankAccounts() {
         this.refresh.next();
