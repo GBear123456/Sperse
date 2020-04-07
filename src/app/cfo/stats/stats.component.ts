@@ -56,7 +56,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild('linearChart', { static: false }) private linearChart: DxChartComponent;
     @ViewChild('barChart', { static: false }) private barChart: DxChartComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
-    @ViewChild(LeftMenuComponent, { static: false }) leftMenuComponent: LeftMenuComponent;
+    @ViewChild(LeftMenuComponent, { static: true }) leftMenuComponent: LeftMenuComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
