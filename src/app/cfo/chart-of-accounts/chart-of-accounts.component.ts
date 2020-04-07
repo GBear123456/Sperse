@@ -4,6 +4,7 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 /** Third party imports */
 import * as XLSX from 'xlsx';
 import 'devextreme/data/odata/store';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -11,8 +12,8 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
-import { SyncTypeIds } from '../../../shared/AppEnums';
-import { AppConsts } from '../../../shared/AppConsts';
+import { SyncTypeIds } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 class UploadCategoryModel {
     'Cashflow Type': string;
@@ -34,6 +35,7 @@ class UploadCategoryModel {
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     override = false;
     syncTypeIds = SyncTypeIds;
     isMobile = AppConsts.isMobile;
@@ -61,7 +63,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     }
 
     downloadExcel() {
-        this.exportToXLS('all');
+        this.exportToXLS('all', this.dataGrid);
     }
 
     uploadExcel(evt) {
