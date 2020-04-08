@@ -8,8 +8,9 @@
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 
-<div class="main-wrapper">
-    <cfo-left-menu [items]="menuItems"
+<div class="wrapper" [ngClass]="{ leftMenuOpened: !leftMenu.collapsed }">
+    <cfo-left-menu #leftMenu
+                   [items]="menuItems"
                    [showToggleButton]="true"
                    [selectedItemIndex]="0"
                    headerTitle=""

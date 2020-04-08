@@ -96,6 +96,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -115,6 +116,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private _selectedLeads: any;
@@ -1395,6 +1397,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
+    repaintToolbar() {
+        if (this.toolbar) {
+            this.toolbar.toolbarComponent.instance.repaint();
+        }
+    }
+
     ngOnDestroy() {
         this.deactivate();
         this.lifeCycleSubjectsService.destroy.next();
@@ -1407,9 +1415,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.showHostElement(() =>
-            this.pipelineComponent.detectChanges()
-        );
+        this.showHostElement(() => {
+            this.repaintToolbar();
+            this.pipelineComponent.detectChanges();
+        });
     }
 
     deactivate() {

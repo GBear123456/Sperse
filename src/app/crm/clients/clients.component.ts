@@ -108,6 +108,7 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -136,6 +137,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Contact';
@@ -1239,6 +1241,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     }
 
+    repaintToolbar() {
+        if (this.toolbar) {
+            this.toolbar.toolbarComponent.instance.repaint();
+        }
+    }
+
     activate() {
         super.activate();
         this.lifeCycleSubjectsService.activate.next();
@@ -1250,7 +1258,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.dependencyChanged)
             this.refresh();
 
-        this.showHostElement();
+        this.showHostElement(() => {
+            this.repaintToolbar();
+        });
     }
 
     deactivate() {

@@ -93,6 +93,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -119,6 +120,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
     @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private isSlice = this.appService.getModule() === 'slice';
@@ -1160,13 +1162,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.showHostElement();
     }
 
+    repaintToolbar() {
+        if (this.toolbar) {
+            this.toolbar.toolbarComponent.instance.repaint();
+        }
+    }
+
     deactivate() {
         super.deactivate();
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
-        this.hideHostElement();
+        this.showHostElement(() => {
+            this.repaintToolbar();
+        });
     }
 
     toggleActionsMenu(event) {

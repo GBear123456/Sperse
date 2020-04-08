@@ -112,7 +112,8 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
                 },
                 operationType: 'update',
                 instanceType: this.instanceType,
-                instanceId: this.instanceId
+                instanceId: this.instanceId,
+                reconnect: true
             }
         }};
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
