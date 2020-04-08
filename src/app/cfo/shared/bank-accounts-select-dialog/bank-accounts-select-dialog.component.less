@@ -1,5 +1,9 @@
 :host {
     display: block;
+    width: 80vw;
+    @media (min-width: 1200px) {
+        width: 60vw;
+    }
     @media (min-width: 1400px) {
         width: 45vw;
     }
@@ -144,6 +148,12 @@
                     flex: 0 0 41.66667%;
                     max-width: 41.66667%;
                 }
+            }
+        }
+
+        ::ng-deep #gridContainer table.dx-datagrid-table .dx-master-detail-row table.dx-datagrid-table {
+            .dx-row.dx-data-row  td.balance {
+                padding-right: 8px !important;
             }
         }
     }

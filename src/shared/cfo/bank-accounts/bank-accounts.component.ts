@@ -31,7 +31,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     syncAccounts;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
     nameColumnWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
-        map((collapsed: boolean) => collapsed ? null : 250)
+        map((collapsed: boolean) => collapsed || window.innerWidth > 1400 ? null : 250)
     );
 
     constructor(
