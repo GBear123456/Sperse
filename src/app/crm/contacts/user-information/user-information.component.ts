@@ -276,6 +276,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                         finalize(() => this.loadingService.finishLoading())
                     ).subscribe(() => {
                         this.contactsService.invalidate();
+                        this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
                         this.showOrgUnitsDialog(1000);
                     });
                 }
