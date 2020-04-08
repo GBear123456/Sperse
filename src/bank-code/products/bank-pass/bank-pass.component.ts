@@ -22,7 +22,7 @@ import { DxoPagerComponent } from 'devextreme-angular/ui/nested';
 import 'devextreme/data/odata/store';
 import ODataStore from 'devextreme/data/odata/store';
 import { Observable } from 'rxjs';
-import { filter, takeUntil, tap, map } from 'rxjs/operators';
+import { filter, takeUntil, tap, map, pluck } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -154,6 +154,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     bankCodeLevel$ = this.bankCodeService.bankCodeLevel$;
     bankCodeTotalCount$: Observable<string> = this.bankCodeService.bankCodeTotalCount$;
     bankFunnelLink = 'https://www.dropbox.com/s/bktc65pq15d513t/BANKPASS%20Swipe%20Copy.pdf';
+    showBankFunnels$: Observable<boolean> = this.route.data.pipe(pluck('showBankFunnels'));
 
     constructor(
         private oDataService: ODataService,

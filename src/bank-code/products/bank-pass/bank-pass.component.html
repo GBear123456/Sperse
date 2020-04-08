@@ -24,7 +24,7 @@
         <mat-tab-group (selectedTabChange)="tabChanged($event)">
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
-                <div class="bank-funnels">
+                <div *ngIf="showBankFunnels$ | async" class="bank-funnels">
                     <a [href]="bankFunnelLink" target="_blank"><img src="./assets/common/images/bank-code/bank-funnels.png" alt="Bank Funnels"></a>
                     <a [href]="bankFunnelLink" target="_blank">{{ ls.l('Download Sample Marketing Swipe Copy') }}</a>
                 </div>
