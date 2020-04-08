@@ -102,11 +102,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
     @Input() dateField: string;
     set contactGroupId(value: ContactGroup) {
-        if (this._contactGroupId) {
+        if (this._contactGroupId && this._contactGroupId != value) {
             this.destroyPipeline();
             setTimeout(this.initPipeline.bind(this), 100);
         }
-
         this._contactGroupId = value;
     }
 
@@ -353,30 +352,34 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private handleContactView() {
-        this.pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
-            this.compactView = compactView;
-            this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
-            this.detectChanges();
-        });
-        this.pipelineService.compactView$.pipe(
-            takeUntil(this.destroy$),
-            /** If user choose compact view  */
-            filter(Boolean),
-            /** Listen dataLayoutType stream */
-            switchMap(() => this.pipelineService.dataLayoutType$),
-            /** Wait until layout type will became Pipeline (it may already be pipeline) */
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Pipeline),
-            /** Switch to stages stream */
-            switchMap(() => of(this.stages)),
-            /** switch to the streams of stages items */
-            mergeMap(stage => stage),
-            /** filter by stages which are not full or their entities count is less then compact view items count) */
-            filter((stage: Stage) => !stage.isFull && stage.entities.length < this.COMPACT_VIEW_PAGE_COUNT),
-            /** Map to stages ids */
-            map((stage: Stage) => stage.stageIndex),
-            /** Reload entities for each filtered stage*/
-            mergeMap((stageIndex: number) => this.loadStagesEntities(0, stageIndex, true, true))
-        ).subscribe();
+        this.subscribers.push(
+            this.pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
+                this.compactView = compactView;
+                this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
+                this.detectChanges();
+            })
+        );
+        this.subscribers.push(
+            this.pipelineService.compactView$.pipe(
+                takeUntil(this.destroy$),
+                /** If user choose compact view  */
+                filter(Boolean),
+                /** Listen dataLayoutType stream */
+                switchMap(() => this.pipelineService.dataLayoutType$),
+                /** Wait until layout type will became Pipeline (it may already be pipeline) */
+                filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Pipeline),
+                /** Switch to stages stream */
+                switchMap(() => of(this.stages)),
+                /** switch to the streams of stages items */
+                mergeMap(stage => stage),
+                /** filter by stages which are not full or their entities count is less then compact view items count) */
+                filter((stage: Stage) => !stage.isFull && stage.entities.length < this.COMPACT_VIEW_PAGE_COUNT),
+                /** Map to stages ids */
+                map((stage: Stage) => stage.stageIndex),
+                /** Reload entities for each filtered stage*/
+                mergeMap((stageIndex: number) => this.loadStagesEntities(0, stageIndex, true, true))
+            ).subscribe()
+        );
     }
 
     refresh(stageId?: number, skipAlreadyLoadedChecking = false) {

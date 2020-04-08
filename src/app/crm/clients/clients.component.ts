@@ -253,7 +253,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             text: this.l('LoginAsThisUser'),
             class: 'login',
             visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-            action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
+            action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId)
         }
     ];
     permissions = AppPermissions;

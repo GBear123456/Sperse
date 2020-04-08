@@ -506,9 +506,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private handlePipelineUpdate() {
-        this.listenForUpdate(DataLayoutType.Pipeline).subscribe(() => {
-            this.processFilterInternal();
-        });
+        combineLatest(
+            this.odataFilter$,
+            this.refresh$
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap((data) => this.dataLayoutType.value === DataLayoutType.Pipeline ? of(data) : this.dataLayoutType$.pipe(
+                filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Pipeline),
+                first(),
+                mapTo(data)
+            ))
+        ).subscribe(() => this.processFilterInternal());
     }
 
     private handleDataGridUpdate() {
