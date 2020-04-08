@@ -95,6 +95,10 @@ export class FiltersService {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }
 
+    static filterBySource(filter: FilterModel) {
+        return CrmFilterHelpers.filterBySource(filter);
+    }
+
     static filterByDepartment(filter: FilterModel) {
         return CrmFilterHelpers.filterBySetOfValues(filter);
     }

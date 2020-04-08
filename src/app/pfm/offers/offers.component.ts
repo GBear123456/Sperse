@@ -32,7 +32,6 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { AppStore, RatingsStoreSelectors } from '@app/store';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';

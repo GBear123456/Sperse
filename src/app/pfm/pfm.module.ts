@@ -45,6 +45,7 @@ import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dia
 import { OfferStatsComponent } from './reports/offer-stats/offer-stats.component';
 import { VisitorsStatsComponent } from './reports/visitors-stats/visitors-stats.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
+import { StaticListModule } from '../shared/common/static-list/static-list.module';
 
 @NgModule({
     imports: [
@@ -69,7 +70,8 @@ import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.servic
         MatSelectModule,
         MatSlideToggleModule,
         ItemDetailsLayoutModule,
-        StarsRatingModule
+        StarsRatingModule,
+        StaticListModule
     ],
     declarations: [
         OffersComponent,

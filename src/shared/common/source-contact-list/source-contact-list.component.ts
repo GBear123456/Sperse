@@ -8,7 +8,8 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, SourceContactInfo } from '@shared/service-proxies/service-proxies';
+import { SourceContact } from './source-contact.interface';
 
 @Component({
   selector: 'source-contact-list',
@@ -30,7 +31,7 @@ export class SourceContactListComponent {
         }
     }
 
-    contacts: any = [];
+    contacts: SourceContact[] = [];
     private lookupTimeout: any;
     private _leadId: number;
     private lookupSubscription: any;
@@ -49,13 +50,13 @@ export class SourceContactListComponent {
         this.lookupSubscription && this.lookupSubscription.unsubscribe();
         this.lookupSubscription = this.contactProxy.getSourceContacts(searchPhrase, this._leadId, 10)
             .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
-            .subscribe(res => {
-                this.onDataLoaded.emit(this.contacts = res.map(item => {
+            .subscribe((contacts: SourceContactInfo[]) => {
+                this.onDataLoaded.emit(this.contacts = contacts.map(item => {
                     let person = item.personName && item.personName.trim();
                     return {
                         id: item.id,
                         name: person || item.companyName,
-                        sufix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
+                        suffix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
                         addition: person ?
                             [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :
                             (item.companyName ? this.ls.l('Company') : '')

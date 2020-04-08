@@ -84,6 +84,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
+import { StaticListModule } from '../shared/common/static-list/static-list.module';
 
 @NgModule({
     imports: [
@@ -140,7 +141,8 @@ import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.servic
         SliceModule,
         MapModule,
         OrderDropdownModule,
-        ActionMenuModule
+        ActionMenuModule,
+        StaticListModule
     ],
     declarations: [
         ClientsComponent,

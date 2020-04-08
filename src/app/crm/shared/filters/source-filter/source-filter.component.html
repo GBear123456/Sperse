@@ -1,0 +1,39 @@
+<div class="wrapper">
+    <source-contact-list
+        [leadId]="null"
+        targetSelector="#contactLink"
+        (onItemSelected)="onSourceContactChanged($event)">
+    </source-contact-list>
+    <div class="field">
+        <label for="filterCampaign">{{ ls.l('CampaignCode') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterCampaign' }"
+                     [(value)]="items.element.campaignCode">
+        </dx-text-box>
+    </div>
+    <div class="field">
+        <label for="filterAccessCode">{{ ls.l('AffiliateCode') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterAccessCode' }"
+                     [(value)]="items.element.affiliateCode">
+        </dx-text-box>
+    </div>
+    <div class="field">
+        <label for="filterContact">{{ ls.l('Contact') }}</label>
+        <a id="contactLink"
+           [class.selected]="!!items.element.contact"
+           (click)="sourceComponent.toggle()">{{items.element.contact?.name || ls.l('SelectAnItem')}}
+            <i class="la la-close"
+               [hidden]="!items.element.contact"
+               (click)="clearContact($event)">
+            </i>
+        </a>
+    </div>
+    <div class="field">
+        <label for="filterChannel">{{ ls.l('Channel') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterChannel' }"
+                     [(value)]="items.element.channelCode">
+        </dx-text-box>
+    </div>
+</div>

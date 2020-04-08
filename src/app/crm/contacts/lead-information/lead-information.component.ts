@@ -24,7 +24,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { SourceContactListComponent } from '../source-contact-list/source-contact-list.component';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -108,12 +108,12 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         {
             sections: [
                 {
-                    name: 'Campaign',
+                    name: 'Source',
                     icon: 'c-info',
                     items: [
                         { name: 'campaignCode' },
                         { name: 'affiliateCode' },
-                        { name: 'partnerSource' },
+                        { name: 'contact' },
                         { name: 'channelCode' }
                     ]
                 },

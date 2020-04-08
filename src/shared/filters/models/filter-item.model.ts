@@ -1,6 +1,7 @@
 import { FilterModel } from './filter.model';
 import capitalize from 'underscore.string/capitalize';
 import { Observable } from 'rxjs';
+import { AppLocalizationService } from '../../../app/shared/common/localization/app-localization.service';
 
 export class FilterItemModel {
     dataSource: any;
@@ -8,6 +9,7 @@ export class FilterItemModel {
     dispatch: () => any;
     selectedKeys$: Observable<any>;
     disableOuterScroll: boolean;
+    ls: AppLocalizationService;
     protected _value: any = '';
 
     public constructor(value?: any, isPartial = false) {

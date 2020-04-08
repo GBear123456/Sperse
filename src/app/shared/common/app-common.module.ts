@@ -93,7 +93,6 @@ import { AppRatingComponent } from './rating/rating.component';
 import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
-import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { LeftMenuComponent } from './left-menu/left-menu.component';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
@@ -191,7 +190,6 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         PayPalComponent,
         BankTransferComponent,
         ECheckComponent,
-        StaticListComponent,
         UserAssignmentComponent,
         TagsListComponent,
         ListsListComponent,
@@ -219,7 +217,6 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         RatingBarComponent,
-        StaticListComponent,
         UserAssignmentComponent,
         TagsListComponent,
         ListsListComponent,

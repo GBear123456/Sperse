@@ -41,6 +41,8 @@ import { AppSessionService } from '../../../shared/common/session/app-session.se
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '../../shared/common/slice/pivot-grid/pivot-grid.component';
 import { OrganizationUnitsStoreSelectors } from '@app/crm/store';
+import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -81,6 +83,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
     private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
+    private sourceFilter: FilterModel = new FilterModel({
+        component: FilterSourceComponent,
+        caption: 'Source',
+        items: {
+            element: new SourceFilterModel({
+                ls: this.localizationService
+            })
+        }
+    });
     private ordersFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -111,7 +122,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
         this.subscriptionStatusFilter,
-        this.getSourceOrganizationUnitFilter()
+        this.getSourceOrganizationUnitFilter(),
+        this.sourceFilter
     ];
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
@@ -164,7 +176,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
         this.getSubscriptionsFilter('Subscription'),
-        this.getSourceOrganizationUnitFilter()
+        this.getSourceOrganizationUnitFilter(),
+        this.sourceFilter
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
