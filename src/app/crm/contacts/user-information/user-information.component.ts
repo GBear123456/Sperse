@@ -121,19 +121,15 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.onResize();
         this.contactInfoData = this.contactService['data'];
-        this.contactsService.userSubscribe(
-            (userId) => {
-                this.data = this.userService['data'];
-                this.data.userId = userId;
-                if (userId) {
-                    this.loadData();
-                } else
-                    this.getPhonesAndEmails();
-                this.showOrgUnitsDialog();
-                this.updateToolbarOptions();
-            },
-            this.constructor.name
-        );
+        this.contactsService.userSubscribe(userId => {
+            this.data = this.userService['data'];
+            if (this.data.userId = userId)
+                setTimeout(this.loadData.bind(this), 300);
+            else
+                this.getPhonesAndEmails();
+            this.showOrgUnitsDialog();
+            this.updateToolbarOptions();
+        }, this.constructor.name);
         setTimeout(() => this.getPhonesAndEmails(), 500);
 
         this.contactsService.orgUnitsSaveSubscribe(
@@ -192,7 +188,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     loadData() {
-        if (this.data && this.data.raw && this.data.raw.user.id == this.data.userId)
+        let data = this.data && this.data.raw;
+        if (data && data.user.id == this.data.userId)
             this.fillUserData(this.data['raw']);
         else if (!this.dataIsloading) {
             this.loadingService.startLoading();
@@ -426,27 +423,27 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     showOrgUnitsDialog(timeout = 0): void {
-         setTimeout(
-             () => {
-                 const dialog = this.dialog.getDialogById('user-organization-units-dialog');
-                 if (!dialog) {
-                     this.dialog.open(OrganizationUnitsDialogComponent, {
-                         id: 'user-organization-units-dialog',
-                         panelClass: ['slider'],
-                         disableClose: true,
-                         hasBackdrop: false,
-                         closeOnNavigation: true,
-                         data: {
-                             title: this.ls.l('OrganizationUnits'),
-                             selectionMode: 'multiple'
-                         }
-                     });
-                 } else {
-                     dialog.close();
-                 }
-             },
-             timeout
-         );
+        setTimeout(
+            () => {
+                const dialog = this.dialog.getDialogById('user-organization-units-dialog');
+                if (!dialog) {
+                    this.dialog.open(OrganizationUnitsDialogComponent, {
+                        id: 'user-organization-units-dialog',
+                        panelClass: ['slider'],
+                        disableClose: true,
+                        hasBackdrop: false,
+                        closeOnNavigation: true,
+                        data: {
+                            title: this.ls.l('OrganizationUnits'),
+                            selectionMode: 'multiple'
+                        }
+                    });
+                } else {
+                    dialog.close();
+                }
+            },
+            timeout
+        );
     }
 
     ngOnDestroy() {
