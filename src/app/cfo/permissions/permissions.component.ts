@@ -287,13 +287,6 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         });
     }
 
-    calculatePermissionsTableWidth() {
-        /** If we set static width - then last column (addUserButton) moves to the right */
-        return this.showenUsersIds.length > 6
-               ? window.innerWidth - 381
-               : 'auto' ;
-    }
-
     calculatePermissionsTableHeight() {
         return window.innerHeight - 180;
     }

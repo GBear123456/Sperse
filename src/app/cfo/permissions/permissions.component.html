@@ -11,20 +11,18 @@
         <dx-data-grid
             [hidden]="isDataLoaded && (!dataSource || (dataSource && !dataSource.totalCount()))"
             [dataSource]="dataSource"
-            [columnAutoWidth]="true"
             [customizeColumns]="customizeColumns"
             [rowAlternationEnabled]="true"
             [showColumnLines]="false"
             [loadPanel]="{ enabled: false }"
             [showRowLines]="false"
             noDataText=""
-            [width]="calculatePermissionsTableWidth()"
+            width="100%"
             [height]="calculatePermissionsTableHeight()"
             (onCellHoverChanged)="onCellHoverChanged($event)"
             (onCellClick)="onCellClick($event)"
             (onRowUpdating)="onRowUpdating($event)">
             <dxo-editing [allowUpdating]="true" mode="cell"></dxo-editing>
-            <dxo-grouping [allowCollapsing]="false"></dxo-grouping>
             <div *dxTemplate="let data of 'addUserTemplate'">
                 <img class="addUserButton" (click)="showUsersPopup($event)" src="./assets/common/icons/add-user-icon.svg" [alt]="l('UserPermissions_AddUser')">
             </div>
