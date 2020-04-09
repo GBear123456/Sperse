@@ -3,8 +3,8 @@
     [selectedKey]="data?.leadInfo?.sourceContactId"
     [targetSelector]="'#contactSourceLink'"
     (onDataLoaded)="onSourceContactLoaded($event)"
-    (onItemSelected)="onSourceContactChanged($event)">                                            
-</source-contact-list>                                
+    (onItemSelected)="onSourceContactChanged($event)">
+</source-contact-list>
 <div #loaderWrapper>
     <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="General">
@@ -16,7 +16,7 @@
                             <div *ngFor="let item of section.items" class="section-item">
                                 <div *ngIf="!item.hideLabel" class="item-edit-label">{{ls.l(capitalize(item?.lname || item?.name || item))}}:</div>
                                 <ng-container [ngSwitch]="item?.name">
-                                    <ng-container *ngSwitchCase="'partnerSource'">
+                                    <ng-container *ngSwitchCase="'contact'">
                                         <a id="contactSourceLink"
                                            class="clipboard-holder"
                                            [class.selected]="!!sourceContactName"
@@ -38,7 +38,7 @@
                             </div>
                         </div>
                     </div>
-                </div>  
+                </div>
             </dx-scroll-view>
         </mat-tab>
         <mat-tab label="Applications" [disabled]="!data?.leadInfo?.applicantId || !showApplicationAllowed">

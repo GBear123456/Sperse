@@ -68,7 +68,7 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
-import { SourceContactListComponent } from '@app/crm/contacts/source-contact-list/source-contact-list.component';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { StatesService } from '@root/store/states-store/states.service';
 
 @Component({

@@ -67,7 +67,7 @@
                   width="99.9%"
                   [height]="calculateHeight()"
                   [dataSource]="dataSource"
-                  noDataText="''"
+                  noDataText=""
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
                   [showColumnHeaders]="showColumnHeaders"
@@ -79,7 +79,7 @@
                   [loadPanel]="{ enabled: false }"
                   [elementAttr]="{ class: 'with-custom-loader' }"
                   (onRowPrepared)="rowPrepared($event)"
-                  (onContentReady)="contentReady()"
+                  (onContentReady)="contentReady($event)"
                   (onRowClick)="dataRowClick($event)"
                   (onCellClick)="dataCellClick($event)">
         <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
@@ -102,7 +102,7 @@
                     [caption]="l('Account')"
                     [sortIndex]="0"
                     sortOrder="asc"
-                    [width]="nameColumnWidth || (wide ? 600 : 200)"
+                    [width]="nameColumnWidth || (wide ? 600 : (widgetWidth > 1100 ? 350 : 200))"
                     alignment="left"
                     [allowEditing]="false"
                     cssClass="accountNumber bold clipboard-holder">
@@ -219,14 +219,14 @@
                                 [visibleIndex]="2"
                                 cssClass="accountNumber tabular"
                                 cellTemplate="withClipboardLink"
-                                [width]="wide ? 150 : 100"
+                                [width]="wide || widgetWidth > 1100 ? 150 : 100"
                                 alignment="left"
                                 [allowEditing]="allowEditing"
                                 [editorOptions]="{ disabled: true }">
                     </dxi-column>
                     <dxi-column dataField="typeName"
                                 cssClass="type-container"
-                                [width]="wide ? 150 : 100"
+                                [width]="wide || widgetWidth > 1100 ? 150 : 100"
                                 alignment="left"
                                 [allowEditing]="false"
                                 cellTemplate="typeTemplate"

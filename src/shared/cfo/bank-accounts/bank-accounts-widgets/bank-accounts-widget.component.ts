@@ -161,6 +161,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     ).pipe(map(([selectedBusinessEntities, selectedBankAccountTypes, selectedStatuses]) => {
         return !!(selectedBusinessEntities.length || (selectedBankAccountTypes && selectedBankAccountTypes.length) || selectedStatuses.length);
     }));
+    widgetWidth: number;
 
     constructor(
         injector: Injector,
@@ -392,7 +393,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             selectedEntitiesIds, this.saveChangesInCache);
     }
 
-    contentReady() {
+    contentReady(e) {
+        this.widgetWidth = e.component.element().offsetWidth;
         this.calculateHeight();
         this.isDataLoaded = true;
     }

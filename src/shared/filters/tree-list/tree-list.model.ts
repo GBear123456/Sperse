@@ -1,6 +1,9 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import * as _ from 'lodash';
+import find from 'lodash/find';
+import sortBy from 'lodash/sortBy';
+import each from 'lodash/each';
+import remove from 'lodash/remove';
 
 export class FilterTreeListModel extends FilterItemModel {
     list: any[];
@@ -12,41 +15,41 @@ export class FilterTreeListModel extends FilterItemModel {
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         this.value && this.value.map(itemId => {
-            let data = _.find(this.list, (val: any, i, arr) => val.id == itemId);
+            let data = find(this.list, (val: any) => val.id == itemId);
             if (data) {
-                let parentName = data.parent ? _.find(this.list, (val) => val.id == data.parent).name : null;
+                let parentName = data.parent ? find(this.list, (val) => val.id == data.parent).name : null;
                 let sortField = (parentName) ? parentName + ':' : '';
                 sortField += data.name;
-                result.push(<DisplayElement>{   
-                    item: this, 
-                    displayValue: data.name, 
-                    args: itemId, 
-                    parentCode: data.parent, 
-                    sortField: sortField 
+                result.push(<DisplayElement>{
+                    item: this,
+                    displayValue: data.name,
+                    args: itemId,
+                    parentCode: data.parent,
+                    sortField: sortField
                 });
             }
         });
-       
+
         result = this.generateParents(
-            _.sortBy(result, 'sortField')
+            sortBy(result, 'sortField')
         );
         return result;
     }
-   
+
     removeFilterItem(filter: FilterModel, args: any) {
         if (args)
-            _.remove(this.value, (val: any, i, arr) => val == args);
+            remove(this.value, (val: any) => val == args);
         else
             this.value = [];
     }
 
     private generateParents(arr: DisplayElement[]): DisplayElement[] {
         let result: DisplayElement[] = [];
-        _.each(arr, item => {
+        each(arr, item => {
             if (item.parentCode) {
-                let parent = _.find(result, y => y.args == item.parentCode);
+                let parent = find(result, y => y.args == item.parentCode);
                 if (!parent) {
-                    let parentName = _.find(this.list, (val: any, i, arr) => val.id == item.parentCode).name;
+                    let parentName = find(this.list, (val: any) => val.id == item.parentCode).name;
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: item.parentCode });
                 }
             }

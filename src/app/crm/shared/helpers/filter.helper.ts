@@ -99,6 +99,17 @@ export class FilterHelpers {
         return filterValues;
     }
 
+    static filterBySource(filter: FilterModel) {
+        let filterValues = { 'and': [] };
+        let data = filter.items.element.value;
+        data.forEach((dataItem) => {
+            if (dataItem.value) {
+                filterValues.and.push({ [dataItem.name]: dataItem.value });
+            }
+        });
+        return filterValues;
+    }
+
     static filterByGroupId() {
         return {'GroupId': {'eq': 'C'}};
     }

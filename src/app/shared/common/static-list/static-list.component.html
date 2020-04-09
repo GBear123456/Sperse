@@ -48,8 +48,8 @@
                     <div class="item-row {{data.name.replace(whiteSpaceRegExp, '-') | lowercase}}"
                          data-id="{{data.id}}"
                          [attr.index]="data.index > 5 ? 'positive' : data.index < -5 ? 'negative' : data.index">
-                        <div [title]="data.name + ' ' + data.sufix + ' ' + data.addition" class="item-text">
-                            <span [ngClass]="{'head-line': data.hasOwnProperty('addition')}">{{data.name}}</span><span class="sufix">{{data.sufix}}</span>
+                        <div [title]="data.name + ' ' + data.suffix + ' ' + data.addition" class="item-text">
+                            <span [ngClass]="{'head-line': data.hasOwnProperty('addition')}">{{data.name}}</span><span class="suffix">{{data.suffix}}</span>
                             <div *ngIf="data.addition" class="addition-line">{{data.addition}}</div>
                         </div>
                         <a *ngIf="filterModel"

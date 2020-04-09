@@ -127,12 +127,13 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
-import { SourceContactListComponent } from './source-contact-list/source-contact-list.component';
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from './subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfown.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
+import { StaticListModule } from '@app/shared/common/static-list/static-list.module';
 
 @NgModule({
     declarations: [
@@ -190,7 +191,6 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         PersonalDetailsComponent,
         PersonalDetailsDialogComponent,
         SMSDialogComponent,
-        SourceContactListComponent,
         AddSubscriptionDialogComponent,
         CancelSubscriptionDialogComponent,
         MarkAsPaidDialogComponent
@@ -201,6 +201,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         ngCommon.CommonModule,
         CrmStoreModule,
         AppCommonModule,
+        StaticListModule,
         MatProgressBarModule,
         MatTabsModule,
         MatDialogModule,
@@ -242,7 +243,8 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         BankCodeLettersModule,
         CKEditorModule,
         OrderDropdownModule,
-        ActionMenuModule
+        ActionMenuModule,
+        SourceContactListModule
     ],
     entryComponents: [
         EditContactDialog,

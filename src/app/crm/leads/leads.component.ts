@@ -40,11 +40,7 @@ import {
     StarsStoreSelectors,
     TagsStoreSelectors
 } from '@app/store';
-import {
-    OrganizationUnitsStoreActions,
-    OrganizationUnitsStoreSelectors,
-    PipelinesStoreSelectors
-} from '@app/crm/store';
+import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors, PipelinesStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -97,6 +93,8 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -874,6 +872,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterSourceComponent,
+                    caption: 'Source',
+                    items: {
+                        element: new SourceFilterModel({
+                            ls: this.localizationService
+                        })
                     }
                 })
             ], this._activatedRoute.snapshot.queryParams);
