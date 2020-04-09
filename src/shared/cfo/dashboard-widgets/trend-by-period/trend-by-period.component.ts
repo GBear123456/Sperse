@@ -229,19 +229,22 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         })
     );
     showInflowsOutflowsCharts$: Observable<boolean> = this.selectedChartType$.pipe(
-        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashInflowsAndOutflows
-        || selectedChartType === ChartType.Combined))
+        map((selectedChartType: ChartType) => selectedChartType === ChartType.CashInflowsAndOutflows
+                                                      || selectedChartType === ChartType.Combined)
     );
     showNetChangeChart$ = this.selectedChartType$.pipe(
-        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashInflowsAndOutflows
-            || selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+        map((selectedChartType: ChartType) => selectedChartType === ChartType.CashInflowsAndOutflows
+                                                      || selectedChartType === ChartType.Combined
+                                                      || selectedChartType === ChartType.CashBalanceWithNetChange)
     );
     showBalancesChart$ = this.selectedChartType$.pipe(
-        map((selectedChartType: ChartType) => (selectedChartType === ChartType.CashBalancesTrends
-            || selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+        map((selectedChartType: ChartType) => selectedChartType === ChartType.CashBalancesTrends
+                                                      || selectedChartType === ChartType.Combined
+                                                      || selectedChartType === ChartType.CashBalanceWithNetChange)
     );
     showRightAxis$ = this.selectedChartType$.pipe(
-        map((selectedChartType: ChartType) => (selectedChartType === ChartType.Combined || selectedChartType === ChartType.CashBalanceWithNetChange))
+        map((selectedChartType: ChartType) => selectedChartType === ChartType.Combined
+                                                      || selectedChartType === ChartType.CashBalanceWithNetChange)
     );
     updateChartWidthAfterActivation = false;
 
@@ -466,9 +469,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
 
     getAxisName(chartType: ChartType.CashInflowsAndOutflows | ChartType.CashBalancesTrends): string {
         let axisName = 'leftAxis';
-        if (this.selectedChartType.value === ChartType.Combined
-            || this.selectedChartType.value === ChartType.CashBalanceWithNetChange) {
-            axisName = chartType === ChartType.CashBalancesTrends ? 'leftAxis' : 'rightAxis';
+        if ((this.selectedChartType.value === ChartType.Combined
+            || this.selectedChartType.value === ChartType.CashBalanceWithNetChange)
+            && chartType !== ChartType.CashBalancesTrends) {
+            axisName = 'rightAxis';
         }
         return axisName;
     }

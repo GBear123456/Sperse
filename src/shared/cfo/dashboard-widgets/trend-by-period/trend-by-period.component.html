@@ -203,8 +203,8 @@
             </dxi-value-axis>
 
             <!-- Right axis -->
-            <dxi-value-axis name="rightAxis"
-                            [visible]="showRightAxis$ | async"
+            <dxi-value-axis *ngIf="showRightAxis$ | async"
+                            name="rightAxis"
                             position="right">
                 <dxo-label [customizeText]="customizeAxisValues">
                     <dxo-format type="currency largeNumber"></dxo-format>
