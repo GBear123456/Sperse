@@ -382,8 +382,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 id: this.leadId = leadId
             };
         return userId
-               ? this.loadContactInfoForUser(userId, companyId)
-               : this.loadContactInfoForClient(contactId, leadId, companyId);
+            ? this.loadContactInfoForUser(userId, companyId)
+            : this.loadContactInfoForClient(contactId, leadId, companyId);
     }
 
     get isUserProfile() {
@@ -481,9 +481,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     loadLeadData(personContactInfo?: any, lastLeadCallback?) {
         let contactInfo = this.contactService['data'].contactInfo,
             leadInfo = this.contactService['data'].leadInfo;
-        if ((contactInfo && leadInfo && (!this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
+        if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
             !lastLeadCallback && this.startLoading(true);
-            let leadId = leadInfo.id,
+            let leadId = leadInfo && leadInfo.id,
                 leadInfo$ = leadId && !lastLeadCallback
                     ? this.leadService.getLeadInfo(leadId)
                     : this.leadService.getLastLeadInfo(contactInfo.id);
