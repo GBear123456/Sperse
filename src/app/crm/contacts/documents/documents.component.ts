@@ -19,7 +19,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { Observable, from, of } from 'rxjs';
-import { first, finalize, flatMap, tap, pluck, map } from 'rxjs/operators';
+import { finalize, flatMap, tap, pluck, map, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
 import values from 'lodash/values';
@@ -129,7 +129,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     ngAfterViewInit() {
         this.clientService.contactInfo$.pipe(
-            first()
+            takeUntil(this.destroy$)
         ).subscribe(contactInfo => {
             this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();

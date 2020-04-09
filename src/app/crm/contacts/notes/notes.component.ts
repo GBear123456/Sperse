@@ -48,6 +48,12 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                 );
             }
         }, this.constructor.name);
+        clientService.leadInfoSubscribe(() => {
+            this.data = this.contactService['data'];
+            this.loadData().subscribe(
+                (notes: NoteInfoDto[]) => this.dataSource = notes
+            );
+        }, this.constructor.name);
     }
 
     ngOnInit() {
