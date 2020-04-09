@@ -107,9 +107,30 @@ export class ImportChartOfAccountsButtonComponent extends CFOComponentBase {
         });
         this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, this.override, syncInput)
             .pipe(finalize(() => { abp.ui.clearBusy(); }))
-            .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.onComplete.emit();
+            .subscribe((result) => {
+                if (result) {
+                    this.notify.info(this.l('SavedSuccessfully'));
+                    this.onComplete.emit();
+                } else {
+                    this.message.confirm(
+                        this.l('ReconnectNow'),
+                        this.l('AuthorizationRequired'),
+                        isConfirmed => {
+                            if (isConfirmed) {
+                                this.dialog.open(AccountConnectorDialogComponent, {
+                                    ...{
+                                        data: {
+                                            connector: this.syncTypeId === SyncTypeIds.QuickBook ? AccountConnectors.QuickBook : AccountConnectors.XeroOAuth2,
+                                        }
+                                    }
+                                }).componentInstance.onComplete.subscribe(() => {
+                                    this.onComplete.emit();
+                                });
+                            }
+                        }
+                    );
+
+                }
             });
     }
 }
