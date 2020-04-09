@@ -44,8 +44,9 @@ import {
     FlatPermissionWithLevelDtoListResultDto,
     RoleListDto,
     RoleListDtoListResultDto
-} from '../../../shared/service-proxies/service-proxies';
+} from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
+import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './users.component.html',
@@ -54,6 +55,7 @@ import { AppStoreService } from '@app/store/app-store.service';
 })
 export class UsersComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     //Filters
     private filters: FilterModel[];
@@ -542,6 +544,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         }
     }
 
+    repaintToolbar() {
+        if (this.toolbar) {
+            this.toolbar.toolbarComponent.instance.repaint();
+        }
+    }
+
     ngOnDestroy() {
         this.deactivate();
     }
@@ -553,7 +561,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.showHostElement();
+        this.showHostElement(() => {
+            this.repaintToolbar();
+        });
         this.registerToEvents();
     }
 
