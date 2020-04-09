@@ -7,7 +7,7 @@
     <mat-sidenav-container [ngStyle]="rightPanelWidth ? { marginRight: rightPanelWidth } : null">
         <mat-sidenav mode="side" [opened]="true" [disableClose]="true" position="start">
             <ng-content select="[aboveNavigation]"></ng-content>
-            <dx-scroll-view showScrollbar="onHover">
+            <dx-scroll-view showScrollbar="onHover" height="calc(100% - 40px)">
                 <nav mat-tab-nav-bar>
                     <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [disabled]="link.disabled"
                        [routerLink]="link.route" routerLinkActive="active" [queryParams]="queryParams"
