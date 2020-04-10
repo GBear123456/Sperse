@@ -213,7 +213,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 selected: false,
                 icon: 'money',
                 visible: this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage),
-                contactGroups: this.allContactGroupsExceptUser
+                contactGroups: this.allContactGroups
             }
         ];
     }
