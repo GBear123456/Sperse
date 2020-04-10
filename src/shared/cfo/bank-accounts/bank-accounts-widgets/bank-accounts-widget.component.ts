@@ -375,9 +375,20 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     selectedAccountsChanged() {
         let selectedSyncAccounts = this.mainDataGrid.instance.getVisibleRows().filter(row => row.rowType === 'data');
-        const selectedBankAccountsIds = selectedSyncAccounts.reduce((allBankAccounts, row) => allBankAccounts.concat(row.data.bankAccounts.filter(account => account.selected).map(account => account.id)), []);
-        this.bankAccountsService.changeSelectedBankAccountsIds(selectedBankAccountsIds, this.saveChangesInCache);
         this.selectionChanged.emit(selectedSyncAccounts);
+        let selectedSyncAccountsIds = [];
+        const selectedBankAccountsIds = selectedSyncAccounts.reduce((allBankAccounts, row) => {
+            if (row.data.selected) {
+                selectedSyncAccountsIds.push(row.data.syncAccountId);
+            }
+            return allBankAccounts.concat(
+                row.data.bankAccounts.filter(account => account.selected).map(account => account.id)
+            );
+        }, []);
+        this.bankAccountsService.changeState({
+            selectedSyncAccountIds: selectedSyncAccountsIds,
+            selectedBankAccountIds: selectedBankAccountsIds
+        }, this.saveChangesInCache);
     }
 
     bankAccountTypesChanged(e) {

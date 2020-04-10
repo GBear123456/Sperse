@@ -371,7 +371,7 @@ export class BankAccountsService {
         this.syncAccountsAmount$ = this.filteredSyncAccounts$.pipe(
             map((syncAccounts: any[]) => {
                 /** Selected can be true, false or undefined. Undefined if bank accounts of the sync account are partially selected */
-                const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
+                const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false && syncAccount.selected !== 0);
                 return selectedSyncAccounts.length === syncAccounts.length
                     ? selectedSyncAccounts.length.toString()
                     : `${selectedSyncAccounts.length} of ${syncAccounts.length}`;
@@ -497,6 +497,7 @@ export class BankAccountsService {
                 return this.filterDataSource(
                     syncAccounts,
                     state.selectedBusinessEntitiesIds,
+                    state.selectedSyncAccountIds,
                     state.selectedBankAccountIds,
                     state.visibleBankAccountIds,
                     searchValue,
@@ -722,9 +723,17 @@ export class BankAccountsService {
     //     }).map(account => account.id);
     // }
 
-    filterDataSource(syncAccounts: SyncAccountBankDto[], businessEntitiesIds: number[], selectedAccountsIds: number[], visibleBankAccountsIds: number[], searchValue: string, statuses = null): SyncAccountBankDto[] {
+    filterDataSource(
+        syncAccounts: SyncAccountBankDto[],
+        businessEntitiesIds: number[],
+        selectedSyncAccountsIds: number[],
+        selectedBankAccountsIds: number[],
+        visibleBankAccountsIds: number[],
+        searchValue: string,
+        statuses = null
+    ): SyncAccountBankDto[] {
         let result: SyncAccountBankDto[] = [];
-        visibleBankAccountsIds = !visibleBankAccountsIds || !selectedAccountsIds || selectedAccountsIds.length === 0 ? [] : visibleBankAccountsIds;
+        visibleBankAccountsIds = !visibleBankAccountsIds || !selectedBankAccountsIds || selectedBankAccountsIds.length === 0 ? [] : visibleBankAccountsIds;
 
         syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
             const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name && syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
@@ -732,7 +741,7 @@ export class BankAccountsService {
             if ((!businessEntitiesIds || !businessEntitiesIds.length) && (!syncAccount.bankAccounts || !syncAccount.bankAccounts.length)) {
                 if (isSyncAccountNameMatchesTheSearch) {
                     let syncAccountClone = _.clone(syncAccount);
-                    syncAccountClone['selected'] = false;
+                    syncAccountClone['selected'] = selectedSyncAccountsIds && selectedSyncAccountsIds.length && selectedSyncAccountsIds.indexOf(syncAccount.syncAccountId) >= 0;
                     result.push(syncAccountClone);
                 }
             } else {
@@ -746,7 +755,7 @@ export class BankAccountsService {
                         && this.bankAccountMatchTheStatuses(bankAccount, statuses)
                     ) {
                         let bankAccountClone = _.clone(bankAccount);
-                        let isBankAccountSelected = (selectedAccountsIds ? _.contains(selectedAccountsIds, bankAccountClone.id) : true)
+                        let isBankAccountSelected = (selectedBankAccountsIds ? _.contains(selectedBankAccountsIds, bankAccountClone.id) : true)
                             || (visibleBankAccountsIds.length ? !_.contains(visibleBankAccountsIds, bankAccountClone.id) : false);
                         bankAccountClone['selected'] = isBankAccountSelected;
                         if (isBankAccountSelected)
