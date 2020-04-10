@@ -10,9 +10,10 @@
     <calendar-button></calendar-button>
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
-<div [hidden]="!statsData || !statsData.length" class="main-wrapper">
+<div [hidden]="!statsData || !statsData.length" class="main-wrapper wo-animation">
     <div class="mainStatsView">
         <cfo-left-menu [items]="leftSideBarItems"
+                       [hidden]="this.filtersService.fixed"
                        [selectedItemIndex]="0"
                        headerTitle=""
                        (onToggle)="calculateChartsSize()">

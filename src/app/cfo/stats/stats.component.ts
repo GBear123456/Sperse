@@ -209,7 +209,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this.appService.narrowingPageContentWhenFixedFilter = false;
     }
 
     ngOnInit() {
@@ -709,7 +708,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
-        this.appService.narrowingPageContentWhenFixedFilter = true;
         this.dialog.closeAll();
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
