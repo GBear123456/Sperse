@@ -43,43 +43,50 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     dataSource: DataSource;
     addedUsersIds: number[];
     columnsConfiguration = {
-        'accountId': {
-            'visible': false,
-            'visibleIndex': 0
+        accountId: {
+            visible: false,
+            visibleIndex: 0
         },
-        'accountName': {
-            'allowEditing': false,
-            'caption': this.l('UserPermissions_BankAccountName'),
-            'width': '250px',
-            'visibleIndex': 1
+        accountName: {
+            allowEditing: false,
+            caption: this.l('UserPermissions_BankAccountName'),
+            width: '250px',
+            visibleIndex: 1
         },
-        'accountNumber': {
-            'allowEditing': false,
-            'caption': this.l('UserPermissions_BankAccountNumber'),
-            'width': '230px',
-            'visibleIndex': 2
+        accountNumber: {
+            allowEditing: false,
+            caption: this.l('UserPermissions_BankAccountNumber'),
+            width: '230px',
+            visibleIndex: 2
         },
-        'entityName': {
-            'visible': false,
-            'groupIndex': 0,
-            'groupCellTemplate': this.customizeEntityGroup.bind(this),
-            'visibleIndex': 3
+        entityName: {
+            visible: false,
+            groupIndex: 0,
+            groupCellTemplate: this.customizeEntityGroup.bind(this),
+            visibleIndex: 3
         },
-        'user': {
-            'cssClass': 'userColumn',
-            'calculateCellValue': this.calculateUserCellValue,
-            'headerCellTemplate': this.customizeUserHeader.bind(this),
-            'width': '170px',
-            'visibleIndex': 4
+        user: {
+            cssClass: 'userColumn',
+            calculateCellValue: this.calculateUserCellValue,
+            headerCellTemplate: this.customizeUserHeader.bind(this),
+            width: '170px',
+            visibleIndex: 4
         },
-        'addUser': {
-            'alignment': 'left',
-            'allowEditing': false,
-            'allowSorting': false,
-            'dataField': 'addUser',
-            'headerCellTemplate': 'addUserTemplate',
-            'width': '60px',
-            'visibleIndex': 5
+        addUser: {
+            alignment: 'left',
+            allowEditing: false,
+            allowSorting: false,
+            dataField: 'addUser',
+            headerCellTemplate: 'addUserTemplate',
+            width: '60px',
+            visibleIndex: 5
+        },
+        autoWidth: {
+            caption: '',
+            allowEditing: false,
+            allowSorting: false,
+            dataField: 'autoWidth',
+            visibleIndex: 999
         }
     };
     constructor(injector: Injector,
@@ -197,7 +204,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         };
         /** Add new addUser column if it's not added yet */
         if (!addUserColumn) {
-            columns.push(addUserColumnConfig);
+            columns.push(addUserColumnConfig, this.columnsConfiguration['autoWidth']);
         } else {
             /** Else - change config of the add user column (visible or not may change depend on visible users) */
             addUserColumn.visible = this.showAddUserButton;
