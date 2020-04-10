@@ -474,11 +474,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private handleFiltersPining() {
-        this.filtersService.filterFixed$.pipe(
+        const filterFixed$ = this.filtersService.filterFixed$.pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             skip(1)
+        );
+        filterFixed$.pipe(
+            switchMap(this.waitUntil(DataLayoutType.DataGrid))
         ).subscribe(() => {
             this.repaintDataGrid(1000);
+        });
+        filterFixed$.pipe(
+            switchMap(this.waitUntil(DataLayoutType.PivotGrid))
+        ).subscribe(() => {
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.pivotGrid.instance.updateDimensions();
@@ -511,11 +518,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            switchMap((data) => this.dataLayoutType.value === DataLayoutType.Pipeline ? of(data) : this.dataLayoutType$.pipe(
-                filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Pipeline),
-                first(),
-                mapTo(data)
-            ))
+            switchMap(this.waitUntil(DataLayoutType.Pipeline))
         ).subscribe(() => this.processFilterInternal());
     }
 
@@ -596,11 +599,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            switchMap((data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
-                filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
-                first(),
-                mapTo(data)
-            ))
+            switchMap(this.waitUntil(layoutType))
+        );
+    }
+
+    private waitUntil(layoutType: DataLayoutType) {
+        return (data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+            first(),
+            mapTo(data)
         );
     }
 

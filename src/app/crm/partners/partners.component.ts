@@ -393,11 +393,18 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private handleFiltersPining() {
-        this.filtersService.filterFixed$.pipe(
+        const filterFixed$ = this.filtersService.filterFixed$.pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             skip(1)
+        );
+        filterFixed$.pipe(
+            switchMap(this.waitUntil(DataLayoutType.DataGrid))
         ).subscribe(() => {
             this.repaintDataGrid(1000);
+        });
+        filterFixed$.pipe(
+            switchMap(this.waitUntil(DataLayoutType.PivotGrid))
+        ).subscribe(() => {
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.pivotGrid.instance.updateDimensions();
@@ -407,17 +414,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    private waitUntil(layoutType: DataLayoutType) {
+        return (data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+            first(),
+            mapTo(data)
+        );
+    }
+
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
             this.odataFilter$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            switchMap((data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
-                filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
-                first(),
-                mapTo(data)
-            ))
+            switchMap(this.waitUntil(layoutType))
         );
     }
 

@@ -307,7 +307,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     public get categoriesShowed(): boolean {
-        return this._categoriesShowed;
+        return !this.isAdvicePeriod && this._categoriesShowed;
     }
     private syncAccounts: any;
     isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
@@ -325,34 +325,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             '1.2-2'
         ) || '';
     }
-    exportToPdfHeadersConfig: { [name: string]: Omit<PdfExportHeader, 'name'>} = {
-        'BusinessEntityId': {
-            calculateDisplayValue: (data) => {
-                let businessEntityName = '';
-                if (this.filtersInitialData && this.filtersInitialData.businessEntities) {
-                    const businessEntity = this.filtersInitialData.businessEntities.find((businessEntity) => {
-                        return businessEntity.id === data.BusinessEntityId;
-                    });
-                    if (businessEntity) {
-                        businessEntityName = businessEntity.name;
-                    }
-                }
-                return businessEntityName;
-            }
-        },
-        // 'BankAccountId': {
-        //     calculateDisplayValue: (data) => {
-        //         let accountName = '';
-        //         if (this.bankAccountsLookup) {
-        //             const account = this.bankAccountsLookup.find((account) => account.id === data.BankAccountId);
-        //             if (account) {
-        //                 accountName = account.accountName;
-        //             }
-        //         }
-        //         return accountName;
-        //     }
-        // }
-    };
 
     constructor(injector: Injector,
         private transactionsServiceProxy: TransactionsServiceProxy,
