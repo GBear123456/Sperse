@@ -4,9 +4,7 @@ import {
     Component,
     AfterViewInit,
     ViewChild,
-    Injector,
     OnInit,
-    OnDestroy,
     ChangeDetectorRef
 } from '@angular/core';
 import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
@@ -29,7 +27,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
@@ -39,7 +36,6 @@ import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
-import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -69,7 +65,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     localization = AppConsts.localization.CRMLocalizationSourceName;
 
     constructor(
-        injector: Injector,
         private router: Router,
         private appService: AppService,
         private appSessionService: AppSessionService,

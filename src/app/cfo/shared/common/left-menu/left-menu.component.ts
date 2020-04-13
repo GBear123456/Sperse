@@ -35,68 +35,7 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
     @Input() collapsed = true;
     @Input() selectedItemIndex: number;
     @Input() showIntroductionTourLink = false;
-    @Input() items: LeftMenuItem[] =  [
-        {
-            caption: this.l('SetupStep_FinancialAccounts'),
-            component: '/linkaccounts',
-            visible: this.cfoService.currentInstanceStatus$.pipe(
-                map((instanceStatus: GetStatusOutput) => {
-                    return instanceStatus.hasTransactions && this.cfoService.accessAllDepartments;
-                })
-            ),
-            iconSrc: './assets/common/icons/document.svg'
-        },
-        {
-            caption: this.l('SetupStep_BusinessEntity'),
-            component: '/business-entities',
-            visible: this.cfoService.accessAllDepartments,
-            iconSrc: './assets/common/icons/person.svg'
-        },
-        {
-            caption: this.l('SetupStep_Chart'),
-            component: '/chart-of-accounts',
-            iconSrc: './assets/common/icons/setup-chart.svg'
-        },
-        {
-            caption: this.l('SetupStep_Rules'),
-            component: '/rules',
-            visible: this.appSessionService.tenant
-            && this.appSessionService.tenant.customLayoutType == LayoutType.AdvicePeriod
-                ? false
-                : (this.cfoService.currentInstanceStatus$.pipe(
-                    map((instanceStatus: GetStatusOutput) => {
-                        return instanceStatus.hasTransactions
-                            && this.cfoService.hasCategorizationSupported
-                            && this.cfoService.accessAllDepartments;
-                    })
-                )),
-            iconSrc: './assets/common/icons/setup.svg'
-        },
-        {
-            caption: this.l('SetupStep_Permissions'),
-            component: '/permissions',
-            visible: (this.cfoService.currentInstanceStatus$.pipe(
-                map((instanceStatus: GetStatusOutput) => {
-                    return instanceStatus.hasTransactions
-                        && this.cfoService.isInstanceAdmin
-                        && this.cfoService.instanceType == InstanceType.Main;
-                })
-            )),
-            iconSrc: './assets/common/icons/person.svg'
-        },
-        {
-            caption: this.l('SetupStep_InvitedUsers'),
-            component: '/users',
-            visible: this.cfoService.instanceId && this.cfoService.isMemberAccessManage,
-            iconSrc: './assets/common/icons/people.svg'
-        },
-        {
-            caption: this.l('SetupStep_IntroductionTour'),
-            visible: this.showIntroTour && this.showIntroductionTourLink && this.cfoService.instanceType == 'Main',
-            onClick: this.showIntro.bind(this),
-            iconSrc: './assets/common/icons/introduction-tour.svg'
-        }
-    ];
+    @Input() items: LeftMenuItem[];
     @Input() headerTitle: string = this.l(this.cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
     @Input() showToggleButton =
@@ -127,6 +66,70 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
                 component: '/start',
                 iconSrc: './assets/common/icons/statistics.svg'
             });
+        }
+        if (!this.items || !this.items.length) {
+            this.items = [
+                {
+                    caption: this.l('SetupStep_FinancialAccounts'),
+                    component: '/linkaccounts',
+                    visible: this.cfoService.currentInstanceStatus$.pipe(
+                        map((instanceStatus: GetStatusOutput) => {
+                            return instanceStatus.hasTransactions && this.cfoService.accessAllDepartments;
+                        })
+                    ),
+                    iconSrc: './assets/common/icons/document.svg'
+                },
+                {
+                    caption: this.l('SetupStep_BusinessEntity'),
+                    component: '/business-entities',
+                    visible: this.cfoService.accessAllDepartments,
+                    iconSrc: './assets/common/icons/person.svg'
+                },
+                {
+                    caption: this.l('SetupStep_Chart'),
+                    component: '/chart-of-accounts',
+                    iconSrc: './assets/common/icons/setup-chart.svg'
+                },
+                {
+                    caption: this.l('SetupStep_Rules'),
+                    component: '/rules',
+                    visible: this.appSessionService.tenant
+                    && this.appSessionService.tenant.customLayoutType == LayoutType.AdvicePeriod
+                        ? false
+                        : (this.cfoService.currentInstanceStatus$.pipe(
+                            map((instanceStatus: GetStatusOutput) => {
+                                return instanceStatus.hasTransactions
+                                    && this.cfoService.hasCategorizationSupported
+                                    && this.cfoService.accessAllDepartments;
+                            })
+                        )),
+                    iconSrc: './assets/common/icons/setup.svg'
+                },
+                {
+                    caption: this.l('SetupStep_Permissions'),
+                    component: '/permissions',
+                    visible: (this.cfoService.currentInstanceStatus$.pipe(
+                        map((instanceStatus: GetStatusOutput) => {
+                            return instanceStatus.hasTransactions
+                                && this.cfoService.isInstanceAdmin
+                                && this.cfoService.instanceType == InstanceType.Main;
+                        })
+                    )),
+                    iconSrc: './assets/common/icons/person.svg'
+                },
+                {
+                    caption: this.l('SetupStep_InvitedUsers'),
+                    component: '/users',
+                    visible: this.cfoService.instanceId && this.cfoService.isMemberAccessManage,
+                    iconSrc: './assets/common/icons/people.svg'
+                },
+                {
+                    caption: this.l('SetupStep_IntroductionTour'),
+                    visible: this.showIntroTour && this.showIntroductionTourLink && this.cfoService.instanceType == 'Main',
+                    onClick: this.showIntro.bind(this),
+                    iconSrc: './assets/common/icons/introduction-tour.svg'
+                }
+            ];
         }
     }
 

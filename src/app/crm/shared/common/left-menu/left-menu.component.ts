@@ -54,7 +54,7 @@ export class LeftMenuComponent {
             iconSrc: 'assets/common/icons/setup.svg'
         },
         {
-            caption: this.ls.l('IntroductionTour'),
+            caption: this.ls.l('CRMDashboardMenu_IntroductionTour'),
             visible: this.showIntroTour,
             iconSrc: 'assets/common/icons/introduction-tour.svg',
             onClick: () => this.openIntro.emit()
