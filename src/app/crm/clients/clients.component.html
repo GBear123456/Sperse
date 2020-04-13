@@ -16,9 +16,9 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
-                     [visible]="!!actionEvent"
-                     target=".dx-state-hover .dx-link.dx-link-edit"
-                     (onItemClick)="onMenuItemClick($event)">
+                [visible]="!!actionEvent"
+                target=".dx-state-hover .dx-link.dx-link-edit"
+                (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <app-static-list
                 [width]="'180px'"
@@ -34,11 +34,11 @@
         <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
         <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
         <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
-                                  [bulkUpdateMode]="true"
-                                  [filterModel]="filterModelAssignment"
-                                  [proxyService]="contactProxy"
-                                  [permissionKey]="permissions.CRMCustomersManageAssignments"
-                                  [assignedUsersSelector]="assignedUsersSelector">
+                [bulkUpdateMode]="true"
+                [filterModel]="filterModelAssignment"
+                [proxyService]="contactProxy"
+                [permissionKey]="permissions.CRMCustomersManageAssignments"
+                [assignedUsersSelector]="assignedUsersSelector">
         </crm-user-assignment-list>
         <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
         <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
@@ -72,6 +72,7 @@
                             [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" 
                             [allowUpdating]="true">
                         </dxo-editing>
+                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                         <dxi-column cssClass="stars"
                                     [width]="40"
                                     [showInColumnChooser]="false"
@@ -99,7 +100,7 @@
                         <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
+                        <ng-container *ngIf="tenantHasBankCodeFeature">
                             <dxi-column dataField="BankCode"
                                         cellTemplate="bankCodeCell"
                                         [caption]="l('BankCode')"

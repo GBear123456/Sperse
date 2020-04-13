@@ -27,6 +27,7 @@
                               (onOptionChanged)="onGridOptionChanged($event)"
                               (onInitialized)="onInitialized($event)"
                               (onContentReady)="setGridDataLoaded()">
+                    <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                     <dxi-column [caption]="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
                     <dxi-column [caption]="" width="30px" cellTemplate="statusTemplate"></dxi-column>
                     <dxi-column [caption]="l('Time')" dataField="executionTime" dataType="datetime" cssClass="clipboard-holder" sortOrder="desc" sortIndex="0"></dxi-column>
