@@ -1,4 +1,4 @@
-<div class="invite-user-form" *ngIf="showInviteUserForm$ | async">
+<div class="invite-user-form" *ngIf="showInviteUserForm$ | async; else userInfo">
     <dx-scroll-view showScrollbar="onHover">
         <dx-validation-group #inviteValidationGroup>
             <div class="row">
@@ -92,70 +92,72 @@
         </dx-validation-group>
     </dx-scroll-view>
 </div>
-<mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="data?.userId">
-    <mat-tab label="General">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="user-info row" #row>
-                <div class="col-md-5" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
-                    <div class="section-item clearfix">
-                        <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
-                        <inplace-edit #InPlaceEmail
-                                      [id]="null"
-                                      [value]="data && data.user && data.user[EMAIL_FIELD]"
-                                      [isEditDialogEnabled]="true"
-                                      [validationRules]="validationRules[EMAIL_FIELD] || []"
-                                      [lEntityName]="EMAIL_FIELD"
-                                      [editPlaceholder]="ls.l('EditValuePlaceholder')"
-                                      (valueChanged)="updateValue($event, EMAIL_FIELD)"
-                                      (openDialog)="InPlaceEmail.showInput(true)">
-                        </inplace-edit>
-                    </div>
-                    <div class="section-item clearfix">
-                        <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>
-                        <ul *ngIf="!phoneInplaceEdit">
-                            <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" (click)="phoneInPlaceEdit()"></i></li>
-                        </ul>
-                        <div class="inplace-edit-wrapper" *ngIf="phoneInplaceEdit">
-                            <country-phone-number [(phoneNumber)]="data.user.phoneNumber" #countryPhoneNumber></country-phone-number>
-                            <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber.isValid())"></dx-button>
-                            <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
+<ng-template #userInfo>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <mat-tab label="General">
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="user-info row" #row>
+                    <div class="col-md-5" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                        <div class="section-item clearfix">
+                            <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
+                            <inplace-edit #InPlaceEmail
+                                          [id]="null"
+                                          [value]="data && data.user && data.user[EMAIL_FIELD]"
+                                          [isEditDialogEnabled]="true"
+                                          [validationRules]="validationRules[EMAIL_FIELD] || []"
+                                          [lEntityName]="EMAIL_FIELD"
+                                          [editPlaceholder]="ls.l('EditValuePlaceholder')"
+                                          (valueChanged)="updateValue($event, EMAIL_FIELD)"
+                                          (openDialog)="InPlaceEmail.showInput(true)">
+                            </inplace-edit>
                         </div>
+                        <div class="section-item clearfix">
+                            <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>
+                            <ul *ngIf="!phoneInplaceEdit">
+                                <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" (click)="phoneInPlaceEdit()"></i></li>
+                            </ul>
+                            <div class="inplace-edit-wrapper" *ngIf="phoneInplaceEdit">
+                                <country-phone-number [(phoneNumber)]="data.user.phoneNumber" #countryPhoneNumber></country-phone-number>
+                                <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber.isValid())"></dx-button>
+                                <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
+                            </div>
+                        </div>
+                        <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
+                        <div class="title">
+                            {{ls.l('Options') + ':'}}
+                        </div>
+                        <ul *ngIf="data && data?.user" class="items-list">
+                            <li>
+                                <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="ls.l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
+                            </li>
+                            <li>
+                                <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isTwoFactorEnabled" [text]="ls.l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
+                            </li>
+                            <li>
+                                <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isLockoutEnabled" [text]="ls.l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
+                            </li>
+                        </ul>
                     </div>
-                    <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
-                    <div class="title">
-                        {{ls.l('Options') + ':'}}
+                    <div class="col-md-4">
+                        <div class="title">
+                            {{ls.l('Roles') + ':'}}
+                        </div>
+                        <ul class="items-list">
+                            <li *ngFor="let role of data?.roles">
+                                <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate($event, role)"></dx-check-box>
+                            </li>
+                        </ul>
                     </div>
-                    <ul *ngIf="data && data?.user" class="items-list">
-                        <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="ls.l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
-                        </li>
-                        <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isTwoFactorEnabled" [text]="ls.l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
-                        </li>
-                        <li>
-                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isLockoutEnabled" [text]="ls.l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
-                        </li>
-                    </ul>
                 </div>
-                <div class="col-md-4">
-                    <div class="title">
-                        {{ls.l('Roles') + ':'}}
-                    </div>
-                    <ul class="items-list">
-                        <li *ngFor="let role of data?.roles">
-                            <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate($event, role)"></dx-check-box>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </dx-scroll-view>
-    </mat-tab>
-    <mat-tab label="Permissions">
-        <dx-scroll-view showScrollbar="onHover">
-            <permission-tree *ngIf="selectedTabIndex == PERMISSIONS_TAB_INDEX"></permission-tree>
-        </dx-scroll-view>
-    </mat-tab>
-    <mat-tab label="Login Attempts">
-        <login-attemps *ngIf="selectedTabIndex == LOGIN_ATTEMPTS_TAB_INDEX"></login-attemps>
-    </mat-tab>
-</mat-tab-group>
+            </dx-scroll-view>
+        </mat-tab>
+        <mat-tab label="Permissions">
+            <dx-scroll-view showScrollbar="onHover">
+                <permission-tree *ngIf="selectedTabIndex == PERMISSIONS_TAB_INDEX"></permission-tree>
+            </dx-scroll-view>
+        </mat-tab>
+        <mat-tab label="Login Attempts">
+            <login-attemps *ngIf="selectedTabIndex == LOGIN_ATTEMPTS_TAB_INDEX"></login-attemps>
+        </mat-tab>
+    </mat-tab-group>
+</ng-template>
