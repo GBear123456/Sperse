@@ -60,13 +60,6 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
     }
 
     ngOnInit() {
-        if (!this.showIntroductionTourLink && this.instanceType == 'Main') {
-            this.items.push({
-                caption: this.l('SetupStep_YourDashboard'),
-                component: '/start',
-                iconSrc: './assets/common/icons/statistics.svg'
-            });
-        }
         if (!this.items || !this.items.length) {
             this.items = [
                 {
@@ -130,6 +123,13 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
                     iconSrc: './assets/common/icons/introduction-tour.svg'
                 }
             ];
+        }
+        if (!this.showIntroductionTourLink && this.instanceType == 'Main') {
+            this.items.push({
+                caption: this.l('SetupStep_YourDashboard'),
+                component: '/start',
+                iconSrc: './assets/common/icons/statistics.svg'
+            });
         }
     }
 
