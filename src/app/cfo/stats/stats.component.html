@@ -13,7 +13,7 @@
 <div [hidden]="!statsData || !statsData.length" class="main-wrapper wo-animation">
     <div class="mainStatsView">
         <cfo-left-menu [items]="leftSideBarItems"
-                       [hidden]="this.filtersService.fixed"
+                       [hidden]="filtersService.fixed"
                        [selectedItemIndex]="0"
                        headerTitle=""
                        (onToggle)="calculateChartsSize()">
