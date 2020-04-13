@@ -145,6 +145,29 @@
         }
     }
 
+    ::ng-deep .fixed-total-row {
+        position: fixed;
+        bottom: 0;
+        height: 30px;
+        border-top: 1px solid #ddd;
+        display: flex;
+        & > div {
+            height: 100%;
+            background-color: #def9f3;
+            text-align: right;
+            padding: 0 10px;
+            line-height: 27px;
+            border-left: 1px solid #ddd;
+            &:first-child {
+                text-align: left;
+                border: none;
+                font-weight: 600;
+                letter-spacing: 0.11px;
+                color: #212c36;
+            }
+        }
+    }
+
     .close-button {
         left: initial;
         right: 51px;

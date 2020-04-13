@@ -49,6 +49,7 @@ export class PivotGridComponent implements OnInit {
     ];
     private contentShown: BehaviorSubject<boolean> = new BehaviorSubject(false);
     contentShown$: Observable<boolean> = this.contentShown.asObservable();
+    fixedCells = [];
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -89,22 +90,21 @@ export class PivotGridComponent implements OnInit {
 
     updateTotalCellsSizes() {
         setTimeout(() => {
-            this.pivotGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach((grandTotalCell: HTMLTableCellElement) => {
+            this.fixedCells = [];
+            this.pivotGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach((grandTotalCell: HTMLTableCellElement, index) => {
                 if (grandTotalCell.parentElement.previousSibling &&
-                    (grandTotalCell.parentElement.style.position === 'fixed'
-                        || grandTotalCell.getBoundingClientRect().bottom > window.innerHeight)
+                    grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
                 ) {
-                    grandTotalCell.parentElement.style.position = 'fixed';
-                    grandTotalCell.parentElement.style.bottom = '0';
-                    /** Get width and height of cell from previous row */
-                    const cellIndex = grandTotalCell.cellIndex;
-                    const sameElementFromPrevRow = grandTotalCell.parentElement.previousSibling['children'][cellIndex];
-                    grandTotalCell.style.width = (sameElementFromPrevRow.getBoundingClientRect().width - 20) + 'px';
-                    if (!grandTotalCell.closest('.dx-pivotgrid-vertical-headers')) {
-                        grandTotalCell.style.height = grandTotalCell.parentElement.clientHeight + 'px';
-                    }
+                    const cellWidth = grandTotalCell.getBoundingClientRect().width + (index === 0 ? 1 : 0) + 'px';
+                    this.fixedCells.push({
+                        value: grandTotalCell.innerText,
+                        width: cellWidth
+                    });
                 }
             });
+            if (this.fixedCells.length) {
+                this.changeDetectorRef.detectChanges();
+            }
         });
     }
 

@@ -17,3 +17,6 @@
 </dx-pivot-grid>
 <button class="close-button" *ngIf="showFieldPanel" (click)="toggleFieldPanel()"></button>
 <loading-spinner *ngIf="isLoading"></loading-spinner>
+<div class="fixed-total-row" *ngIf="fixedCells.length">
+    <div *ngFor="let cell of fixedCells" [ngStyle]="{ width: cell.width }">{{ cell.value }}</div>
+</div>

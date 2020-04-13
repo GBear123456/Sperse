@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Observable, forkJoin } from 'rxjs';
-import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
+import { filter, finalize, pluck, skip, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -369,12 +369,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     ngOnInit() {
         this.activate();
+        this.handleFiltersPining();
     }
 
     activate() {
         super.activate();
 
         this.initFilterConfig();
+        this.subscribeToFilter();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -389,6 +391,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     get dataSource() {
         return this.selectedOrderType === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
+    }
+
+    private handleFiltersPining() {
+        this.filtersService.filterFixed$.pipe(
+            takeUntil(this.destroy$),
+            skip(1)
+        ).subscribe(() => {
+            if (this.pivotGridComponent) {
+                setTimeout(() => {
+                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.updateTotalCellsSizes();
+                }, 1001);
+            }
+        });
     }
 
     private getSubscriptionsFilter(caption: string) {
@@ -833,6 +849,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 : this.subscriptionsFilters
             );
         }
+    }
+
+    subscribeToFilter() {
         this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
