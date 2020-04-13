@@ -76,7 +76,7 @@ import {
     ServiceTypeInfo
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { CustomReuseStrategy } from '@root/root-routing.module';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';

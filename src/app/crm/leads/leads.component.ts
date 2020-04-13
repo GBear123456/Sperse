@@ -69,7 +69,7 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { CustomReuseStrategy } from '@root/root-routing.module';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';

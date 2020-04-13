@@ -11,21 +11,22 @@ import { first, mapTo, skip, switchMap } from 'rxjs/operators';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { SyncAccountServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { BankAccountsComponent } from '../../../shared/cfo/bank-accounts/bank-accounts.component';
 
 @Component({
     selector: 'bank-accounts',
     templateUrl: './bank-accounts-general.component.html',
     styleUrls: ['./bank-accounts-general.component.less'],
-    providers: [ BankAccountsGeneralService, SyncAccountServiceProxy, LifecycleSubjectsService ]
+    providers: [ SyncAccountServiceProxy, LifecycleSubjectsService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit {
     @ViewChild(SynchProgressComponent, { static: false }) syncComponent: SynchProgressComponent;
+    @ViewChild(BankAccountsComponent, { static: false }) bankAccountsComponent: BankAccountsComponent;
 
     private rootComponent: any;
     createAccountAvailable = false;
@@ -34,7 +35,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         injector: Injector,
         private synchProgress: SynchProgressService,
         private syncAccountServiceProxy: SyncAccountServiceProxy,
-        private bankAccountsGeneralService: BankAccountsGeneralService,
         private dialog: MatDialog,
         private store$: Store<RootStore.State>,
         private lifeCycleService: LifecycleSubjectsService,
@@ -74,21 +74,23 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     }
 
     refresh() {
-        this.bankAccountsGeneralService.refreshBankAccounts();
+        this.bankAccountsComponent.refresh();
     }
 
     repaint() {
-        this.bankAccountsGeneralService.repaintAccountGrid();
+        this.bankAccountsComponent.repaint();
     }
 
     activate() {
         this.lifeCycleService.activate.next();
         this.syncComponent.activate();
+        this.bankAccountsComponent.activate();
         this.rootComponent.overflowHidden(true);
     }
 
     deactivate() {
         this.syncComponent.deactivate();
+        this.bankAccountsComponent.deactivate();
         this.rootComponent.overflowHidden();
     }
 }

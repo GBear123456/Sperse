@@ -26,14 +26,7 @@ import { ReportsComponent } from './reports/reports.component';
                     {
                         path: 'linkaccounts',
                         data: { permission: '', reuse: true },
-                        component: BankAccountsGeneralComponent,
-                        children: [
-                            {
-                                path: '',
-                                component: BankAccountsComponent,
-                                data: { permission: '' },
-                            }
-                        ]
+                        component: BankAccountsGeneralComponent
                     },
                     {
                         path: 'business-entities',

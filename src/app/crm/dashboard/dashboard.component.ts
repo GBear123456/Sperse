@@ -32,7 +32,7 @@ import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
-import { CustomReuseStrategy } from '@root/root-routing.module';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';

@@ -34,8 +34,7 @@ import {
     RenameSyncAccountInput,
     BankAccountDto,
     SyncProgressOutput,
-    InstanceType,
-    SyncProgressStatus
+    InstanceType
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';

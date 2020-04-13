@@ -4,12 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription, Observable } from 'rxjs';
-import { first, filter, takeUntil, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
-import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -25,10 +24,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BankAccountsWidgetComponent, { static: false }) bankAccountsWidget: BankAccountsWidgetComponent;
-    syncCompletedSubscription: Subscription;
-    refreshSubscription: Subscription;
-    repaintSubscription: Subscription;
-    syncAccounts;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
     nameColumnWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
         map((collapsed: boolean) => collapsed || window.innerWidth > 1400 ? null : 250)
@@ -37,26 +32,16 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     constructor(
         injector: Injector,
         private synchProgress: SynchProgressService,
-        private bankAccountsGeneralService: BankAccountsGeneralService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
         private leftMenuService: LeftMenuService,
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        this.subscribeToObservables();
     }
 
     ngOnInit() {
         this.activate();
-        this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
-        /** Redirect user to the start page if instance isn't initialized */
-        this._cfoService.initialized$.pipe(
-            filter((initialized: boolean) => !initialized),
-            takeUntil(this.deactivate$)
-        ).subscribe(() => {
-            this._router.navigate(['../start'], { relativeTo: this.route.parent } );
-        });
     }
 
     ngAfterViewInit() {
@@ -64,20 +49,19 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     }
 
     subscribeToObservables() {
-        this.syncCompletedSubscription = this.synchProgress.syncCompleted$.pipe(
+        /** Redirect user to the start page if instance isn't initialized */
+        this._cfoService.initialized$.pipe(
+            filter((initialized: boolean) => !initialized),
+            takeUntil(this.deactivate$)
+        ).subscribe(() => {
+            this._router.navigate(['../start'], { relativeTo: this.route.parent } );
+        });
+        this.synchProgress.syncCompleted$.pipe(
             takeUntil(this.deactivate$),
-            filter(completed => !!completed)
+            filter(Boolean)
         ).subscribe(() => {
             this.refresh();
         });
-        this.refreshSubscription = this.bankAccountsGeneralService.refresh$.pipe(takeUntil(this.deactivate$))
-            .subscribe( () => {
-                this.refresh();
-            });
-        this.repaintSubscription = this.bankAccountsGeneralService.repaint$.pipe(takeUntil(this.deactivate$))
-            .subscribe( () => {
-                setTimeout(() => this.repaint(), 1001);
-            });
     }
 
     refresh() {
@@ -124,6 +108,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     }
 
     activate() {
+        this.subscribeToObservables();
         /** Load sync accounts */
         this.bankAccountsService.load(false);
     }

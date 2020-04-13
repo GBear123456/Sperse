@@ -88,8 +88,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         merge(
             this.syncProgressService.lastProgressFinished$,
             this.syncProgressService.syncCompleted$.pipe(filter(completed => !completed))
-        ).pipe(takeUntil(this.deactivate$), first())
-        .subscribe(
+        ).pipe(
+            takeUntil(this.deactivate$),
+            first()
+        ).subscribe(
             () => {
                 this.showLoader = false;
                 this.onSyncStarted.emit();

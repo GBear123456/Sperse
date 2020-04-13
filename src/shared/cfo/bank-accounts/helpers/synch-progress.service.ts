@@ -1,5 +1,6 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import { Observable, Subject, of ,  BehaviorSubject, Subscription } from 'rxjs';
@@ -13,7 +14,6 @@ import {
     SyncServiceProxy,
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { HttpClient } from '@angular/common/http';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { SyncTypeIds } from '@shared/AppEnums';
 
@@ -74,15 +74,16 @@ export class SynchProgressService {
     public startSynchronization(forcedSync: boolean = false, newOnly: boolean = true, syncType?: SyncTypeIds, syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
         this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
-            .subscribe(() => {
-                this.tryCount = 0;
-                this.hasFailedAccounts = false;
-                if (forcedSync || (!this.getSyncProgressSubscription && (!this.timeoutsIds || !this.timeoutsIds.length))) {
-                    this.runSynchProgress();
-                }
-            },
-            this.syncAllFailed.bind(this)
-        );
+            .subscribe(
+                () => {
+                    this.tryCount = 0;
+                    this.hasFailedAccounts = false;
+                    if (forcedSync || (!this.getSyncProgressSubscription && (!this.timeoutsIds || !this.timeoutsIds.length))) {
+                        this.runSynchProgress();
+                    }
+                },
+                this.syncAllFailed.bind(this)
+            );
         this.runSynchProgress();
     }
 
