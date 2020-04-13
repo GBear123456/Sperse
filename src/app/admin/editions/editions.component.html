@@ -22,7 +22,7 @@
             <div>
                 <div id="productsGrid">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid id="gridContainer"
+                    <dx-data-grid class="main-component-view"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
@@ -35,7 +35,7 @@
                                   (onCellClick)="openCreateOrEditDialog($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
                                   [dataSource]="dataSource">
-                        <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
+                        <dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing>
                         <dxi-column [caption]="l('ModuleName')"
                                     dataField="module"
                                     cssClass="clipboard-holder"

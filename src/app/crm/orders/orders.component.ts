@@ -400,7 +400,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ).subscribe(() => {
             if (this.pivotGridComponent) {
                 setTimeout(() => {
-                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.dataGrid.instance.updateDimensions();
                     this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
@@ -701,11 +701,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                     action: (options) => {
 
                                         if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                            this.pivotGridComponent.dataGrid.instance.option(
                                                 'export.fileName',
                                                 this.exportService.getFileName(null, 'Subscriptions_PivotGrid')
                                             );
-                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
+                                            this.pivotGridComponent.dataGrid.instance.exportToExcel();
                                         } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
                                             this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                             this.exportToXLS(options);
@@ -790,7 +790,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance;
         CrmService.setDataSourceToComponent(this.subscriptionsPivotGridDataSource, pivotGridInstance);
     }
 
@@ -873,7 +873,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         let context: any = this;
         let grid = this.selectedOrderType === OrderType.Order
             ? this.ordersGrid
-            : (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid ? this.subscriptionsGrid : this.pivotGridComponent.pivotGrid);
+            : (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid ? this.subscriptionsGrid : this.pivotGridComponent.dataGrid);
         if (this.selectedOrderType === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
             context = this.pipelineComponent;
             context.searchColumns = this.searchColumns;

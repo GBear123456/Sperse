@@ -407,7 +407,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).subscribe(() => {
             if (this.pivotGridComponent) {
                 setTimeout(() => {
-                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.dataGrid.instance.updateDimensions();
                     this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
@@ -466,7 +466,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private handlePivotGridUpdate() {
         this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
-            this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+            this.pivotGridComponent.dataGrid.instance.updateDimensions();
             this.processFilterInternal();
         });
     }
@@ -564,13 +564,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showPartnerDetails(event) {
-        let partnerId = event.data && event.data.Id;
-        if (!partnerId)
-            return;
+        let data = event.data || event,
+            orgId = data.OrganizationId,
+            partnerId = data.Id;
+
+        if (event.component)
+            event.component.cancelEditData();
 
         this.searchClear = false;
-        event.component.cancelEditData();
-        let orgId = event.data.OrganizationId;
         setTimeout(() => {
             this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/partners'} });
@@ -903,11 +904,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 {
                                     action: (options) => {
                                         if (this.showPivotGrid) {
-                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                            this.pivotGridComponent.dataGrid.instance.option(
                                                 'export.fileName',
                                                 this.exportService.getFileName(null, 'PivotGrid')
                                             );
-                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
+                                            this.pivotGridComponent.dataGrid.instance.exportToExcel();
                                         } else if (this.showDataGrid) {
                                             this.exportToXLS(options);
                                         }
@@ -1061,7 +1062,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     processFilterInternal() {
         if (this.showDataGrid || this.showPivotGrid) {
             this.processODataFilter(
-                this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom
@@ -1088,7 +1089,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance;
         CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 

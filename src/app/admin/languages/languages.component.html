@@ -21,22 +21,21 @@
 
     <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
-        <dx-data-grid id="gridContainer"
-                      class="main-component-view"
-                      [dataSource]="dataSource"
-                      [allowColumnReordering]="true"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="true"
-                      [hoverStateEnabled]="true"
-                      [loadPanel]="{ enabled: false }"
-                      [pager]="defaultGridPagerConfig"
-                      (onOptionChanged)="onGridOptionChanged($event)"
-                      (onInitialized)="onInitialized($event)"
-                      (onEditingStart)="toggleActionsMenu($event)"
-                      (onRowPrepared)="onRowPrepared($event)"
-                      (onContentReady)="setGridDataLoaded()"
-                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-            <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
+        <dx-data-grid class="main-component-view"
+            [dataSource]="dataSource"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [loadPanel]="{ enabled: false }"
+            [pager]="defaultGridPagerConfig"
+            (onOptionChanged)="onGridOptionChanged($event)"
+            (onInitialized)="onInitialized($event)"
+            (onEditingStart)="toggleActionsMenu($event)"
+            (onRowPrepared)="onRowPrepared($event)"
+            (onContentReady)="setGridDataLoaded()"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing>
             <dxi-column dataField="displayName" [caption]="l('Name')" cssClass="clipboard-holder" width="25%"></dxi-column>
             <dxi-column dataField="name" [sortingMethod]="sortLanguages" [sortIndex]="0" sortOrder="asc" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="creationTime" dataType="date" [caption]="l('CreationTime')" cssClass="clipboard-holder"></dxi-column>

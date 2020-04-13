@@ -47,7 +47,6 @@
                 <div id="ClientsTable">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="main-component-view limitedPagerTotal"
-                                  id="gridContainer"
                                   accesskey="narrowHeaderPanel"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
@@ -68,7 +67,11 @@
                                        showCheckBoxesMode="always"
                                        mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
+                        <dxo-editing mode="popup"
+                            [texts]="{editRow: ''}"
+                            [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" 
+                            [allowUpdating]="true">
+                        </dxo-editing>
                         <dxi-column cssClass="stars"
                                     [width]="40"
                                     [showInColumnChooser]="false"
@@ -117,7 +120,7 @@
                             </bank-code-letters>
                         </div>
                         <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled"
+                        <dxi-column [visible]="isCfoLinkOrVerifyEnabled"
                                     name="LinkToCFO"
                                     cellTemplate="linkToCFOTemplate"
                                     [width]="80"
@@ -126,14 +129,14 @@
                                     [allowEditing]="false">
                         </dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                            <div *ngIf="appService.checkCFOClientAccessPermission()">
+                            <div *ngIf="isCFOClientAccessAllowed">
                                 <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
                                 <span>
                                     <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
                                 </span>
                                 </ng-container>
                                 <ng-template #verify>
-                                <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
+                                <span *ngIf="canSendVerificationRequest && data.data.StatusId === contactStatus.Active">
                                     <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
                                 </span>
                                 </ng-template>

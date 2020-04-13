@@ -4,7 +4,9 @@ import {
     Injector,
     OnDestroy,
     OnInit,
-    ViewChild
+    ViewChild,
+    ChangeDetectorRef,
+    ChangeDetectionStrategy
 } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -124,7 +126,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
         LifecycleSubjectsService,
         ImpersonationService
     ],
-    //changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
@@ -150,6 +152,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private organizationUnits: OrganizationUnitDto[];
 
     formatting = AppConsts.formatting;
+    isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
+    canSendVerificationRequest = this.appService.canSendVerificationRequest();
+    isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
     statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     filterModelLists: FilterModel = new FilterModel({
@@ -430,13 +435,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(
         injector: Injector,
+        private store$: Store<AppStore.State>,
+        private reuseService: RouteReuseStrategy,
         private contactService: ContactsService,
         private pipelineService: PipelineService,
         private filtersService: FiltersService,
         private clientService: ClientService,
+        private changeDetectorRef: ChangeDetectorRef,
         private contactEmailService: ContactEmailServiceProxy,
-        private store$: Store<AppStore.State>,
-        private reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
         private impersonationService: ImpersonationService,
@@ -531,7 +537,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).subscribe(() => {
             if (this.pivotGridComponent) {
                 setTimeout(() => {
-                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.dataGrid.instance.updateDimensions();
                     this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
@@ -581,7 +587,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private handlePivotGridUpdate(): void {
         this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
-            this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+            this.pivotGridComponent.dataGrid.instance.updateDimensions();
             this.processFilterInternal();
         });
     }
@@ -719,14 +725,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     showClientDetails(event) {
-        if (!event.data)
-            return;
+        let data = event.data || event,
+            orgId = data.OrganizationId,
+            clientId = data.Id;
 
-        let orgId = event.data.OrganizationId,
-            clientId = event.data.Id;
+        if (event.component)
+            event.component.cancelEditData();
 
         this.searchClear = false;
-        event.component.cancelEditData();
         setTimeout(() => {
             this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
                 { queryParams: { referrer: 'app/crm/clients'} });
@@ -966,11 +972,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     action: (options) => {
                                         if (this.dataLayoutType.value === DataLayoutType.PivotGrid) {
-                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                            this.pivotGridComponent.dataGrid.instance.option(
                                                 'export.fileName',
                                                 this.exportService.getFileName(null, 'PivotGrid')
                                             );
-                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
+                                            this.pivotGridComponent.dataGrid.instance.exportToExcel();
                                         } else if (this.dataLayoutType.value === DataLayoutType.DataGrid) {
                                             this.exportToXLS(options);
                                         }
@@ -1128,7 +1134,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance;
         CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 
@@ -1162,9 +1168,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     processFilterInternal() {
         if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
-            || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance) {
+            || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance) {
             this.processODataFilter(
-                this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid.instance,
                 this.dataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom,
@@ -1292,8 +1298,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     toggleActionsMenu(event) {
         this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
             && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
-        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionEvent) => {
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionEvent => {
             this.actionEvent = actionEvent;
+            this.changeDetectorRef.detectChanges();
         });
     }
 

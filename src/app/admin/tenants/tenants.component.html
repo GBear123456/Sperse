@@ -24,8 +24,7 @@
                 <div>
                     <div id="tenantsGrid">
                         <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                        <dx-data-grid id="gridContainer"
-                                      class="main-component-view"
+                        <dx-data-grid class="main-component-view"
                                       [remoteOperations]="true"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
@@ -39,7 +38,7 @@
                                       (onCellClick)="editTenant($event)"
                                       (onEditingStart)="toggleActionsMenu($event)"
                                       [dataSource]="dataSource">
-                            <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
+                            <dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing>
                             <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>
                             <dxi-column [caption]="l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column [caption]="l('Active')" cellTemplate="isActiveTemplate"></dxi-column>
