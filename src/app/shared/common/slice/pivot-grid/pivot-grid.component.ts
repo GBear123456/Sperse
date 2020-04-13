@@ -35,7 +35,7 @@ export class PivotGridComponent implements OnInit {
     public get  componentHeight(): string {
         return this.height + 'px';
     }
-    @ViewChild(DxPivotGridComponent, { static: false }) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxPivotGridComponent, { static: false }) dataGrid: DxPivotGridComponent;
     showFieldPanel = false;
     summaryDisplayModes: any[] = [
         { text: 'None', value: 'none' },
@@ -62,7 +62,7 @@ export class PivotGridComponent implements OnInit {
             first(),
             delay(0)
         ).subscribe(() => {
-            this.pivotGrid.instance.repaint();
+            this.dataGrid.instance.repaint();
         });
     }
 
@@ -73,10 +73,10 @@ export class PivotGridComponent implements OnInit {
                     text: mode.text,
                     selected: e.field.summaryDisplayMode === mode.value,
                     onItemClick: () => {
-                        this.pivotGrid.instance.getDataSource().field(e.field.index, {
+                        this.dataGrid.instance.getDataSource().field(e.field.index, {
                             summaryDisplayMode: mode.value
                         });
-                        this.pivotGrid.instance.getDataSource().load();
+                        this.dataGrid.instance.getDataSource().load();
                     }
                 });
             });
@@ -91,7 +91,7 @@ export class PivotGridComponent implements OnInit {
     updateTotalCellsSizes() {
         setTimeout(() => {
             this.fixedCells = [];
-            this.pivotGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach((grandTotalCell: HTMLTableCellElement, index) => {
+            this.dataGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach((grandTotalCell: HTMLTableCellElement, index) => {
                 if (grandTotalCell.parentElement.previousSibling &&
                     grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
                 ) {

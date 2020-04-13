@@ -488,7 +488,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).subscribe(() => {
             if (this.pivotGridComponent) {
                 setTimeout(() => {
-                    this.pivotGridComponent.pivotGrid.instance.updateDimensions();
+                    this.pivotGridComponent.dataGrid.instance.updateDimensions();
                     this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
@@ -1051,7 +1051,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     action: this.exportData.bind(this, options => {
                                         if (this.showPivotGrid) {
-                                            this.pivotGridComponent.pivotGrid.instance.option(
+                                            this.pivotGridComponent.dataGrid.instance.option(
                                                 'export.fileName',
                                                 this.exportService.getFileName(
                                                     null,
@@ -1059,7 +1059,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                                     this.getUserGroup(this.contactGroup)
                                                 )
                                             );
-                                            this.pivotGridComponent.pivotGrid.instance.exportToExcel();
+                                            this.pivotGridComponent.dataGrid.instance.exportToExcel();
                                         } else if (this.showPipeline || this.showDataGrid) {
                                             return this.exportToXLS(
                                                 options,
@@ -1241,9 +1241,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let contexts = cxts && cxts.length ? cxts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
-                    const filterQuery = context.processODataFilter.call(
-                        context,
-                        this.showPivotGrid ? this.pivotGridComponent.pivotGrid.instance : this.dataGrid.instance,
+                    const filterQuery = context.processODataFilter.call(context,
+                        context.dataGrid && context.dataGrid.instance,
                         this.dataSourceURI,
                         this.filters,
                         this.filtersService.getCheckCustom
@@ -1279,7 +1278,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private setPivotGridInstance() {
-        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.pivotGrid && this.pivotGridComponent.pivotGrid.instance;
+        const pivotGridInstance = this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance;
         CrmService.setDataSourceToComponent(this.pivotGridDataSource, pivotGridInstance);
     }
 

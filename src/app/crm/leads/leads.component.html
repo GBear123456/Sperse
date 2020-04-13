@@ -51,7 +51,6 @@
                     <div id="LeadsTable">
                         <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                         <dx-data-grid
-                                id="gridContainer"
                                 class="limitedPagerTotal main-component-view"
                                 accessKey="narrowHeaderPanel"
                                 noDataText=""
@@ -74,7 +73,11 @@
                                     showCheckBoxesMode="always"
                                     mode="multiple">
                             </dxo-selection>
-                            <dxo-editing mode="popup" [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" [allowUpdating]="true"></dxo-editing>
+                            <dxo-editing mode="popup"
+                                [texts]="{editRow: ''}"
+                                [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }" 
+                                [allowUpdating]="true">
+                            </dxo-editing>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
                             <dxi-column dataField="SourceOrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>

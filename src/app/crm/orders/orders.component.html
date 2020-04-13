@@ -33,10 +33,9 @@
             <div [hidden]="isDataLoaded && !totalRowCount || showOrdersPipeline" class="portlet light no-padding margin-bottom-0">
                 <div class="portlet-body">
                     <div>
-                        <div id="ClientsTable">
+                        <div>
                             <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                             <dx-data-grid #ordersGrid
-                                          id="gridContainer"
                                           class="main-component-view"
                                           accesskey="narrowHeaderPanel"
                                           [allowColumnReordering]="true"
@@ -57,7 +56,9 @@
                                                mode="multiple">
                                 </dxo-selection>
                                 <dxo-editing mode="popup"
-                                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }" [allowUpdating]="true">
+                                            [texts]="{editRow: ''}"
+                                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }" 
+                                            [allowUpdating]="true">
                                 </dxo-editing>
                                 <dxi-column cssClass="stars"
                                             [width]="40"
@@ -148,13 +149,13 @@
                               [pager]="defaultGridPagerConfig"
                               [hoverStateEnabled]="true"
                               [remoteOperations]="{
-	                              filtering: false,
-	                              grouping: true,
-	                              groupPaging: true,
-	                              paging: true,
-	                              sorting: true,
-	                              summary: true
-	                          }"
+                                  filtering: false,
+                                  grouping: true,
+                                  groupPaging: true,
+                                  paging: true,
+                                  sorting: true,
+                                  summary: true
+                              }"
                               [allowColumnResizing]="true"
                               (onCellClick)="onCellClick($event, 'subscriptions')"
                               (onContentReady)="onContentReady($event)">
