@@ -21,6 +21,7 @@ import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
 import 'devextreme/data/odata/store';
 import { BehaviorSubject, Observable, ReplaySubject, Subject, forkJoin, of } from 'rxjs';
 import { first, skip, switchMap, mapTo, map, takeUntil, pluck, publishReplay, refCount } from 'rxjs/operators';
@@ -71,11 +72,10 @@ import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accoun
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { Period } from '@app/shared/common/period/period.enum';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
-import { BankAccountDto } from '../../../shared/service-proxies/service-proxies';
-import { PdfExportHeader } from '../../../shared/common/export/pdf-export-header.interface';
+import { BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { BusinessEntitiesChooserComponent } from '../../../shared/cfo/bank-accounts/business-entities-chooser/business-entities-chooser.component';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -95,9 +95,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
-    @ViewChild('counterpartyFilter', { static: false }) counterpartyChooser: ElementRef;
-    @ViewChild('becFilter', { static: false }) businessEntitiesChooser: ElementRef;
-    @ViewChild('categoryFilter', { static: false }) categoryChooser: ElementRef;
+    @ViewChild('counterpartyFilterContainer', { static: false }) counterpartyFilterContainer: ElementRef;
+    @ViewChild('counterpartyFilter', { static: false }) counterpartyFilter: DxDropDownBoxComponent;
+    @ViewChild('becFilterContainer', { static: false }) businessEntitiesFilterContainer: ElementRef;
+    @ViewChild(BusinessEntitiesChooserComponent, { static: false }) businessEntitiesChooser: BusinessEntitiesChooserComponent;
+    @ViewChild('categoryFilterContainer', { static: false }) categoryChooserContainer: ElementRef;
+    @ViewChild('categoryFilter', { static: false }) categoryChooser: DxDropDownBoxComponent;
 
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
@@ -712,9 +715,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         name: 'rowFilter',
                         action: event => {
                             if (this.isHeaderFilterVisible) {
-                                let hostElement = this.getElementRef().nativeElement;
-                                hostElement.appendChild(this.businessEntitiesChooser.nativeElement);
-                                hostElement.appendChild(this.categoryChooser.nativeElement);
+                                this.moveDropdownsToHost();
                             }
                             DataGridService.enableFilteringRow(this.dataGrid, event);
                         },
@@ -1200,13 +1201,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if ($event.rowType === 'filter') {
             if ($event.column.dataField == 'BusinessEntityId') {
                 $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.businessEntitiesChooser.nativeElement);
+                $event.cellElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
             } else if ($event.column.dataField == 'CashflowCategoryName') {
                 $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.categoryChooser.nativeElement);
+                $event.cellElement.appendChild(this.categoryChooserContainer.nativeElement);
             } else if ($event.column.dataField == 'CounterpartyName') {
                 $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.counterpartyChooser.nativeElement);
+                $event.cellElement.appendChild(this.counterpartyFilterContainer.nativeElement);
             }
         } else if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
@@ -1493,7 +1494,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             filterMethod: () => {
                 return {
                     or: event.component.option('selectedItems').map(item => {
-                        return {CounterpartyId: item.id};
+                        return { CounterpartyId: item.id };
                     }
                 )};
             }
@@ -1510,6 +1511,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (e.gridCell.rowType === 'header' && e.gridCell.column.dataField === 'Description') {
             e.value = 'Description';
         }
+    }
+
+    private moveDropdownsToHost() {
+        let hostElement = this.getElementRef().nativeElement;
+        hostElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
+        hostElement.appendChild(this.categoryChooserContainer.nativeElement);
+        hostElement.appendChild(this.counterpartyFilterContainer.nativeElement);
     }
 
     ngOnDestroy() {
@@ -1544,8 +1552,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     deactivate() {
         super.deactivate();
-
         this.dialog.closeAll();
+        this.moveDropdownsToHost();
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden(false);

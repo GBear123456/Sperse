@@ -74,11 +74,11 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     }
 
     refresh() {
-        this.bankAccountsComponent.refresh();
+        this.bankAccountsComponent && this.bankAccountsComponent.refresh();
     }
 
     repaint() {
-        this.bankAccountsComponent.repaint();
+        this.bankAccountsComponent && this.bankAccountsComponent.repaint();
     }
 
     activate() {

@@ -1,5 +1,5 @@
 <div class="selectionList">
-    <ng-container *ngIf="bankAccountsService.sortedBusinessEntities$ | async as dataSource">
+    <ng-container *ngIf="businessEntities$ | async as dataSource">
         <dx-drop-down-box #dropDown *ngIf="dataSource.length"
             width="330px"
             [value]="getSelectedTitle(dataSource)"

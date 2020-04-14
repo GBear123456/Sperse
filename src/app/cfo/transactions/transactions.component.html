@@ -1,10 +1,11 @@
-<div #becFilter [hidden]="!isHeaderFilterVisible" class="bec-filter">
+<div #becFilterContainer [hidden]="!isHeaderFilterVisible" class="bec-filter">
     <business-entities-chooser
         (onChanged)="applyTotalBankAccountFilter(true)">
     </business-entities-chooser>
 </div>
-<div #categoryFilter [hidden]="!isHeaderFilterVisible" class="category-filter">
+<div #categoryFilterContainer [hidden]="!isHeaderFilterVisible" class="category-filter">
     <dx-drop-down-box
+        #categoryFilter
         width="340px"
         [value]=""
         [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'">
@@ -25,8 +26,9 @@
         </div>
     </dx-drop-down-box>
 </div>
-<div #counterpartyFilter [hidden]="!isHeaderFilterVisible" class="counterparty-filter">
+<div #counterpartyFilterContainer [hidden]="!isHeaderFilterVisible" class="counterparty-filter">
     <dx-drop-down-box
+        #counterpartyFilter
         width="340px"
         [value]=""
         [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'">
@@ -124,7 +126,7 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
-                        <dxo-export [enabled]="true" [customizeExcelCell]="customizeExcelCell"></dxo-export>
+                        <dxo-export [enabled]="false" [customizeExcelCell]="customizeExcelCell"></dxo-export>
                         <dxi-column dataField="Date"
                                     dataType="date"
                                     cssClass="tabular"

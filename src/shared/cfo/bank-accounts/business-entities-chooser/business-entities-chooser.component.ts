@@ -1,16 +1,18 @@
 /** Core imports */
-import { Component, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import { DxDropDownBoxComponent } from 'devextreme-angular/ui/drop-down-box';
 import difference from 'lodash/difference';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { BusinessEntityDto } from '../../../service-proxies/service-proxies';
 
 @Component({
     selector: 'business-entities-chooser',
@@ -38,10 +40,12 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     syncAccounts  = [];
     selectedItems = [];
     selectedAll;
+    businessEntities$: Observable<BusinessEntityDto[]> = this.bankAccountsService.sortedBusinessEntities$;
 
     constructor(
         private ls: AppLocalizationService,
-        public bankAccountsService: BankAccountsService
+        private bankAccountsService: BankAccountsService,
+        public elementRef: ElementRef
     ) {}
 
     public selectedItemsChange() {
