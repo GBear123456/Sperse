@@ -70,6 +70,12 @@ export class UserManagementService {
             }
         },
         {
+            name: this.ls.l('MyOrderHistory'),
+            iconClass: 'order-history',
+            visible:  this.checkBankCodeFeature(),
+            onClick: () => this.router.navigateByUrl('code-breaker/order-history/subscriptions')
+        },
+        {
             name: this.ls.l('ChangePassword'),
             id: 'UserProfileChangePasswordLink',
             iconClass: 'flaticon-more-v6',

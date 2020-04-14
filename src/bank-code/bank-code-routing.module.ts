@@ -39,6 +39,10 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
                         data: {
                             externalUrl: 'https://www.eventbrite.com/o/cheri-tree-14479776861'
                         }
+                    },
+                    {
+                        path: 'order-history',
+                        loadChildren: () => import('bank-code/order-history/order-history.module').then(m => m.OrderHistoryModule)
                     }
                 ]
             }
