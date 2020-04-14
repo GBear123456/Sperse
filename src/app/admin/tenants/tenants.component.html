@@ -38,6 +38,7 @@
                                       (onCellClick)="editTenant($event)"
                                       (onEditingStart)="toggleActionsMenu($event)"
                                       [dataSource]="dataSource">
+                            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                             <dxo-editing mode="popup" [allowUpdating]="true" [texts]="{editRow: ''}"></dxo-editing>
                             <dxi-column [caption]="l('TenancyCodeName')" dataField="tenancyName" cssClass="clipboard-holder" width="25%"></dxi-column>
                             <dxi-column [caption]="l('Name')" dataField="name" cssClass="clipboard-holder"></dxi-column>

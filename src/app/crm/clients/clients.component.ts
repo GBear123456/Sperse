@@ -155,6 +155,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
     isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
+    tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     filterModelLists: FilterModel = new FilterModel({
@@ -455,7 +456,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         public userManagementService: UserManagementService
     ) {
         super(injector);
-        if (this.userManagementService.checkBankCodeFeature()) {
+        if (this.tenantHasBankCodeFeature) {
             this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
                 dataField: 'BankCode'

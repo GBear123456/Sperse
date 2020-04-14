@@ -46,7 +46,7 @@
                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
-
+                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                         <dxi-column dataField="displayName" [caption]="l('Role')" cssClass="clipboard-holder" width="33%"></dxi-column>
                         <dxi-column dataField="moduleId" [caption]="l('Module')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
