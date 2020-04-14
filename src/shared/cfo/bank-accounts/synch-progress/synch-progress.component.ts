@@ -84,7 +84,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     syncAll(toggleComponent = false) {
         this.showLoader = true;
         if (toggleComponent) this.toggleComponent();
-        this.syncProgressService.startSynchronization(true, false);
+        this.syncProgressService.startSynchronization(true);
         merge(
             this.syncProgressService.lastProgressFinished$,
             this.syncProgressService.syncCompleted$.pipe(filter(completed => !completed))
