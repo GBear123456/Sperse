@@ -24,7 +24,16 @@ import orderBy from 'lodash/orderBy';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { SyncAccountBankDto, BankAccountDto, BankAccountsServiceProxy, BusinessEntityDto, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import {
+    SyncAccountBankDto,
+    BankAccountDto,
+    BankAccountsServiceProxy,
+    BusinessEntityDto,
+    BusinessEntityServiceProxy,
+    InstanceType,
+    SyncProgressDto,
+    BankAccountProgress
+} from '@shared/service-proxies/service-proxies';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -615,6 +624,21 @@ export class BankAccountsService {
     /** Check if sync accounts and bank accounts changed */
     accountsChanged = (oldSyncAccounts: any[], newSyncAccounts: any[]) => {
         return !ArrayHelper.dataChanged(oldSyncAccounts, newSyncAccounts);
+    }
+
+    getAccountsIds(syncAccounts: (SyncAccountBankDto | SyncProgressDto)[]) {
+        return syncAccounts.sort((a: SyncAccountBankDto | SyncProgressDto, b: SyncAccountBankDto | SyncProgressDto) => {
+            const idProperty = a instanceof SyncProgressDto ? 'accountId' : 'syncAccountId';
+            return a[idProperty] > b[idProperty] ? 1 : -1;
+        }).map((syncAccount: SyncAccountBankDto | SyncProgressDto) => {
+            const syncAccountId = syncAccount instanceof SyncProgressDto ? syncAccount.accountId : syncAccount.syncAccountId;
+            const bankAccountsIds = syncAccount.bankAccounts
+                && (syncAccount.bankAccounts as any).map((bankAccount: BankAccountDto | BankAccountProgress) => bankAccount.id)
+                                                    .sort();
+            return {
+                [syncAccountId]: bankAccountsIds
+            };
+        });
     }
 
     arrayDistinct = (oldData, newData) => !ArrayHelper.dataChanged(oldData, newData);

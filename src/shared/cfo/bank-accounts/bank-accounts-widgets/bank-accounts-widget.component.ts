@@ -203,17 +203,24 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             this.syncProgressService.syncData$.pipe(
                 takeUntil(this.destroy$)
             ).subscribe((syncData: SyncProgressOutput) => {
-                /** Update status of bank accounts whose status has changed */
-                syncData.accountProgresses.forEach(((accountProgress: SyncProgressDto) => {
-                    accountProgress.bankAccounts && accountProgress.bankAccounts.forEach((bankAccount: BankAccountProgress) => {
-                        const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.dataSource);
-                        const bankAccountInDataSource = syncAccounts.find(account => account.id === bankAccount.id);
-                        if (bankAccountInDataSource && bankAccount.syncStatus !== bankAccountInDataSource.syncStatus) {
-                            bankAccountInDataSource.syncStatus = bankAccount.syncStatus;
-                            this.changeDetectorRef.detectChanges();
-                        }
-                    });
-                }));
+                const syncDataAccountsIds = this.bankAccountsService.getAccountsIds(syncData.accountProgresses);
+                const dataSourceAccountsIds = this.bankAccountsService.getAccountsIds(this.dataSource);
+                /** Reload accounts if their ids are not the same as in last data source */
+                if (ArrayHelper.dataChanged(syncDataAccountsIds, dataSourceAccountsIds)) {
+                    this.refresh();
+                } else {
+                    /** Update status of bank accounts whose status has changed */
+                    syncData.accountProgresses.forEach(((accountProgress: SyncProgressDto) => {
+                        accountProgress.bankAccounts && accountProgress.bankAccounts.forEach((bankAccount: BankAccountProgress) => {
+                            const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.dataSource);
+                            const bankAccountInDataSource = syncAccounts.find(account => account.id === bankAccount.id);
+                            if (bankAccountInDataSource && bankAccount.syncStatus !== bankAccountInDataSource.syncStatus) {
+                                bankAccountInDataSource.syncStatus = bankAccount.syncStatus;
+                                this.changeDetectorRef.detectChanges();
+                            }
+                        });
+                    }));
+                }
             });
         }
     }
