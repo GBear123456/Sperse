@@ -71,9 +71,9 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = true, syncType?: SyncTypeIds, syncAccountIds = []) {
+    public startSynchronization(forcedSync: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
+        this.runSync(forcedSync, syncType, syncAccountIds)
             .subscribe(
                 () => {
                     this.tryCount = 0;
@@ -92,7 +92,7 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
+    private runSync(forcedSync: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
         const method: Observable<any> = syncAccountIds && syncAccountIds.length ?
             this.syncServiceProxy.requestSyncForAccounts(
                 InstanceType[this.cfoService.instanceType],
@@ -103,7 +103,6 @@ export class SynchProgressService {
                 InstanceType[this.cfoService.instanceType],
                 this.cfoService.instanceId,
                 forcedSync,
-                newOnly,
                 syncType);
 
         return method.pipe(finalize(() => {

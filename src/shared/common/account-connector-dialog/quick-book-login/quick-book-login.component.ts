@@ -52,7 +52,7 @@ export class QuickBookLoginComponent implements OnInit {
                     if (setupAccountWindow.closed) {
                         if (!this.cfoService.hasTransactions) {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
-                                this.syncProgressService.startSynchronization(true, true);
+                                this.syncProgressService.startSynchronization(true);
                             });
                         }
                         clearInterval(interval);

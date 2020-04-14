@@ -25591,11 +25591,10 @@ export class SyncServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @forcedSync (optional) 
-     * @newOnly (optional) 
      * @syncType (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined, syncType: string | null | undefined): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, syncType: string | null | undefined): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -25603,8 +25602,6 @@ export class SyncServiceProxy {
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (forcedSync !== undefined)
             url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
-        if (newOnly !== undefined)
-            url_ += "newOnly=" + encodeURIComponent("" + newOnly) + "&"; 
         if (syncType !== undefined)
             url_ += "syncType=" + encodeURIComponent("" + syncType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
