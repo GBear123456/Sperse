@@ -111,6 +111,8 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -831,6 +833,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 caption: 'groupId',
                 hidden: true
+            }),
+            new FilterModel({
+                component: FilterSourceComponent,
+                caption: 'Source',
+                items: {
+                    element: new SourceFilterModel({
+                        ls: this.localizationService
+                    })
+                }
             })
         ];
     }
