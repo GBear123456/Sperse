@@ -381,7 +381,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     const orderBy = request.params.$orderby;
-                    request.params.$orderby = orderBy ? orderBy + (orderBy !== 'Id desc' ? ',Id desc' : orderBy) : 'Id desc';
+                    request.params.$orderby = orderBy ? orderBy + (orderBy === 'Id desc' ? '' : ',Id desc') : 'Id desc';
                     if (request.params.$filter && request.url.indexOf('$filter')) {
                         let parts = request.url.split('?');
                         request.url = parts.shift() + '?' + parts.pop().split('&').reduce((acc, item) => {
