@@ -192,19 +192,26 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         if (data && data.user.id == this.data.userId)
             this.fillUserData(this.data['raw']);
         else if (!this.dataIsloading) {
-            this.loadingService.startLoading();
             this.dataIsloading = true;
-            this.contactsService.contactInfoSubscribe(
-            (contactInfo) => this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
-                .pipe(
-                    finalize(() => {
-                        this.dataIsloading = false;
-                        this.loadingService.finishLoading();
-                    })
-                ).subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput)),
-                this.constructor.name
-            );
+            this.loadingService.startLoading();
+            let contactInfo = this.contactInfoData && this.contactInfoData.contactInfo;
+            if (contactInfo && contactInfo.personContactInfo)
+                this.initUserForEdit(contactInfo);
+            else
+                this.contactsService.contactInfoSubscribe(
+                    this.initUserForEdit.bind(this), this.constructor.name
+                );
         }
+    }
+
+    initUserForEdit(contactInfo) {
+        this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
+            .pipe(
+                finalize(() => {
+                    this.dataIsloading = false;
+                    this.loadingService.finishLoading();
+                })
+            ).subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput));
     }
 
     isPartner() {
