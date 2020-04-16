@@ -4,6 +4,11 @@ Login page
 /* bg color */
 :host {
     height: 100%;
+    font-family: Montserrat, sans-serif;
+
+    .uppercase {
+        text-transform: uppercase;
+    }
 }
 
 ::ng-deep body {
@@ -20,7 +25,7 @@ Login page
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    background-image: url('/assets/common/images/bank-code/background@3x.jpg');
+    background-image: url('../../../assets/common/images/bank-code/login_bc_bg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     padding: 30px 0;
@@ -46,7 +51,7 @@ div.footer {
 .main-content {
     flex: 1;
     width: 100%;
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -54,6 +59,99 @@ div.footer {
 
     .account-forms {
         padding: 0 15px;
+        width: 100%;
+    }
+
+    .division {
+        position: absolute;
+        height: 100%;
+        width: 9px;
+        background: url('../../../assets/common/images/bank-code/division.png');
+        background-size: auto 100%;
+
+        @media all and (max-width: 1500px) {
+            display: none;
+        }
+    }
+
+    .slogan {
+        font-size: 45px;
+        text-transform: uppercase;
+        font-family: Montserrat, sans-serif;
+        font-weight: 500;
+        line-height: 51px;
+        color: #004a84;
+
+        span {
+            display: block;
+
+            &.fz-85 {
+                font-size: 85px;
+                font-weight: 700;
+                line-height: 78px;
+            }
+        }
+
+        @media all and (max-width: 1400px) {
+            font-size: 28px;
+            line-height: 32px;
+
+            span {
+                &.fz-85 {
+                    font-size: 50px;
+                    line-height: 48px;
+                }
+            }
+        }
+    }
+
+    .crack-logo {
+        padding: 80px 0;
+    }
+
+    .crack-code-btn {
+        padding: 7px 25px 5px;
+        color: #fff;
+        background: #b92a2e;
+        border: 0;
+        outline: none;
+        border-radius: 7px;
+        transition: .2s;
+        cursor: pointer;
+
+        .text {
+            text-align: center;
+
+            span {
+                display: block;
+            }
+
+            .uppercase {
+                font-size: 20px;
+                white-space: nowrap;
+                font-weight: 700;
+                line-height: 18px;
+            }
+
+            .small {
+                font-size: 12px;
+                font-weight: 500;
+            }
+        }
+
+        .arrow {
+            font-size: 52px;
+            padding: 0;
+            text-align: right;
+            line-height: 0;
+            position: relative;
+            top: -3px;
+        }
+
+        &:hover {
+            background-color: #921a1d;
+            box-shadow: 0 0 3px rgba(172, 31, 34, 0.5);
+        }
     }
 }
 

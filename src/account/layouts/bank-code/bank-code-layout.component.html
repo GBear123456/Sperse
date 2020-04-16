@@ -3,14 +3,42 @@
     <main class="main-content">
         <div class="account-forms">
             <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
+                <div class="col-lg-5 col-md-12 col-xs-12 text-center form-wrapper">
                     <router-outlet></router-outlet>
+                </div>
+
+                <div class="col-lg-7 col-md-12 col-xs-12 text-center crack-code">
+                    <div class="division"></div>
+                    <h1 class="slogan">
+                        <span>Discover your</span>
+                        <span>TRUE personality</span>
+                        <span  class="fz-85">in 90 seconds</span>
+                        <span  class="fz-85">or less</span>
+                    </h1>
+
+                    <div class="crack-logo">
+                        <img src="./assets/common/images/bank-code/crack-my-code.png" alt="Crack My Code">
+                    </div>
+
+                    <div class="button-wrap">
+                        <button class="crack-code-btn" (click)="crackMyCode()">
+                            <span class="row">
+                                <span class="col-10 text">
+                                    <span class="uppercase">crack my code</span>
+                                    <span class="small">Click here to start now</span>
+                                </span>
+                                <span class="col-2 arrow">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                </span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="footer">
+    <!--<div class="footer">
         <bank-code-footer></bank-code-footer>
-    </div>
+    </div>-->
 </div>
