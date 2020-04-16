@@ -826,7 +826,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         })
                 }
             }),
-            ,
             new FilterModel({
                 component: FilterSourceComponent,
                 caption: 'Source',
