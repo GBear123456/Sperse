@@ -709,6 +709,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         })
                 }
             }),
+            new FilterModel({
+                component: FilterSourceComponent,
+                caption: 'Source',
+                items: {
+                    element: new SourceFilterModel({
+                        ls: this.localizationService
+                    })
+                }
+            }),
             this.filterModelLists = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'List',
@@ -753,15 +762,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             nameField: 'name',
                             keyExpr: 'id'
                         })
-                }
-            }),
-            new FilterModel({
-                component: FilterSourceComponent,
-                caption: 'Source',
-                items: {
-                    element: new SourceFilterModel({
-                        ls: this.localizationService
-                    })
                 }
             })
         ];

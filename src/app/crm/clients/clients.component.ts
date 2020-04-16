@@ -826,14 +826,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         })
                 }
             }),
-            this.filterModelLists,
-            this.filterModelTags,
-            this.filterModelRating,
-            this.filterModelStar,
-            new FilterModel({
-                caption: 'groupId',
-                hidden: true
-            }),
+            ,
             new FilterModel({
                 component: FilterSourceComponent,
                 caption: 'Source',
@@ -842,6 +835,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         ls: this.localizationService
                     })
                 }
+            }),
+            this.filterModelLists,
+            this.filterModelTags,
+            this.filterModelRating,
+            this.filterModelStar,
+            new FilterModel({
+                caption: 'groupId',
+                hidden: true
             })
         ];
     }

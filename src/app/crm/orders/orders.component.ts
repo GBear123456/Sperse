@@ -40,7 +40,7 @@ import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 import { AppSessionService } from '../../../shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '../../shared/common/slice/pivot-grid/pivot-grid.component';
-import { OrganizationUnitsStoreSelectors } from '@app/crm/store';
+import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 
@@ -433,6 +433,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 element: new FilterCheckBoxesModel(
                     {
                         dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                        dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
                         nameField: 'displayName',
                         keyExpr: 'id'
                     })
