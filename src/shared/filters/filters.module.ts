@@ -34,6 +34,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
+import { FilterStatesService } from './states/filter-states.service';
 
 @NgModule({
     imports: [
@@ -95,7 +96,8 @@ export class FiltersModule {
         return {
             ngModule: FiltersModule,
             providers: [
-                FiltersService
+                FiltersService,
+                FilterStatesService
             ]
         };
     }

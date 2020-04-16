@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
@@ -42,15 +42,20 @@ export class MapService {
             zoomFactor: 1
         }
     ];
-    selectedMapAreaItem: BehaviorSubject<MapAreaItem> = new BehaviorSubject<MapAreaItem>(this.mapAreasItems[0]);
+    selectedMapAreaItem: BehaviorSubject<MapAreaItem> = new BehaviorSubject<MapAreaItem>(
+        this.selectedMapArea
+            ? this.mapAreasItems.find((mapAreaItem: MapAreaItem) => mapAreaItem.key === this.selectedMapArea)
+            : this.mapAreasItems[0]
+    );
     selectedMapAreaItem$: Observable<MapAreaItem> = this.selectedMapAreaItem.asObservable();
     selectedMapArea$: Observable<MapArea> = this.selectedMapAreaItem$.pipe(
         pluck('key')
     );
     constructor(
         private ls: AppLocalizationService,
-        private http: HttpClient
-    ) { }
+        private http: HttpClient,
+        @Inject('selectedMapArea') @Optional() private selectedMapArea: MapArea
+    ) {}
 
     loadSliceMapData(
         sourceUri: string,
@@ -104,7 +109,9 @@ export class MapService {
                 const avgGroupValue = mapData.totalCount
                     ? (
                         itemWithoutKey
-                            ? (mapData.totalCount - itemWithoutKey.count) / (mapData.data.length - 1)
+                            ? (mapData.totalCount - itemWithoutKey.count) / (
+                                mapData.data.length > 1 ? mapData.data.length - 1 : 1
+                            )
                             : mapData.totalCount / mapData.data.length
                     ).toFixed(0)
                     : 0;

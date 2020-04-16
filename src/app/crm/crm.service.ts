@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, Subscription, combineLatest, fromEvent, of } from 'rxjs';
@@ -232,6 +232,20 @@ export class CrmService {
                            })
                        )
                );
+    }
+
+    handleCountryStateParams(queryParams$: Observable<Params>, countryStatesFilter: FilterModel) {
+        queryParams$.subscribe((params: Params) => {
+            if (params.countryId && params.stateId) {
+                countryStatesFilter.items.countryStates.value = [ params.countryId + ':' + params.stateId ];
+            } else if (params.countryId) {
+                countryStatesFilter.items.countryStates.value = [ params.countryId ];
+            }
+            if (countryStatesFilter.items.countryStates.value) {
+                this.filtersService.change(countryStatesFilter);
+                countryStatesFilter.updateCaptions();
+            }
+        });
     }
 
 }

@@ -3,6 +3,8 @@ import { Component, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import capitalize from 'underscore.string/capitalize';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -30,6 +32,7 @@ export class SideBarComponent implements OnDestroy {
     activeFilter: FilterModel;
     disableFilterScroll: boolean;
     capitalize = capitalize;
+    destroy$: Subject<null> = new Subject<null>();
 
     constructor(
         private eref: ElementRef,
@@ -45,14 +48,20 @@ export class SideBarComponent implements OnDestroy {
             this.filters.forEach((filter: FilterModel) => filter.updateCaptions());
         }, true);
 
-        router.events.subscribe((event) => {
-            if (event instanceof NavigationStart)
-                this.filters = [];
+        router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+            if (event instanceof NavigationStart) {
+                if (!this.filtersService.skipFiltersClean) {
+                    this.filters = [];
+                } else {
+                    this.filtersService.skipFiltersClean = false;
+                }
+            }
         });
 
-        this.filtersService.filterToggle$.subscribe(enabled => {
+        this.filtersService.filterToggle$.pipe(takeUntil(this.destroy$)).subscribe(enabled => {
             enabled || this.appService.toolbarRefresh();
         });
+        window['sidebar'] = this;
     }
 
     excludeFilter(event, filter: FilterModel, displayElement: DisplayElement) {
@@ -70,22 +79,21 @@ export class SideBarComponent implements OnDestroy {
     }
 
     filterApply(event) {
-        this.filtersService
-            .change(this.activeFilter);
+        this.filtersService.change(this.activeFilter);
         this.activeFilter = undefined;
         this.checkFilterDisable(event);
         event.stopPropagation &&
             event.stopPropagation();
     }
 
-    showFilterDialog(event, filter) {
+    showFilterDialog(filter, event?) {
         this.activeFilter = filter;
         if (filter && filter.items && filter.items.element && filter.items.element.dispatch) {
             filter.items.element.dispatch();
         }
         this.disableFilterScroll = this.activeFilter && this.activeFilter.items &&
             this.activeFilter.items.element && this.activeFilter.items.element.disableOuterScroll;
-        event.stopPropagation();
+        event && event.stopPropagation();
     }
 
     closeFilters(event) {
@@ -132,6 +140,7 @@ export class SideBarComponent implements OnDestroy {
     }
 
     ngOnDestroy() {
+        this.destroy$.next();
         this.filtersService.unsubscribe();
     }
 }

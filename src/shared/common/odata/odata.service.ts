@@ -77,29 +77,31 @@ export class ODataService {
         let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue)),
             url = this.getODataUrl(uri, queryWithSearch, instanceData, params);
 
-        /** Add filter to the params for pivot grid data source */
-        if (grid.NAME === 'dxPivotGrid') {
-            const filter = queryWithSearch ? buildQuery({ filter: queryWithSearch }) : '';
-            if (filter) {
-                const store = grid.getDataSource()._store;
-                if (!this.pivotGridInitialBeforeSend) {
-                    this.pivotGridInitialBeforeSend = store && store._dataSource._store._beforeSend;
-                }
-                const newBeforeSend = (request) => {
-                    const filterIndex = request.url.indexOf('?$filter');
-                    if (filterIndex !== -1) {
-                        request.url = request.url.slice(0, filterIndex);
+        if (grid) {
+            /** Add filter to the params for pivot grid data source */
+            if (grid.NAME === 'dxPivotGrid') {
+                const filter = queryWithSearch ? buildQuery({ filter: queryWithSearch }) : '';
+                if (filter) {
+                    const store = grid.getDataSource()._store;
+                    if (!this.pivotGridInitialBeforeSend) {
+                        this.pivotGridInitialBeforeSend = store && store._dataSource._store._beforeSend;
                     }
-                    request.params['$filter'] = filter.slice('?$filter='.length);
-                    this.pivotGridInitialBeforeSend(request);
-                };
-                if (store) {
-                    store._dataSource._store._beforeSend = newBeforeSend;
+                    const newBeforeSend = (request) => {
+                        const filterIndex = request.url.indexOf('?$filter');
+                        if (filterIndex !== -1) {
+                            request.url = request.url.slice(0, filterIndex);
+                        }
+                        request.params['$filter'] = filter.slice('?$filter='.length);
+                        this.pivotGridInitialBeforeSend(request);
+                    };
+                    if (store) {
+                        store._dataSource._store._beforeSend = newBeforeSend;
+                    }
                 }
             }
-        }
 
-        this.loadDataSource(grid.getDataSource(), uri, url);
+            this.loadDataSource(grid.getDataSource(), uri, url);
+        }
 
         return queryWithSearch;
     }

@@ -68,8 +68,8 @@
                                        mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup"
-                            [texts]="{editRow: ''}"
-                            [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" 
+                            [texts]="{ editRow: '' }"
+                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
@@ -178,6 +178,7 @@
                        [height]="mapHeight$ | async"
                        [contactGroupText]="l('Customers').toLowerCase()"
                        [dataIsLoading]="mapDataIsLoading"
+                       areaClickLink="app/crm/clients"
                        [data]="mapData$ | async">
             </slice-map>
         </div>

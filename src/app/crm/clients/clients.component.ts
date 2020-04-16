@@ -8,7 +8,7 @@ import {
     ChangeDetectorRef,
     ChangeDetectionStrategy
 } from '@angular/core';
-import { RouteReuseStrategy } from '@angular/router';
+import { Params, RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -111,6 +111,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
+import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -209,6 +210,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 keyExpr: 'id',
                 selectedKeys$: of(['A'])
             })
+        }
+    });
+    filterCountryStates: FilterModel = new FilterModel({
+        component: FilterStatesComponent,
+        caption: 'states',
+        items: {
+            countryStates: new FilterStatesModel(this.filterStatesService)
         }
     });
     filterModelRating: FilterModel = new FilterModel({
@@ -433,6 +441,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
+    private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
+        takeUntil(this.destroy$),
+        filter(() => this.componentIsActivated)
+    );
 
     constructor(
         injector: Injector,
@@ -450,6 +462,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private sessionService: AppSessionService,
         private crmService: CrmService,
         private mapService: MapService,
+        private filterStatesService: FilterStatesService,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -516,6 +529,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.activate();
         this.handleModuleChange();
         this.handleDataLayoutTypeInQuery();
+        this.crmService.handleCountryStateParams(this.queryParams$, this.filterCountryStates);
         this.handleFiltersPining();
     }
 
@@ -643,9 +657,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private handleDataLayoutTypeInQuery() {
-        this._activatedRoute.queryParams.pipe(
-            takeUntil(this.destroy$),
-            filter(() => this.componentIsActivated),
+        this.queryParams$.pipe(
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         ).subscribe((dataLayoutType) => {
@@ -785,13 +797,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 caption: 'phone',
                 items: { Phone: new FilterItemModel() }
             }),
-            new FilterModel({
-                component: FilterStatesComponent,
-                caption: 'states',
-                items: {
-                    countryStates: new FilterStatesModel()
-                }
-            }),
+            this.filterCountryStates,
             new FilterModel({
                 component: FilterInputsComponent,
                 operator: 'startswith',

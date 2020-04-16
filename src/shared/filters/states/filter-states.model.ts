@@ -1,34 +1,69 @@
-import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
+/** Core imports */
+
+/** Third party imports */
 import sortBy from 'lodash/sortBy';
 import remove from 'lodash/remove';
 import DevExpress from 'devextreme/bundles/dx.all';
+import { of, zip } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+/** Application imports */
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
+import { FilterStatesService } from './filter-states.service';
+import { ICountryState } from './country-state.interface';
 
 export class FilterStatesModel extends FilterItemModel {
     list: DevExpress.ui.dxTreeViewNode[];
+    filterStatesService: FilterStatesService;
+
+    constructor(filterStatesService: FilterStatesService, value?: any, isPartial = false) {
+        super(value, isPartial);
+        this.filterStatesService = filterStatesService;
+    }
 
     getDisplayElements(): DisplayElement[] {
         let displayedElements: DisplayElement[] = [];
         this.value && this.value.map((selectedCode: string) => {
             const [ countryCode, stateCode ] = selectedCode.split(':');
-            let itemData, parentData;
-            parentData = itemData = this.list.find((val: DevExpress.ui.dxTreeViewNode) => val.key === countryCode);
-            if (itemData && stateCode) {
-                itemData = itemData.children.find((val: DevExpress.ui.dxTreeViewNode) => val.key === selectedCode);
+            let itemData, parentData, list$;
+            if (countryCode && !this.list) {
+                /** Upload countries and states */
+                list$ = zip(
+                    this.filterStatesService.getCountries([countryCode], stateCode ? [countryCode] : null),
+                    this.filterStatesService.getStates(countryCode, stateCode ? [stateCode] : null)
+                ).pipe(
+                    map(([countries, states]: [ICountryState[], ICountryState[]]) => {
+                        return countries.map((country: ICountryState) => {
+                            country['children'] = states;
+                            return country;
+                        });
+                    })
+                );
+            } else {
+                list$ = of(this.list);
             }
-            if (itemData) {
-                let parentName = itemData.parent ? parentData.text : null;
-                let sortField = parentName ? parentName + ':' : '';
-                sortField += itemData.text;
-                displayedElements.push(<DisplayElement>{
-                    item: this,
-                    displayValue: itemData.text,
-                    args: selectedCode,
-                    parentCode: itemData.parent ? itemData.parent.key : null,
-                    parentName: parentName,
-                    sortField: sortField
-                });
-            }
+            list$.subscribe((list) => {
+                console.log('list', list);
+                parentData = itemData = list.find((val: any) => val.key === countryCode || val.code === countryCode);
+                if (itemData && stateCode) {
+                    itemData = itemData.children.find((val: any) => val.key === selectedCode || val.code === selectedCode);
+                }
+                if (itemData) {
+                    const itemName = itemData.text || itemData.name;
+                    let parentName = itemData.parent ? parentData.text || parentData.name : null;
+                    let sortField = parentName ? parentName + ':' : '';
+                    sortField += itemName;
+                    displayedElements.push(<DisplayElement>{
+                        item: this,
+                        displayValue: itemName,
+                        args: selectedCode,
+                        parentCode: itemData.parent ? parentData.key || parentData.code : null,
+                        parentName: parentName,
+                        sortField: sortField
+                    });
+                }
+            });
         });
 
         displayedElements = this.generateParents(

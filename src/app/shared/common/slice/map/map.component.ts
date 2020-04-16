@@ -2,13 +2,14 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    ViewChild,
+    HostBinding,
     Input,
-    SimpleChanges,
     OnChanges,
-    HostBinding
+    SimpleChanges,
+    ViewChild
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { DxVectorMapComponent } from 'devextreme-angular/ui/vector-map';
@@ -26,6 +27,9 @@ import { ExportService } from '@shared/common/export/export.service';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { MapArea } from './map-area.enum';
+import { DataLayoutType } from '../../../layout/data-layout-type';
+import { FiltersService } from '../../../../../shared/filters/filters.service';
 
 @Component({
     selector: 'slice-map',
@@ -44,6 +48,7 @@ export class MapComponent implements OnChanges {
     @Input() showLegendBorder = false;
     @Input() usaOnly = false;
     @Input() contactGroupText = '';
+    @Input() areaClickLink = 'app/crm/leads';
     @ViewChild(DxVectorMapComponent, { static: false }) vectorMapComponent: DxVectorMapComponent;
     @HostBinding('style.height') get componentHeight() {
         return this.height + 'px';
@@ -70,7 +75,9 @@ export class MapComponent implements OnChanges {
         private ls: AppLocalizationService,
         private exportService: ExportService,
         private mapService: MapService,
-        private userManagementService: UserManagementService
+        private userManagementService: UserManagementService,
+        private filtersService: FiltersService,
+        private router: Router
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -118,6 +125,28 @@ export class MapComponent implements OnChanges {
 
     onSelectedMapAreaChanged(e) {
         this.mapService.selectedMapAreaItem.next(e.value);
+    }
+
+    mapClick(e) {
+        if (e.target) {
+            let filter = {};
+            if (this.mapService.selectedMapAreaItem.value.key === MapArea.World) {
+                filter['countryId'] = e.target.attribute('postal');
+            } else {
+                filter['stateId'] = e.target.attribute('postal');
+                filter['countryId'] = this.mapService.selectedMapAreaItem.value.key === MapArea.Canada ? 'CA' : 'US';
+            }
+            this.filtersService.skipFiltersClean = true;
+            this.router.navigate(
+                this.areaClickLink.split('/'),
+                {
+                    queryParams: {
+                        dataLayoutType: DataLayoutType.DataGrid,
+                        ...filter
+                    }
+                }
+            );
+        }
     }
 
 }

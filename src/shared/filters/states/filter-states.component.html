@@ -6,6 +6,7 @@
         parentIdExpr="parentId"
         [createChildren]="createChildren"
         showCheckBoxesMode="normal"
+        (onContentReady)="updateValues($event)"
         (onItemSelected)="onSelect($event)"
         (onSelectionChanged)="onSelect($event)">
     </dx-tree-view>

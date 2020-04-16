@@ -54,6 +54,7 @@ export class FiltersService {
             return filtersValues;
         })
     );
+    skipFiltersClean = false;
 
     static filterByCategory(filter: FilterModel) {
         return PfmFilterHelpers.filterByCategory(filter);

@@ -9,11 +9,13 @@
     id="vector-map"
     [background]="{ borderColor: '#FFFFFF' }"
     [zoomFactor]="selectedMapAreaZoomFactor$ | async"
-    [bounds]="selectedMapAreaBounds$ | async">
+    [bounds]="selectedMapAreaBounds$ | async"
+    (onClick)="mapClick($event)">
     <dxo-loading-indicator [show]="true"></dxo-loading-indicator>
     <dxo-tooltip
         [enabled]="true"
-        [customizeTooltip]="customizeTooltip"></dxo-tooltip>
+        [customizeTooltip]="customizeTooltip">
+    </dxo-tooltip>
     <dxo-export [enabled]="false"></dxo-export>
     <dxo-title text="">
         <dxo-subtitle text=""></dxo-subtitle>

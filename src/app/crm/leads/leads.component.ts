@@ -95,6 +95,7 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -175,6 +176,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterModelStages: FilterModel;
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
+    filterCountryStates: FilterModel = new FilterModel({
+        component: FilterStatesComponent,
+        caption: 'states',
+        items: {
+            countryStates: new FilterStatesModel(this.filterStatesService)
+        }
+    });
 
     private rootComponent: any;
     private exportCallback: Function;
@@ -398,6 +406,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private crmService: CrmService,
         private mapService: MapService,
         private impersonationService: ImpersonationService,
+        private filterStatesService: FilterStatesService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -456,9 +465,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.handlePivotGridUpdate();
         this.handleChartUpdate();
         this.handleMapUpdate();
-        this.handleQueryParams();
         this.handleModuleChange();
         this.activate();
+        this.handleQueryParams();
         this.handleFiltersPining();
     }
 
@@ -563,6 +572,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private handleQueryParams() {
+        this.handleDataLayoutParam();
+        this.crmService.handleCountryStateParams(this.queryParams$, this.filterCountryStates);
+        this.handleAddNewParam();
+        this.handleRefreshParam();
+    }
+
+    private handleDataLayoutParam() {
         const queryDataLayoutType$ = this.queryParams$.pipe(
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
@@ -576,14 +592,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).subscribe((pipelineDefinition: PipelineDto) => {
             this.onStagesLoaded({ stages: pipelineDefinition.stages });
         });
+    }
 
+    private handleAddNewParam() {
         this.queryParams$.pipe(
             pluck('action'),
             filter((action: string) => action === 'addNew')
         ).subscribe(() => {
             setTimeout(() => this.createLead());
         });
+    }
 
+    private handleRefreshParam() {
         this.queryParams$.pipe(
             pluck('refresh'),
             filter(Boolean)
@@ -772,13 +792,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             })
                     }
                 }),
-                new FilterModel({
-                    component: FilterStatesComponent,
-                    caption: 'states',
-                    items: {
-                        countryStates: new FilterStatesModel()
-                    }
-                }),
+                this.filterCountryStates,
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'startswith',

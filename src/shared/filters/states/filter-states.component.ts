@@ -13,18 +13,14 @@ import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store
 import { FilterComponent } from '../models/filter-component';
 import { FilterStatesModel } from './filter-states.model';
 import { CountryDto, CountryStateDto, ICountryStateDto } from '@shared/service-proxies/service-proxies';
-
-interface ICountryState extends ICountryStateDto {
-    hasItems: boolean;
-    parentId: string;
-    selected: boolean;
-    expanded: boolean;
-}
+import { FilterStatesService } from './filter-states.service';
+import { ICountryState } from './country-state.interface';
 
 @Component({
     templateUrl: './filter-states.component.html',
     styleUrls: ['./filter-states.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    // providers: [ FilterStatesService ]
 })
 export class FilterStatesComponent implements FilterComponent, OnInit {
     items: {
@@ -35,10 +31,10 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
     selectedCountries: string[] = [];
     countriesToExpand: string[] = [];
     selectedStates: string[] = [];
-    countriesCodesThatHaveStates = ['US', 'CA'];
 
     constructor(
         private cacheService: CacheService,
+        private filterStatesService: FilterStatesService,
         private store$: Store<RootStore.State>
     ) {}
 
@@ -66,70 +62,19 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
     createChildren = (node) => {
         if (!node) {
             /** Return list of countries */
-            return this.getCountries().toPromise();
+            return this.filterStatesService.getCountries(this.selectedCountries, this.countriesToExpand).toPromise();
         } else {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(node.key));
             /** Return states of specific country */
-            return this.getStates(node.key).toPromise();
+            return this.filterStatesService.getStates(node.key, this.selectedStates).toPromise();
         }
-    }
-
-    /**
-     * Move countries that have states to the top
-     * @param {CountryDto[]} countries
-     * @return {CountryDto[]}
-     */
-    private sortCountries(countries: CountryDto[]): CountryDto[] {
-        const countriesThatHaveStates: CountryDto[] = [];
-        this.countriesCodesThatHaveStates.forEach((countryCode: string) => {
-            const countryIndex = countries.findIndex((country: CountryDto) => {
-                return country.code === countryCode;
-            });
-            countriesThatHaveStates.push(countries.splice(countryIndex, 1)[0]);
-        });
-        countries.unshift(...countriesThatHaveStates);
-        return countries;
-    }
-
-    private getCountries(): Observable<ICountryState[]> {
-        return this.store$.pipe(
-            select(CountriesStoreSelectors.getCountries),
-            filter(Boolean),
-            first()
-        ).pipe(
-            map((countries: CountryDto[]) => {
-                countries = this.sortCountries(countries);
-                return countries.map((country: CountryDto) => ({
-                    ...country,
-                    hasItems: this.countriesCodesThatHaveStates.indexOf(country.code) >= 0,
-                    selected: this.selectedCountries.indexOf(country.code) >= 0,
-                    expanded: this.countriesToExpand.indexOf(country.code) >= 0,
-                    parentId: null
-                }));
-            })
-        );
-    }
-
-    private getStates(countryCode: string): Observable<ICountryState[]> {
-        return this.store$.pipe(
-            select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode }),
-            filter(Boolean),
-            first(),
-            map((states: CountryStateDto[]) => {
-                return states.map(((state: CountryStateDto) => ({
-                    ...state,
-                    code: countryCode + ':' + state.code,
-                    hasItems: false,
-                    selected: this.selectedStates.indexOf(state.code) >= 0,
-                    parentId: countryCode,
-                    expanded: false
-                })));
-            })
-        );
     }
 
     onSelect($event) {
         this.items.countryStates.value = $event.component.getSelectedNodesKeys();
+        this.updateValues($event);
+    }
+
+    updateValues($event) {
         this.items.countryStates.list = $event.component.getNodes();
     }
 

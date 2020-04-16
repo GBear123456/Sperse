@@ -1,17 +1,18 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
-    ViewChild,
-    OnInit,
     ElementRef,
-    ChangeDetectorRef, OnDestroy
+    OnDestroy,
+    OnInit,
+    ViewChild
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 /** Third party imports */
-import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, takeUntil, tap, map } from 'rxjs/operators';
+import { combineLatest, Observable, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -25,12 +26,17 @@ import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 
 @Component({
     selector: 'clients-by-region',
     templateUrl: './clients-by-region.component.html',
     styleUrls: ['./clients-by-region.component.less'],
-    providers: [ LifecycleSubjectsService, MapService ],
+    providers: [
+        LifecycleSubjectsService,
+        MapService,
+        { provide: 'selectedMapArea', useValue: MapArea.World }
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsByRegionComponent implements OnInit, OnDestroy {

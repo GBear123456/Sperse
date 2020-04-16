@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Params } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -94,6 +95,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
+import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -171,6 +173,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelTypes: FilterModel;
+    filterCountryStates: FilterModel = new FilterModel({
+        component: FilterStatesComponent,
+        caption: 'states',
+        items: {
+            countryStates: new FilterStatesModel(this.filterStatesService)
+        }
+    });
     filterModelAssignment: FilterModel;
     filterModelStatus: FilterModel;
     filterModelRating: FilterModel;
@@ -315,6 +324,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
+    private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
+        takeUntil(this.destroy$),
+        filter(() => this.componentIsActivated)
+    );
 
     constructor(
         injector: Injector,
@@ -331,6 +344,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private crmService: CrmService,
         private impersonationService: ImpersonationService,
         private mapService: MapService,
+        private filterStatesService: FilterStatesService,
         public appService: AppService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
@@ -389,6 +403,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.handleChartUpdate();
         this.handleMapUpdate();
         this.handleDataLayoutTypeInQuery();
+        this.crmService.handleCountryStateParams(this.queryParams$, this.filterCountryStates);
         this.handleFiltersPining();
     }
 
@@ -503,9 +518,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private handleDataLayoutTypeInQuery() {
-        this._activatedRoute.queryParams.pipe(
-            takeUntil(this.destroy$),
-            filter(() => this.componentIsActivated),
+        this.queryParams$.pipe(
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         ).subscribe((dataLayoutType) => {
@@ -656,13 +669,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 caption: 'phone',
                 items: { Phone: new FilterItemModel() }
             }),
-            new FilterModel({
-                component: FilterStatesComponent,
-                caption: 'states',
-                items: {
-                    countryStates: new FilterStatesModel()
-                }
-            }),
+            this.filterCountryStates,
             new FilterModel({
                 component: FilterInputsComponent,
                 operator: 'startswith',
