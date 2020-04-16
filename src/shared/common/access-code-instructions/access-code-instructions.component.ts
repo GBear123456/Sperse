@@ -53,5 +53,4 @@ export class AccessCodeInstructionsComponent {
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('Copied'));
     }
-
 }

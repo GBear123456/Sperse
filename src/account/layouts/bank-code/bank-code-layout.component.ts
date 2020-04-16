@@ -31,6 +31,9 @@ export class BankCodeLayoutComponent implements OnInit {
     }
 
     crackMyCode() {
-
+        const link = location.href.indexOf('successfactory.com') >= 0
+            ? 'https://sf.crackmycode.com'
+            : 'https://bp.crackmycode.com';
+        window.open(link);
     }
 }
