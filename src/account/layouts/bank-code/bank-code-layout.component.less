@@ -25,7 +25,7 @@ Login page
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    background-image: url('/assets/common/images/bank-code/login_bc_bg.jpg');
+    background-image: url('../../../assets/common/images/bank-code/login_bc_bg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     padding: 30px 0;
@@ -60,6 +60,18 @@ div.footer {
     .account-forms {
         padding: 0 15px;
         width: 100%;
+    }
+
+    .division {
+        position: absolute;
+        height: 100%;
+        width: 9px;
+        background: url('../../../assets/common/images/bank-code/division.png');
+        background-size: auto 100%;
+
+        @media all and (max-width: 1500px) {
+            display: none;
+        }
     }
 
     .slogan {

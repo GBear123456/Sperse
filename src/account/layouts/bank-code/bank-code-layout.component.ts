@@ -29,4 +29,8 @@ export class BankCodeLayoutComponent implements OnInit {
         if (tenant)
             this.tenantName = tenant.name || tenant.tenancyName;
     }
+
+    crackMyCode() {
+
+    }
 }
