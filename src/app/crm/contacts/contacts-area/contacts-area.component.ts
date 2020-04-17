@@ -4,9 +4,9 @@ import { Component, Input } from '@angular/core';
 /** Third party imports  */
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
-import { filter } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 import capitalize from 'underscore.string/capitalize';
+import { filter } from 'rxjs/operators';
 
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
@@ -140,9 +140,10 @@ export class ContactsAreaComponent {
     updateDataField(field, dataItem, updatedData) {
         let name = this.getFieldName(field),
             isPhoneDialog = (name == 'Phone');
-        this['contact' + name + 'Service']
-            [(dataItem ? 'update' : 'create') + 'Contact' + name](
-            (isPhoneDialog ? (dataItem ? UpdateContactPhoneInput : CreateContactPhoneInput) : (dataItem ? UpdateContactEmailInput : CreateContactEmailInput)
+        this['contact' + name + 'Service'][(dataItem ? 'update' : 'create') + 'Contact' + name](
+            (isPhoneDialog ?
+                (dataItem ? UpdateContactPhoneInput : CreateContactPhoneInput) :
+                (dataItem ? UpdateContactEmailInput : CreateContactEmailInput)
             ).fromJS(updatedData)
         ).subscribe(
             result => {
@@ -168,7 +169,7 @@ export class ContactsAreaComponent {
                 this.contactsService.invalidateUserData();
             },
             () => {
-                dataItem[field] = dataItem.original;
+                dataItem[field] = updatedData.value;
             }
         );
     }
