@@ -354,9 +354,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        const selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
-        /** If component is not activated - wait until it will activate and then reload */
-        selectedCurrencyId$.pipe(
+        this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId)).pipe(
             skip(1),
             switchMap((selectedCurrencyId) => this.componentIsActivated ? of(selectedCurrencyId) : this.lifecycleService.activate$.pipe(first(), mapTo(selectedCurrencyId)))
         ).subscribe((selectedCurrencyId) => {
@@ -364,6 +362,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
 
         this.cfoPreferencesService.dateRange$.pipe(
+            skip(1),
             takeUntil(this.destroy$),
             switchMap((dateRange) => this.componentIsActivated
                 ? of(dateRange)
@@ -523,9 +522,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.syncAccounts = syncAccounts;
             });
             /** After selected accounts change */
-            this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
-                this.applyTotalBankAccountFilter(true);
-            });
             this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                 /** filter all widgets by new data if change is on this component */
                 if (this.componentIsActivated) {
@@ -997,10 +993,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     setDataSource() {
-        if (this.dataGrid && !this.dataGrid.dataSource) {
+        if (this.dataGrid && !this.dataGrid.dataSource)
             this.dataGrid.dataSource = this.dataSource;
-            this.changeDetectionRef.markForCheck();
-        }
     }
 
     applyTotalBankAccountFilter(emitFilterChange = false) {
@@ -1257,6 +1251,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.storeGridState(event.component);
         this.setGridDataLoaded();
         this.onSelectionChanged(event, true);
+        event.component.updateDimensions();
     }
 
     categorizeTransactions($event) {
