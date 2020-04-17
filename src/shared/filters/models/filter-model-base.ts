@@ -2,7 +2,7 @@
 import { Type } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import * as _ from 'underscore';
 import camelCase from 'lodash/camelCase';
 
@@ -38,11 +38,25 @@ export class FilterModelBase<T extends FilterItemModel> {
 
     updateCaptions() {
         let displayElements: DisplayElement[] = [];
-
-        _.each(_.values(_.mapObject(
-            this.items, (item: FilterItemModel, key: string) => item && item.getDisplayElements && item.getDisplayElements(key)
-        )), x => { displayElements = displayElements.concat(x); });
-        this.displayElements = displayElements.filter((val) =>  val && val.displayValue);
+        _.each(
+            _.values(
+                _.mapObject(
+                    this.items,
+                    (item: FilterItemModel, key: string) => {
+                        const displayElements = item && item.getDisplayElements && item.getDisplayElements(key);
+                        return displayElements && displayElements instanceof Observable ? displayElements : of(displayElements);
+                    }
+                )
+            ),
+            x => {
+                if (x) {
+                    displayElements = displayElements.concat(x);
+                }
+            }
+        );
+        forkJoin(displayElements).subscribe((elements: any) => {
+            this.displayElements = [].concat.apply([], elements).filter(Boolean).filter((val) =>  val && val.displayValue);
+        });
     }
 
     clearFilterItems() {

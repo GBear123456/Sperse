@@ -1284,7 +1284,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
-        this.lifeCycleSubjectsService.activate.next();
+        this.lifeCycleSubjectsService.activate.next(true);
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

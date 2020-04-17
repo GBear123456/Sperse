@@ -205,6 +205,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     activate() {
-        this.lifeCycleService.activate.next();
+        this.lifeCycleService.activate.next(true);
     }
 }

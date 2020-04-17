@@ -61,7 +61,6 @@ export class SideBarComponent implements OnDestroy {
         this.filtersService.filterToggle$.pipe(takeUntil(this.destroy$)).subscribe(enabled => {
             enabled || this.appService.toolbarRefresh();
         });
-        window['sidebar'] = this;
     }
 
     excludeFilter(event, filter: FilterModel, displayElement: DisplayElement) {
@@ -86,7 +85,7 @@ export class SideBarComponent implements OnDestroy {
             event.stopPropagation();
     }
 
-    showFilterDialog(filter, event?) {
+    showFilterDialog(event, filter) {
         this.activeFilter = filter;
         if (filter && filter.items && filter.items.element && filter.items.element.dispatch) {
             filter.items.element.dispatch();

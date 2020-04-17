@@ -55,7 +55,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
     }
 
     activate() {
-        this.lifeCycleService.activate.next();
+        this.lifeCycleService.activate.next(true);
     }
 
     load(): void {

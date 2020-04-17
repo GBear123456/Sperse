@@ -30,6 +30,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { MapArea } from './map-area.enum';
 import { DataLayoutType } from '../../../layout/data-layout-type';
 import { FiltersService } from '../../../../../shared/filters/filters.service';
+import { ContactGroup } from '../../../../../shared/AppEnums';
 
 @Component({
     selector: 'slice-map',
@@ -131,7 +132,7 @@ export class MapComponent implements OnChanges {
         if (e.target) {
             let filter = {};
             if (this.mapService.selectedMapAreaItem.value.key === MapArea.World) {
-                filter['countryId'] = e.target.attribute('postal');
+                filter['countryId'] = e.target.attribute('iso_a2');
             } else {
                 filter['stateId'] = e.target.attribute('postal');
                 filter['countryId'] = this.mapService.selectedMapAreaItem.value.key === MapArea.Canada ? 'CA' : 'US';
@@ -142,6 +143,7 @@ export class MapComponent implements OnChanges {
                 {
                     queryParams: {
                         dataLayoutType: DataLayoutType.DataGrid,
+                        contactGroup: Object.keys(ContactGroup).shift(),
                         ...filter
                     }
                 }

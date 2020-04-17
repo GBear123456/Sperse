@@ -243,7 +243,6 @@ export class CrmService {
             }
             if (countryStatesFilter.items.countryStates.value) {
                 this.filtersService.change(countryStatesFilter);
-                countryStatesFilter.updateCaptions();
             }
         });
     }

@@ -1526,7 +1526,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super.activate();
         this.initFiltering();
         this.initToolbarConfig();
-        this.lifecycleService.activate.next();
+        this.lifecycleService.activate.next(true);
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
 

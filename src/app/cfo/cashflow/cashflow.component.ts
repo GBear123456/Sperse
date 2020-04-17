@@ -4786,7 +4786,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.pivotGrid.instance.repaint();
             setTimeout(() => this.toggleGridOpacity());
         }
-        this.lifecycleService.activate.next();
+        this.lifecycleService.activate.next(true);
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();

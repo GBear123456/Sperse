@@ -700,7 +700,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-        this.lifecycleService.activate.next();
+        this.lifecycleService.activate.next(true);
 
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);

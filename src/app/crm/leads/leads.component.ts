@@ -562,7 +562,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private handleModuleChange() {
         merge(
             this.dataLayoutType$,
-            this.lifeCycleSubjectsService.activate$
+            this.lifeCycleSubjectsService.activate$.pipe(filter(Boolean))
         ).pipe(
             takeUntil(this.destroy$)
         ).subscribe(() => {
@@ -572,9 +572,29 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handleQueryParams() {
         this.handleDataLayoutParam();
-        this.crmService.handleCountryStateParams(this.queryParams$, this.filterCountryStates);
+        this.handleContactGroupParam();
+        this.crmService.handleCountryStateParams(
+            this.queryParams$.pipe(
+                /** Wait for activation to update the filters */
+                switchMap((queryParams: Params) => this.lifeCycleSubjectsService.activate$.pipe(
+                    filter(Boolean),
+                    mapTo(queryParams))
+                )
+            ),
+            this.filterCountryStates
+        );
         this.handleAddNewParam();
         this.handleRefreshParam();
+    }
+
+    private handleContactGroupParam() {
+        this.queryParams$.pipe(
+            pluck('contactGroup'),
+            filter((contactGroup: string) => contactGroup && this.selectedContactGroup !== contactGroup)
+        ).subscribe((contactGroup: string) => {
+            this.selectedContactGroup = contactGroup;
+            this.contactGroupId.next(ContactGroup[this.selectedContactGroup]);
+        });
     }
 
     private handleDataLayoutParam() {
@@ -603,11 +623,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private handleRefreshParam() {
-        this.queryParams$.pipe(
-            pluck('refresh'),
-            filter(Boolean)
-        ).subscribe(() => {
-            this.refresh();
+        this.queryParams$.subscribe((queryParams: Params) => {
+            /** Contact group is handled in different method and it cause refresh by it own */
+            if (queryParams.refresh && !queryParams.contactGroup) {
+                this.refresh();
+            }
         });
     }
 
@@ -733,7 +753,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     invalidate(quiet = false, stageId?: number) {
-        this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
+        this.lifeCycleSubjectsService.activate$.pipe(filter(Boolean), first()).subscribe(() => {
             this.refresh(false);
         });
     }
@@ -1430,7 +1450,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     activate() {
         super.activate();
-        this.lifeCycleSubjectsService.activate.next();
         this.initFilterConfig();
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
@@ -1439,10 +1458,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();
         });
+        this.lifeCycleSubjectsService.activate.next(true);
     }
 
     deactivate() {
         super.deactivate();
+        this.lifeCycleSubjectsService.activate.next(false);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         if (!this.showPipeline) {
