@@ -1238,18 +1238,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    processFilterInternal(cxts?: any[]) {
+    processFilterInternal(contexts?: any[]) {
         if (this.showPipeline && this.pipelineComponent) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
 
         if (this.showPipeline || this.showDataGrid || this.showPivotGrid) {
-            let contexts = cxts && cxts.length ? cxts : [ this.showPipeline ? this.pipelineComponent : this ];
+            contexts = contexts && contexts.length ? contexts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
                     const filterQuery = context.processODataFilter.call(context,
-                        context.dataGrid && context.dataGrid.instance,
+                        this.showPivotGrid
+                            ? this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
+                            : context.dataGrid && context.dataGrid.instance,
                         this.dataSourceURI,
                         this.filters,
                         this.filtersService.getCheckCustom

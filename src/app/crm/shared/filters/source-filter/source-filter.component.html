@@ -22,7 +22,7 @@
         <label for="filterContact">{{ ls.l('Contact') }}</label>
         <a id="contactLink"
            [class.selected]="!!items.element.contact"
-           (click)="sourceComponent.toggle()">{{items.element.contact?.name || ls.l('SelectAnItem')}}
+           (click)="sourceComponent.toggle()">{{items.element.contact?.name || ls.l('Search')}}
             <i class="la la-close"
                [hidden]="!items.element.contact"
                (click)="clearContact($event)">
