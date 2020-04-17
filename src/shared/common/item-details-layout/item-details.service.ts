@@ -64,7 +64,7 @@ export class ItemDetailsService {
                     isLastOnList: isLastOnList
                 });
                 if (itemDirection !== TargetDirectionEnum.Current && (!isFirstOnList || !isLastOnList)) {
-                    if (itemDirection === TargetDirectionEnum.Prev) {
+                    if (itemDirection === TargetDirectionEnum.Prev && !isFirstOnList) {
                         if (isFirstOnPage) {
                             /** Update data sourse page */
                             if (dataSource.pageIndex() > 0) {
@@ -81,7 +81,7 @@ export class ItemDetailsService {
                         } else {
                             fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex - 1][itemKeyField], TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
                         }
-                    } else if (itemDirection === TargetDirectionEnum.Next) {
+                    } else if (itemDirection === TargetDirectionEnum.Next && !isLastOnList) {
                         if (isLastOnPage) {
                             if (!dataSource['entities']) {
                                 /** Update data sourse page */
@@ -119,8 +119,8 @@ export class ItemDetailsService {
     }
 
     private getDistinctItemIndex(items: any[], itemId: number, itemDirection: TargetDirectionEnum, itemKeyField: string, itemDistinctField: string): any {
-        let reverse = itemDirection == TargetDirectionEnum.Prev;
-        for (let index = reverse ? items.length - 1 : 0 ; index >= 0 && index < items.length; reverse ? index-- : index++) {
+        let reverse = itemDirection == TargetDirectionEnum.Prev, total = items.length;
+        for (let index = reverse ? total - 1 : 0 ; index >= 0 && index < total; reverse ? index-- : index++) {
             let item = items[index];
             if (item[itemKeyField] == itemId) {
                 if (itemDirection == TargetDirectionEnum.Next && items[index + 1]
@@ -135,7 +135,7 @@ export class ItemDetailsService {
                     return index;
             }
         }
-        return 0;
+        return reverse ? 0 : total - 1;
     }
 
     private getItemsCountOnLastPage(total, pageSize, pageIndex) {
