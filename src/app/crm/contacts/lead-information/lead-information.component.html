@@ -21,7 +21,7 @@
                                            class="clipboard-holder"
                                            [class.selected]="!!sourceContactName"
                                            [class.disabled]="!isCGManageAllowed"
-                                           (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed && data?.leadInfo ? ls.l('SelectAnItem') : '')}}
+                                           (click)="isCGManageAllowed && sourceComponent.toggle()">{{sourceContactName || (isCGManageAllowed && data?.leadInfo ? ls.l('Search') : '')}}
                                             <i class="save-to-clipboard" [hidden]="!sourceContactName" (click)="saveToClipboard($event, sourceContactName)"></i>
                                         </a>
                                     </ng-container>
