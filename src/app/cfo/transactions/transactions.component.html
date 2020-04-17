@@ -101,14 +101,13 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
-                                  [hidden]="!isDataLoaded"
-                                  [cacheEnabled]="false"
+                                  [cacheEnabled]="true"
                                   [headerFilter]="{ allowSearch: true, visible: false }"
                                   [pager]="defaultGridPagerConfig"
                                   [loadPanel]="{ enabled: false }"
                                   [height]="gridHeight"
                                   [elementAttr]="{ class: 'with-custom-loader' }"
-                                  columnResizingMode="widget"
+                                  [remoteOperations]="{ filtering: true, grouping: true, groupPaging: true, paging: false, sorting: false, summary: false }"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
@@ -121,10 +120,10 @@
                                        showCheckBoxesMode="always"
                                        mode="multiple">
                         </dxo-selection>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
                         <dxo-export [enabled]="false" [customizeExcelCell]="customizeExcelCell"></dxo-export>
                         <dxi-column dataField="Date"
@@ -159,6 +158,7 @@
                         <dxi-column dataField="Description"
                                     cssClass="description-column"
                                     dataType="string"
+                                    [name]="l('Description')"
                                     cellTemplate="descriptionTemplate"
                                     [caption]="l('Transactions_Description')">
                         </dxi-column>

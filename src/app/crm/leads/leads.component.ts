@@ -504,7 +504,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-
     private handleTotalCountUpdate() {
         combineLatest(
             this.odataFilter$,
@@ -844,10 +843,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 }),
                 new FilterModel({
-                    component: FilterInputsComponent,
-                    caption: 'Campaign',
-                    field: 'SourceCampaignCode',
-                    items: { SourceCampaignCode: new FilterItemModel() }
+                    component: FilterSourceComponent,
+                    caption: 'Source',
+                    items: {
+                        element: new SourceFilterModel({
+                            ls: this.localizationService
+                        })
+                    }
                 }),
                 this.filterModelLists = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -893,15 +895,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterSourceComponent,
-                    caption: 'Source',
-                    items: {
-                        element: new SourceFilterModel({
-                            ls: this.localizationService
-                        })
                     }
                 })
             ], this._activatedRoute.snapshot.queryParams);

@@ -11,12 +11,12 @@
     height: 100%;
     border: 3px solid transparent;
     filter: blur(1px);
-    
+
     @media all and (max-width: 768px) {
         width: 100% !important;
         margin: 0 0 15px;
     }
-    
+
     /** Best Value Triangle */
     .bestValue {
         position: absolute;
@@ -55,24 +55,24 @@
             margin-bottom: 8px;
             color: #0bb1f0;
         }
-        
+
         sup {
             top: 0;
         }
-        
+
         .price-block {
             margin-top: 10px;
             display: flex;
-            
+
             .amountPerMonth {
                 font-size: 24px;
                 line-height: 1;
-                
+
                 .currency-symbol {
                     position: relative;
                     top: 5px;
                 }
-                
+
                 .number {
                     font-size: 30px;
                     line-height: 1;
@@ -81,7 +81,7 @@
                 }
             }
         }
-        
+
         .includesUsers,
         .amountPerUser,
         .amountPerMonth {
@@ -95,28 +95,28 @@
         .includesUsers {
             display: inline-block;
         }
-        
+
         .amountPerUser {
             margin-left: auto;
             flex-direction: column;
-            
+
             .top {
                 font-size: 16px;
             }
-            
+
             .bottom {
                 font-size: 11px;
                 color: #bfbfbf;
             }
         }
-        
+
         .number-info {
             display: flex;
             flex-direction: column;
             font-size: 11px;
             justify-content: space-around;
             color: #bfbfbf;
-            
+
             .decimal {
                 color: #989898;
             }
@@ -149,7 +149,7 @@
 
 :host(.last) {
     width: 34%;
-    
+
     .title {
         font-size: 16px !important;
     }
@@ -197,14 +197,14 @@
         position: absolute;
         right: 5px;
         top: 5px;
-        background-image: url(../../../../../../assets/common/icons/check-green.svg);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2213%22 height%3D%229%22%3E%0D    %3Cpath fill%3D%22%2361d956%22 fill-rule%3D%22evenodd%22 d%3D%22M11.11.369L4.912 6.603 2.648 4.326a.953.953 0 0 0-1.384 0 .962.962 0 0 0 0 1.39L4.22 8.688c.198.198.395.297.692.297.297 0 .495-.099.693-.297l6.89-6.929a.963.963 0 0 0 0-1.39.953.953 0 0 0-1.385 0z%22%2F%3E%0D%3C%2Fsvg%3E%0D");
         background-size: 70%;
         background-color: #d5ffd1;
         border-radius: 50%;
         background-position: 50% 50%;
         background-repeat: no-repeat;
     }
-    
+
     .bestValue span {
         display: none;
     }
@@ -212,7 +212,7 @@
         ul {
             li {
                 color: #0bb1f0;
-                
+
                 &.disabled {
                     color: #d7d7d7;
                 }
@@ -225,11 +225,11 @@
     width: 34%;
     .cardHeader {
         padding-right: 39px;
-        
+
         @media all and (max-width: 767px) {
             padding-right: 0;
         }
-        
+
         .title {
             font-size: 15px;
         }

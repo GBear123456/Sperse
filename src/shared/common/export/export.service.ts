@@ -194,7 +194,7 @@ export class ExportService {
                 result.push({
                     id: column.dataField,
                     name: column.dataField,
-                    prompt: column.dataField === 'Description' ? column.dataField : column.caption,
+                    prompt: column.name || column.caption,
                     width: (390 / columns.length),
                     align: 'center',
                     padding: 0,

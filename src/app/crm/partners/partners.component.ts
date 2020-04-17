@@ -96,6 +96,8 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -712,6 +714,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             nameField: 'displayName',
                             keyExpr: 'id'
                         })
+                }
+            }),
+            new FilterModel({
+                component: FilterSourceComponent,
+                caption: 'Source',
+                items: {
+                    element: new SourceFilterModel({
+                        ls: this.localizationService
+                    })
                 }
             }),
             this.filterModelLists = new FilterModel({
