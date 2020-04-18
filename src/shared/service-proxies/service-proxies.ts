@@ -2556,6 +2556,74 @@ export class BankAccountsServiceProxy {
 }
 
 @Injectable()
+export class BANKCodeServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createLead(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/CreateLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateLead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateLead(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateLeadOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateLeadOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateLead(response: HttpResponseBase): Observable<CreateLeadOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateLeadOutput.fromJS(resultData200) : new CreateLeadOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateLeadOutput>(<any>null);
+    }
+}
+
+@Injectable()
 export class BusinessEntityServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -14060,16 +14128,17 @@ export class ExternalServiceProxy {
     }
 
     /**
-     * @content (optional) 
+     * @body (optional) 
      * @return Success
      */
-    getBankCode(content: string | null | undefined): Observable<GetBankCodeResponse> {
-        let url_ = this.baseUrl + "/api/services/CRM/External/GetBankCode?";
-        if (content !== undefined)
-            url_ += "content=" + encodeURIComponent("" + content) + "&"; 
+    getBankCode(body: GetBankCodeInput | null | undefined): Observable<Dimensions> {
+        let url_ = this.baseUrl + "/api/services/CRM/External/GetBankCode";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -14085,14 +14154,14 @@ export class ExternalServiceProxy {
                 try {
                     return this.processGetBankCode(<any>response_);
                 } catch (e) {
-                    return <Observable<GetBankCodeResponse>><any>_observableThrow(e);
+                    return <Observable<Dimensions>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetBankCodeResponse>><any>_observableThrow(response_);
+                return <Observable<Dimensions>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetBankCode(response: HttpResponseBase): Observable<GetBankCodeResponse> {
+    protected processGetBankCode(response: HttpResponseBase): Observable<Dimensions> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14103,7 +14172,7 @@ export class ExternalServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetBankCodeResponse.fromJS(resultData200) : new GetBankCodeResponse();
+            result200 = resultData200 ? Dimensions.fromJS(resultData200) : new Dimensions();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -14111,7 +14180,7 @@ export class ExternalServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetBankCodeResponse>(<any>null);
+        return _observableOf<Dimensions>(<any>null);
     }
 }
 
@@ -36414,6 +36483,334 @@ export interface IUpdateBankAccountDto {
     businessEntityId: number | undefined;
 }
 
+export class CreateContactEmailInput implements ICreateContactEmailInput {
+    contactId!: number | undefined;
+    emailAddress!: string | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmailInput {
+    contactId: number | undefined;
+    emailAddress: string | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+    contactId!: number | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactPhoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhoneInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactPhoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhoneInput {
+    contactId: number | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class CreateContactAddressInput implements ICreateContactAddressInput {
+    contactId!: number | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactAddressInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactAddressInput {
+    contactId: number | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
+}
+
+export class CreateLeadInput implements ICreateLeadInput {
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    emailAddress!: CreateContactEmailInput | undefined;
+    phoneNumber!: CreateContactPhoneInput | undefined;
+    address!: CreateContactAddressInput | undefined;
+    bankCode!: string | undefined;
+
+    constructor(data?: ICreateLeadInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            this.emailAddress = data["emailAddress"] ? CreateContactEmailInput.fromJS(data["emailAddress"]) : <any>undefined;
+            this.phoneNumber = data["phoneNumber"] ? CreateContactPhoneInput.fromJS(data["phoneNumber"]) : <any>undefined;
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.bankCode = data["bankCode"];
+        }
+    }
+
+    static fromJS(data: any): CreateLeadInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLeadInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        data["emailAddress"] = this.emailAddress ? this.emailAddress.toJSON() : <any>undefined;
+        data["phoneNumber"] = this.phoneNumber ? this.phoneNumber.toJSON() : <any>undefined;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["bankCode"] = this.bankCode;
+        return data; 
+    }
+}
+
+export interface ICreateLeadInput {
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    emailAddress: CreateContactEmailInput | undefined;
+    phoneNumber: CreateContactPhoneInput | undefined;
+    address: CreateContactAddressInput | undefined;
+    bankCode: string | undefined;
+}
+
+export class CreateLeadOutput implements ICreateLeadOutput {
+    contactId!: number | undefined;
+    leadId!: number | undefined;
+    userId!: number | undefined;
+    userKey!: string | undefined;
+    autoLoginLink!: string | undefined;
+
+    constructor(data?: ICreateLeadOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.leadId = data["leadId"];
+            this.userId = data["userId"];
+            this.userKey = data["userKey"];
+            this.autoLoginLink = data["autoLoginLink"];
+        }
+    }
+
+    static fromJS(data: any): CreateLeadOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLeadOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["leadId"] = this.leadId;
+        data["userId"] = this.userId;
+        data["userKey"] = this.userKey;
+        data["autoLoginLink"] = this.autoLoginLink;
+        return data; 
+    }
+}
+
+export interface ICreateLeadOutput {
+    contactId: number | undefined;
+    leadId: number | undefined;
+    userId: number | undefined;
+    userKey: string | undefined;
+    autoLoginLink: string | undefined;
+}
+
 export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -44079,94 +44476,6 @@ export interface IUpdateContactXrefInput {
     xref: string | undefined;
 }
 
-export class CreateContactAddressInput implements ICreateContactAddressInput {
-    contactId!: number | undefined;
-    streetAddress!: string | undefined;
-    city!: string | undefined;
-    stateId!: string | undefined;
-    stateName!: string | undefined;
-    zip!: string | undefined;
-    countryId!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-    ownershipTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactAddressInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.stateId = data["stateId"];
-            this.stateName = data["stateName"];
-            this.zip = data["zip"];
-            this.countryId = data["countryId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-            this.ownershipTypeId = data["ownershipTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactAddressInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactAddressInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["stateId"] = this.stateId;
-        data["stateName"] = this.stateName;
-        data["zip"] = this.zip;
-        data["countryId"] = this.countryId;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        data["ownershipTypeId"] = this.ownershipTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactAddressInput {
-    contactId: number | undefined;
-    streetAddress: string | undefined;
-    city: string | undefined;
-    stateId: string | undefined;
-    stateName: string | undefined;
-    zip: string | undefined;
-    countryId: string | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
-    usageTypeId: string | undefined;
-    ownershipTypeId: string | undefined;
-}
-
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     id!: number | undefined;
 
@@ -44923,62 +45232,6 @@ export interface ISendSMSInput {
     message: string | undefined;
 }
 
-export class CreateContactEmailInput implements ICreateContactEmailInput {
-    contactId!: number | undefined;
-    emailAddress!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactEmailInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.emailAddress = data["emailAddress"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactEmailInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactEmailInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["emailAddress"] = this.emailAddress;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactEmailInput {
-    contactId: number | undefined;
-    emailAddress: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
-    usageTypeId: string | undefined;
-}
-
 export class CreateContactEmailOutput implements ICreateContactEmailOutput {
     id!: number | undefined;
 
@@ -45600,66 +45853,6 @@ export interface IContactPhoneInfo {
     id: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
-    usageTypeId: string | undefined;
-}
-
-export class CreateContactPhoneInput implements ICreateContactPhoneInput {
-    contactId!: number | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactPhoneInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactPhoneInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhoneInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactPhoneInput {
-    contactId: number | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
     usageTypeId: string | undefined;
 }
 
@@ -50090,18 +50283,10 @@ export interface ISubscribeForEventOutput {
     id: number | undefined;
 }
 
-export enum DimentionName {
-    Action = "Action", 
-    Blueprint = "Blueprint", 
-    Nurturing = "Nurturing", 
-    Knowledge = "Knowledge", 
-}
+export class GetBankCodeInput implements IGetBankCodeInput {
+    content!: string;
 
-export class Dimmension implements IDimmension {
-    name!: DimentionName | undefined;
-    value!: number | undefined;
-
-    constructor(data?: IDimmension) {
+    constructor(data?: IGetBankCodeInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -50112,35 +50297,35 @@ export class Dimmension implements IDimmension {
 
     init(data?: any) {
         if (data) {
-            this.name = data["name"];
-            this.value = data["value"];
+            this.content = data["content"];
         }
     }
 
-    static fromJS(data: any): Dimmension {
+    static fromJS(data: any): GetBankCodeInput {
         data = typeof data === 'object' ? data : {};
-        let result = new Dimmension();
+        let result = new GetBankCodeInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["value"] = this.value;
+        data["content"] = this.content;
         return data; 
     }
 }
 
-export interface IDimmension {
-    name: DimentionName | undefined;
-    value: number | undefined;
+export interface IGetBankCodeInput {
+    content: string;
 }
 
-export class GetBankCodeResponse implements IGetBankCodeResponse {
-    dimmensions!: Dimmension[] | undefined;
+export class Dimensions implements IDimensions {
+    action!: number | undefined;
+    blueprint!: number | undefined;
+    knowledge!: number | undefined;
+    nurturing!: number | undefined;
 
-    constructor(data?: IGetBankCodeResponse) {
+    constructor(data?: IDimensions) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -50151,34 +50336,35 @@ export class GetBankCodeResponse implements IGetBankCodeResponse {
 
     init(data?: any) {
         if (data) {
-            if (data["dimmensions"] && data["dimmensions"].constructor === Array) {
-                this.dimmensions = [];
-                for (let item of data["dimmensions"])
-                    this.dimmensions.push(Dimmension.fromJS(item));
-            }
+            this.action = data["action"];
+            this.blueprint = data["blueprint"];
+            this.knowledge = data["knowledge"];
+            this.nurturing = data["nurturing"];
         }
     }
 
-    static fromJS(data: any): GetBankCodeResponse {
+    static fromJS(data: any): Dimensions {
         data = typeof data === 'object' ? data : {};
-        let result = new GetBankCodeResponse();
+        let result = new Dimensions();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.dimmensions && this.dimmensions.constructor === Array) {
-            data["dimmensions"] = [];
-            for (let item of this.dimmensions)
-                data["dimmensions"].push(item.toJSON());
-        }
+        data["action"] = this.action;
+        data["blueprint"] = this.blueprint;
+        data["knowledge"] = this.knowledge;
+        data["nurturing"] = this.nurturing;
         return data; 
     }
 }
 
-export interface IGetBankCodeResponse {
-    dimmensions: Dimmension[] | undefined;
+export interface IDimensions {
+    action: number | undefined;
+    blueprint: number | undefined;
+    knowledge: number | undefined;
+    nurturing: number | undefined;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
