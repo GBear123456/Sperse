@@ -200,7 +200,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.pageHeaderFixed();
         this.initNavigatorProperties();
         const itemKeyField = this.dataSourceURI == 'User' ? 'id' : 'Id',
-              itemDistinctField = this.dataSourceURI == 'Order' ? 'ContactId' : itemKeyField;
+              itemDistinctField = this.dataSourceURI == 'Order' ? 'LeadId' : itemKeyField;
         let subscription = this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             takeUntil(this.destroy$),
