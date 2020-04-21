@@ -1,5 +1,6 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component,
+    Inject, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -32,7 +33,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     providers: [ CategoryTreeServiceProxy, TransactionsServiceProxy, CommentServiceProxy, ClassificationServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TransactionDetailInfoComponent implements OnInit {
+export class TransactionDetailInfoComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
 
     TRANSACTION_ACCOUNTING_TYPE_KEY: any;
@@ -78,12 +79,15 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getCategoryTree();
         this.getTransactionAttributeTypes();
         this.data.transactionId$.subscribe((id) => {
             this.transactionId = id;
             this.getTransactionDetails();
         });
+    }
+
+    ngAfterViewInit() {
+        this.getCategoryTree();
     }
 
     changeOptionsPopupWidth(e) {
