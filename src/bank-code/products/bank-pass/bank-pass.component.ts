@@ -43,12 +43,14 @@ import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { Param } from '@shared/common/odata/param.model';
 import { InstanceModel } from '@shared/cfo/instance.model';
+import { ExportService } from '../../../shared/common/export/export.service';
+import { ExportGoogleSheetService } from '../../../shared/common/export/export-google-sheets/export-google-sheets';
 
 @Component({
     selector: 'bank-pass',
     templateUrl: 'bank-pass.component.html',
     styleUrls: ['./bank-pass.component.less'],
-    providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy ],
+    providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy, ExportService, ExportGoogleSheetService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
@@ -83,8 +85,11 @@ export class BankPassComponent implements OnInit, OnDestroy {
             url: this.getODataUrl(this.dataSourceURI),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
-                this.dataIsLoading = true;
-                this.changeDetectorRef.detectChanges();
+                /** To avoid double spinner after export to excel */
+                if (request.params.hasOwnProperty('$top')) {
+                    this.dataIsLoading = true;
+                    this.changeDetectorRef.detectChanges();
+                }
                 this.transformRequest(request);
             },
             deserializeDates: false,
@@ -166,6 +171,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private memberSettingsService: MemberSettingsServiceProxy,
         private httpClient: HttpClient,
         private route: ActivatedRoute,
+        private exportService: ExportService,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
@@ -273,6 +279,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
             infoText = `${from && to ? `Showing ${from} to ${to} of ` : ''}${this.totalCount} records`;
         }
         return infoText;
+    }
+
+    exportToExcel() {
+        this.exportService.exportToXLS('all', this.dataGrid);
     }
 
     onContentReady() {

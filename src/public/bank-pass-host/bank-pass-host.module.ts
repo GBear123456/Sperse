@@ -27,6 +27,8 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
 import { MemberSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponent } from './app.component';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
+import { ExportService } from '../../shared/common/export/export.service';
+import { ExportGoogleSheetService } from '../../shared/common/export/export-google-sheets/export-google-sheets';
 
 @NgModule({
     imports: [
@@ -71,7 +73,9 @@ import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/comm
         AppUrlService,
         CacheHelper,
         ClipboardService,
-        LoadingService
+        LoadingService,
+        ExportService,
+        ExportGoogleSheetService
     ]
 })
 export class BankPassHostModule {}

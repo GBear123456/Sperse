@@ -18,14 +18,14 @@ import { PdfExportHeader } from './pdf-export-header.interface';
 @Injectable()
 export class ExportService {
 
-    private _exportGoogleSheetService: ExportGoogleSheetService;
+    private exportGoogleSheetService: ExportGoogleSheetService;
     private readonly EXPORT_REQUEST_TIMEOUT = 3 * 60 * 1000;
 
     constructor(
         private injector: Injector,
         private loadingService: LoadingService
     ) {
-        this._exportGoogleSheetService = injector.get(ExportGoogleSheetService);
+        this.exportGoogleSheetService = injector.get(ExportGoogleSheetService);
     }
 
     getFileName(dataGrid?, name?: string, prefix?: string): string {
@@ -125,17 +125,17 @@ export class ExportService {
     }
 
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
-        return this._exportGoogleSheetService.export(new Promise((resolve) => {
+        return this.exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
                 let visibleColumns = dataGrid.instance.getVisibleColumns(),
-                    rowData = this._exportGoogleSheetService.getHeaderRows(visibleColumns);
+                    rowData = this.exportGoogleSheetService.getHeaderRows(visibleColumns);
 
                 data.forEach((val: any) => {
                     let row = { values: [] };
                     visibleColumns.forEach((col: any) => {
                         if (col.allowExporting) {
                             let value = val[col.dataField];
-                            row.values.push(this._exportGoogleSheetService.getCellData(value, col));
+                            row.values.push(this.exportGoogleSheetService.getCellData(value, col));
                         }
                     });
                     rowData.push(row);

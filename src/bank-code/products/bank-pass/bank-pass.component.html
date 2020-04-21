@@ -20,6 +20,11 @@
                               (valueChanged)="accessCodeChanged($event)">
                 </inplace-edit>
             </div>
+            <div class="buttons">
+                <button *ngIf="currentTabIndex == 1 || gridInitialized" class="download" (click)="exportToExcel()">
+                    <img src="./assets/common/icons/xls.svg"/>
+                </button>
+            </div>
         </div>
         <mat-tab-group (selectedTabChange)="tabChanged($event)">
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
