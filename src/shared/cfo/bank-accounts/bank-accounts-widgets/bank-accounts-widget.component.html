@@ -388,7 +388,6 @@
                  showEvent="dxclick"
                  (onItemClick)="actionsItemClick($event)"
                  [visible]="isContextMenuVisible">
-
     <div *dxTemplate="let e of 'item'">
         <div *ngIf="!e.hide" class="action-menu-item" [ngClass]="e.text | lowercase">
             {{e.text}}

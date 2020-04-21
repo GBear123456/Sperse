@@ -1,8 +1,10 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+/** Application imports */
 import { StartComponent } from './start/start.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
-import { BankAccountsComponent } from '@shared/cfo/bank-accounts/bank-accounts.component';
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { StatsComponent } from './stats/stats.component';
 import { TransactionsComponent } from './transactions/transactions.component';
@@ -69,4 +71,4 @@ import { ReportsComponent } from './reports/reports.component';
         CfoInstanceStatusGuard
     ]
 })
-export class CfoRoutingModule { }
+export class CfoRoutingModule {}

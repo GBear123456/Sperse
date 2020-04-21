@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
-import { InstanceServiceProxy, InstanceType, GetStatusOutput } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CfoInstanceStatusGuard implements CanActivate {
         private router: Router,
         private cfoService: CFOService,
         private instanceServiceProxy: InstanceServiceProxy
-    ) {   }
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         /** Setup instance before moving to the page if it hasn't initialized yet */

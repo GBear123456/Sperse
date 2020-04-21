@@ -54,7 +54,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
             filter((initialized: boolean) => !initialized),
             takeUntil(this.deactivate$)
         ).subscribe(() => {
-            this._router.navigate(['../start'], { relativeTo: this.route.parent } );
+            this._router.navigate(['../start'], { relativeTo: this.route } );
         });
         this.synchProgress.syncCompleted$.pipe(
             takeUntil(this.deactivate$),
