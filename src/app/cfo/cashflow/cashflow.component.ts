@@ -2123,11 +2123,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             const fixedFilters$ = $('.fixed-filters');
             const marginLeft: any = fixedFilters$.css('marginLeft');
             let fixedFiltersWidth: number = fixedFilters$.length ? parseInt(marginLeft) : 0;
-            /** Set new offset to stick the scrollbar to the bottom of the page */
-            scrollElement.offset({
-                top: window.innerHeight - minusValue,
-                left: this.leftColumnWidth + fixedFiltersWidth
-            });
+            const top = window.innerHeight - minusValue;
+            if (top > 149) {
+                /** Set new offset to stick the scrollbar to the bottom of the page */
+                scrollElement.offset({
+                    top: top,
+                    left: this.leftColumnWidth + fixedFiltersWidth
+                });
+            }
         } else {
             scrollElement.removeClass('fixedScrollbar');
             scrollElement.css({left: 'auto', top: 'auto'});
