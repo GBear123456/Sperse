@@ -443,8 +443,10 @@
                 padding-left: 0;
             }
 
-            .dx-texteditor-empty .dx-placeholder {
-                display: none !important;
+            div.dx-texteditor-empty {
+                &, & .dx-placeholder {
+                    display: none !important;
+                }
             }
         }
     }
