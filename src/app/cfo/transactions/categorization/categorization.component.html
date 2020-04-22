@@ -26,15 +26,15 @@
                   (onRowInserted)="onCategoryInserted($event)"
                   (onRowExpanded)="onRowExpandChange()"
                   (onRowCollapsed)="onRowExpandChange()"
-                  (onRowRemoving)="onCategoryRemoving($event)"
                   (onRowPrepared)="onRowPrepared($event)"
                   (onNodesInitialized)="onNodesInitialized()">
         <dxo-editing mode="row"
-                     [texts]="{confirmDeleteMessage: ''}"
+                     [texts]="{confirmDeleteMessage: ''}"                     
                      [allowUpdating]="false"
                      [allowAdding]="false">
         </dxo-editing>
         <dxi-column [cssClass]="columnClassName"
+                    [editCellTemplate]="'categoryEditTemplate'"
                     [cellTemplate]="'categoryTemplate'"
                     [allowSorting]="true"
                     [sortIndex]="0"
@@ -60,6 +60,10 @@
                     [allowEditing]="false"
                     [visible]="settings.showTC">
         </dxi-column>
+
+        <div *dxTemplate="let cell of 'categoryEditTemplate'" class="test">
+            <dx-text-box [width]="180" [value]="cell.value" valueChangeEvent="keyup" (onValueChanged)="cell.setValue($event.value)"></dx-text-box>
+        </div> 
 
         <div *dxTemplate="let cell of 'categoryTemplate'">
             <ng-container>
