@@ -502,7 +502,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.finishLoading(true);
             })).subscribe(successCallback, error => {
                 this.appHttpConfiguration.avoidErrorHandling = false;
-                if (error.message == this.l('LeadNotFound'))
+                if (error.code == 404)
                     this.leadService.getLastLeadInfo(contactInfo.id).subscribe(successCallback);
                 else
                     this.notify.error(error.message);
