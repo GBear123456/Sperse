@@ -102,7 +102,7 @@
         }
     }
 
-    ::ng-deep dx-tree-list {
+    ::ng-deep .dx-treelist {
         max-width: 100% !important;
 
         .dx-treelist-headers {
@@ -175,7 +175,7 @@
 
         tr.drag-hover td {
             .category-hover {
-                background-color: #FFFBF5;
+                background-color: rgba(255, 251, 245, 0.5);
                 border: solid 1px #ffe9bc;
             }
         }
@@ -423,7 +423,6 @@
                             height: 32px;
                             margin-top: -7px;
                             right: 0px;
-                            z-index: -1;
                         }
 
                         .category-drop-area {
@@ -542,7 +541,6 @@
 
                     &.dx-state-hover, &.dx-selection, &.dx-edit-row {
                         cursor: pointer;
-
                         td {
                             color: #424c56;
                             border: none !important;
@@ -555,7 +553,7 @@
 
                             .category-hover {
                                 border: solid 1px #b8e9fb !important;
-                                background-color: #F0FAFE;
+                                background-color: rgba(240, 250, 254, 0.5);
                             }
                         }
                     }
