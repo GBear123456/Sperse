@@ -4,7 +4,7 @@
               [editTitle]="true"
               [placeholder]="ls.l('Enter the rule name')"
               [isTitleValid]="isTitleValid">
-    <dx-scroll-view showScrollbar="onHover" height="calc(100% - 82px)">
+    <dx-scroll-view showScrollbar="onHover" height="100%">
         <div class="transactions-container" *ngIf="showSelectedTransactions">
             <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
             <dx-data-grid class="grid-layout"
@@ -121,20 +121,21 @@
 
                             <div *dxTemplate="let cell of 'valueTemplate'">
                                 <dx-select-box
-                                               [placeholder]="ls.l('Enter_Value')"
-                                               [hoverStateEnabled]="false"
-                                               [activeStateEnabled]="false"
-                                               [focusStateEnabled]="false"
-                                               [acceptCustomValue]="true"
-                                               [noDataText]="''"
-                                               [dropDownButtonTemplate]="''"
-                                               [dataSource]="keyAttributeValuesDataSource"
-                                               (onCustomItemCreating)="onCustomAttributeCreating($event, cell)"
-                                               (onKeyDown)="onAttributeKeyEnter($event, cell)"
-                                               (onValueChanged)="attributeValueValueChanged($event, cell)"
-                                               valueExpr="name"
-                                               displayExpr="name"
-                                               [value]="cell.value">
+                                    [placeholder]="ls.l('Enter_Value')"
+                                    [hoverStateEnabled]="false"
+                                    [activeStateEnabled]="false"
+                                    [focusStateEnabled]="false"
+                                    [acceptCustomValue]="true"
+                                    [noDataText]="''"
+                                    [dropDownButtonTemplate]="''"
+                                    [dataSource]="keyAttributeValuesDataSource"
+                                    (onOptionChanged)="onAttributeOptionChanged($event, cell)"
+                                    (onCustomItemCreating)="onCustomAttributeCreating($event, cell)"
+                                    (onKeyDown)="onAttributeKeyEnter($event, cell)"
+                                    (onValueChanged)="attributeValueValueChanged($event, cell)"
+                                    valueExpr="name"
+                                    displayExpr="name"
+                                    [value]="cell.value">
                                 </dx-select-box>
                             </div>
                     </dx-data-grid>
@@ -255,7 +256,8 @@
                                        [itemTemplate]="'itemTMPL'"
                                        valueExpr="key"
                                        displayExpr="name"
-                                       [showClearButton]="true"
+                                       [showClearButton]="false"
+                                       (onOptionChanged)="onDescriptorOptionChanged($event)"
                                        (onCustomItemCreating)="onCustomDescriptorCreating($event)"
                                        (onValueChanged)="onDescriptorChanged($event)"
                                        [(value)]="descriptor">

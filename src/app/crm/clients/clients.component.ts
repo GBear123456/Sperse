@@ -1181,6 +1181,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
             this._refresh.next(null);
+            this.changeDetectorRef.detectChanges();
         }
     }
 

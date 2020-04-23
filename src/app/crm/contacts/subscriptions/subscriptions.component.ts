@@ -86,7 +86,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     setDataSource(data: OrderSubscriptionDto[]) {
         _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceType),
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceTypeId),
             (values: OrderSubscriptionDto[]) => {
                 _.chain(values).sortBy('id').reverse().value()[0]['isLastSubscription'] = true;
             });

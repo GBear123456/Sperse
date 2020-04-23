@@ -810,8 +810,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
             if ($event.data.key)
                 this.addActionButton('delete', $event.cellElement, () => {
-                    this.categoryList.instance.deleteRow(
-                        this.categoryList.instance.getRowIndexByKey($event.data.key));
+                    this.onCategoryRemoving($event.data);
                 });
             if (this.showFilterIcon)
                 this.addActionButton('filter', $event.cellElement, () => {
@@ -883,9 +882,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         ).subscribe();
     }
 
-    onCategoryRemoving($event) {
-        $event.cancel = true;
-        let itemId = $event.key,
+    onCategoryRemoving(data) {
+        let itemId = data.key,
             isAccountingType = isNaN(itemId),
             dialogData = {
                 deleteAllReferences: true,
@@ -900,6 +898,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }).afterClosed().pipe(
             filter(Boolean),
             switchMap(() => {
+                this.startLoading();
                 return this.categoryTreeServiceProxy[isAccountingType ? 'deleteAccountingType' : 'deleteCategory'].call(
                     this.categoryTreeServiceProxy,
                     InstanceType[this._cfoService.instanceType],

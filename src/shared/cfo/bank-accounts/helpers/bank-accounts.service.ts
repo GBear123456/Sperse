@@ -96,6 +96,7 @@ export class BankAccountsService {
     private _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
     private _businessEntities: BehaviorSubject<BusinessEntityDto[]> = new BehaviorSubject([]);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
+    syncAccounts: SyncAccountBankDto[];
     bankAccountsIds$: Observable<number[]>;
     businessEntities$: Observable<BusinessEntityDto[]>;
     sortedBusinessEntities$: Observable<BusinessEntityDto[]>;
@@ -443,6 +444,7 @@ export class BankAccountsService {
             this.syncAccountsRequest$
                 .pipe(finalize(() => { this.syncAccountsRequest$ = null; }))
                 .subscribe(syncAccounts => {
+                    this.syncAccounts = syncAccounts;
                     this._syncAccounts.next(syncAccounts);
                 });
         }

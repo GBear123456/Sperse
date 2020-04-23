@@ -204,7 +204,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 takeUntil(this.destroy$)
             ).subscribe((syncData: SyncProgressOutput) => {
                 const syncDataAccountsIds = this.bankAccountsService.getAccountsIds(syncData.accountProgresses);
-                const dataSourceAccountsIds = this.bankAccountsService.getAccountsIds(this.dataSource);
+                const dataSourceAccountsIds = this.bankAccountsService.getAccountsIds(this.bankAccountsService.syncAccounts);
                 /** Reload accounts if their ids are not the same as in last data source */
                 if (ArrayHelper.dataChanged(syncDataAccountsIds, dataSourceAccountsIds)) {
                     this.refresh();
@@ -212,7 +212,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                     /** Update status of bank accounts whose status has changed */
                     syncData.accountProgresses.forEach(((accountProgress: SyncProgressDto) => {
                         accountProgress.bankAccounts && accountProgress.bankAccounts.forEach((bankAccount: BankAccountProgress) => {
-                            const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.dataSource);
+                            const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.bankAccountsService.syncAccounts);
                             const bankAccountInDataSource = syncAccounts.find(account => account.id === bankAccount.id);
                             if (bankAccountInDataSource && bankAccount.syncStatus !== bankAccountInDataSource.syncStatus) {
                                 bankAccountInDataSource.syncStatus = bankAccount.syncStatus;
