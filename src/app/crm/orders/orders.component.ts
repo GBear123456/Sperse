@@ -931,7 +931,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: null,
+            entityStageDataSource: this.dataGrid.instance.getDataSource(),
             loadMethod: null,
             section: section
         });
@@ -939,6 +939,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     onCardClick({entity, entityStageDataSource, loadMethod, section = 'invoices'}) {
         if (entity && entity.ContactId) {
+            let isOrder = this.selectedOrderType === OrderType.Order;
             this.searchClear = false;
             this._router.navigate(
                 [
@@ -948,15 +949,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     section
                 ], {
                     queryParams: {
-                        id: entity.Id,
+                        ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
                         referrer: 'app/crm/orders',
                         dataLayoutType: DataLayoutType.Pipeline
                     }
                 }
             );
             if (entityStageDataSource)
-                this.itemDetailsService.setItemsSource(
-                    ItemTypeEnum.Order, entityStageDataSource, loadMethod);
+                this.itemDetailsService.setItemsSource(isOrder ? ItemTypeEnum.Order :
+                    ItemTypeEnum.Subscription, entityStageDataSource, loadMethod);
         }
     }
 
@@ -1058,8 +1059,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         super.deactivate();
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        if (!this.showOrdersPipeline)
-            this.itemDetailsService.setItemsSource(ItemTypeEnum.Order, this.dataGrid.instance.getDataSource());
 
         this.hideHostElement();
     }
