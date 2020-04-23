@@ -57,6 +57,7 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { MatDialogRef } from '@angular/material/dialog';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -116,6 +117,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         private dialogService: DialogService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
+        private appHttpConfiguration: AppHttpConfiguration,
         private orgContactService: OrganizationContactServiceProxy,
         private partnerService: PartnerServiceProxy,
         private leadService: LeadServiceProxy,
@@ -488,12 +490,22 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     ? this.leadService.getLeadInfo(leadId)
                     : this.leadService.getLastLeadInfo(contactInfo.id);
 
-            leadInfo$.pipe(finalize(() => {
-                this.finishLoading(true);
-            })).subscribe(result => {
+            let successCallback = (result) => {
                 this.fillLeadDetails(result);
+                this.appHttpConfiguration.avoidErrorHandling = false;
                 personContactInfo && this.initNavLinks(personContactInfo);
                 lastLeadCallback && lastLeadCallback();
+            };
+
+            this.appHttpConfiguration.avoidErrorHandling = true;
+            leadInfo$.pipe(finalize(() => {
+                this.finishLoading(true);
+            })).subscribe(successCallback, error => {
+                this.appHttpConfiguration.avoidErrorHandling = false;
+                if (error.code == 404)
+                    this.leadService.getLastLeadInfo(contactInfo.id).subscribe(successCallback);
+                else
+                    this.notify.error(error.message);
             });
         } else
             this.contactsService.leadInfoUpdate(leadInfo);

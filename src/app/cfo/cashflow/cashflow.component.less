@@ -1512,16 +1512,24 @@
                     &.adjustmentRow {
                         &.projected {
                             td.forecastDate {
-                                display: flex;
                                 align-items: center;
                                 padding-left: 3px;
-
+                                position: relative;
+                                & > div {
+                                    margin-left: 10px;
+                                }
                                 &:before {
                                     content: '!';
                                     color: #f89800;
                                     font-weight: 800;
                                     font-size: 18px;
-                                    margin-right: 5px;
+                                    position: absolute;
+                                    left: 3px;
+                                    height: 15px;
+                                    line-height: 15px;
+                                    top: 0;
+                                    bottom: 0;
+                                    margin: auto;
                                 }
                             }
                         }

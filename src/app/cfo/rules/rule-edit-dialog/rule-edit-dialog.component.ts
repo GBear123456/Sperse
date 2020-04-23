@@ -28,6 +28,16 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     providers: [ CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy ]
 })
 export class RuleDialogComponent implements OnInit, AfterViewInit {
+    constructor(
+        private classificationServiceProxy: ClassificationServiceProxy,
+        private cashflowServiceProxy: CashflowServiceProxy,
+        private cfoService: CFOService,
+        private transactionsServiceProxy: TransactionsServiceProxy,
+        private notifyService: NotifyService,
+        private elementRef: ElementRef,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {}
     @ViewChild(DxTreeViewComponent, { static: false }) transactionTypesList: DxTreeViewComponent;
     @ViewChild('attributesComponent', { static: false }) attributeList: DxDataGridComponent;
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
@@ -93,16 +103,23 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             value: true
         }
     ];
-    constructor(
-        private classificationServiceProxy: ClassificationServiceProxy,
-        private cashflowServiceProxy: CashflowServiceProxy,
-        private cfoService: CFOService,
-        private transactionsServiceProxy: TransactionsServiceProxy,
-        private notifyService: NotifyService,
-        private elementRef: ElementRef,
-        public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any
-    ) {}
+
+    attributeDisplayValue = ((data) => {
+        let attribute = _.findWhere(this.gridAttributeTypes,
+                {id: data.attributeTypeId});
+
+        return attribute ? attribute.name : capitalize(data.attributeTypeId);
+    }).bind(this);
+
+    conditionDisplayValue = ((data) => {
+        return {
+            Equal: '='
+            //Exist: '\u2203'
+        }[data.conditionTypeId] ||
+            data.conditionTypeId;
+    }).bind(this);
+
+    attributeValue: string;
 
     ngOnInit() {
         this.formats = _.values(CashFlowAmountFormat).map((value) => {
@@ -603,18 +620,24 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             this.availableGridAttributeTypes = list;
     }
 
-    attributeDisplayValue = ((data) => {
-        let attribute = _.findWhere(this.gridAttributeTypes,
-                {id: data.attributeTypeId});
+    onDescriptorOptionChanged($event) {
+        if ($event.name == 'text')
+            this.descriptor = $event.value;
+        else if ($event.name == 'opened')
+            setTimeout(() => {
+                $event.component.field().value = this.descriptor;
+            });
+    }
 
-        return attribute ? attribute.name : capitalize(data.attributeTypeId);
-    }).bind(this);
-
-    conditionDisplayValue = ((data) => {
-        return {
-            Equal: '='
-            //Exist: '\u2203'
-        }[data.conditionTypeId] ||
-            data.conditionTypeId;
-    }).bind(this);
+    onAttributeOptionChanged($event) {
+        $event.component.option('placeholder', this.ls.l('Enter_Value'));
+        if ($event.name == 'text')
+            this.attributeValue = $event.value;
+        else if ($event.name == 'opened') {
+            setTimeout(() => {
+                $event.component.field().value = this.attributeValue;
+                $event.component.option('placeholder', '');
+            });
+        }
+    }
 }
