@@ -96,6 +96,7 @@ import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notificat
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
 
 let COMPONENTS = [
     StartComponent,
@@ -188,7 +189,8 @@ let COMPONENTS = [
         SearchInputModule,
         SortButtonModule,
         ExpandButtonModule,
-        ActionMenuModule
+        ActionMenuModule,
+        ModalDialogModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

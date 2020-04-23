@@ -20,9 +20,13 @@
                               (valueChanged)="accessCodeChanged($event)">
                 </inplace-edit>
             </div>
-            <div class="buttons">
-                <button *ngIf="currentTabIndex == 1 || gridInitialized" class="download" (click)="exportToExcel()">
+            <div class="buttons" *ngIf="currentTabIndex == 1 || gridInitialized">
+                <button class="download" (click)="exportToExcel()">
                     <img src="./assets/common/icons/xls.svg"/>
+                </button>
+                <button class="add" (click)="openAddLeadDialog()">+</button>
+                <button class="refresh" (click)="refresh()">
+                    <img src="./assets/common/icons/refresh-btn.svg" [alt]="ls.l('Refresh')">
                 </button>
             </div>
         </div>
@@ -167,6 +171,7 @@
                             <dxi-column dataField="CountryId" [caption]="ls.l('State')"
                                         cellTemplate="location" [width]="150"></dxi-column>
                             <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column [width]="47" cssClass="delete-button-container" cellTemplate="deleteCellTemplate"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
@@ -181,6 +186,9 @@
                             </div>
                             <div *dxTemplate="let data of 'location'">
                                 {{data.data.CountryId}} {{data.data.State}}
+                            </div>
+                            <div *dxTemplate="let data of 'deleteCellTemplate'">
+                                <button class="delete" (click)="deleteLead(data)"><div>+</div></button>
                             </div>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                         </dx-data-grid>

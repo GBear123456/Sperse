@@ -46,6 +46,7 @@ import { OfferStatsComponent } from './reports/offer-stats/offer-stats.component
 import { VisitorsStatsComponent } from './reports/visitors-stats/visitors-stats.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
 import { StaticListModule } from '../shared/common/static-list/static-list.module';
+import { AppRatingModule } from '../shared/common/rating/app-rating.module';
 
 @NgModule({
     imports: [
@@ -71,7 +72,8 @@ import { StaticListModule } from '../shared/common/static-list/static-list.modul
         MatSlideToggleModule,
         ItemDetailsLayoutModule,
         StarsRatingModule,
-        StaticListModule
+        StaticListModule,
+        AppRatingModule
     ],
     declarations: [
         OffersComponent,

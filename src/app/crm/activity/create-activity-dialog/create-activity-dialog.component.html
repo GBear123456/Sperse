@@ -27,7 +27,7 @@
                          [funnelStyling]="true"
                          [list]="data.stages">
         </app-static-list>
-        <crm-user-assignment-list [multiSelection]="true"
+        <user-assignment-list [multiSelection]="true"
                                   [targetSelector]="'[accesskey=\'UserAssign\']'"
                                   [proxyService]="activityProxy"
                                   [(selectedItemKey)]="data.appointment.AssignedUserIds"
@@ -36,7 +36,7 @@
                                   [permissionKey]="permissions.CRMManageEventsAssignments"
                                   (onSelectionChanged)="onUserAssignmentChanged($event)"
                                   [assignedUsersSelector]="assignedUsersSelector">
-        </crm-user-assignment-list>
+        </user-assignment-list>
 
         <app-static-list #leadsList
                          [width]="'330px'"

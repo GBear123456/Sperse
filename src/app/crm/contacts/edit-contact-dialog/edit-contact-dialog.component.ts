@@ -12,12 +12,9 @@ import capitalize from 'underscore.string/capitalize';
 import {
     AppStore,
     ContactLinkTypesStoreActions,
-    ContactLinkTypesStoreSelectors,
-    EmailUsageTypesStoreActions,
-    EmailUsageTypesStoreSelectors,
-    PhoneUsageTypesStoreActions,
-    PhoneUsageTypesStoreSelectors
+    ContactLinkTypesStoreSelectors
 } from '@app/store';
+import { EmailUsageTypesStoreActions, EmailUsageTypesStoreSelectors, PhoneUsageTypesStoreActions, PhoneUsageTypesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
 import {
     ContactEmailServiceProxy,

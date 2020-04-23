@@ -15,7 +15,7 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { CommonModule } from '@shared/common/common.module';
 import { SignupComponent } from './signup.component';
 import { SignupFormComponent } from './signup-form.component';
-
+import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
 
 @NgModule({
     imports: [
@@ -28,6 +28,7 @@ import { SignupFormComponent } from './signup-form.component';
         DxCheckBoxModule,
         DxButtonModule,
         NgxMaskModule.forRoot(),
+        CountryPhoneNumberModule
     ],
     declarations: [
         SignupFormComponent,

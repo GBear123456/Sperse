@@ -10,12 +10,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
-import { ContactStatus } from '@shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from '../person-dialog/person-dialog.component';
-import { CreateClientDialogComponent } from '../../shared/create-client-dialog/create-client-dialog.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { UploadDocumentsDialogComponent } from '../documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
@@ -34,7 +33,7 @@ import {
     UpdateOrganizationInfoInput,
     UpdatePersonNameInput
 } from '@shared/service-proxies/service-proxies';
-import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -449,7 +448,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         });
         if (selectedMenuItem.type === ContextType.AddContact)
             setTimeout(() => {
-                this.dialog.open(CreateClientDialogComponent, {
+                this.dialog.open(CreateEntityDialogComponent, {
                     panelClass: 'slider',
                     disableClose: true,
                     closeOnNavigation: false,

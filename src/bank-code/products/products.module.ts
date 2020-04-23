@@ -31,6 +31,8 @@ import { ProductsService } from '@root/bank-code/products/products.service';
 import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
+import { CreateEntityModule } from '@shared/common/create-entity-dialog/create-entity.module';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 
 @NgModule({
     imports: [
@@ -49,7 +51,8 @@ import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/comm
         NgxExtendedPdfViewerModule,
         NgCircleProgressModule,
         InplaceEditModule,
-        NoDataModule
+        NoDataModule,
+        CreateEntityModule
     ],
     declarations: [
         CodeBreakerAiComponent,
@@ -65,6 +68,7 @@ import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/comm
     ],
     providers: [
         ProductsService
-    ]
+    ],
+    entryComponents: [ CreateEntityDialogComponent ]
 })
 export class ProductsModule {}

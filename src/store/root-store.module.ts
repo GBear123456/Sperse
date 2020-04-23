@@ -11,6 +11,10 @@ import { localStorageSync } from 'ngrx-store-localstorage';
 import { CurrenciesStoreModule } from './currencies-store';
 import { StatesStoreModule } from './states-store';
 import { environment } from '../environments/environment';
+import { EmailUsageTypesStoreModule } from '@root/store/email-usage-types-store';
+import { AddressUsageTypesStoreModule } from '@root/store/address-usage-types-store';
+import { PhoneUsageTypesStoreModule } from '@root/store/phone-usage-types-store';
+import { CountriesStoreModule } from '@root/store/countries-store';
 
 /** For storing some entities in local storage */
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -46,6 +50,10 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
     imports: [
         StatesStoreModule,
         CurrenciesStoreModule,
+        EmailUsageTypesStoreModule,
+        AddressUsageTypesStoreModule,
+        PhoneUsageTypesStoreModule,
+        CountriesStoreModule,
         StoreModule.forRoot({}, { metaReducers }),
         EffectsModule.forRoot([]),
         environment.production ? [] :

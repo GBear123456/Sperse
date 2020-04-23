@@ -14,9 +14,11 @@ import {
     AddressUsageTypesStoreActions,
     AddressUsageTypesStoreSelectors,
     CountriesStoreActions,
-    CountriesStoreSelectors
-} from '@app/store';
-import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+    CountriesStoreSelectors,
+    RootStore,
+    StatesStoreActions,
+    StatesStoreSelectors
+} from '@root/store';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';

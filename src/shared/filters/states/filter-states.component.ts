@@ -2,17 +2,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { first, filter, map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
-import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { CountriesStoreActions, RootStore } from '@root/store';
 import { FilterComponent } from '../models/filter-component';
 import { FilterStatesModel } from './filter-states.model';
-import { CountryDto, CountryStateDto, ICountryStateDto } from '@shared/service-proxies/service-proxies';
 import { FilterStatesService } from './filter-states.service';
 import { ICountryState } from './country-state.interface';
 

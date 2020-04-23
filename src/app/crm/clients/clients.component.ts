@@ -51,12 +51,12 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { TagsListComponent } from '../shared/tags-list/tags-list.component';
-import { ListsListComponent } from '../shared/lists-list/lists-list.component';
-import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '../shared/rating/rating.component';
+import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/shared/common/lists/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
-import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -728,7 +728,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     createClient() {
-        this.dialog.open(CreateClientDialogComponent, {
+        this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,

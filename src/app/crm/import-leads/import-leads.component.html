@@ -42,7 +42,7 @@
     </import-wizard>
 </div>
 
-<crm-user-assignment-list
+<user-assignment-list
     [selectedKeys]="selectedClientKeys"
     [selectedItemKey]="userId"
     [bulkUpdateMode]="true"
@@ -50,7 +50,7 @@
     (onSelectionChanged)="onUserAssignmentChanged($event)"
     [permissionKey]="getUserAssignmentPermissionKey()"
     [assignedUsersSelector]="assignedUsersSelector">
-</crm-user-assignment-list>
+</user-assignment-list>
 <app-static-list #stagesList
     [width]="'210px'"
     [highlightSelected]="true"
@@ -76,9 +76,9 @@
     <!--(onItemSelected)="onPartnerTypeChanged($event)"-->
     <!--[list]="partnerTypes">-->
 <!--</app-static-list>-->
-<crm-types-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
-<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
-<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></crm-tags-list>
-<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="ratingValue" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></crm-rating>
+<types-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></types-list>
+<lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></lists-list>
+<tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></tags-list>
+<rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="ratingValue" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></rating>
 <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
 

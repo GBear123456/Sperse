@@ -36,34 +36,38 @@
             <div class="row aligned-center">
                 <div class="col-4 col-sm-3 text-right light-gray">{{ls.l("Category")}}</div>
                 <div class="col-8 col-sm-9 truncate category-row" [title]="categoryPathTitle">
-                    <dx-select-box [items]="accountingTypes"
-                                   displayExpr="name"
-                                   accessKey="accType-select"
-                                   valueExpr="key"
-                                   itemTemplate="itemTemplate"
-                                   [(value)]="selectedAccountingTypeKey"
-                                   [disabled]="!isEditAllowed"
-                                   [placeholder]="selectedAccountingTypeKey ? '' : ls.l('TransactionDetail_Choose_Accounting_Type')"
-                                   (onOpened)="changeOptionsPopupWidth($event)"
-                                   (onValueChanged)="getFilteredCategoriesData(transactionInfo, selectedAccountingTypeKey)">
+                    <dx-select-box
+                        height="40px"
+                        [items]="accountingTypes"
+                        displayExpr="name"
+                        accessKey="accType-select"
+                        valueExpr="key"
+                        itemTemplate="itemTemplate"
+                        [(value)]="selectedAccountingTypeKey"
+                        [disabled]="!isEditAllowed"
+                        [placeholder]="selectedAccountingTypeKey ? '' : ls.l('TransactionDetail_Choose_Accounting_Type')"
+                        (onOpened)="changeOptionsPopupWidth($event)"
+                        (onValueChanged)="getFilteredCategoriesData(transactionInfo, selectedAccountingTypeKey)">
                         <div *dxTemplate="let item of 'itemTemplate'">
                             <span [title]="item.name">{{ item.name }}</span>
                         </div>
                     </dx-select-box>
                     <ng-container *ngIf="transactionInfo?.cashflowCategory || selectedAccountingTypeKey">
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        <dx-select-box [items]="filteredCategory"
-                                       #categorySelectBox
-                                       displayExpr="name"
-                                       accessKey="category-select"
-                                       itemTemplate="itemTemplate"
-                                       [disabled]="!isEditAllowed || !selectedAccountingTypeKey"
-                                       [placeholder]="selectedCategoryKey ? '' : ls.l('TransactionDetail_Choose_Transaction_Category')"
-                                       valueExpr="key"
-                                       [(value)]="selectedCategoryKey"
-                                       (onOpened)="changeOptionsPopupWidth($event)"
-                                       (onValueChanged)="getFilteredSubCategoriesData(transactionInfo, selectedCategoryKey)"
-                                       (onItemClick)="confirmUpdateTransactionCategory($event)">
+                        <dx-select-box 
+                            height="40px"
+                            [items]="filteredCategory"
+                            #categorySelectBox
+                            displayExpr="name"
+                            accessKey="category-select"
+                            itemTemplate="itemTemplate"
+                            [disabled]="!isEditAllowed || !selectedAccountingTypeKey"
+                            [placeholder]="selectedCategoryKey ? '' : ls.l('TransactionDetail_Choose_Transaction_Category')"
+                            valueExpr="key"
+                            [(value)]="selectedCategoryKey"
+                            (onOpened)="changeOptionsPopupWidth($event)"
+                            (onValueChanged)="getFilteredSubCategoriesData(transactionInfo, selectedCategoryKey)"
+                            (onItemClick)="confirmUpdateTransactionCategory($event)">
                             <div *dxTemplate="let item of 'itemTemplate'">
                                 <span [title]="item.name">{{ item.name }}</span>
                             </div>

@@ -11,8 +11,7 @@ import { map, startWith } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { AppConsts } from '@shared/AppConsts';

@@ -75,7 +75,6 @@ import { DatePickerDirective } from './timing/date-picker.component';
 import { PeriodComponent } from './period/period.component';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
-import { RatingBarComponent } from './rating-bar/rating-bar.component';
 import { PaymentWizardComponent } from './payment-wizard/payment-wizard.component';
 import { PackageCardComponent } from './payment-wizard/package-chooser/package-card/package-card.component';
 import { PackageChooserComponent } from './payment-wizard/package-chooser/package-chooser.component';
@@ -86,16 +85,12 @@ import { CreditCardComponent } from './payment-wizard/payment-options/credit-car
 import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
 import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
-import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
-import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
-import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
-import { AppRatingComponent } from './rating/rating.component';
-import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
-import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { LeftMenuComponent } from './left-menu/left-menu.component';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
+import { AppRatingModule } from './rating/app-rating.module';
 
 @NgModule({
     imports: [
@@ -160,7 +155,9 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         DxSliderModule,
         CreditCardDirectivesModule,
         AngularGooglePlaceModule,
-        LoadingSpinnerModule
+        LoadingSpinnerModule,
+        ModalDialogModule,
+        AppRatingModule
     ],
     declarations: [
         TimeAgoPipe,
@@ -179,7 +176,6 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         CalendarDialogComponent,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        RatingBarComponent,
         PaymentWizardComponent,
         PackageCardComponent,
         PackageChooserComponent,
@@ -190,13 +186,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         PayPalComponent,
         BankTransferComponent,
         ECheckComponent,
-        UserAssignmentComponent,
-        TagsListComponent,
-        ListsListComponent,
-        AppRatingComponent,
-        RatingComponent,
         StarsListComponent,
-        TypesListComponent,
         LeftMenuComponent
     ],
     exports: [
@@ -216,14 +206,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        RatingBarComponent,
-        UserAssignmentComponent,
-        TagsListComponent,
-        ListsListComponent,
-        AppRatingComponent,
-        RatingComponent,
         StarsListComponent,
-        TypesListComponent,
         LeftMenuComponent
     ],
     providers: [

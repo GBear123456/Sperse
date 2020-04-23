@@ -11,8 +11,7 @@ import { StatesStoreActions, StatesStoreSelectors } from '../../../store/states-
 import { CountryDto, CountryStateDto } from '../../service-proxies/service-proxies';
 import { ICountryState } from './country-state.interface';
 import { RootStore } from '../../../store';
-import { CountriesStoreActions, CountriesStoreSelectors } from '../../../app/store/countries-store';
-
+import { CountriesStoreActions, CountriesStoreSelectors } from '@root/store/countries-store';
 
 @Injectable()
 export class FilterStatesService {

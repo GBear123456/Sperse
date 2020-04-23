@@ -11,8 +11,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
-import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryStateDto, CountryDto, ContactServiceProxy,
     PersonOrgRelationShortInfo, ContactDetailsDto, OrganizationShortInfo } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

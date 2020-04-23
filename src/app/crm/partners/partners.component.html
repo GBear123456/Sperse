@@ -45,9 +45,9 @@
         <!--(onItemSelected)="updatePartnerTypes($event)">-->
         <!--</app-static-list>-->
         <!---->
-        <crm-types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></crm-types-list>
-        <crm-tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
-        <crm-lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
+        <types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></types-list>
+        <tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>
+        <lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></lists-list>
 
         <!--<app-advanced-list-->
         <!--[data]="partnerTypes"-->
@@ -68,14 +68,14 @@
         <!--[bulkUpdateConfirmationKey]="'RemoveFromBulkUpdateConfirmation'"-->
         <!--&gt;</app-advanced-list>-->
 
-        <crm-user-assignment-list [selectedKeys]="selectedPartnerKeys"
+        <user-assignment-list [selectedKeys]="selectedPartnerKeys"
                                   [bulkUpdateMode]="true"
                                   [filterModel]="filterModelAssignment"
                                   [proxyService]="contactProxy"
                                   [permissionKey]="permissions.CRMPartnersManageAssignments"
                                   [assignedUsersSelector]="assignedUsersSelector">
-        </crm-user-assignment-list>
-        <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
+        </user-assignment-list>
+        <rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></rating>
         <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
 
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
