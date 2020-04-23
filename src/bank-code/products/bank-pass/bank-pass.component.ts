@@ -16,6 +16,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { DxoPagerComponent } from 'devextreme-angular/ui/nested';
@@ -35,7 +36,12 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 import { ProductsService } from '@root/bank-code/products/products.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { MemberSettingsServiceProxy, UpdateUserAffiliateCodeDto } from '@shared/service-proxies/service-proxies';
+import {
+    BANKCodeServiceProxy,
+    CreateLeadInput, LeadServiceProxy,
+    MemberSettingsServiceProxy,
+    UpdateUserAffiliateCodeDto
+} from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
@@ -45,12 +51,15 @@ import { Param } from '@shared/common/odata/param.model';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { ExportService } from '../../../shared/common/export/export.service';
 import { ExportGoogleSheetService } from '../../../shared/common/export/export-google-sheets/export-google-sheets';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
+import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 
 @Component({
     selector: 'bank-pass',
     templateUrl: 'bank-pass.component.html',
     styleUrls: ['./bank-pass.component.less'],
-    providers: [ LifecycleSubjectsService, MemberSettingsServiceProxy, ExportService, ExportGoogleSheetService ],
+    providers: [ BANKCodeServiceProxy, LifecycleSubjectsService, MemberSettingsServiceProxy, ExportService, ExportGoogleSheetService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
@@ -172,6 +181,11 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private httpClient: HttpClient,
         private route: ActivatedRoute,
         private exportService: ExportService,
+        private dialog: MatDialog,
+        private bankCodeServiceProxy: BANKCodeServiceProxy,
+        private messageService: MessageService,
+        private leadService: LeadServiceProxy,
+        private notifyService: NotifyService,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
@@ -242,8 +256,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         this.refresh();
     }
 
-    private refresh() {
-        this.dataGrid.instance.refresh();
+    refresh() {
+        if (this.dataGrid) {
+            this.dataGrid.instance.refresh();
+        }
         this.totalDataSource.load();
     }
 
@@ -285,8 +301,55 @@ export class BankPassComponent implements OnInit, OnDestroy {
         this.exportService.exportToXLS('all', this.dataGrid);
     }
 
+    openAddLeadDialog() {
+        this.dialog.open(CreateEntityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                id: 'create-bank-code-lead-dialog',
+                refreshParent: () => this.refresh(),
+                createMethod: this.bankCodeServiceProxy.createLead.bind(this.bankCodeServiceProxy),
+                createModel: CreateLeadInput,
+                isInLeadMode: true,
+                customerType: ContactGroup.Client,
+                hideToolbar: true,
+                hideCompanyField: true,
+                hideLinksField: true,
+                hideNotesField: true,
+                hidePhotoArea: true,
+                disallowMultipleItems: true,
+                showBankCodeEditor: true
+            }
+        });
+    }
+
+    create(createData) {
+        this.bankCodeServiceProxy.createLead(new CreateLeadInput(createData)).subscribe();
+    }
+
     onContentReady() {
         this.changeDetectorRef.detectChanges();
+    }
+
+    deleteLead(e) {
+        this.messageService.confirm(
+            this.ls.l('BankCodeLeadDeleteWarningMessage'),
+            isConfirmed => {
+                if (isConfirmed)
+                    this.deleteLeadsInternal(e.data.Id);
+            }
+        );
+    }
+
+    private deleteLeadsInternal(selectedId: number) {
+        this.leadService.deleteLead(selectedId).subscribe(() => {
+            this.refresh();
+            if (this.dataGrid && this.dataGrid.instance) {
+                this.dataGrid.instance.deselectAll();
+            }
+            this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+        });
     }
 
     ngOnDestroy() {

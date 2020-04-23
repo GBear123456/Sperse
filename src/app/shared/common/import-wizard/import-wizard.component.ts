@@ -16,8 +16,7 @@ import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
-import { RootStore } from '@root/store';
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore } from '@root/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
 import { AppConsts } from '@shared/AppConsts';

@@ -16,7 +16,7 @@ import clone from 'lodash/clone';
 import * as moment from 'moment';
 
 /** Application imports */
-import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -47,7 +47,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { InvoiceAddressDialog } from './invoice-address-dialog/invoice-address-dialog.component';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
@@ -746,7 +746,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     createClient() {
         if (!this.disabledForUpdate)
-            this.dialog.open(CreateClientDialogComponent, {
+            this.dialog.open(CreateEntityDialogComponent, {
                 panelClass: 'slider',
                 disableClose: true,
                 closeOnNavigation: false,

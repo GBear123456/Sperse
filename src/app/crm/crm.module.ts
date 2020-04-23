@@ -46,7 +46,6 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { AppService } from '@app/app.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
-import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { CrmRoutingModule } from './crm-routing.module';
@@ -85,6 +84,9 @@ import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
 import { StaticListModule } from '../shared/common/static-list/static-list.module';
+import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
+import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
+import { ListsModule } from '../shared/common/lists/lists.module';
 
 @NgModule({
     imports: [
@@ -142,7 +144,10 @@ import { StaticListModule } from '../shared/common/static-list/static-list.modul
         MapModule,
         OrderDropdownModule,
         ActionMenuModule,
-        StaticListModule
+        StaticListModule,
+        CountryPhoneNumberModule,
+        ModalDialogModule,
+        ListsModule
     ],
     declarations: [
         ClientsComponent,
@@ -154,7 +159,6 @@ import { StaticListModule } from '../shared/common/static-list/static-list.modul
         LeftMenuComponent,
         ImportListComponent,
         ImportLeadsComponent,
-        DeleteAndReassignDialogComponent,
         InvoiceAddressDialog,
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
@@ -174,7 +178,6 @@ import { StaticListModule } from '../shared/common/static-list/static-list.modul
         InvoiceAddressDialog,
         CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
-        DeleteAndReassignDialogComponent,
         CrmIntroComponent
     ]
 })

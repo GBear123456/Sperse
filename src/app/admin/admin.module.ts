@@ -81,6 +81,7 @@ import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-s
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
+import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
 
 @NgModule({
     imports: [
@@ -134,7 +135,8 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
         PaymentInfoModule,
         ItemDetailsLayoutModule,
         LoadingSpinnerModule,
-        ActionMenuModule
+        ActionMenuModule,
+        ModalDialogModule
     ],
     declarations: [
         UsersComponent,

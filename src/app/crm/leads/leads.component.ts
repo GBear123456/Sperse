@@ -60,13 +60,13 @@ import {
     PipelineDto
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { TagsListComponent } from '../shared/tags-list/tags-list.component';
-import { ListsListComponent } from '../shared/lists-list/lists-list.component';
-import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '../shared/rating/rating.component';
+import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/shared/common/lists/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
@@ -1317,7 +1317,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     createLead() {
-        this.dialog.open(CreateClientDialogComponent, {
+        this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,

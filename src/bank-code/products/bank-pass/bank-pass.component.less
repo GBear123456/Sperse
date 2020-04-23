@@ -359,13 +359,21 @@
 
     }
 
+    ::ng-deep button {
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+        outline: none;
+    }
+
     .header {
         display: flex;
         position: absolute;
         top: 32px;
         right: 39px;
         align-items: center;
-        width: calc(100% - 461px);
+        width: calc(100% - 433px);
         justify-content: flex-end;
         z-index: 1;
 
@@ -382,7 +390,7 @@
             min-width: 140px;
             position: absolute;
             left: 0;
-            right: 320px;
+            right: 410px;
             ::ng-deep .dx-textbox {
                 border: none;
                 @media all and (min-width: 1400px) {
@@ -504,12 +512,40 @@
             }
         }
 
-        .buttons button {
-            border: none;
-            background: none;
-            padding: 0;
-            cursor: pointer;
-            outline: none;
+        .buttons {
+            display: flex;
+            align-items: center;
+            button {
+                &.download {
+                    height: 19px;
+                    line-height: 18px;
+                    margin-right: 5px;
+                }
+                &.add {
+                    background-color: #ff871c;
+                    color: #fff;
+                    border-radius: 4px;
+                    width: 20px;
+                    height: 20px;
+                    font-size: 20px;
+                    line-height: 20px;
+                    margin-right: 5px;
+                }
+                &.refresh {
+                    width: 23px;
+                    img {
+                        max-width: 100%;
+                    }
+                }
+            }
+        }
+
+        @media (max-width: 1500px) {
+            .buttons {
+                position: absolute;
+                top: -20px;
+                right: 0;
+            }
         }
 
         @media (max-width: 992px) {
@@ -539,9 +575,8 @@
             }
 
             .buttons {
-                position: absolute;
-                top: 10px;
-                right: 30px;
+                 top: 10px;
+                 right: 30px;
             }
         }
 
@@ -558,6 +593,10 @@
                 span {
                     display: inherit;
                 }
+            }
+            .buttons {
+                top: 8px;
+                right: 8px;
             }
         }
 
@@ -585,6 +624,22 @@
 
         .dx-datagrid-pager .dx-page-sizes .dx-page-size {
             padding: 4px 5px 5px;
+        }
+
+        .delete-button-container > div {
+            width: 20px;
+            height: 20px;
+            button.delete {
+                background: red;
+                color: #fff;
+                border-radius: 5px;
+                font-size: 20px;
+                width: 20px;
+                line-height: 20px;
+                div {
+                    transform: rotate(45deg);
+                }
+            }
         }
     }
 
@@ -630,10 +685,8 @@
         height: calc(~"100vh - 146px") !important;
     }
 
-    /deep/ circle-progress svg {
-        text {
-            transform: translate(0px, 6px);
-        }
+    /deep/ circle-progress svg text {
+        transform: translate(0px, 6px);
     }
 
     bank-code-counters {
@@ -646,4 +699,8 @@
             display: none !important;
         }
     }
+}
+
+::ng-deep #create-bank-code-lead-dialog .mat-dialog-container .button-primary {
+    background-color: #ac1f22 !important;
 }

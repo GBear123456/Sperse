@@ -21,11 +21,8 @@ import { CustomNumberPipe } from './pipes/custom-number/custom-number.pipe';
 import { NumberToWordsPipe } from './pipes/number-to-words/number-to-words.pipe';
 import { AddressFormatPipe } from './pipes/address-format.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
-import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
-import { InternationalPhoneNumberModule } from '../../node_modules/ngx-international-phone-number/src';
 import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { DxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
@@ -35,6 +32,8 @@ import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-format.module';
 import { AppConsts } from '@shared/AppConsts';
 import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module';
+import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
+import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
 
 @NgModule({
     declarations: [
@@ -45,9 +44,7 @@ import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module
         FileSizePipe,
         ZipCodeFormatterPipe,
         InfoComponent,
-        CountryPhoneNumberComponent,
         TitleCasePipe,
-        ModalDialogComponent,
         RegisterConfirmComponent,
         ConditionsModalComponent,
         DxDataGridClipboardDirective
@@ -61,10 +58,8 @@ import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module
         FileSizePipe,
         ZipCodeFormatterPipe,
         InfoComponent,
-        CountryPhoneNumberComponent,
         TitleCasePipe,
         DxDataGridClipboardDirective,
-        ModalDialogComponent,
         ConditionsModalComponent,
         NoDataModule,
         InlineSVGModule,
@@ -72,17 +67,17 @@ import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module
     ],
     imports: [
         ngCommon.CommonModule,
+        ModalDialogModule,
         NoDataModule,
         RouterModule,
         FormsModule,
-        InternationalPhoneNumberModule,
+        CountryPhoneNumberModule,
         MatDialogModule,
         DxTextBoxModule,
         DxCheckBoxModule,
         PhoneFormatModule
     ],
     entryComponents: [
-        ModalDialogComponent,
         RegisterConfirmComponent,
         ConditionsModalComponent
     ],

@@ -23,8 +23,8 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
-import { CountriesStoreActions, CountriesStoreSelectors, OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
-import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
+import { CountriesStoreActions, CountriesStoreSelectors, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, NoteType } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

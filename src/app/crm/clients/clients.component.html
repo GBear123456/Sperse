@@ -31,16 +31,16 @@
                 [list]="statuses$ | async"
                 (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
-        <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
-        <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
-        <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
+        <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>
+        <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></lists-list>
+        <user-assignment-list [selectedKeys]="selectedClientKeys"
                 [bulkUpdateMode]="true"
                 [filterModel]="filterModelAssignment"
                 [proxyService]="contactProxy"
                 [permissionKey]="permissions.CRMCustomersManageAssignments"
                 [assignedUsersSelector]="assignedUsersSelector">
-        </crm-user-assignment-list>
-        <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
+        </user-assignment-list>
+        <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></rating>
         <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">

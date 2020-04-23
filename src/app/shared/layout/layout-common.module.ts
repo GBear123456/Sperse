@@ -34,6 +34,8 @@ import { LinkedAccountService } from './linked-accounts-modal/linked-account.ser
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { ModalDialogModule } from '../../../shared/common/dialogs/modal/modal-dialog.module';
+import { CountryPhoneNumberModule } from '../../../shared/common/phone-numbers/country-phone-number.module';
 
 let COMPONENTS = [
     HeaderNotificationsComponent,
@@ -70,7 +72,9 @@ let COMPONENTS = [
         DxScrollViewModule,
         DxSelectBoxModule,
         DxCheckBoxModule,
-        DxDataGridModule
+        DxDataGridModule,
+        ModalDialogModule,
+        CountryPhoneNumberModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

@@ -40,8 +40,8 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
 
     constructor(
         public ls: AppLocalizationService,
-        private _message: MessageService,
-        private _filtersService: FiltersService,
+        private message: MessageService,
+        private filtersService: FiltersService,
         private store$: Store<AppStore.State>
     ) {}
 
@@ -73,7 +73,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
         this.selectedKeys = selectedKeys || this.selectedKeys;
         if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
             if (this.bulkUpdateMode) {
-                this._message.confirm(
+                this.message.confirm(
                     this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
                     isConfirmed => {
                         if (isConfirmed)
@@ -121,7 +121,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
             modelItems.from.value = modelItems.to.value = filterValue;
             this.filtered = true;
         }
-        this._filtersService.change(this.filterModel);
+        this.filtersService.change(this.filterModel);
     }
 
     onInitialized($event) {

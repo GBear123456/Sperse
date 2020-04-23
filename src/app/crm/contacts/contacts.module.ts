@@ -81,7 +81,6 @@ import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { PersonInfoComponent } from './person-info/person-info.component';
 import { UserInboxComponent } from './user-inbox/user-inbox.component';
-import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
@@ -106,14 +105,13 @@ import {
     CustomerServiceProxy,
     ContactPhotoServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { CompanyDialogComponent } from './company-dialog/company-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import { ContactListDialogComponent } from './contact-list-dialog/contact-list-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
-import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialog/create-client-dialog.component';
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
@@ -134,6 +132,11 @@ import { OrderDropdownModule } from '@app/crm/shared/order-dropdown/order-dropfo
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { StaticListModule } from '@app/shared/common/static-list/static-list.module';
+import { CreateEntityModule } from '@shared/common/create-entity-dialog/create-entity.module';
+import { CountryPhoneNumberModule } from '../../../shared/common/phone-numbers/country-phone-number.module';
+import { ModalDialogModule } from '../../../shared/common/dialogs/modal/modal-dialog.module';
+import { RatingBarModule } from '../../shared/common/rating-bar/rating-bar.module';
+import { ListsModule } from '../../shared/common/lists/lists.module';
 
 @NgModule({
     declarations: [
@@ -166,7 +169,6 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         PersonDialogComponent,
         PersonInfoComponent,
         ContactPersonsDialogComponent,
-        SimilarCustomersDialogComponent,
         NoteAddDialogComponent,
         DocumentsComponent,
         UploadDocumentDialogComponent,
@@ -179,7 +181,6 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         AddCompanyDialogComponent,
         CompanyDialogComponent,
         RelationCompaniesDialogComponent,
-        CreateClientDialogComponent,
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
         EmailTemplateDialogComponent,
@@ -244,7 +245,12 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         CKEditorModule,
         OrderDropdownModule,
         ActionMenuModule,
-        SourceContactListModule
+        SourceContactListModule,
+        CreateEntityModule,
+        CountryPhoneNumberModule,
+        ModalDialogModule,
+        RatingBarModule,
+        ListsModule
     ],
     entryComponents: [
         EditContactDialog,
@@ -253,14 +259,12 @@ import { StaticListModule } from '@app/shared/common/static-list/static-list.mod
         CompanyDialogComponent,
         PersonDialogComponent,
         ContactPersonsDialogComponent,
-        SimilarCustomersDialogComponent,
         UploadDocumentDialogComponent,
         UploadDocumentsDialogComponent,
         AddContactDialogComponent,
         AddCompanyDialogComponent,
         NoteAddDialogComponent,
         RelationCompaniesDialogComponent,
-        CreateClientDialogComponent,
         NotSupportedTypeDialogComponent,
         InvoiceSettingsDialogComponent,
         EmailTemplateDialogComponent,

@@ -20,7 +20,7 @@ import {
     UpdateActivityDto
 } from '@shared/service-proxies/service-proxies';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
+import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
 import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

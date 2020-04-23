@@ -47,7 +47,7 @@ import { ContactsService } from './contacts.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { RP_DEFAULT_ID, RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts.const';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
-import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
@@ -743,7 +743,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let companyInfo = this.contactInfo['organizationContactInfo'];
 
         this.dialog.closeAll();
-        this.dialog.open(CreateClientDialogComponent, {
+        this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,

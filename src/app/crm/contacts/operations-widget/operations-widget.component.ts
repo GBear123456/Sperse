@@ -6,11 +6,11 @@ import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
-import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
-import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
-import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '@app/crm/shared/rating/rating.component';
+import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/shared/common/lists/lists-list/lists-list.component';
+import { TypesListComponent } from '@app/shared/common/lists/types-list/types-list.component';
+import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ContactInfoDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';

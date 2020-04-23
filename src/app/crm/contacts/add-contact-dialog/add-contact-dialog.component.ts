@@ -1,33 +1,28 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { filter } from 'rxjs/operators';
-import * as _ from 'underscore';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { ContactInfoDto } from '@shared/service-proxies/service-proxies';
-import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
+import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: 'add-contact-dialog.html',
     styleUrls: ['add-contact-dialog.less']
 })
-export class AddContactDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class AddContactDialogComponent implements OnInit, AfterViewInit {
 
     private slider: any;
-    constructor(injector: Injector,
-                @Inject(MAT_DIALOG_DATA) public data: ContactInfoDto,
-                private elementRef: ElementRef,
-                private fullNameParser: NameParserService,
-                public dialogRef: MatDialogRef<AddContactDialogComponent>,
+    constructor(
+        private elementRef: ElementRef,
+        private fullNameParser: NameParserService,
+        public ls: AppLocalizationService,
+        public dialogRef: MatDialogRef<AddContactDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: ContactInfoDto,
     ) {
-        super(injector);
-
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
@@ -64,7 +59,7 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
             this.data.personContactInfo.fullName, this.data.personContactInfo.person);
     }
 
-    onSave(event) {
+    onSave() {
         this.dialogRef.close();
     }
 }

@@ -30,14 +30,13 @@ import { WizardRightSideComponent } from './wizard-right-side/wizard-right-side.
 import { WizardCenterModalComponent } from './wizard-center-modal/wizard-center-modal.component';
 import { CommonModule } from '@shared/common/common.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { ModalDialogModule } from '../common/dialogs/modal/modal-dialog.module';
 
 @NgModule({
     imports: [
         ngCommon.CommonModule,
-
         MatStepperModule,
         MatDialogModule,
-
         DxTextBoxModule,
         DxDateBoxModule,
         DxRadioGroupModule,
@@ -51,6 +50,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         MatTabsModule,
         LoadingSpinnerModule,
         NgxMaskModule.forRoot(),
+        ModalDialogModule
     ],
     declarations: [
         WizardPersonalInfoStepComponent,

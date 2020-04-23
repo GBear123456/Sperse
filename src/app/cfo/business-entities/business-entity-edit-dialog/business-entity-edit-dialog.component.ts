@@ -18,8 +18,7 @@ import { finalize, first, map, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
-import { RootStore, StatesStoreSelectors, StatesStoreActions } from '@root/store';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreSelectors, StatesStoreActions } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
 import {
     BusinessEntityServiceProxy,

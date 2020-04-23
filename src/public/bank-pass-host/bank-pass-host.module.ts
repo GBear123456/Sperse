@@ -29,9 +29,12 @@ import { AppComponent } from './app.component';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 import { ExportService } from '../../shared/common/export/export.service';
 import { ExportGoogleSheetService } from '../../shared/common/export/export-google-sheets/export-google-sheets';
+import { CreateEntityModule } from '../../shared/common/create-entity-dialog/create-entity.module';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 
 @NgModule({
     imports: [
+        AngularGooglePlaceModule,
         AccessCodeInstructionsModule,
         CommonModule,
         BankCodeCommonModule,
@@ -45,6 +48,7 @@ import { ExportGoogleSheetService } from '../../shared/common/export/export-goog
         BankPassHostRoutingModule,
         MatTabsModule,
         InplaceEditModule,
+        CreateEntityModule,
         NgCircleProgressModule.forRoot({
             // defaults config
             radius: 40,

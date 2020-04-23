@@ -8,9 +8,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AppConsts } from '@shared/AppConsts';
-import { ContactListsServiceProxy, AddContactsToListsInput, ContactListInput,
-    UpdateContactListInput, UpdateContactListsInput} from '@shared/service-proxies/service-proxies';
+import { ContactListsServiceProxy, ContactListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { AppPermissions } from '../../../../shared/AppPermissions';
 
@@ -53,7 +51,7 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _filterService: FiltersService
+        private filterService: FiltersService
     ) {
         super(injector);
     }
@@ -173,7 +171,7 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
                         this.filterModel.items.element.value = [$event.data.id];
                         $event.cellElement.parentElement.classList.add('filtered');
                     }
-                    this._filterService.change(this.filterModel);
+                    this.filterService.change(this.filterModel);
                 });
         }
     }
@@ -184,7 +182,7 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
             this.clearFiltersHighlight();
             this.filterModel.items.element.value = [];
         }
-        this._filterService.change(this.filterModel);
+        this.filterService.change(this.filterModel);
     }
 
     onRowRemoving($event) {
