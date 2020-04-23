@@ -190,7 +190,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 break;
             case 'orders':
                 this.dataSourceURI = 'Order';
-                this.currentItemId = this.queryParams.id;
+                this.currentItemId = this.queryParams.orderId;
+                break;
+            case 'subscriptions':
+                this.dataSourceURI = 'Subscription';
+                this.currentItemId = this.queryParams.subId;
                 break;
             default:
                 break;
@@ -202,7 +206,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.pageHeaderFixed();
         this.initNavigatorProperties();
         const itemKeyField = this.dataSourceURI == 'User' ? 'id' : 'Id',
-              itemDistinctField = this.dataSourceURI == 'Order' ? 'ContactId' : itemKeyField;
+              itemDistinctField = ['Order', 'Subscription'].indexOf(this.dataSourceURI) >= 0 ? 'LeadId' : itemKeyField;
         let subscription = this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             takeUntil(this.destroy$),
@@ -238,8 +242,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private getSection() {
-        return this.queryParams && this.queryParams.referrer && this.queryParams.referrer.split('/').pop()
-            || (this.contactGroupId.value == ContactGroup.Partner ? 'partners' : 'clients');
+        if (this.queryParams) {
+            if (this.queryParams.subId)
+                return 'subscriptions';
+            else if (this.queryParams.referrer)
+                return this.queryParams.referrer.split('/').pop();
+        }
+        return this.contactGroupId.value == ContactGroup.Partner ? 'partners' : 'clients';
     }
 
     private updateLocation(itemFullInfo) {
@@ -259,7 +268,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 break;
             case 'orders':
                 this.contactsService.updateLocation(itemFullInfo.itemData.ContactId,
-                    itemFullInfo.itemData.LeadId, null, null, {...this.queryParams, id: itemFullInfo.itemData.Id});
+                    itemFullInfo.itemData.LeadId, null, null, {...this.queryParams, orderId: itemFullInfo.itemData.Id});
+                break;
+            case 'subscriptions':
+                this.contactsService.updateLocation(itemFullInfo.itemData.ContactId,
+                    itemFullInfo.itemData.LeadId, null, null, {...this.queryParams, subId: itemFullInfo.itemData.Id});
                 break;
             default:
                 break;
