@@ -60,13 +60,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
-    headlineButtons: HeadlineButton[] = [
-        {
-            enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
-            action: this.showSourceDataWidget.bind(this),
-            label: this.l('Show source data')
-        }
-    ];
+    headlineButtons: HeadlineButton[] = this.getHeadlineButtons();
     axisDateFormat = 'month';
     labelPositiveBackgroundColor = '#626b73';
     labelNegativeBackgroundColor = '#f05b2a';
@@ -278,7 +272,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             } else {
                 this.statsData = null;
             }
-
+            this.headlineButtons = this.getHeadlineButtons();
             this.loadingFinished = true;
         });
 
@@ -309,6 +303,16 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+    }
+
+    private getHeadlineButtons() {
+        return [
+            {
+                enabled: !AppConsts.isMobile && !!(this.statsData && this.statsData.length),
+                action: this.showSourceDataWidget.bind(this),
+                label: this.l('Show source data')
+            }
+        ];
     }
 
     initToolbarConfig() {
