@@ -38,7 +38,6 @@ import {
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { FiltersService } from '@shared/filters/filters.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
@@ -92,7 +91,6 @@ import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module
         OrderServiceProxy,
         ActivityServiceProxy,
         OrganizationContactServiceProxy,
-        FiltersService,
         AppStoreService
     ],
     entryComponents: [
