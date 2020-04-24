@@ -81,7 +81,7 @@ export abstract class AppServiceBase {
         if (config) {
             config.navigation = config.navigation.map((record: ConfigNavigation) => {
                 let clone = cloneDeep(record);
-                record.route = this.replaceParams(record.route, params);
+                clone.route = this.replaceParams(record.route, params);
                 if (record.alterRoutes && record.alterRoutes.length) {
                     clone.alterRoutes = [];
                     record.alterRoutes.forEach((el) => {
