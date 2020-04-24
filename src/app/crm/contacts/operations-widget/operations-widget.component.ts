@@ -199,22 +199,22 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                         {
                             name: 'lists',
                             action: this.toggleLists.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
+                            disabled: !this.contactService.checkCGPermission(this.customerType)
                         },
                         {
                             name: 'tags',
                             action: this.toggleTags.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
+                            disabled: !this.contactService.checkCGPermission(this.customerType)
                         },
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
+                            disabled: !this.contactService.checkCGPermission(this.customerType)
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
+                            disabled: !this.contactService.checkCGPermission(this.customerType)
                         }
                     ]
                 },

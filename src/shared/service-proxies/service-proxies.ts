@@ -30988,58 +30988,6 @@ export class UserServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getUsersToExcel(): Observable<FileDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/GetUsersToExcel";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUsersToExcel(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUsersToExcel(<any>response_);
-                } catch (e) {
-                    return <Observable<FileDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUsersToExcel(response: HttpResponseBase): Observable<FileDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? FileDto.fromJS(resultData200) : new FileDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileDto>(<any>null);
-    }
-
-    /**
      * @id (optional) 
      * @return Success
      */
@@ -36483,7 +36431,7 @@ export interface IUpdateBankAccountDto {
     businessEntityId: number | undefined;
 }
 
-export class CreateContactEmailInput implements ICreateContactEmailInput {
+export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
     contactId!: number | undefined;
     emailAddress!: string | undefined;
     isActive!: boolean | undefined;
@@ -36491,7 +36439,7 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
-    constructor(data?: ICreateContactEmailInput) {
+    constructor(data?: ICreateContactEmailInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -36511,9 +36459,9 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         }
     }
 
-    static fromJS(data: any): CreateContactEmailInput {
+    static fromJS(data: any): CreateContactEmailInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactEmailInput();
+        let result = new CreateContactEmailInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -36530,7 +36478,7 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
     }
 }
 
-export interface ICreateContactEmailInput {
+export interface ICreateContactEmailInputWithoutCheck {
     contactId: number | undefined;
     emailAddress: string | undefined;
     isActive: boolean | undefined;
@@ -36539,7 +36487,7 @@ export interface ICreateContactEmailInput {
     usageTypeId: string | undefined;
 }
 
-export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneInputWithoutCheck {
     contactId!: number | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
@@ -36548,7 +36496,7 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
-    constructor(data?: ICreateContactPhoneInput) {
+    constructor(data?: ICreateContactPhoneInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -36569,9 +36517,9 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
         }
     }
 
-    static fromJS(data: any): CreateContactPhoneInput {
+    static fromJS(data: any): CreateContactPhoneInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhoneInput();
+        let result = new CreateContactPhoneInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -36589,7 +36537,7 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     }
 }
 
-export interface ICreateContactPhoneInput {
+export interface ICreateContactPhoneInputWithoutCheck {
     contactId: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
@@ -36599,7 +36547,7 @@ export interface ICreateContactPhoneInput {
     usageTypeId: string | undefined;
 }
 
-export class CreateContactAddressInput implements ICreateContactAddressInput {
+export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
     contactId!: number | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
@@ -36615,7 +36563,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
 
-    constructor(data?: ICreateContactAddressInput) {
+    constructor(data?: ICreateContactAddressInputWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -36643,9 +36591,9 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         }
     }
 
-    static fromJS(data: any): CreateContactAddressInput {
+    static fromJS(data: any): CreateContactAddressInputWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateContactAddressInput();
+        let result = new CreateContactAddressInputWithoutCheck();
         result.init(data);
         return result;
     }
@@ -36670,7 +36618,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     }
 }
 
-export interface ICreateContactAddressInput {
+export interface ICreateContactAddressInputWithoutCheck {
     contactId: number | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
@@ -36694,9 +36642,9 @@ export class CreateLeadInput implements ICreateLeadInput {
     lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
-    emailAddress!: CreateContactEmailInput | undefined;
-    phoneNumber!: CreateContactPhoneInput | undefined;
-    address!: CreateContactAddressInput | undefined;
+    emailAddress!: CreateContactEmailInputWithoutCheck | undefined;
+    phoneNumber!: CreateContactPhoneInputWithoutCheck | undefined;
+    address!: CreateContactAddressInputWithoutCheck | undefined;
     bankCode!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -36716,9 +36664,9 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.lastName = data["lastName"];
             this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
-            this.emailAddress = data["emailAddress"] ? CreateContactEmailInput.fromJS(data["emailAddress"]) : <any>undefined;
-            this.phoneNumber = data["phoneNumber"] ? CreateContactPhoneInput.fromJS(data["phoneNumber"]) : <any>undefined;
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.emailAddress = data["emailAddress"] ? CreateContactEmailInputWithoutCheck.fromJS(data["emailAddress"]) : <any>undefined;
+            this.phoneNumber = data["phoneNumber"] ? CreateContactPhoneInputWithoutCheck.fromJS(data["phoneNumber"]) : <any>undefined;
+            this.address = data["address"] ? CreateContactAddressInputWithoutCheck.fromJS(data["address"]) : <any>undefined;
             this.bankCode = data["bankCode"];
         }
     }
@@ -36753,18 +36701,15 @@ export interface ICreateLeadInput {
     lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
-    emailAddress: CreateContactEmailInput | undefined;
-    phoneNumber: CreateContactPhoneInput | undefined;
-    address: CreateContactAddressInput | undefined;
+    emailAddress: CreateContactEmailInputWithoutCheck | undefined;
+    phoneNumber: CreateContactPhoneInputWithoutCheck | undefined;
+    address: CreateContactAddressInputWithoutCheck | undefined;
     bankCode: string | undefined;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
     contactId!: number | undefined;
     leadId!: number | undefined;
-    userId!: number | undefined;
-    userKey!: string | undefined;
-    autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateLeadOutput) {
         if (data) {
@@ -36779,9 +36724,6 @@ export class CreateLeadOutput implements ICreateLeadOutput {
         if (data) {
             this.contactId = data["contactId"];
             this.leadId = data["leadId"];
-            this.userId = data["userId"];
-            this.userKey = data["userKey"];
-            this.autoLoginLink = data["autoLoginLink"];
         }
     }
 
@@ -36796,9 +36738,6 @@ export class CreateLeadOutput implements ICreateLeadOutput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["leadId"] = this.leadId;
-        data["userId"] = this.userId;
-        data["userKey"] = this.userKey;
-        data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
 }
@@ -36806,9 +36745,6 @@ export class CreateLeadOutput implements ICreateLeadOutput {
 export interface ICreateLeadOutput {
     contactId: number | undefined;
     leadId: number | undefined;
-    userId: number | undefined;
-    userKey: string | undefined;
-    autoLoginLink: string | undefined;
 }
 
 export class BusinessEntityDto implements IBusinessEntityDto {
@@ -43154,210 +43090,6 @@ export interface IContactShortInfo {
     statusId: string | undefined;
 }
 
-export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
-    contactId!: number | undefined;
-    emailAddress!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactEmailInputWithoutCheck) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.emailAddress = data["emailAddress"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactEmailInputWithoutCheck {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactEmailInputWithoutCheck();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["emailAddress"] = this.emailAddress;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactEmailInputWithoutCheck {
-    contactId: number | undefined;
-    emailAddress: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
-    usageTypeId: string | undefined;
-}
-
-export class CreateContactPhoneInputWithoutCheck implements ICreateContactPhoneInputWithoutCheck {
-    contactId!: number | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactPhoneInputWithoutCheck) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactPhoneInputWithoutCheck {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhoneInputWithoutCheck();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactPhoneInputWithoutCheck {
-    contactId: number | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
-    usageTypeId: string | undefined;
-}
-
-export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
-    contactId!: number | undefined;
-    streetAddress!: string | undefined;
-    city!: string | undefined;
-    stateId!: string | undefined;
-    stateName!: string | undefined;
-    zip!: string | undefined;
-    countryId!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-    ownershipTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactAddressInputWithoutCheck) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.stateId = data["stateId"];
-            this.stateName = data["stateName"];
-            this.zip = data["zip"];
-            this.countryId = data["countryId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-            this.ownershipTypeId = data["ownershipTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactAddressInputWithoutCheck {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactAddressInputWithoutCheck();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["stateId"] = this.stateId;
-        data["stateName"] = this.stateName;
-        data["zip"] = this.zip;
-        data["countryId"] = this.countryId;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        data["ownershipTypeId"] = this.ownershipTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactAddressInputWithoutCheck {
-    contactId: number | undefined;
-    streetAddress: string | undefined;
-    city: string | undefined;
-    stateId: string | undefined;
-    stateName: string | undefined;
-    zip: string | undefined;
-    countryId: string | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
-    usageTypeId: string | undefined;
-    ownershipTypeId: string | undefined;
-}
-
 export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInputWithoutCheck {
     contactId!: number | undefined;
     url!: string | undefined;
@@ -44476,6 +44208,94 @@ export interface IUpdateContactXrefInput {
     xref: string | undefined;
 }
 
+export class CreateContactAddressInput implements ICreateContactAddressInput {
+    contactId!: number | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactAddressInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactAddressInput {
+    contactId: number | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
+}
+
 export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     id!: number | undefined;
 
@@ -45232,6 +45052,62 @@ export interface ISendSMSInput {
     message: string | undefined;
 }
 
+export class CreateContactEmailInput implements ICreateContactEmailInput {
+    contactId!: number | undefined;
+    emailAddress!: string | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmailInput {
+    contactId: number | undefined;
+    emailAddress: string | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+}
+
 export class CreateContactEmailOutput implements ICreateContactEmailOutput {
     id!: number | undefined;
 
@@ -45853,6 +45729,66 @@ export interface IContactPhoneInfo {
     id: number | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+    contactId!: number | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactPhoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhoneInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactPhoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhoneInput {
+    contactId: number | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
     usageTypeId: string | undefined;
 }
 

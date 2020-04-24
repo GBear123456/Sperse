@@ -42,7 +42,8 @@
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
                     [texts]="{confirmDeleteMessage: ''}"
-                    [allowUpdating]="true"
+                    [allowUpdating]="canUpdateAndDelete"
+                    [allowDeleting]="canUpdateAndDelete"
                     [allowAdding]="!bulkUpdateMode || selectedKeys?.length">
                 </dxo-editing>
             </dx-tree-list>

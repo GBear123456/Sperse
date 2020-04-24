@@ -20,7 +20,7 @@ import { AppPermissions } from '../../../../shared/AppPermissions';
 })
 export class AdvancedListComponent extends AppComponentBase implements OnInit {
     @Input() name: string;
-    @Input() permissionName = AppPermissions.CRMCustomersManageListsAndTags;
+    @Input() permissionName = AppPermissions.CRMCustomersManage;
     @Input() bulkUpdateConfirmationKey: string;
     @Input() bulkRemoveConfirmationKey: string;
     @Input() dataSource: any;

@@ -69,7 +69,7 @@ export class RatingComponent {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
+        return this.permission.isGranted(AppPermissions.CRMCustomersManage) &&
             (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

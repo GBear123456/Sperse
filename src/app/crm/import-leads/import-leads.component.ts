@@ -930,7 +930,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'lists',
                         action: () => this.listsComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId),
                         attr: {
                             'filter-selected': this.isListsSelected
                         }
@@ -938,7 +938,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'tags',
                         action: () => this.tagsComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId),
                         attr: {
                             'filter-selected': this.isTagsSelected
                         }
@@ -946,7 +946,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'rating',
                         action: () => this.ratingComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId),
                         attr: {
                             'filter-selected': !!this.ratingValue
                         }
@@ -957,7 +957,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: 30,
                         },
                         action: () => this.starsListComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'Manage'),
                         attr: {
                             'filter-selected': this.isStarSelected
                         }

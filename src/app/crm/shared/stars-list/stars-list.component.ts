@@ -163,7 +163,7 @@ export class StarsListComponent implements OnInit {
     }
 
     checkPermissions() {
-        return this.permissionCheckerService.isGranted(AppPermissions.CRMCustomersManageRatingAndStars) &&
+        return this.permissionCheckerService.isGranted(AppPermissions.CRMCustomersManage) &&
             (!this.bulkUpdateMode || this.permissionCheckerService.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

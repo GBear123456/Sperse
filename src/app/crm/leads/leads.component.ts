@@ -991,7 +991,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -999,7 +999,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -1007,7 +1007,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -1015,7 +1015,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected

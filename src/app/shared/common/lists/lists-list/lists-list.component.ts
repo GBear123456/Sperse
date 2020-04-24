@@ -47,6 +47,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     listComponent: any;
 
     tooltipVisible = false;
+    canUpdateAndDelete = this.permission.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
         injector: Injector,
@@ -317,6 +318,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowClick($event) {
+        if (!this.canUpdateAndDelete)
+            return;
+
         let nowDate = new Date();
         if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
             $event.event.originalEvent.preventDefault();
@@ -367,7 +371,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManageListsAndTags) &&
+        return this.permission.isGranted(AppPermissions.CRMCustomersManage) &&
             (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

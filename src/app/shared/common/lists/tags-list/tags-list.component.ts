@@ -52,6 +52,8 @@ export class TagsListComponent implements OnInit {
     listComponent: any;
     tooltipVisible = false;
 
+    canUpdateAndDelete = this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags);
+
     constructor(
         private filterService: FiltersService,
         private tagsService: ContactTagsServiceProxy,
@@ -326,6 +328,9 @@ export class TagsListComponent implements OnInit {
     }
 
     onRowClick($event) {
+        if (!this.canUpdateAndDelete)
+            return;
+
         let nowDate = new Date();
         if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
             $event.event.originalEvent.preventDefault();
@@ -372,7 +377,7 @@ export class TagsListComponent implements OnInit {
     }
 
     checkPermissions() {
-        return this.permissionChecker.isGranted(AppPermissions.CRMCustomersManageListsAndTags) &&
+        return this.permissionChecker.isGranted(AppPermissions.CRMCustomersManage) &&
             (!this.bulkUpdateMode || this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates));
     }
 

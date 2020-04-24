@@ -917,7 +917,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -925,7 +925,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -933,7 +933,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -941,7 +941,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
