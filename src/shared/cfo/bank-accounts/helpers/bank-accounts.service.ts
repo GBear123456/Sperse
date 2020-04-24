@@ -429,12 +429,7 @@ export class BankAccountsService {
         return orderBy(businessEntities, ['selected', 'hasChildren', 'name'], ['desc', 'desc', 'asc']);
     }
 
-    load(acceptFilterOnlyOnApply = true, applyFilter = true) {
-        /** Change accept value */
-        this.acceptFilterOnlyOnApply = acceptFilterOnlyOnApply;
-
-        this.loadState(applyFilter);
-
+    loadSyncAccounts() {
         if (!this.syncAccountsRequest$) {
             this.syncAccountsRequest$ = this.cfoPreferencesService.getCurrencyId().pipe(
                 switchMap((currencyId: string) => this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, currencyId)),
@@ -448,25 +443,36 @@ export class BankAccountsService {
                     this._syncAccounts.next(syncAccounts);
                 });
         }
+        return this.syncAccountsRequest$;
+    }
 
+    loadBusinessEntities() {
         if (!this.businessEntitiesRequest$) {
-            this.businessEntitiesRequest$ = this.businessEntityService.getBusinessEntities(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId).pipe(
+            this.businessEntitiesRequest$ = this.businessEntityService.getBusinessEntities(
+                InstanceType[this.cfoService.instanceType],
+                this.cfoService.instanceId
+            ).pipe(
                 publishReplay(),
                 refCount()
             );
 
             this.businessEntitiesRequest$
-                .pipe(finalize(() => { this.businessEntitiesRequest$ = null; }))
+                .pipe(finalize(() => this.businessEntitiesRequest$ = null))
                 .subscribe(businessEntities => {
                     this._businessEntities.next(businessEntities);
                 });
         }
+        return this.businessEntitiesRequest$;
+    }
 
+    load(acceptFilterOnlyOnApply = true, applyFilter = true, refreshBankAccountsOnly = false) {
+        /** Change accept value */
+        this.acceptFilterOnlyOnApply = acceptFilterOnlyOnApply;
+        this.loadState(applyFilter);
         const combinedRequest = forkJoin(
-            this.syncAccountsRequest$,
-            this.businessEntitiesRequest$
+            this.loadSyncAccounts(),
+            refreshBankAccountsOnly ? of ([]) : this.loadBusinessEntities()
         );
-
         combinedRequest.subscribe(() => {
             this.filteredSyncAccounts$.pipe(first()).subscribe(() => {
                 if (applyFilter) {

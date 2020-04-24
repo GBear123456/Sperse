@@ -207,12 +207,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 const dataSourceAccountsIds = this.bankAccountsService.getAccountsIds(this.bankAccountsService.syncAccounts);
                 /** Reload accounts if their ids are not the same as in last data source */
                 if (ArrayHelper.dataChanged(syncDataAccountsIds, dataSourceAccountsIds)) {
-                    this.refresh();
+                    this.refresh(true);
                 } else {
                     /** Update status of bank accounts whose status has changed */
                     syncData.accountProgresses.forEach(((accountProgress: SyncProgressDto) => {
                         accountProgress.bankAccounts && accountProgress.bankAccounts.forEach((bankAccount: BankAccountProgress) => {
-                            const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.bankAccountsService.syncAccounts);
+                            const syncAccounts = this.bankAccountsService.getBankAccountsFromSyncAccounts(this.dataSource);
                             const bankAccountInDataSource = syncAccounts.find(account => account.id === bankAccount.id);
                             if (bankAccountInDataSource && bankAccount.syncStatus !== bankAccountInDataSource.syncStatus) {
                                 bankAccountInDataSource.syncStatus = bankAccount.syncStatus;
@@ -242,9 +242,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         setTimeout(() => this.actionRequiredTooltip.instance.repaint());
     }
 
-    refresh() {
+    refresh(refreshSyncAccountsOnly = false) {
         this.isDataLoaded = false;
-        this.bankAccountsService.load(false)
+        this.bankAccountsService.load(false, true, refreshSyncAccountsOnly)
             .subscribe(() => {
                 this.isDataLoaded = true;
             });
