@@ -1268,17 +1268,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             contexts = contexts && contexts.length ? contexts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
-                    const filterQuery = context.processODataFilter.call(context,
-                        this.showPivotGrid
-                            ? this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
-                            : context.dataGrid && context.dataGrid.instance,
-                        this.dataSourceURI,
-                        this.filters,
-                        this.filtersService.getCheckCustom
-                    );
-                    if (this.showDataGrid) {
-                        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
-                        this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
+                    const dataGridInstance =  this.showPivotGrid
+                        ? this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
+                        : context.dataGrid && context.dataGrid.instance;
+                    if (dataGridInstance) {
+                        const filterQuery = context.processODataFilter.call(
+                            context,
+                            dataGridInstance,
+                            this.dataSourceURI,
+                            this.filters,
+                            this.filtersService.getCheckCustom
+                        );
+                        if (this.showDataGrid) {
+                            this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                            this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
+                        }
                     }
                 }
             });
