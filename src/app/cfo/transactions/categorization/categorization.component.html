@@ -61,7 +61,7 @@
                     [visible]="settings.showTC">
         </dxi-column>
 
-        <div *dxTemplate="let cell of 'categoryEditTemplate'" class="test">
+        <div *dxTemplate="let cell of 'categoryEditTemplate'">
             <dx-text-box [width]="180" [value]="cell.value" valueChangeEvent="keyup" (onValueChanged)="cell.setValue($event.value)"></dx-text-box>
         </div> 
 
