@@ -218,7 +218,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ]
             },
             {
-                location: 'after',
+                location: 'before',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     {
@@ -226,9 +227,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         widget: 'dxButton',
                         options: {
                             text: this.l('All'),
-                            checkPressed: () => {
-                                return !this.group;
-                            }
+                            checkPressed: () => !this.group
                         },
                         action: () => {
                             this.filterByGroup(undefined);
@@ -251,8 +250,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 }))
             },
             {
-                location: 'after',
+                location: 'center',
                 areItemsDependent: true,
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'All',
