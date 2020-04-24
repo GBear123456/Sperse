@@ -1235,7 +1235,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
                     const dataGridInstance =  this.showPivotGrid
-                        ? this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
+                        ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (dataGridInstance) {
                         const filterQuery = context.processODataFilter.call(
