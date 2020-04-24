@@ -1,17 +1,30 @@
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ConfigInterface } from '@app/shared/common/config.interface';
+import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 
-export class ApiConfig {
+export class ApiConfig implements ConfigInterface {
     code = 'API';
     name = 'API';
     search = false;
     requiredFeature = AppFeatures.API;
     requiredPermission = AppPermissions.API;
     localizationSource = 'Platform';
-    navigation = [
-        [ 'Introduction', '', '', '/app/api/introduction' ],
-        [ 'Documentation', '', 'icon-home', '/app/api/swagger' ],
-        [ 'Downloads', '', '', '' ],
-        [ 'Demos', '', '', '' ]
+    navigation: ConfigNavigation[] = [
+        {
+            text: 'Introduction',
+            route: '/app/api/introduction'
+        },
+        {
+            text: 'Documentation',
+            icon: 'icon-home',
+            route: '/app/api/swagger'
+        },
+        {
+            text: 'Downloads'
+        },
+        {
+            text: 'Demos'
+        }
     ];
 }

@@ -1,24 +1,90 @@
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ConfigInterface } from '@app/shared/common/config.interface';
+import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 
-export class AdminConfig {
+export class AdminConfig implements ConfigInterface {
     code =  'Admin';
     name = 'Admin';
     search = false;
     requiredFeature = AppFeatures.Admin;
     requiredPermission = AppPermissions.Administration;
     localizationSource = 'Platform';
-    navigation = [
-        [ 'Dashboard', AppPermissions.AdministrationHostDashboard, 'icon-home', '/app/admin/hostDashboard' ],
-        [ 'Tenants', AppPermissions.Tenants, 'icon-globe', '/app/admin/tenants', AppFeatures.AdminAdvanced ],
-        [ 'Roles', AppPermissions.AdministrationRoles, 'icon-briefcase', '/app/admin/roles', '' ],
-        [ 'Users', AppPermissions.AdministrationUsers, 'icon-people', '/app/admin/users', '' ],
-        [ 'Languages', AppPermissions.AdministrationLanguages, 'icon-flag', '/app/admin/languages', AppFeatures.AdminCustomizations ],
-        [ 'AuditLogs', AppPermissions.AdministrationAuditLogs, 'icon-lock', '/app/admin/auditLogs', AppFeatures.AdminAdvanced ],
-        [ 'Maintenance', AppPermissions.AdministrationHostMaintenance, 'icon-wrench', '/app/admin/maintenance', AppFeatures.AdminAdvanced ],
-        [ 'Jobs', AppPermissions.AdministrationHangfireDashboard, 'icon-wrench', '/app/admin/jobs', AppFeatures.AdminAdvanced ],
-        [ 'Settings', AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts, 'icon-settings', '/app/admin/hostSettings', AppFeatures.Admin, '', '', 'host' ],
-        [ 'Settings', AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts, 'icon-settings', '/app/admin/tenantSettings', AppFeatures.Admin, '', '', 'tenant' ],
-        [ 'Products', AppPermissions.Editions, 'icon-grid', '/app/admin/products' ]
+    navigation: ConfigNavigation[] = [
+        {
+            text: 'Dashboard',
+            permission: AppPermissions.AdministrationHostDashboard,
+            icon: 'icon-home',
+            route: '/app/admin/hostDashboard'
+        },
+        {
+            text: 'Tenants',
+            permission: AppPermissions.Tenants,
+            feature: AppFeatures.AdminAdvanced,
+            icon: 'icon-globe',
+            route: '/app/admin/tenants'
+        },
+        {
+            text: 'Roles',
+            permission: AppPermissions.AdministrationRoles,
+            icon: 'icon-briefcase',
+            route: '/app/admin/roles'
+        },
+        {
+            text: 'Users',
+            permission: AppPermissions.AdministrationUsers,
+            icon: 'icon-people',
+            route: '/app/admin/users'
+        },
+        {
+            text: 'Languages',
+            permission: AppPermissions.AdministrationLanguages,
+            feature: AppFeatures.AdminCustomizations,
+            icon: 'icon-flag',
+            route: '/app/admin/languages'
+        },
+        {
+            text: 'AuditLogs',
+            permission: AppPermissions.AdministrationAuditLogs,
+            feature: AppFeatures.AdminAdvanced,
+            icon: 'icon-lock',
+            route: '/app/admin/auditLogs'
+        },
+        {
+            text: 'Maintenance',
+            permission: AppPermissions.AdministrationHostMaintenance,
+            feature: AppFeatures.AdminAdvanced,
+            icon: 'icon-wrench',
+            route: '/app/admin/maintenance'
+        },
+        {
+            text: 'Jobs',
+            permission: AppPermissions.AdministrationHangfireDashboard,
+            feature: AppFeatures.AdminAdvanced,
+            icon: 'icon-wrench',
+            route: '/app/admin/jobs'
+        },
+        {
+            text: 'Settings',
+            permission: AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts,
+            feature: AppFeatures.Admin,
+            icon: 'icon-settings',
+            route: '/app/admin/hostSettings',
+            host: 'host'
+        },
+        {
+            text: 'Settings',
+            permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts,
+            icon: 'icon-settings',
+            feature: AppFeatures.Admin,
+            route: '/app/admin/tenantSettings',
+            host: 'tenant'
+        },
+        {
+            text: 'Products',
+            permission: AppPermissions.Editions,
+            icon: 'icon-grid',
+            route: '/app/admin/products'
+        }
     ];
 }

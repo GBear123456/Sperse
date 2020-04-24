@@ -16,6 +16,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { ConfigInterface } from '@app/shared/common/config.interface';
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -55,7 +56,7 @@ export class HeaderNotificationsComponent implements OnInit {
         this.getCurrentLoginInformations();
 
         if (this.appService.moduleSubscriptions$) {
-            this.appService.subscribeModuleChange((config) => this.getSubscriptionInfo(config['name']));
+            this.appService.subscribeModuleChange((config: ConfigInterface) => this.getSubscriptionInfo(config.name));
             this.appService.moduleSubscriptions$.subscribe(() => this.getSubscriptionInfo());
         }
         this.getSubscriptionInfo();

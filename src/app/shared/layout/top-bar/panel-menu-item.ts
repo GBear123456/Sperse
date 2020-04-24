@@ -1,10 +1,12 @@
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 export class PanelMenuItem {
     text = '';
-    permissionName: AppPermissions = null;
-    featureName: AppFeatures = null;
+    permission: AppPermissions | string = null;
+    feature: AppFeatures = null;
+    layoutType: LayoutType = null;
     icon = '';
     route = '';
     alterRoutes: string[] = [];
@@ -16,23 +18,25 @@ export class PanelMenuItem {
 
     constructor(
         text: string,
-        permissionName: AppPermissions,
+        permission: AppPermissions | string,
         icon: string,
         route: string,
-        featureName: AppFeatures,
+        feature: AppFeatures,
         disabled: boolean,
         alterRoutes?: string[],
-        items?: PanelMenuItem[],
-        host?: string
+        host?: string,
+        layoutType?: LayoutType,
+        items?: PanelMenuItem[]
     ) {
         this.text = text;
-        this.permissionName = permissionName;
-        this.featureName = featureName;
+        this.permission = permission;
+        this.feature = feature;
         this.icon = icon;
         this.route = route;
         this.disabled = disabled;
         this.visible = Boolean(text);
         this.host = host;
+        this.layoutType = layoutType;
 
         if (items === undefined) {
             this.items = [];
