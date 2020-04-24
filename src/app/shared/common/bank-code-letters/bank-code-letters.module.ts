@@ -12,8 +12,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 
 /** Application imports */
-import { BankCodeLetterComponent } from '@app/shared/common/bank-code-letters/bank-code-letter/bank-code-letter.component';
-import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
+import { BankCodeDecodeComponent } from './bank-code-decode/bank-code-decode.component';
+import { BankCodeLetterComponent } from './bank-code-letter/bank-code-letter.component';
+import { BankCodeLettersComponent } from './bank-code-letters.component';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
 
@@ -29,11 +30,13 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
         DragDropModule
     ],
     declarations: [
+        BankCodeDecodeComponent,
         BankCodeLettersComponent,
         BankCodeLetterComponent,
         BankCodeLettersEditorDialogComponent
     ],
     exports: [
+        BankCodeDecodeComponent,
         BankCodeLetterComponent,
         BankCodeLettersComponent
     ],

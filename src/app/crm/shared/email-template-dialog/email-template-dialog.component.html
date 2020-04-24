@@ -155,5 +155,6 @@
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>
+        <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
     </div>
 </modal-dialog>

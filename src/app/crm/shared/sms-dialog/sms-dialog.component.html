@@ -66,4 +66,5 @@
             </div>
         </div>
     </dx-validation-group>
+    <bank-code-decode [content]="smsText" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
 </modal-dialog>

@@ -87,20 +87,28 @@ export class SMSDialogComponent {
         }
         setTimeout(() => {
             if (this.validationGroup.instance.validate().isValid && this.countryPhoneNumber.isValid()) {
-                this.loadingService.startLoading(this.validationGroup.instance.element());
+                this.startLoading();
                 this.contactCommunicationServiceProxy.sendSMS(new SendSMSInput({
                     contactId: this.data.contact.id,
                     parentId: this.data.parentId,
                     message: this.smsText,
                     phoneNumber: this.phoneNumber
                 })).pipe(
-                    finalize(() => this.loadingService.finishLoading(this.validationGroup.instance.element()))
+                    finalize(() => this.finishLoading())
                 ).subscribe(() => {
                     this.dialogRef.close(true);
                     this.notifyService.success(this.ls.l('MessageSuccessfullySent'));
                 });
             }
         });
+    }
+
+    startLoading() {
+        this.loadingService.startLoading(this.validationGroup.instance.element());
+    }
+
+    finishLoading() {
+        this.loadingService.finishLoading(this.validationGroup.instance.element());
     }
 
     insertTag(event, container, tooltip) {
