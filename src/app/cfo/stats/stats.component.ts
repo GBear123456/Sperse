@@ -168,7 +168,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     requestFilter$: Observable<StatsFilter> = this.requestFilter.asObservable();
     private syncAccounts: any;
     private forecastModels$ = this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean));
-    private selectedForecastModelIndex$ = this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)));
+    private selectedForecastModelIndex$ = this.cfoStore$.pipe(
+        select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null))
+    );
     private selectedForecastModelId$ = this.cfoStore$.pipe(
         select(ForecastModelsStoreSelectors.getSelectedForecastModelId),
         filter(Boolean),

@@ -9,7 +9,10 @@
     <synch-progress class="synch-progress" (onComplete)="getUpdatedDataSource()"></synch-progress>
     <calendar-button></calendar-button>
 </app-headline>
-<app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+<app-toolbar [config]="toolbarConfig"
+             [disableToolbarUpdateAfterFitlersFixing]="true"
+             [hidden]="appService.toolbarIsHidden$ | async">
+</app-toolbar>
 <div [hidden]="!statsData || !statsData.length" class="main-wrapper wo-animation">
     <div class="mainStatsView">
         <cfo-left-menu [items]="leftSideBarItems"

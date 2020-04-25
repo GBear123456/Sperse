@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -21,7 +21,7 @@ import { AppService } from '@app/app.service';
     styleUrls: ['./toolbar.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToolBarComponent implements OnDestroy {
+export class ToolBarComponent implements OnDestroy, OnInit {
     @ViewChild(DxToolbarComponent, { static: false }) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
@@ -30,6 +30,7 @@ export class ToolBarComponent implements OnDestroy {
         this._config = config;
         this.initToolbarItems();
     }
+    @Input() disableToolbarUpdateAfterFitlersFixing = false;
     @HostBinding('style.display') display: string;
     @HostBinding('class.compact') @Input() compact = false;
     public items = [];
@@ -37,17 +38,23 @@ export class ToolBarComponent implements OnDestroy {
     private subscription: Subscription = this.filtersService.filterToggle$.subscribe((enabled) => {
         enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', this.filtersService.hasFilterSelected);
     });
-    private fixedSubscription: Subscription = this.filtersService.filterFixed$.pipe(
-        delay(100)
-    ).subscribe((fixed: boolean) => {
-        this.updateToolbarItemAttribute('filters', 'button-pressed', fixed);
-    });
+    private fixedSubscription: Subscription;
 
     constructor(
         private filtersService: FiltersService,
         private ls: AppLocalizationService,
         public appService: AppService
     ) {}
+
+    ngOnInit() {
+        if (!this.disableToolbarUpdateAfterFitlersFixing) {
+            this.fixedSubscription = this.filtersService.filterFixed$.pipe(
+                delay(100)
+            ).subscribe((fixed: boolean) => {
+                this.updateToolbarItemAttribute('filters', 'button-pressed', fixed);
+            });
+        }
+    }
 
     private getSupportedButtons() {
         return {
@@ -437,6 +444,8 @@ export class ToolBarComponent implements OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
-        this.fixedSubscription.unsubscribe();
+        if (this.fixedSubscription) {
+            this.fixedSubscription.unsubscribe();
+        }
     }
 }
