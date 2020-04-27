@@ -28,7 +28,13 @@ import { NotifyService } from '@abp/notify/notify.service';
 export class UserAssignmentComponent implements OnDestroy {
     @Input() multiSelection = false;
     @Input() filterModel: any;
-    @Input() selectedKeys: any;
+    @Input() get selectedKeys(): Array<any> {
+        return this.affectedKeys;
+    }
+    set selectedKeys(value: Array<any>) {
+        this.relatedUsers = undefined;
+        this.affectedKeys = value;
+    }
     @Input() targetSelector = '[aria-label="Assign"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
@@ -49,7 +55,9 @@ export class UserAssignmentComponent implements OnDestroy {
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
+    private affectedKeys = [];
     list: any = [];
+    relatedUsers;
     listComponent: any;
     tooltipVisible = false;
     isRelatedUser = false;
@@ -154,23 +162,32 @@ export class UserAssignmentComponent implements OnDestroy {
     refreshList(assignedUsersSelector) {
         this.subscription = this.store$.pipe(assignedUsersSelector)
             .pipe(filter(Boolean))
-            .subscribe((result) => {
-                if (this.selectedKeys && this.selectedKeys.length && this.selectedKeys[0] && result && this.proxyService)
-                    this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
-                        if (res && res.length) {
-                            res.forEach((user) => {
-                                this.isRelatedUser = this.isRelatedUser ||
-                                    (user.id == abp.session.userId);
-                                if (!_.findWhere(this.list, { id: user.id }))
-                                    this.list.unshift(user);
-                            });
-                            if (!this.checkPermissions() && this.isRelatedUser)
-                                this.list = res;
-                        }
-                    });
-                if (result && result instanceof Array)
-                    this.list = result.slice(0);
+            .subscribe(assignableUsers => {
+                if (assignableUsers && assignableUsers instanceof Array) {
+                    this.list = assignableUsers.slice(0);
+                    if (!this.relatedUsers && this.selectedKeys && this.selectedKeys[0] && this.proxyService)
+                        this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe(relatedUsers => {
+                            this.relatedUsers = relatedUsers;
+                            this.initRelatedUsers();
+                        });
+                    else
+                        this.initRelatedUsers();
+                } else
+                    this.list = [];
             });
+    }
+
+    initRelatedUsers() {
+        if (this.relatedUsers && this.relatedUsers.length) {
+            this.relatedUsers.forEach(user => {
+                this.isRelatedUser = this.isRelatedUser ||
+                    (user.id == abp.session.userId);
+                if (!_.findWhere(this.list, { id: user.id }))
+                    this.list.unshift(user);
+            });
+            if (!this.checkPermissions() && this.isRelatedUser)
+                this.list = this.relatedUsers;
+        }
     }
 
     reset() {
