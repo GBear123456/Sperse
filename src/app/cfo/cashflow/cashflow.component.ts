@@ -842,33 +842,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.handleGetCashflowGridSettingsResult(cashflowSettings);
 
                 this.initFiltering();
-
-                /** @todo fix double initial loading */
-                this.cfoPreferencesService.dateRange$.pipe(
-                    takeUntil(this.destroy$),
-                    switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
-                ).subscribe((dateRange: CalendarValuesModel) => {
-                    this.dateFilter.items = {
-                        from: new FilterItemModel(dateRange.from.value),
-                        to: new FilterItemModel(dateRange.to.value)
-                    };
-                    this.getCellOptionsFromCell.cache = {};
-                    this.filtersService.change(this.dateFilter);
-                });
-
-                /** After selected accounts change */
-                this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
-                    this.setBankAccountsFilter(true);
-                });
-                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
-                    /** filter all widgets by new data if change is on this component */
-                    if (this.componentIsActivated) {
-                        this.setBankAccountsFilter();
-                        /** if change is on another component - mark this for future update */
-                    } else {
-                        this.updateAfterActivation = true;
-                    }
-                });
+                this.applyFiltersInitially();
+                this.listenForDateUpdate();
+                this.listenForBankAccountsUpdate();
             });
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
@@ -921,6 +897,41 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.filterByBankAccounts();
+        });
+    }
+
+    private applyFiltersInitially() {
+        /** After selected accounts change */
+        forkJoin(
+            this.cfoPreferencesService.dateRange$.pipe(first()),
+            this.bankAccountsService.selectedBankAccountsIds$.pipe(first())
+        ).subscribe(([dateFilter, accountsIds]: [CalendarValuesModel, number[]]) => {
+            this.setDateFilter(dateFilter);
+            this.setBankAccountsFilter(true);
+        });
+    }
+
+    private listenForDateUpdate() {
+        this.cfoPreferencesService.dateRange$.pipe(
+            takeUntil(this.destroy$),
+            skip(1),
+            switchMap((dateRange: CalendarValuesModel) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
+        ).subscribe((dateRange: CalendarValuesModel) => {
+            this.setDateFilter(dateRange);
+            this.getCellOptionsFromCell.cache = {};
+            this.filtersService.change(this.dateFilter);
+        });
+    }
+
+    private listenForBankAccountsUpdate() {
+        this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+            /** filter all widgets by new data if change is on this component */
+            if (this.componentIsActivated) {
+                this.setBankAccountsFilter();
+                /** if change is on another component - mark this for future update */
+            } else {
+                this.updateAfterActivation = true;
+            }
         });
     }
 
@@ -1000,13 +1011,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);
                 this.bankAccountsService.applyFilter();
             }
-
-            let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
-            if (filterMethod)
-                filterMethod(filter, this.cashflowService.requestFilter);
-            else
-                this.cashflowService.requestFilter[filter.field] = undefined;
-
+            this.updateRequestFilter(filter);
             this.closeTransactionsDetail();
             this.filteredLoad = true;
             this.loadGridDataSource();
@@ -1016,6 +1021,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.filtersService.filterToggle$.subscribe(enabled => {
             enabled || setTimeout(this.repaintDataGrid.bind(this), 1000);
         });
+    }
+
+    private updateRequestFilter(filter: FilterModel) {
+        let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+        if (filterMethod)
+            filterMethod(filter, this.cashflowService.requestFilter);
+        else
+            this.cashflowService.requestFilter[filter.field] = undefined;
     }
 
     initToolbarConfig() {
@@ -1494,26 +1507,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             pluck('transactionStats'),
             finalize(() => this.finishLoading())
         ).subscribe((transactions: TransactionStatsDto[]) => {
-            this.handleCashflowData(transactions, period);
-            /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
-            this.overrideCashflowDataPushMethod();
-        },
+                this.handleCashflowData(transactions, period);
+                /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
+                this.overrideCashflowDataPushMethod();
+            },
             () => {},
-        () => {
-            if (!this.gridDataExists && (!this.cashflowService.cashflowData || !this.cashflowService.cashflowData.length)) {
+            () => {
+                if (!this.gridDataExists && (!this.cashflowService.cashflowData || !this.cashflowService.cashflowData.length)) {
 
-            } else {
-                this.gridDataExists = true;
-                this.dataSource = this.getApiDataSource();
-            }
+                } else {
+                    this.gridDataExists = true;
+                    this.dataSource = this.getApiDataSource();
+                }
 
-            this.initToolbarConfig();
-            this.initFooterToolbar();
+                this.initToolbarConfig();
+                this.initFooterToolbar();
 
-            if (completeCallback) {
-                completeCallback.call(this);
-            }
-        });
+                if (completeCallback) {
+                    completeCallback.call(this);
+                }
+            });
     }
 
     handleCashflowData(transactions, period = GroupByPeriod.Monthly) {
@@ -4525,6 +4538,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         const buttonsWidthWithCommentsTitle = 340;
         let commentsWidth = window.innerWidth * 0.23;
         return commentsWidth > buttonsWidthWithCommentsTitle ? window.innerWidth > 1600 ? '33%' : '23%' : buttonsWidthWithCommentsTitle;
+    }
+
+    setDateFilter(dateRange: CalendarValuesModel) {
+        this.dateFilter.items = {
+            from: new FilterItemModel(dateRange.from.value),
+            to: new FilterItemModel(dateRange.to.value)
+        };
+        this.updateRequestFilter(this.dateFilter);
     }
 
     setBankAccountsFilter(emitFilterChange = false) {
