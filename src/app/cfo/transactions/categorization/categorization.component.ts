@@ -137,7 +137,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     ngOnInit() {
         this.initSettings();
-        if (this.settings.showTC) {
+        if (this.settings.showTC || !this.settings.showEmpty) {
             this.initTransactionsTotalCount();
         }
         this.refreshCategories(this.settings.showTC);
@@ -284,6 +284,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                                     action: (event) => {
                                         if (event.event.target.tagName == 'INPUT') {
                                             this.settings.showEmpty = !this.settings.showEmpty;
+                                            if (!this.transactionsCountDataSource && !this.settings.showEmpty) {
+                                                this.initTransactionsTotalCount();
+                                                this.refreshTransactionsCountDataSource();
+                                            }
                                             if (this.showAddEntity) {
                                                 this.initToolbarConfig();
                                             }
@@ -737,7 +741,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         this.categories.forEach((item: Category) => {
             item.transactionsCount = items[0][item.key];
-
             if (isNaN(item.key))
                 accountingTypes[item.key] = item;
             else if (+item.parent != item.parent)
@@ -748,7 +751,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             if (+category.parent == category.parent && category.transactionsCount) {
                 let parentCategory = parentCategories[category.parent];
                 if (parentCategory && category.transactionsCount)
-                    parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + category.transactionsCount : category.transactionsCount;
+                    parentCategory.transactionsCount = parentCategory.transactionsCount
+                        ? parentCategory.transactionsCount + category.transactionsCount
+                        : category.transactionsCount;
             }
         });
 
@@ -756,7 +761,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             parentCategories.forEach(x => {
                 let accountingType = accountingTypes[x.parent];
                 if (x.transactionsCount)
-                    accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
+                    accountingType.transactionsCount = accountingType.transactionsCount
+                        ? accountingType.transactionsCount + x.transactionsCount
+                        : x.transactionsCount;
             });
 
         if (!this.settings.showEmpty)
