@@ -137,10 +137,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     ngOnInit() {
         this.initSettings();
-        if (this.settings.showTC || !this.settings.showEmpty) {
+        const loadTransactionsTotal = this.settings.showTC || !this.settings.showEmpty;
+        if (loadTransactionsTotal) {
             this.initTransactionsTotalCount();
         }
-        this.refreshCategories(this.settings.showTC);
+        this.refreshCategories(loadTransactionsTotal);
         this.showAddEntity = this.showAddEntity && this.isInstanceAdmin;
         this.initToolbarConfig();
     }
