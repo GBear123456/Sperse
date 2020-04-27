@@ -189,7 +189,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
     loadData() {
         let data = this.data && this.data.raw;
-        if (data && data.user.id == this.data.userId)
+        if (data && data.user && data.user.id == this.data.userId)
             this.fillUserData(this.data['raw']);
         else if (!this.dataIsloading) {
             this.dataIsloading = true;
