@@ -14,8 +14,8 @@
                   [noDataText]="noDataText"
                   [hoverStateEnabled]="true"
                   [(dataSource)]="categories"
-                  [selection]="{allowSelectAll: false, mode: 'single'}"
-                  [searchPanel]="{visible: showSearch, placeholder: l('Find by ID or name')}"
+                  [selection]="{ allowSelectAll: false, mode: 'single' }"
+                  [searchPanel]="{ visible: showSearch, placeholder: l('Find by ID or name') }"
                   [rootValue]="'root'"
                   (onKeyDown)="onKeyDown($event)"
                   (onCellPrepared)="onCellPrepared($event)"
@@ -29,13 +29,13 @@
                   (onRowPrepared)="onRowPrepared($event)"
                   (onNodesInitialized)="onNodesInitialized()">
         <dxo-editing mode="row"
-                     [texts]="{confirmDeleteMessage: ''}"                     
+                     [texts]="{ confirmDeleteMessage: '' }"
                      [allowUpdating]="false"
                      [allowAdding]="false">
         </dxo-editing>
         <dxi-column [cssClass]="columnClassName"
-                    [editCellTemplate]="'categoryEditTemplate'"
-                    [cellTemplate]="'categoryTemplate'"
+                    editCellTemplate="categoryEditTemplate"
+                    cellTemplate="categoryTemplate"
                     [allowSorting]="true"
                     [sortIndex]="0"
                     [width]="180"
@@ -44,31 +44,31 @@
                     [sortOrder]="'asc'" dataField="name">
         </dxi-column>
         <dxi-column [allowSorting]="true"
-                    [alignment]="'left'"
+                    alignment="left"
                     [sortIndex]="1"
-                    [sortOrder]="'asc'"
+                    sortOrder="asc"
                     dataField="coAID"
-                    [caption]="'ID'"
+                    caption="ID"
                     [calculateSortValue]="calculateSortValue"
                     [visible]="settings.showCID">
         </dxi-column>
         <dxi-column dataField="transactionsCount"
                     [cellTemplate]="'transactionsCountTemplate'"
                     dataType="number"
-                    [alignment]="'left'"
-                    [caption]="'Count'"
+                    alignment="left"
+                    caption="Count"
                     [allowEditing]="false"
                     [visible]="settings.showTC">
         </dxi-column>
 
         <div *dxTemplate="let cell of 'categoryEditTemplate'">
             <dx-text-box [width]="180" [value]="cell.value" valueChangeEvent="keyup" (onValueChanged)="cell.setValue($event.value)"></dx-text-box>
-        </div> 
+        </div>
 
         <div *dxTemplate="let cell of 'categoryTemplate'">
             <ng-container>
                 <div class="category-hover"></div>
-                <span> {{ cell.text }} </span>
+                <span>{{ cell.text }}</span>
                 <div class="category-drop-area">
                     <div *ngIf="isInstanceAdmin || _cfoService.classifyTransactionsAllowed()" class="category-drop-add-rule">{{l('AddRule')}}</div>
                 </div>
@@ -76,9 +76,8 @@
         </div>
         <div *dxTemplate="let cell of 'transactionsCountTemplate'">
             <div *ngIf="cell.value" class="transactionCount">
-                <span> {{ cell.text }} </span>
+                <span>{{ cell.text }}</span>
             </div>
         </div>
-
     </dx-tree-list>
 </div>

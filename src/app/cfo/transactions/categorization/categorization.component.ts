@@ -137,9 +137,23 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     ngOnInit() {
         this.initSettings();
-        this.refreshCategories(true);
+        if (this.settings.showTC) {
+            this.initTransactionsTotalCount();
+        }
+        this.refreshCategories(this.settings.showTC);
         this.showAddEntity = this.showAddEntity && this.isInstanceAdmin;
         this.initToolbarConfig();
+    }
+
+    ngAfterViewInit(): void {
+        if (this.isInstanceAdmin) {
+            this.categoryList.editing.allowAdding = this.addingAllowed;
+            this.categoryList.editing.allowUpdating = true;
+            this.categoryList.instance.refresh();
+        }
+    }
+
+    private initTransactionsTotalCount() {
         this.transactionsCountDataSource = new DataSource({
             store: {
                 type: 'odata',
@@ -151,14 +165,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             },
             onChanged: this.setTransactionsCount.bind(this)
         });
-    }
-
-    ngAfterViewInit(): void {
-        if (this.isInstanceAdmin) {
-            this.categoryList.editing.allowAdding = this.addingAllowed;
-            this.categoryList.editing.allowUpdating = true;
-            this.categoryList.instance.refresh();
-        }
     }
 
     initToolbarConfig() {
@@ -314,6 +320,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                                             this.settings.showCID = false;
                                             event.itemElement.previousElementSibling.querySelector('input').checked = false;
                                             this.settings.showTC = !this.settings.showTC;
+                                            if (!this.transactionsCountDataSource && this.settings.showTC) {
+                                                this.initTransactionsTotalCount();
+                                                this.refreshTransactionsCountDataSource();
+                                            }
                                             this.changeDetectionRef.detectChanges();
                                             this.storeSettings();
                                         }
@@ -394,21 +404,19 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initSettings() {
-        let settings: any = localStorage.getItem(
-            this.constructor.name);
+        let settings: any = localStorage.getItem(this.constructor.name);
         if (settings)
             try {
                 settings = JSON.parse(settings);
                 for (let prt in settings) {
                     this.settings[prt] = settings[prt];
                 }
-            } catch (e) { }
+            } catch (e) {}
         this.applyPadding();
     }
 
     storeSettings() {
-        localStorage.setItem(this.constructor.name,
-            JSON.stringify(this.settings));
+        localStorage.setItem(this.constructor.name, JSON.stringify(this.settings));
     }
 
     processExpandTree(expandFirstLevel, expandSecondLevel) {
@@ -643,7 +651,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                             name: sourceCategory.name,
                             coAID: sourceCategory.coAID,
                         })
-                    ).subscribe((result) => {
+                    ).subscribe(() => {
                         this.refreshCategories();
                         this.onCategoriesChanged.emit();
                     });
@@ -720,8 +728,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     setTransactionsCount() {
-        let items = this.transactionsCountDataSource.items();
-        if (!items.length)
+        let items = this.transactionsCountDataSource && this.transactionsCountDataSource.items();
+        if (!items || !items.length)
             return ;
 
         let accountingTypes: any[] = [];
