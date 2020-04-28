@@ -28976,6 +28976,58 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getRapidSettings(): Observable<RapidSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetRapidSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRapidSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRapidSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<RapidSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RapidSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRapidSettings(response: HttpResponseBase): Observable<RapidSettingsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? RapidSettingsDto.fromJS(resultData200) : new RapidSettingsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RapidSettingsDto>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -29217,6 +29269,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateYTelSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateRapidSettings(body: RapidSettingsDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateRapidSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateRapidSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateRapidSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateRapidSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -64813,6 +64917,7 @@ export enum LayoutType {
     LendSpace = "LendSpace", 
     AdvicePeriod = "AdvicePeriod", 
     BankCode = "BankCode", 
+    Rapid = "Rapid", 
 }
 
 export class FaviconDto implements IFaviconDto {
@@ -67391,6 +67496,46 @@ export interface IIAgeSettingsEditDto {
     passwordResetEmailId: number | undefined;
     isEnabled: boolean | undefined;
     offerAnnouncementEmailId: number | undefined;
+}
+
+export class RapidSettingsDto implements IRapidSettingsDto {
+    username!: string | undefined;
+    password!: string | undefined;
+
+    constructor(data?: IRapidSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.username = data["username"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): RapidSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RapidSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface IRapidSettingsDto {
+    username: string | undefined;
+    password: string | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
