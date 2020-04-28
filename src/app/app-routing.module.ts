@@ -118,7 +118,7 @@ export class CfoActivateService implements CanActivate {
                     },
                     {
                         path: 'hub',
-                        loadChildren: 'app/hub/hub.module#HubModule', //Lazy load main module
+                        loadChildren: () => import('app/hub/hub.module').then(m => m.HubModule), //Lazy load cfo *module
                         data: { feature: 'HUB', localizationSource: 'HUB' },
                         resolve: { hub: ModulePathResolverService }
                     }

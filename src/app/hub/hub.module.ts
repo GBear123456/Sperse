@@ -7,7 +7,7 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { RatingModule } from 'ng-starrating';
 
 /** Application imports */
-import { AppCommonModule } from '../shared/common/app-common.module';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { HubRoutingModule } from './hub-routing.module';
 import { MarketplaceComponent } from './marketplace/marketplace.component';

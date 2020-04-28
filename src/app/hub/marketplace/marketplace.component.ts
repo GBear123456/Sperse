@@ -18,7 +18,7 @@ const defaultVisibleItems = 3,
     providers: [ ExtensionServiceProxy ]
 })
 export class MarketplaceComponent extends AppComponentBase implements OnInit {
-    @ViewChild('content') scrollView: DxScrollViewComponent;
+    @ViewChild('content', { static: false }) scrollView: DxScrollViewComponent;
     public headlineConfig = {
         names: [this.l('Marketplace')],
         onRefresh: () => {
