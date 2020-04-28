@@ -115,6 +115,12 @@ export class CfoActivateService implements CanActivate {
                         loadChildren: () => import('app/cfo-portal/cfo-portal.module').then(m => m.CfoPortalModule), //Lazy load cfo-portal *module
                         data: { feature: 'CFO.Partner', permission: AppPermissions.CFOMemberAccess, localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
+                    },
+                    {
+                        path: 'hub',
+                        loadChildren: 'app/hub/hub.module#HubModule', //Lazy load main module
+                        data: { feature: 'HUB', localizationSource: 'HUB' },
+                        resolve: { hub: ModulePathResolverService }
                     }
                 ]
             }
