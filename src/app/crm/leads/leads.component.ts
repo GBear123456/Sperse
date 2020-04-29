@@ -213,6 +213,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
     formatting = AppConsts.formatting;
 
+    tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     public headlineButtons: HeadlineButton[] = [
         {
             enabled: this.contactService.checkCGPermission(ContactGroup.Client),

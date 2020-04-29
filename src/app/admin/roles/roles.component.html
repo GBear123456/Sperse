@@ -24,6 +24,7 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
                             class="main-component-view"
+                            [renderAsync]="true"
                             [dataSource]="dataSource"
                             [allowColumnReordering]="true"
                             [columnAutoWidth]="true"

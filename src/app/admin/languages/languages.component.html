@@ -22,6 +22,7 @@
     <div id="admin-languages" class="portlet light no-padding margin-bottom-0">
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid class="main-component-view"
+            [renderAsync]="true"
             [dataSource]="dataSource"
             [allowColumnReordering]="true"
             [columnAutoWidth]="true"

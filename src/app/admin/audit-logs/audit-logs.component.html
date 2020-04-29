@@ -16,6 +16,7 @@
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid class="main-component-view"
                               id="operationsLogsGrid"
+                              [renderAsync]="true"
                               [remoteOperations]="true"
                               [dataSource]="operationLogsDataSource"
                               [allowColumnReordering]="true"
