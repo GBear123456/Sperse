@@ -13,6 +13,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
   selector: 'dx-data-grid'
 })
 export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
+    private subscription;
     private clipboardIcon;
     private copyToClipboard = (event) => {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
@@ -35,7 +36,7 @@ export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.component.onCellHoverChanged.subscribe(event => {
+        this.subscription = this.component.onCellHoverChanged.subscribe(event => {
             if (event.rowType == 'data' && event.eventType == 'mouseover') {
                 if (event.cellElement.classList.contains('clipboard-holder'))
                     this.appendClipboardIcon(event.cellElement);
@@ -51,6 +52,7 @@ export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.subscription.unsubscribe();
         this.clipboardIcon.removeEventListener('click', this.copyToClipboard);
         this.renderer.removeClass(this.clipboardIcon, 'save-to-clipboard');
         if (this.clipboardIcon.parentNode)
