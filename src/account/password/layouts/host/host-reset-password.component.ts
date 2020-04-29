@@ -59,14 +59,14 @@ export class HostResetPasswordComponent implements OnInit {
             resetCode: this.model.resetCode,
             c: this.model.c
         });
+
         this.accountService.getResetPasswordCodeInfo(infoInput).subscribe((result: GetResetPasswordCodeInfoOutput) => {
             this.appSessionService.changeTenantIfNeeded(
                 result.tenantId, false
             );
 
-            if (!result.isValid)
-            {
-                abp.message.error(this.ls.l("InvalidPasswordResetCode_Detail"), this.ls.l("InvalidPasswordResetCode")).done(() => {
+            if (!result.isValid) {
+                abp.message.error(this.ls.l('InvalidPasswordResetCode_Detail'), this.ls.l('InvalidPasswordResetCode')).done(() => {
                     this.router.navigate(['account/login']);
                 });
                 return;
