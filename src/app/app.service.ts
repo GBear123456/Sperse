@@ -35,6 +35,7 @@ import { CfoPortalConfig } from '@app/cfo-portal/cfo-portal.config';
 import { PfmConfig } from '@app/pfm/pfm.config';
 import { BehaviorSubject } from '@node_modules/rxjs';
 import { SliceConfig } from '@app/shared/common/slice/slice.config';
+import { HubConfig } from '@app/hub/hub.config';
 
 @Injectable()
 export class AppService extends AppServiceBase {
@@ -148,7 +149,7 @@ export class AppService extends AppServiceBase {
                     name: 'HUB',
                     showDescription: false,
                     showInDropdown: true,
-                    isComingSoon: true
+                    isComingSoon: false
                 },
                 {
                     name: 'Slice',
@@ -169,7 +170,8 @@ export class AppService extends AppServiceBase {
                 cfo: new CfoConfig(),
                 cfoPortal: new CfoPortalConfig(),
                 pfm: new PfmConfig(),
-                slice: new SliceConfig()
+                slice: new SliceConfig(),
+                hub: new HubConfig()
             },
         );
 
