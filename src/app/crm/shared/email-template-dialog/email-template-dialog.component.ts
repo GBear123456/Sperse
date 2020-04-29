@@ -114,8 +114,15 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (this.templateEditMode)
                 this.saveTemplateData();
             else {
-                this.data.attachments = this.attachments.map(item => item.id);
-                this.onSave.emit(this.data);
+                this.data.attachments = [];
+                if (this.attachments.every(item => {
+                    if (item.loader)
+                        this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
+                    else
+                        this.data.attachments.push(item.id);
+                    return !item.loader;
+                }))
+                    this.onSave.emit(this.data);
             }
         }
     }
@@ -292,14 +299,20 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.ckEditor.insertHtml('<a href="#' + tag + '#">' + link + '</a>');
     }
 
-    addAttachments(files: NgxFileDropEntry[]) {
-        if (files.length)
+    addAttachments(files: NgxFileDropEntry[], scrollView) {
+        if (files.length) {
+            let scroll = scrollView.instance;
+            setTimeout(() => scroll.scrollTo(
+                scroll.scrollHeight()
+            ));
+            scroll.update();
             files.forEach(file => {
                 if (file.fileEntry)
                     file.fileEntry['file'](this.uploadFile.bind(this));
                 else
                     this.uploadFile(file);
             });
+        }
     }
 
     removeAttachment(attachment: Partial<EmailAttachment>, index?) {
@@ -337,6 +350,8 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.attachments = this.attachments.filter(item => item.name != file.name);
             this.notifyService.error(res.error.message);
             this.changeDetectorRef.markForCheck();
+        }, () => {
+            attachment.loader = undefined;
         });
         this.attachments.push(attachment);
     }
@@ -349,7 +364,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             xhr.open('POST', AppConsts.remoteServiceBaseUrl + '/api/services/CRM/ContactCommunication/SaveAttachment');
             xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
 
-            xhr.addEventListener('progress', event => {
+            xhr.upload.addEventListener('progress', event => {
                 subscriber.next(event);
             });
 
