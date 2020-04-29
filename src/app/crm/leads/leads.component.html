@@ -189,7 +189,8 @@
                        [height]="mapHeight$ | async"
                        [contactGroupText]="userGroupText$ | async"
                        [dataIsLoading]="mapDataIsLoading"
-                       [data]="mapData$ | async">
+                       [data]="mapData$ | async"
+                       (onMapItemClick)="mapItemClick($event)">
             </slice-map>
         </div>
     </div>

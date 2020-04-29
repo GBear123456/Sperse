@@ -2,14 +2,16 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    EventEmitter,
     HostBinding,
     Input,
     OnChanges,
+    Output,
     SimpleChanges,
     ViewChild
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Params } from '@angular/router';
 
 /** Third party imports */
 import { DxVectorMapComponent } from 'devextreme-angular/ui/vector-map';
@@ -41,6 +43,7 @@ import { ContactGroup } from '../../../../../shared/AppEnums';
 })
 export class MapComponent implements OnChanges {
     @Input() data: MapData;
+    @Input() dataIsGrouped = true;
     @Input() palette: string[] = [ '#ade8ff', '#86ddff', '#5fd2ff', '#38c8ff', '#11bdff', '#00a8ea' ];
     @Input() infoItems: InfoItem[];
     @Input() width: number;
@@ -50,6 +53,7 @@ export class MapComponent implements OnChanges {
     @Input() usaOnly = false;
     @Input() contactGroupText = '';
     @Input() areaClickLink = 'app/crm/leads';
+    @Output() onMapItemClick: EventEmitter<Params> = new EventEmitter<Params>();
     @ViewChild(DxVectorMapComponent, { static: false }) vectorMapComponent: DxVectorMapComponent;
     @HostBinding('style.height') get componentHeight() {
         return this.height + 'px';
@@ -76,9 +80,7 @@ export class MapComponent implements OnChanges {
         private ls: AppLocalizationService,
         private exportService: ExportService,
         private mapService: MapService,
-        private userManagementService: UserManagementService,
-        private filtersService: FiltersService,
-        private router: Router
+        private userManagementService: UserManagementService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -89,8 +91,7 @@ export class MapComponent implements OnChanges {
     }
 
     customizeTooltip = (arg) => {
-        let stateData = this.data[arg.attribute('postal')];
-        let total = stateData && stateData.total;
+        let total = this.getElementTotal(arg);
         let totalMarkupString = total
             ? `<div id="nominal"><b>${total}</b> ${total === 1 ? this.contactGroupText.slice(0, -1) : this.contactGroupText}</div>`
             : `<div>${this.ls.l('CRMDashboard_NoData')}</div>`;
@@ -100,9 +101,27 @@ export class MapComponent implements OnChanges {
 
     customizeLayers = (elements) => {
         elements.forEach((element) => {
-            let stateData = this.data[element.attribute('postal')];
-            element.attribute('total', stateData && stateData.total || 0);
+            element.attribute('total', this.getElementTotal(element));
         });
+    }
+
+    private getElementTotal(element): number {
+        let total = 0;
+        if (!this.dataIsGrouped && this.mapService.selectedMapAreaItem.getValue().key === MapArea.World) {
+            const countryData = this.data[element.attribute('iso_a2')];
+            for (let stateCode in countryData) {
+                total += +(countryData[stateCode] && countryData[stateCode].total);
+            }
+        } else {
+            let stateData = this.dataIsGrouped
+                ? (this.mapService.selectedMapAreaItem.value.key === MapArea.World
+                    ? this.data[element.attribute('iso_a2')]
+                    : this.data[element.attribute('postal')]
+                  )
+                : this.data[element.attribute('iso_a2')][element.attribute('postal')];
+            total = +(stateData && stateData.total);
+        }
+        return total;
     }
 
     customizeText = (arg) => {
@@ -137,17 +156,7 @@ export class MapComponent implements OnChanges {
                 filter['stateId'] = e.target.attribute('postal');
                 filter['countryId'] = this.mapService.selectedMapAreaItem.value.key === MapArea.Canada ? 'CA' : 'US';
             }
-            this.filtersService.skipFiltersClean = true;
-            this.router.navigate(
-                this.areaClickLink.split('/'),
-                {
-                    queryParams: {
-                        dataLayoutType: DataLayoutType.DataGrid,
-                        contactGroup: Object.keys(ContactGroup).shift(),
-                        ...filter
-                    }
-                }
-            );
+            this.onMapItemClick.emit(filter);
         }
     }
 

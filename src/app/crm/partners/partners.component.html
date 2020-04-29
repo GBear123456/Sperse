@@ -184,7 +184,8 @@
                        [contactGroupText]="l('Partners').toLowerCase()"
                        [dataIsLoading]="mapDataIsLoading"
                        areaClickLink="app/crm/partners"
-                       [data]="mapData$ | async">
+                       [data]="mapData$ | async"
+                       (onMapItemClick)="mapItemClick($event)">
             </slice-map>
         </div>
     </div>

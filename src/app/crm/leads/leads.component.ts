@@ -40,7 +40,11 @@ import {
     StarsStoreSelectors,
     TagsStoreSelectors
 } from '@app/store';
-import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors, PipelinesStoreSelectors } from '@app/crm/store';
+import {
+    OrganizationUnitsStoreActions,
+    OrganizationUnitsStoreSelectors,
+    PipelinesStoreSelectors
+} from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -118,6 +122,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
+    private readonly dataSourceURI = 'Lead';
+    private readonly totalDataSourceURI = 'Lead/$count';
+    private readonly groupDataSourceURI = 'LeadSlice';
+    private readonly dateField = 'LeadDate';
     private _selectedLeads: any;
     get selectedLeads() {
         return this._selectedLeads || [];
@@ -173,6 +181,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
+    filterDate = new FilterModel({
+        component: FilterCalendarComponent,
+        operator: { from: 'ge', to: 'le' },
+        caption: 'creation',
+        field: this.dateField,
+        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+    });
     filterModelStages: FilterModel;
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
@@ -206,10 +222,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     hideMap$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.Map;
     }));
-    private readonly dataSourceURI = 'Lead';
-    private readonly totalDataSourceURI = 'Lead/$count';
-    private readonly groupDataSourceURI = 'LeadSlice';
-    private readonly dateField = 'LeadDate';
     private filters: FilterModel[];
     formatting = AppConsts.formatting;
 
@@ -365,10 +377,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    odataFilter$: Observable<string> = this.filterChanged$.pipe(
-        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
-        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
-    );
+    odataFilter$: Observable<string>;
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -414,13 +423,22 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ) {
         super(injector);
         this.contactGroupOptionInit();
+        this.crmService.updateDateFilter(this._activatedRoute.snapshot.queryParams, this.filterDate);
+        this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
+        this.odataFilter$ = this.filterChanged$.pipe(
+            map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
+            startWith(this.oDataService.getODataFilter(
+                [ this.filterDate, this.filterCountryStates ],
+                this.filtersService.getCheckCustom
+            ))
+        );
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
+                url: this.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     request.params.contactGroupId = this.contactGroupId.value;
@@ -433,7 +451,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;
@@ -473,6 +490,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngAfterViewInit() {
         this.initDataSource();
+    }
+
+    private getInitialFilter() {
+        return [
+            this.filterDate.getODataFilterObject(),
+            this.filtersService.getCheckCustom(this.filterCountryStates)
+        ];
     }
 
     private initAssignedUsersSelector() {
@@ -573,18 +597,31 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private handleQueryParams() {
         this.handleDataLayoutParam();
         this.handleContactGroupParam();
-        this.crmService.handleCountryStateParams(
-            this.queryParams$.pipe(
-                /** Wait for activation to update the filters */
-                switchMap((queryParams: Params) => this.lifeCycleSubjectsService.activate$.pipe(
-                    filter(Boolean),
-                    mapTo(queryParams))
-                )
-            ),
-            this.filterCountryStates
-        );
+        this.handleFilterParams();
         this.handleAddNewParam();
         this.handleRefreshParam();
+    }
+
+    private handleFilterParams() {
+        this.queryParams$.pipe(
+            skip(1),
+            /** Wait for activation to update the filters */
+            switchMap((queryParams: Params) => this.lifeCycleSubjectsService.activate$.pipe(
+                filter(Boolean),
+                mapTo(queryParams))
+            )
+        ).subscribe((params: Params) => {
+            this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
+            this.crmService.updateDateFilter(params, this.filterDate);
+            this.processFilterInternal();
+            this.totalDataSource.load();
+        });
+    }
+
+    mapItemClick(params: Params) {
+        this.toggleDataLayout(DataLayoutType.DataGrid);
+        this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
+        this.filtersService.change(this.filterCountryStates);
     }
 
     private handleContactGroupParam() {
@@ -791,21 +828,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'Email',
                     items: { Email: new FilterItemModel() }
                 }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'creation',
-                    field: this.dateField,
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
-                }),
+                this.filterDate,
                 this.filterModelStages = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'stages',
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: this.pipelinePurposeId}))),
+                                dataSource$: this.store$.pipe(
+                                    select(PipelinesStoreSelectors.getPipelineTreeSource(
+                                        { purpose: this.pipelinePurposeId })
+                                    )
+                                ),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })

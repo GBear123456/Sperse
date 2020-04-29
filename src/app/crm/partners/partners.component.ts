@@ -1217,6 +1217,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    mapItemClick(params: Params) {
+        this.toggleDataLayout(DataLayoutType.DataGrid);
+        this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
+        this.filtersService.change(this.filterCountryStates);
+    }
+
     onMenuItemClick(event) {
         event.itemData.action.call(this);
         this.actionEvent = null;
