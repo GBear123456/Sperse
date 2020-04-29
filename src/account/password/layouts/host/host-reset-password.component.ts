@@ -67,9 +67,8 @@ export class HostResetPasswordComponent implements OnInit {
                 result.tenantId, false
             );
 
-            if (!result.isValid)
-            {
-                abp.message.error(this.ls.l("InvalidPasswordResetCode_Detail"), this.ls.l("InvalidPasswordResetCode")).done(() => {
+            if (!result.isValid) {
+                abp.message.error(this.ls.l('InvalidPasswordResetCode_Detail'), this.ls.l('InvalidPasswordResetCode')).done(() => {
                     this.router.navigate(['account/login']);
                 });
                 return;
