@@ -1,9 +1,10 @@
 /** Core imports */
-import { Directive, ElementRef, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Directive, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
 import { NotifyService } from '@abp/notify/notify.service';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -12,9 +13,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
   selector: 'dx-data-grid'
 })
 export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
-    private observer: MutationObserver;
-    private element = this.elRef.nativeElement;
-    private pool = [];
+    private subscription;
+    private clipboardIcon;
     private copyToClipboard = (event) => {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
         this.notifyService.info(this.ls.l('SavedToClipboard'));
@@ -24,45 +24,38 @@ export class DxDataGridClipboardDirective implements AfterViewInit, OnDestroy {
     }
 
     constructor(
-        private elRef: ElementRef,
         private renderer: Renderer2,
         private ls: AppLocalizationService,
         private notifyService: NotifyService,
+        private component: DxDataGridComponent,
         private clipboardService: ClipboardService
-    ) {   }
+    ) {
+        this.clipboardIcon = this.renderer.createElement('i');
+        this.clipboardIcon.addEventListener('click', this.copyToClipboard);
+        this.renderer.addClass(this.clipboardIcon, 'save-to-clipboard');
+    }
 
     ngAfterViewInit() {
-        this.observer = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-                this.element.querySelectorAll('.dx-datagrid-rowsview .dx-datagrid-content table:first-child .clipboard-holder').forEach((elm, i) => {
-                    if (elm.innerText.trim() && !elm.querySelector('i')) {
-                        if (!this.pool[i]) {
-                            this.pool[i] = this.renderer.createElement('i');
-                            this.pool[i].addEventListener('click', this.copyToClipboard);
-                            this.renderer.addClass(this.pool[i], 'save-to-clipboard');
-                        }
-                        this.renderer.appendChild(elm, this.pool[i]);
-                    }
-                });
-            });
-        });
-
-        this.observer.observe(this.element, {
-            characterData: false,
-            attributes: false,
-            childList: true,
-            subtree: true
+        this.subscription = this.component.onCellHoverChanged.subscribe(event => {
+            if (event.rowType == 'data' && event.eventType == 'mouseover') {
+                if (event.cellElement.classList.contains('clipboard-holder'))
+                    this.appendClipboardIcon(event.cellElement);
+                else
+                    this.appendClipboardIcon(event.cellElement.querySelector('.clipboard-holder'));
+            }
         });
     }
 
+    appendClipboardIcon(elm) {
+        if (elm && elm.innerText.trim() && !elm.querySelector('i'))
+            this.renderer.appendChild(elm, this.clipboardIcon);
+    }
+
     ngOnDestroy() {
-        this.observer.disconnect();
-        this.pool.forEach(elm => {
-            elm.removeEventListener('click', this.copyToClipboard);
-            this.renderer.removeClass(elm, 'save-to-clipboard');
-            if (elm.parentNode)
-                this.renderer.removeChild(elm.parentNode, elm);
-        });
-        this.pool.length = 0;
+        this.subscription.unsubscribe();
+        this.clipboardIcon.removeEventListener('click', this.copyToClipboard);
+        this.renderer.removeClass(this.clipboardIcon, 'save-to-clipboard');
+        if (this.clipboardIcon.parentNode)
+            this.renderer.removeChild(this.clipboardIcon.parentNode, this.clipboardIcon);
     }
 }

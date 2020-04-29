@@ -23,6 +23,7 @@
                 <div id="productsGrid">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="main-component-view"
+                                  [renderAsync]="true"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"

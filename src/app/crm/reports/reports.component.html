@@ -20,6 +20,7 @@
                       id="gridContainer"
                       class="main-component-view"
                       accesskey="narrowHeaderPanel"
+                      [renderAsync]="true"
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
                       [allowColumnResizing]="true"
@@ -43,6 +44,7 @@
             <dxi-column dataField="city" [caption]="ls.l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="status" [caption]="ls.l('Status')" [calculateDisplayValue]="customizeStatusCell" cellTemplate="statusCell"></dxi-column>
             <dxi-column dataField="bankCode"
+                        [renderAsync]="true"
                         cellTemplate="bankCodeCell"
                         [caption]="ls.l('BankCode')">
             </dxi-column>
