@@ -160,7 +160,7 @@
         </div>
     </dx-toolbar>
     <div *ngIf="similarCustomersAvailable()"
-         class="similar-clients-message" (click)="showSimilarCustomers($event)">
+         class="similar-clients-message" (click)="showSimilarEntities($event)">
         {{ls.l('SimilarRecordsFound')}}
     </div>
     <div class="form-content">
@@ -434,12 +434,13 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <div *ngIf="showBankCodeEditor" class="field bank-code">
+            <div *ngIf="showBankCodeField" class="field bank-code">
                 <label>{{ ls.l('BANKCODE') }}</label>
                 <bank-code-letters [(bankCode)]="bankCode"
                                    [allowAdd]="true"
                                    [closeAfterEdit]="true"
                                    [allowEdit]="true"
+                                   [updateOnServerAfterEdit]="false"
                                    [editDialogPosition]="{ x: 400 }">
                 </bank-code-letters>
             </div>

@@ -93,7 +93,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
     @ViewChildren('addressInput') addressInputs: QueryList<ElementRef>;
-    @HostBinding('class.hidePhotoArea') hidePhotoArea = this.data.hidePhotoArea;
+    @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea;
+    @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();
@@ -114,7 +115,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     saveButtonId = 'saveClientOptions';
     saveContextMenuItems = [
         { text: this.ls.l('SaveAndAddNew'), selected: false },
-        { text: this.ls.l('SaveAndExtend'), selected: false },
+        { text: this.ls.l('SaveAndExtend'), selected: false, visible: !this.data.hideSaveAndExtend },
         { text: this.ls.l('SaveAndClose'), selected: false }
     ];
     masks = AppConsts.masks;
@@ -180,12 +181,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     isListAndTagsDisabled = true;
     isRatingAndStarsDisabled = true;
     assignedUsersSelector = this.getAssignedUsersSelector();
-    hideToolbar = this.data.hideToolbar;
-    hideCompanyField = this.data.hideCompanyField;
-    hideLinksField = this.data.hideLinksField;
-    hideNotesField = this.data.hideNotesField;
-    disallowMultipleItems = this.data.disallowMultipleItems;
-    showBankCodeEditor = this.data.disallowMultipleItems;
+    hideCompanyField: boolean = this.data.hideCompanyField;
+    hideLinksField: boolean = this.data.hideLinksField;
+    hideNotesField: boolean = this.data.hideNotesField;
+    disallowMultipleItems: boolean = this.data.disallowMultipleItems;
+    showBankCodeField: boolean = this.data.showBankCodeField;
+    dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
 
     constructor(
@@ -462,7 +463,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         }, []).concat(this.similarCustomers);
     }
 
-    showSimilarCustomers(event) {
+    showSimilarEntities(event) {
         if (this.similarCustomersDialog)
             this.similarCustomersDialog.close();
 
@@ -509,41 +510,42 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.userAssignmentComponent.toggle();
     }
 
-    checkSimilarCustomers(field?, index?) {
-        let person = this.person,
-            isPhone =  field == 'phones',
-            isAddress = field == 'addresses',
-            contact = field && this.contacts[field][index];
-        if (isPhone && contact.number == contact.code)
-            return false;
-
-        this.clearSimilarCustomersCheck();
-        this.similarCustomersTimeout = setTimeout(() => {
-            this.similarCustomersSubscription = this.contactProxy.getSimilarContacts(
-                field ? undefined : person.namePrefix || undefined,
-                field ? undefined : person.firstName || undefined,
-                field ? undefined : person.middleName || undefined,
-                field ? undefined : person.lastName || undefined,
-                field ? undefined : person.nameSuffix || undefined,
-                field ? undefined : undefined, //this.company ||
-                (field == 'emails') && contact.email && [contact.email] || undefined,
-                isPhone && contact.number && [contact.number] || undefined,
-                isAddress && contact.address || undefined,
-                isAddress && contact.city || undefined,
-                isAddress && contact.stateCode || undefined,
-                isAddress && contact.zip || undefined,
-                isAddress && this.getCountryCode(contact.country) || undefined,
-                this.data.customerType
-            ).subscribe(response => {
-                if (response) {
-                    if (field)
-                        contact.similarCustomers = response;
-                    else
-                        this.similarCustomers = response;
-                    this.changeDetectorRef.detectChanges();
-                }
-            });
-        }, 1000);
+    checkSimilarEntities(field?, index?) {
+        if (!this.dontCheckSimilarEntities) {
+            let person = this.person,
+                isPhone =  field == 'phones',
+                isAddress = field == 'addresses',
+                contact = field && this.contacts[field][index];
+            if (isPhone && contact.number == contact.code)
+                return false;
+            this.clearSimilarCustomersCheck();
+            this.similarCustomersTimeout = setTimeout(() => {
+                this.similarCustomersSubscription = this.contactProxy.getSimilarContacts(
+                    field ? undefined : person.namePrefix || undefined,
+                    field ? undefined : person.firstName || undefined,
+                    field ? undefined : person.middleName || undefined,
+                    field ? undefined : person.lastName || undefined,
+                    field ? undefined : person.nameSuffix || undefined,
+                    field ? undefined : undefined, //this.company ||
+                    (field == 'emails') && contact.email && [contact.email] || undefined,
+                    isPhone && contact.number && [contact.number] || undefined,
+                    isAddress && contact.address || undefined,
+                    isAddress && contact.city || undefined,
+                    isAddress && contact.stateCode || undefined,
+                    isAddress && contact.zip || undefined,
+                    isAddress && this.getCountryCode(contact.country) || undefined,
+                    this.data.customerType
+                ).subscribe(response => {
+                    if (response) {
+                        if (field)
+                            contact.similarCustomers = response;
+                        else
+                            this.similarCustomers = response;
+                        this.changeDetectorRef.detectChanges();
+                    }
+                });
+            }, 1000);
+        }
     }
 
     clearSimilarCustomersCheck() {
@@ -664,7 +666,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         clearTimeout(this.checkValidTimeout);
         this.checkValidTimeout = setTimeout(() => {
             let field = 'addresses';
-            this.checkSimilarCustomers(field, index);
+            this.checkSimilarEntities(field, index);
             this.addButtonVisible[field] =
                 this.checkEveryContactValid(field) &&
                     !this.checkDuplicateContact(field);
@@ -755,7 +757,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.checkFieldValid(field, value) &&
                 !this.checkDuplicateContact(field);
 
-        this.checkSimilarCustomers(field, i);
+        this.checkSimilarEntities(field, i);
         this.changeDetectorRef.detectChanges();
     }
 
@@ -765,7 +767,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contacts[field][i].code = component.getCountryCode();
             this.addButtonVisible[field] = !component.isEmpty() &&
                 component.isValid() && !this.checkDuplicateContact(field);
-            this.checkSimilarCustomers(field, i);
+            this.checkSimilarEntities(field, i);
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -890,7 +892,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     onFullNameKeyUp(inputValue: string) {
         this.title = inputValue;
         this.nameParser.parseIntoPerson(this.title, this.person);
-        this.checkSimilarCustomers();
+        this.checkSimilarEntities();
     }
 
     ngOnDestroy(): void {

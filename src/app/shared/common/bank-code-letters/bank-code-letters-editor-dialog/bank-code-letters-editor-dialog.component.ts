@@ -13,6 +13,7 @@ import {
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -46,6 +47,7 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
         { letter: BankCodeLetter.K, name: this.ls.l('Knowledge') }
     ];
     bankCodeIsEmpty: boolean;
+    dontUpdateOnServer: boolean = this.data.dontUpdateOnServer;
 
     constructor(
         private elementRef: ElementRef,
@@ -86,15 +88,18 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
     }
 
     updateBankCode(bankCode: string) {
-        const updateMethod = this.personId
-            ? this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
-                id: this.personId,
-                bankCode: bankCode
-            }))
-            : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: bankCode }));
-        updateMethod.pipe(
-            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(
+        const updateMethod$: any = this.dontUpdateOnServer
+            ? of(true)
+            : (this.personId
+                ? this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
+                    id: this.personId,
+                    bankCode: bankCode
+                }))
+                : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: bankCode }))
+            ).pipe(
+                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+            );
+        updateMethod$.subscribe(
             () => {
                 this.bankCode = bankCode;
                 this.bankCodeIsEmpty = false;
