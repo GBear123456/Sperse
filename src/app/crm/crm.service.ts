@@ -20,6 +20,7 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { DateHelper } from '../../shared/helpers/DateHelper';
 
 @Injectable()
 export class CrmService {
@@ -235,16 +236,35 @@ export class CrmService {
     }
 
     handleCountryStateParams(queryParams$: Observable<Params>, countryStatesFilter: FilterModel) {
-        queryParams$.subscribe((params: Params) => {
+        queryParams$.subscribe((params: Params) => this.updateCountryStateFilter(params, countryStatesFilter));
+    }
+
+    updateCountryStateFilter(params: Params, countryStatesFilter: FilterModel): boolean {
+        let filterChanged = false;
+        if (params.countryId) {
             if (params.countryId && params.stateId) {
                 countryStatesFilter.items.countryStates.value = [ params.countryId + ':' + params.stateId ];
             } else if (params.countryId) {
                 countryStatesFilter.items.countryStates.value = [ params.countryId ];
             }
-            if (countryStatesFilter.items.countryStates.value) {
-                this.filtersService.change(countryStatesFilter);
-            }
-        });
+            countryStatesFilter.updateCaptions();
+            filterChanged = true;
+        }
+        return filterChanged;
     }
 
+    updateDateFilter(params: Params, dateFilter: FilterModel): boolean {
+        let filterChanged = false;
+        if (params.startDate || params.endDate) {
+            if (params.startDate) {
+                dateFilter.items.from.value = DateHelper.addTimezoneOffset(new Date(params.startDate), true);
+            }
+            if (params.endDate) {
+                dateFilter.items.to.value = DateHelper.addTimezoneOffset(new Date(params.endDate), true);
+            }
+            dateFilter.updateCaptions();
+            filterChanged = true;
+        }
+        return filterChanged;
+    }
 }

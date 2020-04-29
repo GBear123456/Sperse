@@ -9,10 +9,11 @@ import {
     ViewChild
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, first, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -27,6 +28,9 @@ import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
+import { DataLayoutType } from '../../../../app/shared/layout/data-layout-type';
+import { ContactGroup } from '../../../AppEnums';
+import { DateHelper } from '../../../helpers/DateHelper';
 
 @Component({
     selector: 'clients-by-region',
@@ -53,6 +57,7 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         private lifeCycleService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef,
         private layoutService: LayoutService,
+        private router: Router,
         public ls: AppLocalizationService
     ) {}
 
@@ -70,7 +75,10 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
             map((contactsByRegion: GetContactsByRegionOutput[]) => {
                 let data = {};
                 contactsByRegion.forEach((val: GetContactsByRegionOutput) => {
-                    data[val.stateId] = {
+                    if (!data[val.countryId]) {
+                        data[val.countryId] = {};
+                    }
+                    data[val.countryId][val.stateId] = {
                         name: val.stateId || 'Other',
                         total: val.count
                     };
@@ -78,6 +86,26 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
                 return data;
             })
         );
+    }
+
+    redirectToContacts(params: Params) {
+        this.dashboardWidgetsService.period$.pipe(
+            first()
+        ).subscribe((period: PeriodModel) => {
+            console.log(DateHelper);
+            this.router.navigate(
+                ['app', 'crm', 'leads' ],
+                {
+                    queryParams: {
+                        dataLayoutType: DataLayoutType.DataGrid,
+                        contactGroup: Object.keys(ContactGroup).shift(),
+                        startDate: period.from.toJSON(),
+                        endDate: period.to.toJSON(),
+                        ...params
+                    }
+                }
+            );
+        });
     }
 
     ngOnDestroy() {

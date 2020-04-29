@@ -183,7 +183,8 @@
                        [contactGroupText]="l('Customers').toLowerCase()"
                        [dataIsLoading]="mapDataIsLoading"
                        areaClickLink="app/crm/clients"
-                       [data]="mapData$ | async">
+                       [data]="mapData$ | async"
+                       (onMapItemClick)="mapItemClick($event)">
             </slice-map>
         </div>
     </div>

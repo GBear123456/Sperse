@@ -1323,6 +1323,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
+    mapItemClick(params: Params) {
+        this.toggleDataLayout(DataLayoutType.DataGrid);
+        this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
+        this.filtersService.change(this.filterCountryStates);
+    }
+
     onMenuItemClick(event) {
         event.itemData.action.call(this);
         this.actionEvent = null;

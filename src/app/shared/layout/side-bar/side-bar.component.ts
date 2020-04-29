@@ -50,11 +50,7 @@ export class SideBarComponent implements OnDestroy {
 
         router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
             if (event instanceof NavigationStart) {
-                if (!this.filtersService.skipFiltersClean) {
-                    this.filters = [];
-                } else {
-                    this.filtersService.skipFiltersClean = false;
-                }
+                this.filters = [];
             }
         });
 
