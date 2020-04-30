@@ -210,13 +210,14 @@ export class CrmService {
         }
     }
 
-    getUsersWithInstances(usersIds: number[]): Subscription {
-        return this.instanceServiceProxy.getUsersWithInstance(usersIds).subscribe((usersIdsWithInstance: number[]) => {
+    getUsersWithInstances(usersIds: number[]): Observable<number[]> {
+        return this.instanceServiceProxy.getUsersWithInstance(usersIds).pipe(map((usersIdsWithInstance: number[]) => {
             this.usersIdsWithInstance = {};
             usersIds.forEach((userId) => {
                 this.usersIdsWithInstance[userId] = usersIdsWithInstance.indexOf(userId) >= 0;
             });
-        });
+            return usersIdsWithInstance;
+        }));
     }
 
     isCfoAvailable(userId: number): Observable<boolean> {
