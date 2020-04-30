@@ -267,10 +267,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     updateValue(value, item) {
         let fieldName = item.name;
+        const initialValue = this.data.leadInfo[fieldName];
         this.data.leadInfo[fieldName] = value;
         this.leadService.updateLeadInfo(
             UpdateLeadInfoInput.fromJS(this.data.leadInfo)
-        ).subscribe();
+        ).subscribe(
+            () => {},
+            () => this.data.leadInfo[fieldName] = initialValue
+        );
     }
 
     getObjectKeys(obj) {
