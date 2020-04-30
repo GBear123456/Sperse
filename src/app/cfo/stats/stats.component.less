@@ -197,13 +197,18 @@
             right: -500px;
             position: absolute;
             top: -137px;
-            height: calc(100% + 198px);
+            height: calc(100% + 160px);
             transition-duration: 0.3s;
 
             &.showen {
                 right: 0;
             }
         }
+    }
+
+    &.toolbar-is-hidden .mainStatsView source-data {
+        top: 0;
+        height: calc(100% + 22px);
     }
 
     ::ng-deep .dx-gallery.dx-widget[accesskey='statsForecastSwitcher'] {

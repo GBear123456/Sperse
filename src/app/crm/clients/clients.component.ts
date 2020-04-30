@@ -462,9 +462,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private itemDetailsService: ItemDetailsService,
         private impersonationService: ImpersonationService,
         private sessionService: AppSessionService,
-        private crmService: CrmService,
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
+        public crmService: CrmService,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -497,7 +497,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 onLoaded: (records) => {
                     let userIds = this.getUserIds(records);
                     if (this.appService.isCfoLinkOrVerifyEnabled && userIds.length)
-                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
+                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                            this.changeDetectorRef.markForCheck();
+                        });
                 }
             }
         });
@@ -1338,13 +1340,4 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         e.component.option('visible', false);
         e.component.hide();
     }
-
-    isCfoAvailable(userId: number): Observable<boolean> {
-        /** Users instances may load after odata request and we should avoid loading of usersInstances request for every
-         *  individual user */
-        return this.usersInstancesLoadingSubscription && !this.usersInstancesLoadingSubscription.closed
-               ? of(false)
-               : this.crmService.isCfoAvailable(userId);
-    }
-
 }

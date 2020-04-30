@@ -4,11 +4,15 @@
     background: #fff;
     border-left: 2px solid #e5e9ec;
     position: relative;
-    padding: 12px 24px 0;
-    ::ng-deep md-tab-group {
+    padding: 12px 24px;
+    ::ng-deep .mat-tab-group {
+        height: 100%;
         .mat-tab-header {
             border-bottom: none;
             margin-bottom: 20px;
+        }
+        .mat-tab-body-wrapper {
+            height: 100%;
         }
         .mat-tab-body {
             .mat-tab-body-content {
@@ -25,7 +29,7 @@
                 font-weight: 500
             }
         }
-        md-ink-bar {
+        .mat-ink-bar {
             background-color: #00aeef !important;
             height: 3px;
         }

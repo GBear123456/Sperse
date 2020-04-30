@@ -134,16 +134,16 @@
                                     [allowEditing]="false">
                         </dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                            <div *ngIf="isCFOClientAccessAllowed">
-                                <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
-                                <span>
-                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
-                                </span>
+                            <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription.closed">
+                                <ng-container *ngIf="crmService.isCfoAvailable(data.data.UserId) | async; else verify">
+                                    <span>
+                                        <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
+                                    </span>
                                 </ng-container>
                                 <ng-template #verify>
-                                <span *ngIf="canSendVerificationRequest && data.data.StatusId === contactStatus.Active">
-                                    <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
-                                </span>
+                                    <span *ngIf="canSendVerificationRequest && data.data.StatusId === contactStatus.Active">
+                                        <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                    </span>
                                 </ng-template>
                             </div>
                         </div>
