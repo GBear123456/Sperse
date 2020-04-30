@@ -41,14 +41,14 @@ export class HostResetPasswordComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenantId: number;
+        let tenantId: number = abp.session.tenantId;
         if (this.activatedRoute.snapshot.queryParams['c']) {
             this.model.c = this.activatedRoute.snapshot.queryParams['c'];
         } else {
             this.model.userId = this.activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
             let tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
-            tenantId = this.parseTenantId(tenantIdStr);
+            tenantId = this.parseTenantId(tenantIdStr) || tenantId;
             this.appSessionService.changeTenantIfNeeded(
                 tenantId, false
             );
@@ -60,7 +60,9 @@ export class HostResetPasswordComponent implements OnInit {
             c: this.model.c
         });
 
+        abp.multiTenancy.setTenantIdCookie(tenantId);
         this.accountService.getResetPasswordCodeInfo(infoInput).subscribe((result: GetResetPasswordCodeInfoOutput) => {
+            abp.multiTenancy.setTenantIdCookie();
             this.appSessionService.changeTenantIfNeeded(
                 result.tenantId, false
             );
@@ -103,12 +105,8 @@ export class HostResetPasswordComponent implements OnInit {
     }
 
     parseTenantId(tenantIdAsStr?: string): number {
-        let tenantId = !tenantIdAsStr ? undefined : parseInt(tenantIdAsStr);
-        if (tenantId === NaN) {
-            tenantId = undefined;
-        }
-
-        return tenantId;
+        let tenantId = parseInt(tenantIdAsStr);
+        return isNaN(tenantId) ? undefined : tenantId;
     }
 
     togglePasswordVisibe(event, input) {
