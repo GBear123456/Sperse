@@ -26,7 +26,7 @@
     </ng-container>
 
     <div class="form-content">
-        <dx-scroll-view showScrollbar="onHover">
+        <dx-scroll-view showScrollbar="onHover" #scrollView>
             <div class="row">
                 <div class="field-area from" [hidden]="templateEditMode">
                     <label class="caption from">{{ls.l('From')}}:</label>
@@ -141,7 +141,7 @@
                     </dx-tooltip>
                     <a id="tagsButton" class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
                     <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)"></ckeditor>
-                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
+                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                             <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
                         </ng-template>
@@ -155,6 +155,8 @@
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>
-        <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
+        <div class="bank-decode-wrapper">
+            <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
+        </div>
     </div>
 </modal-dialog>
