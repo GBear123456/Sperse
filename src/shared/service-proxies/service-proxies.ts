@@ -2570,6 +2570,62 @@ export class BANKCodeServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    getBankCode(body: GetBankCodeInput | null | undefined): Observable<GetBankCodeOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetBankCode";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBankCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBankCode(<any>response_);
+                } catch (e) {
+                    return <Observable<GetBankCodeOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetBankCodeOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBankCode(response: HttpResponseBase): Observable<GetBankCodeOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetBankCodeOutput.fromJS(resultData200) : new GetBankCodeOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetBankCodeOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     createLead(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/BANKCode/CreateLead";
         url_ = url_.replace(/[?&]$/, "");
@@ -14295,74 +14351,6 @@ export class ExtensionServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class ExternalServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    getBankCode(body: GetBankCodeInput | null | undefined): Observable<Dimensions> {
-        let url_ = this.baseUrl + "/api/services/CRM/External/GetBankCode";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetBankCode(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetBankCode(<any>response_);
-                } catch (e) {
-                    return <Observable<Dimensions>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<Dimensions>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetBankCode(response: HttpResponseBase): Observable<Dimensions> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? Dimensions.fromJS(resultData200) : new Dimensions();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<Dimensions>(<any>null);
     }
 }
 
@@ -37003,6 +36991,94 @@ export interface IUpdateBankAccountDto {
     businessEntityId: number | undefined;
 }
 
+export class GetBankCodeInput implements IGetBankCodeInput {
+    content!: string;
+
+    constructor(data?: IGetBankCodeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.content = data["content"];
+        }
+    }
+
+    static fromJS(data: any): GetBankCodeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetBankCodeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        return data; 
+    }
+}
+
+export interface IGetBankCodeInput {
+    content: string;
+}
+
+export class GetBankCodeOutput implements IGetBankCodeOutput {
+    action!: number | undefined;
+    blueprint!: number | undefined;
+    knowledge!: number | undefined;
+    nurturing!: number | undefined;
+    value!: string | undefined;
+
+    constructor(data?: IGetBankCodeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.action = data["action"];
+            this.blueprint = data["blueprint"];
+            this.knowledge = data["knowledge"];
+            this.nurturing = data["nurturing"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): GetBankCodeOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetBankCodeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["action"] = this.action;
+        data["blueprint"] = this.blueprint;
+        data["knowledge"] = this.knowledge;
+        data["nurturing"] = this.nurturing;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface IGetBankCodeOutput {
+    action: number | undefined;
+    blueprint: number | undefined;
+    knowledge: number | undefined;
+    nurturing: number | undefined;
+    value: string | undefined;
+}
+
 export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
     contactId!: number | undefined;
     emailAddress!: string | undefined;
@@ -50957,90 +51033,6 @@ export interface IImportExtensionDto {
     logo: string | undefined;
     url: string | undefined;
     rank: number | undefined;
-}
-
-export class GetBankCodeInput implements IGetBankCodeInput {
-    content!: string;
-
-    constructor(data?: IGetBankCodeInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.content = data["content"];
-        }
-    }
-
-    static fromJS(data: any): GetBankCodeInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetBankCodeInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        return data; 
-    }
-}
-
-export interface IGetBankCodeInput {
-    content: string;
-}
-
-export class Dimensions implements IDimensions {
-    action!: number | undefined;
-    blueprint!: number | undefined;
-    knowledge!: number | undefined;
-    nurturing!: number | undefined;
-
-    constructor(data?: IDimensions) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.action = data["action"];
-            this.blueprint = data["blueprint"];
-            this.knowledge = data["knowledge"];
-            this.nurturing = data["nurturing"];
-        }
-    }
-
-    static fromJS(data: any): Dimensions {
-        data = typeof data === 'object' ? data : {};
-        let result = new Dimensions();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["action"] = this.action;
-        data["blueprint"] = this.blueprint;
-        data["knowledge"] = this.knowledge;
-        data["nurturing"] = this.nurturing;
-        return data; 
-    }
-}
-
-export interface IDimensions {
-    action: number | undefined;
-    blueprint: number | undefined;
-    knowledge: number | undefined;
-    nurturing: number | undefined;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
