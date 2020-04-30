@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild, HostBinding } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
@@ -57,6 +57,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild('barChart', { static: false }) private barChart: DxChartComponent;
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(LeftMenuComponent, { static: true }) leftMenuComponent: LeftMenuComponent;
+    @HostBinding('class.toolbar-is-hidden') toolbarIsHidden = false;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
@@ -192,6 +193,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     constructor(
         injector: Injector,
+        private appService: AppService,
         private bankAccountService: BankAccountsServiceProxy,
         private cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private statsService: StatsService,
@@ -200,7 +202,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private cfoStore$: Store<CfoStore.State>,
         private rootStore$: Store<RootStore.State>,
         public filtersService: FiltersService,
-        public appService: AppService,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
@@ -208,6 +209,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit() {
+        this.appService.toolbarIsHidden$.pipe(takeUntil(this.destroy$)).subscribe((toolbarIsHidden: boolean) => {
+            this.toolbarIsHidden = toolbarIsHidden;
+        });
+
         this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
         this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountsCount = amount;
@@ -495,7 +500,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return this.appService.toolbarIsHidden.value ? window.innerHeight - 199 : window.innerHeight - 260;
+        return this.toolbarIsHidden ? window.innerHeight - 199 : window.innerHeight - 260;
     }
 
     handleCashFlowInitialResult() {
@@ -531,13 +536,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     getUpdatedDataSource() {
         this.refresh.next(null);
         this.bankAccountsService.load(true, false);
-    }
-
-    ngOnDestroy() {
-        this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
-
-        super.ngOnDestroy();
     }
 
     /** Calculates the max amount of the labels for displaying to not clutter the screen */
@@ -706,8 +704,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-        this.lifecycleService.activate.next(true);
-
+        this.lifecycleService.activate.next();
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
         setTimeout(() => this.calculateChartsSize());
@@ -720,4 +717,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.rootComponent.overflowHidden();
     }
 
+    ngOnDestroy() {
+        this.filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
+        super.ngOnDestroy();
+    }
 }

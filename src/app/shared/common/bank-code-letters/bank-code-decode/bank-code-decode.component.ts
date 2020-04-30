@@ -7,9 +7,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ExternalServiceProxy, GetBankCodeInput, Dimensions } from '@shared/service-proxies/service-proxies';
-import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
-import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
+import { BANKCodeServiceProxy, GetBankCodeInput } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
@@ -17,7 +15,7 @@ import { NotifyService } from '@abp/notify/notify.service';
     templateUrl: './bank-code-decode.component.html',
     styleUrls: ['./bank-code-decode.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ExternalServiceProxy]
+    providers: [BANKCodeServiceProxy]
 })
 export class BankCodeDecodeComponent {
     @Input() content: string;
@@ -28,19 +26,18 @@ export class BankCodeDecodeComponent {
 
     constructor(
         private notify: NotifyService,
-        private externalProxy: ExternalServiceProxy,
+        private bankCodeServiceProxy: BANKCodeServiceProxy,
         public features: FeatureCheckerService,
-        public bankCodeService: BankCodeService,
         public ls: AppLocalizationService
     ) {}
 
     decode(event) {
         if (this.content) {
             this.onDecodeStart.emit();
-            this.externalProxy.getBankCode(new GetBankCodeInput({
+            this.bankCodeServiceProxy.getBankCode(new GetBankCodeInput({
                 content: this.content.replace(/\<(\/)?(\w)*(\d)?\>/gim, '')
             })).subscribe(res => {
-                this.bankCode = this.bankCodeService.getBankCodeByDimensions(res);
+                this.bankCode = res.value;
                 this.onDecodeFinish.emit(res);
             }, error => {
                 this.onDecodeFinish.emit(error);

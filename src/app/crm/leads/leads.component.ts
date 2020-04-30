@@ -399,6 +399,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     assignedUsersSelector;
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
+    private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    private activate$: Observable<boolean> = this._activate.asObservable();
 
     constructor(
         injector: Injector,
@@ -587,7 +589,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private handleModuleChange() {
         merge(
             this.dataLayoutType$,
-            this.lifeCycleSubjectsService.activate$.pipe(filter(Boolean))
+            this.activate$.pipe(filter(Boolean))
         ).pipe(
             takeUntil(this.destroy$)
         ).subscribe(() => {
@@ -607,7 +609,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.queryParams$.pipe(
             skip(1),
             /** Wait for activation to update the filters */
-            switchMap((queryParams: Params) => this.lifeCycleSubjectsService.activate$.pipe(
+            switchMap((queryParams: Params) => this.activate$.pipe(
                 filter(Boolean),
                 mapTo(queryParams))
             )
@@ -791,7 +793,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     invalidate(quiet = false, stageId?: number) {
-        this.lifeCycleSubjectsService.activate$.pipe(filter(Boolean), first()).subscribe(() => {
+        this.activate$.pipe(filter(Boolean), first()).subscribe(() => {
             this.refresh(false);
         });
     }
@@ -1499,12 +1501,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();
         });
-        this.lifeCycleSubjectsService.activate.next(true);
+        this._activate.next(true);
     }
 
     deactivate() {
         super.deactivate();
-        this.lifeCycleSubjectsService.activate.next(false);
+        this._activate.next(false);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         if (!this.showPipeline) {

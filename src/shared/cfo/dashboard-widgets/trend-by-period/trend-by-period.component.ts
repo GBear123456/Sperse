@@ -436,7 +436,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
             this.updateWidth();
             this.updateChartWidthAfterActivation = false;
         }
-        this.lifeCycleService.activate.next(true);
+        this.lifeCycleService.activate.next();
     }
 
     /**
