@@ -28,7 +28,10 @@
         }
 
         .login-form {
-            padding: 50px 80px 0;
+            @media all and (min-width: 768px) {
+                padding: 50px 80px 0;
+            }
+            
             width: 100%;
         }
 
@@ -62,7 +65,9 @@
     }
 
     .login-form {
-        min-width: 428px;
+        @media all and (min-width: 768px) {
+            min-width: 428px;
+        }
         margin: 0 auto;
 
         input,
@@ -338,14 +343,14 @@
         line-height: 1.1;
 
         a {
-            color: #ac1f22;
+            color: #004a84;
             transition: .2s;
             padding: 0 2px;
             text-decoration: none;
             font-family: 'AvianoSans-Bla', sans-serif !important;
 
             &:hover {
-                color: lighten(#ac1f22, 18%);
+                color: lighten(#004a84, 18%);
             }
         }
     }
