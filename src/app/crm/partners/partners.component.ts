@@ -1179,7 +1179,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
-        this.lifeCycleSubjectsService.activate.next(true);
+        this.lifeCycleSubjectsService.activate.next();
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

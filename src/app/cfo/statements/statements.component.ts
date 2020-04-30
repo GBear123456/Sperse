@@ -473,7 +473,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.initFiltering();
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-        this.lifecycleService.activate.next(true);
+        this.lifecycleService.activate.next();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.setBankAccountsFilter(true);

@@ -165,7 +165,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     activate() {
         this.loadStatus();
-        this.lifeCycleSubject.activate.next(true);
+        this.lifeCycleSubject.activate.next();
         this.subscribeToRefreshParam();
 
         if (this.clientsByRegion && this.clientsByRegion.mapComponent)
