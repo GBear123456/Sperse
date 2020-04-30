@@ -36,7 +36,7 @@
                     </div>
                 </div>
             </dx-scroll-view>
-        </mat-tab>    
+        </mat-tab>
         <mat-tab [label]="ls.l('Overview')" *ngIf="showOverviewTab">
             <span class="gear-icon" (click)="toggleConfigMode()"></span>
             <dx-scroll-view showScrollbar="onHover">
@@ -66,6 +66,6 @@
         </mat-tab>
         <mat-tab label="Activity" [disabled]="true">
             Activity
-        </mat-tab>    
+        </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>
