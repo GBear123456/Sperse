@@ -26,7 +26,7 @@ export class PfmConfig implements ConfigInterface {
         {
             text: 'MemberArea',
             icon: 'icon-home',
-            route: 'personal-finance'
+            route: '/personal-finance'
         }
     ];
 }
