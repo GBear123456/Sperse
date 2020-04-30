@@ -10,7 +10,6 @@ import buildQuery from 'odata-query';
 import values from 'lodash/values';
 
 /** Application imports */
-import { Dimensions } from '@shared/service-proxies/service-proxies';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeGroup } from '@root/bank-code/products/bank-pass/bank-code-group.interface';
@@ -243,14 +242,6 @@ export class BankCodeService {
             startWith(''),
             map((percent: number) => percent + '%')
         );
-    }
-
-    getBankCodeByDimensions(obj: Dimensions): string {
-        return Object.keys(obj).sort((a, b) => {
-            return obj[a] > obj[b] ? -1 : a.localeCompare(b);
-        }).map(value => {
-            return value[0].toUpperCase();
-        }).join('');
     }
 
     private getFilterFromTime(time: BankCodeTime) {
