@@ -92,7 +92,6 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         this.dashboardWidgetsService.period$.pipe(
             first()
         ).subscribe((period: PeriodModel) => {
-            console.log(DateHelper);
             this.router.navigate(
                 ['app', 'crm', 'leads' ],
                 {
