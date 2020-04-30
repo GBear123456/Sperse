@@ -6,6 +6,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 /** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BANKCodeServiceProxy, GetBankCodeInput } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -26,6 +27,7 @@ export class BankCodeDecodeComponent {
 
     constructor(
         private notify: NotifyService,
+        private bankCodeService: BankCodeService,
         private bankCodeServiceProxy: BANKCodeServiceProxy,
         public features: FeatureCheckerService,
         public ls: AppLocalizationService
