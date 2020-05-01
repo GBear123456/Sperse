@@ -312,7 +312,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
-    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
@@ -1220,7 +1220,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     mapItemClick(params: Params) {
         this.toggleDataLayout(DataLayoutType.DataGrid);
         this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
-        this.filtersService.change(this.filterCountryStates);
+        this.filtersService.change([this.filterCountryStates]);
     }
 
     onMenuItemClick(event) {

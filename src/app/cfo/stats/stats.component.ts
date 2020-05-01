@@ -227,7 +227,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 from: new FilterItemModel(dateRange.from.value),
                 to: new FilterItemModel(dateRange.to.value)
             };
-            this.filtersService.change(this.dateFilter);
+            this.filtersService.change([this.dateFilter]);
         });
 
         combineLatest(

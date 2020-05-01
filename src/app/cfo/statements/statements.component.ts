@@ -145,7 +145,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 from: new FilterItemModel(dateRange.from.value),
                 to: new FilterItemModel(dateRange.to.value)
             };
-            this.filtersService.change(this.dateFilter);
+            this.filtersService.change([this.dateFilter]);
         });
 
         combineLatest(

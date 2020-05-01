@@ -364,21 +364,20 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             this.setupFilters(permissions.items, roles.items);
         });
 
-        this.filtersService.apply((filter) => {
-            let filterValue = filter &&
-                filter.items.element.value;
-
-            if (filter) {
-                if (filter.caption == 'role')
-                    this.role = filterValue;
-                else if (filter.caption == 'permission')
-                    this.selectedPermissions = filterValue;
-                else if (filter.caption == 'group')
-                    this.group = filterValue;
-                else if (filter.caption == 'isActive')
-                    this.isActive = filterValue;
-            }
-
+        this.filtersService.apply((filters: FilterModel[]) => {
+            filters.forEach((filter: FilterModel) => {
+                let filterValue = filter && filter.items.element.value;
+                if (filter) {
+                    if (filter.caption == 'role')
+                        this.role = filterValue;
+                    else if (filter.caption == 'permission')
+                        this.selectedPermissions = filterValue;
+                    else if (filter.caption == 'group')
+                        this.group = filterValue;
+                    else if (filter.caption == 'isActive')
+                        this.isActive = filterValue;
+                }
+            });
             this.initToolbarConfig();
             this.invalidate();
         });
@@ -478,7 +477,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         if (filterModel) {
             filterModel.isSelected = true;
             filterModel.items.element.value = value;
-            this.filtersService.change(filterModel);
+            this.filtersService.change([filterModel]);
         }
     }
 
