@@ -32,6 +32,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         contactInfo: ContactInfoDto
     };
     private formatting = AppConsts.formatting;
+    ident = Date.now().toString();
 
     constructor(injector: Injector,
         private clientService: ContactsService,
@@ -47,13 +48,13 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                     (notes: NoteInfoDto[]) => this.dataSource = notes
                 );
             }
-        }, this.constructor.name);
+        }, this.ident);
         clientService.leadInfoSubscribe(() => {
             this.data = this.contactService['data'];
             this.loadData().subscribe(
                 (notes: NoteInfoDto[]) => this.dataSource = notes
             );
-        }, this.constructor.name);
+        }, this.ident);
     }
 
     ngOnInit() {
@@ -114,6 +115,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     ngOnDestroy() {
-        this.clientService.unsubscribe(this.constructor.name);
+        this.clientService.unsubscribe(this.ident);
     }
 }

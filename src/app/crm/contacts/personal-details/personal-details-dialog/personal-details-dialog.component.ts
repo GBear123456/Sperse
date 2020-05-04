@@ -61,6 +61,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         message: this.ls.l('MaxLengthIs', 255)
     }];
     isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
+    ident = Date.now().toString();
 
     constructor(
         private cacheHelper: CacheHelper,
@@ -86,7 +87,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
             }
-        }, this.constructor.name);
+        }, this.ident);
 
         if (this.showOverviewTab) {
             contactsService.verificationSubscribe(
@@ -214,6 +215,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }
