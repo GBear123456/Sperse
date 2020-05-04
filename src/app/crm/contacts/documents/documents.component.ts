@@ -96,6 +96,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public parsedCsv: any;
     archiveFiles$: Observable<any[]>;
     manageAllowed = false;
+    ident = Date.now().toString();
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -119,7 +120,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     this.loadDocuments();
                 }
             },
-            this.constructor.name
+            this.ident
         );
     }
 
@@ -686,7 +687,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnDestroy() {
-        this.clientService.unsubscribe(this.constructor.name);
+        this.clientService.unsubscribe(this.ident);
         this.clientService.toolbarUpdate();
         if (this.openDocumentMode) {
             this.closeDocument();

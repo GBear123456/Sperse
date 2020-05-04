@@ -33,6 +33,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     private readonly dataSourceURI = 'Order';
     private formatting = AppConsts.formatting;
     currency: string;
+    ident = Date.now().toString();
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -52,7 +53,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                     dataSource.load();
                 }
             }
-        }, this.constructor.name);
+        }, this.ident);
         invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
@@ -119,6 +120,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     ngOnDestroy() {
-        this.clientService.unsubscribe(this.constructor.name);
+        this.clientService.unsubscribe(this.ident);
     }
 }
