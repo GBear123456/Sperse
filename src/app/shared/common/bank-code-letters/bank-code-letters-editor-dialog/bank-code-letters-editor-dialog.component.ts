@@ -7,11 +7,12 @@ import {
     Inject,
     ElementRef,
     ChangeDetectorRef,
-    AfterViewInit
+    AfterViewInit,
+    HostListener
 } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -55,6 +56,7 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
         private personContactServiceProxy: PersonContactServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private memberSettingsService: MemberSettingsServiceProxy,
+        private dialogRef: MatDialogRef<BankCodeLettersEditorDialogComponent>,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
@@ -62,6 +64,13 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
         this.bankCodeIsEmpty = this.data.bankCode === this.bankCodeService.emptyBankCode;
         this.bankCode = this.bankCodeIsEmpty ? 'BANK' : this.data.bankCode;
         this.resortDefinitions();
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event) {
+        if (!event.target.closest('#bankCodeLettersEditorDialog')) {
+            this.dialogRef.close();
+        }
     }
 
     ngAfterViewInit() {
@@ -78,7 +87,6 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
     }
 
     changeBankCode(bankCodeDefinitionLetter: BankCodeLetter, i: number) {
-        this.loadingService.startLoading(this.elementRef.nativeElement);
         const newBankCode = this.swap(
             this.bankCode,
             this.bankCode.indexOf(bankCodeDefinitionLetter.toString()),
@@ -96,8 +104,6 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
                     bankCode: bankCode
                 }))
                 : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: bankCode }))
-            ).pipe(
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             );
         updateMethod$.subscribe(
             () => {
