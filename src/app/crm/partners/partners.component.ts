@@ -312,7 +312,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
-    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
@@ -981,6 +981,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: [
                     {
                         name: 'dataGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => this.showDataGrid
@@ -988,6 +989,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'pivotGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
                             checkPressed: () => this.showPivotGrid
@@ -995,6 +997,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'chart',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Chart),
                         options: {
                             checkPressed: () => this.showChart
@@ -1002,6 +1005,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'map',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Map),
                         options: {
                             checkPressed: () => this.showMap
@@ -1220,7 +1224,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     mapItemClick(params: Params) {
         this.toggleDataLayout(DataLayoutType.DataGrid);
         this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
-        this.filtersService.change(this.filterCountryStates);
+        this.filtersService.change([this.filterCountryStates]);
     }
 
     onMenuItemClick(event) {

@@ -21,6 +21,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '../../shared/helpers/DateHelper';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class CrmService {
@@ -48,6 +49,7 @@ export class CrmService {
         map((contentHeight) => contentHeight - 88)
     );
     private usersIdsWithInstance: { [id: string]: boolean } = {};
+    showSliceButtons: boolean = environment.releaseStage !== 'production';
 
     constructor(
         private filtersService: FiltersService,

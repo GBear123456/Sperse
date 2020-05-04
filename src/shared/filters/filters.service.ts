@@ -21,8 +21,8 @@ export class FiltersService {
     private subjectFilterToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private subjectFixedToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private subjectFilters: Subject<FilterModel[]> = new Subject<FilterModel[]>();
-    private subjectFilter: Subject<FilterModel> = new Subject<FilterModel>();
-    filterChanged$: Observable<FilterModel> = this.subjectFilter.asObservable();
+    private filtersChanged: Subject<FilterModel[]> = new Subject<FilterModel[]>();
+    filtersChanged$: Observable<FilterModel[]> = this.filtersChanged.asObservable();
     private subscribers: Array<Subscription> = [];
     private disableTimeout: any;
 
@@ -42,7 +42,7 @@ export class FiltersService {
 
     filterFixed$ = this.subjectFixedToggle.asObservable();
     filterToggle$ = this.subjectFilterToggle.asObservable();
-    filtersValues$: Observable<any> = this.subjectFilter.pipe(
+    filtersValues$: Observable<any> = this.filtersChanged$.pipe(
         map(() => {
             let filtersValues = {};
             this.filters.forEach((filterModel: FilterModel) => {
@@ -228,7 +228,7 @@ export class FiltersService {
                 }
             });
             if (applyFilterImmediately)
-                this.change(<FilterModel>{});
+                this.change([<FilterModel>{}]);
         }
         return this.checkIfAnySelected();
     }
@@ -237,13 +237,13 @@ export class FiltersService {
         this.subjectFilters.asObservable().subscribe(callback);
     }
 
-    change(filter: FilterModel) {
+    change(filters: FilterModel[]) {
         this.checkIfAnySelected();
-        this.subjectFilter.next(filter);
+        this.filtersChanged.next(filters);
     }
 
-    apply(callback: (filter: FilterModel) => any, keepAlways: boolean = false) {
-        let sub = this.subjectFilter.asObservable().subscribe(callback);
+    apply(callback: (filters: FilterModel[]) => any, keepAlways: boolean = false) {
+        let sub = this.filtersChanged$.subscribe(callback);
         if (!keepAlways)
             this.subscribers.push(sub);
     }

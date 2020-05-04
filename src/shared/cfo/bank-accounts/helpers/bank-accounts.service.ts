@@ -835,7 +835,7 @@ export class BankAccountsService {
     setBankAccountsFilter(filters, syncAccounts, emitFilterChange = false) {
         let accountFilter: FilterModel = _.find(filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         accountFilter = this.changeAndGetBankAccountFilter(accountFilter, this.state, syncAccounts);
-        emitFilterChange && this.filtersService.change(accountFilter);
+        emitFilterChange && this.filtersService.change([accountFilter]);
         this.applyFilter();
     }
 

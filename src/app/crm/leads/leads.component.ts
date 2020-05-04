@@ -375,7 +375,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
         }
     });
-    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
     odataFilter$: Observable<string>;
@@ -614,17 +614,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 mapTo(queryParams))
             )
         ).subscribe((params: Params) => {
-            this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
-            this.crmService.updateDateFilter(params, this.filterDate);
-            this.processFilterInternal();
-            this.totalDataSource.load();
+            let filtersToChange = [];
+            if (this.crmService.updateCountryStateFilter(params, this.filterCountryStates)) {
+                filtersToChange.push(this.filterCountryStates);
+            }
+            if (this.crmService.updateDateFilter(params, this.filterDate)) {
+                filtersToChange.push(this.filterDate);
+            }
+            if (filtersToChange.length) {
+                this.filtersService.change(filtersToChange);
+            }
         });
     }
 
     mapItemClick(params: Params) {
         this.toggleDataLayout(DataLayoutType.DataGrid);
         this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
-        this.filtersService.change(this.filterCountryStates);
+        this.filtersService.change([this.filterCountryStates]);
     }
 
     private handleContactGroupParam() {
@@ -1204,6 +1210,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'pivotGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
                             checkPressed: () => this.showPivotGrid
@@ -1211,6 +1218,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'chart',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Chart),
                         options: {
                             checkPressed: () => this.showChart
@@ -1218,6 +1226,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'map',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Map),
                         options: {
                             checkPressed: () => this.showMap

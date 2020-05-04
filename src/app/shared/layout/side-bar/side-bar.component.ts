@@ -64,7 +64,7 @@ export class SideBarComponent implements OnDestroy {
         if (displayElement.item.removeFilterItem)
             displayElement.item.removeFilterItem(filter, displayElement.args, displayElement.id);
 
-        this.filtersService.change(filter);
+        this.filtersService.change([filter]);
         event.stopPropagation();
     }
 
@@ -74,7 +74,7 @@ export class SideBarComponent implements OnDestroy {
     }
 
     filterApply(event) {
-        this.filtersService.change(this.activeFilter);
+        this.filtersService.change([this.activeFilter]);
         this.activeFilter = undefined;
         this.checkFilterDisable(event);
         event.stopPropagation &&

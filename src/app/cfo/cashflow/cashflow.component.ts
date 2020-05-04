@@ -919,7 +919,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         ).subscribe((dateRange: CalendarValuesModel) => {
             this.setDateFilter(dateRange);
             this.getCellOptionsFromCell.cache = {};
-            this.filtersService.change(this.dateFilter);
+            this.filtersService.change([this.dateFilter]);
         });
     }
 
@@ -1005,13 +1005,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     initFiltering() {
-        this.filtersService.apply((filter) => {
-            if (filter && filter.items.element) {
-                if (filter.caption == 'BusinessEntity')
-                    this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);
-                this.bankAccountsService.applyFilter();
-            }
-            this.updateRequestFilter(filter);
+        this.filtersService.apply((filters: FilterModel[]) => {
+            filters.forEach((filter: FilterModel) => {
+                if (filter && filter.items.element) {
+                    if (filter.caption == 'BusinessEntity')
+                        this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);
+                    this.bankAccountsService.applyFilter();
+                }
+                this.updateRequestFilter(filter);
+            });
             this.closeTransactionsDetail();
             this.filteredLoad = true;
             this.loadGridDataSource();

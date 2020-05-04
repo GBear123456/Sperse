@@ -861,12 +861,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
             this.title = '';
-            this.tagsComponent.reset();
-            this.listsComponent.reset();
-            this.partnerTypesComponent.reset();
-            this.userAssignmentComponent.selectedItemKey = this.currentUserId;
+            this.tagsComponent && this.tagsComponent.reset();
+            this.listsComponent && this.listsComponent.reset();
+            this.partnerTypesComponent && this.partnerTypesComponent.reset();
+            if (this.userAssignmentComponent) {
+                this.userAssignmentComponent.selectedItemKey = this.currentUserId;
+            }
             this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
-            this.ratingComponent.reset();
+            this.ratingComponent && this.ratingComponent.reset();
             this.changeDetectorRef.detectChanges();
         };
 
