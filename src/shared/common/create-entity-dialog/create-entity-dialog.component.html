@@ -396,12 +396,11 @@
                                     [acceptCustomValue]="true"
                                     [dataSource]="getCountryStates(address.countryCode) | async"
                                     displayExpr="name"
-                                    valueExpr="code"
                                     name="state"
                                     [placeholder]="ls.l('State')"
                                     width="270px"
                                     [searchEnabled]="true"
-                                    [(value)]="address['stateName']"
+                                    [(value)]="address['state']"
                                     (onValueChanged)="checkAddressControls(i)"
                                     (onCustomItemCreating)="onCustomStateCreate($event, i)">
                                 </dx-select-box>
@@ -412,18 +411,18 @@
                                     [placeholder]="ls.l('Zip')"
                                     width="270px"
                                     [(value)]="address['zip']"
-                                    [valueChangeEvent]="'keyup'"
+                                    valueChangeEvent="keyup"
                                     (onValueChanged)="checkAddressControls(i)">
                                 </dx-text-box>
                                 <dx-select-box
                                     [dataSource]="countries"
                                     displayExpr="name"
-                                    valueExpr="name"
+                                    valueExpr="code"
                                     name="country"
                                     [placeholder]="ls.l('Country')"
                                     width="270px"
                                     [searchEnabled]="true"
-                                    [(value)]="address['country']"
+                                    [(value)]="address['countryCode']"
                                     (onValueChanged)="onCountryChange($event, i)">
                                 </dx-select-box>
                             </div>
