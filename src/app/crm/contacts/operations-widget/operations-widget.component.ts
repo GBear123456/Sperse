@@ -89,7 +89,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
     private _partnerTypes: any[] = [];
     isPrevDisabled = false;
     isNextDisabled = false;
-
+    manageCGPermision = '';
     toolbarConfig = [];
     customToolbarConfig;
     optionButtonConfig;
@@ -143,6 +143,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
     initToolbarConfig(ms = 300) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
+            this.manageCGPermision = this.contactService.getCGPermissionKey(this.customerType, 'Manage');
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
@@ -193,28 +194,28 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                         {
                             name: 'partnerType',
                             action: this.togglePartnerTypes.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType),
+                            disabled: !this.contactService.checkCGPermission(this.customerType, ''),
                             visible: this.customerType == ContactGroup.Partner
                         },
                         {
                             name: 'lists',
                             action: this.toggleLists.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType)
+                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'tags',
                             action: this.toggleTags.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType)
+                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType)
+                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType)
+                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         }
                     ]
                 },

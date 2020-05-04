@@ -345,8 +345,8 @@ export class TypesListComponent implements OnInit {
         return 0;
     }
 
-    checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManage) &&
+    isManageAllowed() {
+        return this.permission.isGranted(AppPermissions.CRMPartnersManage) &&
             (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 

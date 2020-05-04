@@ -217,8 +217,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     ) {
         this.company = this.data.company;
         this.isAssignDisabled = !contactService.checkCGPermission(data.customerType, 'ManageAssignments');
-        this.isListAndTagsDisabled = !contactService.checkCGPermission(data.customerType, 'Manage');
-        this.isRatingAndStarsDisabled = !contactService.checkCGPermission(data.customerType, 'Manage');
+        this.isListAndTagsDisabled = !contactService.checkCGPermission(data.customerType);
+        this.isRatingAndStarsDisabled = !contactService.checkCGPermission(data.customerType);
     }
 
     ngOnInit() {

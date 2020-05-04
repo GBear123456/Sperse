@@ -34,16 +34,16 @@
                 [list]="stages"
                 (onItemSelected)="updateLeadsStage($event)">
         </app-static-list>
-        <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>
-        <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></lists-list>
+        <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags" [managePermission]="manageCGPermision"></tags-list>
+        <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" [managePermission]="manageCGPermision"></lists-list>
         <user-assignment-list [selectedKeys]="selectedClientKeys"
-                                  [bulkUpdateMode]="true"
-                                  [filterModel]="filterModelAssignment"
-                                  [proxyService]="contactProxy"
-                                  [permissionKey]="permissions.CRMCustomersManageAssignments"
-                                  [assignedUsersSelector]="assignedUsersSelector">
+            [bulkUpdateMode]="true"
+            [filterModel]="filterModelAssignment"
+            [proxyService]="contactProxy"
+            [permissionKey]="permissions.CRMCustomersManageAssignments"
+            [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
-        <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></rating>
+        <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating" [managePermission]="manageCGPermision"></rating>
         <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">

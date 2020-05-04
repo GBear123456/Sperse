@@ -841,7 +841,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -849,7 +849,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -857,7 +857,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -865,7 +865,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -873,7 +873,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
