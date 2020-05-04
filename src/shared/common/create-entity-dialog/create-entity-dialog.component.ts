@@ -240,7 +240,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     saveOptionsInit() {
-        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
         if (this.cacheService.exists(cacheKey))
             selectedIndex = this.cacheService.get(cacheKey);
@@ -251,7 +251,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
         this.changeDetectorRef.detectChanges();
     }

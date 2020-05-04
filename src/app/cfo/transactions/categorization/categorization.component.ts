@@ -101,6 +101,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     private _selectedKeys = [];
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
+    private readonly CACHE_KEY = this.cacheHelper.getCacheKey('categorization');
     settings = {
         showCID: true, /* Category ID */
         showTC: false, /* Transaction Count */
@@ -403,7 +404,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initSettings() {
-        let settings: any = localStorage.getItem(this.constructor.name);
+        let settings: any = localStorage.getItem(this.CACHE_KEY);
         if (settings)
             try {
                 settings = JSON.parse(settings);
@@ -415,7 +416,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     storeSettings() {
-        localStorage.setItem(this.constructor.name, JSON.stringify(this.settings));
+        localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.settings));
     }
 
     processExpandTree(expandFirstLevel, expandSecondLevel) {

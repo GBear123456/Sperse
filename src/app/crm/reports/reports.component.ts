@@ -347,7 +347,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.isDataLoaded = false;
             this.changeDetectorRef.detectChanges();
             this.cacheService.set(
-                this.cacheHelper.getCacheKey(this.REPORT_TYPE_CACHE_KEY, this.constructor.name),
+                this.cacheHelper.getCacheKey(this.REPORT_TYPE_CACHE_KEY),
                 event.value
             );
              setTimeout(() => {

@@ -33,7 +33,7 @@ export class LeftMenuService {
             this.appService.getModule(),
             this.cfoService.instanceId ||
             this.cfoService.instanceType
-        ].join('_'), this.constructor.name);
+        ].join('_'));
     }
 
     toggle() {

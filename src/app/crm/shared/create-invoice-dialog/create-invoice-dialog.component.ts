@@ -297,7 +297,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     saveOptionsInit() {
-        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name);
+        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY);
         this.selectedOption = this.saveContextMenuItems[
             this.data.saveAsDraft
                 ? this.SAVE_OPTION_DRAFT : this.cacheService.exists(cacheKey)
@@ -325,7 +325,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
+        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
