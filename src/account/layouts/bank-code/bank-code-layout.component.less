@@ -6,14 +6,60 @@ Login page
     height: 100%;
 }
 
-::ng-deep body {
-    height: calc(~"100vh - 70px");
-    padding-top: 70px;
-}
-
 ::ng-deep .cdk-global-scrollblock {
     position: static !important;
     width: initial !important;
+}
+
+::ng-deep .login-box {
+
+    * {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+    border: solid 1px #ebecec;
+    background-color: #ffffff;
+    padding: 0;
+    border-radius: 10px;
+    width: 96%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    @media all and (min-width: 768px) {
+        width: 450px;
+        max-width: 100%;
+        margin: auto;
+    }
+
+    @media all and (min-width: 1600px) {
+        width: 580px;
+        margin: auto;
+    }
+
+    .colored-line {
+        display: flex;
+        height: 10px;
+
+        span {
+            width: 25%;
+        }
+
+        .bg-blue {
+            background: #004a84;
+        }
+        .bg-red {
+            background: #d4191f;
+        }
+        .bg-yellow {
+            background: #ffa300;
+        }
+        .bg-green {
+            background: #00692e;
+        }
+    }
 }
 
 .login {
@@ -54,6 +100,134 @@ div.footer {
 
     .account-forms {
         padding: 0 15px;
+        width: 100%;
+    }
+
+    .division {
+        position: absolute;
+        height: 100%;
+        width: 9px;
+        background: url('../../../assets/common/images/bank-code/division.png');
+        background-size: auto 100%;
+
+        @media all and (max-width: 1500px) {
+            display: none;
+        }
+    }
+
+    .slogan {
+        font-size: 45px;
+        text-transform: uppercase;
+        font-weight: 500;
+        line-height: 51px;
+        color: #004a84;
+
+        span {
+            display: block;
+
+            &.fz-85 {
+                font-size: 85px;
+                font-weight: 700;
+                line-height: 78px;
+            }
+        }
+
+        @media all and (max-width: 1560px) {
+            font-size: 28px;
+            line-height: 32px;
+
+            span {
+                &.fz-85 {
+                    font-size: 50px;
+                    line-height: 48px;
+                }
+            }
+        }
+    }
+
+    .crack-code {
+        @media all and (max-width: 768px) {
+            padding-top: 55px;
+        }
+    }
+
+    .crack-logo {
+        padding: 80px 0;
+
+        @media all and (max-width: 1560px) {
+            padding: 30px 0;
+
+            img {
+                max-width: 200px;
+            }
+        }
+    }
+
+    .crack-code-btn {
+        padding: 7px 25px 5px;
+        color: #fff;
+        background: #b92a2e;
+        border: 0;
+        outline: none;
+        border-radius: 7px;
+        transition: .2s;
+        cursor: pointer;
+        display: inline-block;
+
+        @media all and (max-width: 1560px) {
+            padding: 0 25px;
+        }
+
+        span {
+            opacity: 1;
+        }
+
+        .text {
+            text-align: center;
+
+            @media all and (max-width: 1560px) {
+                padding: 0 10px 0 0;
+            }
+
+            span {
+                display: block;
+            }
+
+            .uppercase {
+                font-size: 20px;
+                white-space: nowrap;
+                font-weight: 700;
+                line-height: 18px;
+
+                @media all and (max-width: 1560px) {
+                    font-size: 18px;
+                }
+            }
+
+            .small {
+                font-size: 12px;
+                font-weight: 500;
+
+                @media all and (max-width: 1560px) {
+                    font-size: 11px;
+                }
+            }
+        }
+
+        .arrow {
+            font-size: 52px;
+            padding: 0;
+            text-align: right;
+            line-height: 0;
+            position: relative;
+            top: -3px;
+        }
+
+        &:hover {
+            background-color: #921a1d;
+            text-decoration: none;
+            box-shadow: 0 0 3px rgba(172, 31, 34, 0.5);
+        }
     }
 }
 

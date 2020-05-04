@@ -1,7 +1,14 @@
 <div [@routerTransition]>
     <div class="login-box">
         <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
-            <h3>Log In</h3>
+            <div class="logo">
+                <a href="https://www.codebreakertech.com">
+                    <img src="./assets/common/images/bank-code/CodebreakerWideLogo.png" alt="Codebreaker Teach">
+                </a>
+            </div>
+            <h3>Sign in to your account:</h3>
+
+            <label class="label-for-input" for="user-name">{{ls.l('EmailAddress')}}</label>
             <div class="form-group icon-input icon-input__user clearfix">
                 <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                        class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
