@@ -77,8 +77,7 @@
     <!--[list]="partnerTypes">-->
 <!--</app-static-list>-->
 <types-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></types-list>
-<lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></lists-list>
-<tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></tags-list>
-<rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="ratingValue" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></rating>
-<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
-
+<lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)" [managePermission]="manageCGPermision"></lists-list>
+<tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)" [managePermission]="manageCGPermision"></tags-list>
+<rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="ratingValue" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)" [managePermission]="manageCGPermision"></rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)" [managePermission]="manageCGPermision"></crm-stars-list>

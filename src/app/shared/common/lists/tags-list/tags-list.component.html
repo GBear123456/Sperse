@@ -6,12 +6,12 @@
             <div class="actions clearfix">
                 <span class="title">{{ls.l('Tags')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{ls.l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions()" (click)="apply()">{{ls.l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!isManageAllowed()" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
                 <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="apply(true)">{{ls.l('Remove')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !tagslist.selectedRowKeys?.length" (click)="apply()">{{ls.l('Add')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="apply(true)">{{ls.l('Remove')}}</span>
+                    <span class="filter-apply" [class.disabled]="!isManageAllowed() || !tagslist.selectedRowKeys?.length" (click)="apply()">{{ls.l('Add')}}</span>
                 </div>
             </div>
             <dx-tree-list #tagslist
@@ -24,7 +24,7 @@
                 [showColumnLines]="false"
                 [showColumnHeaders]="false"
                 [searchPanel]="{visible: true, placeholder: ls.l('Search'), width: 260}"
-                [selection]="{allowSelectAll: false, mode: (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'multiple' }"
+                [selection]="{allowSelectAll: false, mode: !isManageAllowed() || (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'multiple' }"
                 [selectedRowKeys]="selectedTags"
                 [(dataSource)]="list"
                 (onRowClick)="onRowClick($event)"
@@ -38,13 +38,13 @@
                 (onContentReady)="onContentReady($event)"
                 (onRowInserted)="onRowInserted($event)"
                 (onEditorPrepared)="editorPrepared($event)"
-                [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
+                [ngClass]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
                     [texts]="{confirmDeleteMessage: ''}"
-                    [allowUpdating]="canUpdateAndDelete"
-                    [allowDeleting]="canUpdateAndDelete"
-                    [allowAdding]="!bulkUpdateMode || selectedKeys?.length">
+                    [allowUpdating]="isManageAllowed()"
+                    [allowDeleting]="isManageAllowed()"
+                    [allowAdding]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length)">
                 </dxo-editing>
             </dx-tree-list>
         </div>

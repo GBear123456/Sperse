@@ -284,7 +284,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importTypeIndex = 0;
     importType = ImportTypeInput.Lead;
     contactGroupId = ContactGroup.Client;
-
+    manageCGPermision = '';
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
 
@@ -868,6 +868,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private initToolbarConfig() {
+        this.manageCGPermision = this.contactService.getCGPermissionKey(this.contactGroupId, 'Manage');
         let disabledManage = !this.contactService.checkCGPermission(this.contactGroupId);
         this.toolbarConfig = [
             {
@@ -930,7 +931,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'lists',
                         action: () => this.listsComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId),
+                        disabled: disabledManage,
                         attr: {
                             'filter-selected': this.isListsSelected
                         }
@@ -938,7 +939,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'tags',
                         action: () => this.tagsComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId),
+                        disabled: disabledManage,
                         attr: {
                             'filter-selected': this.isTagsSelected
                         }
@@ -946,7 +947,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'rating',
                         action: () => this.ratingComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId),
+                        disabled: disabledManage,
                         attr: {
                             'filter-selected': !!this.ratingValue
                         }
@@ -957,7 +958,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: 30,
                         },
                         action: () => this.starsListComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'Manage'),
+                        disabled: disabledManage,
                         attr: {
                             'filter-selected': this.isStarSelected
                         }

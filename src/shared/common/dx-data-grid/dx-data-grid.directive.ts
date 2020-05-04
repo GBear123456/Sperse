@@ -46,7 +46,8 @@ export class DxDataGridDirective implements AfterViewInit, OnDestroy {
             }
         }),
         this.component.onContentReady.subscribe(event => {
-            if (!event.component.getDataSource().group())
+            let dataSource = event.component.getDataSource();
+            if (!dataSource || !dataSource.group())
                 event.element.classList.remove('show-group-panel');
         }),
         this.component.onCellPrepared.subscribe(event => {

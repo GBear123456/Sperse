@@ -176,6 +176,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
     manageDisabled = true;
+    manageCGPermision = '';
     sliceStorageKey = 'CRM_Contacts_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
 
     filterModelLists: FilterModel;
@@ -970,6 +971,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     initToolbarConfig() {
         this.manageDisabled = !this.contactService.checkCGPermission(this.contactGroupId.value);
+        this.manageCGPermision = this.contactService.getCGPermissionKey(this.contactGroupId.value, 'Manage');
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -1034,7 +1036,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -1042,7 +1044,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -1050,7 +1052,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -1058,7 +1060,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'Manage'),
+                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -1073,8 +1075,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'delete',
                         disabled: !this.selectedLeads.length ||
-                        !this.contactService.checkCGPermission(this.contactGroupId.value) ||
-                        this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
+                            !this.contactService.checkCGPermission(this.contactGroupId.value) ||
+                            this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
                         action: this.deleteLeads.bind(this)
                     }
                 ]

@@ -32,43 +32,10 @@
                          [list]="statuses"
                          (onItemSelected)="updatePartnerStatuses($event)">
         </app-static-list>
-        <!--<app-static-list #partnerTypesList-->
-        <!--[width]="'180px'"-->
-        <!--[title]="l('Type')"-->
-        <!--[selectedKeys]="selectedPartnerKeys"-->
-        <!--[showConfirmation]="true"-->
-        <!-- [bulkUpdatePermissionKey]="AppPermissions.CRMBulkUpdates" -->
-        <!--[updateConfirmationTitle]="l('PartnerTypeUpdateConfirmationTitle')"-->
-        <!--[updateConfirmationMessage]="l('PartnersUpdateTypeWarningMessage')"-->
-        <!--[hideButtons]="true"-->
-        <!--[filterModel]="filterModelType"-->
-        <!--[targetSelector]="'[accessKey=PartnerType]'"-->
-        <!--[list]="partnerTypes"-->
-        <!--(onItemSelected)="updatePartnerTypes($event)">-->
-        <!--</app-static-list>-->
-        <!---->
-        <types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></types-list>
-        <tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>
-        <lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></lists-list>
 
-        <!--<app-advanced-list-->
-        <!--[data]="partnerTypes"-->
-        <!--[permissionName]="AppPermissions.CRMCustomersManageListsAndTags"-->
-        <!--[bulkRemoveConfirmationKey]="'RemoveFromTypeBulkUpdateConfirmation'"-->
-        <!--[bulkUpdateConfirmationKey]="'AddToTypeUpdateConfirmation'"-->
-        <!--&gt;</app-advanced-list>-->
-        <!--<app-advanced-list-->
-        <!--[data]="tags"-->
-        <!--[permissionName]="AppPermissions.CRMCustomersManageListsAndTags"-->
-        <!--[bulkRemoveConfirmationKey]="'UntagBulkUpdateConfirmation'"-->
-        <!--[bulkUpdateConfirmationKey]="'TagBulkUpdateConfirmation'"-->
-        <!--&gt;</app-advanced-list>-->
-        <!--<app-advanced-list-->
-        <!--[data]="lists"-->
-        <!--[permissionName]="AppPermissions.CRMCustomersManageListsAndTags"-->
-        <!--[bulkRemoveConfirmationKey]="'AddToListsBulkUpdateConfirmation'"-->
-        <!--[bulkUpdateConfirmationKey]="'RemoveFromBulkUpdateConfirmation'"-->
-        <!--&gt;</app-advanced-list>-->
+        <types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></types-list>
+        <tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags" [managePermission]="permissions.CRMPartnersManage"></tags-list>
+        <lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" [managePermission]="permissions.CRMPartnersManage"></lists-list>
 
         <user-assignment-list [selectedKeys]="selectedPartnerKeys"
                                   [bulkUpdateMode]="true"
@@ -77,8 +44,8 @@
                                   [permissionKey]="permissions.CRMPartnersManageAssignments"
                                   [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
-        <rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></rating>
-        <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
+        <rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating" [managePermission]="permissions.CRMPartnersManage"></rating>
+        <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar" [managePermission]="permissions.CRMPartnersManage"></crm-stars-list>
 
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
