@@ -99,6 +99,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
         items: [
             {
                 name: 'print',
+                visible: false,
                 action: this.print.emit.bind(this.print)
             }
         ]

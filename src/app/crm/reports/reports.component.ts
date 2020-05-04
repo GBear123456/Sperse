@@ -122,10 +122,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                             }
                         ]
                     }
-                },
-                {
-                    name: 'columnChooser',
-                    action: () => DataGridService.showColumnChooser(this.dataGrid)
                 }
             ]
         }
@@ -276,6 +272,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         return this.selectedReportType === ReportType.Subscribers
                 ? this.subscribersDataGrid
                 : this.statsDataGrid;
+    }
+
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
     toggleContactView() {

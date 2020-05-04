@@ -954,24 +954,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             ]
                         }
                     },
-                    { name: 'print', action: Function() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'columnChooser',
-                        disabled: !(this.showDataGrid || this.showPivotGrid),
-                        action: () => {
-                            if (this.showDataGrid) {
-                                DataGridService.showColumnChooser(this.dataGrid);
-                            } else if (this.showPivotGrid) {
-                                this.pivotGridComponent.toggleFieldPanel();
-                            }
-                        }
-                    }
+                    { name: 'print', action: Function(), visible: false }
                 ]
             },
             {
@@ -1014,6 +997,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             }
         ];
+    }
+
+    toggleColumnChooser() {
+        if (this.showDataGrid) {
+            DataGridService.showColumnChooser(this.dataGrid);
+        } else if (this.showPivotGrid) {
+            this.pivotGridComponent.toggleFieldPanel();
+        }
     }
 
     repaintDataGrid(delay = 0) {

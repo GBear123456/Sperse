@@ -4,10 +4,12 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
                   (onReload)="refresh()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
-                  (onToggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="contactGroups"
                         [totalCount]="totalCount"
                         [(value)]="selectedContactGroup"

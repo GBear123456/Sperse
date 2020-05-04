@@ -2,9 +2,11 @@
               [showToggleToolbarButton]="true"
               [showToggleCompactViewButton]="true"
               [showReloadButton]="ui.showReload"
+              [showToggleColumnSelectorButton]="true"
               (onToggleCompactView)="toggleContactView()"
               (onToggleToolbar)="toggleToolbar()"
-              (onReload)="reload()">
+              (onReload)="reload()"
+              (onToggleColumnSelector)="toggleColumnChooser()">
     <types-dropdown [items]="reportTypes"
                     [totalCount]="totalCount"
                     [(value)]="selectedReportType"

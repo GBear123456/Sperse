@@ -147,17 +147,14 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
                             }, { type: 'downloadOptions' }]
                         }
                     },
-                    { name: 'print', action: Function() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
+                    { name: 'print', action: Function(), visible: false }
                 ]
             }
         ];
+    }
+
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
     toggleCompactView() {

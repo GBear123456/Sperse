@@ -4,10 +4,12 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
                   (onReload)="invalidate()"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="showCompactRowHeight()"
-                  (onToggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div [hidden]="isDataLoaded && !totalRowCount" class="main-wrapper portlet light no-padding margin-bottom-0">

@@ -31,7 +31,7 @@
     </div>
 </div>
 <ng-template #toggleButtonContainer>
-    <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="(showReloadButton && !showRefreshButtonSeparately) || showToggleToolbarButton || showToggleCompactViewButton || showToggleFullScreenButton">
+    <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
             <li *ngIf="showReloadButton && !showRefreshButtonSeparately">
@@ -53,6 +53,14 @@
             <li *ngIf="showToggleFullScreenButton">
                 <div><span class="icon toggleFullScreenView" (click)="toggleFullScreen()"></span></div>
                 <span class="text">{{ fullScreenButtonText$ | async }}</span>
+            </li>
+            <li *ngIf="showToggleColumnSelectorButton">
+                <div><span class="icon toggleColumnSelector" (click)="toggleColumnSelector()"></span></div>
+                <span class="text">{{ ls.l('ColumnSelector') }}</span>
+            </li>
+            <li *ngIf="showPrintButton">
+                <div><span class="icon print" (click)="print()"></span></div>
+                <span class="text">{{ ls.l('PrintResultsPage') }}</span>
             </li>
         </ul>
     </div>

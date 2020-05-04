@@ -155,7 +155,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                             }, { type: 'downloadOptions' }]
                         }
                     },
-                    { name: 'print', action: Function() }
+                    { name: 'print', action: Function(), visible: false }
                 ]
             },
             {

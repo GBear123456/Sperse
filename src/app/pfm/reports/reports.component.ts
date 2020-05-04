@@ -166,11 +166,6 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                         }
                     },
                     {
-                        name: 'columnChooser',
-                        visible: this.section !== 'clicks' && !this.cfoService.hasStaticInstance,
-                        action: () => DataGridService.showColumnChooser(this.openedGrid)
-                    },
-                    {
                         widget: 'dxButton',
                         options: {
                             text: 'Show all',
@@ -185,6 +180,10 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             },
         ];
+    }
+
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.openedGrid);
     }
 
     onStatsClick(event) {

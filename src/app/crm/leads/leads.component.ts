@@ -1169,24 +1169,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             ]
                         }
                     },
-                    { name: 'print', action: Function() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'columnChooser',
-                        disabled: !(this.showDataGrid || this.showPivotGrid),
-                        action: () => {
-                            if (this.showDataGrid) {
-                                DataGridService.showColumnChooser(this.dataGrid);
-                            } else if (this.showPivotGrid) {
-                                this.pivotGridComponent.toggleFieldPanel();
-                            }
-                        }
-                    }
+                    { name: 'print', action: Function(), visible: false }
                 ]
             },
             {
@@ -1462,6 +1445,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     toggleStars() {
         this.starsListComponent.toggle();
+    }
+
+    toggleColumnChooser() {
+        if (this.showDataGrid) {
+            DataGridService.showColumnChooser(this.dataGrid);
+        } else if (this.showPivotGrid) {
+            this.pivotGridComponent.toggleFieldPanel();
+        }
     }
 
     deleteLeads() {

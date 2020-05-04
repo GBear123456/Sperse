@@ -5,10 +5,12 @@
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
+                  [showToggleColumnSelectorButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactRowHeight()"
                   (onToggleFullScreen)="toggleFullScreen()"
-                  (onReload)="invalidate()">
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <action-menu [items]="actionMenuItems"

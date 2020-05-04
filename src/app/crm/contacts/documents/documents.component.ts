@@ -214,7 +214,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     },
                     {
                         name: 'print',
-                        visible: !conf.printHidden,
+                        visible: false/*!conf.printHidden*/,
                         action: () => {
                             const viewedDocument = <any>this.getViewedDocumentElement();
                             if (this.showViewerType !== DocumentViewerType.WOPI && this.showViewerType !== DocumentViewerType.VIDEO) {

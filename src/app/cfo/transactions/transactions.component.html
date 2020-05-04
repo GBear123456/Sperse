@@ -58,11 +58,13 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleTotalsButton]="true"
+                  [showToggleColumnSelectorButton]="!_cfoService.hasStaticInstance"
                   (onReload)="reload()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onToggleTotals)="toggleDataGridToolbar()"
-                  (onToggleToolbar)="toggleToolbar()">
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
         <business-entities-chooser class="accounts-chooser" (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">
