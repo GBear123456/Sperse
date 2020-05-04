@@ -20,6 +20,8 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
         contactInfo: ContactInfoDto
     };
 
+    ident = Date.now().toString();
+
     constructor(
         private dialog: MatDialog,
         private contactsService: ContactsService,
@@ -35,7 +37,7 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
                     action: () => this.personalDetailsService.showPersonalDetailsDialog('contact-information-personal-details-dialog')
                 }
             }));
-        }, this.constructor.name);
+        }, this.ident);
     }
 
     ngOnInit() {
@@ -44,6 +46,6 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

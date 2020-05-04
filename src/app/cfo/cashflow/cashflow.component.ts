@@ -1177,6 +1177,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'print',
+                        visible: false,
                         options: {
                             width: 58
                         }

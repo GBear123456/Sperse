@@ -112,11 +112,14 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                                 icon: 'sheet'
                             }, { type: 'downloadOptions' }]
                         }
-                    },
-                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
+                    }
                 ]
             }
         ];
+    }
+
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
     onContentReady(event) {

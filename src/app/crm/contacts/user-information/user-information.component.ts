@@ -95,6 +95,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     };
     orgUnitsDisabled;
     dataIsloading = false;
+    ident = Date.now().toString();
     @HostListener('window:resize') onResize() {
         if (this.orgUnitsDisabled = (innerWidth > 1200))
             if (this.selectedTabIndex == this.ORG_UNITS_TAB_INDEX)
@@ -129,7 +130,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.getPhonesAndEmails();
             this.showOrgUnitsDialog();
             this.updateToolbarOptions();
-        }, this.constructor.name);
+        }, this.ident);
         setTimeout(() => this.getPhonesAndEmails(), 500);
 
         this.contactsService.orgUnitsSaveSubscribe(
@@ -143,7 +144,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     );
                 });
             },
-            this.constructor.name
+            this.ident
         );
 
         if (!(this.roles = this.roleServiceProxy['data']))
@@ -199,7 +200,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.initUserForEdit(contactInfo);
             else
                 this.contactsService.contactInfoSubscribe(
-                    this.initUserForEdit.bind(this), this.constructor.name
+                    this.initUserForEdit.bind(this), this.ident
                 );
         }
     }
@@ -456,7 +457,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.dialog.closeAll();
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
         if (this.dependencyChanged)
             this.contactsService.invalidate();
     }

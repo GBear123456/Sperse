@@ -4,9 +4,12 @@
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showReloadButton]="ui.showReload"
+                  [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
+                  [showToggleFullScreenButton]="true"
                   (onToggleCompactView)="toggleContactView()"
                   (onToggleToolbar)="toggleToolbar()"
-                  (onReload)="invalidate()">
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="orderTypes"
                         [totalCount]="totalCount"
                         [(value)]="selectedOrderType"
@@ -58,7 +61,7 @@
                                 </dxo-selection>
                                 <dxo-editing mode="popup"
                                             [texts]="{editRow: ''}"
-                                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }" 
+                                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                             [allowUpdating]="true">
                                 </dxo-editing>
                                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>

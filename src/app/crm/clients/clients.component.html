@@ -6,10 +6,12 @@
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
+                  [showToggleColumnSelectorButton]="this.showDataGrid || this.showPivotGrid"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
-                  (onReload)="refresh()">
+                  (onReload)="refresh()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <span *ngIf="totalCount !== undefined" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
