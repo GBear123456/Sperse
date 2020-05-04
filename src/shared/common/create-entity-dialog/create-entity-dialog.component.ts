@@ -256,7 +256,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.changeDetectorRef.detectChanges();
     }
 
-    getCountryCode(name) {
+    getCountryCode(name: string): string {
         let country = this.countries && this.countries.find(country => country.name === name);
         return country && country['code'];
     }
@@ -429,14 +429,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 address.city ||
                 address.state ||
                 address.zip ||
-                address.country) {
+                address.countryCode) {
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: this.statesService.getAdjustedStateCode(address.stateCode, address.stateName),
-                    stateName: address.stateName,
+                    stateId: this.statesService.getAdjustedStateCode(address.state.code, address.state.name),
+                    stateName: address.state.name,
                     zip: address.zip,
-                    countryId: this.getCountryCode(address.country),
+                    countryId: address.countryCode,
                     isActive: true,
                     comment: address.comment,
                     usageTypeId: address.type
@@ -533,7 +533,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                     isAddress && contact.city || undefined,
                     isAddress && contact.stateCode || undefined,
                     isAddress && contact.zip || undefined,
-                    isAddress && this.getCountryCode(contact.country) || undefined,
+                    isAddress && contact.countryCode || undefined,
                     this.data.customerType
                 ).subscribe(response => {
                     if (response) {
@@ -576,16 +576,21 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         const stateCode = this.googlePlaceService.getStateCode(event.address_components);
         const stateName = this.googlePlaceService.getStateName(event.address_components);
         this.statesService.updateState(countryCode, stateCode, stateName);
-        this.contacts.addresses[i].stateCode = stateCode;
-        this.contacts.addresses[i].stateName = stateName;
+        this.contacts.addresses[i].state = {
+            code: stateCode,
+            name: stateName
+        };
+        this.contacts.addresses[i].countryCode = countryCode;
         this.contacts.addresses[i].address = this.addressInputs.toArray()[i].nativeElement.value = number ? (number + ' ' + street) : street;
         this.contacts.addresses[i].city = this.googlePlaceService.getCity(event.address_components);
         this.changeDetectorRef.detectChanges();
     }
 
     onCustomStateCreate(e, i: number) {
-        this.contacts.addresses[i].stateCode = null;
-        this.contacts.addresses[i].stateName = e.text;
+        this.contacts.addresses[i].state = {
+            code: null,
+            name: e.text
+        };
         this.statesService.updateState(this.contacts.addresses[i].countryCode, null, e.text);
         e.customItem = {
             code: null,
@@ -656,9 +661,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     onCountryChange(event, index) {
         this.checkAddressControls(index);
-        let country = this.countries && this.countries.find(country => country.name === event.value);
-        if (country) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country.code));
+        if (event.value) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(event.value));
         }
     }
 
@@ -704,7 +708,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         else if (field == 'links')
             return this.validateLinkAddress(isObject ? item.url : item);
         else if (field == 'addresses')
-            return item.address && item.city && item.country;
+            return item.address && item.city && item.countryCode;
         else
             return false;
     }
