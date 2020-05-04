@@ -95,6 +95,9 @@
                                 <dxi-column dataField="NoteCount" [caption]="l('NoteCount')" [visible]="false"></dxi-column>
                                 <dxi-column dataField="DocumentCount" [caption]="l('DocumentCount')" [visible]="false"></dxi-column>
                                 <dxi-column dataField="OrderDate" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
+                                <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
                                 <dxo-sorting mode="multiple"></dxo-sorting>
                                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                                 <dxo-paging [pageSize]="20"></dxo-paging>
@@ -189,7 +192,9 @@
                     <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
                     <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate" alignment="left"></dxi-column>
                     <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="OrderAmount" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>
