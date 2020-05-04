@@ -25,7 +25,7 @@ import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { DxDataGridClipboardDirective } from '@shared/common/clipboard/dx-data-grid.directive';
+import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.directive';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
@@ -47,7 +47,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         TitleCasePipe,
         RegisterConfirmComponent,
         ConditionsModalComponent,
-        DxDataGridClipboardDirective
+        DxDataGridDirective
     ],
     exports: [
         CalendarComponent,
@@ -59,7 +59,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         ZipCodeFormatterPipe,
         InfoComponent,
         TitleCasePipe,
-        DxDataGridClipboardDirective,
+        DxDataGridDirective,
         ConditionsModalComponent,
         NoDataModule,
         InlineSVGModule,

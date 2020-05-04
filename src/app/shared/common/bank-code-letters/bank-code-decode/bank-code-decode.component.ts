@@ -27,8 +27,8 @@ export class BankCodeDecodeComponent {
 
     constructor(
         private notify: NotifyService,
-        private bankCodeService: BankCodeService,
         private bankCodeServiceProxy: BANKCodeServiceProxy,
+        public bankCodeService: BankCodeService,
         public features: FeatureCheckerService,
         public ls: AppLocalizationService
     ) {}

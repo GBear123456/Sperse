@@ -19,7 +19,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 @Component({
     templateUrl: './app.component.html',
     styleUrls: [
-        '../shared/common/clipboard/clipboard.directive.less',
+        '../shared/common/dx-data-grid/dx-data-grid.directive.less',
         '../../node_modules/ng2-image-viewer/imageviewer.scss',
         '../assets/common/styles/spinner.css',
         './shared/layout/layout.less',
