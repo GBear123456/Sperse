@@ -41,14 +41,14 @@ export class HostResetPasswordComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenantId: number = abp.session.tenantId;
+        let tenantId: number = abp.session.tenantId,
+            tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
+        tenantId = this.parseTenantId(tenantIdStr) || tenantId;
         if (this.activatedRoute.snapshot.queryParams['c']) {
             this.model.c = this.activatedRoute.snapshot.queryParams['c'];
         } else {
             this.model.userId = this.activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
-            let tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
-            tenantId = this.parseTenantId(tenantIdStr) || tenantId;
             this.appSessionService.changeTenantIfNeeded(
                 tenantId, false
             );
