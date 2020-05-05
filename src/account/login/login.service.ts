@@ -283,6 +283,7 @@ export class LoginService {
                 );
                 delete params.secureId;
                 delete params.redirect;
+                delete params.tenantId;
                 delete params.switchAccountToken;
 
                 redirectUrl = redirectUrl.split('?').shift() +
