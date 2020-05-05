@@ -20,7 +20,7 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
         contactInfo: ContactInfoDto
     };
 
-    ident = Date.now().toString();
+    private readonly ident = "ContactInformation";
 
     constructor(
         private dialog: MatDialog,

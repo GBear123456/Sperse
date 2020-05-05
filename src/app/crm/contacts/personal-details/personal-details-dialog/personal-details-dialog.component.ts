@@ -61,7 +61,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         message: this.ls.l('MaxLengthIs', 255)
     }];
     isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
-    ident = Date.now().toString();
+    private readonly ident = "PersonalDetailsDialog";
 
     constructor(
         private cacheHelper: CacheHelper,

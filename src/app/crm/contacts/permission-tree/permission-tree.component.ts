@@ -34,7 +34,7 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
     public sortTreeDesc = false;
     private permissionsData: PermissionTreeEditModel;
     isEditAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
-    ident = Date.now().toString();
+    private readonly ident = "PermissionTree";
     toolbarConfig = [
         {
             location: 'before', items: [

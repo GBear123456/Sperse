@@ -46,7 +46,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     startCase = startCase;
     personContactInfo: PersonContactInfoDto;
     accessConfidentialData = this.permission.isGranted(AppPermissions.CRMAccessConfidentialData);
-    ident = Date.now().toString();
+    private readonly ident = "PersonalDetails";
     columns = [
         [
             { name: 'General', type: 'head', icon: 'profile' },

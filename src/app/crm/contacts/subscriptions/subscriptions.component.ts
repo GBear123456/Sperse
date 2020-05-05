@@ -54,7 +54,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     manageAllowed = false;
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
-    ident = Date.now().toString();
+    private readonly ident = "Subscriptions";
 
     constructor(
         private invoicesService: InvoicesService,
