@@ -33,7 +33,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     private readonly dataSourceURI = 'Order';
     private formatting = AppConsts.formatting;
     currency: string;
-    ident = Date.now().toString();
+    private readonly ident = "Orders";
 
     constructor(injector: Injector,
         private dialog: MatDialog,

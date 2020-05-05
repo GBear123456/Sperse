@@ -95,7 +95,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     };
     orgUnitsDisabled;
     dataIsloading = false;
-    ident = Date.now().toString();
+    private readonly ident = "UserInformation";
     @HostListener('window:resize') onResize() {
         if (this.orgUnitsDisabled = (innerWidth > 1200))
             if (this.selectedTabIndex == this.ORG_UNITS_TAB_INDEX)

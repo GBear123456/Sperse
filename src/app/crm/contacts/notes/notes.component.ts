@@ -32,7 +32,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         contactInfo: ContactInfoDto
     };
     private formatting = AppConsts.formatting;
-    ident = Date.now().toString();
+    private readonly ident = "Notes";
 
     constructor(injector: Injector,
         private clientService: ContactsService,

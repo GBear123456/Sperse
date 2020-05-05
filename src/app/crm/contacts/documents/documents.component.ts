@@ -96,7 +96,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public parsedCsv: any;
     archiveFiles$: Observable<any[]>;
     manageAllowed = false;
-    ident = Date.now().toString();
+    private readonly ident = "Documents";
 
     constructor(injector: Injector,
         private dialog: MatDialog,
