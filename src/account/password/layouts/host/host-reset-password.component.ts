@@ -44,14 +44,15 @@ export class HostResetPasswordComponent implements OnInit {
         let tenantId: number = abp.session.tenantId,
             tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
         tenantId = this.parseTenantId(tenantIdStr) || tenantId;
+        this.appSessionService.changeTenantIfNeeded(
+            tenantId, false
+        );
+
         if (this.activatedRoute.snapshot.queryParams['c']) {
             this.model.c = this.activatedRoute.snapshot.queryParams['c'];
         } else {
             this.model.userId = this.activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
-            this.appSessionService.changeTenantIfNeeded(
-                tenantId, false
-            );
         }
 
         let infoInput = new GetResetPasswordCodeInfoInput({
@@ -60,9 +61,7 @@ export class HostResetPasswordComponent implements OnInit {
             c: this.model.c
         });
 
-        abp.multiTenancy.setTenantIdCookie(tenantId);
         this.accountService.getResetPasswordCodeInfo(infoInput).subscribe((result: GetResetPasswordCodeInfoOutput) => {
-            abp.multiTenancy.setTenantIdCookie();
             this.appSessionService.changeTenantIfNeeded(
                 result.tenantId, false
             );
