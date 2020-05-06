@@ -49,6 +49,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     tooltipVisible = false;
 
+    isUpdateDeleteAllowed = this.permission.isGranted(AppPermissions.CRMManageListsAndTags);
+
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -174,13 +176,13 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, () => {
-                if ($event.data.hasOwnProperty('id'))
-                    this.listComponent.deleteRow(
-                        this.listComponent.getRowIndexByKey($event.data.id));
-                else
-                    $event.component.cancelEditData();
-            });
+            if (this.isUpdateDeleteAllowed)
+                this.addActionButton('delete', $event.cellElement, () => {
+                    if ($event.data.hasOwnProperty('id'))
+                        this.onRowRemoving($event);
+                    else
+                        $event.component.cancelEditData();
+                });
             if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, () => {
                     this.clearFiltersHighlight();
@@ -239,8 +241,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     first()
                 ).subscribe(() => {
                     this.clearFilterIfSelected(itemId);
+                    this.notify.success(this.l('SuccessfullyDeleted'));
                 });
-
             } else {
                 this.tooltipVisible = true;
             }
@@ -318,7 +320,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowClick($event) {
-        if (!this.isManageAllowed())
+        if (!this.isUpdateDeleteAllowed)
             return;
 
         let nowDate = new Date();
@@ -372,7 +374,6 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     isManageAllowed() {
         return this.permission.isGranted(this.managePermission) &&
-            this.permission.isGranted(AppPermissions.CRMManageListsAndTags) &&
             (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

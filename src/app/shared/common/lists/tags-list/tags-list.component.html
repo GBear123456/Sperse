@@ -30,7 +30,6 @@
                 (onRowClick)="onRowClick($event)"
                 (onInitialized)="onInitialized($event)"
                 (onInitNewRow)="onInitNewRow($event)"
-                (onRowRemoving)="onRowRemoving($event)"
                 (onRowUpdating)="onRowUpdating($event)"
                 (onRowInserting)="onRowInserting($event)"
                 (onSelectionChanged)="onSelectionChanged($event)"
@@ -42,8 +41,8 @@
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
                     [texts]="{confirmDeleteMessage: ''}"
-                    [allowUpdating]="isManageAllowed()"
-                    [allowDeleting]="isManageAllowed()"
+                    [allowUpdating]="true"
+                    [allowDeleting]="isUpdateDeleteAllowed"
                     [allowAdding]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length)">
                 </dxo-editing>
             </dx-tree-list>
