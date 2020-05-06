@@ -667,6 +667,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 items: [
                     {
                         name: 'dataGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleSubscriptionsDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => {
@@ -676,6 +677,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     },
                     {
                         name: 'pivotGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleSubscriptionsDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
                             checkPressed: () => {

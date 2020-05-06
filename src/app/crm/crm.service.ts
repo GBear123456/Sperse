@@ -49,7 +49,7 @@ export class CrmService {
         map((contentHeight) => contentHeight - 88)
     );
     private usersIdsWithInstance: { [id: string]: boolean } = {};
-    showSliceButtons: boolean = environment.releaseStage !== 'production';
+    showSliceButtons: boolean = environment.releaseStage !== 'production' && environment.releaseStage !== 'beta';
 
     constructor(
         private filtersService: FiltersService,
