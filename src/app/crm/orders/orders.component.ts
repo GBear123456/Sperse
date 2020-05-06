@@ -535,6 +535,45 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 location: 'after',
                 locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    type: 'downloadOptions',
+                                    visible: this.ordersDataLayoutType === DataLayoutType.DataGrid
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     // {
@@ -642,6 +681,65 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             checkPressed: () => {
                                 return (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid);
                             }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: (options) => {
+
+                                        if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
+                                            this.pivotGridComponent.dataGrid.instance.option(
+                                                'export.fileName',
+                                                this.exportService.getFileName(null, 'Subscriptions_PivotGrid')
+                                            );
+                                            this.pivotGridComponent.dataGrid.instance.exportToExcel();
+                                        } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
+                                            this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                            this.exportToXLS(options);
+                                        }
+                                    },
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: (options) => {
+                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                        this.exportToCSV(options);
+                                    },
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet',
+                                    visible: this.subscriptionsDataLayoutType === DataLayoutType.DataGrid
+                                },
+                                {
+                                    action: (options) => {
+                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                        this.exportToGoogleSheet(options);
+                                    },
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet',
+                                    visible: this.subscriptionsDataLayoutType === DataLayoutType.DataGrid
+                                },
+                                {
+                                    type: 'downloadOptions',
+                                    visible: this.subscriptionsDataLayoutType === DataLayoutType.DataGrid
+                                }
+                            ]
                         }
                     }
                 ]
