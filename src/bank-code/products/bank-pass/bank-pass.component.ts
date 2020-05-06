@@ -69,7 +69,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     dataIsLoading = true;
     gridInitialized = false;
     totalCount: number;
-    currentTabIndex = 0;
+    currentTabIndex: number = +!!this.activatedRoute.snapshot.queryParams.showLeads;
     searchValue: '';
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';
@@ -185,6 +185,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private bankCodeServiceProxy: BANKCodeServiceProxy,
         private messageService: MessageService,
         private leadService: LeadServiceProxy,
+        private activatedRoute: ActivatedRoute,
         private notifyService: NotifyService,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,

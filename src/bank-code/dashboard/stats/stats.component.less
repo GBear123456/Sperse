@@ -1,0 +1,27 @@
+:host {
+    background-color: #fff;
+    display: block;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+
+    .content {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        padding-bottom: 35px;
+        &.no-clients {
+            opacity: .5;
+        }
+        .sun img {
+            position: absolute;
+            left: -70px;
+            max-width: 280px;
+            max-height: 280px;
+            top: 2px;
+        }
+        .level-image-block {
+            margin-top: 45px;
+        }
+    }
+}

@@ -1,0 +1,34 @@
+<begin-overlay *ngIf="noClients$ | async"
+               text="Ready to generate your first lead?"
+               buttonText="Let's go!"
+               (onButtonClick)="generateFirstLead()">
+</begin-overlay>
+<h2>My New Leads</h2>
+<dx-data-grid id="gridContainer"
+              class="limitedPagerTotal"
+              accessKey="narrowHeaderPanel"
+              noDataText=""
+              [dataSource]="dataSource"
+              [loadPanel]="{ enabled: false }"
+              [cacheEnabled]="false"
+              [columnAutoWidth]="true"
+              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+    <dxo-pager [visible]="false"></dxo-pager>
+    <dxo-sorting mode="none"></dxo-sorting>
+    <dxi-column dataField="Id" [visible]="false"></dxi-column>
+    <dxi-column dataField="Name" [width]="300" [caption]="ls.l('Name')"></dxi-column>
+    <dxi-column dataField="BankCode" [width]="180" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"></dxi-column>
+    <dxi-column dataField="Email" [width]="280" [caption]="ls.l('Email')"></dxi-column>
+    <dxi-column dataField="Phone" [width]="180" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+    <dxi-column cssClass="follow-up-button-container" [width]="180" cellTemplate="followUpCellTemplate"></dxi-column>
+    <div *dxTemplate="let cellData of 'phoneCell'">
+        {{ cellData.value | phone }}
+    </div>
+    <div *dxTemplate="let cellData of 'bankCodeCell'">
+        <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+    </div>
+    <div *dxTemplate="let data of 'followUpCellTemplate'">
+        <button class="follow-up" (click)="followUp(data)">Follow-Up</button>
+    </div>
+</dx-data-grid>
+<button class="view-more" (click)="viewMore()">View more leads</button>
