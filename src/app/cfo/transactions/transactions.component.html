@@ -98,6 +98,7 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
                                   class="limitedPagerTotal main-component-view"
+                                  [ngClass]="{ showDataGridToolbar: showDataGridToolbar }"
                                   [renderAsync]="true"
                                   [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
                                   [allowColumnReordering]="true"
