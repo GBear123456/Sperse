@@ -22873,7 +22873,7 @@ export class PersonContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updatePersonBANKCode(body: UpdatePersonBANKCodeInput | null | undefined): Observable<void> {
+    updatePersonBANKCode(body: UpdatePersonBANKCodeInput | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonBANKCode";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22885,6 +22885,7 @@ export class PersonContactServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -22895,14 +22896,14 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processUpdatePersonBANKCode(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<number>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<number>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdatePersonBANKCode(response: HttpResponseBase): Observable<void> {
+    protected processUpdatePersonBANKCode(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22911,14 +22912,17 @@ export class PersonContactServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -49305,6 +49309,11 @@ export enum ContactStarColorType {
     Gradient3 = "Gradient3", 
     Gradient4 = "Gradient4", 
     Gradient5 = "Gradient5", 
+    Blueprint = "Blueprint", 
+    Action = "Action", 
+    Nurturing = "Nurturing", 
+    Knowledge = "Knowledge", 
+    Unknown = "Unknown", 
 }
 
 export class GetCountByStarOutput implements IGetCountByStarOutput {
