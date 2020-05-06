@@ -126,6 +126,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     companies = [];
     company: string;
     notes = '';
+    ratingValue;
     sourceContactId: number;
     emailValidators: any = [];
     phoneValidators: any = [];
@@ -277,7 +278,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         let partnerTypeName = this.partnerTypesComponent && this.partnerTypesComponent.selectedItems.length
             ? this.partnerTypesComponent.selectedItems[0].name
             : undefined;
-        let ratingId = this.ratingComponent && this.ratingComponent.ratingValue;
         let trackingInfo = new TrackingInfo();
         trackingInfo.channelCode = 'CRM';
         let dataObj: any = {
@@ -303,7 +303,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             stageId: stageId,
             lists: this.isListAndTagsDisabled ? undefined : lists,
             tags: this.isListAndTagsDisabled ? undefined : tags,
-            ratingId: this.isRatingAndStarsDisabled ? undefined : ratingId,
+            ratingId: this.isRatingAndStarsDisabled ? undefined : this.ratingValue,
             contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName,
             sourceContactId: this.sourceContactId,
@@ -960,6 +960,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onRatingChanged(event) {
+        this.ratingValue = event.value;
         this.isRatingSelected = Boolean(event.value);
     }
 
