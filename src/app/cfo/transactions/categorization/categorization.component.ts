@@ -737,14 +737,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         this.categories.forEach((item: Category) => {
             item.transactionsCount = items[0][item.key];
-            if (isNaN(item.key))
+            if (isNaN(<number>item.key))
                 accountingTypes[item.key] = item;
-            else if (+item.parent != item.parent)
+            else if (parseInt(<string>item.parent) != item.parent)
                 parentCategories[item.key] = item;
         });
 
         this.categories.forEach((category: Category) => {
-            if (+category.parent == category.parent && category.transactionsCount) {
+            if (parseInt(<string>category.parent) == category.parent && category.transactionsCount) {
                 let parentCategory = parentCategories[category.parent];
                 if (parentCategory && category.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount
@@ -830,7 +830,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 this.addActionButton('filter', $event.cellElement, () => {
                     const category: Category = $event.data;
                     let wrapper = $event.cellElement.parentElement;
-                    if (!this.clearSelection(wrapper, category.key))
+                    if (!this.clearSelection(wrapper, <number>category.key))
                         this.filteredRowsData.push(category);
                     this.onFilterSelected.emit(this.filteredRowsData);
                 });

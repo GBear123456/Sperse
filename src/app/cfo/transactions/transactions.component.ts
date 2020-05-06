@@ -1071,27 +1071,28 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     filterByCashflowCategories(categories: Category[], event?) {
         this.clearCategoriesFilters();
         if (Array.isArray(categories)) {
-            if (categories.length === 1 && !this.isCategory(categories[0])) {
-                if (this.isCashflowType(categories[0])) {
-                    this.selectedCashflowTypeIds.next([categories[0].key.toString()]);
-                } else {
-                    let field = {};
-                    if (this.isAccountingTypeId(categories[0]))
-                        field['AccountingTypeId'] = new FilterItemModel(+categories[0].key);
-                    else
-                        field['CashflowSubCategoryId'] = new FilterItemModel(+categories[0].key);
+            let filterCashflowTypes = categories.filter((category: Category) => this.isCashflowType(category)).map((category: Category) => <string>category.key);
+            let filterAccountingTypes = categories.filter((category: Category) => this.isAccountingTypeId(category));
+            let filterCategories = categories.filter((category: Category) => this.isCategory(category.key));
 
-                    this.cashFlowCategoryFilter = [
-                        new FilterModel({
-                            items: field
-                        })
-                    ];
-                }
-            } else {
-                this.selectedCategoriesIds.next(
-                    categories.map((category: Category) => category.key)
-                );
+            if (filterCashflowTypes.length) {
+                this.selectedCashflowTypeIds.next(filterCashflowTypes);
             }
+
+            if (filterAccountingTypes.length || filterCategories.length) {
+                let field = {};
+                this.addCategorizationFilter(filterAccountingTypes, 'AccountingTypeId', field);
+                this.addCategorizationFilter(filterCategories.filter((category: Category) => !this.isCategory(category.parent)), 'CashflowCategoryId', field);
+                this.addCategorizationFilter(filterCategories.filter((category: Category) => this.isCategory(category.parent)), 'CashflowSubCategoryId', field);
+                this.cashFlowCategoryFilter = [
+                    new FilterModel({
+                        items: field,
+                        options: { method: 'filterMethod' },
+                        filterMethod: this.filterByCombinedCategories
+                    })
+                ];
+            }
+
             this.clearClassifiedFilter();
             this.processFilterInternal();
         } else if (this.selectedCashflowCategoryKeys) {
@@ -1100,21 +1101,39 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.categoriesRowsData = categories.slice();
         this.selectedCashflowCategoryKeys = categories && categories.map((category: Category) => {
-            return category.key;
+            return <number>category.key;
         });
         this.initToolbarConfig();
     }
 
+    private addCategorizationFilter(categories: Category[], filterName: string, filterObject) {
+        if (categories.length) {
+            let keys = categories.map((category: Category) => parseInt(<string>category.key));
+            filterObject[filterName] = new FilterItemModel(keys);
+        }
+    }
+
     private isCashflowType(category: Category): boolean {
-        return !+category.key;
+        return !parseInt(<string>category.key);
     }
 
     private isAccountingTypeId(category: Category): boolean {
-        return isNaN(category.key);
+        return isNaN(<number>category.key);
     }
 
-    private isCategory(category: Category): boolean {
-        return category.parent !== 'root' && isNaN(+category.parent);
+    private isCategory(key: string | number): boolean {
+        return !isNaN(<number> key);
+    }
+
+    private filterByCombinedCategories() {
+        let filterObj = { or: [] };
+        _.pairs(this.items)
+            .reduce((obj, pair) => {
+                let val = pair.pop().value, key = pair.pop();
+                if (val) obj.or.push(`${key} in (${val.join(',')})`);
+                return obj;
+            }, filterObj);
+        return filterObj;
     }
 
     private clearCategoriesFilters() {
