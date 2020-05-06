@@ -214,7 +214,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         }
     ];
     reportTypesEnum = ReportType;
-    private readonly REPORT_TYPE_CACHE_KEY = 'REPORT_TYPE';
 
     constructor(
         private filtersService: FiltersService,
@@ -346,10 +345,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.totalCount = null;
             this.isDataLoaded = false;
             this.changeDetectorRef.detectChanges();
-            this.cacheService.set(
-                this.cacheHelper.getCacheKey(this.REPORT_TYPE_CACHE_KEY),
-                event.value
-            );
              setTimeout(() => {
                  this.initDataSource();
                  this.reload();

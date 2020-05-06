@@ -52,7 +52,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
     refresh: Observable<boolean> = this._refresh.asObservable();
     contactInfoSubscription: Subscription;
-    ident = Date.now().toString();
+    private readonly ident = "PaymentInformation";
     constructor(
         private invoicesService: InvoicesService,
         private paymentServiceProxy: PaymentServiceProxy,

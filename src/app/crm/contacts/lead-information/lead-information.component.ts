@@ -62,7 +62,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     private organizationUnits: any;
     private invoiceSettings: InvoiceSettings = new InvoiceSettings();
 
-    ident = Date.now().toString();
+    private readonly ident = "LeadInformation";
 
     isCGManageAllowed = false;
     isEditAllowed = false;

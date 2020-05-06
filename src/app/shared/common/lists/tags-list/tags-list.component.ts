@@ -53,6 +53,8 @@ export class TagsListComponent implements OnInit {
     listComponent: any;
     tooltipVisible = false;
 
+    isUpdateDeleteAllowed = this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags);
+
     constructor(
         private filterService: FiltersService,
         private tagsService: ContactTagsServiceProxy,
@@ -179,13 +181,14 @@ export class TagsListComponent implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, (event) => {
-                if ($event.data.hasOwnProperty('id'))
-                    this.listComponent.deleteRow(
-                        this.listComponent.getRowIndexByKey($event.data.id));
-                else
-                    $event.component.cancelEditData();
-            });
+            if (this.isUpdateDeleteAllowed)
+                this.addActionButton('delete', $event.cellElement, (event) => {
+                    console.log($event, event);
+                    if ($event.data.hasOwnProperty('id'))
+                        this.onRowRemoving($event);
+                    else
+                        $event.component.cancelEditData();
+                });
             if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     this.clearFiltersHighlight();
@@ -236,7 +239,7 @@ export class TagsListComponent implements OnInit {
                     type: TagsStoreActions.ActionTypes.REMOVE_TAG,
                     payload: {
                         id: itemId,
-                        reassignToItemId: dialogData.reassignToItemId,
+                        moveToTagId: dialogData.reassignToItemId,
                         deleteAllReferences: dialogData.deleteAllReferences
                     }
                 });
@@ -244,7 +247,10 @@ export class TagsListComponent implements OnInit {
                 this.actions$.pipe(
                     ofType(TagsStoreActions.ActionTypes.REMOVE_TAG_SUCCESS),
                     first()
-                ).subscribe(() => { this.clearFilterIfSelected(itemId); });
+                ).subscribe(() => {
+                    this.clearFilterIfSelected(itemId);
+                    this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                });
             } else {
                 this.tooltipVisible = true;
             }
@@ -327,7 +333,7 @@ export class TagsListComponent implements OnInit {
     }
 
     onRowClick($event) {
-        if (!this.isManageAllowed())
+        if (!this.isUpdateDeleteAllowed)
             return;
 
         let nowDate = new Date();
@@ -377,7 +383,6 @@ export class TagsListComponent implements OnInit {
 
     isManageAllowed() {
         return this.permissionChecker.isGranted(this.managePermission) &&
-            this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags) &&
             (!this.bulkUpdateMode || this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates));
     }
 

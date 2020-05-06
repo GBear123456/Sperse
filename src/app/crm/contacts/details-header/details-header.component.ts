@@ -99,6 +99,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     );
     contactId: number;
 
+    private readonly CACHE_KEY_PREFIX = 'DetailsHeader';
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
     private contactGroup: ContactGroup;
     private showRemovingOrgRelationProgress = false;
@@ -407,7 +408,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addOptionsInit() {
         if (this.addContextMenuItems.length) {
-            let cacheKey = this.cacheHelper.getCacheKey(this.addOptionCacheKey),
+            let cacheKey = this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.CACHE_KEY_PREFIX),
                 selectedMenuItem = this.getContextMenuItemByType(
                     this.cacheService.exists(cacheKey) ? this.cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
                 );
@@ -425,7 +426,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             option.selected = true;
             this.addContextComponent.instance.option('selectedItem', option);
             this.cacheService.set(
-                this.cacheHelper.getCacheKey(this.addOptionCacheKey),
+                this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.CACHE_KEY_PREFIX),
                 option.type.toString()
             );
         }

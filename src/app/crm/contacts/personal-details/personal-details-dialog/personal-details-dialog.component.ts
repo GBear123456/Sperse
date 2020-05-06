@@ -61,7 +61,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         message: this.ls.l('MaxLengthIs', 255)
     }];
     isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
-    ident = Date.now().toString();
+    private readonly ident = "PersonalDetailsDialog";
 
     constructor(
         private cacheHelper: CacheHelper,
@@ -95,7 +95,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             );
 
             let key = this.cacheHelper.getCacheKey(
-                abp.session.userId.toString()
+                abp.session.userId.toString(), this.ident
             );
             if (this.cacheService.exists(key))
                 this.overviewPanelSetting = this.cacheService.get(key);
@@ -178,7 +178,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         event.stopPropagation();
         this.overviewPanelSetting[section] = event.target.checked;
         this.cacheService.set(this.cacheHelper.getCacheKey(
-            abp.session.userId.toString()
+            abp.session.userId.toString(), this.ident
         ), this.overviewPanelSetting);
     }
 
