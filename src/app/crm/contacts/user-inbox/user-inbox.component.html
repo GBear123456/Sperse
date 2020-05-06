@@ -82,7 +82,7 @@
                         </div>
                     </div>
                 </dx-scroll-view>
-                <div class="attachments" *ngIf="activeMessage?.items?.length">
+                <div class="attachments" *ngIf="activeMessage?.attachments?.length">
                     <div *ngFor="let attachment of activeMessage?.attachments" class="attachment">
                         <a [download]="attachment.name" href="javascript:void(0)" class="name" (click)="openAttachment(attachment)">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
                     </div>

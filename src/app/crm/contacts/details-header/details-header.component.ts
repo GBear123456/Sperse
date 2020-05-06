@@ -407,7 +407,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addOptionsInit() {
         if (this.addContextMenuItems.length) {
-            let cacheKey = this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.constructor.name),
+            let cacheKey = this.cacheHelper.getCacheKey(this.addOptionCacheKey),
                 selectedMenuItem = this.getContextMenuItemByType(
                     this.cacheService.exists(cacheKey) ? this.cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
                 );
@@ -425,7 +425,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             option.selected = true;
             this.addContextComponent.instance.option('selectedItem', option);
             this.cacheService.set(
-                this.cacheHelper.getCacheKey(this.addOptionCacheKey, this.constructor.name),
+                this.cacheHelper.getCacheKey(this.addOptionCacheKey),
                 option.type.toString()
             );
         }

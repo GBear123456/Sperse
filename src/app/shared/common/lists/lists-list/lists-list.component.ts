@@ -25,6 +25,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
+    @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() targetSelector = '[aria-label=\'Lists\']';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
@@ -47,7 +48,6 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     listComponent: any;
 
     tooltipVisible = false;
-    canUpdateAndDelete = this.permission.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
         injector: Injector,
@@ -318,7 +318,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowClick($event) {
-        if (!this.canUpdateAndDelete)
+        if (!this.isManageAllowed())
             return;
 
         let nowDate = new Date();
@@ -370,8 +370,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         this.onSelectionChanged.emit(event);
     }
 
-    checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManage) &&
+    isManageAllowed() {
+        return this.permission.isGranted(this.managePermission) &&
+            this.permission.isGranted(AppPermissions.CRMManageListsAndTags) &&
             (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

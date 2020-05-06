@@ -160,7 +160,7 @@
         </div>
     </dx-toolbar>
     <div *ngIf="similarCustomersAvailable()"
-         class="similar-clients-message" (click)="showSimilarCustomers($event)">
+         class="similar-clients-message" (click)="showSimilarEntities($event)">
         {{ls.l('SimilarRecordsFound')}}
     </div>
     <div class="form-content">
@@ -396,12 +396,11 @@
                                     [acceptCustomValue]="true"
                                     [dataSource]="getCountryStates(address.countryCode) | async"
                                     displayExpr="name"
-                                    valueExpr="code"
                                     name="state"
                                     [placeholder]="ls.l('State')"
                                     width="270px"
                                     [searchEnabled]="true"
-                                    [(value)]="address['stateName']"
+                                    [(value)]="address['state']"
                                     (onValueChanged)="checkAddressControls(i)"
                                     (onCustomItemCreating)="onCustomStateCreate($event, i)">
                                 </dx-select-box>
@@ -412,18 +411,18 @@
                                     [placeholder]="ls.l('Zip')"
                                     width="270px"
                                     [(value)]="address['zip']"
-                                    [valueChangeEvent]="'keyup'"
+                                    valueChangeEvent="keyup"
                                     (onValueChanged)="checkAddressControls(i)">
                                 </dx-text-box>
                                 <dx-select-box
                                     [dataSource]="countries"
                                     displayExpr="name"
-                                    valueExpr="name"
+                                    valueExpr="code"
                                     name="country"
                                     [placeholder]="ls.l('Country')"
                                     width="270px"
                                     [searchEnabled]="true"
-                                    [(value)]="address['country']"
+                                    [(value)]="address['countryCode']"
                                     (onValueChanged)="onCountryChange($event, i)">
                                 </dx-select-box>
                             </div>
@@ -434,12 +433,12 @@
                     </div>
                 </div>
             </dx-validation-group>
-            <div *ngIf="showBankCodeEditor" class="field bank-code">
+            <div *ngIf="showBankCodeField" class="field bank-code">
                 <label>{{ ls.l('BANKCODE') }}</label>
                 <bank-code-letters [(bankCode)]="bankCode"
                                    [allowAdd]="true"
-                                   [closeAfterEdit]="true"
                                    [allowEdit]="true"
+                                   [updateOnServerAfterEdit]="false"
                                    [editDialogPosition]="{ x: 400 }">
                 </bank-code-letters>
             </div>

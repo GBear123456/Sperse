@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, Subject } from '@node_modules/rxjs';
 
 @Injectable()
 export class LifecycleSubjectsService {
-    activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    activate: Subject<boolean> = new Subject<boolean>();
     activate$: Observable<boolean> = this.activate.asObservable();
     deactivate: Subject<null> = new Subject<null>();
     deactivate$: Observable<null> = this.deactivate.asObservable();

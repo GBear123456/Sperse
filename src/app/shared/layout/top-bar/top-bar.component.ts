@@ -120,7 +120,7 @@ export class TopBarComponent implements OnDestroy {
         const MENU_HOME = 'Home';
         let tenant = this.appSessionService.tenant;
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode && configNavigation[0][0] != MENU_HOME
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode && configNavigation[0].text != MENU_HOME
             && (configCode === 'CRM' || configCode === 'Slice')) {
             configNavigation.unshift({
                 text: MENU_HOME,

@@ -62,6 +62,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     private organizationUnits: any;
     private invoiceSettings: InvoiceSettings = new InvoiceSettings();
 
+    private readonly ident = "LeadInformation";
+
     isCGManageAllowed = false;
     isEditAllowed = false;
     startCase = startCase;
@@ -174,14 +176,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     this.notifyService.info(this.ls.l('SavedSuccessfully'))
                 );
             }
-        }, this.constructor.name);
+        }, this.ident);
     }
 
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.data.leadInfo = leadInfo;
             this.updateSourceContactName();
-        }, this.constructor.name);
+        }, this.ident);
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
             this.initToolbarInfo();
@@ -191,7 +193,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
             this.updateSourceContactName();
             this.loadOrganizationUnits();
-        }, this.constructor.name);
+        }, this.ident);
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
         });
@@ -222,7 +224,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                         return organizationUnit.id === (leadInfo.sourceOrganizationUnitId || this.data.leadInfo.sourceOrganizationUnitId);
                     })].filter(Boolean).map(item => item.id) : []
                 });
-            }, this.constructor.name);
+            }, this.ident);
         });
     }
 
@@ -267,10 +269,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     updateValue(value, item) {
         let fieldName = item.name;
+        const initialValue = this.data.leadInfo[fieldName];
         this.data.leadInfo[fieldName] = value;
         this.leadService.updateLeadInfo(
             UpdateLeadInfoInput.fromJS(this.data.leadInfo)
-        ).subscribe();
+        ).subscribe(
+            () => {},
+            () => this.data.leadInfo[fieldName] = initialValue
+        );
     }
 
     getObjectKeys(obj) {
@@ -354,6 +360,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

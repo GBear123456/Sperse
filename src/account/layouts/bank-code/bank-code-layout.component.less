@@ -11,14 +11,60 @@ Login page
     }
 }
 
-::ng-deep body {
-    height: calc(~"100vh - 70px");
-    padding-top: 70px;
-}
-
 ::ng-deep .cdk-global-scrollblock {
     position: static !important;
     width: initial !important;
+}
+
+::ng-deep .login-box {
+
+    * {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+    border: solid 1px #ebecec;
+    background-color: #ffffff;
+    padding: 0;
+    border-radius: 10px;
+    width: 96%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    @media all and (min-width: 768px) {
+        width: 450px;
+        max-width: 100%;
+        margin: auto;
+    }
+
+    @media all and (min-width: 1600px) {
+        width: 580px;
+        margin: auto;
+    }
+
+    .colored-line {
+        display: flex;
+        height: 10px;
+
+        span {
+            width: 25%;
+        }
+
+        .bg-blue {
+            background: #004a84;
+        }
+        .bg-red {
+            background: #d4191f;
+        }
+        .bg-yellow {
+            background: #ffa300;
+        }
+        .bg-green {
+            background: #00692e;
+        }
+    }
 }
 
 .login {
@@ -77,7 +123,6 @@ div.footer {
     .slogan {
         font-size: 45px;
         text-transform: uppercase;
-        font-family: Montserrat, sans-serif;
         font-weight: 500;
         line-height: 51px;
         color: #004a84;
@@ -92,7 +137,7 @@ div.footer {
             }
         }
 
-        @media all and (max-width: 1400px) {
+        @media all and (max-width: 1560px) {
             font-size: 28px;
             line-height: 32px;
 
@@ -105,8 +150,22 @@ div.footer {
         }
     }
 
+    .crack-code {
+        @media all and (max-width: 768px) {
+            padding-top: 55px;
+        }
+    }
+
     .crack-logo {
         padding: 80px 0;
+
+        @media all and (max-width: 1560px) {
+            padding: 30px 0;
+
+            img {
+                max-width: 200px;
+            }
+        }
     }
 
     .crack-code-btn {
@@ -118,9 +177,22 @@ div.footer {
         border-radius: 7px;
         transition: .2s;
         cursor: pointer;
+        display: inline-block;
+
+        @media all and (max-width: 1560px) {
+            padding: 0 25px;
+        }
+
+        span {
+            opacity: 1;
+        }
 
         .text {
             text-align: center;
+
+            @media all and (max-width: 1560px) {
+                padding: 0 10px 0 0;
+            }
 
             span {
                 display: block;
@@ -131,11 +203,19 @@ div.footer {
                 white-space: nowrap;
                 font-weight: 700;
                 line-height: 18px;
+
+                @media all and (max-width: 1560px) {
+                    font-size: 18px;
+                }
             }
 
             .small {
                 font-size: 12px;
                 font-weight: 500;
+
+                @media all and (max-width: 1560px) {
+                    font-size: 11px;
+                }
             }
         }
 
@@ -150,6 +230,7 @@ div.footer {
 
         &:hover {
             background-color: #921a1d;
+            text-decoration: none;
             box-shadow: 0 0 3px rgba(172, 31, 34, 0.5);
         }
     }

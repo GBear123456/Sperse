@@ -69,7 +69,7 @@ export class ODataService {
         return url;
     }
 
-    private getODataFilterString(filter): string {
+    getODataFilterString(filter): string {
         return filter ? buildQuery({ filter }) : '';
     }
 

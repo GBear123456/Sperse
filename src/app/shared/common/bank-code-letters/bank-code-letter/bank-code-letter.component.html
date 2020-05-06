@@ -1,4 +1,5 @@
-<span [class]="letter === letters.Empty ? 'empty' : key + letter"
+<span #spanLetter
+    [class]="letter === letters.Empty ? 'empty' : key + letter"
     [ngStyle]="getStylesByLetter(letter)"
     (click)="click($event)"
     (mouseenter)="toggleTooltip()"
@@ -6,8 +7,7 @@
     {{ letter }}
 </span>
 <dx-tooltip *ngIf="showDescriptionOnHover"
-    [target]="'.' + key + letter"
-    position="bottom"
+    [target]="spanLetter"
     [(visible)]="showTooltip">
     <div *dxTemplate="let data = data of 'content'">
         <img width="600px" height="500px" src="./assets/common/images/bank-code/{{letter}}_SalesTips.jpg">

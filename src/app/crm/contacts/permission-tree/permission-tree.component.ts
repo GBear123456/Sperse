@@ -34,6 +34,7 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
     public sortTreeDesc = false;
     private permissionsData: PermissionTreeEditModel;
     isEditAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersChangePermissionsAndRoles);
+    private readonly ident = "PermissionTree";
     toolbarConfig = [
         {
             location: 'before', items: [
@@ -103,7 +104,7 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
                 if (this.data.userId = userId)
                     this.loadData();
             },
-            this.constructor.name
+            this.ident
         );
         if ((this.data = this.userService['data']).userId)
             this.loadData();
@@ -236,6 +237,6 @@ export class PermissionTreeComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

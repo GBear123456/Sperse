@@ -6,8 +6,8 @@
             <div class="actions clearfix">
                 <span class="title">{{ls.l('Stars')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{ls.l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !starslist.selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!isManageAllowed() || !starslist.selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <dx-list #starslist
@@ -22,7 +22,7 @@
                 (onSelectionChanged)="onSelectionChange($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row" data-id="{{data.id}}">
-                        <div class="star" [ngStyle]="{ 'background': getStarColorByType(data.colorType, true) }"></div>
+                        <div [ngClass]="'star star-' + data.colorType.toLowerCase()"></div>
                         <span>{{ ls.l(data.name) }}</span>
                         <a *ngIf="filterModel" class="dx-link dx-link-filter" [title]="ls.l('Filter')" (click)="applyFilter($event, data)"></a>
                     </div>

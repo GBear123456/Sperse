@@ -32,6 +32,7 @@ export class TagsListComponent implements OnInit {
     @Input() targetSelector = '[aria-label="Tags"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
+    @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() set selectedItems(value) {
         this.selectedTags = value;
     }
@@ -51,8 +52,6 @@ export class TagsListComponent implements OnInit {
     addNewTimeout: any;
     listComponent: any;
     tooltipVisible = false;
-
-    canUpdateAndDelete = this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
         private filterService: FiltersService,
@@ -74,7 +73,7 @@ export class TagsListComponent implements OnInit {
         }
     }
 
-    apply(isRemove: boolean = false, selectedKeys = undefined) {
+    apply(isRemove: boolean = false, selectedKeys?) {
         if (this.listComponent) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
@@ -328,7 +327,7 @@ export class TagsListComponent implements OnInit {
     }
 
     onRowClick($event) {
-        if (!this.canUpdateAndDelete)
+        if (!this.isManageAllowed())
             return;
 
         let nowDate = new Date();
@@ -376,8 +375,9 @@ export class TagsListComponent implements OnInit {
         return 0;
     }
 
-    checkPermissions() {
-        return this.permissionChecker.isGranted(AppPermissions.CRMCustomersManage) &&
+    isManageAllowed() {
+        return this.permissionChecker.isGranted(this.managePermission) &&
+            this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags) &&
             (!this.bulkUpdateMode || this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates));
     }
 

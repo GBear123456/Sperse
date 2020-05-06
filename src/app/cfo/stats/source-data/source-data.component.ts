@@ -1,31 +1,30 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 /** Third party imports */
 import * as moment from 'moment-timezone';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { BankAccountDailyStatDto } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'source-data',
     templateUrl: './source-data.component.html',
     styleUrls: ['./source-data.component.less'],
 })
-export class SourceDataComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class SourceDataComponent implements OnInit {
     @Input() historicalSourceData: Array<BankAccountDailyStatDto>;
     @Input() forecastSourceData: Array<BankAccountDailyStatDto>;
     @Output('onClose') closingSourceDataEmitter: EventEmitter<any> = new EventEmitter();
-
+    capitalize = capitalize;
     amountOfItemsOnPage: number;
     constructor(
-        injector: Injector,
         private cfoPreferencesService: CfoPreferencesService,
-    ) {
-        super(injector);
-    }
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
         this.amountOfItemsOnPage = (window.innerHeight - 275) / 27;

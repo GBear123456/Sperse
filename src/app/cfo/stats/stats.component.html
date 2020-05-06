@@ -11,7 +11,7 @@
 </app-headline>
 <app-toolbar [config]="toolbarConfig"
              [disableToolbarUpdateAfterFitlersFixing]="true"
-             [hidden]="appService.toolbarIsHidden$ | async">
+             [hidden]="toolbarIsHidden">
 </app-toolbar>
 <div [hidden]="!statsData || !statsData.length" class="main-wrapper wo-animation">
     <div class="mainStatsView">

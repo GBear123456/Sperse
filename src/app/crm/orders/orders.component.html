@@ -4,9 +4,12 @@
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showReloadButton]="ui.showReload"
+                  [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
+                  [showToggleFullScreenButton]="true"
                   (onToggleCompactView)="toggleContactView()"
                   (onToggleToolbar)="toggleToolbar()"
-                  (onReload)="invalidate()">
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="orderTypes"
                         [totalCount]="totalCount"
                         [(value)]="selectedOrderType"
@@ -38,6 +41,7 @@
                             <dx-data-grid #ordersGrid
                                           class="main-component-view"
                                           accesskey="narrowHeaderPanel"
+                                          [renderAsync]="true"
                                           [allowColumnReordering]="true"
                                           [columnAutoWidth]="true"
                                           [allowColumnResizing]="true"
@@ -57,7 +61,7 @@
                                 </dxo-selection>
                                 <dxo-editing mode="popup"
                                             [texts]="{editRow: ''}"
-                                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }" 
+                                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                             [allowUpdating]="true">
                                 </dxo-editing>
                                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
@@ -66,7 +70,7 @@
                                             [showInColumnChooser]="false"
                                             [allowExporting]="false">
                                 </dxi-column>
-                                <dxi-column dataField="Id" [caption]="l('Id')" [visible]="false" sortOrder="asc"></dxi-column>
+                                <dxi-column dataField="Id" [caption]="l('Id')" [visible]="false"></dxi-column>
                                 <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -74,9 +78,10 @@
                                     <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                                 </div>
                                 <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column dataField="Email" [caption]="l('Contact.Email')"></dxi-column>
                                 <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-                                <dxi-column dataField="Email" [caption]="l('Contact.Email')" [visible]="false"></dxi-column>
                                 <dxi-column dataField="Phone"
+                                            [renderAsync]="true"
                                             [caption]="l('Contact.Phone')"
                                             [visible]="false" cellTemplate="phoneCell"
                                             [editorOptions]="{
@@ -92,7 +97,10 @@
                                 <dxi-column dataField="TotalNumber" [caption]="l('TotalNumber')" [visible]="false"></dxi-column>
                                 <dxi-column dataField="NoteCount" [caption]="l('NoteCount')" [visible]="false"></dxi-column>
                                 <dxi-column dataField="DocumentCount" [caption]="l('DocumentCount')" [visible]="false"></dxi-column>
-                                <dxi-column dataField="OrderDate" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
+                                <dxi-column dataField="OrderDate" [caption]="l('Created')" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
+                                <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>
+                                <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
                                 <dxo-sorting mode="multiple"></dxo-sorting>
                                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                                 <dxo-paging [pageSize]="20"></dxo-paging>
@@ -187,7 +195,9 @@
                     <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
                     <dxi-column dataField="Fee" [caption]="l('Fee')" cellTemplate="amountTemplate" alignment="left"></dxi-column>
                     <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column dataField="OrderAmount" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>

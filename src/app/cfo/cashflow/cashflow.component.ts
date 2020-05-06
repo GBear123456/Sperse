@@ -919,7 +919,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         ).subscribe((dateRange: CalendarValuesModel) => {
             this.setDateFilter(dateRange);
             this.getCellOptionsFromCell.cache = {};
-            this.filtersService.change(this.dateFilter);
+            this.filtersService.change([this.dateFilter]);
         });
     }
 
@@ -1005,13 +1005,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     initFiltering() {
-        this.filtersService.apply((filter) => {
-            if (filter && filter.items.element) {
-                if (filter.caption == 'BusinessEntity')
-                    this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);
-                this.bankAccountsService.applyFilter();
-            }
-            this.updateRequestFilter(filter);
+        this.filtersService.apply((filters: FilterModel[]) => {
+            filters.forEach((filter: FilterModel) => {
+                if (filter && filter.items.element) {
+                    if (filter.caption == 'BusinessEntity')
+                        this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);
+                    this.bankAccountsService.applyFilter();
+                }
+                this.updateRequestFilter(filter);
+            });
             this.closeTransactionsDetail();
             this.filteredLoad = true;
             this.loadGridDataSource();
@@ -1175,6 +1177,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'print',
+                        visible: false,
                         options: {
                             width: 58
                         }
@@ -4810,7 +4813,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.pivotGrid.instance.repaint();
             setTimeout(() => this.toggleGridOpacity());
         }
-        this.lifecycleService.activate.next(true);
+        this.lifecycleService.activate.next();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();

@@ -39,9 +39,7 @@ export class ImportUsersStepComponent implements DoCheck, OnInit {
     @Input() moduleType: ModuleType;
     importUsers: ImportUserData[] = [];
     importValidators: any[] = [];
-    roles$: Observable<RoleListDto[]> = this.roleService.getRoles(undefined, this.moduleType).pipe(
-        pluck('items')
-    );
+    roles$: Observable<RoleListDto[]>;
     validationResult: boolean;
     emailRegEx = AppConsts.regexPatterns.email;
     skipUserGroupValidation = false;
@@ -58,6 +56,9 @@ export class ImportUsersStepComponent implements DoCheck, OnInit {
 
     ngOnInit() {
         this.setImportUsers();
+        this.roles$ = this.roleService.getRoles(undefined, this.moduleType).pipe(
+            pluck('items')
+        );
     }
 
     ngDoCheck() {

@@ -1,16 +1,21 @@
 /** Core imports */
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
-
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { Observable, forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { filter, finalize, pluck, skip, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-
 /** Application imports */
-import { CrmStore, PipelinesStoreSelectors, SubscriptionsStoreActions, SubscriptionsStoreSelectors } from '@app/crm/store';
+import {
+    CrmStore,
+    OrganizationUnitsStoreActions,
+    OrganizationUnitsStoreSelectors,
+    PipelinesStoreSelectors,
+    SubscriptionsStoreActions,
+    SubscriptionsStoreSelectors
+} from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -40,7 +45,6 @@ import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 import { AppSessionService } from '../../../shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '../../shared/common/slice/pivot-grid/pivot-grid.component';
-import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 
@@ -60,7 +64,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     pipelineDataSource: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
     stages = [];
-
     selectedOrderKeys = [];
 
     private _selectedOrders: any;
@@ -393,6 +396,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.selectedOrderType === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
 
+    get showToggleColumnSelectorButton() {
+        return (this.selectedOrderType === OrderType.Order && this.ordersDataLayoutType === DataLayoutType.DataGrid)
+        || this.selectedOrderType === OrderType.Subscription;
+    }
+
     private handleFiltersPining() {
         this.filtersService.filterFixed$.pipe(
             takeUntil(this.destroy$),
@@ -528,50 +536,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 location: 'after',
                 locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [
-                                {
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                },
-                                {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                },
-                                {
-                                    action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet'
-                                },
-                                {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                },
-                                {
-                                    type: 'downloadOptions',
-                                    visible: this.ordersDataLayoutType === DataLayoutType.DataGrid
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: 'columnChooser',
-                        action: () => DataGridService.showColumnChooser(this.dataGrid),
-                        disabled: this.showOrdersPipeline
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     // {
@@ -682,78 +646,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         }
                     }
                 ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [
-                                {
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                },
-                                {
-                                    action: (options) => {
-
-                                        if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
-                                            this.pivotGridComponent.dataGrid.instance.option(
-                                                'export.fileName',
-                                                this.exportService.getFileName(null, 'Subscriptions_PivotGrid')
-                                            );
-                                            this.pivotGridComponent.dataGrid.instance.exportToExcel();
-                                        } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
-                                            this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
-                                            this.exportToXLS(options);
-                                        }
-                                    },
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                },
-                                {
-                                    action: (options) => {
-                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
-                                        this.exportToCSV(options);
-                                    },
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet',
-                                    visible: this.subscriptionsDataLayoutType === DataLayoutType.DataGrid
-                                },
-                                {
-                                    action: (options) => {
-                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
-                                        this.exportToGoogleSheet(options);
-                                    },
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet',
-                                    visible: this.subscriptionsDataLayoutType === DataLayoutType.DataGrid
-                                },
-                                {
-                                    type: 'downloadOptions',
-                                    visible: this.subscriptionsDataLayoutType === DataLayoutType.DataGrid
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: 'columnChooser',
-                        action: () => {
-                            if (this.selectedOrderType === OrderType.Subscription
-                                && this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
-                                this.pivotGridComponent.toggleFieldPanel();
-                            } else {
-                                DataGridService.showColumnChooser(this.dataGrid);
-                            }
-                        }
-                    }
-                ]
             }
         ];
+    }
+
+    toggleColumnChooser() {
+        if (this.selectedOrderType === OrderType.Subscription
+            && this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
+            this.pivotGridComponent.toggleFieldPanel();
+        } else {
+            DataGridService.showColumnChooser(this.dataGrid);
+        }
     }
 
     toggleToolbar() {

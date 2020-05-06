@@ -122,10 +122,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                             }
                         ]
                     }
-                },
-                {
-                    name: 'columnChooser',
-                    action: () => DataGridService.showColumnChooser(this.dataGrid)
                 }
             ]
         }
@@ -278,6 +274,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 : this.statsDataGrid;
     }
 
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
+    }
+
     toggleContactView() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
@@ -347,7 +347,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.isDataLoaded = false;
             this.changeDetectorRef.detectChanges();
             this.cacheService.set(
-                this.cacheHelper.getCacheKey(this.REPORT_TYPE_CACHE_KEY, this.constructor.name),
+                this.cacheHelper.getCacheKey(this.REPORT_TYPE_CACHE_KEY),
                 event.value
             );
              setTimeout(() => {

@@ -6,10 +6,12 @@
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
+                  [showToggleColumnSelectorButton]="this.showDataGrid || this.showPivotGrid"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
-                  (onReload)="refresh()">
+                  (onReload)="refresh()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <span *ngIf="totalCount !== undefined" class="total-count"> ({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
@@ -48,6 +50,7 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  [renderAsync]="true"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
@@ -56,8 +59,8 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
+                                  [twoWayBindingEnabled]="false"
                                   [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
-                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
@@ -95,7 +98,7 @@
                         <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular" [renderAsync]="true"></dxi-column>
                         <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
@@ -104,6 +107,7 @@
                             <dxi-column dataField="BankCode"
                                         cellTemplate="bankCodeCell"
                                         [caption]="l('BankCode')"
+                                        [renderAsync]="true"
                                         [visible]="tenantHasBankCodeFeature"
                                         [showInColumnChooser]="tenantHasBankCodeFeature">
                             </dxi-column>
@@ -125,21 +129,22 @@
                                     name="LinkToCFO"
                                     cellTemplate="linkToCFOTemplate"
                                     [width]="80"
+                                    [renderAsync]="true"
                                     [showInColumnChooser]="false"
                                     [allowExporting]="false"
                                     [allowEditing]="false">
                         </dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                            <div *ngIf="isCFOClientAccessAllowed">
-                                <ng-container *ngIf="isCfoAvailable(data.data.UserId) | async; else verify">
-                                <span>
-                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
-                                </span>
+                            <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription.closed">
+                                <ng-container *ngIf="crmService.isCfoAvailable(data.data.UserId) | async; else verify">
+                                    <span>
+                                        <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
+                                    </span>
                                 </ng-container>
                                 <ng-template #verify>
-                                <span *ngIf="canSendVerificationRequest && data.data.StatusId === contactStatus.Active">
-                                    <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
-                                </span>
+                                    <span *ngIf="canSendVerificationRequest && data.data.StatusId === contactStatus.Active">
+                                        <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                    </span>
                                 </ng-template>
                             </div>
                         </div>
@@ -179,7 +184,8 @@
                        [contactGroupText]="l('Customers').toLowerCase()"
                        [dataIsLoading]="mapDataIsLoading"
                        areaClickLink="app/crm/clients"
-                       [data]="mapData$ | async">
+                       [data]="mapData$ | async"
+                       (onMapItemClick)="mapItemClick($event)">
             </slice-map>
         </div>
     </div>

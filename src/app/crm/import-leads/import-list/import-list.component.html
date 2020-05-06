@@ -5,7 +5,9 @@
                       icon="docs"
                       [buttons]="headlineButtons"
                       [showReloadButton]="ui.showReload"
-                      (onReload)="invalidate()">
+                      [showToggleColumnSelectorButton]="true"
+                      (onReload)="invalidate()"
+                      (onToggleColumnSelector)="toggleColumnChooser()">
             <import-progress-bar></import-progress-bar>
         </app-headline>
         <app-toolbar [config]="toolbarConfig"></app-toolbar>

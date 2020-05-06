@@ -323,11 +323,14 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                     { type: 'downloadOptions' }
                                 ]
                             }
-                        },
-                        { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
+                        }
                     ]
                 }
             ];
+    }
+
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
     toggleRating() {

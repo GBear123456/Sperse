@@ -23,6 +23,7 @@ export class RatingComponent {
     @Input() selectedKeys: any;
     @Input() ratingValue: number;
     @Input() targetSelector = '[aria-label="Rating"]';
+    @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
 
@@ -68,8 +69,8 @@ export class RatingComponent {
             });
     }
 
-    checkPermissions() {
-        return this.permission.isGranted(AppPermissions.CRMCustomersManage) &&
+    isManageAllowed() {
+        return this.permission.isGranted(this.managePermission) &&
             (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

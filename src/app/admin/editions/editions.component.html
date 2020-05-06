@@ -5,10 +5,12 @@
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
+                  [showToggleColumnSelectorButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactRowHeight()"
                   (onToggleFullScreen)="toggleFullScreen()"
-                  (onReload)="invalidate()">
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <action-menu [items]="actionMenuItems"
@@ -23,6 +25,7 @@
                 <div id="productsGrid">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="main-component-view"
+                                  [renderAsync]="true"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"

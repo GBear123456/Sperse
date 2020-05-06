@@ -229,7 +229,7 @@ export class UserAssignmentComponent implements OnDestroy {
             event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
 
-        this.filtersService.change(this.filterModel);
+        this.filtersService.change([this.filterModel]);
     }
 
     onContentReady() {

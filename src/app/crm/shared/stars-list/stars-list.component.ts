@@ -28,6 +28,7 @@ export class StarsListComponent implements OnInit {
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
+    @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
     }
@@ -140,7 +141,7 @@ export class StarsListComponent implements OnInit {
             event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
 
-        this.filtersService.change(this.filterModel);
+        this.filtersService.change([this.filterModel]);
     }
 
     onContentReady($event) {
@@ -162,8 +163,8 @@ export class StarsListComponent implements OnInit {
         this.onSelectionChanged.emit(event);
     }
 
-    checkPermissions() {
-        return this.permissionCheckerService.isGranted(AppPermissions.CRMCustomersManage) &&
+    isManageAllowed() {
+        return this.permissionCheckerService.isGranted(this.managePermission) &&
             (!this.bulkUpdateMode || this.permissionCheckerService.isGranted(AppPermissions.CRMBulkUpdates));
     }
 }

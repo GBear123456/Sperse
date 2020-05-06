@@ -121,7 +121,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
             modelItems.from.value = modelItems.to.value = filterValue;
             this.filtered = true;
         }
-        this.filtersService.change(this.filterModel);
+        this.filtersService.change([this.filterModel]);
     }
 
     onInitialized($event) {

@@ -20,6 +20,8 @@ import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { DateHelper } from '../../shared/helpers/DateHelper';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class CrmService {
@@ -47,6 +49,7 @@ export class CrmService {
         map((contentHeight) => contentHeight - 88)
     );
     private usersIdsWithInstance: { [id: string]: boolean } = {};
+    showSliceButtons: boolean = environment.releaseStage !== 'production';
 
     constructor(
         private filtersService: FiltersService,
@@ -209,13 +212,14 @@ export class CrmService {
         }
     }
 
-    getUsersWithInstances(usersIds: number[]): Subscription {
-        return this.instanceServiceProxy.getUsersWithInstance(usersIds).subscribe((usersIdsWithInstance: number[]) => {
+    getUsersWithInstances(usersIds: number[]): Observable<number[]> {
+        return this.instanceServiceProxy.getUsersWithInstance(usersIds).pipe(map((usersIdsWithInstance: number[]) => {
             this.usersIdsWithInstance = {};
             usersIds.forEach((userId) => {
                 this.usersIdsWithInstance[userId] = usersIdsWithInstance.indexOf(userId) >= 0;
             });
-        });
+            return usersIdsWithInstance;
+        }));
     }
 
     isCfoAvailable(userId: number): Observable<boolean> {
@@ -235,16 +239,35 @@ export class CrmService {
     }
 
     handleCountryStateParams(queryParams$: Observable<Params>, countryStatesFilter: FilterModel) {
-        queryParams$.subscribe((params: Params) => {
+        queryParams$.subscribe((params: Params) => this.updateCountryStateFilter(params, countryStatesFilter));
+    }
+
+    updateCountryStateFilter(params: Params, countryStatesFilter: FilterModel): boolean {
+        let filterChanged = false;
+        if (params.countryId) {
             if (params.countryId && params.stateId) {
                 countryStatesFilter.items.countryStates.value = [ params.countryId + ':' + params.stateId ];
             } else if (params.countryId) {
                 countryStatesFilter.items.countryStates.value = [ params.countryId ];
             }
-            if (countryStatesFilter.items.countryStates.value) {
-                this.filtersService.change(countryStatesFilter);
-            }
-        });
+            countryStatesFilter.updateCaptions();
+            filterChanged = true;
+        }
+        return filterChanged;
     }
 
+    updateDateFilter(params: Params, dateFilter: FilterModel): boolean {
+        let filterChanged = false;
+        if (params.startDate || params.endDate) {
+            if (params.startDate) {
+                dateFilter.items.from.value = DateHelper.addTimezoneOffset(new Date(params.startDate), true);
+            }
+            if (params.endDate) {
+                dateFilter.items.to.value = DateHelper.addTimezoneOffset(new Date(params.endDate), true);
+            }
+            dateFilter.updateCaptions();
+            filterChanged = true;
+        }
+        return filterChanged;
+    }
 }

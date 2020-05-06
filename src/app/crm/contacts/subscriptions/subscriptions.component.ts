@@ -54,6 +54,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     manageAllowed = false;
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
+    private readonly ident = "Subscriptions";
 
     constructor(
         private invoicesService: InvoicesService,
@@ -71,7 +72,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             if (area === 'subscriptions') {
                 this.refreshData(true);
             }
-        }, this.constructor.name);
+        }, this.ident);
         invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
     }
 
@@ -81,7 +82,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 && this.contactsService.checkCGPermission(contactInfo.groupId);
             this.data = this.contactService['data'];
             this.refreshData();
-        }, this.constructor.name);
+        }, this.ident);
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {
@@ -203,6 +204,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

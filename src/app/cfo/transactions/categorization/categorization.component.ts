@@ -81,7 +81,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input('transactionsFilter')
     set transactionsFilter(value: any[]) {
         this._transactionsFilterQuery = value;
-        this.refreshTransactionsCountDataSource();
+        this.loadTransactionsCountDataSource();
     }
     private _transactionsFilterQuery: any[];
     private _filteredRowsData: Category[];
@@ -101,6 +101,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     private _selectedKeys = [];
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
+    private readonly CACHE_KEY = this.cacheHelper.getCacheKey('categorization');
     settings = {
         showCID: true, /* Category ID */
         showTC: false, /* Transaction Count */
@@ -137,11 +138,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     ngOnInit() {
         this.initSettings();
-        const loadTransactionsTotal = this.settings.showTC || !this.settings.showEmpty;
-        if (loadTransactionsTotal) {
-            this.initTransactionsTotalCount();
-        }
-        this.refreshCategories(loadTransactionsTotal);
+        this.refreshCategories(true, this.settings.showTC || !this.settings.showEmpty);
         this.showAddEntity = this.showAddEntity && this.isInstanceAdmin;
         this.initToolbarConfig();
     }
@@ -285,14 +282,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                                     action: (event) => {
                                         if (event.event.target.tagName == 'INPUT') {
                                             this.settings.showEmpty = !this.settings.showEmpty;
-                                            if (!this.transactionsCountDataSource && !this.settings.showEmpty) {
-                                                this.initTransactionsTotalCount();
-                                                this.refreshTransactionsCountDataSource();
-                                            }
                                             if (this.showAddEntity) {
                                                 this.initToolbarConfig();
                                             }
-                                            this.refreshCategories();
+                                            this.refreshCategories(
+                                                false,
+                                                !this.transactionsCountDataSource && !this.settings.showEmpty
+                                            );
                                             this.storeSettings();
                                         }
                                     }
@@ -326,8 +322,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                                             event.itemElement.previousElementSibling.querySelector('input').checked = false;
                                             this.settings.showTC = !this.settings.showTC;
                                             if (!this.transactionsCountDataSource && this.settings.showTC) {
-                                                this.initTransactionsTotalCount();
-                                                this.refreshTransactionsCountDataSource();
+                                                this.loadTransactionsCountDataSource();
                                             }
                                             this.changeDetectionRef.detectChanges();
                                             this.storeSettings();
@@ -409,7 +404,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initSettings() {
-        let settings: any = localStorage.getItem(this.constructor.name);
+        let settings: any = localStorage.getItem(this.CACHE_KEY);
         if (settings)
             try {
                 settings = JSON.parse(settings);
@@ -421,7 +416,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     storeSettings() {
-        localStorage.setItem(this.constructor.name, JSON.stringify(this.settings));
+        localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.settings));
     }
 
     processExpandTree(expandFirstLevel, expandSecondLevel) {
@@ -722,7 +717,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             }
 
             if (refreshTransactionsCount) {
-                this.refreshTransactionsCountDataSource();
+                this.loadTransactionsCountDataSource();
             }
             setTimeout(() => this.finishLoading());
             if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
@@ -742,14 +737,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         this.categories.forEach((item: Category) => {
             item.transactionsCount = items[0][item.key];
-            if (isNaN(item.key))
+            if (isNaN(<number>item.key))
                 accountingTypes[item.key] = item;
-            else if (+item.parent != item.parent)
+            else if (parseInt(<string>item.parent) != item.parent)
                 parentCategories[item.key] = item;
         });
 
         this.categories.forEach((category: Category) => {
-            if (+category.parent == category.parent && category.transactionsCount) {
+            if (parseInt(<string>category.parent) == category.parent && category.transactionsCount) {
                 let parentCategory = parentCategories[category.parent];
                 if (parentCategory && category.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount
@@ -807,8 +802,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         return categories;
     }
 
-    refreshTransactionsCountDataSource() {
-        if (this.transactionsCountDataSource) {
+    loadTransactionsCountDataSource() {
+        const loadTransactionsTotal = this.settings.showTC || !this.settings.showEmpty;
+        if (loadTransactionsTotal) {
+            if (!this.transactionsCountDataSource)
+                this.initTransactionsTotalCount();
             this.transactionsCountDataSource.store()['_url'] = this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
             this.transactionsCountDataSource.load();
         }
@@ -832,7 +830,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 this.addActionButton('filter', $event.cellElement, () => {
                     const category: Category = $event.data;
                     let wrapper = $event.cellElement.parentElement;
-                    if (!this.clearSelection(wrapper, category.key))
+                    if (!this.clearSelection(wrapper, <number>category.key))
                         this.filteredRowsData.push(category);
                     this.onFilterSelected.emit(this.filteredRowsData);
                 });
