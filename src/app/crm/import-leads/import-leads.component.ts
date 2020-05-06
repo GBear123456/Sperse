@@ -457,31 +457,36 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         return (value || !isNaN(value)) && (dataSource[fieldName] = value);
     }
 
+    private setFieldsIfDefined(list, dataSource) {
+        _.mapObject(list, (val, key) => {
+            this.setFieldIfDefined(val, key, dataSource);
+        });
+    }
+
     private parseFullNameIntoDataSource(fullName, dataSource) {
         let parsed = this.nameParser.getParsed(fullName);
 
-        this.setFieldIfDefined(parsed.title, this.NAME_PREFIX_FIELD, dataSource);
-        this.setFieldIfDefined(parsed.first, this.FIRST_NAME_FIELD, dataSource);
-        this.setFieldIfDefined(parsed.middle, this.MIDDLE_NAME_FIELD, dataSource);
-        this.setFieldIfDefined(parsed.last, this.LAST_NAME_FIELD, dataSource);
-        this.setFieldIfDefined(parsed.nick, this.NICK_NAME_FIELD, dataSource);
-        this.setFieldIfDefined(parsed.suffix, this.NAME_SUFFIX_FIELD, dataSource);
+        this.setFieldsIfDefined({
+            [this.NAME_PREFIX_FIELD]: parsed.title,
+            [this.FIRST_NAME_FIELD]: parsed.first,
+            [this.MIDDLE_NAME_FIELD]: parsed.middle,
+            [this.LAST_NAME_FIELD]: parsed.last,
+            [this.NICK_NAME_FIELD]: parsed.nick,
+            [this.NAME_SUFFIX_FIELD]: parsed.suffix
+        }, dataSource);
 
         return true;
     }
 
     private parseFullAddressIntoDataSource(field, fullAddress, dataSource) {
         let parsed = addressParser.parseLocation(fullAddress);
-        if (parsed) {
-            this.setFieldIfDefined(parsed.state, field.mappedField +
-                (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateId'), dataSource);
-            this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
-            const zipCode = parsed.plus4 ? parsed.zip + '-' + parsed.plus4 : parsed.zip;
-            this.setFieldIfDefined(zipCode, field.mappedField + '_zip', dataSource);
-            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street,
-                parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
-                    field.mappedField + '_street', dataSource);
-        }
+        if (parsed)
+            this.setFieldsIfDefined({
+                [field.mappedField + (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateId')]: parsed.state,
+                [field.mappedField + '_city']: parsed.city,
+                [field.mappedField + '_zip']: parsed.plus4 ? parsed.zip + '-' + parsed.plus4 : parsed.zip,
+                [field.mappedField + '_street']: [parsed.number, parsed.prefix, parsed.street, parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' ')
+            }, dataSource);
         return true;
     }
 
