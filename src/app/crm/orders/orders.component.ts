@@ -209,7 +209,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     ];
     selectedOrderType = OrderType.Order;
-    private readonly ORDER_TYPE_CACHE_KEY = 'ORDER_TYPE';
     ordersDataSource = {
         uri: this.ordersDataSourceURI,
         requireTotalCount: true,
@@ -948,7 +947,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (event.previousValue != event.value) {
             this.totalCount = undefined;
             this.searchValue = '';
-            this.cacheService.set(this.getCacheKey(this.ORDER_TYPE_CACHE_KEY), event.value);
             this.filterChanged = true;
             this.initFilterConfig(true);
             setTimeout(() => {

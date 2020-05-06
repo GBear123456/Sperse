@@ -55,9 +55,11 @@ export class CreateActivityDialogComponent implements OnInit {
     @ViewChild('startDateRef', { static: false }) startDateComponent: DxDateBoxComponent;
     @ViewChild('endDateRef', { static: false }) endDateComponent: DxDateBoxComponent;
 
+    private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
+    private readonly cacheKey = this.cacheHelper.getCacheKey(
+        this.SAVE_OPTION_CACHE_KEY, 'CreateActivityDialog');
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private readonly SAVE_OPTION_DEFAULT = 1;
-    private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private lookupTimeout: any;
     private latestSearchPhrase = '';
     private listFilterTimeout: any;
@@ -310,10 +312,9 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     saveOptionsInit() {
-        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
-            selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this.cacheService.exists(cacheKey))
-            selectedIndex = this.cacheService.get(cacheKey);
+        let selectedIndex = this.SAVE_OPTION_DEFAULT;
+        if (this.cacheService.exists(this.cacheKey))
+            selectedIndex = this.cacheService.get(this.cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
         this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
         this.changeDetectorRef.detectChanges();
@@ -321,7 +322,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        this.cacheService.set(this.cacheKey,
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
         this.changeDetectorRef.detectChanges();
     }

@@ -15,7 +15,7 @@ export class LeftMenuService {
     private collapsed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     collapsed$: Observable<boolean> = this.collapsed.asObservable();
     private readonly CACHE_KEY_COLLAPSED = 'Collapsed';
-
+    private readonly CACHE_PREFIX = 'LeftMenu';
     constructor(
         private appService: AppService,
         private cfoService: CFOService,
@@ -33,7 +33,7 @@ export class LeftMenuService {
             this.appService.getModule(),
             this.cfoService.instanceId ||
             this.cfoService.instanceType
-        ].join('_'));
+        ].join('_'), this.CACHE_PREFIX);
     }
 
     toggle() {

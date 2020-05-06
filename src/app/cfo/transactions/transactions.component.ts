@@ -126,6 +126,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private readonly dataSourceURI = 'Transaction';
     private readonly countDataSourceURI = 'Transaction/$count';
     private readonly totalDataSourceURI = 'TransactionTotal';
+    private readonly cacheKey = this.getCacheKey('dataGridState', this.dataSourceURI);
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
@@ -1226,15 +1227,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGridStateTimeout = setTimeout(() => {
             instance = instance || this.dataGrid && this.dataGrid.instance;
             if (instance)
-                this.cacheService.set(this.getCacheKey('dataGridState'), instance.state());
+                this.cacheService.set(this.cacheKey, instance.state());
         }, 500);
     }
 
     applyGridState(instance) {
         instance = instance || this.dataGrid && this.dataGrid.instance;
         if (instance) {
-            let state = this.cacheService.get(
-                this.getCacheKey('dataGridState'));
+            let state = this.cacheService.get(this.cacheKey);
             if (state) {
                 instance.state(state);
                 state.columns.forEach((column) =>
