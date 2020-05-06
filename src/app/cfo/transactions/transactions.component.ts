@@ -792,7 +792,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             );
         }
-        e.toolbarOptions.visible = this.showDataGridToolbar;
     }
 
     processTotalValuesInternal(totals, startingBalanceTotal = 0) {

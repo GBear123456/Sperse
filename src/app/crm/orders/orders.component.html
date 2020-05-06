@@ -197,7 +197,7 @@
                     <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="OrderAmount" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
+                    <dxi-column dataField="EntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>

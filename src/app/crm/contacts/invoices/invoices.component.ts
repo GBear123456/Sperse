@@ -64,7 +64,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
 
-    private readonly ident = "Invoices";
+    private readonly ident = 'Invoices';
 
     contactId: number;
     stages$ = this.pipelineService.getPipelineDefinitionObservable(

@@ -10,7 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class LoginAttempsComponent implements OnInit, OnDestroy {
     userLoginAttempts: UserLoginAttemptDto[];
-    private readonly ident = "LoginAttemps";
+    private readonly ident = 'LoginAttemps';
 
     constructor(
         private userService: UserServiceProxy,
