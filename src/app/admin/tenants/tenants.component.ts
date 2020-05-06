@@ -175,7 +175,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             this.searchValue = this.tenantName = this.tenantNameFilter.items.name.value = tenantName;
             this.tenantNameFilter.updateCaptions();
             this.initFilterConfig();
-            this.filtersService.change(this.tenantNameFilter);
+            this.filtersService.change([this.tenantNameFilter]);
         });
     }
 
@@ -257,17 +257,14 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                             }, { type: 'downloadOptions' }]
                         }
                     },
-                    { name: 'print', action: Function() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'columnChooser', action: () => DataGridService.showColumnChooser(this.dataGrid) }
+                    { name: 'print', action: Function(), visible: false }
                 ]
             }
         ];
+    }
+
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
     toggleCompactView() {
@@ -311,16 +308,18 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
             this.initToolbarConfig();
         }
 
-        this.filtersService.apply((filter) => {
+        this.filtersService.apply((filters: FilterModel[]) => {
             this.initToolbarConfig();
 
-            if (filter.field == 'name')
-                this.tenantName = filter.items.name.value;
-            else if (filter.field == 'creationTime') {
-                this.creationDateStart = filter.items.from.value;
-                this.creationDateEnd = filter.items.to.value;
-            } else if (filter.field == 'productId')
-                this.productId = filter.items.element.value;
+            filters.forEach((filter: FilterModel) => {
+                if (filter.field == 'name')
+                    this.tenantName = filter.items.name.value;
+                else if (filter.field == 'creationTime') {
+                    this.creationDateStart = filter.items.from.value;
+                    this.creationDateEnd = filter.items.to.value;
+                } else if (filter.field == 'productId')
+                    this.productId = filter.items.element.value;
+            });
 
             this.dataGrid.instance.refresh();
         });

@@ -143,7 +143,7 @@ export class StaticListComponent {
             this.filterModel.items.element.value = [data.id];
             event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
-        this.filtersService.change(this.filterModel);
+        this.filtersService.change([this.filterModel]);
     }
 
     onContentReady() {

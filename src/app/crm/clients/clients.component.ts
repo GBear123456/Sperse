@@ -382,7 +382,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
-    filterChanged$: Observable<FilterModel> = this.filtersService.filterChanged$.pipe(
+    filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
@@ -462,9 +462,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private itemDetailsService: ItemDetailsService,
         private impersonationService: ImpersonationService,
         private sessionService: AppSessionService,
-        private crmService: CrmService,
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
+        public crmService: CrmService,
         public dialog: MatDialog,
         public appService: AppService,
         public contactProxy: ContactServiceProxy,
@@ -497,7 +497,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 onLoaded: (records) => {
                     let userIds = this.getUserIds(records);
                     if (this.appService.isCfoLinkOrVerifyEnabled && userIds.length)
-                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds);
+                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                            this.changeDetectorRef.markForCheck();
+                        });
                 }
             }
         });
@@ -917,7 +919,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -925,7 +927,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -933,7 +935,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -941,7 +943,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client),
+                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -1022,24 +1024,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             ]
                         }
                     },
-                    { name: 'print', action: Function() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'columnChooser',
-                        disabled: !(this.showDataGrid || this.showPivotGrid),
-                        action: () => {
-                            if (this.showDataGrid) {
-                                DataGridService.showColumnChooser(this.dataGrid);
-                            } else if (this.showPivotGrid) {
-                                this.pivotGridComponent.toggleFieldPanel();
-                            }
-                        }
-                    }
+                    { name: 'print', action: Function(), visible: false }
                 ]
             },
             {
@@ -1049,6 +1034,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 items: [
                     {
                         name: 'dataGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.DataGrid),
                         options: {
                             checkPressed: () => this.showDataGrid
@@ -1056,6 +1042,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'pivotGrid',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
                         options: {
                             checkPressed: () => this.showPivotGrid
@@ -1063,6 +1050,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'chart',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Chart),
                         options: {
                             checkPressed: () => this.showChart
@@ -1070,6 +1058,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'map',
+                        visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Map),
                         options: {
                             checkPressed: () => this.showMap
@@ -1079,6 +1068,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ];
        return this.toolbarConfig;
+    }
+
+    toggleColumnChooser() {
+        if (this.showDataGrid) {
+            DataGridService.showColumnChooser(this.dataGrid);
+        } else if (this.showPivotGrid) {
+            this.pivotGridComponent.toggleFieldPanel();
+        }
     }
 
     repaintDataGrid(delay = 0) {
@@ -1285,7 +1282,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
-        this.lifeCycleSubjectsService.activate.next(true);
+        this.lifeCycleSubjectsService.activate.next();
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
@@ -1323,6 +1320,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
+    mapItemClick(params: Params) {
+        this.toggleDataLayout(DataLayoutType.DataGrid);
+        this.crmService.updateCountryStateFilter(params, this.filterCountryStates);
+        this.filtersService.change([this.filterCountryStates]);
+    }
+
     onMenuItemClick(event) {
         event.itemData.action.call(this);
         this.actionEvent = null;
@@ -1332,13 +1335,4 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         e.component.option('visible', false);
         e.component.hide();
     }
-
-    isCfoAvailable(userId: number): Observable<boolean> {
-        /** Users instances may load after odata request and we should avoid loading of usersInstances request for every
-         *  individual user */
-        return this.usersInstancesLoadingSubscription && !this.usersInstancesLoadingSubscription.closed
-               ? of(false)
-               : this.crmService.isCfoAvailable(userId);
-    }
-
 }

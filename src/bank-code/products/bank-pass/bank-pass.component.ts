@@ -306,8 +306,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
+            id: 'create-bank-code-lead-dialog',
             data: {
-                id: 'create-bank-code-lead-dialog',
                 refreshParent: () => this.refresh(),
                 createMethod: this.bankCodeServiceProxy.createLead.bind(this.bankCodeServiceProxy),
                 createModel: CreateLeadInput,
@@ -318,8 +318,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 hideLinksField: true,
                 hideNotesField: true,
                 hidePhotoArea: true,
+                hideSaveAndExtend: true,
                 disallowMultipleItems: true,
-                showBankCodeEditor: true
+                showBankCodeField: true,
+                dontCheckSimilarEntities: true
             }
         });
     }

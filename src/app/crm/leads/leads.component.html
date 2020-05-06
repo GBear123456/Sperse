@@ -4,10 +4,12 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
                   (onReload)="refresh()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
-                  (onToggleFullScreen)="repaintDataGrid(100)">
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="contactGroups"
                         [totalCount]="totalCount"
                         [(value)]="selectedContactGroup"
@@ -34,16 +36,16 @@
                 [list]="stages"
                 (onItemSelected)="updateLeadsStage($event)">
         </app-static-list>
-        <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>
-        <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></lists-list>
+        <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags" [managePermission]="manageCGPermision"></tags-list>
+        <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" [managePermission]="manageCGPermision"></lists-list>
         <user-assignment-list [selectedKeys]="selectedClientKeys"
-                                  [bulkUpdateMode]="true"
-                                  [filterModel]="filterModelAssignment"
-                                  [proxyService]="contactProxy"
-                                  [permissionKey]="permissions.CRMCustomersManageAssignments"
-                                  [assignedUsersSelector]="assignedUsersSelector">
+            [bulkUpdateMode]="true"
+            [filterModel]="filterModelAssignment"
+            [proxyService]="contactProxy"
+            [permissionKey]="permissions.CRMCustomersManageAssignments"
+            [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
-        <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></rating>
+        <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating" [managePermission]="manageCGPermision"></rating>
         <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
@@ -54,6 +56,7 @@
                                 class="limitedPagerTotal main-component-view"
                                 accessKey="narrowHeaderPanel"
                                 noDataText=""
+                                [renderAsync]="true"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [cacheEnabled]="false"
@@ -81,7 +84,7 @@
                             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
-                            <dxi-column dataField="SourceOrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
+                            <dxi-column dataField="SourceOrganizationUnitId" [renderAsync]="true" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
                             <dxi-column dataField="PhotoPublicId"
                                         caption=""
                                         cellTemplate="photoTemplate"
@@ -101,46 +104,47 @@
                             <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
-                            <ng-container *ngIf="userManagementService.checkBankCodeFeature() as tenantHasBankCodeFeature">
+                            <ng-container *ngIf="tenantHasBankCodeFeature">
                                 <dxi-column dataField="BankCode"
                                             cellTemplate="bankCodeCell"
+                                            [renderAsync]="true"
                                             [caption]="l('BankCode')"
                                             [visible]="tenantHasBankCodeFeature"
                                             [showInColumnChooser]="tenantHasBankCodeFeature">
                                 </dxi-column>
                             </ng-container>
 
-                        <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="SourceAffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="SourceCampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="SourceChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                            {{cellData.value | phone}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone}}
-                        </div>
-                        <div *dxTemplate="let cellData of 'bankCodeCell'">
-                            <bank-code-letters [bankCode]="cellData.value"
-                                               [showDescriptionsOnClick]="true"
-                                               [key]="cellData.rowIndex"
-                                               [showReportLink]="true">
-                            </bank-code-letters>
-                        </div>
-                        <dxo-group-panel [visible]="true"></dxo-group-panel>
-                        <dxo-sorting mode="multiple"></dxo-sorting>
-                    </dx-data-grid>
+                            <dxi-column dataField="LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="SourceAffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="SourceCampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="SourceChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
+                            <dxi-column dataField="Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                                {{cellData.value | phone}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                            </div>
+                            <div *dxTemplate="let cellData of 'bankCodeCell'">
+                                <bank-code-letters [bankCode]="cellData.value"
+                                                   [showDescriptionsOnClick]="true"
+                                                   [key]="cellData.rowIndex"
+                                                   [showReportLink]="true">
+                                </bank-code-letters>
+                            </div>
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                        </dx-data-grid>
                     </div>
                 </div>
             </div>
@@ -189,7 +193,8 @@
                        [height]="mapHeight$ | async"
                        [contactGroupText]="userGroupText$ | async"
                        [dataIsLoading]="mapDataIsLoading"
-                       [data]="mapData$ | async">
+                       [data]="mapData$ | async"
+                       (onMapItemClick)="mapItemClick($event)">
             </slice-map>
         </div>
     </div>

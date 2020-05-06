@@ -19,6 +19,8 @@ import { TitleService } from '@shared/common/title/title.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { Module } from '@shared/common/module.interface';
+import { AppSessionService } from '@root/shared/common/session/app-session.service';
+import { LayoutType } from '@root/shared/service-proxies/service-proxies';
 
 interface ModuleConfig extends Module {
     code: string;
@@ -51,6 +53,7 @@ export class PlatformSelectComponent {
         private permission: PermissionCheckerService,
         private router: Router,
         private titleService: TitleService,
+        private appSessionService: AppSessionService,
         public layoutService: LayoutService,
         public ls: AppLocalizationService,
         @Inject(DOCUMENT) private document: any
@@ -92,7 +95,7 @@ export class PlatformSelectComponent {
                     } else if (
                         module.name === 'BankCode'
                         && !appService.isHostTenant
-                        && this.feature.isEnabled(AppFeatures.CRMBANKCode)
+                        && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode
                     ) {
                         this.modules.footerItems.push(moduleConfig);
                     }

@@ -22,21 +22,23 @@
                                     lEntityName="Name"
                                     [editPlaceholder]="ls.l('Xref')"
                                     [value]="contactXref$ | async"
-                                    isOptional="true"
+                                    [isOptional]="true"
                                     [validationRules]="xrefValidationRules"
                                     [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
                                     (valueChanged)="updateXref($event)">
                         </inplace-edit>
                     </div>
-                    <div *ngIf="isLayoutTypeBankCode">
+                    <div>
                         <ng-container *ngFor="let n of [1,2,3,4,5]">
-                            <h4>{{ ls.l('Contact_CustomField' + n) }}</h4>
-                            <p>{{ contactInfo?.personContactInfo['customField' + n] }}</p>
+                            <ng-container *ngIf="isLayoutTypeBankCode || contactInfo?.personContactInfo['customField' + n]">
+                                <h4>{{ ls.l('Contact_CustomField' + n) }}</h4>
+                                <p>{{ contactInfo?.personContactInfo['customField' + n] }}</p>
+                            </ng-container>
                         </ng-container>
                     </div>
                 </div>
             </dx-scroll-view>
-        </mat-tab>    
+        </mat-tab>
         <mat-tab [label]="ls.l('Overview')" *ngIf="showOverviewTab">
             <span class="gear-icon" (click)="toggleConfigMode()"></span>
             <dx-scroll-view showScrollbar="onHover">
@@ -66,6 +68,6 @@
         </mat-tab>
         <mat-tab label="Activity" [disabled]="true">
             Activity
-        </mat-tab>    
+        </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>

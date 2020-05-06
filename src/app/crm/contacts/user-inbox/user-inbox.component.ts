@@ -65,6 +65,7 @@ export class UserInboxComponent implements OnDestroy {
         };
     });
     userTimezone = '0000';
+    private readonly ident = "UserInbox";
 
     constructor(
         private domSanitizer: DomSanitizer,
@@ -77,7 +78,7 @@ export class UserInboxComponent implements OnDestroy {
         public profileService: ProfileService
     ) {
         contactsService.invalidateSubscribe(
-            () => this.invalidate(), this.constructor.name
+            () => this.invalidate(), this.ident
         );
         contactsService.contactInfoSubscribe(res => {
             let contactId = this.contactId;
@@ -89,7 +90,7 @@ export class UserInboxComponent implements OnDestroy {
                 this.initDataSource();
             else
                 this.initMainToolbar();
-        }, this.constructor.name);
+        }, this.ident);
     }
 
     initMainToolbar() {
@@ -526,6 +527,6 @@ export class UserInboxComponent implements OnDestroy {
 
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

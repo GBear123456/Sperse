@@ -52,6 +52,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
     refresh: Observable<boolean> = this._refresh.asObservable();
     contactInfoSubscription: Subscription;
+    private readonly ident = "PaymentInformation";
     constructor(
         private invoicesService: InvoicesService,
         private paymentServiceProxy: PaymentServiceProxy,
@@ -133,7 +134,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
             if (area === 'payment-information') {
                 this._refresh.next(true);
             }
-        }, this.constructor.name);
+        }, this.ident);
     }
 
     formatDate(date: moment.Moment) {
@@ -174,7 +175,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
         this.contactInfoSubscription.unsubscribe();
     }
 }

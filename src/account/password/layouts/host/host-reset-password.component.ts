@@ -41,17 +41,18 @@ export class HostResetPasswordComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        let tenantId: number;
+        let tenantId: number = abp.session.tenantId,
+            tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
+        tenantId = this.parseTenantId(tenantIdStr) || tenantId;
+        this.appSessionService.changeTenantIfNeeded(
+            tenantId, false
+        );
+
         if (this.activatedRoute.snapshot.queryParams['c']) {
             this.model.c = this.activatedRoute.snapshot.queryParams['c'];
         } else {
             this.model.userId = this.activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this.activatedRoute.snapshot.queryParams['resetCode'];
-            let tenantIdStr = this.activatedRoute.snapshot.queryParams['tenantId'];
-            tenantId = this.parseTenantId(tenantIdStr);
-            this.appSessionService.changeTenantIfNeeded(
-                tenantId, false
-            );
         }
 
         let infoInput = new GetResetPasswordCodeInfoInput({
@@ -59,14 +60,14 @@ export class HostResetPasswordComponent implements OnInit {
             resetCode: this.model.resetCode,
             c: this.model.c
         });
+
         this.accountService.getResetPasswordCodeInfo(infoInput).subscribe((result: GetResetPasswordCodeInfoOutput) => {
             this.appSessionService.changeTenantIfNeeded(
                 result.tenantId, false
             );
 
-            if (!result.isValid)
-            {
-                abp.message.error(this.ls.l("InvalidPasswordResetCode_Detail"), this.ls.l("InvalidPasswordResetCode")).done(() => {
+            if (!result.isValid) {
+                abp.message.error(this.ls.l('InvalidPasswordResetCode_Detail'), this.ls.l('InvalidPasswordResetCode')).done(() => {
                     this.router.navigate(['account/login']);
                 });
                 return;
@@ -103,12 +104,8 @@ export class HostResetPasswordComponent implements OnInit {
     }
 
     parseTenantId(tenantIdAsStr?: string): number {
-        let tenantId = !tenantIdAsStr ? undefined : parseInt(tenantIdAsStr);
-        if (tenantId === NaN) {
-            tenantId = undefined;
-        }
-
-        return tenantId;
+        let tenantId = parseInt(tenantIdAsStr);
+        return isNaN(tenantId) ? undefined : tenantId;
     }
 
     togglePasswordVisibe(event, input) {

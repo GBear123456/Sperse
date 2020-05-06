@@ -1,5 +1,11 @@
 <div [@routerTransition]>
     <div class="login-box">
+        <div class="colored-line">
+            <span class="bg-blue"></span>
+            <span class="bg-red"></span>
+            <span class="bg-yellow"></span>
+            <span class="bg-green"></span>
+        </div>
         <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
             <h3>{{ls.l('Auto Login')}}</h3>
             <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></div>
@@ -12,7 +18,7 @@
         <div class="login-terms-and-condition">
             <span>{{ls.l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
         </div>
-        <div class="login-box-footer">
+        <!--<div class="login-box-footer">
             <ul class="logos">
                 <li class="logo-item active">
                     <img src="./assets/common/images/bank-code/cb_logo-gray.png" alt="Code Breaker">
@@ -27,6 +33,12 @@
                     <img height="35px" src="./assets/common/images/bank-code/v_logo.png" alt="Vault">
                 </li>
             </ul>
+        </div>-->
+        <div class="colored-line">
+            <span class="bg-blue"></span>
+            <span class="bg-red"></span>
+            <span class="bg-yellow"></span>
+            <span class="bg-green"></span>
         </div>
     </div>
 </div>

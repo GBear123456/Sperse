@@ -46,6 +46,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     startCase = startCase;
     personContactInfo: PersonContactInfoDto;
     accessConfidentialData = this.permission.isGranted(AppPermissions.CRMAccessConfidentialData);
+    private readonly ident = "PersonalDetails";
     columns = [
         [
             { name: 'General', type: 'head', icon: 'profile' },
@@ -111,7 +112,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             }));
             this.personalDetailsService.showPersonalDetailsDialog();
             this.changeDetector.markForCheck();
-        }, this.constructor.name);
+        }, this.ident);
 
         this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res) => {
             this.selectList.timeZone = res.items.map(item => ({ id: item.value, name: item.name }));
@@ -263,6 +264,6 @@ export class PersonalDetailsComponent implements OnDestroy {
 
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

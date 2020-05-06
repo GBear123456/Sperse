@@ -8,7 +8,8 @@ import {
     Input,
     Output,
     OnInit,
-    OnDestroy
+    OnDestroy,
+    Injector
 } from '@angular/core';
 
 /** Third party imports */
@@ -43,11 +44,16 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() showToggleCompactViewButton = false;
     @Input() showToggleFullScreenButton = false;
     @Input() showToggleTotalsButton = false;
+    @Input() showToggleColumnSelectorButton = false;
+    @Input() showPrintButton = false;
+    @Input() toggleButtonPosition: 'left' | 'right' = 'left';
     @Output() onReload: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleToolbar: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleCompactView: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleFullScreen: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleTotals: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onToggleColumnSelector: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onPrint: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
@@ -61,13 +67,21 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         })
     );
     showTotals = !AppConsts.isMobile;
+    showRefreshButtonSeparately: boolean;
+    showHeadlineMenuToggleButton: boolean;
 
     constructor(
+        injector: Injector,
         private appService: AppService,
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        const toggleButtonPosition = injector.get('toggleButtonPosition', null);
+        if (toggleButtonPosition) {
+            this.toggleButtonPosition = toggleButtonPosition;
+        }
+    }
 
     ngOnInit() {
         this.fullScreenService.isFullScreenMode$
@@ -75,11 +89,18 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             .subscribe((isFullScreenMode: boolean) => {
                 this.isFullScreenMode = isFullScreenMode;
             });
+        this.showRefreshButtonSeparately = this.showReloadButton && this.toggleButtonPosition === 'left';
+        this.showHeadlineMenuToggleButton = this.showReloadButton && !this.showRefreshButtonSeparately
+            || this.showToggleToolbarButton
+            || this.showToggleCompactViewButton
+            || this.showToggleFullScreenButton
+            || this.showToggleColumnSelectorButton
+            || this.showPrintButton;
     }
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event) {
-        if (this.showHeadlineButtons && !event.target.closest('.headline-buttons .buttons') && !event.target.closest('.headline-buttons .toggle-button')) {
+        if (this.showHeadlineButtons && !event.target.closest('.toggle-button-container .buttons') && !event.target.closest('.toggle-button-container .toggle-button')) {
             this.showHeadlineButtons = false;
         }
     }
@@ -105,6 +126,14 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     toggleFullScreen() {
         this.fullScreenService.toggleFullscreen(document.documentElement);
         this.onToggleFullScreen.emit();
+    }
+
+    toggleColumnSelector() {
+        this.onToggleColumnSelector.emit();
+    }
+
+    print() {
+        this.onPrint.emit();
     }
 
     toggleTotals() {

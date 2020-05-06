@@ -6,10 +6,12 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
                   (onReload)="invalidate()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onToggleCompactView)="toggleCompactView()"
-                  (onToggleToolbar)="repaintDataGrid()">
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
@@ -24,6 +26,7 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
                             class="main-component-view"
+                            [renderAsync]="true"
                             [dataSource]="dataSource"
                             [allowColumnReordering]="true"
                             [columnAutoWidth]="true"

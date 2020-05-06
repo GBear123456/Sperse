@@ -6,12 +6,12 @@
             <div class="actions clearfix">
                 <span class="title">{{ls.l('Types')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{ls.l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions()" (click)="apply()">{{ls.l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!isManageAllowed()" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
                 <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="apply(true)">{{ls.l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !typeslist.selectedRowKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="apply(true)">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!isManageAllowed() || !typeslist.selectedRowKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <dx-tree-list #typeslist
@@ -38,7 +38,7 @@
                           (onContentReady)="onContentReady($event)"
                           (onRowInserted)="onRowInserted($event)"
                           (onEditorPrepared)="editorPrepared($event)"
-                          [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
+                          [ngClass]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
                 <dxi-column cellTemplate="radiogroup" width="50px" allowEditing="false" [visible]="selectedKeys && selectedKeys.length"
                     allowFiltering="false" allowFixing="true" allowHeaderFiltering="false" allowHiding="false"
                     allowReordering="false" allowResizing="false" allowSearch="false" allowSorting="false"></dxi-column>
@@ -54,8 +54,8 @@
 
                 <dxo-editing mode="row"
                              [texts]="{confirmDeleteMessage: ''}"
-                             [allowUpdating]="true"
-                             [allowAdding]="!bulkUpdateMode || selectedKeys?.length">
+                             [allowUpdating]="isManageAllowed()"
+                             [allowAdding]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length)">
                 </dxo-editing>
             </dx-tree-list>
         </div>

@@ -5,11 +5,13 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="true"
                   [buttons]="headlineButtons"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
-                  (onReload)="invalidate()">
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
@@ -23,6 +25,7 @@
                 <div>
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="limitedPagerTotal main-component-view"
+                                  [renderAsync]="true"
                                   [remoteOperations]="true"
                                   [dataSource]="dataSource"
                                   [allowColumnResizing]="true"
@@ -62,7 +65,7 @@
                         <dxi-column dataField="userName" [caption]="l('UserName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="name" [caption]="l('Name')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="surname" [caption]="l('Surname')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false"></dxi-column>
+                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false" [renderAsync]="true"></dxi-column>
                         <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>

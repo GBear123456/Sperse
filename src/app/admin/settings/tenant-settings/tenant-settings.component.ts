@@ -34,7 +34,9 @@ import {
     EPCVIPServer,
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
-    YTelSettingsEditDto
+    YTelSettingsEditDto,
+    LayoutType,
+    RapidSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -75,12 +77,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
+    isRapidTenantLayout: boolean = this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
     iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
+    rapidSettings: RapidSettingsDto = new RapidSettingsDto();
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
     customCssUploader: FileUploader;
@@ -141,7 +145,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-                this.tenantSettingsService.getYTelSettings()
+                this.tenantSettingsService.getYTelSettings(),
+                this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
             ];
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPServer);
@@ -165,7 +170,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.epcvipEmailSettings,
                     this.ongageSettings,
                     this.iageSettings,
-                    this.yTelSettings
+                    this.yTelSettings,
+                    this.rapidSettings
                 ] = results;
 
                 if (this.settings.general) {
@@ -334,6 +340,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             requests.push(this.tenantSettingsService.updateOngageSettings(this.ongageSettings));
         if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this.tenantSettingsService.updateIAgeSettings(this.iageSettings));
+        if (this.isRapidTenantLayout)
+            requests.push(this.tenantSettingsService.updateRapidSettings(this.rapidSettings));
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));

@@ -64,6 +64,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
 
+    private readonly ident = "Invoices";
+
     contactId: number;
     stages$ = this.pipelineService.getPipelineDefinitionObservable(
         AppConsts.PipelinePurposeIds.order).pipe(map(pipeline => {
@@ -84,14 +86,14 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             if (area === 'invoices') {
                 this.dataSource = this.getDataSource();
             }
-        }, this.constructor.name);
+        }, this.ident);
 
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
             if (!this.contactId || data.id != this.contactId) {
                 this.contactId = data.id;
                 this.dataSource = this.getDataSource();
             }
-        }, this.constructor.name);
+        }, this.ident);
 
         this.invoicesService.settings$.pipe(first()).subscribe(res => {
             this.settings = res;
@@ -356,6 +358,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnDestroy() {
-        this.clientService.unsubscribe(this.constructor.name);
+        this.clientService.unsubscribe(this.ident);
     }
 }

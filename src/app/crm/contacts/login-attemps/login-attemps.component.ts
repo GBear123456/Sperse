@@ -10,6 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class LoginAttempsComponent implements OnInit, OnDestroy {
     userLoginAttempts: UserLoginAttemptDto[];
+    private readonly ident = "LoginAttemps";
 
     constructor(
         private userService: UserServiceProxy,
@@ -23,7 +24,7 @@ export class LoginAttempsComponent implements OnInit, OnDestroy {
             (userId) => {
                 if (userId) this.loadData(userId);
             },
-            this.constructor.name
+            this.ident
         );
         if (this.userService['data'].userId)
             this.loadData(this.userService['data'].userId);
@@ -45,6 +46,6 @@ export class LoginAttempsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.constructor.name);
+        this.contactsService.unsubscribe(this.ident);
     }
 }

@@ -46,6 +46,8 @@ export enum AppPermissions {
     SystemAllowAccessToAllOrganizations = 'Pages.System.AllowAccessToAllOrganizations',
     SystemAllowAccessAllForUserOrganizations = 'Pages.System.AllowAccessAllForUserOrganizations',
     SystemEmailing = 'Pages.System.Emailing',
+    HUB = 'Pages.HUB',
+    HUBImport = 'Pages.HUB.Import',
     CRM = 'Pages.CRM',
     CRMBulkUpdates = 'Pages.CRM.BulkUpdates',
     CRMPipelinesConfigure = 'Pages.CRM.PipelinesConfigure',

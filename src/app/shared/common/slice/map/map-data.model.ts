@@ -1,3 +1,5 @@
 export class MapData {
-    [stateId: string]: { name: string, total: number }
+    [countryId: string]: {
+        [stateId: string]: { name: string, total: number }
+    }
 }

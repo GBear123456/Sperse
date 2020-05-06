@@ -6,8 +6,8 @@
             <div class="actions clearfix">
                 <span class="title">{{ls.l('Stars')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{ls.l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !starslist.selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!isManageAllowed() || !starslist.selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <dx-list #starslist

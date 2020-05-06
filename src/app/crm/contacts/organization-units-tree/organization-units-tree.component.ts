@@ -35,7 +35,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
     private userId: number;
     private organizationUnitsData: OrganizationUnitDto[];
     private lastSelectedItemId: number;
-    private ident = _.uniqueId(this.constructor.name);
+    private ident = _.uniqueId('OrganizationUnitsTree');
 
     toolbarConfig = [
         {

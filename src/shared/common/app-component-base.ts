@@ -135,7 +135,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     getCacheKey(key: string): string {
-        return this.cacheHelper.getCacheKey(key, this.constructor.name);
+        return this.cacheHelper.getCacheKey(key);
     }
 
     l(key: string, ...args: any[]): string {
