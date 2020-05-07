@@ -206,6 +206,16 @@
 
             &.date-row {
                 padding-top: 15px;
+
+                .dx-dropdowneditor-input-wrapper,
+                .dx-texteditor-container {
+                    overflow: visible;
+                }
+
+                .dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge .dx-texteditor-input-container:after {
+                    right: -20px;
+                    pointer-events: auto;
+                }
             }
 
             .bold-label {
@@ -568,6 +578,7 @@
                     opacity: 0;
                     transition: 0.2s;
                     top: -5px;
+                    right: -8px;
                 }
             }
 
@@ -628,6 +639,10 @@
                         }
                     }
                 }
+            }
+
+            .dx-texteditor-input {
+                border-bottom: 0;
             }
         }
     }
