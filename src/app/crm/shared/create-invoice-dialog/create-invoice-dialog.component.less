@@ -543,7 +543,7 @@
             &.add-new {
                 width: 810px;
                 left: -7px;
-                margin-top: 5px;
+                margin-top: 9px;
                 position: relative;
                 background: #FFF;
             }
@@ -577,7 +577,7 @@
                     background-image: url(../../../../assets/common/icons/d-remove.svg);
                     opacity: 0;
                     transition: 0.2s;
-                    top: -5px;
+                    top: 0;
                     right: -8px;
                 }
             }
@@ -631,9 +631,6 @@
         }
 
         .dx-row.dx-data-row {
-            td {
-                padding-top: 9px;
-            }
 
             &:hover {
                 .row-actions {
@@ -645,8 +642,14 @@
                 }
             }
 
+            .dx-dropdowneditor-button {
+                top: 5px;
+            }
+
             .dx-texteditor-input {
                 border-bottom: 0;
+                padding: 7px 9px 8px !important;
+                height: 41px;
             }
         }
     }
