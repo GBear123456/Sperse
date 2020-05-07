@@ -28,7 +28,7 @@ import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permissio
 })
 export class TagsListComponent implements OnInit {
     @Input() filterModel: any;
-    @Input() selectedKeys: number[];
+    @Input() selectedKeys: number[] = [];
     @Input() targetSelector = '[aria-label="Tags"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
@@ -101,7 +101,7 @@ export class TagsListComponent implements OnInit {
     process(isRemove: boolean) {
         let contactIds = this.selectedKeys;
         let tags = this.selectedItems;
-        if (this.bulkUpdateMode) {
+        if (contactIds.length > 1) {
             if (isRemove)
                 this.tagsService.untagContacts(UntagContactsInput.fromJS({
                     contactIds: contactIds,
@@ -382,8 +382,8 @@ export class TagsListComponent implements OnInit {
     }
 
     isManageAllowed() {
-        return this.permissionChecker.isGranted(this.managePermission) &&
-            (!this.bulkUpdateMode || this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates));
+        let selected = this.selectedKeys.length;
+        return selected && this.permissionChecker.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates)));
     }
-
 }

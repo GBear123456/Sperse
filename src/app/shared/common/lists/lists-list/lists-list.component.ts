@@ -24,7 +24,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 })
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
-    @Input() selectedKeys: any;
+    @Input() selectedKeys: any = [];
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() targetSelector = '[aria-label=\'Lists\']';
     @Input() bulkUpdateMode = false;
@@ -97,7 +97,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     process(isRemove: boolean) {
         let contactIds = this.selectedKeys;
         let lists = this.selectedItems;
-        if (this.bulkUpdateMode) {
+        if (contactIds.length > 1) {
             if (isRemove)
                 this._listsService.removeContactsFromLists(contactIds, this.selectedLists
                 ).pipe(finalize(() => {
@@ -373,7 +373,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     isManageAllowed() {
-        return this.permission.isGranted(this.managePermission) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
+        let selected = this.selectedKeys.length;
+        return selected && this.permission.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permission.isGranted(AppPermissions.CRMBulkUpdates)));
     }
 }

@@ -23,7 +23,7 @@
                 [showColumnLines]="false"
                 [showColumnHeaders]="false"
                 [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
-                [selection]="{allowSelectAll: false, mode: !isManageAllowed() || (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'multiple' }"
+                [selection]="{allowSelectAll: false, mode: isManageAllowed() ? 'multiple' : 'none' }"
                 [selectedRowKeys]="selectedLists"
                 [(dataSource)]="list"
                 (onRowClick)="onRowClick($event)"
@@ -36,13 +36,13 @@
                 (onRowInserted)="onRowInserted($event)"
                 (onEditorPrepared)="editorPrepared($event)"
                 (onSelectionChanged)="onSelectionChange($event)"
-                [ngClass]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
+                [ngClass]="isManageAllowed() ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
                     [texts]="{confirmDeleteMessage: ''}"
                     [allowUpdating]="true"
                     [allowDeleting]="isUpdateDeleteAllowed"
-                    [allowAdding]="isManageAllowed() && (!bulkUpdateMode || selectedKeys?.length)">
+                    [allowAdding]="isManageAllowed()">
                 </dxo-editing>
             </dx-tree-list>
         </div>
