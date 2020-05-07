@@ -49,8 +49,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     ) {}
 
     public selectedItemsChange() {
-        setTimeout(() =>
-            this.selectionChanged.emit(this.getSelectedIds()));
+        setTimeout(() => this.selectionChanged.emit(this.getSelectedIds()));
     }
 
     getSelectedIds() {
