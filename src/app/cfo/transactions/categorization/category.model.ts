@@ -1,5 +1,5 @@
 export class Category {
-    key: number;
+    key: string | number;
     parent: string | number;
     coAID: string;
     name: string;

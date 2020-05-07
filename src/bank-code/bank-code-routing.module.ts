@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
-import { RouteConfigLoadEnd, Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { BankCodeComponent } from './bank-code.component';
-import { DashboardComponent } from '@root/bank-code/dashboard/dashboard.component';
-import { ResourcesComponent } from '@root/bank-code/resources/resources.component';
-import { RedirectGuard } from '@shared/common/redirect-guard/redirect-guard';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ResourcesComponent } from '../bank-code/resources/resources.component';
+import { RedirectGuard } from '../shared/common/redirect-guard/redirect-guard';
 
 @NgModule({
     imports: [
@@ -12,8 +11,6 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
             {
                 path: '',
                 component: BankCodeComponent,
-                canActivate: [],
-                canActivateChild: [ ],
                 children: [
                     {
                         path: '',
@@ -48,7 +45,6 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
             }
         ])
     ],
-    exports: [ RouterModule ],
-    providers: [ RedirectGuard ]
+    exports: [ RouterModule ]
 })
-export class BankCodeRoutingModule { }
+export class BankCodeRoutingModule {}

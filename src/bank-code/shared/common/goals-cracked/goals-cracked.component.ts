@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
@@ -12,10 +12,13 @@ import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
     ]
 })
 export class GoalsCrackedComponent {
+    @Input() showPercents = false;
+    @Input() showNumbers = false;
+    @Input() showAll = false;
     goalTypes: GoalType[] = this.bankCodeService.goalTypes;
 
     constructor(
-        private bankCodeService: BankCodeService,
+        public bankCodeService: BankCodeService,
         public ls: AppLocalizationService
     ) {}
 
