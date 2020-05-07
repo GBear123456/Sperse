@@ -111,7 +111,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     products = [];
     descriptions = [];
     lastProductPhrase: string;
-    date = DateHelper.addTimezoneOffset(new Date(), true);
+    date;
     dueDate;
 
     description = '';
@@ -204,7 +204,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.invoiceNo = invoice.InvoiceNumber;
                 this.status = invoice.InvoiceStatus;
                 this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-                this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
+                this.date = invoice.Dat;
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
@@ -220,7 +220,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.notes = invoiceInfo.note;
                     if (!this.data.addNew) {
                         this.invoiceNo = invoiceInfo.number;
-                        this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
+                        this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
                         this.status = invoiceInfo.status;
                     }
@@ -334,7 +334,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
         data.orderNumber = this.orderNumber;
-        data.date = this.getDate(this.date, true, '');
+        data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
         data.billingAddress = this.selectedBillingAddress &&
