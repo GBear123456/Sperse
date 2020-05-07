@@ -76,7 +76,7 @@
                                 {{ (cellData.value | date: formatting.date) || l('Invoice_DueOnReceipt') }}
                             </div>
                             <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
-                                {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                                {{ cellData.value | date: formatting.date : userTimezone }}
                             </div>
                             <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
                                 {{ cellData.value | currency: settings.currency }}
