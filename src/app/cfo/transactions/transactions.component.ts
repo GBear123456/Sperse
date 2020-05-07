@@ -321,6 +321,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
     toolbarConfig: ToolbarGroupModel[];
+    showFilterRow: boolean = this.instanceId && this.isAdvicePeriod;
     amountCustomizer = (value) => {
         return this.currencyPipe.transform(
             value,
@@ -392,6 +393,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             } else
                                 return acc + (acc ? '&' : '') + args.join('=');
                         }, '');
+                    }
+                },
+                onLoaded: () => {
+                    if (this.showFilterRow) {
+                        this.showFilterRow = false;
+                        this.dataGrid.instance.option('filterRow.visible', true);
+                        this.initToolbarConfig();
                     }
                 }
             }
