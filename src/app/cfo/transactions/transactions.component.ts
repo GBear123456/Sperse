@@ -402,6 +402,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         this.dataGrid.instance.option('filterRow.visible', true);
                         this.initToolbarConfig();
                     }
+                    setTimeout(() => {
+                        if (this.dataGrid.instance.option('filterRow.visible')
+                            && this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement) {
+                            this.repaintDataGrid();
+                        }
+                    }, 1000);
                 }
             }
         });
@@ -805,7 +811,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onGridOptionChanged(event) {
         super.onGridOptionChanged(event);
-        this.moveDropdownsToHost();
+        if (event.fullName.indexOf('visibleIndex') > -1) {
+            this.moveDropdownsToHost();
+        }
     }
 
     processTotalValuesInternal(totals, startingBalanceTotal = 0) {
