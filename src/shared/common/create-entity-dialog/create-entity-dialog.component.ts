@@ -308,7 +308,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             partnerTypeName: partnerTypeName,
             sourceContactId: this.sourceContactId,
             trackingInfo: trackingInfo,
-            bankCode: this.bankCode
+            bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null
         };
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];
@@ -434,8 +434,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: this.statesService.getAdjustedStateCode(address.state.code, address.state.name),
-                    stateName: address.state.name,
+                    stateId: address.state
+                        ? this.statesService.getAdjustedStateCode(address.state.code, address.state.name)
+                        : null,
+                    stateName: address.state ? address.state.name : null,
                     zip: address.zip,
                     countryId: address.countryCode,
                     isActive: true,
@@ -856,6 +858,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contacts.addresses = [{type: this.addressesTypeDefault}];
             this.sourceContactId = undefined;
             this.notes = undefined;
+            this.bankCode = '????';
 
             this.person = new PersonInfoDto();
             this.addressTypesLoad();
