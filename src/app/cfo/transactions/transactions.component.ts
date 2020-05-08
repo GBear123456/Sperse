@@ -407,7 +407,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             && this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement) {
                             this.repaintDataGrid();
                         }
-                    }, 1000);
+                    }, 1500);
                 }
             }
         });
