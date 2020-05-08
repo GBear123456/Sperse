@@ -396,6 +396,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                 },
                 onLoaded: () => {
+                    this.moveDropdownsToHost();
                     if (this.showFilterRow) {
                         this.showFilterRow = false;
                         this.dataGrid.instance.option('filterRow.visible', true);
@@ -800,6 +801,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             );
         }
+    }
+
+    onGridOptionChanged(event) {
+        super.onGridOptionChanged(event);
+        this.moveDropdownsToHost();
     }
 
     processTotalValuesInternal(totals, startingBalanceTotal = 0) {
