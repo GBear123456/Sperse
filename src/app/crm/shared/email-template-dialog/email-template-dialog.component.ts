@@ -41,7 +41,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     ckEditor: any;
     showCC = false;
     showBCC = false;
-
+    tagLastValue: string;
     startCase = startCase;
     tagsTooltipVisible = false;
     ckConfig: any = {
@@ -191,7 +191,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     emailInputFocusOut(event, checkDisplay?) {
-        event.text = event.event.target.value;
+        event.text = this.tagLastValue || event.event.target.value;
+        this.tagLastValue = '';
         this.onCustomItemCreating(event, field => {
             let isComboListEmpty = !this.data[field].length;
             if (!this.templateEditMode && checkDisplay && isComboListEmpty) {
@@ -289,6 +290,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         else
             this.addTextTag(event.itemData);
         this.tagsTooltipVisible = false;
+    }
+
+    onKeyUp(event) {
+        this.tagLastValue = event.event.target.value;
     }
 
     addTextTag(tag: string) {

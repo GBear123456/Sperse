@@ -73,6 +73,7 @@
                         [(value)]="data.to"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
+                        (onKeyUp)="onKeyUp($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                     <div class="bcc-links">
