@@ -21,9 +21,9 @@ export class DeleteAndReassignDialogComponent extends ConfirmDialogComponent imp
     }
 
     confirm() {
-        if (!this.data.deleteAllReferences && !this.data.reassignToItemId) {
+        if (!this.data.deleteAllReferences && !this.data.reassignToItemId)
             return this.notifyService.error(this.ls.l(this.data.entityPrefix + '_DeleteDialog_ShouldBeSelected'));
-        }
-        this.dialogRef.close(true);
+        else
+            this.dialogRef.close(true);
     }
 }

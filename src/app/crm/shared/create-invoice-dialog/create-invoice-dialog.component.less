@@ -196,16 +196,59 @@
                 margin-top: 20px;
 
                 dx-text-box {
-                    padding: 0 7px;
-
                     input {
                         text-align: right;
                     }
+                }
+
+                dx-text-box,
+                dx-select-box {
+                    padding: 0 7px;
+                }
+
+
+
+                .alr {
+                    .dx-placeholder {
+                        right: 7px !important;
+                        left: auto !important;
+                    }
+                }
+
+                .dx-datagrid-rowsview {
+                    overflow: visible !important;
+
+                    .dx-scrollable-container {
+                        overflow: visible !important;
+                    }
+                }
+
+                .dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge .dx-texteditor-input-container:after {
+                    top: 12px;
+                    margin-top: 0;
                 }
             }
 
             &.date-row {
                 padding-top: 15px;
+
+                .dx-dropdowneditor-input-wrapper,
+                .dx-texteditor-container {
+                    overflow: visible;
+                }
+
+                .dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge .dx-texteditor-input-container:after {
+                    right: -20px;
+                    pointer-events: auto;
+                }
+
+                .dx-state-disabled {
+                    opacity: .5;
+
+                    .dx-dropdowneditor-button {
+                        display: block;
+                    }
+                }
             }
 
             .bold-label {
@@ -483,9 +526,10 @@
 
         .dx-datagrid-rowsview {
             border: none;
+
             td {
                 margin: 0;
-                padding: 0 7px;
+                padding: 0;
                 overflow: visible;
             }
             tr:nth-child(odd) td {
@@ -533,7 +577,7 @@
             &.add-new {
                 width: 810px;
                 left: -7px;
-                margin-top: 5px;
+                margin-top: 9px;
                 position: relative;
                 background: #FFF;
             }
@@ -567,7 +611,8 @@
                     background-image: url(../../../../assets/common/icons/d-remove.svg);
                     opacity: 0;
                     transition: 0.2s;
-                    top: -5px;
+                    top: 0;
+                    right: -8px;
                 }
             }
 
@@ -620,6 +665,7 @@
         }
 
         .dx-row.dx-data-row {
+
             &:hover {
                 .row-actions {
                     i {
@@ -628,6 +674,21 @@
                         }
                     }
                 }
+            }
+
+            .dx-dropdowneditor-button {
+                top: 5px;
+            }
+
+            .dx-texteditor-input {
+                border-bottom: 0;
+                padding: 7px 0 8px !important;
+                height: 41px;
+            }
+
+            .dx-placeholder::before {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
             }
         }
     }

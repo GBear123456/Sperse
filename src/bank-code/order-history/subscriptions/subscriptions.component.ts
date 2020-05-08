@@ -21,7 +21,7 @@ export class SubscriptionsComponent {
     link$: Observable<SafeResourceUrl> = this.profileService.secureId$.pipe(
         map((secureId: string) => {
             return this.sanitizer.bypassSecurityTrustResourceUrl((environment.releaseStage === 'production'
-                ? 'https://codebreakertech.com/my-account/subscriptions/?WPSecureID='
+                ? 'https://codebreakertech.com/my-account.html/subscriptions/?WPSecureID='
                 : 'https://wp.bankcode.pro/my-account/subscriptions/?WPSecureID=') + secureId);
         })
     );

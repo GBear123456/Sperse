@@ -162,10 +162,13 @@
                         [placeholder]="ls.lr('Date')"
                         [disabled]="disabledForUpdate"
                         (onContentReady)="onDateContentReady($event)">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message=""></dxi-validation-rule>
+                        </dx-validator>
                     </dx-date-box>
                     <dx-date-box #dueDateComponent
                         [placeholder]="ls.l('Invoice_DueOnReceipt')"
-                        [disabled]="disabledForUpdate"
+                        [disabled]="disabledForUpdate || !date"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         width="200px"
                         height="41px"
@@ -194,9 +197,9 @@
                         [scrolling]="{showScrollbar: 'never'}"
                         [allowColumnResizing]="false">
 
-                        <dxi-column dataField="Description" width="310" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
-                        <dxi-column dataField="Quantity" width="115" alignment="right" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
-                        <dxi-column dataField="Rate" width="115" alignment="right" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                        <dxi-column dataField="Description" width="300" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
+                        <dxi-column dataField="Quantity" width="120" alignment="right" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
+                        <dxi-column dataField="Rate" width="120" alignment="right" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
                         <dxi-column dataField="Unit" width="110" caption="{{ls.l('Unit')}}" [allowSorting]="false" cellTemplate="unit"></dxi-column>
                         <dxi-column dataField="Total" width="115" alignment="right" caption="{{ls.l('Total')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="total"></dxi-column>
                         <dxi-column width="30" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
@@ -229,10 +232,11 @@
                                 <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine()">{{ls.l('+ Add new line')}}</span>
                             </div>
                         </div>
-                        <div *dxTemplate="let cellData of 'quantity'">
+                        <div *dxTemplate="let cellData of 'quantity'" class="alr">
                             <dx-text-box
-                                width="110px"
+                                width="120px"
                                 height="32px"
+                                (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="false"
                                 [(value)]="cellData.data.quantity"
@@ -243,10 +247,11 @@
                                 </dx-validator>
                             </dx-text-box>
                         </div>
-                        <div *dxTemplate="let cellData of 'rate'">
+                        <div *dxTemplate="let cellData of 'rate'" class="alr">
                             <dx-text-box
-                                width="110px"
+                                width="120px"
                                 height="32px"
+                                (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="false"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"
@@ -262,6 +267,8 @@
                                 name="unit"
                                 width="100px"
                                 height="32px"
+                                (onFocusIn)="onFieldFocusIn($event)"
+                                [placeholder]="ls.lr('Select')"
                                 [(value)]="cellData.data.unitId"
                                 [dataSource]="invoiceUnits">
                                 <dx-validator>

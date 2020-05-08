@@ -65,7 +65,7 @@ export class UserInboxComponent implements OnDestroy {
         };
     });
     userTimezone = '0000';
-    private readonly ident = "UserInbox";
+    private readonly ident = 'UserInbox';
 
     constructor(
         private domSanitizer: DomSanitizer,

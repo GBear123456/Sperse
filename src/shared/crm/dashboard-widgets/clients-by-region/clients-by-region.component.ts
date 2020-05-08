@@ -98,8 +98,8 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
                     queryParams: {
                         dataLayoutType: DataLayoutType.DataGrid,
                         contactGroup: Object.keys(ContactGroup).shift(),
-                        startDate: period.from.toJSON(),
-                        endDate: period.to.toJSON(),
+                        startDate: period.from ? period.from.toJSON() : 'null',
+                        endDate: period.to ? period.to.toJSON() : 'null',
                         ...params
                     }
                 }

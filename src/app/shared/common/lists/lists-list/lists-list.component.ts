@@ -24,7 +24,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 })
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
-    @Input() selectedKeys: any;
+    @Input() selectedKeys: any = [];
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() targetSelector = '[aria-label=\'Lists\']';
     @Input() bulkUpdateMode = false;
@@ -48,6 +48,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     listComponent: any;
 
     tooltipVisible = false;
+
+    isUpdateDeleteAllowed = this.permission.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
         injector: Injector,
@@ -95,7 +97,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     process(isRemove: boolean) {
         let contactIds = this.selectedKeys;
         let lists = this.selectedItems;
-        if (this.bulkUpdateMode) {
+        if (contactIds.length > 1) {
             if (isRemove)
                 this._listsService.removeContactsFromLists(contactIds, this.selectedLists
                 ).pipe(finalize(() => {
@@ -174,13 +176,13 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, () => {
-                if ($event.data.hasOwnProperty('id'))
-                    this.listComponent.deleteRow(
-                        this.listComponent.getRowIndexByKey($event.data.id));
-                else
-                    $event.component.cancelEditData();
-            });
+            if (this.isUpdateDeleteAllowed)
+                this.addActionButton('delete', $event.cellElement, () => {
+                    if ($event.data.hasOwnProperty('id'))
+                        this.onRowRemoving($event);
+                    else
+                        $event.component.cancelEditData();
+                });
             if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, () => {
                     this.clearFiltersHighlight();
@@ -239,8 +241,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     first()
                 ).subscribe(() => {
                     this.clearFilterIfSelected(itemId);
+                    this.notify.success(this.l('SuccessfullyDeleted'));
                 });
-
             } else {
                 this.tooltipVisible = true;
             }
@@ -318,7 +320,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowClick($event) {
-        if (!this.isManageAllowed())
+        if (!this.isUpdateDeleteAllowed)
             return;
 
         let nowDate = new Date();
@@ -371,8 +373,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     isManageAllowed() {
-        return this.permission.isGranted(this.managePermission) &&
-            this.permission.isGranted(AppPermissions.CRMManageListsAndTags) &&
-            (!this.bulkUpdateMode || this.permission.isGranted(AppPermissions.CRMBulkUpdates));
+        let selected = this.selectedKeys.length;
+        return selected && this.permission.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permission.isGranted(AppPermissions.CRMBulkUpdates)));
     }
 }

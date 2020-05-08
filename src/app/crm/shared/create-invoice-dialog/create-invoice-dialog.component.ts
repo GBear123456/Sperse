@@ -84,6 +84,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private readonly SAVE_OPTION_DEFAULT = 0;
     private readonly SAVE_OPTION_DRAFT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
+    private readonly cacheKey = this.cacheHelper.getCacheKey(
+        this.SAVE_OPTION_CACHE_KEY, 'CreateInvoiceDialog'
+    );
 
     invoiceNo;
     orderId: number;
@@ -108,7 +111,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     products = [];
     descriptions = [];
     lastProductPhrase: string;
-    date = DateHelper.addTimezoneOffset(new Date(), true);
+    date;
     dueDate;
 
     description = '';
@@ -201,7 +204,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.invoiceNo = invoice.InvoiceNumber;
                 this.status = invoice.InvoiceStatus;
                 this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-                this.date = DateHelper.addTimezoneOffset(new Date(invoice.Date), true);
+                this.date = invoice.Dat;
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
@@ -217,7 +220,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.notes = invoiceInfo.note;
                     if (!this.data.addNew) {
                         this.invoiceNo = invoiceInfo.number;
-                        this.date = DateHelper.addTimezoneOffset(new Date(invoiceInfo.date), true);
+                        this.date = invoiceInfo.date;
                         this.dueDate = invoiceInfo.dueDate;
                         this.status = invoiceInfo.status;
                     }
@@ -297,11 +300,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     saveOptionsInit() {
-        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY);
         this.selectedOption = this.saveContextMenuItems[
             this.data.saveAsDraft
-                ? this.SAVE_OPTION_DRAFT : this.cacheService.exists(cacheKey)
-                ? this.cacheService.get(cacheKey) : this.SAVE_OPTION_DEFAULT
+                ? this.SAVE_OPTION_DRAFT : this.cacheService.exists(this.cacheKey)
+                ? this.cacheService.get(this.cacheKey) : this.SAVE_OPTION_DEFAULT
         ];
         this.selectedOption.selected = true;
         this.buttons[0].title = this.selectedOption.text;
@@ -325,14 +327,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        this.cacheService.set(this.cacheKey,
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
     private setRequestCommonFields(data) {
         data.number = this.invoiceNo;
         data.orderNumber = this.orderNumber;
-        data.date = this.getDate(this.date, true, '');
+        data.date = this.getDate(this.date);
         data.dueDate = this.getDate(this.dueDate);
         data.description = this.description;
         data.billingAddress = this.selectedBillingAddress &&

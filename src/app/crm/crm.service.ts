@@ -49,7 +49,7 @@ export class CrmService {
         map((contentHeight) => contentHeight - 88)
     );
     private usersIdsWithInstance: { [id: string]: boolean } = {};
-    showSliceButtons: boolean = environment.releaseStage !== 'production';
+    showSliceButtons: boolean = environment.releaseStage !== 'production' && environment.releaseStage !== 'beta';
 
     constructor(
         private filtersService: FiltersService,
@@ -260,10 +260,14 @@ export class CrmService {
         let filterChanged = false;
         if (params.startDate || params.endDate) {
             if (params.startDate) {
-                dateFilter.items.from.value = DateHelper.addTimezoneOffset(new Date(params.startDate), true);
+                dateFilter.items.from.value = params.startDate === 'null'
+                    ? null
+                    : DateHelper.addTimezoneOffset(new Date(params.startDate), true);
             }
             if (params.endDate) {
-                dateFilter.items.to.value = DateHelper.addTimezoneOffset(new Date(params.endDate), true);
+                dateFilter.items.to.value = params.endDate === 'null'
+                    ? null
+                    : DateHelper.addTimezoneOffset(new Date(params.endDate), true);
             }
             dateFilter.updateCaptions();
             filterChanged = true;

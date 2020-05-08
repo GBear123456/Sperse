@@ -30,6 +30,12 @@
         margin-right: auto;
     }
 
+    & > .bec-filter,
+    & > .category-filter,
+    & > .counterparty-filter {
+        display: none;
+    }
+
     .bec-filter {
         margin-left: 10px;
     }
@@ -38,6 +44,20 @@
         ::ng-deep dx-drop-down-box {
             input {
                 cursor: pointer;
+            }
+        }
+    }
+
+    .bec-filter,
+    .category-filter,
+    .counterparty-filter {
+        ::ng-deep .dx-dropdownbox {
+            .dx-placeholder {
+                font-size: 11px !important;
+                text-transform: capitalize;
+            }
+            .dx-texteditor-buttons-container {
+                display: none;
             }
         }
     }
@@ -431,6 +451,10 @@
 
         .dx-datagrid-focus-overlay.dx-pointer-events-target {
             border: none!important;
+        }
+
+        &.showDataGridToolbar .dx-datagrid-header-panel {
+            display: block;
         }
     }
 }

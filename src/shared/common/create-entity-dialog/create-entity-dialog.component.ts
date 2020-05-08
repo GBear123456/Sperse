@@ -108,6 +108,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersSubscription: Subscription;
     private similarCustomersTimeout: any;
+    private readonly cacheKey = this.cacheHelper.getCacheKey(
+        this.SAVE_OPTION_CACHE_KEY, 'CreateEntityDialog');
     stages: any[] = [];
     stageId: number;
     defaultStageSortOrder = 0;
@@ -124,6 +126,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     companies = [];
     company: string;
     notes = '';
+    ratingValue;
     sourceContactId: number;
     emailValidators: any = [];
     phoneValidators: any = [];
@@ -240,10 +243,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     saveOptionsInit() {
-        let cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
-            selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this.cacheService.exists(cacheKey))
-            selectedIndex = this.cacheService.get(cacheKey);
+        let selectedIndex = this.SAVE_OPTION_DEFAULT;
+        if (this.cacheService.exists(this.cacheKey))
+            selectedIndex = this.cacheService.get(this.cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
         this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
         this.changeDetectorRef.detectChanges();
@@ -251,7 +253,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     updateSaveOption(option) {
         this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        this.cacheService.set(this.cacheKey,
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
         this.changeDetectorRef.detectChanges();
     }
@@ -276,7 +278,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         let partnerTypeName = this.partnerTypesComponent && this.partnerTypesComponent.selectedItems.length
             ? this.partnerTypesComponent.selectedItems[0].name
             : undefined;
-        let ratingId = this.ratingComponent && this.ratingComponent.ratingValue;
         let trackingInfo = new TrackingInfo();
         trackingInfo.channelCode = 'CRM';
         let dataObj: any = {
@@ -302,12 +303,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             stageId: stageId,
             lists: this.isListAndTagsDisabled ? undefined : lists,
             tags: this.isListAndTagsDisabled ? undefined : tags,
-            ratingId: this.isRatingAndStarsDisabled ? undefined : ratingId,
+            ratingId: this.isRatingAndStarsDisabled ? undefined : this.ratingValue,
             contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName,
             sourceContactId: this.sourceContactId,
             trackingInfo: trackingInfo,
-            bankCode: this.bankCode
+            bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null
         };
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];
@@ -433,8 +434,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: this.statesService.getAdjustedStateCode(address.state.code, address.state.name),
-                    stateName: address.state.name,
+                    stateId: address.state
+                        ? this.statesService.getAdjustedStateCode(address.state.code, address.state.name)
+                        : null,
+                    stateName: address.state ? address.state.name : null,
                     zip: address.zip,
                     countryId: address.countryCode,
                     isActive: true,
@@ -855,6 +858,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contacts.addresses = [{type: this.addressesTypeDefault}];
             this.sourceContactId = undefined;
             this.notes = undefined;
+            this.bankCode = '????';
 
             this.person = new PersonInfoDto();
             this.addressTypesLoad();
@@ -959,6 +963,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onRatingChanged(event) {
+        this.ratingValue = event.value;
         this.isRatingSelected = Boolean(event.value);
     }
 

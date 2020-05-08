@@ -388,6 +388,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     mapInfoItems$: Observable<InfoItem[]>;
 
     private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
+    private readonly cacheKey = this.getCacheKey(
+        this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
     private organizationUnits: OrganizationUnitDto[];
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
@@ -766,9 +768,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     contactGroupOptionInit() {
-        let cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY);
-        if (this.cacheService.exists(cacheKey)) {
-            this.selectedContactGroup = this.cacheService.get(cacheKey);
+        if (this.cacheService.exists(this.cacheKey)) {
+            this.selectedContactGroup = this.cacheService.get(this.cacheKey);
             this.contactGroupId.next(ContactGroup[this.selectedContactGroup]);
             this.createButtonEnabledSet();
         }
@@ -1559,7 +1560,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (event.previousValue != event.value) {
             this.contactGroupId.next(ContactGroup[event.value]);
             this.headlineButtons[0].label = this.getHeadlineButtonName();
-            this.cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
+            this.cacheService.set(this.cacheKey, event.value);
             this.createButtonEnabledSet();
             this.initToolbarConfig();
         }

@@ -126,6 +126,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private readonly dataSourceURI = 'Transaction';
     private readonly countDataSourceURI = 'Transaction/$count';
     private readonly totalDataSourceURI = 'TransactionTotal';
+    private readonly cacheKey = this.getCacheKey('dataGridState', this.dataSourceURI);
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
@@ -316,10 +317,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
-    private showDataGridToolbar = !AppConsts.isMobile;
+    public showDataGridToolbar = !AppConsts.isMobile;
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
     toolbarConfig: ToolbarGroupModel[];
+    showFilterRow: boolean = this.instanceId && this.isAdvicePeriod;
     amountCustomizer = (value) => {
         return this.currencyPipe.transform(
             value,
@@ -391,6 +393,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             } else
                                 return acc + (acc ? '&' : '') + args.join('=');
                         }, '');
+                    }
+                },
+                onLoaded: () => {
+                    this.moveDropdownsToHost();
+                    if (this.showFilterRow) {
+                        this.showFilterRow = false;
+                        this.dataGrid.instance.option('filterRow.visible', true);
+                        this.initToolbarConfig();
                     }
                 }
             }
@@ -791,7 +801,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             );
         }
-        e.toolbarOptions.visible = this.showDataGridToolbar;
+    }
+
+    onGridOptionChanged(event) {
+        super.onGridOptionChanged(event);
+        this.moveDropdownsToHost();
     }
 
     processTotalValuesInternal(totals, startingBalanceTotal = 0) {
@@ -1245,15 +1259,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGridStateTimeout = setTimeout(() => {
             instance = instance || this.dataGrid && this.dataGrid.instance;
             if (instance)
-                this.cacheService.set(this.getCacheKey('dataGridState'), instance.state());
+                this.cacheService.set(this.cacheKey, instance.state());
         }, 500);
     }
 
     applyGridState(instance) {
         instance = instance || this.dataGrid && this.dataGrid.instance;
         if (instance) {
-            let state = this.cacheService.get(
-                this.getCacheKey('dataGridState'));
+            let state = this.cacheService.get(this.cacheKey);
             if (state) {
                 instance.state(state);
                 state.columns.forEach((column) =>

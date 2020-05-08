@@ -269,7 +269,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 mappedFieldsSorted = mappedFields.slice().sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)),
                 onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100),
                 columnsIndex = {}, columnCount = 0;
-
             let processPartially = () => {
                 let index = onePercentCount * progress;
                 for (index; index < Math.min(onePercentCount * (progress + 1), totalCount); index++) {
@@ -644,14 +643,14 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     onMapSelectionChanged($event) {
         setTimeout(() => {
-                let rowIdsToDeselect = [];
-                $event.selectedRowsData.forEach((row) => {
-                    if (!row.mappedField)
-                        rowIdsToDeselect.push(row.id);
-                });
+            let rowIdsToDeselect = [];
+            $event.selectedRowsData.forEach((row) => {
+                if (!row.mappedField)
+                    rowIdsToDeselect.push(row.id);
+            });
 
-                $event.component.deselectRows(rowIdsToDeselect);
-                this.onMappingChanged.emit($event);
+            $event.component.deselectRows(rowIdsToDeselect);
+            this.onMappingChanged.emit($event);
         }, 500);
     }
 
@@ -695,27 +694,16 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 this.initColumnTemplate(column);
                 column.calculateDisplayValue = this.calculateDisplayValue;
                 column.visibleIndex = _.findIndex(mappedFileds, item => column.dataField == item.mappedField);
-//                this.updateColumnOrder(column);
+                if (column.visibleIndex == -1) {
+                    let dataField = column.dataField.split('_').slice(0, -1).join('_');
+                    column.visibleIndex = _.findIndex(mappedFileds, item => dataField == item.mappedField);
+                }
             }
 
             if (!columnConfig || !columnConfig['caption'])
                 column.caption = this.l(ImportWizardComponent.getFieldLocalizationName(column.dataField));
         });
     }
-
-    /*
-        !!VP will be enabled later
-        updateColumnOrder(column) {
-            column.visibleIndex = undefined;
-            this.checkSimilarFields.forEach((list, index) => {
-                let parts = list.split(':'),
-                    insideIndex = parts.indexOf(column.dataField);
-
-                if (insideIndex >= 0)
-                    column.visibleIndex = index + insideIndex;
-            });
-        }
-    */
 
     initColumnTemplate(column) {
         this.validateFieldList.some((fld) => {

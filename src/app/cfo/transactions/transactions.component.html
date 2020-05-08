@@ -1,9 +1,9 @@
-<div #becFilterContainer [hidden]="!isHeaderFilterVisible" class="bec-filter">
+<div #becFilterContainer class="bec-filter">
     <business-entities-chooser
         (onChanged)="applyTotalBankAccountFilter(true)">
     </business-entities-chooser>
 </div>
-<div #categoryFilterContainer [hidden]="!isHeaderFilterVisible" class="category-filter">
+<div #categoryFilterContainer class="category-filter">
     <dx-drop-down-box
         #categoryFilter
         width="340px"
@@ -26,7 +26,7 @@
         </div>
     </dx-drop-down-box>
 </div>
-<div #counterpartyFilterContainer [hidden]="!isHeaderFilterVisible" class="counterparty-filter">
+<div #counterpartyFilterContainer class="counterparty-filter">
     <dx-drop-down-box
         #counterpartyFilter
         width="340px"
@@ -98,6 +98,7 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
                                   class="limitedPagerTotal main-component-view"
+                                  [ngClass]="{ showDataGridToolbar: showDataGridToolbar }"
                                   [renderAsync]="true"
                                   [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
                                   [allowColumnReordering]="true"
@@ -127,7 +128,7 @@
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-filter-row [visible]="instanceId && isAdvicePeriod" [showOperationChooser]="true"></dxo-filter-row>
+                        <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
                         <dxo-export [enabled]="false" [customizeExcelCell]="customizeExcelCell"></dxo-export>
                         <dxi-column dataField="Date"
                                     dataType="date"

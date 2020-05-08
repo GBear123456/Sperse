@@ -28,7 +28,7 @@ import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permissio
 })
 export class TagsListComponent implements OnInit {
     @Input() filterModel: any;
-    @Input() selectedKeys: number[];
+    @Input() selectedKeys: number[] = [];
     @Input() targetSelector = '[aria-label="Tags"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
@@ -52,6 +52,8 @@ export class TagsListComponent implements OnInit {
     addNewTimeout: any;
     listComponent: any;
     tooltipVisible = false;
+
+    isUpdateDeleteAllowed = this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags);
 
     constructor(
         private filterService: FiltersService,
@@ -99,7 +101,7 @@ export class TagsListComponent implements OnInit {
     process(isRemove: boolean) {
         let contactIds = this.selectedKeys;
         let tags = this.selectedItems;
-        if (this.bulkUpdateMode) {
+        if (contactIds.length > 1) {
             if (isRemove)
                 this.tagsService.untagContacts(UntagContactsInput.fromJS({
                     contactIds: contactIds,
@@ -179,13 +181,14 @@ export class TagsListComponent implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, (event) => {
-                if ($event.data.hasOwnProperty('id'))
-                    this.listComponent.deleteRow(
-                        this.listComponent.getRowIndexByKey($event.data.id));
-                else
-                    $event.component.cancelEditData();
-            });
+            if (this.isUpdateDeleteAllowed)
+                this.addActionButton('delete', $event.cellElement, (event) => {
+                    console.log($event, event);
+                    if ($event.data.hasOwnProperty('id'))
+                        this.onRowRemoving($event);
+                    else
+                        $event.component.cancelEditData();
+                });
             if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     this.clearFiltersHighlight();
@@ -236,7 +239,7 @@ export class TagsListComponent implements OnInit {
                     type: TagsStoreActions.ActionTypes.REMOVE_TAG,
                     payload: {
                         id: itemId,
-                        reassignToItemId: dialogData.reassignToItemId,
+                        moveToTagId: dialogData.reassignToItemId,
                         deleteAllReferences: dialogData.deleteAllReferences
                     }
                 });
@@ -244,7 +247,10 @@ export class TagsListComponent implements OnInit {
                 this.actions$.pipe(
                     ofType(TagsStoreActions.ActionTypes.REMOVE_TAG_SUCCESS),
                     first()
-                ).subscribe(() => { this.clearFilterIfSelected(itemId); });
+                ).subscribe(() => {
+                    this.clearFilterIfSelected(itemId);
+                    this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                });
             } else {
                 this.tooltipVisible = true;
             }
@@ -327,7 +333,7 @@ export class TagsListComponent implements OnInit {
     }
 
     onRowClick($event) {
-        if (!this.isManageAllowed())
+        if (!this.isUpdateDeleteAllowed)
             return;
 
         let nowDate = new Date();
@@ -376,9 +382,8 @@ export class TagsListComponent implements OnInit {
     }
 
     isManageAllowed() {
-        return this.permissionChecker.isGranted(this.managePermission) &&
-            this.permissionChecker.isGranted(AppPermissions.CRMManageListsAndTags) &&
-            (!this.bulkUpdateMode || this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates));
+        let selected = this.selectedKeys.length;
+        return selected && this.permissionChecker.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates)));
     }
-
 }
