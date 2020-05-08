@@ -196,11 +196,33 @@
                 margin-top: 20px;
 
                 dx-text-box {
-                    padding: 0 7px;
+                    //padding: 0 0 0 7px;
 
                     input {
                         text-align: right;
                     }
+                }
+
+
+
+                .alr {
+                    .dx-placeholder {
+                        right: 7px !important;
+                        left: auto !important;
+                    }
+                }
+
+                .dx-datagrid-rowsview {
+                    overflow: visible !important;
+
+                    .dx-scrollable-container {
+                        overflow: visible !important;
+                    }
+                }
+
+                .dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge .dx-texteditor-input-container:after {
+                    top: 12px;
+                    margin-top: 0;
                 }
             }
 
@@ -215,6 +237,14 @@
                 .dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge .dx-texteditor-input-container:after {
                     right: -20px;
                     pointer-events: auto;
+                }
+
+                .dx-state-disabled {
+                    opacity: .5;
+
+                    .dx-dropdowneditor-button {
+                        display: block;
+                    }
                 }
             }
 
@@ -648,8 +678,13 @@
 
             .dx-texteditor-input {
                 border-bottom: 0;
-                padding: 7px 9px 8px !important;
+                padding: 7px 0 8px !important;
                 height: 41px;
+            }
+
+            .dx-placeholder::before {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
             }
         }
     }
