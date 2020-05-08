@@ -1,11 +1,13 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
-import { map } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
+import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
@@ -15,6 +17,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { ProfileService } from '../../../shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'leads',
@@ -26,9 +29,46 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeadsComponent {
-    noClients$ = this.bankCodeService.getClientsBankCodesTotalCount().pipe(
-        map((clientsCount: number) => !clientsCount)
-    );
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    totalCount: number;
+    stubData = [
+        {
+            'Id': 1,
+            'Name': 'John Smith',
+            'BankCode': 'BKAN',
+            'Email': 'johnsmith@gmail.com',
+            'Phone': '502-859-3321'
+        },
+        {
+            'Id': 2,
+            'Name': 'Caleb Troll',
+            'BankCode': 'ABNK',
+            'Email': 'calebt@gmail.com',
+            'Phone': '302-559-3181'
+        },
+        {
+            'Id': 3,
+            'Name': 'Paula Goldman',
+            'BankCode': 'KNAB',
+            'Email': 'goldmanp@gmail.com',
+            'Phone': '295-050-2285'
+        },
+        {
+            'Id': 4,
+            'Name': 'Mike Danza',
+            'BankCode': 'ANKB',
+            'Email': 'mike952@gmail.com',
+            'Phone': '502-859-3321'
+        },
+        {
+            'Id': 5,
+            'Name': 'Tony Montoya',
+            'BankCode': 'BNKA',
+            'Email': 't.montoya@gmail.com',
+            'Phone': '607-184-1145'
+        },
+    ];
+    items = [];
     dataSource = new DataSource({
         requireTotalCount: false,
         pageSize: 5,
@@ -40,9 +80,8 @@ export class LeadsComponent {
             'BankCode'
         ],
         sort: [{ selector: 'Id', desc: true }],
-        store: {
+        store: new ODataStore({
             key: 'Id',
-            type: 'odata',
             url: this.oDataService.getODataUrl('Lead'),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
@@ -59,27 +98,30 @@ export class LeadsComponent {
                 }
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
-            deserializeDates: false,
-            paginate: false
-        },
-        onChanged: () => {
-            // this.dataIsLoading = false;
-            // this.gridInitialized = true;
-            // this.changeDetectorRef.detectChanges();
-        }
+            onLoaded: (items: any[]) => {
+                this.totalCount = items.length;
+                this.items = items.length ? items : this.stubData;
+                this.changeDetectorRef.detectChanges();
+            },
+            deserializeDates: false
+        })
     });
     constructor(
         private bankCodeService: BankCodeService,
         private oDataService: ODataService,
         private router: Router,
+        private profileService: ProfileService,
+        private changeDetectorRef: ChangeDetectorRef,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {
-        window['t'] = this;
+        this.dataSource.load();
     }
 
     generateFirstLead() {
-
+        this.profileService.trackingLink$.pipe(first()).subscribe(
+            (trackingLink: string) => window.open(trackingLink, '_blank')
+        );
     }
 
     followUp(data) {
@@ -87,9 +129,9 @@ export class LeadsComponent {
     }
 
     viewMore() {
-        this.router.navigateByUrl(
-            'code-breaker/products/bankpass',
-            { queryParams: { showLeads: 'true' }}
+        this.router.navigate(
+            ['code-breaker', 'products', 'bankpass'],
+            { queryParams: { 'showLeads': 'true' }}
         )
     }
 }

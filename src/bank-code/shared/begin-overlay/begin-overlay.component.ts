@@ -11,6 +11,5 @@ export class BeginOverlayComponent {
     @Input() buttonText: string;
     @Output() onButtonClick: EventEmitter<any> = new EventEmitter();
 
-    constructor() {
-    }
+    constructor() {}
 }

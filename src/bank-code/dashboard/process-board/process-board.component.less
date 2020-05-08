@@ -28,9 +28,9 @@
 
     & > div {
         background-color: #ffffff;
-        padding: 15px;
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 15px;
+        padding: 10px;
         p {
             font-size: 18px;
             color: #575757;
@@ -43,18 +43,24 @@
             padding-left: 0;
             display: flex;
             justify-content: space-between;
+            flex-flow: column;
             li {
                 list-style: none;
                 position: relative;
+                display: flex;
+                flex-flow: row-reverse;
                 .point {
                     border-radius: 50%;
                     border: 3px solid #dfdfdf;
-                    width: 35px;
+                    min-width: 35px;
+                    max-width: 35px;
                     height: 35px;
-                    margin: auto;
                     position: relative;
                     z-index: 1;
                     background-color: #fff;
+                    @media (min-width: 768px) {
+                        margin: auto;
+                    }
                 }
                 .description {
                     font-family: Montserrat, sans-serif;
@@ -62,7 +68,18 @@
                     color: #575757;
                     font-weight: 600;
                     line-height: 18px;
-                    padding: 3px 30px;
+                    padding: 3px 20px;
+                    text-align: left;
+                    margin-right: auto;
+
+                    @media (min-width: 768px) {
+                        text-align: center;
+                    }
+
+                    @media (min-width: 1200px) {
+                        padding-right: 30px;
+                        padding-left: 30px;
+                    }
                 }
                 &:before,
                 &:after {
@@ -72,9 +89,10 @@
                     width: calc((100% - 28px) / 2);
                     position: absolute;
                     top: 10px;
+                    display: none;
                 }
                 &:before {
-                    left: 0;
+                    left: -1px;
                 }
                 &:after {
                     right: 0;
@@ -103,6 +121,21 @@
                     }
                 }
             }
+
+            @media (min-width: 768px) {
+                flex-flow: row;
+                li {
+                    display: list-item;
+                    &:before,
+                    &:after {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        @media (min-width: 768px) {
+            padding: 15px;
         }
     }
 

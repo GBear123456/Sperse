@@ -1,4 +1,4 @@
-<begin-overlay *ngIf="noClients$ | async"
+<begin-overlay *ngIf="totalCount === 0"
                text="Ready to generate your first lead?"
                buttonText="Let's go!"
                (onButtonClick)="generateFirstLead()">
@@ -8,7 +8,7 @@
               class="limitedPagerTotal"
               accessKey="narrowHeaderPanel"
               noDataText=""
-              [dataSource]="dataSource"
+              [dataSource]="items"
               [loadPanel]="{ enabled: false }"
               [cacheEnabled]="false"
               [columnAutoWidth]="true"
@@ -16,11 +16,11 @@
     <dxo-pager [visible]="false"></dxo-pager>
     <dxo-sorting mode="none"></dxo-sorting>
     <dxi-column dataField="Id" [visible]="false"></dxi-column>
-    <dxi-column dataField="Name" [width]="300" [caption]="ls.l('Name')"></dxi-column>
-    <dxi-column dataField="BankCode" [width]="180" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"></dxi-column>
-    <dxi-column dataField="Email" [width]="280" [caption]="ls.l('Email')"></dxi-column>
-    <dxi-column dataField="Phone" [width]="180" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-    <dxi-column cssClass="follow-up-button-container" [width]="180" cellTemplate="followUpCellTemplate"></dxi-column>
+    <dxi-column dataField="Name" [width]="250" [caption]="ls.l('Name')"></dxi-column>
+    <dxi-column dataField="BankCode" [minWidth]="140" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"></dxi-column>
+    <dxi-column dataField="Email" [minWidth]="270" [caption]="ls.l('Email')"></dxi-column>
+    <dxi-column dataField="Phone" [minWidth]="180" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+    <dxi-column cssClass="follow-up-button-container" [minWidth]="120" cellTemplate="followUpCellTemplate"></dxi-column>
     <div *dxTemplate="let cellData of 'phoneCell'">
         {{ cellData.value | phone }}
     </div>

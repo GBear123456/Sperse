@@ -3,7 +3,15 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { delay, distinctUntilChanged, map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
+import {
+    delay,
+    distinctUntilChanged,
+    map,
+    publishReplay,
+    refCount,
+    startWith,
+    switchMap
+} from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -16,6 +24,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
+import { environment } from '@root/environments/environment';
 
 @Injectable()
 export class ProfileService {
@@ -38,6 +47,16 @@ export class ProfileService {
     );
     private accessCode: BehaviorSubject<string> = new BehaviorSubject<string>(this.appSession.user ? this.appSession.user.affiliateCode : null);
     accessCode$: Observable<string> = this.accessCode.asObservable();
+    trackingLink$: Observable<string> = this.accessCode$.pipe(
+        map((accessCode: string) => {
+            return (environment.releaseStage === 'production'
+                ? (location.href.indexOf('successfactory.com') >= 0
+                    ? 'https://sf.crackmycode.com'
+                    : 'https://bp.crackmycode.com')
+                : 'https://bankpass.bankcode.pro'
+            ) + ( accessCode ? '/' + accessCode : '');
+        })
+    );
     defaultPhotos = {
         [LayoutType.AdvicePeriod]: AppConsts.imageUrls.noPhotoAdvicePeriod,
         [LayoutType.BankCode]: AppConsts.imageUrls.noPhotoBankCode
