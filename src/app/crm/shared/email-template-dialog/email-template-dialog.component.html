@@ -28,8 +28,8 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
             <div class="row">
-                <div class="field-area from" [hidden]="templateEditMode">
-                    <label class="caption from">{{ls.l('From')}}:</label>
+                <div class="field-area from">
+                    <label class="caption disabled">{{ls.l('From')}}:</label>
                     <dx-tag-box
                         name="from"
                         width="calc(50% - 52px)"
@@ -61,8 +61,8 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area" *ngIf="!templateEditMode">
-                    <label class="caption">{{ls.l('To')}}:</label>
+                <div class="field-area">
+                    <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
                     <dx-tag-box
                         name="to"
                         width="calc(100% - 31px)"
@@ -73,6 +73,7 @@
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [(value)]="data.to"
+                        [disabled]="templateEditMode"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onKeyUp)="onKeyUp($event)"
@@ -117,7 +118,7 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area">
+                <div class="field-area subject">
                     <label class="caption">{{ls.l('Subject')}}:</label>
                     <dx-text-box
                         name="subject"
