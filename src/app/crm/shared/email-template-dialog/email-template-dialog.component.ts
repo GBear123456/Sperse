@@ -103,8 +103,8 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (this.attachments.length && !this.data.attachments)
                 this.attachments.forEach(item => this.removeAttachment(item));
         });
-        this.showCC = this.data.cc && this.data.cc.length;
-        this.showBCC = this.data.bcc && this.data.bcc.length;
+        this.showCC = Boolean(this.data.cc && this.data.cc.length);
+        this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
         this.changeDetectorRef.detectChanges();
     }
 
@@ -231,8 +231,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.data.body = res.body;
                     this.data.cc = res.cc;
                     this.data.subject = res.subject;
-                    this.showCC = res.cc && res.cc.length;
-                    this.showBCC = res.bcc && res.bcc.length;
+                    this.showCC = Boolean(res.cc && res.cc.length);
+                    this.showBCC = Boolean(res.bcc && res.bcc.length);
                     this.changeDetectorRef.markForCheck();
                     this.onTemplateChange.emit(event.value);
                 });

@@ -162,7 +162,7 @@
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
             </div>
         </dx-scroll-view>
-        <div class="bank-decode-wrapper">
+        <div class="bank-decode-wrapper" *ngIf="!templateEditMode">
             <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div>
     </div>
