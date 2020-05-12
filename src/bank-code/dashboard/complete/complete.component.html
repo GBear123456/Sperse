@@ -1,14 +1,14 @@
 <div class="row">
     <div class="col-sm-4 left-part">
-        <p>Do you like to</p>
-        <p class="action">Complete?</p>
+        <p>{{ ls.l('DoYouLike') }}</p>
+        <p class="action">{{ ls.l('Complete') }}?</p>
     </div>
     <div class="col-sm-4 complete-group">
         <img src="./assets/common/images/bank-code/complete-group.png">
     </div>
     <div class="col-sm-4">
         <p class="description">
-            Click <a routerLink="top-performers">here</a> to find out how you stack up against other Codebreakers around the world. <span>Get motivated, get results, and TAKE IT TO THE BANK®!</span>
+            {{ ls.l('Click') }} <a routerLink="top-performers">{{ ls.l('here') }}</a> {{ ls.l('HowYouStackUpAgainsOther') }} <span>{{ ls.l('GetMotivatedAndResults') }}</span>
         </p>
     </div>
 </div>
