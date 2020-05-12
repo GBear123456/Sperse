@@ -40,6 +40,7 @@
                         [acceptCustomValue]="true"
                         [(value)]="data.from"
                         [disabled]="true"
+                        (onKeyUp)="onKeyUp($event)"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -54,6 +55,7 @@
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [(value)]="data.replyTo"
+                        (onKeyUp)="onKeyUp($event)"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -92,6 +94,7 @@
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [(value)]="data.cc"
+                        (onKeyUp)="onKeyUp($event)"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -108,6 +111,7 @@
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [(value)]="data.bcc"
+                        (onKeyUp)="onKeyUp($event)"
                         (onOpened)="emailInputFocusIn($event)"
                         (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
