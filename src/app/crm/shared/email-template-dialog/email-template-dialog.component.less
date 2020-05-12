@@ -102,6 +102,12 @@
         }
     }
 
+    .char-count {
+        position: absolute;
+        bottom: 0px;
+        right: 30px;
+    }
+
     ::ng-deep ckeditor {
         .cke_chrome {
             border: none!important;
@@ -110,12 +116,19 @@
                 background: #f3f7fa!important;
             }
             .cke_bottom {
+                padding: 6px 8px 0px 0px!important;
                 border-top: none!important;
                 background: #f3f7fa!important;
                 border-bottom: 1px solid #dfdfdf;
             }
             .cke_contents {
                 min-height: 380px;
+            }
+            .cke_path {
+                margin: 4px 0 2px!important;
+            }
+            .cke_resizer_ltr {
+                margin: 8px 0px!important;
             }
         }    
     }
@@ -141,6 +154,16 @@
             display: block;
             position: relative;
             white-space: nowrap;
+
+            &.subject {
+                label {
+                    border: none;
+                    line-height: 42px;
+                } 
+                ::ng-deep dx-text-box input {
+                    border: none;
+                }
+            }
 
             &.attachments {
                 .attachment {
@@ -201,7 +224,7 @@
                 padding-top: 1px;
                 color: #8a969b;
                 padding-right: 10px;
-                &.from {
+                &.disabled {
                     opacity: 0.5;
                 }
             }            
@@ -227,6 +250,9 @@
 
             dx-tag-box {
                 cursor: text;
+                &.dx-state-disabled {
+                    opacity: 0.5;
+                }
                 input {
                     border-bottom: none;
                 }

@@ -54,6 +54,7 @@ import { ExportGoogleSheetService } from '../../../shared/common/export/export-g
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     selector: 'bank-pass',
@@ -346,13 +347,27 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     private deleteLeadsInternal(selectedId: number) {
-        this.leadService.deleteLead(selectedId).subscribe(() => {
-            this.refresh();
-            if (this.dataGrid && this.dataGrid.instance) {
-                this.dataGrid.instance.deselectAll();
+        this.leadService.deleteLead(selectedId, false).subscribe((res) => {
+            if (res.success) {
+                this.handleSuccessfulDelete();
             }
-            this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+            else {
+                let message = ContactsHelper.getDeleteErrorMessage(res);
+                this.messageService.confirm(message, 'Force delete entities ?', (confirm) => {
+                    if (confirm) {
+                        this.leadService.deleteLead(selectedId, true).subscribe(() => this.handleSuccessfulDelete());
+                    }
+                }, true);
+            }
         });
+    }
+
+    private handleSuccessfulDelete() {
+        this.refresh();
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.dataGrid.instance.deselectAll();
+        }
+        this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
     }
 
     ngOnDestroy() {

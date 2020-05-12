@@ -58,6 +58,7 @@ import { ContextType } from '@app/crm/contacts/details-header/context-type.enum'
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -679,14 +680,28 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.l('LeadDeleteWarningMessage', this.getCustomerName()),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.leadService.deleteLead(this.leadId).subscribe(() => {
-                        this.notify.success(this.l('SuccessfullyDeleted'));
-                        this.contactService['data']['deleted'] = true;
-                        this.close();
+                    this.leadService.deleteLead(this.leadId, false).subscribe((res) => {
+                        if (res.success) {
+                            this.handleSuccessfulDelete();
+                        }
+                        else {
+                            let message = ContactsHelper.getDeleteErrorMessage(res);
+                            this.message.confirm(message, 'Force delete entities ?', (confirm) => {
+                                if (confirm) {
+                                    this.leadService.deleteLead(this.leadId, true).subscribe(() => this.handleSuccessfulDelete());
+                                }
+                            }, true);
+                        }
                     });
                 }
             }
         );
+    }
+
+    private handleSuccessfulDelete() {
+        this.notify.success(this.l('SuccessfullyDeleted'));
+        this.contactService['data']['deleted'] = true;
+        this.close();
     }
 
     updateStatus(statusId: string) {

@@ -7410,6 +7410,64 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @forceDelete (optional) 
+     * @return Success
+     */
+    deleteContact(id: number | null | undefined, forceDelete: boolean | null | undefined): Observable<DeleteContactLeadOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/DeleteContact?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (forceDelete !== undefined)
+            url_ += "forceDelete=" + encodeURIComponent("" + forceDelete) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteContact(<any>response_);
+                } catch (e) {
+                    return <Observable<DeleteContactLeadOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DeleteContactLeadOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteContact(response: HttpResponseBase): Observable<DeleteContactLeadOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DeleteContactLeadOutput.fromJS(resultData200) : new DeleteContactLeadOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DeleteContactLeadOutput>(<any>null);
+    }
+
+    /**
      * @namePrefix (optional) 
      * @firstName (optional) 
      * @middleName (optional) 
@@ -18179,12 +18237,15 @@ export class LeadServiceProxy {
 
     /**
      * @leadId (optional) 
+     * @forceDelete (optional) 
      * @return Success
      */
-    deleteLead(leadId: number | null | undefined): Observable<void> {
+    deleteLead(leadId: number | null | undefined, forceDelete: boolean | null | undefined): Observable<DeleteContactLeadOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLead?";
         if (leadId !== undefined)
             url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+        if (forceDelete !== undefined)
+            url_ += "forceDelete=" + encodeURIComponent("" + forceDelete) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -18192,6 +18253,7 @@ export class LeadServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -18202,14 +18264,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processDeleteLead(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<DeleteContactLeadOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<DeleteContactLeadOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDeleteLead(response: HttpResponseBase): Observable<void> {
+    protected processDeleteLead(response: HttpResponseBase): Observable<DeleteContactLeadOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18218,22 +18280,28 @@ export class LeadServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DeleteContactLeadOutput.fromJS(resultData200) : new DeleteContactLeadOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<DeleteContactLeadOutput>(<any>null);
     }
 
     /**
+     * @forceDelete (optional) 
      * @body (optional) 
      * @return Success
      */
-    deleteLeads(body: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLeads";
+    deleteLeads(forceDelete: boolean | null | undefined, body: number[] | null | undefined): Observable<DeleteContactLeadOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLeads?";
+        if (forceDelete !== undefined)
+            url_ += "forceDelete=" + encodeURIComponent("" + forceDelete) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -18244,6 +18312,7 @@ export class LeadServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -18254,14 +18323,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processDeleteLeads(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<DeleteContactLeadOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<DeleteContactLeadOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDeleteLeads(response: HttpResponseBase): Observable<void> {
+    protected processDeleteLeads(response: HttpResponseBase): Observable<DeleteContactLeadOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18270,14 +18339,17 @@ export class LeadServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DeleteContactLeadOutput.fromJS(resultData200) : new DeleteContactLeadOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<DeleteContactLeadOutput>(<any>null);
     }
 
     /**
@@ -44292,6 +44364,74 @@ export interface ICreateOrUpdateContactOutput {
     userId: number | undefined;
     userKey: string | undefined;
     autoLoginLink: string | undefined;
+}
+
+export class DeleteContactLeadOutput implements IDeleteContactLeadOutput {
+    leadErrors!: { [key: string] : string[]; } | undefined;
+    contactErrors!: { [key: string] : string[]; } | undefined;
+    success!: boolean | undefined;
+
+    constructor(data?: IDeleteContactLeadOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["leadErrors"]) {
+                this.leadErrors = {};
+                for (let key in data["leadErrors"]) {
+                    if (data["leadErrors"].hasOwnProperty(key))
+                        this.leadErrors[key] = data["leadErrors"][key];
+                }
+            }
+            if (data["contactErrors"]) {
+                this.contactErrors = {};
+                for (let key in data["contactErrors"]) {
+                    if (data["contactErrors"].hasOwnProperty(key))
+                        this.contactErrors[key] = data["contactErrors"][key];
+                }
+            }
+            this.success = data["success"];
+        }
+    }
+
+    static fromJS(data: any): DeleteContactLeadOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new DeleteContactLeadOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.leadErrors) {
+            data["leadErrors"] = {};
+            for (let key in this.leadErrors) {
+                if (this.leadErrors.hasOwnProperty(key))
+                    data["leadErrors"][key] = this.leadErrors[key];
+            }
+        }
+        if (this.contactErrors) {
+            data["contactErrors"] = {};
+            for (let key in this.contactErrors) {
+                if (this.contactErrors.hasOwnProperty(key))
+                    data["contactErrors"][key] = this.contactErrors[key];
+            }
+        }
+        data["success"] = this.success;
+        return data; 
+    }
+}
+
+export interface IDeleteContactLeadOutput {
+    leadErrors: { [key: string] : string[]; } | undefined;
+    contactErrors: { [key: string] : string[]; } | undefined;
+    success: boolean | undefined;
 }
 
 export class SimilarContactOutput implements ISimilarContactOutput {

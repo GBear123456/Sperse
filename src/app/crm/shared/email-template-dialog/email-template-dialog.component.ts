@@ -51,8 +51,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'links', groups: [ 'Link', 'Unlink' ] },
             { name: 'paragraph', groups: [ 'list', 'align' ] },
             { name: 'styles', groups: [ 'styles' ] },
-            { name: 'other', groups: [ 'simplebutton' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+            { name: 'other', groups: [ 'simplebutton' ] }
         ],
         removeButtons: 'Anchor,Subscript,Superscript'
     };
@@ -78,6 +77,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     ];
     templates$: Observable<GetTemplatesResponse[]>;
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
+    charCount: number;
 
     constructor(
         private domSanitizer: DomSanitizer,
@@ -103,9 +103,9 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (this.attachments.length && !this.data.attachments)
                 this.attachments.forEach(item => this.removeAttachment(item));
         });
-        this.showCC = this.templateEditMode || this.data.cc && this.data.cc.length;
-        this.showBCC = this.templateEditMode || this.data.bcc && this.data.bcc.length;
-        this.changeDetectorRef.markForCheck();
+        this.showCC = Boolean(this.data.cc && this.data.cc.length);
+        this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+        this.changeDetectorRef.detectChanges();
     }
 
     save() {
@@ -194,11 +194,12 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.tagLastValue = '';
         this.onCustomItemCreating(event, field => {
             let isComboListEmpty = !this.data[field].length;
-            if (!this.templateEditMode && checkDisplay && isComboListEmpty) {
+            if (checkDisplay && isComboListEmpty) {
                 if (field == 'cc')
                     this.showCC = false;
                 else
                     this.showBCC = false;
+                this.changeDetectorRef.detectChanges();
             } else if (field == 'to')
                 event.component.option('isValid', !isComboListEmpty);
         });
@@ -208,6 +209,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this[field] = true;
         setTimeout(() =>
             element.instance.focus());
+        this.changeDetectorRef.detectChanges();
     }
 
     startLoading() {
@@ -229,6 +231,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.data.body = res.body;
                     this.data.cc = res.cc;
                     this.data.subject = res.subject;
+                    this.showCC = Boolean(res.cc && res.cc.length);
+                    this.showBCC = Boolean(res.bcc && res.bcc.length);
                     this.changeDetectorRef.markForCheck();
                     this.onTemplateChange.emit(event.value);
                 });
@@ -254,8 +258,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                 Array.prototype.push.apply(currentList, validValues);
             else
                 this.data[field] = validValues;
-            this.changeDetectorRef.markForCheck();
             callback && callback(field);
+            this.changeDetectorRef.markForCheck();
         });
 
         return event.customItem = '';
@@ -281,6 +285,13 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCKReady(event) {
         this.ckEditor = event.editor;
+        this.ckEditor.container.find('#cke_1_bottom').$[0].prepend(
+            this.ckEditor.container.find('#cke_1_toolbox>span:first-child').$[0]);
+        this.updateDataLength();
+    }
+
+    updateDataLength() {
+        this.charCount = Math.max(this.ckEditor.getData().replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
     }
 
     onTagClick(event) {
