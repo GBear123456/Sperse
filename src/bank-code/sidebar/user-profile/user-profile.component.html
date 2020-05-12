@@ -8,7 +8,7 @@
 </div>
 <div *ngIf="appSession?.user?.userName as userName" class="welcome">{{ ls.l('Welcome') + ' ' + userName }}!</div>
 <div class="access-code-container">
-    <p>Your Access Code:</p>
+    <p>{{ ls.l('YourAccessCode') }}:</p>
     <div class="access-code">{{ accessCode$ | async }}</div>
 </div>
 <ul class="navigation">
