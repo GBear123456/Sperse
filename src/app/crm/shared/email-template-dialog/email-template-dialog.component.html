@@ -145,7 +145,8 @@
                         </div>
                     </dx-tooltip>
                     <a id="tagsButton" class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
-                    <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)"></ckeditor>
+                    <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                    <p class="char-count">{{charCount}}</p>
                     <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                             <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>

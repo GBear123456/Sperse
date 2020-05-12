@@ -51,8 +51,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'links', groups: [ 'Link', 'Unlink' ] },
             { name: 'paragraph', groups: [ 'list', 'align' ] },
             { name: 'styles', groups: [ 'styles' ] },
-            { name: 'other', groups: [ 'simplebutton' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] }
+            { name: 'other', groups: [ 'simplebutton' ] }
         ],
         removeButtons: 'Anchor,Subscript,Superscript'
     };
@@ -78,6 +77,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     ];
     templates$: Observable<GetTemplatesResponse[]>;
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
+    charCount: number;
 
     constructor(
         private domSanitizer: DomSanitizer,
@@ -281,6 +281,13 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCKReady(event) {
         this.ckEditor = event.editor;
+        this.ckEditor.container.find('#cke_1_bottom').$[0].prepend(
+            this.ckEditor.container.find('#cke_1_toolbox>span:first-child').$[0]);
+        this.updateDataLength();
+    }
+
+    updateDataLength() {
+        this.charCount = Math.max(this.ckEditor.getData().replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
     }
 
     onTagClick(event) {
