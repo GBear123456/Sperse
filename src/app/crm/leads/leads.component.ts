@@ -61,7 +61,8 @@ import {
     ContactServiceProxy,
     LeadServiceProxy,
     OrganizationUnitDto,
-    PipelineDto
+    PipelineDto,
+    DeleteContactLeadOutput
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
@@ -100,6 +101,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -1470,17 +1472,35 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private deleteLeadsInternal(selectedIds: number[]) {
-        let request = selectedIds.length > 1 ?
-            this.leadService.deleteLeads(selectedIds) :
-            this.leadService.deleteLead(selectedIds[0]);
+        let request = this.getDeleteMethod(selectedIds, false);
 
-        request.subscribe(() => {
-            this.refresh();
-            if (this.dataGrid && this.dataGrid.instance) {
-                this.dataGrid.instance.deselectAll();
+        request.subscribe((res) => {
+            if (res.success) {
+                this.handleSuccessfulDelete();
             }
-            this.notify.success(this.l('SuccessfullyDeleted'));
+            else {
+                let message = ContactsHelper.getDeleteErrorMessage(res);
+                this.message.confirm(message, 'Force delete entities ?', (confirm) => {
+                    if (confirm) {
+                        this.getDeleteMethod(selectedIds, true).subscribe(() => this.handleSuccessfulDelete());
+                    }
+                }, true);
+            }
         });
+    }
+
+    private getDeleteMethod(selectedIds: number[], forceDelete): Observable<DeleteContactLeadOutput> {
+        return selectedIds.length > 1 ?
+            this.leadService.deleteLeads(forceDelete, selectedIds) :
+            this.leadService.deleteLead(selectedIds[0], forceDelete);
+    }
+
+    private handleSuccessfulDelete() {
+        this.refresh();
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.dataGrid.instance.deselectAll();
+        }
+        this.notify.success(this.l('SuccessfullyDeleted'));
     }
 
     repaintToolbar() {
