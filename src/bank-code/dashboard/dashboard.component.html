@@ -8,30 +8,30 @@
                 <process-board></process-board>
                 <div class="start-widgets row">
                     <div class="col-sm-4">
-                        <start-widget title="Codebreaker AI"
-                                      subtitle="Decode"
+                        <start-widget [title]="ls.l('BankCode_CodebreakerAI')"
+                                      [subtitle]="ls.l('Decode')"
                                       color="#004a84"
                                       iconSrc="./assets/common/images/bank-code/lock.png"
                                       link="../products/codebreaker-ai">
-                            Decode your prospect's <b>BANK</b>CODE in nanoseconds using cutting-edge artificial intelligence!
+                            {{ ls.l('DecodeYourProspects') }} <b>{{ ls.l('BankCode_Bank') }}</b>{{ ls.l('CodeInNanoseconds') }}
                         </start-widget>
                     </div>
                     <div class="col-sm-4">
-                        <start-widget title="BankPass"
-                                      subtitle="Generate Leads"
+                        <start-widget [title]="ls.l('BankCode_BankPass')"
+                                      [subtitle]="ls.l('GenerateLeads')"
                                       color="#ac1f22"
                                       iconSrc="./assets/common/images/bank-code/lead.png"
                                       link="../products/bankpass">
-                            Share your Access Code right now to capture unlimited leads using your <b>BANK</b>PASS.
+                            {{ ls.l('ShareYourAccessCode') }} <b>{{ ls.l('BankCode_Bank') }}</b><span class="uppercase">{{ ls.l('BankCode_Pass') }}</span>.
                         </start-widget>
                     </div>
                     <div class="col-sm-4">
-                        <start-widget title="BankVault"
-                                      subtitle="Get The Yes!"
+                        <start-widget [title]="ls.l('BankCode_BankVault')"
+                                      [subtitle]=""
                                       color="#f09e1f"
                                       iconSrc="./assets/common/images/bank-code/close-deal.png"
                                       link="../products/bankvault">
-                            GET THE YES! Access your <b>BANK</b>VAULT and let the learning begin!
+                            {{ ls.l('GetTheYes') }}! {{ ls.l('AccessYour') }} <b>{{ ls.l('BankCode_Bank') }}</b><span class="uppercase">{{ ls.l('BankCode_Vault') }}</span> {{ ls.l('AndLetTheLearningBegin') }}!
                         </start-widget>
                     </div>
                 </div>
