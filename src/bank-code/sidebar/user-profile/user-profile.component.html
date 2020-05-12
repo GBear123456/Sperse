@@ -1,0 +1,19 @@
+<div class="user-photo">
+    <img [src]="profileService.getProfilePictureUrl(appSession?.user?.profilePictureId)"/>
+</div>
+<div class="bank-code" *ngIf="appSession?.user?.bankCode as bankCode">
+    <bank-code-letters [bankCode]="bankCode"
+                       [allowEdit]="true">
+    </bank-code-letters>
+</div>
+<div *ngIf="appSession?.user?.userName as userName" class="welcome">{{ ls.l('Welcome') + ' ' + userName }}!</div>
+<div class="access-code-container">
+    <p>Your Access Code:</p>
+    <div class="access-code">{{ accessCode$ | async }}</div>
+</div>
+<ul class="navigation">
+    <li *ngFor="let item of navigationItems">
+        <div class="img"><img [src]="item.imgUrl" [alt]="item.name"></div>
+        <a (click)="navigationItemClick(item, $event)">{{ item.name }}</a>
+    </li>
+</ul>
