@@ -52,7 +52,7 @@ export class ProfileService {
             return (environment.releaseStage === 'production'
                 ? (location.href.indexOf('successfactory.com') >= 0
                     ? 'https://sf.crackmycode.com'
-                    : 'https://bp.crackmycode.com')
+                    : 'https://crackmycode.com')
                 : 'https://bankpass.bankcode.pro'
             ) + ( accessCode ? '/' + accessCode : '');
         })
