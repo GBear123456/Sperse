@@ -124,17 +124,17 @@
                     </dx-text-box>
                 </div>
                 <div class="field-area ckeditor">
-                    <p>{{templateNote}}</p>
-                    <dx-tooltip [width]="200"
+                    <dx-tooltip [width]="225"
                          [(visible)]="tagsTooltipVisible"
                          [target]="'#tagsButton'">
-                        <div *dxTemplate="let data of 'content'">
+                        <div *dxTemplate="let data of 'content'" class="tags-container">
+                            <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
                             <dx-list
                                 [selectionMode]="'single'"
                                 [dataSource]="tagsList"
-                                [itemTemplate]="startCase"
+                                [itemTemplate]="'startCase'"
                                 (onItemClick)="onTagClick($event)">
-                                <div *dxTemplate="let data of 'startCase'">
+                                <div *dxTemplate="let data of 'startCase'" class="tags-list-item">
                                     {{ startCase(data) }}
                                 </div>                
                             </dx-list>

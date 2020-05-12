@@ -1,7 +1,6 @@
 <email-template-dialog
     [tagsList]="tagsList"
     [templateEditMode]="true" 
-    [templateNote]="ls.l('InvoiceEmail_SupportedTags')"
     (onTemplateChange)="templateChanged($event)" 
     (onTagItemClick)="onTagItemClick($event)"
     (onSave)="save()">

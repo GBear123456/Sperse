@@ -58,7 +58,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     };
 
     @Input() tagsList = [];
-    @Input() templateNote = '';
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
     @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<number>();
