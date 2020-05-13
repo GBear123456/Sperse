@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
@@ -16,6 +17,8 @@ import clone from 'lodash/clone';
 import * as moment from 'moment';
 
 /** Application imports */
+import { ContactStatus } from '@shared/AppEnums';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -141,6 +144,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     filterBoolean = Boolean;
 
     constructor(
+        private reuseService: RouteReuseStrategy,
         private nameParser: NameParserService,
         private oDataService: ODataService,
         private contactProxy: ContactServiceProxy,
@@ -436,6 +440,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private afterSave(): void {
         this.data.refreshParent && this.data.refreshParent();
+        if (this.status != InvoiceStatus.Draft && this.data.contactInfo.statusId == ContactStatus.Prospective)
+            (this.reuseService as CustomReuseStrategy).invalidate('leads');
+
         if (this.selectedOption.email)
             setTimeout(() => this.showNewEmailDialog());
         else {
