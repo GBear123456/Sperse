@@ -12,8 +12,10 @@
     <div class="access-code">{{ accessCode$ | async }}</div>
 </div>
 <ul class="navigation">
-    <li *ngFor="let item of navigationItems">
-        <div class="img"><img [src]="item.imgUrl" [alt]="item.name"></div>
-        <a (click)="navigationItemClick(item, $event)">{{ item.name }}</a>
-    </li>
+    <ng-container *ngFor="let item of navigationItems">
+        <li *ngIf="!item.hidden">
+            <div class="img"><img [src]="item.imgUrl" [alt]="item.name"></div>
+            <a (click)="navigationItemClick(item, $event)">{{ item.name }}</a>
+        </li>
+    </ng-container>
 </ul>
