@@ -833,7 +833,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 closeOnNavigation: true,
                 position: {
                     top: '100px',
-                    left: innerWidth - 700 + 'px'
+                    left: Math.max((innerWidth - 900 - 620) / 2, 0) + 'px'
                 }
             }).afterClosed().subscribe(result => {
                 if (!this[field] && result)

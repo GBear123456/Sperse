@@ -1,6 +1,6 @@
 :host {
     display: block;
-    min-width: 350px;
+    min-width: 600px;
     position: relative;
     &:before {
         content: "";
@@ -13,56 +13,113 @@
         border-bottom: 10px solid transparent;
         border-right: 10px solid #FFF;
     }
-    input {
-        width: 240px;
-        height: 48px;
-        &:disabled {
-            opacity: 0.5;
-            color: #333;
-        }
-    }
     label {
-        right: -4px;
-        width: 80px;
-        height: 48px;
-        position: relative;
-        color: #BDC6C7;
-        line-height: 46px;
-        vertical-align: top;
-        border-bottom: 1px solid #dfdfdf;
-        margin-bottom: 0px;
-        padding-bottom: 0px;
-        font-size: 12px;
+        width: 100px;
+        white-space: nowrap;
+        margin-top: 7px;
     }
     h2 {
         font-weight: 500;
         line-height: 1.71;
         letter-spacing: 0.6px;
+        margin: 0 auto 0 0;
         cursor: move;
     }
-    .phone-container {
-        max-width: 340px;
-        ::ng-deep .wrapper {
-            width: 240px!important;
+    input {
+        width: 420px;
+        height: 48px;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.79;
+        letter-spacing: 0.3px;
+        color: #424c56;
+        padding: 0;
+    }
+    .field.addr {
+        padding-left: 140px;
+        & > *:first-child {
+            padding-right: 20px;
         }
-        label {
-            height: 47px!important;
+        ::ng-deep dx-select-box[name="country"]:not(.dx-state-hover) {
+            .dx-dropdowneditor-icon {
+                background-color: #FFFFFF;
+            }
         }
     }
-    ::ng-deep .dx-texteditor-container {
-        width: 240px;
+    .phone-container {
+        ::ng-deep country-phone-number {
+            width: 420px;
+            height: 48px;
+            display: inline-block;
+            vertical-align: top;
+
+            input {
+                font-size: 15px;
+                font-weight: 400;
+                line-height: 1.79;
+                letter-spacing: 0.3px;
+                color: #424c56;
+                padding: 0;
+            }
+
+            .input-group {
+                height: 49px;
+            }
+
+            .wrapper {
+                width: 420px!important;
+            }
+
+            .flagInput .dropdown .btn {
+                height: 48px;
+            }
+
+            .flagInput, .flagInput .dropdown .btn span, .dropdown-content .list-group a span {
+                line-height: unset;
+                font-size: 12px;
+                margin: 0;
+                top: 0;
+            }
+
+            .flagInput .dropdown .btn span.arrow-down {
+                margin-top: 5px;
+                margin-left: 2px;
+            }
+
+            .dropdown-content .list-group a span.country-name {
+                margin-left: 6px;
+            }
+
+            .list-group .list-group-item span {
+                vertical-align: middle;
+            }
+        }
     }
     dx-select-box, dx-text-box, dx-number-box {
         display: inline-block;
         ::ng-deep input {
             height: 48px;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.79;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            padding: 0;
         }
     }
+    dx-text-box[name="firstName"] {
+        margin-right: 20px;
+    }
     mat-dialog-actions {
+        margin: 0px!important;
         justify-content: flex-end;
+        background-color: #F3F7FA;
+        border-bottom: 1px solid #dadee1;
+        padding: 10px 20px;
     }
     mat-dialog-content {
         min-height: 160px;
+        padding: 10px 50px 30px;
     }
     .type-item-wrapper {
         ::ng-deep input {
@@ -74,10 +131,6 @@
             background-image: none!important;
         }
     }
-    country-phone-number {
-        height: 38px;
-        display: inline-block;
-    }
 }
 
 ::ng-deep .address-template {
@@ -87,5 +140,12 @@
     }
     span {
         padding-left: 30px;
+    }
+}
+
+::ng-deep mat-dialog-container {
+    &#selectedBillingAddress,   
+    &#selectedShippingAddress {
+        padding: 0;
     }
 }

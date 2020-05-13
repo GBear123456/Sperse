@@ -21,6 +21,7 @@ import { StatesService } from '@root/store/states-store/states.service';
     selector: 'invoice-address-dialog',
     templateUrl: 'invoice-address-dialog.html',
     styleUrls: [
+        '../../../../shared/common/styles/form.less',
         './invoice-address-dialog.less',
         '../../../contacts/addresses/addresses.styles.less'
     ],
