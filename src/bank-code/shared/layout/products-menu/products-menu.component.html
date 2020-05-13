@@ -6,7 +6,7 @@
                [displayExpr]="displayExpr"
                valueExpr="route"
                [value]="selectedProductRoute$ | async"
-               (onOpened)="onPopupOpened()"
+               (onOpened)="onPopupOpened($event)"
                (onItemClick)="itemClick($event)">
     <div *dxTemplate="let data of 'itemTemplate'">
         <span class="first-word">{{ data.firstWord }}</span><ng-container *ngIf="data.secondWord"><span *ngIf="!data.noSpace">&nbsp;</span>{{ data.secondWord }}</ng-container>

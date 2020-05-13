@@ -10,9 +10,7 @@ import { AppLocalizationService } from '../../../app/shared/common/localization/
 
 @Component({
     templateUrl: 'bank-code-header.component.html',
-    styleUrls: [
-        'bank-code-header.component.less'
-    ],
+    styleUrls: ['bank-code-header.component.less'],
     selector: 'bank-code-header'
 })
 export class BankCodeHeaderComponent {

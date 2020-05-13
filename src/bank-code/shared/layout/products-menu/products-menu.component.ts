@@ -17,6 +17,7 @@ import { filter, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '../../../../app/shared/common/localization/app-localization.service';
+import { AppConsts } from '../../../../shared/AppConsts';
 
 @Component({
     selector: 'products-menu',
@@ -126,7 +127,10 @@ export class ProductsMenuComponent implements OnInit, OnDestroy {
             : null;
     }
 
-    onPopupOpened() {
+    onPopupOpened(e) {
+        if (AppConsts.isMobile) {
+            e.component._popup.option('width', 260);
+        }
         this.renderer.addClass(
             this.document.body.querySelector('.dx-selectbox-popup-wrapper'),
             'bank-code-product-menu-popup'
