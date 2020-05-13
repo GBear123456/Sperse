@@ -6,6 +6,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     styleUrls: ['sidebar.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SidebarComponent {
-    constructor() {}
-}
+export class SidebarComponent {}

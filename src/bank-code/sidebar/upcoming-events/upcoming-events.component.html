@@ -1,0 +1,13 @@
+<h2>{{ ls.l('UpcomingEvents') }}</h2>
+<ul>
+    <li *ngFor="let event of events">
+        <div class="icon">
+            <img [src]="event.iconSrc">
+        </div>
+        <div>
+            <h3>{{ event.title }}</h3>
+            <h4>{{ event.date }}</h4>
+            <p>{{ event.text }}</p>
+        </div>
+    </li>
+</ul>

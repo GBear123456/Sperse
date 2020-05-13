@@ -7,4 +7,5 @@ export class MemberAreaLink {
     url?: string;
     sublinks?: MemberAreaLink[];
     hidden?: boolean;
+    onClick?: () => void;
 }

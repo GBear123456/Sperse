@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AppLocalizationService } from '../../../app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'special-announcements',
@@ -7,5 +8,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpecialAnnouncementsComponent {
-    constructor() {}
+    announcements = [
+        {
+            title: 'Lorem ipsum dolor sit amet',
+            text: 'Lorem ipsum dolor sit amet, consectetur elit, eiusmod tempor incididunt. Lorem ipsum dolor sit amet, consectetur elit, eiusmod tempor incididunt.',
+            imageSrc: './assets/common/images/bank-code/announcement.png'
+        }
+    ];
+
+    constructor(public ls: AppLocalizationService) {}
+
 }
