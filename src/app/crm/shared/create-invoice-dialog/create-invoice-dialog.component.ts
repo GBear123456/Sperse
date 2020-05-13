@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
@@ -16,6 +17,8 @@ import clone from 'lodash/clone';
 import * as moment from 'moment';
 
 /** Application imports */
+import { ContactStatus } from '@shared/AppEnums';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -111,7 +114,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     products = [];
     descriptions = [];
     lastProductPhrase: string;
-    date;
+    date = new Date();
     dueDate;
 
     description = '';
@@ -141,6 +144,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     filterBoolean = Boolean;
 
     constructor(
+        private reuseService: RouteReuseStrategy,
         private nameParser: NameParserService,
         private oDataService: ODataService,
         private contactProxy: ContactServiceProxy,
@@ -204,7 +208,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.invoiceNo = invoice.InvoiceNumber;
                 this.status = invoice.InvoiceStatus;
                 this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-                this.date = invoice.Dat;
+                this.date = invoice.Date;
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
@@ -436,6 +440,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private afterSave(): void {
         this.data.refreshParent && this.data.refreshParent();
+        if (this.status != InvoiceStatus.Draft && this.data.contactInfo.statusId == ContactStatus.Prospective)
+            (this.reuseService as CustomReuseStrategy).invalidate('leads');
+
         if (this.selectedOption.email)
             setTimeout(() => this.showNewEmailDialog());
         else {
@@ -516,7 +523,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     return address;
                 });
                 this.shippingAddresses = this.sortAddresses(clone(addresses), 'S');
+                if (this.shippingAddresses && this.shippingAddresses.length) {
+                    this.selectedShippingAddress = this.shippingAddresses[0];
+                    this.showEditAddressDialog(null, 'selectedShippingAddress');
+                }
                 this.billingAddresses = this.sortAddresses(clone(addresses), 'B');
+                if (this.billingAddresses && this.billingAddresses.length) {
+                    this.selectedBillingAddress = this.shippingAddresses[0];
+                    this.showEditAddressDialog(null, 'selectedBillingAddress');
+                }
                 this.changeDetectorRef.markForCheck();
             });
     }
@@ -614,8 +629,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceNo = this.invoiceInfo.nextInvoiceNumber;
             this.status = InvoiceStatus.Draft;
             this.customer = undefined;
-            this.date = undefined;
-            this.dueDate = this.date;
+            this.date = new Date();
+            this.dueDate = undefined;
             this.description = '';
             this.notes = '';
             this.lines = [{}];
@@ -809,22 +824,22 @@ export class CreateInvoiceDialogComponent implements OnInit {
         };
         dialogData['viewMode'] = this.disabledForUpdate;
         dialogData['contactId'] = dialogData['contactId'] || this.contactId;
-        this.dialog.open(InvoiceAddressDialog, {
-            id: field,
-            data: dialogData,
-            hasBackdrop: false,
-            disableClose: false,
-            closeOnNavigation: true,
-            position: {
-                top: '100px',
-                left: innerWidth - 700 + 'px'
-            }
-        }).afterClosed().subscribe(result => {
-            if (!this[field] && result)
-                this[field] = new InvoiceAddressInput(dialogData);
-            this.changeDetectorRef.detectChanges();
-        });
         if (event) {
+            this.dialog.open(InvoiceAddressDialog, {
+                id: field,
+                data: dialogData,
+                hasBackdrop: false,
+                disableClose: false,
+                closeOnNavigation: true,
+                position: {
+                    top: '100px',
+                    left: innerWidth - 700 + 'px'
+                }
+            }).afterClosed().subscribe(result => {
+                if (!this[field] && result)
+                    this[field] = new InvoiceAddressInput(dialogData);
+                this.changeDetectorRef.detectChanges();
+            });
             event.stopPropagation();
             event.preventDefault();
         }
