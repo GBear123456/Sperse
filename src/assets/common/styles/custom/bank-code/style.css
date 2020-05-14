@@ -18,6 +18,9 @@
   box-shadow: none !important;
   border-radius: 0;
 }
+.swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark {
+  display: none;
+}
 .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
   height: 50px!important;
 }
