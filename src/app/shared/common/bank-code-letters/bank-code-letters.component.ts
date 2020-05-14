@@ -42,6 +42,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() closeAfterEdit = false;
     @Input() updateOnServerAfterEdit = true;
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
+    @Output() onBankCodeStarIdChange: EventEmitter<number> = new EventEmitter<number>();
     @HostBinding('class.active') @Input() active = true;
     @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
@@ -145,6 +146,9 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
                 if (this.closeAfterEdit) {
                     editDialog.close();
                 }
+            });
+            editDialog.componentInstance.bankCodeStarIdChange.subscribe((starId: number) => {
+                 this.onBankCodeStarIdChange.emit(starId);
             });
             e.stopPropagation();
             e.preventDefault();

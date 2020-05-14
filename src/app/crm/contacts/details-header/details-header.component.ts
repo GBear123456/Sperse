@@ -142,6 +142,26 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {}
 
+    ngOnInit(): void {
+        this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
+            this.initializePersonOrgRelationInfo(data);
+        });
+        this.contactInfo$.pipe(
+            filter(Boolean),
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe(
+            (contactInfo: ContactInfoDto) => {
+                this.contactId = contactInfo.id;
+                this.contactGroup = contactInfo.groupId;
+                this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+                this.addContextMenuItems = this.getDefaultContextMenuItems().filter(menuItem => {
+                    return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
+                });
+                this.addOptionsInit();
+            }
+        );
+    }
+
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
         if (isCompany && data['organizationContactInfo'].primaryPhoto) {
@@ -161,27 +181,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             : 'url(' + this.profileService.getContactPhotoUrl(null, true, 'large') + ')';
     }
 
-    ngOnInit(): void {
-        this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
-            this.initializePersonOrgRelationInfo(data);
-        });
-        this.contactInfo$.pipe(
-            filter(Boolean),
-            takeUntil(this.lifeCycleService.destroy$)
-        ).subscribe(
-            (contactInfo: ContactInfoDto) => {
-                this.contactId = contactInfo.id;
-                this.contactGroup = contactInfo.groupId;
-                this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
-                this.addContextMenuItems = this.getDefaultContextMenuItems(contactInfo).filter(menuItem => {
-                    return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
-                });
-                this.addOptionsInit();
-            }
-        );
-    }
-
-    getDefaultContextMenuItems(contactInfo: ContactInfoDto) {
+    getDefaultContextMenuItems() {
         return [
             {
                 type: ContextType.AddFiles,
@@ -228,6 +228,12 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 );
         }
         return personContactInfo;
+    }
+
+    bankCodeStarIdChange(starId: number) {
+        const data = this.data;
+        data.starId = starId;
+        this.data = data;
     }
 
     updateJobTitle(value) {

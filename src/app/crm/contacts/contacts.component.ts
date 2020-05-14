@@ -147,7 +147,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
         contactsService.invalidateSubscribe(area => this.invalidate(area));
         contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
-
         this.handleContactsOptions();
     }
 

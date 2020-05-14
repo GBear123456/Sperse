@@ -30,7 +30,8 @@
                                    key="detailsHeader"
                                    [showDescriptionsOnHover]="true"
                                    [showReportLink]="true"
-                                   reportIconName="blue">
+                                   reportIconName="blue"
+                                   (onBankCodeStarIdChange)="bankCodeStarIdChange($event)">
                 </bank-code-letters>
             </div>
         </ng-template>

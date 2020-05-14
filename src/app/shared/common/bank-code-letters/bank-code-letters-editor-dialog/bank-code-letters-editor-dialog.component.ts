@@ -15,7 +15,6 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -39,6 +38,7 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
 })
 export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
+    @Output() bankCodeStarIdChange: EventEmitter<number> = new EventEmitter<number>();
     bankCode: string;
     personId: number = this.data.personId;
     bankCodeDefinitions: BankCodeDefinition[] = [
@@ -106,7 +106,10 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
                 : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: bankCode }))
             );
         updateMethod$.subscribe(
-            () => {
+            (result) => {
+                if (result) {
+                    this.bankCodeStarIdChange.emit(result);
+                }
                 this.bankCode = bankCode;
                 this.bankCodeIsEmpty = false;
                 this.bankCodeChange.emit(this.bankCode);
