@@ -398,13 +398,26 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         let supportedButtons = this.getSupportedButtons();
         let items = [];
         if (this._config)
-            this._config.forEach((group) => {
+            this._config.forEach((group, configIndex: number) => {
                 let groupItems = group.items.filter((item => this.checkItemVisible(item))),
                     count = groupItems.length;
                 groupItems.forEach((item, index) => {
                     this.initDropDownMenu(item);
                     let internalConfig = supportedButtons[item.name];
-                    let mergedConfig = _.extend(internalConfig || {}, item.options);
+                    let mergedConfig = _.extend(
+                        internalConfig || {},
+                        item.options,
+                        {
+                            onValueChanged: (e) => {
+                                if (item.options.onValueChanged) {
+                                    if (item.name === 'search') {
+                                        this.toolbarComponent.instance.option(`items[${configIndex}].options.value`, e['value']);
+                                    }
+                                    item.options.onValueChanged(e);
+                                }
+                            }
+                        }
+                    );
 
                     this.checkItemVisible(item) && items.push({
                         name: item.name,
