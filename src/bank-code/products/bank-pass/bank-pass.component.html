@@ -194,7 +194,7 @@
                         </dx-data-grid>
                     </div>
                     <app-no-data [hidden]="dataIsLoading || totalCount > 0"
-                                 title="No contacts added yet"
+                                 [title]="ls.l('NoContactsFound')"
                                  [showLink]="false">
                     </app-no-data>
                 </div>
