@@ -1,10 +1,15 @@
-<h2 *ngIf="!data.viewMode" mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('Update Address')}}</h2>
+<mat-dialog-actions *ngIf="!data.viewMode">
+    <h2 *ngIf="!data.viewMode" mat-dialog-title (mousedown)="mouseDown($event)">{{ls.l('Update Address')}}</h2>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave(phoneComponent)">{{ls.l('Update')}}</button>
+</mat-dialog-actions>
 <dx-scroll-view showScrollbar="always">
     <mat-dialog-content>
         <dx-validation-group (onInitialized)="initValidationGroup($event)">
-            <div>
-                <label>{{ls.l('Company')}}</label>
+            <div class="field">
+                <label class="company-label">{{ls.l('Company')}}</label>
                 <dx-select-box
+                    width="420px"
                     name="company"
                     maxLength="50"
                     [placeholder]="!data.viewMode ? ls.l('EditValuePlaceholder') : ''"
@@ -18,27 +23,27 @@
                     (onFocusIn)="onFieldFocus($event)">
                 </dx-select-box>
             </div>
-            <div>
-                <label>{{ls.l('FirstName')}}</label>
+            <div class="field">
+                <label class="profile-label">{{ls.l('FullNamePlaceholder')}}</label>
                 <dx-text-box
+                    width="200px"
                     name="firstName"
                     maxLength="50"
                     [disabled]="data.viewMode"
                     [(value)]="data.firstName">
                 </dx-text-box>
-            </div>
-            <div>
-                <label>{{ls.l('LastName')}}</label>
                 <dx-text-box
+                    width="200px"
                     name="lastName"
                     maxLength="50"
                     [disabled]="data.viewMode"
                     [(value)]="data.lastName">
                 </dx-text-box>
             </div>
-            <div>
-                <label>{{ls.l('Email')}}</label>
+            <div class="field email">
+                <label class="email-label">{{ls.l('Email')}}</label>
                 <dx-select-box
+                    width="420px"
                     name="email"
                     maxLength="50"
                     [placeholder]="!data.viewMode ? ls.l('EditValuePlaceholder') : ''"
@@ -55,8 +60,8 @@
                     </dx-validator>
                 </dx-select-box>
             </div>
-            <div class="phone-container">
-                <label>{{ls.l('Phone')}}</label>
+            <div class="phone-container field">
+                <label class="phone-label">{{ls.l('Phone')}}</label>
                 <country-phone-number #phoneComponent id="togglePhone"
                     [phoneNumber]="data.phone"
                     [disabled]="data.viewMode"
@@ -78,8 +83,8 @@
                     </div>
                 </dx-tooltip>
             </div>
-            <div>
-                <label>{{ls.l('Address')}}</label>
+            <div class="field">
+                <label class="address-label">{{ls.l('Address')}}</label>
                 <input *ngIf="!googleAutoComplete"
                        id="toggleAddress"
                        type="text"
@@ -121,13 +126,14 @@
                     </div>
                 </dx-tooltip>
             </div>
-            <div>
-                <label>{{ls.l('Country')}}</label>
+            <div class="field addr">
                 <dx-select-box
+                    width="230px"
                     name="country"
                     [dataSource]="countries"
                     displayExpr="name"
                     valueExpr="code"
+                    [placeholder]="ls.l('Country')"
                     [disabled]="data.viewMode"
                     [searchEnabled]="true"
                     [(value)]="data.countryId"
@@ -136,21 +142,19 @@
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
                             <dx-text-box class="state"
-                                         [value]="data?.name"
-                                         [readOnly]="true">
+                                width="210px"
+                                [value]="data?.name"
+                                [readOnly]="true">
                             </dx-text-box>
                         </div>
                     </div>
                 </dx-select-box>
-            </div>
-
-            <div>
-                <label>{{ls.l('State')}}</label>
                 <dx-select-box
                     [acceptCustomValue]="true"
                     [dataSource]="getCountryStates() | async"
                     displayExpr="name"
                     valueExpr="name"
+                    [placeholder]="ls.l('State')"
                     [disabled]="data.viewMode"
                     name="state"
                     [searchEnabled]="true"
@@ -165,24 +169,22 @@
                 </dx-select-box>
             </div>
 
-            <div>
-                <label>{{ls.l('City')}}</label>
+            <div class="field addr">
                 <dx-text-box
+                    width="230px"
                     name="city"
                     maxLength="50"
+                    [placeholder]="ls.l('City')"
                     [disabled]="data.viewMode"
                     [(value)]="data.city">
                     <dx-validator>
                         <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('City'))"></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
-            </div>
-
-            <div>
-                <label>{{ls.l('ZipCode')}}</label>
                 <dx-text-box
                     name="zip"
                     maxLength="10"
+                    [placeholder]="ls.l('Zip')"
                     [disabled]="data.viewMode"
                     [(value)]="data.zip">
                 </dx-text-box>
@@ -190,7 +192,3 @@
         </dx-validation-group>
     </mat-dialog-content>
 </dx-scroll-view>
-<mat-dialog-actions *ngIf="!data.viewMode">
-    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button mat-button class="button-layout button-primary" (click)="onSave(phoneComponent)">{{ls.l('Update')}}</button>
-</mat-dialog-actions>
