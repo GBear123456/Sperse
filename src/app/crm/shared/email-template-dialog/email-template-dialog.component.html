@@ -80,8 +80,8 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                     <div class="bcc-links">
-                        <span (click)="showInputField(CCElement, 'showCC')" [hidden]="showCC">{{ls.l('CC')}}</span>
-                        <span (click)="showInputField(BCCElement, 'showBCC')" [hidden]="showBCC">{{ls.l('BCC')}}</span>
+                        <span (click)="showInputField(CCElement, 'showCC')" [ngClass]="{disabled: showCC}">{{ls.l('CC')}}</span>
+                        <span (click)="showInputField(BCCElement, 'showBCC')" [ngClass]="{disabled: showBCC}">{{ls.l('BCC')}}</span>
                     </div>
                 </div>
                 <div class="field-area" [hidden]="!showCC">
