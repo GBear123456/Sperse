@@ -67,6 +67,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
+import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/filter-multiline-input.component';
+import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import {
     ContactEmailServiceProxy,
     ContactServiceProxy,
@@ -781,9 +783,40 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 items: { Name: new FilterItemModel()}
             }),
             new FilterModel({
-                component: FilterInputsComponent,
+                component: FilterMultilineInputComponent,
                 caption: 'email',
-                items: { Email: new FilterItemModel() }
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'Email',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'Email'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterMultilineInputComponent,
+                caption: 'xref',
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'Xref',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'xref'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterMultilineInputComponent,
+                caption: 'affiliateCode',
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'AffiliateCode',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'AffiliateCode'
+                    })
+                }
             }),
             this.subscriptionStatusFilter,
             new FilterModel({
@@ -796,10 +829,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }),
             this.filterModelStatus,
             new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
+                component: FilterMultilineInputComponent,
                 caption: 'phone',
-                items: { Phone: new FilterItemModel() }
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'Phone',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'Phone',
+                        normalize: FilterHelpers.normalizePhone
+                    })
+                }
             }),
             this.filterCountryStates,
             new FilterModel({
