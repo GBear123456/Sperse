@@ -771,11 +771,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     initDataSource() {
         if (this.selectedOrderType === OrderType.Order) {
             if (this.showOrdersPipeline) {
-                if (!this.pipelineDataSource) {
+                if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
-                    this.setDataGridInstance(this.dataGrid);
-                }
-            }
+            } else
+                this.setDataGridInstance(this.dataGrid);
         } else if (this.selectedOrderType === OrderType.Subscription) {
             if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
                 this.setDataGridInstance(this.dataGrid);
