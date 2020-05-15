@@ -5,7 +5,8 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, takeUntil, first } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize, filter, takeUntil, first, skip } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
@@ -146,6 +147,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         }
     ];
     capitalize = capitalize;
+    private dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
+    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
 
     constructor(
         private dialog: MatDialog,
@@ -197,12 +200,16 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
         });
+        this.dialogOpened$.pipe(takeUntil(this.lifeCycleService.destroy$), skip(1)).subscribe(() => {
+            this.initToolbarInfo();
+        })
     }
 
     initToolbarInfo() {
         setTimeout(() => this.contactsService.toolbarUpdate({
             optionButton: {
                 name: 'options',
+                options: { checkPressed: () => this.dialogOpened.value },
                 action: this.showOrgUnitsDialog.bind(this)
             }
         }));
@@ -346,8 +353,11 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                         title: this.ls.l('Owner'),
                         selectionMode: 'single'
                     }
+                }).afterClosed().subscribe(() => {
+                    this.dialogOpened.next(false);
                 });
             }
+            this.dialogOpened.next(true);
         });
     }
 
@@ -361,5 +371,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.ident);
+        this.lifeCycleService.destroy.next();
     }
 }

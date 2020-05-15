@@ -26,7 +26,7 @@ export class OrganizationUnitsDialogComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.slider = this.elementRef.nativeElement.closest('.slider');
-        this.slider.classList.add('hide', 'min-width-0');
+        this.slider.classList.add('hide', 'min-width-0', 'without-shadow');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
             top: '155px',
@@ -40,7 +40,7 @@ export class OrganizationUnitsDialogComponent implements OnInit, AfterViewInit {
             this.dialogRef.updateSize('425px', '100vh');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
-                    top: '157px',
+                    top: '218px',
                     right: '0px'
                 });
             }, 100);

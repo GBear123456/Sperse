@@ -149,7 +149,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                 return (this.toolbarConfig = this.customToolbarConfig);
 
             let impersonationItem = {
-                location: 'before',
+                location: 'after',
                 locateInMenu: 'auto',
                 items: [
                     {
@@ -165,7 +165,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                     }
                 ]
             }, optionItem = {
-                location: 'before',
+                location: 'after',
                 locateInMenu: 'auto',
                 items: this.optionButtonConfig ? [this.optionButtonConfig] : []
             };
@@ -232,21 +232,21 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                         }
                     ]
                 },
-                impersonationItem,
-                optionItem,
                 this.printButtonConfig,
-                this.getNavigationConfig()
+                this.getNavigationConfig(),
+                optionItem,
+                impersonationItem
             ] : [
                 impersonationItem,
-                optionItem,
                 this.printButtonConfig,
-                this.getNavigationConfig()
+                this.getNavigationConfig(),
+                optionItem
             ];
 
             if (this.cfoLinkOrVerifyEnabled) {
                 this.toolbarConfig.push(
                     {
-                        location: 'before',
+                        location: 'after',
                         locateInMenu: 'auto',
                         items: [
                             {

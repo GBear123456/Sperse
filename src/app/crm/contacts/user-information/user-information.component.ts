@@ -5,8 +5,8 @@ import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } fro
 import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
-import { Observable } from 'rxjs';
-import { finalize, map, startWith } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize, map, startWith, skip, takeUntil } from 'rxjs/operators';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
@@ -30,12 +30,13 @@ import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppStoreService } from '@app/store/app-store.service';
+import { LifecycleSubjectsService } from '../../../../shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'user-information',
     templateUrl: './user-information.component.html',
     styleUrls: ['./user-information.component.less'],
-    providers: [ PhoneFormatPipe ]
+    providers: [ PhoneFormatPipe, LifecycleSubjectsService ]
 })
 export class UserInformationComponent implements OnInit, OnDestroy {
     @ViewChild('emailAddress', { static: false }) emailAddressComponent: DxSelectBoxComponent;
@@ -101,6 +102,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             if (this.selectedTabIndex == this.ORG_UNITS_TAB_INDEX)
                 this.selectedTabIndex = this.GENERAL_TAB_INDEX;
     }
+    private dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
+    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
 
     constructor(
         private appStoreService: AppStoreService,
@@ -114,6 +117,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         private loadingService: LoadingService,
         private notify: NotifyService,
         private elementRef: ElementRef,
+        private lifecycleSubjectService: LifecycleSubjectsService,
         public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService
@@ -153,12 +157,18 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.updateInviteDataRoles();
             });
         this.updateInviteDataRoles();
+        this.dialogOpened$.pipe(takeUntil(this.lifecycleSubjectService.destroy$), skip(1)).subscribe(() => {
+            this.updateToolbarOptions();
+        });
     }
 
     private updateToolbarOptions() {
         setTimeout(() => this.contactsService.toolbarUpdate({
             optionButton: {
                 name: 'options',
+                options: {
+                    checkPressed: () => this.dialogOpened.value
+                },
                 action: this.showOrgUnitsDialog.bind(this)
             }
         }));
@@ -445,7 +455,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                             title: this.ls.l('OrganizationUnits'),
                             selectionMode: 'multiple'
                         }
+                    }).afterClosed().subscribe(() => {
+                        this.dialogOpened.next(false);
                     });
+                    this.dialogOpened.next(true);
                 } else {
                     dialog.close();
                 }
@@ -460,5 +473,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         this.contactsService.unsubscribe(this.ident);
         if (this.dependencyChanged)
             this.contactsService.invalidate();
+        this.lifecycleSubjectService.destroy.next();
     }
 }

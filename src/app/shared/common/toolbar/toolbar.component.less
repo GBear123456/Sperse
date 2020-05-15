@@ -624,6 +624,18 @@
             }
         }
 
+        [accesskey="settings"] {
+            &:after {
+                display: none;
+            }
+            &[button-pressed="true"] {
+                background-color: rgba(0, 174, 239, 0.04);
+                .dx-button-content {
+                    background: url('../../../../assets/common/icons/profile-gear-blue.svg') no-repeat 15px;
+                }
+            }
+        }
+
         [accesskey="pipeline"] {
             &[button-pressed="true"] {
                 .dx-button-content {

@@ -299,7 +299,9 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             options: {
                 hint: this.ls.l('Options'),
-                icon: this.getImgURI('gear-icon')
+                accessKey: 'settings',
+                icon: this.getImgURI('profile-gear'),
+                text: this.ls.l('Settings')
             }
         };
     }
