@@ -5,7 +5,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
-import { filter, first, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, first, map, skip, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -34,10 +35,12 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { InplaceSelectBox } from '@app/shared/common/inplace-select-box/inplace-select-box.interface';
 import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
+import { LifecycleSubjectsService } from '../../../../shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     templateUrl: './personal-details.component.html',
     styleUrls: ['./personal-details.component.less'],
+    providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalDetailsComponent implements OnDestroy {
@@ -83,6 +86,8 @@ export class PersonalDetailsComponent implements OnDestroy {
         maritalStatus: this.getMaritalStatusList(),
         preferredToD: this.getPreferredToD()
     };
+    dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
+    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
 
     constructor(
         private notifyService: NotifyService,
@@ -95,6 +100,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private dictionaryProxy: DictionaryServiceProxy,
         private clipboardService: ClipboardService,
         private personalDetailsService: PersonalDetailsService,
+        private lifecycleService: LifecycleSubjectsService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
@@ -104,13 +110,8 @@ export class PersonalDetailsComponent implements OnDestroy {
             this.person = contactInfo.personContactInfo.person;
             this.getStates(this.person && this.person.citizenship);
             this.isEditAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
-            setTimeout(() => this.contactsService.toolbarUpdate({
-                optionButton: {
-                    name: 'options',
-                    action: () => this.personalDetailsService.showPersonalDetailsDialog()
-                }
-            }));
-            this.personalDetailsService.showPersonalDetailsDialog();
+            setTimeout(() => this.updateToolbar());
+            this.showPersonalDetailsDialog();
             this.changeDetector.markForCheck();
         }, this.ident);
 
@@ -122,6 +123,30 @@ export class PersonalDetailsComponent implements OnDestroy {
         this.loadCountries();
         this.getCountries();
         this.loadStates();
+        this.dialogOpened$.pipe(takeUntil(this.lifecycleService.destroy$), skip(1)).subscribe(() => {
+            this.updateToolbar();
+        })
+    }
+
+    private updateToolbar() {
+        this.contactsService.toolbarUpdate({
+            optionButton: {
+                name: 'options',
+                options: {
+                    checkPressed: () => this.dialogOpened.value
+                },
+                action: () => {
+                    this.showPersonalDetailsDialog();
+                    this.dialogOpened.next(!this.dialogOpened.value);
+                }
+            }
+        })
+    }
+
+    showPersonalDetailsDialog() {
+        this.personalDetailsService.showPersonalDetailsDialog().subscribe(() => {
+            this.dialogOpened.next(false);
+        });
     }
 
     private getCountries() {
@@ -265,5 +290,6 @@ export class PersonalDetailsComponent implements OnDestroy {
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.ident);
+        this.lifecycleService.destroy.next();
     }
 }
