@@ -243,7 +243,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[\s,]+/).map(item =>
+            values = event.text.split(/[\s,|\s;]+/).map(item =>
                 AppConsts.regexPatterns.email.test(item) ? item : ''),
             validValues = values.filter(Boolean),
             currentList = this.data[field];
@@ -285,13 +285,16 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCKReady(event) {
         this.ckEditor = event.editor;
-        this.ckEditor.container.find('#cke_1_bottom').$[0].prepend(
-            this.ckEditor.container.find('#cke_1_toolbox>span:first-child').$[0]);
-        this.updateDataLength();
+        setTimeout(() => {
+            this.ckEditor.container.find('.cke_bottom').$[0].prepend(
+                this.ckEditor.container.find('.cke_toolbox>span:first-child').$[0]);
+            this.updateDataLength();
+        }, 500);
     }
 
     updateDataLength() {
         this.charCount = Math.max(this.ckEditor.getData().replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
+        this.changeDetectorRef.markForCheck();
     }
 
     onTagClick(event) {

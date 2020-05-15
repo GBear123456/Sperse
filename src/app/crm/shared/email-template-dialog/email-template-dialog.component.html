@@ -80,8 +80,8 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                     <div class="bcc-links">
-                        <span (click)="showInputField(CCElement, 'showCC')" [hidden]="showCC">{{ls.l('CC')}}</span>
-                        <span (click)="showInputField(BCCElement, 'showBCC')" [hidden]="showBCC">{{ls.l('BCC')}}</span>
+                        <span (click)="showInputField(CCElement, 'showCC')" [ngClass]="{disabled: showCC}">{{ls.l('CC')}}</span>
+                        <span (click)="showInputField(BCCElement, 'showBCC')" [ngClass]="{disabled: showBCC}">{{ls.l('BCC')}}</span>
                     </div>
                 </div>
                 <div class="field-area" [hidden]="!showCC">
@@ -130,11 +130,13 @@
                 </div>
                 <div class="field-area ckeditor">
                     <dx-tooltip [width]="225"
+                         position="bottom"
                          [(visible)]="tagsTooltipVisible"
                          [target]="'#tagsButton'">
                         <div *dxTemplate="let data of 'content'" class="tags-container">
                             <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
                             <dx-list
+                                height="calc(100% - 40px)"
                                 [selectionMode]="'single'"
                                 [dataSource]="tagsList"
                                 [itemTemplate]="'startCase'"

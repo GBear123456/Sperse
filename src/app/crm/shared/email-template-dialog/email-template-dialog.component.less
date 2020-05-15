@@ -105,7 +105,7 @@
     .char-count {
         position: absolute;
         bottom: 0px;
-        right: 30px;
+        right: 24px;
     }
 
     ::ng-deep ckeditor {
@@ -116,13 +116,14 @@
                 background: #f3f7fa!important;
             }
             .cke_bottom {
-                padding: 6px 8px 0px 0px!important;
+                height: 30px;
                 border-top: none!important;
                 background: #f3f7fa!important;
                 border-bottom: 1px solid #dfdfdf;
             }
             .cke_contents {
                 min-height: 380px;
+                max-height: calc(100vh - 500px);
             }
             .cke_path {
                 margin: 4px 0 2px!important;
@@ -203,8 +204,8 @@
 
                 ::ng-deep ngx-file-drop {
                     position: absolute;
-                    bottom: 0;
-                    right: 25px;
+                    bottom: 7px;
+                    right: 60px;
                     .ngx-file-drop__drop-zone {
                         height: 30px;
                         width: auto;
@@ -245,6 +246,11 @@
                     font-stretch: normal;
                     line-height: 1.79;
                     letter-spacing: 0.28px;
+                    &.disabled {
+                        opacity: 0.5;
+                        cursor: default;
+                        pointer-events: none;                        
+                    }
                 }
             }
 
@@ -300,5 +306,10 @@
     }
     .tags-note {
         white-space:pre-wrap
+    }
+    ::ng-deep dx-list {
+        .dx-scrollable-scrollbar {
+            right: -10px;
+        }
     }
 }
