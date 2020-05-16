@@ -36,7 +36,7 @@ export class ActionMenuComponent {
         }
     }
 
-    onTooltipShown(e) {
+    onTooltipShowing(e) {
         if (this.class) {
             e.component.$content()[0].classList.add(this.class);
         }

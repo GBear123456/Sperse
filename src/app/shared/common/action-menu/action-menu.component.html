@@ -2,7 +2,7 @@
             [target]="target"
             [visible]="visible"
             (onHidden)="onHidden.emit($event)"
-            (onShown)="onTooltipShown($event)">
+            (onShowing)="onTooltipShowing($event)">
     <div *dxTemplate="let data of 'content'">
         <div class="lists-tooltip-container">
             <dx-list [dataSource]="items"
