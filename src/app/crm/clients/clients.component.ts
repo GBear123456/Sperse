@@ -258,18 +258,82 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
 
     actionEvent: any;
-    actionMenuItems: ActionMenuItem[] = [
+    actionMenuItems: any[] = [
         {
-            text: this.l('Edit'),
-            class: 'edit',
-            visible: true,
-            action: () => this.showClientDetails(this.actionEvent)
+            key: '',
+            items: [
+                {
+                    text: this.l('Call'),
+                    class: 'call',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('SendEmail'),
+                    class: 'email',
+                    action: () => {
+                        this.contactService.showEmailDialog({
+                            contactId: (this.actionEvent.data || this.actionEvent).Id
+                        });
+                    }
+                },
+            ]
         },
         {
-            text: this.l('LoginAsThisUser'),
-            class: 'login',
-            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-            action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId)
+            key: '',
+            items: [
+                {
+                    text: this.l('NotesAndCallLog'),
+                    class: 'notes',
+                    action: () => {
+                        this.showClientDetails(this.actionEvent, 'notes')
+                    },
+                    button: {
+                        text: '+' + 'Add',
+                        action: () => {
+                            this.showClientDetails(this.actionEvent, 'notes', {
+                                addNew: true
+                            });
+                        }
+                    }
+                },
+                {
+                    text: this.l('Appointment'),
+                    class: 'appointment',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('Orders'),
+                    class: 'orders',
+                    action: () => {
+                        this.showClientDetails(this.actionEvent, 'invoices')
+                    }
+                },
+                {
+                    text: this.l('Notifications'),
+                    class: 'notifications',
+                    disabled: true,
+                    action: () => {}
+                }
+            ]
+        },
+        {
+            key: '',
+            items: [
+                {
+                    text: this.l('Delete'),
+                    class: 'delete',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('EditRow'),
+                    class: 'edit',
+                    visible: true,
+                    action: () => this.showClientDetails(this.actionEvent)
+                }
+            ]
         }
     ];
     permissions = AppPermissions;
@@ -741,7 +805,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }).afterClosed().subscribe(() => this.refresh());
     }
 
-    showClientDetails(event) {
+    showClientDetails(event, section?: string, queryParams?: Params) {
         let data = event.data || event,
             orgId = data.OrganizationId,
             clientId = data.Id;
@@ -751,8 +815,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.searchClear = false;
         setTimeout(() => {
-            this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
-                { queryParams: { referrer: 'app/crm/clients'} });
+            this._router.navigate(
+                ['app/crm/contact', clientId]
+                    .concat(orgId ? ['company', orgId] : [])
+                    .concat(section ? [ section ]: []),
+                { queryParams: { referrer: 'app/crm/clients', ...queryParams }}
+            );
         });
     }
 

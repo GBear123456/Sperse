@@ -101,13 +101,13 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                                                      this._contactInfo['organizationContactInfo'].contactPersons
                              ? this._contactInfo['organizationContactInfo'].contactPersons
                              : [{
-                id: this._contactInfo.id,
-                fullName: personContactInfo.fullName,
-                jobTitle: personContactInfo.jobTitle,
-                ratingId: this._contactInfo.ratingId,
-                thumbnail: personContactInfo.primaryPhoto,
-                phones: personContactInfo.details.phones
-            }];
+                                    id: this._contactInfo.id,
+                                    fullName: personContactInfo.fullName,
+                                    jobTitle: personContactInfo.jobTitle,
+                                    ratingId: this._contactInfo.ratingId,
+                                    thumbnail: personContactInfo.primaryPhoto,
+                                    phones: personContactInfo.details.phones
+                                }];
         this.contacts = relatedPersons.concat(relatedOrganizations);
         this.onContactChanged({value: this.contacts[0].id});
         this.dialogRef.beforeClose().subscribe(() => {
@@ -210,7 +210,17 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             if ($event.text)
-                this.userService.getUsers($event.text, [ AppPermissions.CRM ], undefined, false, undefined, undefined, undefined, 10, 0).subscribe((result) => {
+                this.userService.getUsers(
+                    $event.text,
+                    [ AppPermissions.CRM ],
+                    undefined,
+                    false,
+                    undefined,
+                    undefined,
+                    undefined,
+                    10,
+                    0
+                ).subscribe((result) => {
                     this.users = result.items.map((user) => {
                         return {
                             id: user.id,

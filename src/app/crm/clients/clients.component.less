@@ -19,7 +19,7 @@
             display: inline-block;
             background: url('../../../assets/common/icons/verify-icon.svg') no-repeat center;
         }
-        .dx-datagrid-rowsview {  
+        .dx-datagrid-rowsview {
             .dx-datagrid-focus-overlay.dx-pointer-events-target {
                 display: none;
             }
@@ -71,5 +71,26 @@
                 }
             }
         }
+    }
+}
+
+::ng-deep .clients-action-menu {
+    padding: 0 !important;
+    .dx-list-group {
+        &:first-child,
+        &:last-child {
+            .dx-list-group-body {
+                display: flex;
+            }
+        }
+    }
+
+    .dx-list-group-header {
+        padding: 0;
+        border-bottom: 0;
+    }
+
+    .dx-list-group-body {
+        padding: 0 17px;
     }
 }

@@ -11,7 +11,14 @@ import capitalize from 'lodash/capitalize';
 import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
-import { InstanceServiceProxy, InstanceType, InstanceStatus, ContactServiceProxy, GetStatusOutput } from 'shared/service-proxies/service-proxies';
+import {
+    InstanceServiceProxy,
+    InstanceType,
+    InstanceStatus,
+    ContactServiceProxy,
+    GetStatusOutput,
+    ContactShortInfo
+} from 'shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -150,7 +157,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     initContactInfo(userId) {
-        this.contactService.getContactShortInfoForUser(userId).subscribe(response => {
+        this.contactService.getContactShortInfoForUser(userId).subscribe((response: ContactShortInfo) => {
             this.appService.contactInfo = response;
         });
     }

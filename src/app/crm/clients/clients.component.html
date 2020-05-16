@@ -19,6 +19,9 @@
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
                 [visible]="!!actionEvent"
+                [grouped]="true"
+                class="clients-action-menu"
+                width="300px"
                 target=".dx-state-hover .dx-link.dx-link-edit"
                 (onItemClick)="onMenuItemClick($event)">
         </action-menu>

@@ -1,12 +1,13 @@
 /** Core imports */
 import { Component, OnInit, Injector, ViewChild, OnDestroy } from '@angular/core';
 import { formatDate } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { first, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
@@ -16,7 +17,9 @@ import {
     ContactServiceProxy,
     ContactInfoDto,
     NotesServiceProxy,
-    NoteInfoDto
+    NoteInfoDto,
+    PersonContactInfoDto,
+    OrganizationContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
@@ -38,7 +41,8 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         private clientService: ContactsService,
         private notesService: NotesServiceProxy,
         private contactService: ContactServiceProxy,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private route: ActivatedRoute
     ) {
         super(injector);
         clientService.invalidateSubscribe((area: string) => {
@@ -66,7 +70,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         dataSource$.subscribe((notes: NoteInfoDto[]) => {
             if (this.componentIsActivated) {
                 this.dataSource = notes;
-                if (!notes || !notes.length)
+                if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
                     setTimeout(() => this.openNoteAddDialog());
             }
         });
@@ -89,17 +93,21 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     openNoteAddDialog() {
-        if (this.data.contactInfo.personContactInfo)
-            this.clientService.organizationContactInfo.pipe(first()).subscribe(() => {
-                this.dialog.open(NoteAddDialogComponent, {
-                    panelClass: ['slider'],
-                    hasBackdrop: false,
-                    closeOnNavigation: true,
-                    data: {
-                        contactInfo: this.contactService['data'].contactInfo
-                    }
-                });
+        /** When every piece of data is loaded - open note add dialog */
+        forkJoin(
+            this.clientService.contactInfo$.pipe(first()),
+            this.clientService.personContactInfo$.pipe(first()),
+            this.clientService.organizationContactInfo$.pipe(first())
+        ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
+            this.dialog.open(NoteAddDialogComponent, {
+                panelClass: ['slider'],
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    contactInfo: contactInfo
+                }
             });
+        });
     }
 
     onToolbarPreparing($event) {

@@ -12,6 +12,8 @@ export class ActionMenuComponent {
     @Input() visible = false;
     @Input() width = '200px';
     @Input() target = '.dx-state-hover .dx-link.dx-link-edit';
+    @Input() grouped = false;
+    @Input() class = '';
     @Output() onItemClick: EventEmitter<any> = new EventEmitter<any>();
     @Output() onHidden: EventEmitter<any> = new EventEmitter<any>();
     @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
@@ -31,6 +33,12 @@ export class ActionMenuComponent {
                     this.show(target);
                 }
             });
+        }
+    }
+
+    onTooltipShown(e) {
+        if (this.class) {
+            e.component.$content()[0].classList.add(this.class);
         }
     }
 

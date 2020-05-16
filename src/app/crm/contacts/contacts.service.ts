@@ -26,7 +26,8 @@ import {
     CreatePersonOrgRelationOutput,
     CreateContactPhotoInput,
     ContactPhotoServiceProxy,
-    InvoiceServiceProxy
+    InvoiceServiceProxy,
+    PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -53,10 +54,13 @@ export class ContactsService {
     private leadInfoSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
     private contactInfo: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
-    organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
+    private organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
+    organizationContactInfo$: Observable<OrganizationContactInfoDto> = this.organizationContactInfo.asObservable();
     private subscribers: any = {
         common: []
     };
+    private personContactInfo: ReplaySubject<PersonContactInfoDto> = new ReplaySubject(1);
+    personContactInfo$: Observable<PersonContactInfoDto> = this.personContactInfo.asObservable();
 
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
 
@@ -80,6 +84,10 @@ export class ContactsService {
             this.subscribers[ident] = [];
         this.subscribers[ident].push(sub);
         return sub;
+    }
+
+    updatePersonContactInfo(personContactInfo: PersonContactInfoDto) {
+        this.personContactInfo.next(personContactInfo);
     }
 
     getCGPermissionKey(contactGroup: ContactGroup, permission = ''): string {
