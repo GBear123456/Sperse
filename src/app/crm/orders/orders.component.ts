@@ -30,6 +30,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/filter-multiline-input.component';
+import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
@@ -47,6 +49,7 @@ import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '../../shared/common/slice/pivot-grid/pivot-grid.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -126,7 +129,56 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         this.subscriptionStatusFilter,
         this.getSourceOrganizationUnitFilter(),
-        this.sourceFilter
+        this.sourceFilter,
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'email',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'Email',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'Email'
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'xref',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'ContactXref',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'xref'
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'affiliateCode',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'PersonalAffiliateCode',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'AffiliateCode'
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'phone',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'Phone',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'Phone',
+                    normalize: FilterHelpers.normalizePhone
+                })
+            }
+        })
     ];
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
@@ -180,7 +232,56 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         this.getSubscriptionsFilter('Subscription'),
         this.getSourceOrganizationUnitFilter(),
-        this.sourceFilter
+        this.sourceFilter,
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'email',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'EmailAddress',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'Email'
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'xref',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'ContactXref',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'xref'
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'affiliateCode',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'PersonalAffiliateCode',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'AffiliateCode'
+                })
+            }
+        }),
+        new FilterModel({
+            component: FilterMultilineInputComponent,
+            caption: 'phone',
+            filterMethod: FilterHelpers.filterByMultiline,
+            field: 'PhoneNumber',
+            items: {
+                element: new FilterMultilineInputModel({
+                    ls: this.localizationService,
+                    name: 'Phone',
+                    normalize: FilterHelpers.normalizePhone
+                })
+            }
+        })
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
@@ -771,11 +872,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     initDataSource() {
         if (this.selectedOrderType === OrderType.Order) {
             if (this.showOrdersPipeline) {
-                if (!this.pipelineDataSource) {
+                if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
-                    this.setDataGridInstance(this.dataGrid);
-                }
-            }
+            } else
+                this.setDataGridInstance(this.dataGrid);
         } else if (this.selectedOrderType === OrderType.Subscription) {
             if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
                 this.setDataGridInstance(this.dataGrid);

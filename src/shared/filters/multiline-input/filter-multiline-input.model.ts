@@ -1,0 +1,69 @@
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
+import uniq from 'lodash/uniq';
+import remove from 'lodash/remove';
+
+export class FilterMultilineInputModel extends FilterItemModel {
+    public name: string;
+    public normalize: (value: string) => string;
+    private _valuesArray: string[];
+
+    public constructor(init?: Partial<FilterMultilineInputModel>) {
+        super(init, true);
+    }
+
+    get valuesArray(): string[] {
+        return this._valuesArray;
+    }
+
+    get value(): any {
+        return this._value;
+    }
+
+    set value(value: any) {
+        let values: string[] = [];
+        if (value && typeof value === 'string') {
+            values = value.split('\n');
+            for (let i = values.length - 1; i >= 0; i--) {
+                values[i] = values[i].trim();
+                if (!values[i])
+                    values.splice(i, 1);
+            }
+            values = uniq(values);
+        }
+        else if (Array.isArray(value)) {
+            values = value;
+        }
+
+        if (values.length > 1000) {
+            values.splice(1000);
+        }
+
+        value = values.join('\n');
+        this._valuesArray = values;
+        this._value = value;
+    }
+
+    getDisplayElements(): DisplayElement[] {
+        let result: DisplayElement[] = [];
+        if (this._valuesArray) {
+            this._valuesArray.forEach(v =>
+                result.push(<DisplayElement>{
+                    item: this,
+                    displayValue: v,
+                    args: v
+                })
+            );
+        }
+        return result;
+    }
+
+    removeFilterItem(filter: FilterModel, args: any) {
+        if (args) {
+            remove(this._valuesArray, (val: any) => val == args);
+            this.value = this._valuesArray;
+        }
+        else
+            this.value = "";
+    }
+}

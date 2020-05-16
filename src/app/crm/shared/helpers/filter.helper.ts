@@ -3,6 +3,7 @@ import { PipelineDto } from '@shared/service-proxies/service-proxies';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 import * as _ from 'underscore';
+import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 
 export class FilterHelpers {
     static ConvertPipelinesToTreeSource(data: PipelineDto[]): any[] {
@@ -108,6 +109,32 @@ export class FilterHelpers {
             }
         });
         return filterValues;
+    }
+
+    static filterByMultiline(filter: FilterModel) {
+        let data = [];
+        let element = filter.items.element as FilterMultilineInputModel;
+        if (element) {
+            let valuesArray: string[] = element.valuesArray;
+            if (valuesArray && valuesArray.length) {
+                let inExpression = '';
+                for (var i = 0; i < valuesArray.length; i++) {
+                    let value = valuesArray[i];
+                    if (element.normalize)
+                        value = element.normalize(value);
+                    inExpression += `'${value.replace(/'/g, "''")}'`;
+                    if (i != valuesArray.length - 1)
+                        inExpression += ',';
+                }
+                data = [`${filter.field} in (${encodeURIComponent(inExpression)})`];
+            }
+        }
+
+        return data;
+    }
+
+    static normalizePhone(phone: string) {
+        return phone.replace(/[^\d+]/g, "");
     }
 
     static filterByGroupId() {

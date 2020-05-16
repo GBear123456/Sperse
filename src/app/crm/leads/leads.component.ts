@@ -102,6 +102,9 @@ import { FilterSourceComponent } from '../shared/filters/source-filter/source-fi
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -837,9 +840,40 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: { Name: new FilterItemModel() }
                 }),
                 new FilterModel({
-                    component: FilterInputsComponent,
-                    caption: 'Email',
-                    items: { Email: new FilterItemModel() }
+                    component: FilterMultilineInputComponent,
+                    caption: 'email',
+                    filterMethod: FilterHelpers.filterByMultiline,
+                    field: 'Email',
+                    items: {
+                        element: new FilterMultilineInputModel({
+                            ls: this.localizationService,
+                            name: 'Email'
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterMultilineInputComponent,
+                    caption: 'xref',
+                    filterMethod: FilterHelpers.filterByMultiline,
+                    field: 'ContactXref',
+                    items: {
+                        element: new FilterMultilineInputModel({
+                            ls: this.localizationService,
+                            name: 'xref'
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterMultilineInputComponent,
+                    caption: 'affiliateCode',
+                    filterMethod: FilterHelpers.filterByMultiline,
+                    field: 'ContactAffiliateCode',
+                    items: {
+                        element: new FilterMultilineInputModel({
+                            ls: this.localizationService,
+                            name: 'AffiliateCode'
+                        })
+                    }
                 }),
                 this.filterDate,
                 this.filterModelStages = new FilterModel({
@@ -856,6 +890,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterMultilineInputComponent,
+                    caption: 'phone',
+                    filterMethod: FilterHelpers.filterByMultiline,
+                    field: 'Phone',
+                    items: {
+                        element: new FilterMultilineInputModel({
+                            ls: this.localizationService,
+                            name: 'Phone',
+                            normalize: FilterHelpers.normalizePhone
+                        })
                     }
                 }),
                 this.filterCountryStates,

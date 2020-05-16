@@ -98,6 +98,9 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -627,9 +630,40 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: { Name: new FilterItemModel()}
             }),
             new FilterModel({
-                component: FilterInputsComponent,
+                component: FilterMultilineInputComponent,
                 caption: 'email',
-                items: { Email: new FilterItemModel() }
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'Email',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'Email'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterMultilineInputComponent,
+                caption: 'xref',
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'Xref',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'xref'
+                    })
+                }
+            }),
+            new FilterModel({
+                component: FilterMultilineInputComponent,
+                caption: 'affiliateCode',
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'AffiliateCode',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'AffiliateCode'
+                    })
+                }
             }),
             new FilterModel({
                 component: FilterCalendarComponent,
@@ -666,10 +700,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }),
             new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
+                component: FilterMultilineInputComponent,
                 caption: 'phone',
-                items: { Phone: new FilterItemModel() }
+                filterMethod: FilterHelpers.filterByMultiline,
+                field: 'Phone',
+                items: {
+                    element: new FilterMultilineInputModel({
+                        ls: this.localizationService,
+                        name: 'Phone'
+                    })
+                }
             }),
             this.filterCountryStates,
             new FilterModel({

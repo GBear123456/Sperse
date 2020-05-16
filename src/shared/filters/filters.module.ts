@@ -14,6 +14,7 @@ import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxRangeSliderModule } from 'devextreme-angular/ui/range-slider';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -35,6 +36,7 @@ import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscripti
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { FilterStatesService } from './states/filter-states.service';
+import { FilterMultilineInputComponent } from './multiline-input/filter-multiline-input.component';
 
 @NgModule({
     imports: [
@@ -46,6 +48,7 @@ import { FilterStatesService } from './states/filter-states.service';
         DxCheckBoxModule,
         DxSelectBoxModule,
         DxTextBoxModule,
+        DxTextAreaModule,
         DxDateBoxModule,
         DxDropDownBoxModule,
         DxDataGridModule,
@@ -69,6 +72,7 @@ import { FilterStatesService } from './states/filter-states.service';
         FilterRangeComponent,
         FilterRadioGroupComponent,
         FilterTreeListComponent,
+        FilterMultilineInputComponent,
         BankAccountFilterComponent,
         AdDirective
     ],
@@ -85,6 +89,7 @@ import { FilterStatesService } from './states/filter-states.service';
         FilterRangeComponent,
         FilterRadioGroupComponent,
         FilterTreeListComponent,
+        FilterMultilineInputComponent,
         BankAccountFilterComponent
     ],
     exports: [
