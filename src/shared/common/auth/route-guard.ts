@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -86,8 +87,12 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode)
-            return '/code-breaker';
+        if (tenant && tenant.customLayoutType == LayoutType.BankCode) {
+            if (AppConsts.appMemberPortalUrl)
+                location.href = AppConsts.appMemberPortalUrl;
+            else
+                return '/code-breaker';
+        }
 
         if ((!preferedModule || preferedModule == 'CRM') && this.feature.isEnabled(AppFeatures.CRM) && this.permissionChecker.isGranted(AppPermissions.CRM))
             return 'app/crm';

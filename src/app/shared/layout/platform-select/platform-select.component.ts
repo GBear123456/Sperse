@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -48,6 +49,7 @@ export class PlatformSelectComponent {
 
     constructor(
         private appService: AppService,
+        private authService: AppAuthService,
         private userManagementService: UserManagementService,
         private feature: FeatureCheckerService,
         private permission: PermissionCheckerService,
@@ -131,7 +133,8 @@ export class PlatformSelectComponent {
             } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.CFOMemberAccess)) {
                 return window.open(location.origin + '/app/cfo-portal', '_blank');
             } else if (module.name === 'BankCode' && this.userManagementService.checkBankCodeFeature()) {
-                return window.open(location.origin + '/code-breaker/home', '_blank');
+                AppConsts.appMemberPortalUrl && this.authService.setTokenBeforeRedirect();
+                return window.open(AppConsts.appMemberPortalUrl || (location.origin + '/code-breaker/home'), '_blank');
             } else {
                 navigate = this.router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
             }

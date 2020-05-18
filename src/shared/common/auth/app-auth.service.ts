@@ -6,6 +6,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class AppAuthService implements OnDestroy {
     private tokenCheckTimeout: any;
     private tokenCheckBusy = false;
+    private readonly REDIRECT_AUTH_DATA = 'AuthData';
 
     constructor(
         private appLocalizationService: AppLocalizationService,
@@ -29,11 +30,19 @@ export class AppAuthService implements OnDestroy {
         }
     }
 
+    getTopLevelDomain() {
+        return location.origin.split('.').slice(-2).join('.');
+    }
+
+    setTokenBeforeRedirect() {
+        document.cookie = this.REDIRECT_AUTH_DATA + '=' + abp.auth.getToken() +
+            '; path=/; domain=' + this.getTopLevelDomain();
+    }
+
     setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
-        const authDataKey = 'AuthData';
         document.cookie.split(';').some((data) => {
             let parts = data.split('=');
-            if ((parts[0].trim() == authDataKey) && parts[1]) {
+            if ((parts[0].trim() == this.REDIRECT_AUTH_DATA) && parts[1]) {
                 let authData = JSON.parse(parts[1]);
                 this.setLoginCookies(
                     authData.accessToken,
@@ -43,9 +52,7 @@ export class AppAuthService implements OnDestroy {
                     authData.twoFactorRememberClientToken,
                     authData.returnUrl
                 );
-                document.cookie = authDataKey + '=; path=/; domain=' +
-                    location.origin.split('.').slice(-2).join('.');
-
+                document.cookie = this.REDIRECT_AUTH_DATA + '=; path=/; domain=' + this.getTopLevelDomain();
                 return true;
             }
             return false;

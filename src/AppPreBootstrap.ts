@@ -213,6 +213,7 @@ export class AppPreBootstrap {
         abp.event.trigger('abp.dynamicScriptsInitialized');
 
         AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
+        AppConsts.appMemberPortalUrl = abp.setting.get('App.MemberPortal.Url');
         AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
         loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();

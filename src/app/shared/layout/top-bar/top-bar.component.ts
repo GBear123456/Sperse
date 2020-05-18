@@ -11,6 +11,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 /** Application imports */
 import { PanelMenu } from './panel-menu';
 import { AppService } from '@app/app.service';
+import { AppConsts } from '@shared/AppConsts';
 import { PanelMenuItem } from './panel-menu-item';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -19,6 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -44,6 +46,7 @@ export class TopBarComponent implements OnDestroy {
     };
 
     constructor(
+        private authService: AppAuthService,
         private appSessionService: AppSessionService,
         private appService: AppService,
         private permissionChecker: AppPermissionService,
@@ -135,9 +138,13 @@ export class TopBarComponent implements OnDestroy {
         let route = event.itemData.route;
         /** Avoid redirect to the same route */
         if (route && location.pathname !== event.itemData.route) {
-            if (route.startsWith('/'))
-                this.router.navigate([event.itemData.route]);
-            else
+            if (route.startsWith('/')) {
+                if (event.itemData.route == '/code-breaker' && AppConsts.appMemberPortalUrl) {
+                    this.authService.setTokenBeforeRedirect();
+                    location.href = AppConsts.appMemberPortalUrl;
+                } else
+                    this.router.navigate([event.itemData.route]);
+            } else
                 window.open(route, '_blank');
         }
     }
