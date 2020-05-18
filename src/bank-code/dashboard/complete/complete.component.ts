@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'complete',
@@ -8,5 +7,5 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CompleteComponent {
-    constructor(public ls: AppLocalizationService) {}
+    constructor() {}
 }

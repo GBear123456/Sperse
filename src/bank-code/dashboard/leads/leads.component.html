@@ -3,7 +3,7 @@
                buttonText="Let's go!"
                (onButtonClick)="generateFirstLead()">
 </begin-overlay>
-<h2>{{ ls.l('MyNewLeads') }}</h2>
+<h2>My New Leads</h2>
 <dx-data-grid id="gridContainer"
               class="limitedPagerTotal"
               accessKey="narrowHeaderPanel"
@@ -16,7 +16,7 @@
     <dxo-pager [visible]="false"></dxo-pager>
     <dxo-sorting mode="none"></dxo-sorting>
     <dxi-column dataField="Id" [visible]="false"></dxi-column>
-    <dxi-column dataField="Name" [width]="240" [caption]="ls.l('Name')"></dxi-column>
+    <dxi-column dataField="Name" [width]="250" [caption]="ls.l('Name')"></dxi-column>
     <dxi-column dataField="BankCode" [minWidth]="140" cellTemplate="bankCodeCell" [caption]="ls.l('BankCode')"></dxi-column>
     <dxi-column dataField="Email" [minWidth]="270" [caption]="ls.l('Email')"></dxi-column>
     <dxi-column dataField="Phone" [minWidth]="180" [caption]="ls.l('Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
@@ -28,7 +28,7 @@
         <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
     </div>
     <div *dxTemplate="let data of 'followUpCellTemplate'">
-        <button class="follow-up" (click)="followUp(data)">{{ ls.l('FollowUp') }}</button>
+        <button class="follow-up" (click)="followUp(data)">Follow-Up</button>
     </div>
 </dx-data-grid>
-<button class="view-more" (click)="viewMore()">{{ ls.l('ViewMoreLeads') }}</button>
+<button class="view-more" (click)="viewMore()">View more leads</button>

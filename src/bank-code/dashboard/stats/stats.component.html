@@ -1,6 +1,6 @@
 <begin-overlay *ngIf="noClients$ | async"
-               [text]="ls.l('LetsDecodeYourFirstCode')"
-               [buttonText]="ls.l('StartNow')"
+               text="Let's decode your first prospect's code"
+               buttonText="Start Now"
                (onButtonClick)="decodeFirstCode()">
 </begin-overlay>
 <div class="content row" [ngClass]="{ 'no-clients': noClients$ | async }">
@@ -15,4 +15,4 @@
              alt="Codebreaker">
     </div>
 </div>
-<button *ngIf="!showAll" class="view-more" (click)="showAll = true">{{ ls.l('ViewMoreStats') }}</button>
+<button *ngIf="!showAll" class="view-more" (click)="showAll = true">View more stats</button>

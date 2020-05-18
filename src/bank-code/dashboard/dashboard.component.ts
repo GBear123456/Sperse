@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'dashboard',
@@ -8,5 +7,5 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
-    constructor(public ls: AppLocalizationService) {}
+    constructor() {}
 }

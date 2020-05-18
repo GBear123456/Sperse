@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'start-widget',
@@ -14,5 +13,5 @@ export class StartWidgetComponent {
     @Input() iconSrc: string;
     @Input() iconAlt: string = '';
     @Input() link: string;
-    constructor(public ls: AppLocalizationService) {}
+    constructor() {}
 }
