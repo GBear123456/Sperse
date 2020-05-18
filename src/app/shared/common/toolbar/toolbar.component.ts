@@ -302,6 +302,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 accessKey: 'settings',
                 icon: this.getImgURI('profile-gear'),
                 text: this.ls.l('Settings')
+            },
+            login: {
+                hint: this.ls.l('Login'),
+                accessKey: 'login',
+                text: this.ls.l('Login')
             }
         };
     }
@@ -325,7 +330,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
 
     getDropDownItemTemplate(link, width) {
         return {
-            item: `<div class="toolbar-dropdown-item" ${width ? 'style="width:' + width + 'px;"' : ''}>
+            item: `<div class="toolbar-dropdown-item ${link.class || ''}" ${width ? 'style="width:' + width + 'px;"' : ''}>
                 ${link.icon ? `<img style="margin-right: 15px; position: relative; top: -2px;" src="${this.getImgURI(link.icon)}">` : ''}
                 ${link.text}
             </div>`,
@@ -393,7 +398,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     }
 
     checkItemVisible(item) {
-        return !item.hasOwnProperty('visible') || item.visible;
+        return !item.hasOwnProperty('visible')
+            || (item.visible && (!item.options || !item.options.items || item.options.items.some(subitem => !subitem.hasOwnProperty('visible') || subitem.visible)));
     }
 
     initToolbarItems() {
@@ -427,6 +433,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                         locateInMenu: group.locateInMenu,
                         disabled: item.disabled,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
+                        visible: !item.hasOwnProperty('visible') || item.visible,
                         text: !item.widget && item.text,
                         html: !item.widget && item.html,
                         itemTemplate: item.itemTemplate || group.itemTemplate,

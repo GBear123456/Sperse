@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, ViewChild, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Injector, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -13,7 +13,7 @@ import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignmen
 import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactInfoDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactInfoDto, LayoutType, UserServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -22,6 +22,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
+import { UserManagementService } from '../../../../shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'operations-widget',
@@ -105,14 +106,19 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
         ]
     };
     permissions = AppPermissions;
-    isCfoAvailable;
+    isCfoAvailable = false;
+    isCrmAvailable = false;
+    isPfmAvailable = false;
+    isApiAvailable = false;
+
     constructor(
         injector: Injector,
         private appService: AppService,
         private userService: UserServiceProxy,
         private contactService: ContactsService,
         private impersonationService: ImpersonationService,
-        private crmService: CrmService
+        private crmService: CrmService,
+        private userManagementService: UserManagementService
     ) {
         super(injector);
         contactService.toolbarSubscribe(config => {
@@ -137,6 +143,18 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                     .subscribe((isCfoAvailable: boolean) => {
                         this.isCfoAvailable = isCfoAvailable;
                     });
+                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.CRM)
+                    .subscribe((isCrmAvailable: boolean) => {
+                        this.isCrmAvailable = isCrmAvailable;
+                    });
+                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.PFM)
+                    .subscribe((isPfmAvailable: boolean) => {
+                        this.isPfmAvailable = isPfmAvailable;
+                    });
+                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.API)
+                    .subscribe((isApiAvailable: boolean) => {
+                        this.isApiAvailable = isApiAvailable;
+                    });
             }
         }
     }
@@ -153,14 +171,139 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                 locateInMenu: 'auto',
                 items: [
                     {
-                        widget: 'dxButton',
+                        name: 'login',
+                        widget: 'dxDropDownMenu',
+                        text: this.l('Login'),
                         options: {
-                            text: this.l('LoginAsThisUser')
-                        },
-                        visible: this.contactInfo && this.contactInfo.personContactInfo && this.contactInfo.personContactInfo.userId &&
-                            this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-                        action: () => {
-                            this.impersonationService.impersonate(this.contactInfo.personContactInfo.userId, this.appSession.tenantId);
+                            hint: this.l('Login'),
+                            name: 'login',
+                            items: [
+                                {
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId
+                                        );
+                                    },
+                                    text: this.l('LoginAsThisUser'),
+                                    visible: this.canImpersonate,
+                                },
+                                {
+                                    text: this.l(this.isCfoAvailable ? 'CFO' : 'ClientDetails_RequestVerification'),
+                                    visible: this.canImpersonate && this.cfoLinkOrVerifyEnabled,
+                                    icon: !this.isCfoAvailable ? 'verify-icon' : '',
+                                    class: this.isCfoAvailable ? 'icon cfo-icon' : '',
+                                    action: () => {
+                                        if (this.isCfoAvailable === true) {
+                                            this.redirectToCFO();
+                                        } else if (this.isCfoAvailable === false) {
+                                            this.requestVerification();
+                                        }
+                                    }
+                                },
+                                {
+                                    text: this.l('CRM'),
+                                    visible: this.canImpersonate && this.isCrmAvailable,
+                                    class: 'icon crm-icon',
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/app/crm'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('PFM'),
+                                    visible: this.canImpersonate && this.isPfmAvailable,
+                                    class: 'icon pfm-icon',
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/app/pfm'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('API'),
+                                    visible: this.isApiAvailable,
+                                    class: 'icon api-icon',
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/app/api'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('BankCode_CodebreakerAI'),
+                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/code-breaker/products/codebreaker-ai'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('BankCode_BankPass'),
+                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/code-breaker/products/bankpass'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('BankCode_BankVault'),
+                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/code-breaker/products/bankvault'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('BankCode_WhyTheyBuy'),
+                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/code-breaker/products/why-they-buy'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('BankCode_BankAffiliate'),
+                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/code-breaker/products/bank-affiliate'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('BankCode_BankTrainer'),
+                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            '/code-breaker/products/bank-trainer'
+                                        );
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -242,31 +385,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                 this.getNavigationConfig(),
                 optionItem
             ];
-
-            if (this.cfoLinkOrVerifyEnabled) {
-                this.toolbarConfig.push(
-                    {
-                        location: 'after',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
-                                action: () => {
-                                    if (this.isCfoAvailable === true) {
-                                        this.redirectToCFO();
-                                    } else if (this.isCfoAvailable === false) {
-                                        this.requestVerification();
-                                    }
-                                },
-                                options: {
-                                    text: this.l(this.isCfoAvailable ? 'CFO' : 'ClientDetails_RequestVerification'),
-                                    icon: this.isCfoAvailable ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
-                                }
-                            }
-                        ]
-                    }
-                );
-            }
         }, ms);
+    }
+
+    get canImpersonate(): Boolean {
+        return !!(this.contactInfo && this.contactInfo.personContactInfo && this.contactInfo.personContactInfo.userId &&
+            this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation));
     }
 
     getNavigationConfig() {
@@ -381,10 +505,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
      * @return {boolean}
      */
     get cfoLinkOrVerifyEnabled(): boolean {
-        return this.isCfoAvailable && this.appService.checkCFOClientAccessPermission()
+        return !!(this.isCfoAvailable && this.appService.checkCFOClientAccessPermission()
                || (
                    this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
                    && this.contactInfo.statusId === ContactStatus.Active
-               );
+               ));
     }
 }
