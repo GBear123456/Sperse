@@ -8,8 +8,8 @@
                  class="logo-layout"/>
         </a>
     </div>
-    <div *ngIf="loggedUserId" class="products-menu">
-        <p>{{ ls.l('MyProducts') }}:</p>
-        <products-menu></products-menu>
-    </div>
+
+    <ng-template ad-header-host></ng-template>
+
+    <area-navigation [memberAreaLinks]="memberAreaLinks" *ngIf="loggedUserId"></area-navigation>
 </div>

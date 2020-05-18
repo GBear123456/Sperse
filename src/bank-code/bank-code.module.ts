@@ -1,5 +1,5 @@
 /** Core imports */
-import { NgModule } from '@angular/core';
+import { ComponentFactoryResolver, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -10,6 +10,7 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
 
 /** Application imports */
+import { BankCodeLayoutService } from './shared/layout/bank-code-layout.service';
 import { BankCodeComponent } from './bank-code.component';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -27,6 +28,8 @@ import { CompleteComponent } from './dashboard/complete/complete.component';
 import { BankCodeLayoutModule } from '../bank-code/shared/layout/bank-code-layout.module';
 import { ResourcesComponent } from '../bank-code/resources/resources.component';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
+import { AppSessionService } from '../shared/common/session/app-session.service';
+import { UserManagementListComponent } from '../shared/common/layout/user-management-list/user-management-list.component';
 import { UpcomingEventsComponent } from './sidebar/upcoming-events/upcoming-events.component';
 import { SpecialAnnouncementsComponent } from './sidebar/special-announcements/special-announcements.component';
 import { UserProfileComponent } from './sidebar/user-profile/user-profile.component';
@@ -66,5 +69,15 @@ import { UserProfileComponent } from './sidebar/user-profile/user-profile.compon
     providers: [],
 })
 export class BankCodeModule {
-    constructor() {}
+    constructor(
+        private layoutService: BankCodeLayoutService,
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private sessionService: AppSessionService
+    ) {
+        if (this.sessionService.userId) {
+            this.layoutService.headerContentUpdate(
+                this.componentFactoryResolver.resolveComponentFactory(UserManagementListComponent)
+            );
+        }
+    }
 }
