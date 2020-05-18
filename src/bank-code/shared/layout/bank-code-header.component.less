@@ -11,6 +11,7 @@
 
     .page-header {
         padding: 0 20px;
+
         @media all and (max-width: 440px) {
             padding: 16px 10px;
         }
@@ -142,9 +143,10 @@
     .page-header.navbar {
 
         @media all and (min-width: 769px) {
-            height: 134px;
+            height: 69px;
             flex-wrap: nowrap;
         }
+
 
         &.navbar-fixed-top,
         &.navbar-static-top {
@@ -292,26 +294,6 @@
                     }
                 }
             }
-        }
-    }
-
-    .products-menu {
-        display: flex;
-        align-items: center;
-        p {
-            font-size: 24.5px;
-            color: #004a84;
-            font-weight: 700;
-            margin-bottom: 0;
-            text-transform: uppercase;
-            margin-right: 8px;
-        }
-        @media (max-width: 768px) {
-            p {
-                display: none;
-            }
-            position: absolute;
-            right: 0;
         }
     }
 }
