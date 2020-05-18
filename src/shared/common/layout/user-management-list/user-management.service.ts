@@ -73,7 +73,13 @@ export class UserManagementService {
             name: this.ls.l('MyOrderHistory'),
             iconClass: 'order-history',
             visible:  this.checkBankCodeFeature(),
-            onClick: () => this.router.navigateByUrl('code-breaker/order-history/subscriptions')
+            onClick: () => {
+                if (AppConsts.appMemberPortalUrl) {
+                    this.authService.setTokenBeforeRedirect();
+                    window.open(AppConsts.appMemberPortalUrl + '/app/order-history/subscriptions');
+                } else
+                    this.router.navigateByUrl('code-breaker/order-history/subscriptions');
+            }
         },
         {
             name: this.ls.l('ChangePassword'),
