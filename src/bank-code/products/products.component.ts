@@ -61,7 +61,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
                 hidden: !showBankAffiliate
             },
             {
-                name: this.ls.l('Why They Buy'),
+                name: this.ls.l('BankCode_WhyTheyBuy'),
                 routerUrl: 'why-they-buy'
             }
             /*

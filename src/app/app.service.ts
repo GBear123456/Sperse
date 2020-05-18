@@ -20,7 +20,8 @@ import {
     InstanceStatus,
     TenantSubscriptionServiceProxy,
     ModuleType,
-    ModuleSubscriptionInfoDto
+    ModuleSubscriptionInfoDto,
+    GetUserInstanceInfoOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -374,8 +375,8 @@ export class AppService extends AppServiceBase {
         });
     }
 
-    redirectToCFO(userId) {
-        this.instanceServiceProxy.getUserInstanceInfo(userId).subscribe(result => {
+    redirectToCFO(userId: number) {
+        this.instanceServiceProxy.getUserInstanceInfo(userId).subscribe((result: GetUserInstanceInfoOutput) => {
             if (result && result.id && (result.status === InstanceStatus.Active))
                 window.open(AppConsts.appBaseUrl + '/app/cfo/' + result.id + '/start');
             else

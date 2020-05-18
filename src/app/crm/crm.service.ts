@@ -5,8 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Params, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subscription, combineLatest, fromEvent, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, combineLatest, fromEvent, of } from 'rxjs';
+import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
 import flatten from 'lodash/flatten';
 
 /** Application imports */
@@ -19,9 +19,14 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    GetUserPermissionsForEditOutput,
+    InstanceServiceProxy,
+    UserServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '../../shared/helpers/DateHelper';
 import { environment } from '../../environments/environment';
+import { AppPermissions } from '../../shared/AppPermissions';
 
 @Injectable()
 export class CrmService {
@@ -49,6 +54,7 @@ export class CrmService {
         map((contentHeight) => contentHeight - 88)
     );
     private usersIdsWithInstance: { [id: string]: boolean } = {};
+    private usersPermissions: { [id: string]: Observable<string[]> } = {};
     showSliceButtons: boolean = environment.releaseStage !== 'production' && environment.releaseStage !== 'beta';
 
     constructor(
@@ -60,7 +66,8 @@ export class CrmService {
         private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
-        private instanceServiceProxy: InstanceServiceProxy
+        private instanceServiceProxy: InstanceServiceProxy,
+        private userService: UserServiceProxy
     ) {}
 
     static getModuleNameFromLayoutType(dataLayoutType: DataLayoutType) {
@@ -236,6 +243,23 @@ export class CrmService {
                            })
                        )
                );
+    }
+
+    isModuleAvailable(userId: number, modulePermission: AppPermissions): Observable<boolean> {
+        return this.getUserPermissions(userId).pipe(
+            map((grantedPermissions: string[]) => grantedPermissions.indexOf(modulePermission) >= 0
+        ));
+    }
+
+    private getUserPermissions(userId: number): Observable<string[]> {
+        if (userId && !this.usersPermissions[userId]) {
+            this.usersPermissions[userId] = this.userService.getUserPermissionsForEdit(userId).pipe(
+                map((permissionsOutput: GetUserPermissionsForEditOutput) => permissionsOutput.grantedPermissionNames),
+                publishReplay(),
+                refCount()
+            )
+        }
+        return !userId ? of([]) : this.usersPermissions[userId];
     }
 
     handleCountryStateParams(queryParams$: Observable<Params>, countryStatesFilter: FilterModel) {

@@ -310,8 +310,8 @@ export class UserManagementService {
         return this.isLayout(LayoutType.AdvicePeriod);
     }
 
-    isLayout(layoutType: LayoutType) {
-        return this.appSession.tenant && this.appSession.tenant.customLayoutType === layoutType;
+    isLayout(layoutType: LayoutType): boolean {
+        return !!(this.appSession.tenant && this.appSession.tenant.customLayoutType === layoutType);
     }
 
     checkBankCodeFeature(): boolean {

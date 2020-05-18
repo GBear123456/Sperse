@@ -101,9 +101,39 @@
         line-height: 1.71;
         letter-spacing: 0.3px;
         color: #424c56;
+        display: flex;
+        align-items: center;
         img {
             width: 17px;
             height: 19px;
+        }
+        &.icon {
+            &:before {
+                content: '';
+                border-radius: 50%;
+                width: 10px;
+                height: 10px;
+                margin-right: 10px;
+            }
+
+            &.cfo-icon:before {
+                background-image: linear-gradient(41deg, #f76b1c, #fad961);
+            }
+            &.crm-icon:before {
+                background-image: linear-gradient(41deg, #3023ae, #c86dd7);
+            }
+            &.pfm-icon:before {
+                background-image: linear-gradient(221deg, #48d8bd, #129064);
+            }
+            &.slice-icon:before {
+                background-image: linear-gradient(41deg, #0d72e4, #2bd3ec);
+            }
+            &.api-icon:before {
+                background-image: linear-gradient(221deg, #91f7c8, #0cab2a);
+            }
+            &.hub-icon:before {
+                background-image: linear-gradient(to bottom, rgba(0, 255, 255, 0), rgba(0, 255, 255, 0)), linear-gradient(222deg, #2beccf, #34aee0);
+            }
         }
     }
     .toolbar-download-options {
@@ -497,6 +527,26 @@
                     background: url('../../../../assets/common/icons/expand-tree-icon.svg') left center no-repeat;
                     padding-left: 28px;
                     font-family: Montserrat;
+                }
+            }
+
+            &[accesskey="login"] {
+                padding: 6px 10px;
+
+                .dx-button-content {
+                    display: none;
+                }
+
+                &::before {
+                    content: attr(title);
+                    font-weight: 300;
+                    font-size: 13px;
+                    line-height: 1.85;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    display: inline-block;
+                    font-family: Montserrat;
+                    white-space: nowrap;
                 }
             }
 

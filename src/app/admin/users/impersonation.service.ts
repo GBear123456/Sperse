@@ -13,7 +13,7 @@ export class ImpersonationService {
         private authService: AppAuthService
     ) {}
 
-    impersonate(userId: number, tenantId?: number): void {
+    impersonate(userId: number, tenantId?: number, path?: string): void {
 
         const input = new ImpersonateInput();
         input.userId = userId;
@@ -23,7 +23,7 @@ export class ImpersonationService {
             .subscribe((result: ImpersonateOutput) => {
                 this.authService.logout(false);
 
-                let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
+                let targetUrl = AppConsts.appBaseUrl + (path ? path : '') + '?secureId=' + result.impersonationToken;
                 if (input.tenantId) {
                     targetUrl = targetUrl + '&tenantId=' + input.tenantId;
                 }
