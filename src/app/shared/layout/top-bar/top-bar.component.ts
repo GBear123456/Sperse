@@ -141,7 +141,7 @@ export class TopBarComponent implements OnDestroy {
             if (route.startsWith('/')) {
                 if (event.itemData.route == '/code-breaker' && AppConsts.appMemberPortalUrl) {
                     this.authService.setTokenBeforeRedirect();
-                    window.open(AppConsts.appMemberPortalUrl, '_blank');
+                    location.href = AppConsts.appMemberPortalUrl;
                 } else
                     this.router.navigate([event.itemData.route]);
             } else

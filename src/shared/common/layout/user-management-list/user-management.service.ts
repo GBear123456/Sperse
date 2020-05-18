@@ -76,7 +76,7 @@ export class UserManagementService {
             onClick: () => {
                 if (AppConsts.appMemberPortalUrl) {
                     this.authService.setTokenBeforeRedirect();
-                    window.open(AppConsts.appMemberPortalUrl + '/app/order-history/subscriptions');
+                    location.href = AppConsts.appMemberPortalUrl + '/app/order-history/subscriptions';
                 } else
                     this.router.navigateByUrl('code-breaker/order-history/subscriptions');
             }
