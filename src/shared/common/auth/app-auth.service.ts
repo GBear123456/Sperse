@@ -35,8 +35,11 @@ export class AppAuthService implements OnDestroy {
     }
 
     setTokenBeforeRedirect() {
-        document.cookie = this.REDIRECT_AUTH_DATA + '=' + abp.auth.getToken() +
-            '; path=/; domain=' + this.getTopLevelDomain();
+        document.cookie = this.REDIRECT_AUTH_DATA + '=' + JSON.stringify({
+            accessToken: abp.auth.getToken(),
+            expireInSeconds: 3600,
+            rememberClient: true
+        }) + '; path=/; domain=' + this.getTopLevelDomain();
     }
 
     setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
