@@ -2,7 +2,7 @@
 <div>
     <p>Complete your onboarding process so you can maximize your results with CODEBREAKER.</p>
     <ul>
-        <li *ngFor="let step of steps" [ngClass]="{ completed: step.completed$ | async }">
+        <li *ngFor="let step of steps" [ngClass]="{ completed: step.completed }">
             <div class="point"></div>
             <div class="description">{{ step.name }}</div>
         </li>

@@ -30,7 +30,7 @@
                 </button>
             </div>
         </div>
-        <mat-tab-group (selectedTabChange)="tabChanged($event)" [(selectedIndex)]="currentTabIndex">
+        <mat-tab-group (selectedTabChange)="tabChanged($event)">
             <mat-tab [label]="ls.l('MyBankPass').toUpperCase()">
                 <access-code-instructions></access-code-instructions>
                 <div *ngIf="showBankFunnels" class="bank-funnels">

@@ -6,7 +6,7 @@
 <div class="content row" [ngClass]="{ 'no-clients': noClients$ | async }">
     <div class="col-sm-3 sun"><img src="./assets/common/images/bank-code/sun.svg"></div>
     <div class="col-sm-6">
-        <bank-code-goals-cracked [showAll]="showAll" [showStubsIfEmpty]="true"></bank-code-goals-cracked>
+        <bank-code-goals-cracked [showAll]="showAll"></bank-code-goals-cracked>
     </div>
     <div class="col-sm-3 level-image-block">
         <img *ngIf="badgeIconName$ | async as badgeIconName"

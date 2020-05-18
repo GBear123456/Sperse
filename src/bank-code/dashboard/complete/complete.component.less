@@ -2,7 +2,7 @@
     display: flex;
     background: #fff;
     border-radius: 15px;
-    padding: 19px;
+    padding: 0 43px;
     .row {
         align-items: center;
     }
@@ -10,23 +10,13 @@
         p {
             text-transform: uppercase;
             font-weight: 700;
-            font-size: 22px;
+            font-size: 36px;
             margin-bottom: 0;
             line-height: 38px;
             letter-spacing: -0.01em;
-            text-align: center;
             &.action {
-                font-size: 30px;
+                font-size: 50px;
                 color: #ac1f22;
-            }
-            @media (min-width: 768px) {
-                text-align: left;
-            }
-            @media (min-width: 1200px) {
-                font-size: 36px;
-                &.action {
-                    font-size: 50px;
-                }
             }
         }
     }
@@ -34,29 +24,17 @@
     .complete-group {
         text-align: center;
         img {
-            padding: 13px 0;
-            max-width: 100%;
-            @media (min-width: 768px) {
-                padding-bottom: 0;
-            }
+            padding-top: 13px;
         }
     }
 
     .description {
-        font-size: 15px;
-        line-height: 15px;
+        font-size: 19px;
+        line-height: 23px;
         margin-bottom: 0;
         letter-spacing: -0.05em;
         span {
             font-weight: 600;
         }
-        @media (min-width: 1200px) {
-            font-size: 19px;
-            line-height: 23px;
-        }
-    }
-
-    @media (min-width: 768px) {
-        padding: 0 43px;
     }
 }

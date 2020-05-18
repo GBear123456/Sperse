@@ -1,14 +1,5 @@
-/** Core imports */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-/** Third party imports */
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-/** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppSessionService } from '../../../shared/common/session/app-session.service';
-import { BankCodeService } from '../../../app/shared/common/bank-code/bank-code.service';
 
 @Component({
     selector: 'process-board',
@@ -17,33 +8,30 @@ import { BankCodeService } from '../../../app/shared/common/bank-code/bank-code.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProcessBoardComponent {
+    isOwnBankCodeCracked = false;
+    isContactsBankCodeCracked = false;
+    isBasicTrainingCompleted = false;
     steps = [
         {
             name: 'Create Your Account',
-            completed$: of(true)
+            completed: true
         },
         {
             name: 'Crack Your Own BANKCODE',
-            completed$: of(!!this.appSession.user.bankCode)
+            completed: this.isOwnBankCodeCracked
         },
         {
             name: 'Crach A Contact\'s BANKCODE',
-            completed$: this.bankCodeService.getClientsBankCodesTotalCount().pipe(
-                map(Boolean)
-            )
+            completed: this.isContactsBankCodeCracked
         },
         {
             name: 'Complete The Basic Training',
-            completed$: of(false)
+            completed: this.isBasicTrainingCompleted
         },
         {
             name: 'TAKE IT TO THE BANK!®',
-            completed$: of(false)
+            completed: this.isBasicTrainingCompleted
         }
     ];
-    constructor(
-        private appSession: AppSessionService,
-        private bankCodeService: BankCodeService,
-        public ls: AppLocalizationService
-    ) {}
+    constructor(public ls: AppLocalizationService) {}
 }

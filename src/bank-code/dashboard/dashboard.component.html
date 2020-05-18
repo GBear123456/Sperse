@@ -1,44 +1,36 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-3">
-            <sidebar></sidebar>
+<sidebar></sidebar>
+<main>
+    <process-board></process-board>
+    <div class="start-widgets row">
+        <div class="col-sm-4">
+            <start-widget title="Codebreaker AI"
+                          subtitle="Decode"
+                          color="#004a84"
+                          iconSrc="./assets/common/images/bank-code/lock.png"
+                          link="../products/codebreaker-ai">
+                Decode your prospect's <b>BANK</b>CODE in nanoseconds using cutting-edge artificial intelligence!
+            </start-widget>
         </div>
-        <div class="col-lg-9 right">
-            <main>
-                <process-board></process-board>
-                <div class="start-widgets row">
-                    <div class="col-sm-4">
-                        <start-widget title="Codebreaker AI"
-                                      subtitle="Decode"
-                                      color="#004a84"
-                                      iconSrc="./assets/common/images/bank-code/lock.png"
-                                      link="../products/codebreaker-ai">
-                            Decode your prospect's <b>BANK</b>CODE in nanoseconds using cutting-edge artificial intelligence!
-                        </start-widget>
-                    </div>
-                    <div class="col-sm-4">
-                        <start-widget title="BankPass"
-                                      subtitle="Generate Leads"
-                                      color="#ac1f22"
-                                      iconSrc="./assets/common/images/bank-code/lead.png"
-                                      link="../products/bankpass">
-                            Share your Access Code right now to capture unlimited leads using your <b>BANK</b>PASS.
-                        </start-widget>
-                    </div>
-                    <div class="col-sm-4">
-                        <start-widget title="BankVault"
-                                      subtitle="Get The Yes!"
-                                      color="#f09e1f"
-                                      iconSrc="./assets/common/images/bank-code/close-deal.png"
-                                      link="../products/bankvault">
-                            GET THE YES! Access your <b>BANK</b>VAULT and let the learning begin!
-                        </start-widget>
-                    </div>
-                </div>
-                <stats></stats>
-                <leads></leads>
-                <complete></complete>
-            </main>
+        <div class="col-sm-4">
+            <start-widget title="BankPass"
+                          subtitle="Generate Leads"
+                          color="#ac1f22"
+                          iconSrc="./assets/common/images/bank-code/lead.png"
+                          link="../products/bankpass">
+                Share your Access Code right now to capture unlimited leads using your <b>BANK</b>PASS.
+            </start-widget>
+        </div>
+        <div class="col-sm-4">
+            <start-widget title="BankVault"
+                          subtitle="Get The Yes!"
+                          color="#f09e1f"
+                          iconSrc="./assets/common/images/bank-code/close-deal.png"
+                          link="../products/bankvault">
+                GET THE YES! Access your <b>BANK</b>VAULT and let the learning begin!
+            </start-widget>
         </div>
     </div>
-</div>
+    <stats></stats>
+    <leads></leads>
+    <complete></complete>
+</main>
