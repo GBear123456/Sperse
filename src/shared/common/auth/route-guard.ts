@@ -88,7 +88,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (tenant && tenant.customLayoutType == LayoutType.BankCode) {
-            if (AppConsts.appMemberPortalUrl)
+            if (AppConsts.appMemberPortalUrl && !user)
                 location.href = AppConsts.appMemberPortalUrl;
             else
                 return '/code-breaker';
