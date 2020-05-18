@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLocalizationService } from '../../../app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'upcoming-events',
@@ -34,5 +33,5 @@ export class UpcomingEventsComponent {
             iconSrc: './assets/common/images/bank-code/event-logo-3.png'
         },
     ];
-    constructor(public ls: AppLocalizationService) {}
+    constructor() {}
 }

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AppLocalizationService } from '../../../app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'special-announcements',
@@ -15,7 +14,4 @@ export class SpecialAnnouncementsComponent {
             imageSrc: './assets/common/images/bank-code/announcement.png'
         }
     ];
-
-    constructor(public ls: AppLocalizationService) {}
-
 }
