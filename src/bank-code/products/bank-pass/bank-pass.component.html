@@ -156,7 +156,7 @@
                                         [width]="50" [allowExporting]="false"
                                         [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                             <div *dxTemplate="let data of 'photoTemplate'">
-                                <div [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')' }"
+                                <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}"
                                      class="img-circle">
                                 </div>
                             </div>
