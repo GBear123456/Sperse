@@ -7,11 +7,5 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpecialAnnouncementsComponent {
-    announcements = [
-        {
-            title: 'Lorem ipsum dolor sit amet',
-            text: 'Lorem ipsum dolor sit amet, consectetur elit, eiusmod tempor incididunt. Lorem ipsum dolor sit amet, consectetur elit, eiusmod tempor incididunt.',
-            imageSrc: './assets/common/images/bank-code/announcement.png'
-        }
-    ];
+    constructor() {}
 }

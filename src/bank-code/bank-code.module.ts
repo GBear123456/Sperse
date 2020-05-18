@@ -30,9 +30,6 @@ import { ResourcesComponent } from '../bank-code/resources/resources.component';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 import { AppSessionService } from '../shared/common/session/app-session.service';
 import { UserManagementListComponent } from '../shared/common/layout/user-management-list/user-management-list.component';
-import { UpcomingEventsComponent } from './sidebar/upcoming-events/upcoming-events.component';
-import { SpecialAnnouncementsComponent } from './sidebar/special-announcements/special-announcements.component';
-import { UserProfileComponent } from './sidebar/user-profile/user-profile.component';
 
 @NgModule({
     imports: [
@@ -61,10 +58,7 @@ import { UserProfileComponent } from './sidebar/user-profile/user-profile.compon
         LeadsComponent,
         BankCodeComponent,
         BeginOverlayComponent,
-        ResourcesComponent,
-        SpecialAnnouncementsComponent,
-        UpcomingEventsComponent,
-        UserProfileComponent
+        ResourcesComponent
     ],
     providers: [],
 })

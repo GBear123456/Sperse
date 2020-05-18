@@ -45,7 +45,6 @@ import { RedirectGuard } from '../shared/common/redirect-guard/redirect-guard';
             }
         ])
     ],
-    exports: [ RouterModule ],
-    providers: [ RedirectGuard ]
+    exports: [ RouterModule ]
 })
 export class BankCodeRoutingModule {}
