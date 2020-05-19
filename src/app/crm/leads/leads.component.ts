@@ -61,7 +61,8 @@ import {
     ContactServiceProxy,
     LeadServiceProxy,
     OrganizationUnitDto,
-    PipelineDto,
+    PipelineDto,
+
     DeleteContactLeadOutput
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -1509,45 +1510,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     deleteLeads() {
         let selectedIds: number[] = this.selectedLeads.map(lead => lead.Id);
-        this.message.confirm(
-            this.l('LeadsDeleteWarningMessage'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.deleteLeadsInternal(selectedIds);
+        ContactsHelper.showConfirmMessage(this.l('LeadsDeleteWarningMessage'), this.l('ForceDelete'), (isConfirmed, forceDelete) => {
+            if (isConfirmed) {
+                let request = this.getDeleteMethod(selectedIds, forceDelete);
+                request.subscribe(() => {
+                        this.refresh();
+                        if (this.dataGrid && this.dataGrid.instance) {
+                            this.dataGrid.instance.deselectAll();
+                        }
+                        this.notify.success(this.l('SuccessfullyDeleted'));
+                });
             }
-        );
-    }
-
-    private deleteLeadsInternal(selectedIds: number[]) {
-        let request = this.getDeleteMethod(selectedIds, false);
-
-        request.subscribe((res) => {
-            if (res.success) {
-                this.handleSuccessfulDelete();
-            }
-            else {
-                let message = ContactsHelper.getDeleteErrorMessage(res);
-                this.message.confirm(message, 'Force delete entities ?', (confirm) => {
-                    if (confirm) {
-                        this.getDeleteMethod(selectedIds, true).subscribe(() => this.handleSuccessfulDelete());
-                    }
-                }, true);
-            }
-        });
+        },
+        this.permission.isGranted(AppPermissions.CRMForceDeleteEntites));
     }
 
     private getDeleteMethod(selectedIds: number[], forceDelete): Observable<DeleteContactLeadOutput> {
         return selectedIds.length > 1 ?
             this.leadService.deleteLeads(forceDelete, selectedIds) :
             this.leadService.deleteLead(selectedIds[0], forceDelete);
-    }
-
-    private handleSuccessfulDelete() {
-        this.refresh();
-        if (this.dataGrid && this.dataGrid.instance) {
-            this.dataGrid.instance.deselectAll();
-        }
-        this.notify.success(this.l('SuccessfullyDeleted'));
     }
 
     repaintToolbar() {

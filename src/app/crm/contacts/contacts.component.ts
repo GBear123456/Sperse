@@ -676,32 +676,18 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     deleteLead() {
-        this.message.confirm(
-            this.l('LeadDeleteWarningMessage', this.getCustomerName()),
-            isConfirmed => {
-                if (isConfirmed) {
-                    this.leadService.deleteLead(this.leadId, false).subscribe((res) => {
-                        if (res.success) {
-                            this.handleSuccessfulDelete();
-                        }
-                        else {
-                            let message = ContactsHelper.getDeleteErrorMessage(res);
-                            this.message.confirm(message, 'Force delete entities ?', (confirm) => {
-                                if (confirm) {
-                                    this.leadService.deleteLead(this.leadId, true).subscribe(() => this.handleSuccessfulDelete());
-                                }
-                            }, true);
-                        }
-                    });
-                }
+        let text = this.l('LeadDeleteWarningMessage', this.getCustomerName());
+        let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
+        ContactsHelper.showConfirmMessage(text, this.l('ForceDelete'), (isConfirmed, forceDelete) => {
+            if (isConfirmed) {
+                this.leadService.deleteLead(this.leadId, forceDelete).subscribe(() => {
+                    this.notify.success(this.l('SuccessfullyDeleted'));
+                    this.contactService['data']['deleted'] = true;
+                    this.close();
+                });
             }
-        );
-    }
-
-    private handleSuccessfulDelete() {
-        this.notify.success(this.l('SuccessfullyDeleted'));
-        this.contactService['data']['deleted'] = true;
-        this.close();
+        },
+        canForceDelete);
     }
 
     updateStatus(statusId: string) {

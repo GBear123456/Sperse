@@ -30,6 +30,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
+import { AppPermissions } from '@shared/AppPermissions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
@@ -55,6 +56,7 @@ import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'bank-pass',
@@ -187,6 +189,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private messageService: MessageService,
         private leadService: LeadServiceProxy,
         private notifyService: NotifyService,
+        private permissionService: AppPermissionService,
         public bankCodeService: BankCodeService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
@@ -336,37 +339,18 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     deleteLead(e) {
-        this.messageService.confirm(
-            this.ls.l('BankCodeLeadDeleteWarningMessage'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.deleteLeadsInternal(e.data.Id);
-            }
-        );
-    }
-
-    private deleteLeadsInternal(selectedId: number) {
-        this.leadService.deleteLead(selectedId, false).subscribe((res) => {
-            if (res.success) {
-                this.handleSuccessfulDelete();
-            }
-            else {
-                let message = ContactsHelper.getDeleteErrorMessage(res);
-                this.messageService.confirm(message, 'Force delete entities ?', (confirm) => {
-                    if (confirm) {
-                        this.leadService.deleteLead(selectedId, true).subscribe(() => this.handleSuccessfulDelete());
+        ContactsHelper.showConfirmMessage(this.ls.l('BankCodeLeadDeleteWarningMessage'), this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
+            if (isConfirmed) {
+                this.leadService.deleteLead(e.data.Id, forceDelete).subscribe(() => {
+                    this.refresh();
+                    if (this.dataGrid && this.dataGrid.instance) {
+                        this.dataGrid.instance.deselectAll();
                     }
-                }, true);
+                    this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                });
             }
-        });
-    }
-
-    private handleSuccessfulDelete() {
-        this.refresh();
-        if (this.dataGrid && this.dataGrid.instance) {
-            this.dataGrid.instance.deselectAll();
-        }
-        this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+        },
+        this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites));
     }
 
     ngOnDestroy() {
