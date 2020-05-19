@@ -86,8 +86,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         maritalStatus: this.getMaritalStatusList(),
         preferredToD: this.getPreferredToD()
     };
-    dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
+    private readonly settingsDialogId = 'personal-details-dialog';
 
     constructor(
         private notifyService: NotifyService,
@@ -111,7 +110,8 @@ export class PersonalDetailsComponent implements OnDestroy {
             this.getStates(this.person && this.person.citizenship);
             this.isEditAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             setTimeout(() => this.updateToolbar());
-            this.showPersonalDetailsDialog();
+            if (this.contactsService.settingsDialogOpened.value)
+                this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
             this.changeDetector.markForCheck();
         }, this.ident);
 
@@ -123,9 +123,6 @@ export class PersonalDetailsComponent implements OnDestroy {
         this.loadCountries();
         this.getCountries();
         this.loadStates();
-        this.dialogOpened$.pipe(takeUntil(this.lifecycleService.destroy$), skip(1)).subscribe(() => {
-            this.updateToolbar();
-        })
     }
 
     private updateToolbar() {
@@ -133,20 +130,13 @@ export class PersonalDetailsComponent implements OnDestroy {
             optionButton: {
                 name: 'options',
                 options: {
-                    checkPressed: () => this.dialogOpened.value
+                    checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.showPersonalDetailsDialog();
-                    this.dialogOpened.next(!this.dialogOpened.value);
+                    this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId);
                 }
             }
         })
-    }
-
-    showPersonalDetailsDialog() {
-        this.personalDetailsService.showPersonalDetailsDialog().subscribe(() => {
-            this.dialogOpened.next(false);
-        });
     }
 
     private getCountries() {

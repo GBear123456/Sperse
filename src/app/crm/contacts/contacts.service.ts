@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { filter, finalize, tap, switchMap, catchError, map, mapTo } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject, of, BehaviorSubject } from 'rxjs';
+import { filter, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
 import invert from 'lodash/invert';
 
 /** Application imports */
@@ -40,11 +40,14 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
+import { CacheHelper } from '../../../shared/common/cache-helper/cache-helper';
+import { CacheService } from 'ng2-cache-service';
 
 @Injectable()
 export class ContactsService {
     private verificationSubject: Subject<any> = new Subject<any>();
     private toolbarSubject: Subject<any> = new Subject<any>();
+    private toolbarItemSubject: Subject<any> = new Subject<any>();
     private userId: ReplaySubject<number> = new ReplaySubject(1);
     userId$: Observable<number> = this.userId.asObservable();
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
@@ -63,6 +66,11 @@ export class ContactsService {
     personContactInfo$: Observable<PersonContactInfoDto> = this.personContactInfo.asObservable();
 
     readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
+    readonly settingsDialogOpenedCacheKey: string = this.cacheHelper.getCacheKey('save_option_opened_settings');
+    settingsDialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(this.cacheService.get(this.settingsDialogOpenedCacheKey) || true);
+    settingsDialogOpened$: Observable<boolean> = this.settingsDialogOpened.asObservable().pipe(
+        distinctUntilChanged()
+    );
 
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
@@ -75,6 +83,8 @@ export class ContactsService {
         private ls: AppLocalizationService,
         private router: Router,
         private location: Location,
+        private cacheHelper: CacheHelper,
+        private cacheService: CacheService,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         public dialog: MatDialog
     ) {}
@@ -130,6 +140,16 @@ export class ContactsService {
             userData.raw = undefined;
             this.updateUserId(userData.userId);
         }
+    }
+
+    openSettingsDialog() {
+        this.cacheService.set(this.settingsDialogOpenedCacheKey, true);
+        this.settingsDialogOpened.next(true);
+    }
+
+    closeSettingsDialog() {
+        this.cacheService.set(this.settingsDialogOpenedCacheKey, false);
+        this.settingsDialogOpened.next(false);
     }
 
     contactInfoSubscribe(callback, ident?: string) {

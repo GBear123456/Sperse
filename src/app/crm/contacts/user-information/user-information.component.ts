@@ -5,8 +5,8 @@ import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } fro
 import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, map, startWith, skip, takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { finalize, filter, map, startWith } from 'rxjs/operators';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
@@ -102,8 +102,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             if (this.selectedTabIndex == this.ORG_UNITS_TAB_INDEX)
                 this.selectedTabIndex = this.GENERAL_TAB_INDEX;
     }
-    private dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
 
     constructor(
         private appStoreService: AppStoreService,
@@ -132,7 +130,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 setTimeout(this.loadData.bind(this), 300);
             else
                 this.getPhonesAndEmails();
-            this.showOrgUnitsDialog();
+            if (this.contactsService.settingsDialogOpened.value)
+                this.toggleOrgUnitsDialog(0, false);
             this.updateToolbarOptions();
         }, this.ident);
         setTimeout(() => this.getPhonesAndEmails(), 500);
@@ -157,9 +156,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.updateInviteDataRoles();
             });
         this.updateInviteDataRoles();
-        this.dialogOpened$.pipe(takeUntil(this.lifecycleSubjectService.destroy$), skip(1)).subscribe(() => {
-            this.updateToolbarOptions();
-        });
     }
 
     private updateToolbarOptions() {
@@ -167,9 +163,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             optionButton: {
                 name: 'options',
                 options: {
-                    checkPressed: () => this.dialogOpened.value
+                    checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
-                action: this.showOrgUnitsDialog.bind(this)
+                action: () => this.toggleOrgUnitsDialog()
             }
         }));
     }
@@ -292,7 +288,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     ).subscribe(() => {
                         this.contactsService.invalidate();
                         this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
-                        this.showOrgUnitsDialog(1000);
+                        if (this.contactsService.settingsDialogOpened.value)
+                            this.toggleOrgUnitsDialog(0, false);
                     });
                 }
             }
@@ -440,7 +437,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
-    showOrgUnitsDialog(timeout = 0): void {
+    toggleOrgUnitsDialog(timeout = 0, closeIfExists = true): void {
         setTimeout(
             () => {
                 const dialog = this.dialog.getDialogById('user-organization-units-dialog');
@@ -448,19 +445,19 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.dialog.open(OrganizationUnitsDialogComponent, {
                         id: 'user-organization-units-dialog',
                         panelClass: ['slider'],
-                        disableClose: true,
+                        disableClose: false,
                         hasBackdrop: false,
                         closeOnNavigation: true,
                         data: {
                             title: this.ls.l('OrganizationUnits'),
                             selectionMode: 'multiple'
                         }
-                    }).afterClosed().subscribe(() => {
-                        this.dialogOpened.next(false);
+                    }).afterClosed().pipe(filter(Boolean)).subscribe(() => {
+                        this.contactsService.closeSettingsDialog();
                     });
-                    this.dialogOpened.next(true);
-                } else {
-                    dialog.close();
+                    this.contactsService.openSettingsDialog();
+                } else if (closeIfExists) {
+                    this.contactsService.closeSettingsDialog();
                 }
             },
             timeout

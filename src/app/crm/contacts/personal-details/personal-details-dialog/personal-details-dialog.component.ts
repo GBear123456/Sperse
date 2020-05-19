@@ -211,7 +211,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     close() {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
     }
 
     ngOnDestroy() {

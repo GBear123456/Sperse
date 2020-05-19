@@ -48,6 +48,6 @@ export class OrganizationUnitsDialogComponent implements OnInit, AfterViewInit {
     }
 
     close() {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
     }
 }

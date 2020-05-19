@@ -1,5 +1,17 @@
 /** Core imports */
-import { Component, EventEmitter, Injector, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Injector,
+    Input,
+    OnChanges,
+    Output,
+    Renderer2,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -29,7 +41,7 @@ import { UserManagementService } from '../../../../shared/common/layout/user-man
     templateUrl: './operations-widget.component.html',
     styleUrls: ['./operations-widget.component.less']
 })
-export class OperationsWidgetComponent extends AppComponentBase implements OnChanges {
+export class OperationsWidgetComponent extends AppComponentBase implements AfterViewInit, OnChanges {
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: TagsListComponent;
     @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
@@ -113,12 +125,14 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
 
     constructor(
         injector: Injector,
+        private elementRef: ElementRef,
         private appService: AppService,
         private userService: UserServiceProxy,
         private contactService: ContactsService,
         private impersonationService: ImpersonationService,
         private crmService: CrmService,
-        private userManagementService: UserManagementService
+        private userManagementService: UserManagementService,
+        private renderer: Renderer2
     ) {
         super(injector);
         contactService.toolbarSubscribe(config => {
@@ -131,6 +145,19 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
             }
 
             this.initToolbarConfig();
+        });
+    }
+
+    ngAfterViewInit() {
+        this.contactService.settingsDialogOpened$.subscribe((opened: boolean) => {
+            const settingsButton = this.elementRef.nativeElement.querySelector('[accesskey="settings"]');
+            if (settingsButton) {
+                this.renderer.setAttribute(
+                    settingsButton,
+                    'button-pressed',
+                    opened.toString()
+                );
+            }
         });
     }
 

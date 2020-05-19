@@ -3,8 +3,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { takeUntil, skip, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactsService } from '../contacts.service';
@@ -25,10 +23,7 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
     };
 
     private readonly ident = 'ContactInformation';
-    dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable().pipe(
-        distinctUntilChanged()
-    );
+    private readonly settingsDialogId = 'contact-information-personal-details-dialog';
 
     constructor(
         private dialog: MatDialog,
@@ -39,19 +34,14 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {
         this.contactsService.contactInfoSubscribe(() => {
-            this.showPersonalDetailsDialog();
+            if (this.contactsService.settingsDialogOpened.value)
+                this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
             setTimeout(() => this.updateToolbar());
         }, this.ident);
     }
 
     ngOnInit() {
         this.data = this.contactService['data'];
-        this.dialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            skip(1)
-        ).subscribe(() => {
-            this.updateToolbar();
-        })
     }
 
     updateToolbar() {
@@ -59,19 +49,12 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
             optionButton: {
                 name: 'options',
                 options: {
-                    checkPressed: () => this.dialogOpened.value
+                    checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.showPersonalDetailsDialog();
-                    this.dialogOpened.next(!this.dialogOpened.value);
+                    this.personalDetailsService.togglePersonalDetailsDialog('contact-information-personal-details-dialog');
                 }
             }
-        });
-    }
-
-    showPersonalDetailsDialog() {
-        this.personalDetailsService.showPersonalDetailsDialog('contact-information-personal-details-dialog').subscribe(() => {
-            this.dialogOpened.next(false);
         });
     }
 

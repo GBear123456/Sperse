@@ -147,8 +147,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         }
     ];
     capitalize = capitalize;
-    private dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
 
     constructor(
         private dialog: MatDialog,
@@ -190,7 +188,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
             this.initToolbarInfo();
-            this.showOrgUnitsDialog();
+            if (this.contactsService.settingsDialogOpened.value)
+                this.toggleOrgUnitsDialog(false);
             this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
@@ -200,17 +199,14 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
         });
-        this.dialogOpened$.pipe(takeUntil(this.lifeCycleService.destroy$), skip(1)).subscribe(() => {
-            this.initToolbarInfo();
-        })
     }
 
     initToolbarInfo() {
         setTimeout(() => this.contactsService.toolbarUpdate({
             optionButton: {
                 name: 'options',
-                options: { checkPressed: () => this.dialogOpened.value },
-                action: this.showOrgUnitsDialog.bind(this)
+                options: { checkPressed: () => this.contactsService.settingsDialogOpened.value },
+                action: this.toggleOrgUnitsDialog.bind(this)
             }
         }));
     }
@@ -341,7 +337,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.sourceComponent.toggle();
     }
 
-    showOrgUnitsDialog(): void {
+    toggleOrgUnitsDialog(closeIfExists = true): void {
         setTimeout(() => {
             if (!this.dialog.getDialogById('lead-organization-units-dialog')) {
                 this.dialog.open(OrganizationUnitsDialogComponent, {
@@ -353,11 +349,13 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                         title: this.ls.l('Owner'),
                         selectionMode: 'single'
                     }
-                }).afterClosed().subscribe(() => {
-                    this.dialogOpened.next(false);
+                }).afterClosed().pipe(filter(Boolean)).subscribe(() => {
+                    this.contactsService.closeSettingsDialog();
                 });
+                this.contactsService.openSettingsDialog();
+            } else if(closeIfExists) {
+                this.contactsService.closeSettingsDialog();
             }
-            this.dialogOpened.next(true);
         });
     }
 
