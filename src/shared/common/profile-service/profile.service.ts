@@ -3,15 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import {
-    delay,
-    distinctUntilChanged,
-    map,
-    publishReplay,
-    refCount,
-    startWith,
-    switchMap
-} from 'rxjs/operators';
+import { delay, distinctUntilChanged, map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 /** Application imports */

@@ -1,38 +1,37 @@
 /** Core imports */
-import { ApplicationRef, ChangeDetectionStrategy, Component, Inject, Injector, Renderer2 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Component, ViewContainerRef, OnInit, Injector, OnDestroy, Renderer2, Inject } from '@angular/core';
+import { NavigationEnd } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
-import { TitleService } from '../shared/common/title/title.service';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
-    selector: 'bank-code',
-    templateUrl: 'bank-code.component.html',
+    templateUrl: './bank-code.component.html',
     styleUrls: [
         '../account/layouts/bank-code/bank-code-dialog.component.less',
         './bank-code.component.less',
         '../shared/aviano-sans-font.less'
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '(window:blur)': 'closeUserMenuPopup($event)'
     }
 })
-export class BankCodeComponent {
+export class BankCodeComponent extends AppComponentBase implements OnInit, OnDestroy {
+    private viewContainerRef: ViewContainerRef;
     private rootComponent: any;
-    constructor(
+    public constructor(
         injector: Injector,
-        applicationRef: ApplicationRef,
-        private renderer: Renderer2,
-        private router: Router,
-        private titleService: TitleService,
-        @Inject(DOCUMENT) private document: any
+        viewContainerRef: ViewContainerRef,
+        @Inject(DOCUMENT) private document: any,
+        private renderer: Renderer2
     ) {
-        this.rootComponent = injector.get(applicationRef.componentTypes[0]);
+        super(injector);
+        this.viewContainerRef = viewContainerRef;
+        this.rootComponent = this.getRootComponent();
         this.titleService.setTitle('');
     }
 
@@ -45,7 +44,8 @@ export class BankCodeComponent {
     ngOnInit(): void {
         this.rootComponent.addStyleSheet('', 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,700&display=swap');
         this.renderer.addClass(this.document.body, 'member-area');
-        this.router.events.pipe(
+        this._router.events.pipe(
+            takeUntil(this.destroy$),
             filter(event => event instanceof NavigationEnd)
         ).subscribe(() => {
             scrollTo(0, 0);
@@ -53,6 +53,7 @@ export class BankCodeComponent {
     }
 
     ngOnDestroy() {
+        super.ngOnDestroy();
         this.renderer.removeClass(this.document.body, 'member-area');
     }
 }

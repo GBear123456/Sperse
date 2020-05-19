@@ -271,6 +271,17 @@
                     <system-settings></system-settings>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab label="{{l('MemberPortal')}}" *ngIf="isAdminCustomizations">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="form-group">
+                        <label for="MemberPortalUrl">{{l("MemberPortalUrl")}}</label>
+                        <input #memberPortalUrl="ngModel" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128" [pattern]="urlRegexPattern">
+                    </div>
+                    <div>
+                        <span class="help-block text-danger" *ngIf="!memberPortalUrl.valid && !memberPortalUrl.pristine">{{l("Invalid_MemberPortalUrl")}}</span>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('EmailSmtp')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">

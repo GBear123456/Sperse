@@ -227,7 +227,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('API'),
-                                    visible: this.isApiAvailable,
+                                    visible: this.canImpersonate && this.isApiAvailable,
                                     class: 'icon api-icon',
                                     action: () => {
                                         this.impersonationService.impersonate(
@@ -239,7 +239,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('BankCode_CodebreakerAI'),
-                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -250,7 +250,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('BankCode_BankPass'),
-                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -261,7 +261,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('BankCode_BankVault'),
-                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -272,7 +272,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('BankCode_WhyTheyBuy'),
-                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -283,7 +283,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('BankCode_BankAffiliate'),
-                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -294,7 +294,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnCha
                                 },
                                 {
                                     text: this.l('BankCode_BankTrainer'),
-                                    visible: this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,

@@ -14,6 +14,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
+import { environment } from '@root/environments/environment';
 
 class UploadCategoryModel {
     'Cashflow Type': string;
@@ -39,6 +40,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     override = false;
     syncTypeIds = SyncTypeIds;
     isMobile = AppConsts.isMobile;
+    environment = environment;
 
     constructor(
         injector: Injector,

@@ -13,5 +13,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     ]
 })
 export class AnnouncementsComponent {
+
     constructor(public ls: AppLocalizationService) {}
+
 }

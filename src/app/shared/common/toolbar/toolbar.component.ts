@@ -398,8 +398,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     }
 
     checkItemVisible(item) {
-        return !item.hasOwnProperty('visible')
-            || (item.visible && (!item.options || !item.options.items || item.options.items.some(subitem => !subitem.hasOwnProperty('visible') || subitem.visible)));
+        return (!item.hasOwnProperty('visible') || item.visible) && (!item.options || !item.options.items || item.options.items.some(subitem => !subitem.hasOwnProperty('visible') || subitem.visible));
     }
 
     initToolbarItems() {
