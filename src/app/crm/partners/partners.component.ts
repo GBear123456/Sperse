@@ -586,14 +586,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             orgId = data.OrganizationId,
             partnerId = data.Id;
 
-        if (event.component)
-            event.component.cancelEditData();
+        if (partnerId) {
+            if (event.component)
+                event.component.cancelEditData();
 
-        this.searchClear = false;
-        setTimeout(() => {
-            this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
-            { queryParams: { referrer: 'app/crm/partners'} });
-        });
+            this.searchClear = false;
+            setTimeout(() => {
+                this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
+                { queryParams: { referrer: 'app/crm/partners'} });
+            });
+        }
     }
 
     toggleDataLayout(dataLayoutType: DataLayoutType) {
