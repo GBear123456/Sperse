@@ -98,13 +98,13 @@
                             <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
                             <i class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
                         </ng-template>
-                        {{ selectedBillingAddress?.company }}<br *ngIf="selectedBillingAddress?.company">
-                        {{ selectedBillingAddress?.firstName + ' ' + selectedBillingAddress?.lastName }}<br *ngIf="customer">
-                        {{ [selectedBillingAddress?.email, selectedBillingAddress?.phone].filter(filterBoolean).join(', ') }}<br *ngIf="selectedBillingAddress?.email || selectedBillingAddress?.phone">
-                        {{ selectedBillingAddress?.address1 }}<br *ngIf="selectedBillingAddress?.address1">
-                        {{ selectedBillingAddress?.city }}<br *ngIf="selectedBillingAddress?.city">
-                        {{ selectedBillingAddress?.stateId }} {{ selectedBillingAddress?.zip }}<br *ngIf="selectedBillingAddress?.stateId || selectedBillingAddress?.zip">
-                        {{ selectedBillingAddress?.countryId == 'US' ? '' : selectedBillingAddress?.countryId }}
+                        <div *ngIf="selectedBillingAddress?.company as company">{{ company }}</div>
+                        <div *ngIf="[selectedBillingAddress?.firstName, selectedBillingAddress?.lastName].filter(filterBoolean).join(' ') as customer">{{ customer }}</div>
+                        <div *ngIf="[selectedBillingAddress?.email, selectedBillingAddress?.phone].filter(filterBoolean).join(', ') as contacts">{{ contacts }}</div>
+                        <div *ngIf="selectedBillingAddress?.address1 as address">{{ address }}</div>
+                        <div *ngIf="selectedBillingAddress?.city as city">{{ city }}</div>
+                        <div *ngIf="[selectedBillingAddress?.stateId, selectedBillingAddress?.zip].filter(filterBoolean).join(' ') as state">{{ state }}</div>
+                        <div *ngIf="selectedBillingAddress?.countryId as countryId">{{ countryId == 'US' ? '' : countryId }}</div>
                     </div>
                 </div>
                 <div class="ship-to" [hidden]="!invoiceSettings.showShippingAddress">
@@ -136,13 +136,13 @@
                             <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
                             <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
                         </ng-template>
-                        {{ selectedShippingAddress?.company }}<br *ngIf="selectedShippingAddress?.company">
-                        {{ selectedShippingAddress?.firstName + ' ' + selectedShippingAddress?.lastName }}<br *ngIf="customer">
-                        {{ [selectedShippingAddress?.email, selectedShippingAddress?.phone].filter(filterBoolean).join(', ') }}<br *ngIf="selectedShippingAddress?.email || selectedShippingAddress?.phone">
-                        {{ selectedShippingAddress?.address1 }}<br *ngIf="selectedShippingAddress?.address1">
-                        {{ selectedShippingAddress?.city }}<br *ngIf="selectedShippingAddress?.city">
-                        {{ selectedShippingAddress?.stateId }} {{ selectedShippingAddress?.zip }}<br *ngIf="selectedShippingAddress?.stateId || selectedShippingAddress?.zip">
-                        {{ selectedShippingAddress?.countryId == 'US' ? '' : selectedShippingAddress?.countryId }}
+                        <div *ngIf="selectedShippingAddress?.company as company">{{ company }}</div>
+                        <div *ngIf="[selectedShippingAddress?.firstName, selectedShippingAddress?.lastName].filter(filterBoolean).join(' ') as customer">{{ customer }}</div>
+                        <div *ngIf="[selectedShippingAddress?.email, selectedShippingAddress?.phone].filter(filterBoolean).join(', ') as contacts">{{ contacts }}</div>
+                        <div *ngIf="selectedShippingAddress?.address1 as address">{{ address }}</div>
+                        <div *ngIf="selectedShippingAddress?.city as city">{{ city }}</div>
+                        <div *ngIf="[selectedShippingAddress?.stateId, selectedShippingAddress?.zip].filter(filterBoolean).join(' ') as state">{{ state }}</div>
+                        <div *ngIf="selectedShippingAddress?.countryId as country">{{ country == 'US' ? '' : country }}</div>
                     </div>
                 </div>
                 <div class="billed-from">

@@ -127,14 +127,13 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         this.contactsService.userSubscribe(userId => {
             this.data = this.userService['data'];
             if (this.data.userId = userId)
-                setTimeout(this.loadData.bind(this), 300);
+                this.loadData();
             else
                 this.getPhonesAndEmails();
             if (this.contactsService.settingsDialogOpened.value)
                 this.toggleOrgUnitsDialog(0, false);
             this.updateToolbarOptions();
         }, this.ident);
-        setTimeout(() => this.getPhonesAndEmails(), 500);
 
         this.contactsService.orgUnitsSaveSubscribe(
             data => {
@@ -187,11 +186,16 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
     getPhonesAndEmails() {
         let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
-        if (contactInfo && (!this.phones || !this.emails)) {
-            this.phones = contactInfo.details.phones.filter(item => item.isActive);
-            this.emails = contactInfo.details.emails.filter(item => item.isActive);
-        }
-        this.loadData();
+        this.phones = contactInfo.details.phones.filter(item => item.isActive);
+        this.emails = contactInfo.details.emails.filter(item => item.isActive);
+        this.inviteData.emailAddress = undefined;
+        this.inviteData.phoneNumber = undefined;
+
+        setTimeout(() => {
+            let instance = this.emailAddressComponent.instance;
+            if (instance)
+                instance.option('isValid', true);
+        });
     }
 
     loadData() {
@@ -418,10 +422,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             this.inviteData[field] = $event.text;
         });
-    }
-
-    onValueChanged($event) {
-        this.inviteData[$event.component.option('name')] = $event.value;
     }
 
     resetPasswordDialog(event) {

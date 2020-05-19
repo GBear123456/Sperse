@@ -18,11 +18,14 @@
         <div class="right-actions" *ngIf="isInstanceAdmin">
             <div>
                 <p class="title">{{l('CustomCharts_Title')}}</p>
-                <div class="links-wrap">
-                    <i class="arrow-icon"></i>
-                    <import-chart-of-accounts-button (onComplete)="refresh()" [override]="override" [syncTypeId]="syncTypeIds.QuickBook"></import-chart-of-accounts-button>
-                </div>
-                <hr style="width: calc(100% - 70px); margin-left: 70px;"/>
+                <ng-container *ngIf="environment.releaseStage != 'production'">
+                    <div class="links-wrap">
+                        <i class="arrow-icon"></i>
+                        <import-chart-of-accounts-button (onComplete)="refresh()" [override]="override"
+                            [syncTypeId]="syncTypeIds.QuickBook"></import-chart-of-accounts-button>
+                    </div>
+                    <hr style="width: calc(100% - 70px); margin-left: 70px;" />
+                </ng-container>
                 <div class="links-wrap">
                     <i class="arrow-icon"></i>
                     <import-chart-of-accounts-button (onComplete)="refresh()" [override]="override" [syncTypeId]="syncTypeIds.XeroOAuth2"></import-chart-of-accounts-button>

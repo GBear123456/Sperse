@@ -10,6 +10,7 @@ import { AccountConnector } from '@shared/common/account-connector-dialog/models
 import { AccountConnectors } from '@shared/AppEnums';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'account-connector-chooser',
@@ -42,7 +43,7 @@ export class AccountConnectorChooserComponent implements OnInit {
                 iconName: 'quick-book-connector',
                 title: this.ls.l('QuickBookConnectorTitle'),
                 description: this.ls.l('QuickBookConnectorDescription'),
-                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.QuickBook))
+                disabled: environment.releaseStage === 'production' || !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.QuickBook))
             },
             {
                 name: AccountConnectors.XeroOAuth2,

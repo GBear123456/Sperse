@@ -288,7 +288,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('NotesAndCallLog'),
                     class: 'notes',
                     action: () => {
-                        this.showClientDetails(this.actionEvent, 'notes')
+                        this.showClientDetails(this.actionEvent, 'notes');
                     },
                     button: {
                         text: '+' + 'Add',
@@ -309,7 +309,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('Orders'),
                     class: 'orders',
                     action: () => {
-                        this.showClientDetails(this.actionEvent, 'invoices')
+                        this.showClientDetails(this.actionEvent, 'invoices');
                     }
                 },
                 {
@@ -811,19 +811,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         let data = event.data || event,
             orgId = data.OrganizationId,
             clientId = data.Id;
+        if (clientId) {
+            if (event.component)
+                event.component.cancelEditData();
 
-        if (event.component)
-            event.component.cancelEditData();
-
-        this.searchClear = false;
-        setTimeout(() => {
-            this._router.navigate(
-                ['app/crm/contact', clientId]
-                    .concat(orgId ? ['company', orgId] : [])
-                    .concat(section ? [ section ]: []),
-                { queryParams: { referrer: 'app/crm/clients', ...queryParams }}
-            );
-        });
+            this.searchClear = false;
+            setTimeout(() => {
+                this._router.navigate(
+                    ['app/crm/contact', clientId]
+                        .concat(orgId ? ['company', orgId] : [])
+                        .concat(section ? [ section ] : []),
+                    { queryParams: { referrer: 'app/crm/clients', ...queryParams }}
+                );
+            });
+        }
     }
 
     initFilterConfig() {
