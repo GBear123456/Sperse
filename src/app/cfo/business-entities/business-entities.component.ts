@@ -30,17 +30,17 @@ import { LeftMenuService } from '../shared/common/left-menu/left-menu.service';
 })
 export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    private rootComponent: any;
+    private readonly dataSourceURI = 'BusinessEntity';
+    private isAddButtonDisabled = !this.isInstanceAdmin;
     headlineButtons: HeadlineButton[] = [
         {
-            enabled: true,
-            action: this.onNextClick.bind(this),
-            label: this.l('Next'),
+            enabled: !this.isAddButtonDisabled,
+            action: () => this.addEntity(),
+            label: this.l('AddEntity'),
             class: 'btn-layout next-button'
         }
     ];
-    private rootComponent: any;
-    private readonly dataSourceURI = 'BusinessEntity';
-    private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
     contentWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
         map((collapsed: boolean) => window.innerWidth - (collapsed || AppConsts.isMobile ? 0 : 324 ))
@@ -72,43 +72,20 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             }
         };
         this.bankAccountsService.load();
-        this.isAddButtonDisabled = !this.isInstanceAdmin;
     }
 
-    onNextClick() {
-        this._router.navigate([this.instanceUri + '/start']);
+    toggleColumnChooser() {
+        DataGridService.showColumnChooser(this.dataGrid);
     }
 
-    onToolbarPreparing(e) {
-        e.toolbarOptions.items.unshift(
-            {
-                location: 'after',
-                widget: 'dxButton',
-                options: {
-                    hint: this.l('ColumnChooser'),
-                    icon: 'column-chooser',
-                    onClick: DataGridService.showColumnChooser.bind(this, this.dataGrid),
-                }
-            }
-        );
-        if (!this.isAddButtonDisabled) {
-            e.toolbarOptions.items.unshift({
-                location: 'after',
-                widget: 'dxButton',
-                options: {
-                    text: this.l('AddEntity'),
-                    onClick: this.addEntity.bind(this),
-                    bindingOptions: { 'disabled': this.isAddButtonDisabled },
-                    elementAttr: { 'class': 'link' }
-                }
-            });
+    toggleCompactView() {
+        DataGridService.toggleCompactRowsHeight(this.dataGrid);
+    }
+
+    repaintDataGrid(delay = 0) {
+        if (this.dataGrid) {
+            setTimeout(() => this.dataGrid.instance.repaint(), delay);
         }
-
-        e.toolbarOptions.items.unshift(
-            {
-                location: 'before',
-                template: 'toolbarTitleTemplate'
-            });
     }
 
     onCellPrepared($event) {
@@ -119,7 +96,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         }
     }
 
-    addEntity(e) {
+    addEntity() {
         this.showEditDialog();
     }
 

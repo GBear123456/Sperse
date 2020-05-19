@@ -3,7 +3,13 @@
                   iconSrc="assets/common/icons/magic-stick-icon.svg"
                   [buttons]="headlineButtons"
                   [showReloadButton]="ui.showReload"
-                  (onReload)="refreshDataGrid()">
+                  [showToggleColumnSelectorButton]="true"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  (onReload)="refreshDataGrid()"
+                  (onToggleColumnSelector)="toggleColumnChooser()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid()">
     </app-headline>
     <div class="content-wrap">
         <cfo-left-menu [selectedItemIndex]="1"></cfo-left-menu>
@@ -11,6 +17,7 @@
             <div class="grid-wrapper">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid id="gridContainer"
+                            class="main-component-view"
                             [dataSource]="dataSource"
                             [allowColumnReordering]="true"
                             [columnAutoWidth]="true"
@@ -19,7 +26,6 @@
                             [columnResizingMode]="'widget'"
                             [loadPanel]="{ enabled: false }"
                             (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
-                            (onToolbarPreparing)="onToolbarPreparing($event)"
                             (onCellClick)="onCellClick($event)"
                             (onContentReady)="onContentReady()"
                             (onCellPrepared)="onCellPrepared($event)">
@@ -75,7 +81,6 @@
 
                     <div *dxTemplate="let data of 'dateOpenedTemplate'" class="clipboard-holder">{{data.value | date: 'EEE dd, yyyy' : userTimezone }}</div>
                     <div *dxTemplate="let data of 'phoneCell'" class="clipboard-holder">{{data.value | phone}}</div>
-                    <div *dxTemplate="let data of 'toolbarTitleTemplate'" class="title clipboard-holder">{{l('BusinessEntities')}}</div>
                     <div *dxTemplate="let data of 'statusTemplate'" class="statusContent">
                         <span [ngClass]="data.value.toLowerCase()">
                             <span>
