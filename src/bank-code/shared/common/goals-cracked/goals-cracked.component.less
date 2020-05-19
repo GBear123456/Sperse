@@ -1,30 +1,17 @@
 :host {
-
-    .card-title {
-        font-size: 27px !important;
-        margin-bottom: 0 !important;
-        padding-bottom: 10px !important;
-        padding-top: 23px;
-        color: #313131;
-        &:after {
-            display: none;
-            padding-bottom: 0;
-        }
-    }
     .bar-info {
         font-size: 14px;
         margin-bottom: 14px;
         font-weight: 500;
 
         & > div {
-            color: #404040;
-            text-transform: uppercase;
-            font-size: 17px;
-            white-space: nowrap;
+            font-family: 'AktivGroteskW01-Regular', sans-serif !important;
+            color: #000;
         }
 
         .font-weight-bold {
             font-size: 16px;
+            font-family: 'AktivGroteskW01-Bold', sans-serif !important;
         }
 
         .text-secondary {
@@ -61,21 +48,36 @@
         background: #615ba5;
     }
 
-    ::ng-deep dx-progress-bar {
-        &.daily-goal .dx-progressbar-range {
-            background-color: #f09e1f;
+    /deep/ dx-progress-bar {
+        &.daily-goal {
+            .dx-progressbar-range {
+                border-color: #ac1f22;
+                background-color: #ac1f22;
+            }
         }
-        &.weekly-goal .dx-progressbar-range {
-            background-color: #104779;
+        &.weekly-goal {
+            .dx-progressbar-range {
+                border-color: #104779;
+                background-color: #104779;
+            }
         }
-        &.monthly-goal .dx-progressbar-range {
-            background-color: #ac1f22;
+        &.monthly-goal {
+            .dx-progressbar-range {
+                border-color: #f09e1f;
+                background-color: #f09e1f;
+            }
         }
-        &.quarterly-goal .dx-progressbar-range {
-            background-color: #1b6634;
+        &.quarterly-goal {
+            .dx-progressbar-range {
+                border-color: #1b6634;
+                background-color: #1b6634;
+            }
         }
-        &.annual-goal .dx-progressbar-range {
-            background-color: #615ba5;
+        &.annual-goal {
+            .dx-progressbar-range {
+                border-color: #615ba5;
+                background-color: #615ba5;
+            }
         }
 
         .dx-trackbar-container {
@@ -85,18 +87,6 @@
 
         .dx-progressbar-wrapper {
             vertical-align: top;
-        }
-
-        .dx-trackbar-container,
-        .dx-progressbar-range {
-            border-radius: 15px;
-            height: 24px;
-        }
-
-        .dx-progressbar-range {
-            height: calc(100% + 2px);
-            border: none;
-            background-color: #337ab7;
         }
     }
 }

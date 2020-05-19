@@ -4,7 +4,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { takeUntil, skip } from 'rxjs/operators';
+import { takeUntil, skip, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactsService } from '../contacts.service';
@@ -26,7 +26,9 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
 
     private readonly ident = 'ContactInformation';
     dialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable();
+    dialogOpened$: Observable<boolean> = this.dialogOpened.asObservable().pipe(
+        distinctUntilChanged()
+    );
 
     constructor(
         private dialog: MatDialog,

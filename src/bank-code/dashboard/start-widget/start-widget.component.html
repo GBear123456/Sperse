@@ -1,9 +1,0 @@
-<h2>{{ title }}</h2>
-<h3 [ngStyle]="{ color: color }">{{ subtitle }}</h3>
-<p class="description"><ng-content></ng-content></p>
-<div class="bottom-block" [ngStyle]="{ backgroundColor: color }">
-    <div>
-        <div class="icon-container"><img [src]="iconSrc" [alt]="iconAlt"></div>
-        <a [routerLink]="link">{{ ls.l('StartNow')! }}</a>
-    </div>
-</div>

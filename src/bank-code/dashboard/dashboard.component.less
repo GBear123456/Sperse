@@ -1,49 +1,27 @@
 :host {
-    display: flex;
-    .left {
-        padding: 0;
-    }
-    .right {
-        background-color: #e7e8e9;
-    }
-    main {
-        padding: 28px 15px;
-        process-board {
-            margin-bottom: 30px;
-        }
-        .start-widgets {
-            margin-bottom: 31px;
-            flex-wrap: wrap;
-            @media (max-width: 767px) {
-                [class^="col"]:not(:last-child) {
-                    margin-bottom: 31px;
-                }
-            }
-        }
-        stats {
-            margin-bottom: 35px;
-        }
-        leads {
-            margin-bottom: 27px;
-        }
-    }
+    display: block;
 
-    ::ng-deep h1,
-    ::ng-deep h2,
-    ::ng-deep h3,
-    ::ng-deep h4,
-    ::ng-deep h5,
-    ::ng-deep h6,
-    ::ng-deep .btn {
-        font-family: 'Montserrat', sans-serif !important;
-        font-weight: normal;
+    ::ng-deep .dashboard {
+        padding-top: 40px;
 
-        * {
-            font-family: 'Montserrat', sans-serif !important;
+        h1 {
+            font-size: 40px;
+            font-weight: 900;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 0.58;
+            letter-spacing: -0.8px;
+            text-align: center;
+            color: #000000;
+            margin: 3rem auto;
         }
-    }
 
-    .uppercase {
-        text-transform: uppercase;
+        .card {
+            box-shadow: 0 20px 100px 0 rgba(0, 0, 0, 0.15);
+            border: solid 1px #ebecec;
+            background-color: #ffffff;
+            border-radius: 2px;
+            width: 100%;
+        }
     }
 }
