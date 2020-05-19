@@ -20,6 +20,7 @@ import {
     TenantSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantCustomizationServiceProxy,
+    MemberPortalSettingsDto,
     IdcsSettings,
     BaseCommercePaymentSettings,
     PayPalSettings,
@@ -34,7 +35,7 @@ import {
     EPCVIPServer,
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
-    YTelSettingsEditDto,
+    YTelSettingsEditDto,
     LayoutType,
     RapidSettingsDto
 } from '@shared/service-proxies/service-proxies';
@@ -68,6 +69,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
     loading = false;
     settings: TenantSettingsEditDto = undefined;
+    memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
     idcsSettings: IdcsSettings = new IdcsSettings();
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
@@ -91,6 +93,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     customToSUploader: FileUploader;
     customPrivacyPolicyUploader: FileUploader;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    urlRegexPattern = AppConsts.regexPatterns.url;
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     masks = AppConsts.masks;
@@ -136,6 +139,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
         let requests: Observable<any>[] = [
                 this.tenantSettingsService.getAllSettings(),
+                this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
                 this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
                 this.tenantPaymentSettingsService.getPayPalSettings(),
                 this.tenantPaymentSettingsService.getACHWorksSettings(),
@@ -161,6 +165,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             ).subscribe((results) => {
                 [
                     this.settings,
+                    this.memberPortalSettings,
                     this.baseCommercePaymentSettings,
                     this.payPalPaymentSettings,
                     this.achWorksSettings,
@@ -330,6 +335,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
+        if (this.isAdminCustomizations)
+            requests.push(this.tenantSettingsService.updateMemberPortalSettings(this.memberPortalSettings));
         if (this.isCreditReportFeatureEnabled)
             requests.push(this.tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled)
