@@ -100,3 +100,10 @@
 .swal-icon--success__ring {
   border-color: rgba(0, 74, 132, 0.7);
 }
+body.bank-code .swal-modal .checkbox-container input[type="checkbox"]:hover + label:before {
+    border: 1px solid #004a84;
+}
+body.bank-code .swal-modal .checkbox-container input[type="checkbox"]:checked + label:before {
+    border-color: #004a84;
+    background-color: #004a84;
+}

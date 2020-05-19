@@ -1,21 +1,31 @@
 import { DeleteContactLeadOutput } from '@shared/service-proxies/service-proxies';
+import swal from 'sweetalert';
+import extend from 'lodash/extend';
 
 export class ContactsHelper {
-    static getDeleteErrorMessage(res: DeleteContactLeadOutput) : string {
-        let message = '<div style="text-align:left"> Following conditions are preventing delete:<br>';
-        if (Object.keys(res.leadErrors).length)
-            message += this.getDeleteErrorHtml('Lead', res.leadErrors);
-        if (Object.keys(res.contactErrors).length) {
-            message += 'Related contact conditions:<br>' + this.getDeleteErrorHtml('Contact', res.contactErrors);
-        }
-        return message += '</div>';
-    }
+    static showConfirmMessage(text: string, labelText: string, callback: (confirmed: boolean, forceDelete: boolean) => void, canForceDelete: boolean) {
+        let content, input;
+        if (canForceDelete) {
+            content = document.createElement("div");
+            content.className = "checkbox-container";
 
-    private static getDeleteErrorHtml(name, errors: { [key: string]: string[]; }) {
-        let result = '<ul>';
-        Object.keys(errors).forEach(v => {
-            result += `<li>${name} ${v}: ${errors[v].join(', ')}</li>`;
-        });
-        return result + '</ul>'
+            input = document.createElement("input");
+            input.type = "checkbox";
+            input.id = "modal-checkbox";
+            content.appendChild(input);
+
+            let label = document.createElement("label");
+            label.htmlFor = 'modal-checkbox';
+            const labelTextElement = document.createTextNode(labelText);
+            label.appendChild(labelTextElement);
+            content.appendChild(label);
+        }
+
+        let opts = extend({}, abp['libs'].sweetAlert.config.confirm, {
+            text: text,
+            content: content
+        })
+
+        swal(opts).then((isConfirmed) => { callback && callback(isConfirmed, canForceDelete ? input.checked : false); });
     }
 }

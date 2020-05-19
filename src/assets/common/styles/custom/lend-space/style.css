@@ -132,6 +132,13 @@ body.lend-space .swal-modal .swal-button:hover {
   color: #FFF;
   background-color: #000;
 }
+body.lend-space .swal-modal .checkbox-container input[type="checkbox"]:hover + label:before {
+    border: 1px solid #f0d500;
+}
+body.lend-space .swal-modal .checkbox-container input[type="checkbox"]:checked + label:before {
+    border-color: #f0d500;
+    background-color: #f0d500;
+}
 body.lend-space .accountsContainer {
   display: block !important;
 }
