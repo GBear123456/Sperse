@@ -19,7 +19,6 @@ import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { AccountTotals } from '@shared/service-proxies/service-proxies';
-import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -95,18 +94,13 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.loadingService.startLoading(this.dailyStats.nativeElement)),
             switchMap(([currencyId, bankAccountIds, period, ]: [string, number[], CalendarValuesModel, null]) => {
-                const periodTo = DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.to.value)));
                 return this.dashboardProxy.getDailyBalanceStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
                     bankAccountIds,
                     currencyId,
-                    period.from.value
-                        ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.from.value)))
-                        : undefined,
-                    period.to.value
-                        ? periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo
-                        : moment.utc().startOf('day')
+                    DateHelper.getStartDate(period.from.value),
+                    DateHelper.getEndDate(period.to.value)
                 ).pipe(
                     catchError(() => of(new GetDailyBalanceStatsOutput())),
                     finalize(() => this.loadingService.finishLoading(this.dailyStats.nativeElement))

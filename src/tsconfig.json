@@ -34,7 +34,7 @@
     "enableIvy": false
   },
   "include": [
-      "./*",
+      "./**/*",
       "./node_modules/ngx-international-phone-number/src/"
   ],
   "exclude": [

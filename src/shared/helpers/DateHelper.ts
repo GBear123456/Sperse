@@ -2,7 +2,7 @@ import * as moment from 'moment-timezone';
 
 export class DateHelper {
 
-    static getDateWithoutTime(date: moment) {
+    static getDateWithoutTime(date: moment): moment {
         return moment(date).utc().set({ hour: 0 , minute: 0, second: 0, millisecond: 0 });
     }
 
@@ -44,6 +44,22 @@ export class DateHelper {
      */
     static getQuarter(date: Date = new Date()) {
         return Math.floor(date.getMonth() / 3) + 1;
+    }
+
+    static getStartDate(date: Date) {
+        let startDate;
+        if (date) {
+            const periodFrom = DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(date)));
+            startDate = periodFrom.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodFrom
+        }
+        return startDate;
+    }
+
+    static getEndDate(date: Date) {
+        const periodTo = date && DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(date)));
+        return date
+                ? periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo
+                : moment.utc().startOf('day');
     }
 
 }

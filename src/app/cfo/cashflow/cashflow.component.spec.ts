@@ -32,7 +32,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import {
     BankAccountsServiceProxy, BusinessEntityServiceProxy,
     CashflowServiceProxy,
-    ContactServiceProxy, InstanceServiceProxy, MyFinancesServiceProxy,
+    ContactServiceProxy, InstanceServiceProxy,
     PermissionServiceProxy, PersonContactServiceProxy,
     SessionServiceProxy, SyncServiceProxy, TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -157,8 +157,7 @@ describe('CashflowComponent', () => {
                 LoadingService,
                 ProfileService,
                 SynchProgressService,
-                SyncServiceProxy,
-                MyFinancesServiceProxy
+                SyncServiceProxy
             ]
         })
             .compileComponents();
