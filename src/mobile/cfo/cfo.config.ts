@@ -17,7 +17,6 @@ export class CfoConfig implements ConfigInterface {
         },
         {
             text: 'Accounts',
-            icon: 'icon-home',
             route: '/app/cfo/:instance/linkaccounts'
         }
     ];

@@ -13,7 +13,6 @@ export class HubConfig {
         {
             text: 'Marketplace',
             permission: AppPermissions.HUB,
-            icon: 'icon-home',
             route: '/app/hub/marketplace'
         }
     ];

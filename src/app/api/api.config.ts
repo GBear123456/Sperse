@@ -17,7 +17,6 @@ export class ApiConfig implements ConfigInterface {
         },
         {
             text: 'Documentation',
-            icon: 'icon-home',
             route: '/app/api/swagger'
         },
         {

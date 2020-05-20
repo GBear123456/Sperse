@@ -14,18 +14,15 @@ export class PfmConfig implements ConfigInterface {
         {
             text: 'Offers',
             permission: AppPermissions.PFMApplicationsManageOffers,
-            icon: 'icon-home',
             route: '/app/pfm/offers'
         },
         {
             text: 'Reports',
             permission: AppPermissions.PFMApplicationsManageOffers,
-            icon: 'icon-home',
             route: '/app/pfm/reports'
         },
         {
             text: 'MemberArea',
-            icon: 'icon-home',
             route: '/personal-finance'
         }
     ];

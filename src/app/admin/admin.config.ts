@@ -14,68 +14,58 @@ export class AdminConfig implements ConfigInterface {
         {
             text: 'Dashboard',
             permission: AppPermissions.AdministrationHostDashboard,
-            icon: 'icon-home',
             route: '/app/admin/hostDashboard'
         },
         {
             text: 'Tenants',
             permission: AppPermissions.Tenants,
             feature: AppFeatures.AdminAdvanced,
-            icon: 'icon-globe',
             route: '/app/admin/tenants'
         },
         {
             text: 'Roles',
             permission: AppPermissions.AdministrationRoles,
-            icon: 'icon-briefcase',
             route: '/app/admin/roles'
         },
         {
             text: 'Users',
             permission: AppPermissions.AdministrationUsers,
-            icon: 'icon-people',
             route: '/app/admin/users'
         },
         {
             text: 'Languages',
             permission: AppPermissions.AdministrationLanguages,
             feature: AppFeatures.AdminCustomizations,
-            icon: 'icon-flag',
             route: '/app/admin/languages'
         },
         {
             text: 'AuditLogs',
             permission: AppPermissions.AdministrationAuditLogs,
             feature: AppFeatures.AdminAdvanced,
-            icon: 'icon-lock',
             route: '/app/admin/auditLogs'
         },
         {
             text: 'Maintenance',
             permission: AppPermissions.AdministrationHostMaintenance,
             feature: AppFeatures.AdminAdvanced,
-            icon: 'icon-wrench',
             route: '/app/admin/maintenance'
         },
         {
             text: 'Jobs',
             permission: AppPermissions.AdministrationHangfireDashboard,
             feature: AppFeatures.AdminAdvanced,
-            icon: 'icon-wrench',
             route: '/app/admin/jobs'
         },
         {
             text: 'Settings',
             permission: AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts,
             feature: AppFeatures.Admin,
-            icon: 'icon-settings',
             route: '/app/admin/hostSettings',
             host: 'host'
         },
         {
             text: 'Settings',
             permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts,
-            icon: 'icon-settings',
             feature: AppFeatures.Admin,
             route: '/app/admin/tenantSettings',
             host: 'tenant'
@@ -83,7 +73,6 @@ export class AdminConfig implements ConfigInterface {
         {
             text: 'Products',
             permission: AppPermissions.Editions,
-            icon: 'icon-grid',
             route: '/app/admin/products'
         }
     ];
