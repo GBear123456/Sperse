@@ -32,12 +32,13 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
     ImportSubscriptionInput, ImportCustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
-    GetImportStatusOutput
+    GetImportStatusOutput, LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -372,6 +373,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private partnerService: PartnerServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
         private contactService: ContactsService,
+        private userManagementService: UserManagementService,
         public importWizardService: ImportWizardService
     ) {
         super(injector);
@@ -967,6 +969,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         },
                         action: () => this.starsListComponent.toggle(),
                         disabled: disabledManage,
+                        visible: !this.userManagementService.isLayout(LayoutType.BankCode),
                         attr: {
                             'filter-selected': this.isStarSelected
                         }

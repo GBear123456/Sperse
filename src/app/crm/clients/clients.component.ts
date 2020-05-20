@@ -1,15 +1,14 @@
 /** Core imports */
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Injector,
     OnDestroy,
     OnInit,
-    ViewChild,
-    ChangeDetectorRef,
-    ChangeDetectionStrategy
+    ViewChild
 } from '@angular/core';
 import { Params, RouteReuseStrategy } from '@angular/router';
-
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
@@ -33,7 +32,6 @@ import {
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
-
 /** Application imports */
 import { AppService } from '@app/app.service';
 import {
@@ -74,6 +72,7 @@ import {
     ContactServiceProxy,
     ContactStatusDto,
     CreateContactEmailInput,
+    LayoutType,
     OrganizationUnitDto,
     ServiceTypeInfo
 } from '@shared/service-proxies/service-proxies';
@@ -110,7 +109,6 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
@@ -513,6 +511,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
+    isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         injector: Injector,

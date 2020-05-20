@@ -63,6 +63,7 @@ import {
     BulkUpdatePartnerTypeInput,
     ContactServiceProxy,
     ContactStatusDto,
+    LayoutType,
     OrganizationUnitDto,
     PartnerServiceProxy,
     PartnerTypeServiceProxy
@@ -333,6 +334,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
+    isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         injector: Injector,

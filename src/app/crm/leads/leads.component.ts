@@ -62,8 +62,8 @@ import {
     LeadServiceProxy,
     OrganizationUnitDto,
     PipelineDto,
-
-    DeleteContactLeadOutput
+    DeleteContactLeadOutput,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
@@ -410,6 +410,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     toolbarConfig: ToolbarGroupModel[];
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
+    isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         injector: Injector,

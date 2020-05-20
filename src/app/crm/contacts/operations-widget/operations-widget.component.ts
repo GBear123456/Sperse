@@ -122,6 +122,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     isCrmAvailable = false;
     isPfmAvailable = false;
     isApiAvailable = false;
+    isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         injector: Injector,
@@ -266,7 +267,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('BankCode_CodebreakerAI'),
-                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -277,7 +278,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('BankCode_BankPass'),
-                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -288,7 +289,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('BankCode_BankVault'),
-                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -299,7 +300,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('BankCode_WhyTheyBuy'),
-                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -310,7 +311,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('BankCode_BankAffiliate'),
-                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -321,7 +322,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('BankCode_BankTrainer'),
-                                    visible: this.canImpersonate && this.userManagementService.isLayout(LayoutType.BankCode),
+                                    visible: this.canImpersonate && this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -381,11 +382,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
+                            visible: !this.isBankCodeLayout,
                             disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
+                            visible: !this.userManagementService.isLayout(LayoutType.BankCode),
                             disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         }
                     ]

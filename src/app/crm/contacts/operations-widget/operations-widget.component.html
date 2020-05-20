@@ -53,6 +53,6 @@
             [proxyService]="getProxyService()">
         </user-assignment-list>
         <rating [selectedKeys]="[contactInfo.id]" [ratingValue]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)" [managePermission]="manageCGPermision"></rating>
-        <crm-stars-list [selectedKeys]="[contactInfo.id]" [selectedItemKey]="contactInfo?.starId" [managePermission]="manageCGPermision"></crm-stars-list>
+        <crm-stars-list *ngIf="!isBankCodeLayout" [selectedKeys]="[contactInfo.id]" [selectedItemKey]="contactInfo?.starId" [managePermission]="manageCGPermision"></crm-stars-list>
     </ng-container>
 </div>

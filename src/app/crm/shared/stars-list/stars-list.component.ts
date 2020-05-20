@@ -15,7 +15,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
 
 @Component({
   selector: 'crm-stars-list',
@@ -43,7 +42,6 @@ export class StarsListComponent implements OnInit {
 
     listComponent: any;
     tooltipVisible = false;
-    getStarColorByType = StarsHelper.getStarColorByType;
 
     constructor(
         private filtersService: FiltersService,
@@ -88,7 +86,7 @@ export class StarsListComponent implements OnInit {
                 starId: this.selectedItemKey
             })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
-            })).subscribe((result) => {
+            })).subscribe(() => {
                 this.notifyService.success(this.ls.l('CustomersMarked'));
             });
         else

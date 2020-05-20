@@ -46,7 +46,11 @@
             [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
         <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating" [managePermission]="manageCGPermision"></rating>
-        <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
+        <crm-stars-list [selectedKeys]="selectedClientKeys"
+                        [bulkUpdateMode]="true"
+                        [filterModel]="filterModelStar"
+                        [hideButtons]="isBankCodeLayoutType">
+        </crm-stars-list>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <div>

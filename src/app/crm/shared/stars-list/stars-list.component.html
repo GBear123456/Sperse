@@ -12,7 +12,7 @@
             </div>
             <dx-list #starslist
                 height="240px"
-                [selectionMode]="bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
+                [selectionMode]="hideButtons || bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"
