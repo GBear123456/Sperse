@@ -113,7 +113,7 @@ export class SideBarComponent implements OnDestroy {
 
     checkFilterDisable(event) {
         if (!this.filtersService.fixed &&
-            event.path.every(el => el.localName != 'filter')
+            event.composedPath().every(el => el.localName != 'filter')
         ) {
             this.filtersService.disable(() => {
                 this.activeFilter = undefined;
