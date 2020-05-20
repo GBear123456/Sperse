@@ -593,6 +593,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     });
                                 }, 3000);
                             this.clearToolbarSelectedItems();
+                        }, error => {
+                            this.message.error(error.details, error.message);
                         });
                     }
                 }
@@ -610,10 +612,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             xhr.setRequestHeader('Content-Type', 'application/json');
 
             xhr.addEventListener('load', () => {
+                let response = JSON.parse(xhr.responseText);
                 if (xhr.status === 200)
-                    subscriber.next(JSON.parse(xhr.responseText).result);
+                    subscriber.next(response.result);
                 else
-                    subscriber.error(xhr);
+                    subscriber.error(response.error);
                 subscriber.complete();
             });
 
