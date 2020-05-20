@@ -529,7 +529,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 }
                 this.billingAddresses = this.sortAddresses(clone(addresses), 'B');
                 if (this.billingAddresses && this.billingAddresses.length) {
-                    this.selectedBillingAddress = this.shippingAddresses[0];
+                    this.selectedBillingAddress = this.billingAddresses[0];
                     this.showEditAddressDialog(null, 'selectedBillingAddress');
                 }
                 this.changeDetectorRef.markForCheck();
