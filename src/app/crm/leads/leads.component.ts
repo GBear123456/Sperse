@@ -562,7 +562,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-            switchMap(this.waitUntil(DataLayoutType.Pipeline))
+            switchMap(this.waitUntil(DataLayoutType.Pipeline)),
+            filter(() => this.pipelineDataSource)
         ).subscribe(() => this.processFilterInternal());
     }
 
