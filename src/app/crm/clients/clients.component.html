@@ -12,7 +12,7 @@
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount !== undefined" class="total-count"> ({{ totalCount }})</span>
+        <span *ngIf="totalCount !== undefined" class="total-count"> ({{ totalCount | number }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>

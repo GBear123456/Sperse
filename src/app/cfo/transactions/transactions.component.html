@@ -65,7 +65,7 @@
                   (onToggleTotals)="toggleDataGridToolbar()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount" class="total-count"> ({{ totalCount }})</span>
+        <span *ngIf="totalCount" class="total-count"> ({{ totalCount | number }})</span>
         <business-entities-chooser class="accounts-chooser" (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">
         </business-entities-chooser>
