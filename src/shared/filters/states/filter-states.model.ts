@@ -23,8 +23,7 @@ export class FilterStatesModel extends FilterItemModel {
     }
 
     getDisplayElements(): any {
-        let displayedElements: Observable<DisplayElement>[] = [];
-        this.value && this.value.map((selectedCode: string) => {
+        return this.value.length ? forkJoin(this.value.map((selectedCode: string) => {
             const [ countryCode, stateCode ] = selectedCode.split(':');
             let itemData, parentData, list$;
             if (countryCode && !this.list) {
@@ -43,36 +42,32 @@ export class FilterStatesModel extends FilterItemModel {
             } else {
                 list$ = of(this.list);
             }
-            displayedElements.push(
-                list$.pipe(
-                    map((list: any) => {
-                        let element: any;
-                        parentData = itemData = list.find((val: any) => val.key === countryCode || val.code === countryCode);
-                        if (itemData && stateCode) {
-                            itemData = itemData.children.find((val: any) => val.key === selectedCode || val.code === selectedCode);
-                        }
-                        if (itemData) {
-                            const itemName = itemData.text || itemData.name;
-                            let parentName = itemData.parent || itemData.parentId ? parentData.text || parentData.name : null;
-                            let sortField = parentName ? parentName + ':' : '';
-                            sortField += itemName;
-                            element = {
-                                item: this,
-                                displayValue: itemName,
-                                args: selectedCode,
-                                parentCode: itemData.parent || itemData.parentId ? parentData.key || parentData.code : null,
-                                parentName: parentName,
-                                sortField: sortField
-                            };
-                        }
-                        return element;
-                    })
-                )
+
+            return list$.pipe(
+                map((list: any) => {
+                    let parentData = itemData = list.find((val: any) => val.key === countryCode || val.code === countryCode);
+                    if (itemData && stateCode) {
+                        itemData = itemData.children.find((val: any) => val.key === selectedCode || val.code === selectedCode);
+                    }
+                    if (itemData) {
+                        const itemName = itemData.text || itemData.name;
+                        let parentName = itemData.parent || itemData.parentId ? parentData.text || parentData.name : null;
+                        let sortField = parentName ? parentName + ':' : '';
+                        sortField += itemName;
+                        return {
+                            item: this,
+                            displayValue: itemName,
+                            args: selectedCode,
+                            parentCode: itemData.parent || itemData.parentId ? parentData.key || parentData.code : null,
+                            parentName: parentName,
+                            sortField: sortField
+                        };
+                    }
+                })
             );
-        });
-        return forkJoin(displayedElements).pipe(
-            map((elements: any) => this.generateParents(sortBy(elements, 'sortField')))
-        );
+        })).pipe(map((elements: any) =>
+            this.generateParents(sortBy(elements, 'sortField'))
+        )) : [];
     }
 
     removeFilterItem(filter: FilterModel, args: any) {
