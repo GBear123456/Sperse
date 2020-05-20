@@ -140,7 +140,8 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     navigateToWizard() {
-        this._router.navigate(['app/crm/import-leads']);
+        if (this.componentIsActivated)
+            this._router.navigate(['app/crm/import-leads']);
     }
 
     deleteImport() {
