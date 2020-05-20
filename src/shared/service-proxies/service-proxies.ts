@@ -17865,6 +17865,58 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    submitClientRequest(body: SubmitClientRequestInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitClientRequest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubmitClientRequest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubmitClientRequest(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSubmitClientRequest(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     updateLeadStage(body: UpdateLeadStageInfo | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadStage";
         url_ = url_.replace(/[?&]$/, "");
@@ -22945,7 +22997,7 @@ export class PersonContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updatePersonBANKCode(body: UpdatePersonBANKCodeInput | null | undefined): Observable<number> {
+    updatePersonBANKCode(body: UpdatePersonBANKCodeInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonBANKCode";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22957,7 +23009,6 @@ export class PersonContactServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -22968,14 +23019,14 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processUpdatePersonBANKCode(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdatePersonBANKCode(response: HttpResponseBase): Observable<number> {
+    protected processUpdatePersonBANKCode(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22984,17 +23035,14 @@ export class PersonContactServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -44423,6 +44471,7 @@ export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput
     leadId!: number | undefined;
     userId!: number | undefined;
     userKey!: string | undefined;
+    userEmailAddress!: string | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateOrUpdateContactOutput) {
@@ -44440,6 +44489,7 @@ export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput
             this.leadId = data["leadId"];
             this.userId = data["userId"];
             this.userKey = data["userKey"];
+            this.userEmailAddress = data["userEmailAddress"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -44457,6 +44507,7 @@ export class CreateOrUpdateContactOutput implements ICreateOrUpdateContactOutput
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
         data["userKey"] = this.userKey;
+        data["userEmailAddress"] = this.userEmailAddress;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
@@ -44467,6 +44518,7 @@ export interface ICreateOrUpdateContactOutput {
     leadId: number | undefined;
     userId: number | undefined;
     userKey: string | undefined;
+    userEmailAddress: string | undefined;
     autoLoginLink: string | undefined;
 }
 
@@ -56270,6 +56322,7 @@ export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
     leadId!: number | undefined;
     userId!: number | undefined;
     userKey!: string | undefined;
+    userEmailAddress!: string | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateOrUpdateLeadOutput) {
@@ -56287,6 +56340,7 @@ export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
             this.leadId = data["leadId"];
             this.userId = data["userId"];
             this.userKey = data["userKey"];
+            this.userEmailAddress = data["userEmailAddress"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -56304,6 +56358,7 @@ export class CreateOrUpdateLeadOutput implements ICreateOrUpdateLeadOutput {
         data["leadId"] = this.leadId;
         data["userId"] = this.userId;
         data["userKey"] = this.userKey;
+        data["userEmailAddress"] = this.userEmailAddress;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
@@ -56314,6 +56369,7 @@ export interface ICreateOrUpdateLeadOutput {
     leadId: number | undefined;
     userId: number | undefined;
     userKey: string | undefined;
+    userEmailAddress: string | undefined;
     autoLoginLink: string | undefined;
 }
 
@@ -56564,6 +56620,106 @@ export interface ISubmitFreeTrialRequestInput {
     contactGroupId: string | undefined;
     email: string;
     tag: string | undefined;
+}
+
+export class SubmitClientRequestInput implements ISubmitClientRequestInput {
+    accountName!: string | undefined;
+    leadRequestXref!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    countryId!: string | undefined;
+    zip!: string | undefined;
+    firstName!: string;
+    lastName!: string;
+    email!: string;
+    phone!: string | undefined;
+    phoneExt!: string | undefined;
+    comments!: string | undefined;
+    sourceCode!: string | undefined;
+    channelCode!: string | undefined;
+    affiliateCode!: string | undefined;
+    isHelpNeeded!: boolean | undefined;
+
+    constructor(data?: ISubmitClientRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountName = data["accountName"];
+            this.leadRequestXref = data["leadRequestXref"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.countryId = data["countryId"];
+            this.zip = data["zip"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.phoneExt = data["phoneExt"];
+            this.comments = data["comments"];
+            this.sourceCode = data["sourceCode"];
+            this.channelCode = data["channelCode"];
+            this.affiliateCode = data["affiliateCode"];
+            this.isHelpNeeded = data["isHelpNeeded"];
+        }
+    }
+
+    static fromJS(data: any): SubmitClientRequestInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitClientRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountName"] = this.accountName;
+        data["leadRequestXref"] = this.leadRequestXref;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["countryId"] = this.countryId;
+        data["zip"] = this.zip;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["phoneExt"] = this.phoneExt;
+        data["comments"] = this.comments;
+        data["sourceCode"] = this.sourceCode;
+        data["channelCode"] = this.channelCode;
+        data["affiliateCode"] = this.affiliateCode;
+        data["isHelpNeeded"] = this.isHelpNeeded;
+        return data; 
+    }
+}
+
+export interface ISubmitClientRequestInput {
+    accountName: string | undefined;
+    leadRequestXref: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    countryId: string | undefined;
+    zip: string | undefined;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string | undefined;
+    phoneExt: string | undefined;
+    comments: string | undefined;
+    sourceCode: string | undefined;
+    channelCode: string | undefined;
+    affiliateCode: string | undefined;
+    isHelpNeeded: boolean | undefined;
 }
 
 export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
