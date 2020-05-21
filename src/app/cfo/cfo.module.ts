@@ -91,12 +91,12 @@ import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-butt
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { ReportsComponent } from './reports/reports.component';
-import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 let COMPONENTS = [
     StartComponent,
@@ -134,7 +134,6 @@ let COMPONENTS = [
     GenerateReportDialogComponent,
     SendNotificationDialogComponent,
     AddInstanceUserDialogComponent,
-    CalendarButtonComponent,
     InstanceUsersComponent
 ];
 
@@ -216,7 +215,8 @@ let COMPONENTS = [
         CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,
-        CalculatorService
+        CalculatorService,
+        CalendarService
     ]
 })
 

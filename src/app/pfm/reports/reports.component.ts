@@ -12,7 +12,6 @@ import { AppComponentBase } from '@root/shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@root/shared/helpers/DateHelper';
-import { AppConsts } from '@root/shared/AppConsts';
 import { LeftMenuComponent } from '@app/shared/common/left-menu/left-menu.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { CFOService } from '@shared/cfo/cfo.service';

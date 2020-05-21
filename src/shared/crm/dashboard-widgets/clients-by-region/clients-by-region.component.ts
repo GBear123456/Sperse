@@ -21,16 +21,16 @@ import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetContactsByRegionOutput } from '@shared/service-proxies/service-proxies';
 import { MapComponent } from '@app/shared/common/slice/map/map.component';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
-import { DataLayoutType } from '../../../../app/shared/layout/data-layout-type';
-import { ContactGroup } from '../../../AppEnums';
-import { DateHelper } from '../../../helpers/DateHelper';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { ContactGroup } from '@shared/AppEnums';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { PeriodModel } from '@app/shared/common/period/period.model';
 
 @Component({
     selector: 'clients-by-region',
@@ -58,6 +58,7 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private layoutService: LayoutService,
         private router: Router,
+        private calendarService: CalendarService,
         public ls: AppLocalizationService
     ) {}
 
@@ -68,7 +69,10 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([period, refresh]: [PeriodModel, null]) => this.dashboardServiceProxy.getContactsByRegion(period && period.from, period && period.to).pipe(
+            switchMap(([period, refresh]: [PeriodModel, null]) => this.dashboardServiceProxy.getContactsByRegion(
+                period && period.from,
+                period && period.to
+            ).pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             )),

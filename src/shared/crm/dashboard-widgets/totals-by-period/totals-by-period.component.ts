@@ -55,8 +55,8 @@ import { Period } from '@app/shared/common/period/period.enum';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
 import { ContactGroup } from '@shared/AppEnums';
-import { AppLocalizationService } from '../../../../app/shared/common/localization/app-localization.service';
-import { LoadingService } from '../../../common/loading-service/loading.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'totals-by-period',

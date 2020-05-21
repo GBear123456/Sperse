@@ -5,12 +5,12 @@ import { InstanceServiceProxy, InstanceType, InstanceStatus } from '@shared/serv
 @Injectable()
 export class CFOService extends CFOServiceBase {
 
-    constructor(private _instanceServiceProxy: InstanceServiceProxy) {
+    constructor(private instanceServiceProxy: InstanceServiceProxy) {
         super();
     }
 
     instanceChangeProcess() {
-        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
+        this.instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
             this.initialized = (data.status == InstanceStatus.Active) && data.hasSyncAccounts;
         });
     }

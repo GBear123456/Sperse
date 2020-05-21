@@ -91,6 +91,7 @@ import { LeftMenuComponent } from './left-menu/left-menu.component';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { AppRatingModule } from './rating/app-rating.module';
+import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
 
 @NgModule({
     imports: [
@@ -187,7 +188,8 @@ import { AppRatingModule } from './rating/app-rating.module';
         BankTransferComponent,
         ECheckComponent,
         StarsListComponent,
-        LeftMenuComponent
+        LeftMenuComponent,
+        CalendarButtonComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -207,7 +209,8 @@ import { AppRatingModule } from './rating/app-rating.module';
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         StarsListComponent,
-        LeftMenuComponent
+        LeftMenuComponent,
+        CalendarButtonComponent
     ],
     providers: [
         ImportWizardService

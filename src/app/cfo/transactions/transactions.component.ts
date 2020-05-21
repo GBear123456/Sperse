@@ -76,6 +76,7 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { BankAccountDto } from '@shared/service-proxies/service-proxies';
 import { BusinessEntitiesChooserComponent } from '../../../shared/cfo/bank-accounts/business-entities-chooser/business-entities-chooser.component';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -135,7 +136,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         operator: { from: 'ge', to: 'le' },
         caption: 'Date',
         field: 'Date',
-        items$: this.cfoPreferencesService.dateRange$.pipe(
+        items$: this.calendarService.dateRange$.pipe(
             map((dateRange: CalendarValuesModel) => ({
                 from: new FilterItemModel(dateRange.from.value),
                 to: new FilterItemModel(dateRange.to.value)
@@ -341,6 +342,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private route: ActivatedRoute,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
+        private calendarService: CalendarService,
         public appService: AppService,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
@@ -363,7 +365,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.filtersService.change([this.setCurrenciesFilter(selectedCurrencyId)]);
         });
 
-        this.cfoPreferencesService.dateRange$.pipe(
+        this.calendarService.dateRange$.pipe(
             skip(1),
             takeUntil(this.destroy$),
             switchMap((dateRange) => this.componentIsActivated

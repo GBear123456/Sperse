@@ -20,7 +20,6 @@
                               [innerRadius]="0.9"
                               [customizePoint]="customizePoint"
                               (onPointHoverChanged)="onPointHoverChanged($event)"
-                              (onPointSelectionChanged)="onPointSelectionChanged($event)"
                               [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
                               (onDrawn)="onDrawn($event)">
                     <dxo-common-series-settings [argumentField]="selectedArgumentField$ | async"></dxo-common-series-settings>

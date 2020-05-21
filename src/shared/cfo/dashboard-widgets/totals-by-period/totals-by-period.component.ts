@@ -29,7 +29,6 @@ import {
     InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { PeriodModel } from '@app/shared/common/period/period.model';
 import {
     CfoStore,
     ForecastModelsStoreActions
@@ -42,8 +41,9 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TotalDataModel } from '@shared/cfo/dashboard-widgets/totals-by-period/total-data.model';
 import { Period } from '@app/shared/common/period/period.enum';
-import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
-import { DateHelper } from '../../../helpers/DateHelper';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -61,7 +61,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     loading = true;
     allPeriodLocalizationValue = this.l('All_Periods');
     currentPeriod: string;
-    period$: Observable<any> = this.cfoPreferencesService.dateRange$.pipe(
+    period$: Observable<any> = this.calendarService.dateRange$.pipe(
         map((period: CalendarValuesModel) => {
             let groupBy;
             switch (period.period) {
@@ -100,9 +100,10 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         private bankAccountService: BankAccountsService,
         private lifeCycleService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef,
-        public cfoPreferencesService: CfoPreferencesService,
         private rootStore$: Store<RootStore.State>,
-        private cfoStore$: Store<CfoStore.State>
+        private cfoStore$: Store<CfoStore.State>,
+        private calendarService: CalendarService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
     }

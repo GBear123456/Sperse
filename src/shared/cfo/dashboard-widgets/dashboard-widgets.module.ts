@@ -77,5 +77,4 @@ export function defaultPeriodFactory(cfoService: CFOService) {
         DashboardService
     ]
 })
-export class DashboardWidgetsModule {
-}
+export class DashboardWidgetsModule {}

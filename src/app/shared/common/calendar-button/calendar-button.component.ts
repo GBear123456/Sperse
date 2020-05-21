@@ -9,9 +9,9 @@ import lowerFirst from 'lodash/lowerFirst';
 import * as moment from 'moment';
 
 /** Application imports */
-import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     selector: 'calendar-button',
@@ -20,15 +20,15 @@ import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-va
 })
 export class CalendarButtonComponent {
     @Input() emptyEndDateIsAvailable = false;
-    periodLabel$: Observable<string> = this.cfoPreferencesService.periodLabel$.pipe(
-        withLatestFrom(this.cfoPreferencesService.dateRange$),
+    periodLabel$: Observable<string> = this.calendarService.periodLabel$.pipe(
+        withLatestFrom(this.calendarService.dateRange$),
         map(([label, dateRange]: [string, CalendarValuesModel]) => {
             return this.emptyEndDateIsAvailable && dateRange.from.value && !dateRange.to.value ? label + ' -' : label;
         })
     );
     constructor(
         private dialog: MatDialog,
-        private cfoPreferencesService: CfoPreferencesService
+        private calendarService: CalendarService
     ) {}
 
     openCalendarDialog() {
@@ -40,18 +40,18 @@ export class CalendarButtonComponent {
                 hasBackdrop: false,
                 closeOnNavigation: true,
                 data: {
-                    to: { value: this.cfoPreferencesService.dateRange.value && new Date(this.cfoPreferencesService.dateRange.value.to.value) },
-                    from: { value: this.cfoPreferencesService.dateRange.value && new Date(this.cfoPreferencesService.dateRange.value.from.value) },
+                    to: { value: this.calendarService.dateRange.value && new Date(this.calendarService.dateRange.value.to.value) },
+                    from: { value: this.calendarService.dateRange.value && new Date(this.calendarService.dateRange.value.from.value) },
                     options: {
                         allowFutureDates: true,
                         endDate: moment(new Date()).add(10, 'years').toDate(),
-                        rangeSelectedPeriod: lowerFirst(this.cfoPreferencesService.dateRange.value.period)
+                        rangeSelectedPeriod: lowerFirst(this.calendarService.dateRange.value.period)
                     }
                 }
             }).afterClosed().pipe(
                 filter(Boolean)
             ).subscribe((dateRange: any) => {
-                this.cfoPreferencesService.dateRange.next({
+                this.calendarService.dateRange.next({
                     from: { value: dateRange.dateFrom },
                     to: { value: dateRange.dateTo },
                     period: dateRange.period

@@ -29,7 +29,6 @@ import {
 import { DashboardServiceProxy, StageDto } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { PeriodModel } from '@app/shared/common/period/period.model';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -39,6 +38,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
+import { PeriodModel } from '@app/shared/common/period/period.model';
 
 @Component({
     selector: 'totals-by-source',
@@ -208,8 +208,9 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
 
     private updatePieChartTopPositions(e) {
         const componentTop = this.elementRef.nativeElement.getBoundingClientRect().top;
-        if (componentTop) {
-            const circleBoundingRect = e.element.querySelector('.dxc-series').getBoundingClientRect();
+        const chart = e.element.querySelector('.dxc-series');
+        if (componentTop && chart) {
+            const circleBoundingRect = chart.getBoundingClientRect();
             const circleTop = circleBoundingRect.top;
             const circleCenterY = circleTop - componentTop + (circleBoundingRect.height) / 2;
             this.totalNumbersTop = circleCenterY - 55 + 'px';

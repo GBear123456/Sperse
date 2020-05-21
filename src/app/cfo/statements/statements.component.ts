@@ -52,6 +52,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -127,6 +128,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private lifecycleService: LifecycleSubjectsService,
         private rootStore$: Store<RootStore.State>,
         private cfoStore$: Store<CfoStore.State>,
+        private calendarService: CalendarService,
         public appService: AppService,
         public bankAccountsService: BankAccountsService
     ) {
@@ -137,7 +139,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.bankAccountsService.load();
         this.cfoStore$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
 
-        this.cfoPreferences.dateRange$.pipe(
+        this.calendarService.dateRange$.pipe(
             takeUntil(this.destroy$),
             switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
         ).subscribe((dateRange: CalendarValuesModel) => {

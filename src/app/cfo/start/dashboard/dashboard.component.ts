@@ -16,7 +16,6 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { Period } from '@app/shared/common/period/period.enum';
 import { LeftMenuComponent } from '../../shared/common/left-menu/left-menu.component';
 
 @Component({

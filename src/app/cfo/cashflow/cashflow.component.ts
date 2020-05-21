@@ -139,6 +139,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 /** Constants */
 const StartedBalance    = CashflowTypes.StartedBalance,
@@ -739,6 +740,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private currencyPipe: CurrencyPipe,
         private lifecycleService: LifecycleSubjectsService,
         private fullscreenService: FullScreenService,
+        private calendarService: CalendarService,
         public cashflowService: CashflowService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
@@ -903,7 +905,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private applyFiltersInitially() {
         /** After selected accounts change */
         forkJoin(
-            this.cfoPreferencesService.dateRange$.pipe(first()),
+            this.calendarService.dateRange$.pipe(first()),
             this.bankAccountsService.selectedBankAccountsIds$.pipe(first())
         ).subscribe(([dateFilter, accountsIds]: [CalendarValuesModel, number[]]) => {
             this.setDateFilter(dateFilter);
@@ -912,7 +914,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     private listenForDateUpdate() {
-        this.cfoPreferencesService.dateRange$.pipe(
+        this.calendarService.dateRange$.pipe(
             takeUntil(this.destroy$),
             skip(1),
             switchMap((dateRange: CalendarValuesModel) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))

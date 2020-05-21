@@ -87,6 +87,7 @@ import { StaticListModule } from '../shared/common/static-list/static-list.modul
 import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
 import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
 import { ListsModule } from '../shared/common/lists/lists.module';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @NgModule({
     imports: [
@@ -171,7 +172,8 @@ import { ListsModule } from '../shared/common/lists/lists.module';
         ImportServiceProxy,
         ImportLeadsService,
         DataSourceService,
-        LeftMenuService
+        LeftMenuService,
+        CalendarService
     ],
     entryComponents: [
         BankSettingsDialogComponent,

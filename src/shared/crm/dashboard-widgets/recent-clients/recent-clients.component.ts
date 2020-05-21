@@ -14,7 +14,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
-import { DateHelper } from '../../../helpers/DateHelper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'recent-clients',
@@ -75,7 +75,7 @@ export class RecentClientsComponent implements OnInit {
         if (this.selectedItem.value && this.selectedItem.value.dataLink) {
             $event.row && this.router.navigate(
                 [this.selectedItem.value.dataLink, $event.row.data.id],
-                {queryParams: {referrer: this.router.url}}
+                { queryParams: {referrer: this.router.url} }
             );
         }
     }

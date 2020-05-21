@@ -34,7 +34,6 @@ import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { Period } from '@app/shared/common/period/period.enum';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -140,10 +139,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 this.cacheService.set(this.introAcceptedCacheKey, 'true');
             });
         }
-    }
-
-    periodChanged(period: Period) {
-        this.dashboardWidgetsService.periodChanged(period);
     }
 
     openPaymentWizardDialog() {

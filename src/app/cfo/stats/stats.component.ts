@@ -44,7 +44,8 @@ import { LeftMenuComponent } from '@app/cfo/shared/common/left-menu/left-menu.co
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import { LeftMenuItem } from '../../shared/common/left-menu/left-menu-item.interface';
+import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     'selector': 'app-stats',
@@ -201,6 +202,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private lifecycleService: LifecycleSubjectsService,
         private cfoStore$: Store<CfoStore.State>,
         private rootStore$: Store<RootStore.State>,
+        private calendarService: CalendarService,
         public filtersService: FiltersService,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
@@ -219,7 +221,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             this.initToolbarConfig();
         });
 
-        this.cfoPreferencesService.dateRange$.pipe(
+        this.calendarService.dateRange$.pipe(
             takeUntil(this.destroy$),
             switchMap((dateRange) => this.componentIsActivated ? of(dateRange) : this.lifecycleService.activate$.pipe(first(), mapTo(dateRange)))
         ).subscribe((dateRange: CalendarValuesModel) => {

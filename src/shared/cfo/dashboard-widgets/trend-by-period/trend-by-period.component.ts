@@ -44,7 +44,6 @@ import { TrendByPeriodModel } from './trend-by-period.model';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { PeriodModel } from '@app/shared/common/period/period.model';
 import { CfoStore, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -57,6 +56,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
 import { Period } from '../../../../app/shared/common/period/period.enum';
 import { DateHelper } from '../../../helpers/DateHelper';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -151,7 +151,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
     ];
     selectedPeriod: TrendByPeriodModel = this.periods.find(period => period.name === 'month');
     refresh$: Observable<null> = this.dashboardService.refresh$;
-    period$ = this.cfoPreferencesService.dateRange$.pipe(
+    period$ = this.calendarService.dateRange$.pipe(
         map((calendarValues: CalendarValuesModel) => {
             let periodName = 'month';
             if (calendarValues.period === Period.Today || periodName === Period.Yesterday) {
@@ -262,6 +262,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit, 
         private sessionService: AbpSessionService,
         private cacheService: CacheService,
         private layoutService: LayoutService,
+        private calendarService: CalendarService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);

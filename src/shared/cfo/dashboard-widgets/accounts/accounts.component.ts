@@ -22,6 +22,7 @@ import { AccountTotals } from '@shared/service-proxies/service-proxies';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     selector: 'app-accounts',
@@ -48,7 +49,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsSliderSelected$: Observable<number> = this.dailyStatsSliderSelected.asObservable();
     currencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
     bankAccountIds$: Observable<number[]> = this.bankAccountsService.selectedBankAccountsIds$;
-    period$: Observable<CalendarValuesModel> = this.cfoPreferencesService.dateRange$;
+    period$: Observable<CalendarValuesModel> = this.calendarService.dateRange$;
 
     constructor(
         injector: Injector,
@@ -56,6 +57,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         private dashboardProxy: DashboardServiceProxy,
         private lifeCycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
+        private calendarService: CalendarService,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService,
     ) {

@@ -19,15 +19,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { PeriodModel } from '@app/shared/common/period/period.model';
-import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
-import { DateHelper } from '../../../helpers/DateHelper';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
     selector: 'top-spending-categories',
@@ -39,7 +37,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent, { static: true }) pieChart: DxPieChartComponent;
     @HostBinding('class.fullpage') @Input() fullpage = false;
 
-    period$: Observable<CalendarValuesModel> = this.cfoPreferences.dateRange$;
+    period$: Observable<CalendarValuesModel> = this.calendarService.dateRange$;
     currencyId: string;
     topSpendingCategories: GetSpendingCategoriesOutput[];
     topSpendingCategories$: Observable<GetSpendingCategoriesOutput[]> = combineLatest(
@@ -51,19 +49,14 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
         switchMap(([selectedBankAccountsIds, currencyId, period, ]: [number[], string, CalendarValuesModel, null]) => {
             this.currencyId = currencyId;
-            const periodTo = DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.to.value)));
             return this.dashboardServiceProxy.getSpendingCategories(
                 this.cfoService.instanceType as InstanceType,
                 this.cfoService.instanceId,
                 5,
                 selectedBankAccountsIds,
                 currencyId,
-                period.from.value
-                    ? DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(period.from.value)))
-                    : undefined,
-                period.to.value
-                    ? (periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo)
-                    : moment.utc().startOf('day')
+                DateHelper.getStartDate(period.from.value),
+                DateHelper.getEndDate(period.to.value)
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             );
@@ -76,7 +69,6 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         private dashboardService: DashboardService,
         private cfoService: CFOService,
         private bankAccountsService: BankAccountsService,
-        private cfoPreferences: CfoPreferencesService,
         private store$: Store<RootStore.State>,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
@@ -84,6 +76,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private lifeCycleService: LifecycleSubjectsService,
+        private calendarService: CalendarService,
         public ls: AppLocalizationService
     ) {}
 

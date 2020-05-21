@@ -4,7 +4,7 @@
               [showReloadButton]="ui.showReload"
               (onReload)="refresh()">
     <import-progress-bar></import-progress-bar>
-    <app-period (onChange)="periodChanged($event)"></app-period>
+    <calendar-button></calendar-button>
 </app-headline>
 <div [@routerTransition]>
   <crm-left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></crm-left-menu>
@@ -38,8 +38,10 @@
                           <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
                       </div>
                       <div class="right-side col-xl-8">
-                          <totals-by-period *ngIf="isGrantedCustomers"></totals-by-period>
-                          <recent-clients *ngIf="isGrantedCustomers"></recent-clients>
+                          <ng-container *ngIf="isGrantedCustomers">
+                              <totals-by-period></totals-by-period>
+                              <recent-clients></recent-clients>
+                          </ng-container>
                       </div>
                   </div>
                   <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>

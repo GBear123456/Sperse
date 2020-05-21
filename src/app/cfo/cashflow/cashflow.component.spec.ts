@@ -5,7 +5,7 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 import { HeadLineComponent } from '@app/shared/common/headline/headline.component';
 import { SelectionFilterComponent } from '@shared/cfo/bank-accounts/selection-filter/selection-filter.component';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-import { CalendarButtonComponent } from '@app/cfo/shared/common/calendar-button/calendar-button.component';
+import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import {
     DxButtonComponent, DxDataGridComponent,
