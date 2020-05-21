@@ -215,7 +215,7 @@ export class FiltersService {
         this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
-            filters.forEach((filter) => {
+            filters && filters.forEach((filter) => {
                 filter.clearFilterItems();
                 if (initFilters[filter.caption]) {
                     let props = Object.keys(initFilters[filter.caption]);

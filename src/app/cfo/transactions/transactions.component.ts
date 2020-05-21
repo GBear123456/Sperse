@@ -988,7 +988,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initFiltering() {
         this.filtersService.apply((filters: FilterModel[]) => {
             if (filters && filters.length) {
-                filters.forEach((filter: FilterModel) => {
+                filters && filters.forEach((filter: FilterModel) => {
                     let filterName = filter.caption.toLowerCase();
                     if (filterName == 'businessentity' || filterName == 'account') {
                         this.bankAccountsService.changeSelectedBusinessEntities(

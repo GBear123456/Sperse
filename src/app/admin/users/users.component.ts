@@ -362,7 +362,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
 
         this.filtersService.apply((filters: FilterModel[]) => {
-            filters.forEach((filter: FilterModel) => {
+            filters && filters.forEach((filter: FilterModel) => {
                 let filterValue = filter && filter.items.element.value;
                 if (filter) {
                     if (filter.caption == 'role')

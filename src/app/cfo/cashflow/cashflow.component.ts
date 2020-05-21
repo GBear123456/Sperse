@@ -1006,7 +1006,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     initFiltering() {
         this.filtersService.apply((filters: FilterModel[]) => {
-            filters.forEach((filter: FilterModel) => {
+            filters && filters.forEach((filter: FilterModel) => {
                 if (filter && filter.items.element) {
                     if (filter.caption == 'BusinessEntity')
                         this.bankAccountsService.changeSelectedBusinessEntities(filter.items.element.value);

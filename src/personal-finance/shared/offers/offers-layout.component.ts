@@ -632,7 +632,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private hideTooBigFilters(filters) {
         /** Change whether to display all filter values */
-        filters.forEach((filter) => {
+        filters && filters.forEach((filter) => {
             if (filter.type === FilterType.Checkbox && filter.values$) {
                 filter.values$.pipe(first()).subscribe(filterValues => {
                     if (filterValues.length <= this.maxDisplayedFilterValues) {

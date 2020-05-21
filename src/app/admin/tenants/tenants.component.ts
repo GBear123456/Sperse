@@ -311,7 +311,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         this.filtersService.apply((filters: FilterModel[]) => {
             this.initToolbarConfig();
 
-            filters.forEach((filter: FilterModel) => {
+            filters && filters.forEach((filter: FilterModel) => {
                 if (filter.field == 'name')
                     this.tenantName = filter.items.name.value;
                 else if (filter.field == 'creationTime') {
