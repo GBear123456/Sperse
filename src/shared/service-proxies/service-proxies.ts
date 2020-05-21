@@ -71050,6 +71050,7 @@ export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
     isActive!: boolean | undefined;
     isTwoFactorEnabled!: boolean | undefined;
     isLockoutEnabled!: boolean | undefined;
+    notifyUser!: boolean | undefined;
 
     constructor(data?: IUpdateUserOptionsDto) {
         if (data) {
@@ -71066,6 +71067,7 @@ export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
             this.isActive = data["isActive"];
             this.isTwoFactorEnabled = data["isTwoFactorEnabled"];
             this.isLockoutEnabled = data["isLockoutEnabled"];
+            this.notifyUser = data["notifyUser"];
         }
     }
 
@@ -71082,6 +71084,7 @@ export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
         data["isActive"] = this.isActive;
         data["isTwoFactorEnabled"] = this.isTwoFactorEnabled;
         data["isLockoutEnabled"] = this.isLockoutEnabled;
+        data["notifyUser"] = this.notifyUser;
         return data; 
     }
 }
@@ -71091,6 +71094,7 @@ export interface IUpdateUserOptionsDto {
     isActive: boolean | undefined;
     isTwoFactorEnabled: boolean | undefined;
     isLockoutEnabled: boolean | undefined;
+    notifyUser: boolean | undefined;
 }
 
 export class GrantPermissionInput implements IGrantPermissionInput {
