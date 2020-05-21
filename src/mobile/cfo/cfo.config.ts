@@ -12,7 +12,6 @@ export class CfoConfig implements ConfigInterface {
     localizationSource = 'CFO';
     navigation: ConfigNavigation[] = [
         {
-            icon: 'icon-home',
             route: '/app/cfo/:instance/start'
         },
         {
