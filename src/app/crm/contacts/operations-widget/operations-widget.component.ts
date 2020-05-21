@@ -382,13 +382,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
-                            visible: !this.isBankCodeLayout,
                             disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
-                            visible: !this.userManagementService.isLayout(LayoutType.BankCode),
+                            visible: !this.isBankCodeLayout,
                             disabled: !this.contactService.checkCGPermission(this.customerType, '')
                         }
                     ]
