@@ -127,7 +127,6 @@ export class TopBarComponent implements OnDestroy {
             && (configCode === 'CRM' || configCode === 'Slice')) {
             configNavigation.unshift({
                 text: MENU_HOME,
-                icon: 'icon-home',
                 route: '/code-breaker'
             });
         }
