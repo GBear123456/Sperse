@@ -48,7 +48,15 @@
             </div>
             <div class="field-area flex-space-between">
                 <div class="bill-to">
-                    <label class="bold-label">{{ls.l('Invoice_BillTo')}}
+                    <label class="bold-label">{{ls.l('Invoice_BillTo')}}                        
+                        <img *ngIf="disabledForUpdate; else billingEditButtons"
+                             class="preview"
+                             src='./assets/common/icons/preview.svg'
+                             (click)="showEditAddressDialog($event, 'selectedBillingAddress')">
+                        <ng-template #billingEditButtons>
+                            <i *ngIf="selectedBillingAddress" class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
+                            <i *ngIf="selectedBillingAddress" class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
+                        </ng-template>
                         <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>
                         <a (click)="clearClient()" [hidden]="!contactId || disabledForUpdate || data?.contactInfo">{{ls.l('Change') + ' ' + ls.l('Client')}}</a>
                     </label>
@@ -90,14 +98,6 @@
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
                     <div class="selected-contact-info" *ngIf="selectedBillingAddress">
-                        <img *ngIf="disabledForUpdate; else billingEditButtons"
-                             class="preview"
-                             src='./assets/common/icons/preview.svg'
-                             (click)="showEditAddressDialog($event, 'selectedBillingAddress')">
-                        <ng-template #billingEditButtons>
-                            <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
-                            <i class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
-                        </ng-template>
                         <div *ngIf="selectedBillingAddress?.company as company">{{ company }}</div>
                         <div *ngIf="[selectedBillingAddress?.firstName, selectedBillingAddress?.lastName].filter(filterBoolean).join(' ') as customer">{{ customer }}</div>
                         <div *ngIf="[selectedBillingAddress?.email, selectedBillingAddress?.phone].filter(filterBoolean).join(', ') as contacts">{{ contacts }}</div>
@@ -108,7 +108,16 @@
                     </div>
                 </div>
                 <div class="ship-to" [hidden]="!invoiceSettings.showShippingAddress">
-                    <label class="bold-label">{{ls.l('Invoice_ShipTo')}}</label>
+                    <label class="bold-label">{{ls.l('Invoice_ShipTo')}}
+                        <img *ngIf="disabledForUpdate; else shippingEditButtons"
+                             class="preview"
+                             src='./assets/common/icons/preview.svg'
+                             (click)="showEditAddressDialog($event, 'selectedShippingAddress')">
+                        <ng-template #shippingEditButtons>
+                            <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
+                            <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
+                        </ng-template>
+                    </label>
                     <dx-select-box #shippingAddress
                         name="shippingAddress"
                         width="220px"
@@ -128,14 +137,6 @@
                     </dx-select-box>
                     <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
                     <div class="selected-contact-info" *ngIf="selectedShippingAddress">
-                        <img *ngIf="disabledForUpdate; else shippingEditButtons"
-                             class="preview"
-                             src='./assets/common/icons/preview.svg'
-                             (click)="showEditAddressDialog($event, 'selectedShippingAddress')">
-                        <ng-template #shippingEditButtons>
-                            <i class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedShippingAddress')"></i>
-                            <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
-                        </ng-template>
                         <div *ngIf="selectedShippingAddress?.company as company">{{ company }}</div>
                         <div *ngIf="[selectedShippingAddress?.firstName, selectedShippingAddress?.lastName].filter(filterBoolean).join(' ') as customer">{{ customer }}</div>
                         <div *ngIf="[selectedShippingAddress?.email, selectedShippingAddress?.phone].filter(filterBoolean).join(', ') as contacts">{{ contacts }}</div>
