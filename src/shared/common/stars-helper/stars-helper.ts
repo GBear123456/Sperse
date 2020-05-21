@@ -11,7 +11,12 @@ export class StarsHelper {
         Gradient2: ['#82cc57', '#b1d049'],
         Gradient3: ['#f0eb56', '#ffc800'],
         Gradient4: ['#f3852a', '#e14617'],
-        Gradient5: '#959595'
+        Gradient5: '#959595',
+        Blueprint: '#104579',
+        Action: '#ad1d21',
+        Nurturing: '#f39e1c',
+        Knowledge: '#186434',
+        Unknown: '#959595'
     };
 
     static getStarColorByType(type: ContactStarColorType, gradient = false) {
