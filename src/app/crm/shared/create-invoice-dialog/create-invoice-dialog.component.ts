@@ -808,7 +808,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
             address = this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
         let dialogData: any = Object.assign({}, this[field]) || {
-            addrType: field.match(/[A-Z][a-z]+/g).shift(),
             countryId: address.countryCode,
             stateId: address.stateId,
             stateName: address.stateName,
@@ -824,6 +823,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             phone: undefined
         };
         dialogData['viewMode'] = this.disabledForUpdate;
+        dialogData['addrType'] = field.match(/[A-Z][a-z]+/g).shift();
         dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         if (event) {
             this.dialog.open(InvoiceAddressDialog, {
