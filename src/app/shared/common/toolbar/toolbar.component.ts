@@ -72,6 +72,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             archive: {
                 text: this.ls.l('Archive'),
+                hint: this.ls.l('Archive'),
                 icon: this.getImgURI('folder')
             },
             search: {
@@ -83,6 +84,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             expandTree: {
                 text: this.ls.l('Expand'),
+                hint: this.ls.l('Expand'),
                 icon: this.getImgURI('expand-tree-icon')
             },
             find: {
@@ -109,35 +111,43 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             add: {
                 text: this.ls.l('Add'),
+                hint: this.ls.l('Add'),
                 icon: this.getImgURI('assign-icon')
             },
             assign: {
                 text: this.ls.l('Assign'),
+                hint: this.ls.l('Assign'),
                 icon: this.getImgURI('assign-icon')
             },
             status: {
                 text: this.ls.l('Status'),
+                hint: this.ls.l('Status'),
                 icon: this.getImgURI('status-icon')
             },
             stage: {
                 text: this.ls.l('Stage'),
+                hint: this.ls.l('Stage'),
                 icon: this.getImgURI('status-icon')
             },
             partnerType: {
                 accessKey: 'PartnerType',
                 text: this.ls.l('Type'),
+                hint: this.ls.l('Type'),
                 icon: this.getImgURI('status-icon')
             },
             delete: {
                 text: this.ls.l('Delete'),
+                hint: this.ls.l('Delete'),
                 icon: this.getImgURI('delete-icon')
             },
             discard: {
                 text: this.ls.l('Discard'),
+                hint: this.ls.l('Discard'),
                 icon: this.getImgURI('delete-icon')
             },
             cancel: {
                 text: this.ls.l('Cancel'),
+                hint: this.ls.l('Cancel'),
                 icon: this.getImgURI('close')
             },
             folder: {
@@ -149,7 +159,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('pen')
             },
             more: {
-                text: this.ls.l('More')
+                text: this.ls.l('More'),
+                hint: this.ls.l('More')
             },
             box: {
                 accessKey: 'box',
@@ -203,22 +214,27 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             edit: {
                 text: this.ls.l('Edit'),
+                hint: this.ls.l('Edit'),
                 icon: this.getImgURI('edit-pencil-icon')
             },
             rules: {
                 text: this.ls.l('CashflowToolbar_User_Preferences'),
+                hint: this.ls.l('CashflowToolbar_User_Preferences'),
                 icon: this.getImgURI('preferences-icon')
             },
             expand: {
                 text: this.ls.l('Expand'),
+                hint: this.ls.l('Expand'),
                 icon: this.getImgURI('expand-all-icon')
             },
             expandRows: {
                 text: this.ls.l('Expand rows'),
+                hint: this.ls.l('Expand rows'),
                 icon: this.getImgURI('expand-rows-icon')
             },
             expandCols: {
                 text: this.ls.l('Expand cols'),
+                hint: this.ls.l('Expand cols'),
                 icon: this.getImgURI('expand-cols-icon')
             },
             flag: {
@@ -250,7 +266,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             reportPeriod: {
                 icon: this.getImgURI('report-period'),
-                text: this.ls.l('CashflowToolbar_Report_Period')
+                text: this.ls.l('CashflowToolbar_Report_Period'),
+                hint: this.ls.l('CashflowToolbar_Report_Period')
             },
             addEntity: {
                 hint: this.ls.l('AddAccountingType'),
@@ -258,6 +275,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             tags: {
                 text: this.ls.l('Tags'),
+                hint: this.ls.l('Tags'),
                 icon: this.getImgURI('pen')
             },
             tagsSmall: {
@@ -266,6 +284,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             lists: {
                 text: this.ls.l('Lists'),
+                hint: this.ls.l('Lists'),
                 icon: this.getImgURI('folder')
             },
             listsSmall: {
@@ -274,6 +293,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             rating: {
                 text: this.ls.l('Rating'),
+                hint: this.ls.l('Rating'),
                 icon: this.getImgURI('flag-icon')
             },
             star: {
@@ -330,7 +350,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
 
     getDropDownItemTemplate(link, width) {
         return {
-            item: `<div class="toolbar-dropdown-item ${link.class || ''}" ${width ? 'style="width:' + width + 'px;"' : ''}>
+            item: `<div class="toolbar-dropdown-item ${link.class || ''}" ${width ? 'style="width:' + width + 'px;"' : ''} [title]="link.text">
                 ${link.icon ? `<img style="margin-right: 15px; position: relative; top: -2px;" src="${this.getImgURI(link.icon)}">` : ''}
                 ${link.text}
             </div>`,

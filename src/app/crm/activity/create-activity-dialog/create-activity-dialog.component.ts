@@ -17,7 +17,8 @@ import {
     CustomerServiceProxy,
     ActivityType,
     CreateActivityDto,
-    UpdateActivityDto
+    UpdateActivityDto,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
@@ -32,6 +33,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -113,6 +115,7 @@ export class CreateActivityDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<CreateActivityDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private permissionChecker: PermissionCheckerService,
+        private userManagementService: UserManagementService,
         public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -280,6 +283,7 @@ export class CreateActivityDialogComponent implements OnInit {
                     },
                     {
                         name: 'star',
+                        visible: !this.userManagementService.isLayout(LayoutType.BankCode),
                         disabled: true,
                         action: this.toggleStarsList.bind(this),
                         options: {

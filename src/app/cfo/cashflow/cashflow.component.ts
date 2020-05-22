@@ -1126,6 +1126,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         options: {
                             id: 'bankAccountSelect',
                             text: this.l('Accounts'),
+                            hint: this.l('Accounts'),
                             icon: './assets/common/icons/accounts.svg'
                         },
                         attr: {
