@@ -75,7 +75,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { BankAccountDto } from '@shared/service-proxies/service-proxies';
-import { BusinessEntitiesChooserComponent } from '../../../shared/cfo/bank-accounts/business-entities-chooser/business-entities-chooser.component';
+import { BusinessEntitiesChooserComponent } from '@shared/cfo/bank-accounts/business-entities-chooser/business-entities-chooser.component';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
 @Component({
@@ -1092,7 +1092,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowCategories(categories: Category[], event?) {
+    filterByCashflowCategories(categories: Category[]) {
         this.clearCategoriesFilters();
         if (Array.isArray(categories)) {
             let filterCashflowTypes = categories.filter((category: Category) => this.isCashflowType(category)).map((category: Category) => <string>category.key);
@@ -1511,6 +1511,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     calculateTransactionsCreditDisplayValue = (data) => this.amountCustomizer(data['Credit']);
 
     calculateEndingBalanceDisplayValue = (data) => this.amountCustomizer(data['EndingBalance']);
+
+    customizeGroupAmountCell = (cellInfo) => this.amountCustomizer(cellInfo.value);
 
     calculateCashflowCategoryNameDisplayValue = (data) => data.CashflowCategoryName || this.l('Unclassified');
 

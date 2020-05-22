@@ -1,5 +1,7 @@
 /** Core imports */
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
@@ -7,6 +9,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin, Observable } from 'rxjs';
 import { filter, finalize, pluck, skip, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
+
 /** Application imports */
 import {
     CrmStore,
@@ -54,7 +57,7 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
-    providers: [ PipelineService, OrderServiceProxy ]
+    providers: [ PipelineService, OrderServiceProxy, CurrencyPipe ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
@@ -456,6 +459,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private cacheService: CacheService,
         private sessionService: AppSessionService,
         private crmService: CrmService,
+        private currencyPipe: CurrencyPipe,
         public appService: AppService,
         public dialog: MatDialog,
     ) {
@@ -857,6 +861,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         } else {
             DataGridService.showColumnChooser(this.dataGrid);
         }
+    }
+
+    customizeGroupAmountCell = (cellInfo) => {
+        return this.currencyPipe.transform(cellInfo.value, this.currency, 'symbol', '1.2-2');
     }
 
     toggleToolbar() {

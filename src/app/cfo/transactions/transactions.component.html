@@ -512,6 +512,18 @@
                                 </dx-tooltip>
                             </div>
                         </div>
+                        <dxo-summary>
+                            <dxi-group-item column="Id"
+                                            summaryType="count"
+                                            [displayFormat]="'{0} ' + l('Transactions').toLocaleLowerCase()">
+                            </dxi-group-item>
+                            <dxi-group-item column="Amount"
+                                            summaryType="sum"
+                                            [customizeText]="customizeGroupAmountCell"
+                                            [alignByColumn]="true"
+                                            displayFormat="Total: {0}">
+                            </dxi-group-item>
+                        </dxo-summary>
                     </dx-data-grid>
                 </div>
             </div>

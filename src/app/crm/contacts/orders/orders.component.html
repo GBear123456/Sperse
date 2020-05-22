@@ -21,7 +21,6 @@
                 <dxi-column dataField="CreationTime" [caption]="l('Created')" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
                 <dxi-column dataField="DateProcessed" [caption]="l('Processed')" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
                 <dxo-sorting mode="multiple"></dxo-sorting>
-                <dxo-group-panel [visible]="true"></dxo-group-panel>
                 <dxo-paging [pageSize]="20"></dxo-paging>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | date: formatting.dateTime}}

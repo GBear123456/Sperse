@@ -47,7 +47,7 @@
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [loadPanel]="{ enabled: false }"
-                                          [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                          [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
                                           [pager]="defaultGridPagerConfig"
@@ -113,6 +113,18 @@
                                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                                     {{cellData.value | date: formatting.dateTime : userTimezone}}
                                 </div>
+                                <dxo-summary>
+                                    <dxi-group-item column="Id"
+                                                    summaryType="count"
+                                                    displayFormat="{0} orders">
+                                    </dxi-group-item>
+                                    <dxi-group-item column="Amount"
+                                                    summaryType="sum"
+                                                    [customizeText]="customizeGroupAmountCell"
+                                                    [alignByColumn]="true"
+                                                    displayFormat="Total: {0}">
+                                    </dxi-group-item>
+                                </dxo-summary>
                             </dx-data-grid>
                         </div>
                     </div>
@@ -159,7 +171,7 @@
                               [hoverStateEnabled]="true"
                               [remoteOperations]="{
                                   filtering: false,
-                                  grouping: true,
+                                  grouping: false,
                                   groupPaging: true,
                                   paging: true,
                                   sorting: true,
@@ -207,6 +219,24 @@
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
                     </div>
+                    <dxo-summary>
+                        <dxi-group-item column="Id"
+                                        summaryType="count"
+                                        [displayFormat]="'{0} ' + l('Subscriptions')">
+                        </dxi-group-item>
+                        <dxi-group-item column="Fee"
+                                        summaryType="sum"
+                                        [alignByColumn]="true"
+                                        [customizeText]="customizeGroupAmountCell"
+                                        displayFormat="Total: {0}">
+                        </dxi-group-item>
+                        <dxi-group-item column="OrderAmount"
+                                        summaryType="sum"
+                                        [customizeText]="customizeGroupAmountCell"
+                                        [alignByColumn]="true"
+                                        displayFormat="Total: {0}">
+                        </dxi-group-item>
+                    </dxo-summary>
                 </dx-data-grid>
             </div>
             <slice-pivot-grid [hidden]="subscriptionsDataLayoutType !== layoutTypes.PivotGrid"

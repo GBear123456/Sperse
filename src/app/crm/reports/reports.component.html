@@ -92,6 +92,36 @@
                     {{ cellData.displayValue }}
                 </div>
             </div>
+            <dxo-summary>
+                <dxi-group-item column="name"
+                                summaryType="count"
+                                [displayFormat]="'{0} ' + ls.l('Subscribers')">
+                </dxi-group-item>
+                <dxi-group-item column="bankPassFee"
+                                summaryType="sum"
+                                [alignByColumn]="true"
+                                [customizeText]="customizeGroupAmountCell"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+                <dxi-group-item column="bankVaultFee"
+                                summaryType="sum"
+                                [customizeText]="customizeGroupAmountCell"
+                                [alignByColumn]="true"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+                <dxi-group-item column="wtbFee"
+                                summaryType="sum"
+                                [customizeText]="customizeGroupAmountCell"
+                                [alignByColumn]="true"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+                <dxi-group-item column="totalFee"
+                                summaryType="sum"
+                                [customizeText]="customizeGroupAmountCell"
+                                [alignByColumn]="true"
+                                displayFormat="Total: {0}">
+                </dxi-group-item>
+            </dxo-summary>
         </dx-data-grid>
     </div>
     <div [hidden]="totalCount <= 0 || selectedReportType !== reportTypesEnum.SubscribersStats">

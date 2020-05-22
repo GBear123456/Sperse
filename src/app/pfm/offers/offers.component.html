@@ -81,7 +81,7 @@
                       [allowColumnReordering]="true"
                       [columnAutoWidth]="true"
                       [loadPanel]="{ enabled: false }"
-                      [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
+                      [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
                       [pager]="defaultGridPagerConfig"
@@ -92,10 +92,8 @@
                            showCheckBoxesMode="always"
                            mode="multiple">
             </dxo-selection>
-
-                <dxo-sorting mode="multiple"></dxo-sorting>
-                <dxo-paging [pageSize]="20"></dxo-paging>
-
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="20"></dxo-paging>
             <dxi-column dataField="LogoUrl" caption="Logo" cellTemplate="photoTemplate"
                         [width]="100" [showInColumnChooser]="false" [allowExporting]="false"
                         [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -115,6 +113,12 @@
                     {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-summary>
+                    <dxi-group-item column="Name"
+                                    summaryType="count"
+                                    [displayFormat]="'{0} ' + l('Offers').toLocaleLowerCase()">
+                    </dxi-group-item>
+                </dxo-summary>
             </dx-data-grid>
         </div>
     </div>

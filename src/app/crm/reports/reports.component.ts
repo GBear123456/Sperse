@@ -317,6 +317,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeTotalAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.totalAmount);
 
+    customizeGroupAmountCell = (cellInfo) => this.customizeAmountCell(cellInfo.value);
+
     customizeAmountCell(value: any) {
         return this.currencyPipe.transform(value, this.currency);
     }

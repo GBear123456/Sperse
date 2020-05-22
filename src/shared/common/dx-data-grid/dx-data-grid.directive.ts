@@ -52,10 +52,10 @@ export class DxDataGridDirective implements AfterViewInit, OnDestroy {
         }),
         this.component.onCellPrepared.subscribe(event => {
             if (event.rowType == 'header') {
-                on(event.cellElement, 'dxdragstart', { timeout: 1000 }, e => {
+                on(event.cellElement, 'dxdragstart', { timeout: 1000 }, () => {
                     event.element.classList.add('show-group-panel');
                 });
-                on(event.cellElement, 'dxdragend', { timeout: 0 }, e => {
+                on(event.cellElement, 'dxdragend', { timeout: 0 }, () => {
                     setTimeout(() => {
                         if (!event.component.getDataSource().group())
                             event.element.classList.remove('show-group-panel');
@@ -63,6 +63,25 @@ export class DxDataGridDirective implements AfterViewInit, OnDestroy {
                 });
             }
         }));
+        this.component.onRowPrepared.subscribe(event => {
+            if (event.rowType === 'group') {
+                const cellsSelectorsToHide = ['.dx-command-select', '.dx-command-edit'];
+                let columnsNumberToAdd = 0;
+                cellsSelectorsToHide.forEach((cellSelector: string) => {
+                    const cell = event.rowElement.querySelector(cellSelector);
+                    if (cell) {
+                        cell.style.display = 'none';
+                        columnsNumberToAdd += 1;
+                    }
+                });
+                if (columnsNumberToAdd) {
+                    const lastColumn = event.rowElement.querySelector('td[colspan]');
+                    if (lastColumn) {
+                        lastColumn.colSpan = +lastColumn.colSpan + columnsNumberToAdd;
+                    }
+                }
+            }
+        })
     }
 
     appendClipboardIcon(elm) {

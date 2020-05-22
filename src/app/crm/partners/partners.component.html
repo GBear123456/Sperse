@@ -64,7 +64,7 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
-                                  [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                  [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                   [loadPanel]="{ enabled: false }"
                                   [pager]="defaultGridPagerConfig"
                                   (onOptionChanged)="onGridOptionChanged($event)"
@@ -133,6 +133,12 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-summary>
+                            <dxi-group-item column="Id"
+                                            summaryType="count"
+                                            [displayFormat]="'{0} ' + l('Partners').toLocaleLowerCase()">
+                            </dxi-group-item>
+                        </dxo-summary>
                     </dx-data-grid>
                 </div>
             </div>

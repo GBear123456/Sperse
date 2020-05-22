@@ -49,6 +49,12 @@
                      <dxo-sorting mode="multiple"></dxo-sorting>
                      <dxo-group-panel [visible]="true"></dxo-group-panel>
                      <dxo-paging [pageSize]="20"></dxo-paging>
+                     <dxo-summary>
+                         <dxi-group-item column="Id"
+                                         summaryType="count"
+                                         displayFormat="{0}">
+                         </dxi-group-item>
+                     </dxo-summary>
                  </dx-data-grid>
             </div>
         </div>

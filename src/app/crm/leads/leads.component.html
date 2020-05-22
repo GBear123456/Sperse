@@ -64,7 +64,7 @@
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [cacheEnabled]="false"
-                                [remoteOperations]="{ filtering: false, grouping: true, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
@@ -148,6 +148,12 @@
                             </div>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-summary>
+                                <dxi-group-item column="Id"
+                                                summaryType="count"
+                                                [displayFormat]="'{0} ' + l('ContactGroup_' + selectedContactGroup).toLocaleLowerCase()">
+                                </dxi-group-item>
+                            </dxo-summary>
                         </dx-data-grid>
                     </div>
                 </div>
