@@ -23,7 +23,11 @@ export class FilterMultilineInputModel extends FilterItemModel {
     set value(value: any) {
         let values: string[] = [];
         if (value && typeof value === 'string') {
-            values = value.split('\n');
+            let valuesSplitByEnter = value.split('\n');
+            for (let i = 0; i < valuesSplitByEnter.length; i++) {
+                let valuesSplitByComma = valuesSplitByEnter[i].split(',');
+                values = values.concat(valuesSplitByComma);
+            }
             for (let i = values.length - 1; i >= 0; i--) {
                 values[i] = values[i].trim();
                 if (!values[i])

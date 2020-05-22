@@ -61,10 +61,18 @@ export class SourceFilterModel extends FilterItemModel {
         return result;
     }
 
+    clearItem(item) {
+        item.value = item.displayValue = this[item.property] = null;
+    }
+
     removeFilterItem(filter: FilterModel, args: any, name: string) {
         if (name) {
             let item = filter.items.element.value.find((item) => item.name === name);
-            item.value = item.displayValue = this[item.property] = null;
+            this.clearItem(item);
+        } else {
+            filter.items.element.value.forEach((item) => {
+                this.clearItem(item);
+            });
         }
     }
 }

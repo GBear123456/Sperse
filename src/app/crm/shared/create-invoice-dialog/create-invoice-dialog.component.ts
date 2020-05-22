@@ -13,7 +13,7 @@ import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { finalize, first, switchMap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
-import clone from 'lodash/clone';
+import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -522,12 +522,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         address.city, address.stateId, address.zip, address.countryId].filter(Boolean).join(', ');
                     return address;
                 });
-                this.shippingAddresses = this.sortAddresses(clone(addresses), 'S');
+                this.shippingAddresses = this.sortAddresses(addresses, 'S');
                 if (this.shippingAddresses && this.shippingAddresses.length) {
                     this.selectedShippingAddress = this.shippingAddresses[0];
                     this.showEditAddressDialog(null, 'selectedShippingAddress');
                 }
-                this.billingAddresses = this.sortAddresses(clone(addresses), 'B');
+                this.billingAddresses = this.sortAddresses(addresses, 'B');
                 if (this.billingAddresses && this.billingAddresses.length) {
                     this.selectedBillingAddress = this.billingAddresses[0];
                     this.showEditAddressDialog(null, 'selectedBillingAddress');
@@ -544,7 +544,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     private sortAddresses(addresses: InvoiceAddressInfo[], usageTypeId: 'B' | 'S') {
         const dateProperty = usageTypeId === 'B' ? 'lastBillingDate' : 'lastShippingDate';
-        return addresses.sort((addressA: InvoiceAddressInfo, addressB: InvoiceAddressInfo) => {
+        return cloneDeep(addresses).sort((addressA: InvoiceAddressInfo, addressB: InvoiceAddressInfo) => {
             let result = 0;
             if (addressA[dateProperty] && addressB[dateProperty]) {
                 result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) > 0 ? -1 : 1;
@@ -807,7 +807,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         let person = new PersonInfoDto(),
             address = this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
-        let dialogData: any = this[field] || {
+        let dialogData: any = Object.assign({}, this[field]) || {
             countryId: address.countryCode,
             stateId: address.stateId,
             stateName: address.stateName,
@@ -823,6 +823,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             phone: undefined
         };
         dialogData['viewMode'] = this.disabledForUpdate;
+        dialogData['addrType'] = field.match(/[A-Z][a-z]+/g).shift();
         dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         if (event) {
             this.dialog.open(InvoiceAddressDialog, {
@@ -836,9 +837,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     left: Math.max((innerWidth - 900 - 620) / 2, 0) + 'px'
                 }
             }).afterClosed().subscribe(result => {
-                if (!this[field] && result)
+                if (result) {
                     this[field] = new InvoiceAddressInput(dialogData);
-                this.changeDetectorRef.detectChanges();
+                    this.changeDetectorRef.detectChanges();
+                }
             });
             event.stopPropagation();
             event.preventDefault();
