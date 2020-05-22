@@ -863,7 +863,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     }
 
-    customizeGroupAmountCell = (cellInfo) => {
+    customizeAmountCell = (cellInfo) => {
         return this.currencyPipe.transform(cellInfo.value, this.currency, 'symbol', '1.2-2');
     }
 
