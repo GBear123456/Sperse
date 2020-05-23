@@ -10,6 +10,7 @@ import { Papa } from 'ngx-papaparse';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
+import { Observable } from 'rxjs';
 import { first, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
@@ -24,6 +25,7 @@ import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.se
 import { ImportServiceProxy, ImportFieldInfoDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     selector: 'import-wizard',
@@ -50,6 +52,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Input() lookupFields: any;
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
+    @Input() showLeftMenuToggleButton = false;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
             return {
@@ -119,6 +122,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         { text: 'Affect all pages items', mode: 'allPages' }
     ];
     formatting = AppConsts.formatting;
+    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
     constructor(
         injector: Injector,
@@ -128,7 +132,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         private phoneFormat: PhoneFormatPipe,
         private store$: Store<RootStore.State>,
         private importProxy: ImportServiceProxy,
-        private phoneNumberService: PhoneNumberService
+        private phoneNumberService: PhoneNumberService,
+        private leftMenuService: LeftMenuService
     ) {
         super(injector);
         this.uploadFile = formBuilder.group({
@@ -810,6 +815,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         if ($event.data && $event.data.highliteFields &&
             $event.data.highliteFields.indexOf($event.value) >= 0
         ) $event.cellElement.classList.add('bold');
+    }
+
+    toggleLeftMenu() {
+        this.leftMenuService.toggle();
     }
 
     selectedStepChanged(event) {

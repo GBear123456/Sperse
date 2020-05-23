@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 import * as _ from 'underscore';
 import capitalize from 'underscore.string/capitalize';
 import each from 'lodash/each';
@@ -20,6 +20,9 @@ export class FiltersService {
     private filters: FilterModel[];
     private subjectFilterToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private subjectFixedToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    fixedToggle$: Observable<boolean> = this.subjectFixedToggle.asObservable().pipe(
+        distinctUntilChanged()
+    );
     private subjectFilters: Subject<FilterModel[]> = new Subject<FilterModel[]>();
     private filtersChanged: Subject<FilterModel[]> = new Subject<FilterModel[]>();
     filtersChanged$: Observable<FilterModel[]> = this.filtersChanged.asObservable();

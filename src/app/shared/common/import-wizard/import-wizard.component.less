@@ -63,6 +63,41 @@
             vertical-align: bottom;
             background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
         }
+
+        &.toggle-left-menu {
+            right: initial;
+            left: 319px;
+            width: 74px;
+            i {
+                background: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 45px;
+                width: 45px;
+                border-radius: 50%;
+                margin: auto;
+                cursor: pointer;
+                position: relative;
+                border: 1px solid #e5e9ec;
+                &:before {
+                    color: #959A9F;
+                    font-size: 20px;
+                }
+            }
+            .separator {
+                margin: 0;
+            }
+        }
+    }
+
+    .left-menu-collapsed {
+        h1 {
+            left: 85px;
+        }
+        .actions.toggle-left-menu {
+            left: 0;
+        }
     }
 
     form {

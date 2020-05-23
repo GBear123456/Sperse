@@ -5,7 +5,7 @@ import { Component, OnInit, Injector, ViewChild, AfterViewInit } from '@angular/
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { first, mapTo, skip, switchMap } from 'rxjs/operators';
+import { first, mapTo, skip, switchMap, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -16,7 +16,7 @@ import { SyncAccountServiceProxy, InstanceType } from '@shared/service-proxies/s
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { BankAccountsComponent } from '../../../shared/cfo/bank-accounts/bank-accounts.component';
+import { BankAccountsComponent } from '@shared/cfo/bank-accounts/bank-accounts.component';
 
 @Component({
     selector: 'bank-accounts',
@@ -53,6 +53,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     ngOnInit() {
         this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId)).pipe(
+            takeUntil(this.destroy$),
             skip(1),
             switchMap((data) => {
                 return this.componentIsActivated
@@ -92,5 +93,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this.syncComponent.deactivate();
         this.bankAccountsComponent.deactivate();
         this.rootComponent.overflowHidden();
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 }

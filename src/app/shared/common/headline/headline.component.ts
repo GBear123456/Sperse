@@ -9,7 +9,9 @@ import {
     Output,
     OnInit,
     OnDestroy,
-    Injector
+    Injector,
+    Inject,
+    Optional
 } from '@angular/core';
 
 /** Third party imports */
@@ -24,6 +26,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppConsts } from '@shared/AppConsts';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     selector: 'app-headline',
@@ -46,6 +49,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() showToggleTotalsButton = false;
     @Input() showToggleColumnSelectorButton = false;
     @Input() showPrintButton = false;
+    @Input() showToggleLeftMenuButton = false;
     @Input() toggleButtonPosition: 'left' | 'right' = 'left';
     @Output() onReload: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleToolbar: EventEmitter<null> = new EventEmitter<null>();
@@ -54,11 +58,18 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Output() onToggleTotals: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleColumnSelector: EventEmitter<null> = new EventEmitter<null>();
     @Output() onPrint: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onToggleLeftMenu: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
     data: HeadLineConfigModel;
     showHeadlineButtons = false;
     toolbarMenuToggleButtonText$: Observable<string> = this.appService.toolbarIsHidden$.pipe(
         map(toolbarIsHidden => toolbarIsHidden ? this.ls.l('ShowToolbarMenu') : this.ls.l('HideToolbarMenu'))
+    );
+    toggleLeftMenuButtonText$: Observable<string> = this.leftMenuService.collapsed$.pipe(
+        map((collapsed: boolean) => collapsed ? this.ls.l('ShowLeftSidebar') : this.ls.l('HideLeftSidebar'))
+    );
+    toggleLeftMenuButtonIconClass$: Observable<string> = this.leftMenuService.collapsed$.pipe(
+        map((collapsed: boolean) => 'dx-icon-' + (collapsed ? 'show' : 'hide') +'panel')
     );
     showCompactView = false;
     fullScreenButtonText$ = this.fullScreenService.isFullScreenMode$.pipe(
@@ -75,12 +86,15 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         private appService: AppService,
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
-        public ls: AppLocalizationService
+        private leftMenuService: LeftMenuService,
+        public ls: AppLocalizationService,
+        @Inject('toggleButtonPosition') @Optional() toggleButtonPosition: 'left' | 'right',
+        @Inject('showToggleLeftMenuButton') @Optional() showToggleLeftMenuButton: boolean
     ) {
-        const toggleButtonPosition = injector.get('toggleButtonPosition', null);
         if (toggleButtonPosition) {
             this.toggleButtonPosition = toggleButtonPosition;
         }
+        this.showToggleLeftMenuButton = showToggleLeftMenuButton;
     }
 
     ngOnInit() {
@@ -95,7 +109,8 @@ export class HeadLineComponent implements OnInit, OnDestroy {
             || this.showToggleCompactViewButton
             || this.showToggleFullScreenButton
             || this.showToggleColumnSelectorButton
-            || this.showPrintButton;
+            || this.showPrintButton
+            || this.showToggleLeftMenuButton;
     }
 
     @HostListener('document:click', ['$event'])
@@ -134,6 +149,11 @@ export class HeadLineComponent implements OnInit, OnDestroy {
 
     print() {
         this.onPrint.emit();
+    }
+
+    toggleLeftMenu() {
+        this.leftMenuService.toggle();
+        this.onToggleLeftMenu.emit();
     }
 
     toggleTotals() {

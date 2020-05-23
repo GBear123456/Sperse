@@ -39,6 +39,7 @@ import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -362,6 +363,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     fieldsConfig = {};
     assignedUsersSelector = this.getAssignedUsersSelector(ContactGroup.Client);
+    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
     constructor(
         injector: Injector,
@@ -374,6 +376,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private zipFormatterPipe: ZipCodeFormatterPipe,
         private contactService: ContactsService,
         private userManagementService: UserManagementService,
+        private leftMenuService: LeftMenuService,
         public importWizardService: ImportWizardService
     ) {
         super(injector);

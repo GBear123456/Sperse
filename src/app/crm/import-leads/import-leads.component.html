@@ -3,6 +3,8 @@
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
+        [ngClass]="{ leftMenuCollapsed: leftMenuCollapsed$ | async }"
+        [showLeftMenuToggleButton]="!hideLeftMenu"
         [lookupFields]="mappingFields"
         [columnsConfig]="fieldsConfig"
         [checkSimilarFields]="compareFields"
@@ -14,7 +16,6 @@
         (onSelectionChanged)="onStepChanged($event)"
         (onComplete)="complete($event)"
         (onCancel)="cancel()">
-
         <div class="success">
             <div *ngIf="importStatus == importStatuses.InProgress">
                 <h1>{{l('ImportProgressHeader')}}</h1>

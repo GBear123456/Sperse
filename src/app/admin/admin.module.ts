@@ -82,6 +82,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @NgModule({
     imports: [
@@ -190,7 +191,8 @@ import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialo
         AddMemberModalComponent
     ],
     providers: [
-        ImpersonationService
+        ImpersonationService,
+        LeftMenuService
     ]
 })
 

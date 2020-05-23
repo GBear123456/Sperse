@@ -3,6 +3,7 @@
                   iconSrc="assets/common/icons/credit-card-icon.svg"
                   [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
+                  [showToggleLeftMenuButton]="false"
                   [showToggleCompactViewButton]="!_cfoService.hasStaticInstance"
                   (onToggleCompactView)="toggleCompactView()"
                   (onReload)="reload()">

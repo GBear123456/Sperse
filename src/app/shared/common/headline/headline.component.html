@@ -62,6 +62,10 @@
                 <div><span class="icon print" (click)="print()"></span></div>
                 <span class="text">{{ ls.l('PrintResultsPage') }}</span>
             </li>
+            <li *ngIf="showToggleLeftMenuButton">
+                <div><i class="icon left-menu" [ngClass]="toggleLeftMenuButtonIconClass$ | async" (click)="toggleLeftMenu()"></i></div>
+                <span class="text">{{ toggleLeftMenuButtonText$ | async }}</span>
+            </li>
         </ul>
     </div>
 </ng-template>

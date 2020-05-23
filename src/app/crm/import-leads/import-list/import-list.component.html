@@ -1,11 +1,12 @@
 <div [@routerTransition]>
     <crm-left-menu [selectedItemIndex]="2"></crm-left-menu>
-    <div class="margin-left">
+    <div class="margin-left" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
         <app-headline [names]="[ l('Import') ]"
                       icon="docs"
                       [buttons]="headlineButtons"
                       [showReloadButton]="ui.showReload"
                       [showToggleColumnSelectorButton]="true"
+                      [showToggleLeftMenuButton]="true"
                       (onReload)="invalidate()"
                       (onToggleColumnSelector)="toggleColumnChooser()">
             <import-progress-bar></import-progress-bar>

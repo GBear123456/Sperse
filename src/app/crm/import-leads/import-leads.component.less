@@ -38,7 +38,7 @@
             .dx-progressbar-container {
                 border: 1px solid #ddd;
                 height: 15px;
-            }    
+            }
         }
     }
 
@@ -50,14 +50,14 @@
         }
     }
 
-    import-wizard {
+    ::ng-deep import-wizard {
         margin: 0;
         height: 100%;
         max-width: 100% !important;
         position: absolute;
         top: 75px;
 
-        ::ng-deep h1 {
+        h1 {
             i {
                 position: relative;
                 top: 2px;
@@ -65,17 +65,21 @@
             }
         }
 
-        ::ng-deep .mat-horizontal-content-container {
+        .mat-horizontal-content-container {
             padding: 0 0 0 320px;
             transition: .5s;
         }
 
-        ::ng-deep .mat-horizontal-stepper-header-container {
+        &.leftMenuCollapsed .mat-horizontal-content-container {
+            padding-left: 0;
+        }
+
+        .mat-horizontal-stepper-header-container {
             background-color: #f3f7fa;
             border-bottom: 1px solid #dfdfdf;
         }
 
-        ::ng-deep .dx-checkbox-icon {
+        .dx-checkbox-icon {
             width: 18px;
             height: 18px;
         }

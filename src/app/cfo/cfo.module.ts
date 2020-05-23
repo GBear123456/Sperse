@@ -216,7 +216,15 @@ let COMPONENTS = [
         ContactServiceProxy,
         SyncServiceProxy,
         CalculatorService,
-        CalendarService
+        CalendarService,
+        {
+            provide: 'showToggleLeftMenuButton',
+            deps: [ CFOService ],
+            useFactory: (cfoService: CFOService) => {
+                return !cfoService.hasStaticInstance && !cfoService.isInstanceAdmin ||
+                    cfoService.isInstanceAdmin || cfoService.isMainInstanceType
+            }
+        }
     ]
 })
 

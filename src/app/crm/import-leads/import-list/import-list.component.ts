@@ -3,7 +3,7 @@ import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angul
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -14,6 +14,7 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from '../import-leads.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     templateUrl: './import-list.component.html',
@@ -36,11 +37,13 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
             label: this.l('AddNewImport')
         }
     ];
+    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
     constructor(injector: Injector,
         private importLeadsService: ImportLeadsService,
         private sizeFormatPipe: FileSizePipe,
-        private importProxy: ImportServiceProxy
+        private importProxy: ImportServiceProxy,
+        private leftMenuService: LeftMenuService
     ) {
         super(injector);
         this.dataSource = {

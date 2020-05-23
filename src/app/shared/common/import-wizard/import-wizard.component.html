@@ -5,13 +5,18 @@
     [width]="300"
     [visible]="false">
 </dx-progress-bar>
-<div *ngIf="showSteper">
+<div *ngIf="showSteper" [ngClass]="{ 'left-menu-collapsed': leftMenuCollapsed$ | async }">
     <h1><i class="{{icon}}"></i>{{title}}</h1>
     <div class="actions" [hidden]="selectedStepIndex == FINISH_STEP_INDEX">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
         <button class="button-layout button-primary" (click)="next()" [hidden]="isNextButtonHidden">{{selectedStepIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
         <div class="separator"></div>
         <button class="refresh-button"></button>
+    </div>
+    <div *ngIf="showLeftMenuToggleButton" class="actions toggle-left-menu">
+        <i *ngIf="leftMenuCollapsed$ | async; else hidePanelButton" class="dx-icon-showpanel" (click)="toggleLeftMenu()"></i>
+        <ng-template #hidePanelButton><i class="dx-icon-hidepanel" (click)="toggleLeftMenu()"></i></ng-template>
+        <div class="separator"></div>
     </div>
     <dx-context-menu [items]="selectModeItems"
                      (onItemClick)="selectionModeChanged($event)"

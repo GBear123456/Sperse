@@ -4,20 +4,21 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
+                  [showToggleLeftMenuButton]="true"
                   (onToggleFullScreen)="fullscreen()"
                   (onReload)="refreshList()">
         <synch-progress class="synch-progress"></synch-progress>
     </app-headline>
-    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [hidden]="toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper portlet light no-padding margin-bottom-0">
-        <cfo-left-menu [selectedItemIndex]="3" [collapsed]="filtersService.fixed"></cfo-left-menu>
+        <cfo-left-menu [selectedItemIndex]="3" [collapsed]="filterFixed$ | async"></cfo-left-menu>
         <div class="portlet-body">
             <dx-tree-list height="100%"
-                          [noDataText]="''"
+                          noDataText=""
                           [hoverStateEnabled]="true"
                           [dataSource]="ruleTreeListDataSource"
-                          [sorting]="{mode: 'none'}"
-                          [selection]="{allowSelectAll: false, mode: 'none'}"
+                          [sorting]="{ mode: 'none' }"
+                          [selection]="{ allowSelectAll: false, mode: 'none' }"
                           [autoExpandAll]="true"
                           [showColumnLines]="false"
                           [showRowLines]="true"
@@ -31,9 +32,9 @@
                     <dxo-popup [onShowing]="onShowingPopup" height="0px" width="0px"></dxo-popup>
                 </dxo-editing>
 
-                <dxi-column dataField="isActive" caption="{{l('Status')}}"></dxi-column>
-                <dxi-column dataField="name" caption="{{l('RuleName')}}"></dxi-column>
-                <dxi-column dataField="creationTime" caption="{{l('CreationDate')}}"></dxi-column>
+                <dxi-column dataField="isActive" [caption]="l('Status')"></dxi-column>
+                <dxi-column dataField="name" [caption]="l('RuleName')"></dxi-column>
+                <dxi-column dataField="creationTime" [caption]="l('CreationDate')"></dxi-column>
 
                 <dxi-column dataField="sortOrder" [visible]="false" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxi-column dataField="id" [visible]="false" [sortIndex]="1" sortOrder="asc"></dxi-column>

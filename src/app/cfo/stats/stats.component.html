@@ -4,7 +4,8 @@
               [showReloadButton]="ui.showReload"
               [showToggleToolbarButton]="true"
               (onReload)="reload()"
-              (onToggleToolbar)="toggleToolbar()">
+              (onToggleToolbar)="toggleToolbar()"
+              (onToggleLeftMenu)="calculateChartsSize()">
     <business-entities-chooser (onFilterButtonClick)="openBankAccountsSelectDialog()"></business-entities-chooser>
     <synch-progress class="synch-progress" (onComplete)="getUpdatedDataSource()"></synch-progress>
     <calendar-button></calendar-button>
@@ -18,8 +19,7 @@
         <cfo-left-menu [items]="leftSideBarItems"
                        [hidden]="filtersService.fixed"
                        [selectedItemIndex]="0"
-                       headerTitle=""
-                       (onToggle)="calculateChartsSize()">
+                       headerTitle="">
         </cfo-left-menu>
         <source-data [ngClass]="{'showen': showSourceData}"
                      (onClose)="hideSourceDataWidget()"

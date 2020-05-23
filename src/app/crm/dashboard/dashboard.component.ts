@@ -36,6 +36,7 @@ import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -62,6 +63,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
     hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
     localization = AppConsts.localization.CRMLocalizationSourceName;
+    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
     constructor(
         private router: Router,
@@ -76,6 +78,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         private lifeCycleSubject: LifecycleSubjectsService,
         private dashboardServiceProxy: DashboardServiceProxy,
         private activatedRoute: ActivatedRoute,
+        private leftMenuService: LeftMenuService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
         public cacheHelper: CacheHelper,
@@ -162,11 +165,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.loadStatus();
         this.lifeCycleSubject.activate.next();
         this.subscribeToRefreshParam();
-
-        if (this.clientsByRegion && this.clientsByRegion.mapComponent)
-            this.clientsByRegion.mapComponent.vectorMapComponent.instance.render();
-        if (this.totalsBySource && this.totalsBySource.chartComponent)
-            this.totalsBySource.chartComponent.instance.refresh();
+        this.refreshClientsByRegion();
+        this.refreshTotalsBySource();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -177,6 +177,21 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 filter(params => !!params['refresh'])
             )
             .subscribe(() => this.refresh() );
+    }
+
+    repaint() {
+        this.refreshClientsByRegion();
+        this.refreshTotalsBySource();
+    }
+
+    private refreshClientsByRegion() {
+        if (this.clientsByRegion && this.clientsByRegion.mapComponent)
+            setTimeout(() => this.clientsByRegion.mapComponent.vectorMapComponent.instance.render());
+    }
+
+    private refreshTotalsBySource() {
+        if (this.totalsBySource && this.totalsBySource.chartComponent)
+            setTimeout(() => this.totalsBySource.chartComponent.instance.refresh());
     }
 
     invalidate() {

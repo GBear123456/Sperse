@@ -2,13 +2,15 @@
               [text]="ls.ls(localization, 'statistics and reports')"
               icon="globe"
               [showReloadButton]="ui.showReload"
+              [showToggleLeftMenuButton]="true"
+              (onToggleLeftMenu)="repaint()"
               (onReload)="refresh()">
     <import-progress-bar></import-progress-bar>
     <calendar-button></calendar-button>
 </app-headline>
 <div [@routerTransition]>
   <crm-left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></crm-left-menu>
-  <div class="widgets-wrapper">
+  <div class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
       <div class="wrapper">
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">
               <div>

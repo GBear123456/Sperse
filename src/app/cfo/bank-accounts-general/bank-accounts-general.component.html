@@ -2,7 +2,9 @@
     <app-headline [names]="[ l('Setup_Title'), l('Accounts') ]"
                   iconSrc="assets/common/icons/magic-stick-icon.svg"
                   [showReloadButton]="ui.showReload"
-                  (onReload)="reload()">
+                  [showToggleLeftMenuButton]="true"
+                  (onReload)="reload()"
+                  (onToggleLeftMenu)="repaint()">
         <business-entities-chooser></business-entities-chooser>
         <synch-progress [showSyncAccountButton]="true"
                         class="synch-progress"
@@ -13,8 +15,7 @@
     </app-headline>
     <div class="content-wrap">
         <cfo-left-menu #leftMenu
-                       [selectedItemIndex]="0"
-                       (onToggle)="repaint()">
+                       [selectedItemIndex]="0">
         </cfo-left-menu>
         <div [ngClass]="{ 'frame-wrap': true, 'expanded': !leftMenu.collapsed }">
             <bank-accounts-component></bank-accounts-component>

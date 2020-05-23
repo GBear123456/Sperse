@@ -29,7 +29,6 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { ContactGroup } from '@shared/AppEnums';
-import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
 
 @Component({
@@ -58,7 +57,6 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private layoutService: LayoutService,
         private router: Router,
-        private calendarService: CalendarService,
         public ls: AppLocalizationService
     ) {}
 

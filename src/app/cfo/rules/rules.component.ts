@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
+import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -23,6 +24,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { AppService } from '@app/app.service';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -39,13 +41,16 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
     headlineButtons: HeadlineButton[] = [];
     toolbarConfig: ToolbarGroupModel[];
+    filterFixed$: Observable<boolean> = this.filtersService.fixedToggle$;
+    toolbarIsHidden$: Observable<boolean> = this.appService.toolbarIsHidden$;
 
     constructor(
         injector: Injector,
         private classificationService: ClassificationServiceProxy,
-        public appService: AppService,
-        public dialog: MatDialog,
-        public filtersService: FiltersService
+        private filtersService: FiltersService,
+        private appService: AppService,
+        private dialog: MatDialog,
+        private leftMenuService: LeftMenuService
     ) {
         super(injector);
         this.initToolbarConfig();
@@ -96,6 +101,9 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             this.ruleTreeListDataSource.filter(dataSourceFilters);
             this.ruleTreeListDataSource.load();
         });
+        this.filtersService.fixedToggle$.subscribe(() => {
+            this.leftMenuService.toggle();
+        })
     }
 
     ngAfterViewInit(): void {
@@ -104,7 +112,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             this.treeList.editing.allowDeleting = true;
             this.treeList.editing.allowUpdating = true;
             this.treeList.instance.refresh();
-
             this.headlineButtons.push({
                 enabled: true,
                 action: this.showEditDialog.bind(this),

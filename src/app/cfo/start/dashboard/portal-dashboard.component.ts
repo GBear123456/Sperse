@@ -61,7 +61,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.invalidate();
     }
 
-    toggleLeftMenu() {
+    refresh() {
         setTimeout(() => {
             let component: any = this.trendByPeriodComponent;
             if (component) {

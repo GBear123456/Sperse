@@ -20,8 +20,8 @@ import { takeUntil } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { LeftMenuItem } from './left-menu-item.interface';
-import { LeftMenuService } from '../../../cfo/shared/common/left-menu/left-menu.service';
-import { FullScreenService } from '../../../../shared/common/fullscreen/fullscreen.service';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -38,10 +38,8 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() items: LeftMenuItem[] = [];
     @Input() headerTitle: string;
     @Input() headerLink;
-    @Input() showToggleButton = AppConsts.isMobile;
     @Input() navigatePrefix = '';
     @Output() onItemClick: EventEmitter<LeftMenuItem> = new EventEmitter();
-    @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() collapsedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     private destroy: Subject<null> = new Subject<null>();
     private destroy$: Observable<null> = new Observable<null>();
@@ -54,15 +52,13 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {}
 
     ngOnInit() {
-        if (this.showToggleButton) {
-            this.leftMenuService.collapsed$
-                .pipe(takeUntil(this.destroy$))
-                .subscribe((collapsed: boolean) => {
-                    this.collapsed = collapsed;
-                    this.collapsedChange.emit(collapsed);
-                    this.changeDetectorRef.markForCheck();
-                });
-        }
+        this.leftMenuService.collapsed$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((collapsed: boolean) => {
+                this.collapsed = collapsed;
+                this.collapsedChange.emit(collapsed);
+                this.changeDetectorRef.markForCheck();
+            });
         this.fullScreenService.isFullScreenMode$
             .pipe(takeUntil(this.destroy$))
             .subscribe((isFullScreenMode: boolean) => {
@@ -101,11 +97,6 @@ export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
             { queryParams: { action: 'addNew' }}
         );
         e.stopPropagation();
-    }
-
-    toggle() {
-        this.leftMenuService.toggle();
-        this.onToggle.emit(!this.collapsed);
     }
 
     itemIsVisible(item: LeftMenuItem): Observable<boolean> {

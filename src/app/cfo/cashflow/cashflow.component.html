@@ -4,6 +4,7 @@
               [reloadIsNecessary]="noRefreshedAfterSync"
               [showReloadButton]="ui.showReload"
               [showToggleToolbarButton]="true"
+              [showToggleLeftMenuButton]="false"
               (onReload)="reload()"
               (onToggleToolbar)="toggleToolbar()">
     <business-entities-chooser (onChanged)="refreshDataGrid()"
