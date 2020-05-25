@@ -47,6 +47,9 @@
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [loadPanel]="{ enabled: false }"
+                                          [columnChooser]="{
+                                            height: rowsViewHeight
+                                          }"
                                           [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: false }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
@@ -172,6 +175,9 @@
                               [loadPanel]="{ enabled: false }"
                               [allowColumnReordering]="true"
                               [columnAutoWidth]="true"
+                              [columnChooser]="{
+                                height: rowsViewHeight
+                              }"
                               [pager]="defaultGridPagerConfig"
                               [hoverStateEnabled]="true"
                               [remoteOperations]="{

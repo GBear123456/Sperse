@@ -335,6 +335,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         filter(() => this.componentIsActivated)
     );
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    rowsViewHeight: number;
 
     constructor(
         injector: Injector,
@@ -554,6 +555,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     onContentReady(event) {
         this.setGridDataLoaded();
+        if (!this.rowsViewHeight)
+            this.rowsViewHeight = this.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
