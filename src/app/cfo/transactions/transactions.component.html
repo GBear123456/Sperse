@@ -98,29 +98,28 @@
                 <div class="transactions">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid id="gridContainer"
-                                  class="limitedPagerTotal main-component-view"
-                                  [ngClass]="{ showDataGridToolbar: showDataGridToolbar }"
-                                  [renderAsync]="true"
-                                  [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
-                                  [allowColumnReordering]="true"
-                                  [columnAutoWidth]="true"
-                                  [allowColumnResizing]="true"
-                                  [hoverStateEnabled]="true"
-                                  [cacheEnabled]="true"
-                                  [headerFilter]="{ allowSearch: true, visible: false }"
-                                  [pager]="defaultGridPagerConfig"
-                                  [loadPanel]="{ enabled: false }"
-                                  [height]="gridHeight"
-                                  [elementAttr]="{ class: 'with-custom-loader' }"
-                                  [remoteOperations]="{ filtering: true, grouping: true, groupPaging: true, paging: false, sorting: false, summary: false }"
-                                  (onOptionChanged)="onGridOptionChanged($event)"
-                                  (onContentReady)="onContentReady($event)"
-                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
-                                  (onSelectionChanged)="onSelectionChanged($event)"
-                                  (onCellClick)="onCellClick($event)"
-                                  (onCellPrepared)="onCellPrepared($event)"
-                                  (onToolbarPreparing)="onToolbarPreparing($event)"
-                                  (onInitialized)="onInitialized($event)">
+                        class="limitedPagerTotal main-component-view"
+                        [ngClass]="{ showDataGridToolbar: showDataGridToolbar }"
+                        [renderAsync]="true"
+                        [noDataText]="!dataGrid?.dataSource || dataSource?.isLoading() ? '' : l('NoData')"
+                        [allowColumnReordering]="true"
+                        [columnAutoWidth]="true"
+                        [allowColumnResizing]="true"
+                        [hoverStateEnabled]="true"
+                        [cacheEnabled]="true"
+                        [headerFilter]="{ allowSearch: true, visible: false }"
+                        [pager]="defaultGridPagerConfig"
+                        [loadPanel]="{ enabled: false }"
+                        [height]="gridHeight"
+                        [elementAttr]="{ class: 'with-custom-loader' }"
+                        (onOptionChanged)="onGridOptionChanged($event)"
+                        (onContentReady)="onContentReady($event)"
+                        (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                        (onSelectionChanged)="onSelectionChanged($event)"
+                        (onCellClick)="onCellClick($event)"
+                        (onCellPrepared)="onCellPrepared($event)"
+                        (onToolbarPreparing)="onToolbarPreparing($event)"
+                        (onInitialized)="onInitialized($event)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="multiple">
@@ -131,14 +130,16 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
                         <dxo-export [enabled]="false" [customizeExcelCell]="customizeExcelCell"></dxo-export>
+
                         <dxi-column dataField="Date"
-                                    dataType="date"
                                     cssClass="tabular"
                                     sortOrder="desc"
+                                    calculateSortValue="Date"
+                                    [renderAsync]="true"
                                     [caption]="l('Transactions_Date')"
-                                    cellTemplate="dateCell"
                                     [calculateDisplayValue]="calculateDateDisplayValue">
                         </dxi-column>
+
                         <dxi-column dataField="BusinessEntityId"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BusinessEntity')"
@@ -263,8 +264,6 @@
                         </dxi-column>
                         <dxi-column dataField="MonthYear"
                                     [caption]="l('Transactions_MonthYear')"
-                                    cellTemplate="dateMonthYear"
-                                    groupCellTemplate="dateMonthYear"
                                     calculateSortValue="Date"
                                     [renderAsync]="true"
                                     [calculateDisplayValue]="calculateMonthYearDisplayValue"
@@ -358,14 +357,6 @@
 
                         <div *dxTemplate="let data of 'CashFlowTypeNameTemplate'" [class]="'clipboard-holder ' + data.value.toLowerCase()">
                             {{data.value}}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.text }}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'dateMonthYear'" class="clipboard-holder">
-                            {{cellData.text }}
                         </div>
 
                         <div *dxTemplate="let data of 'startBalanceTotal'">
@@ -513,6 +504,7 @@
                                 </dx-tooltip>
                             </div>
                         </div>
+
                         <dxo-summary>
                             <dxi-group-item column="Id"
                                             summaryType="count"
