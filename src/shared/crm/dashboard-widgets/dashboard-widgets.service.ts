@@ -18,16 +18,19 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Injectable()
 export class DashboardWidgetsService  {
     public period$: Observable<PeriodModel> = this.calendarService.dateRange$.pipe(
-        map((dateRange: CalendarValuesModel) => dateRange.period
-            ? this.periodService.getDatePeriod(dateRange.period)
-            : {
-                from: moment(dateRange.from.value).startOf('day'),
-                to: moment(dateRange.to.value).startOf('day')
-            } as PeriodModel
+        map((dateRange: CalendarValuesModel) => {
+            return dateRange.period
+                    ? this.periodService.getDatePeriod(dateRange.period)
+                    : {
+                        from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
+                        to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to')
+                    } as PeriodModel
+            }
         )
     );
     private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
