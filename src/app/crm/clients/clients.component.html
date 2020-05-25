@@ -65,6 +65,9 @@
                                   [allowColumnResizing]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
+                                  [columnChooser]="{
+                                    height: rowsViewHeight
+                                  }"
                                   [pager]="defaultGridPagerConfig"
                                   [twoWayBindingEnabled]="false"
                                   [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"

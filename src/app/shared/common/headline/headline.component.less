@@ -56,7 +56,7 @@
             }
 
             & > * {
-                margin-left: 0px;
+                margin-left: 0;
             }
             ::ng-deep synch-progress {
                 margin: 0;
@@ -70,11 +70,12 @@
         border-right: 1px solid #dfdfdf;
         display: flex;
         align-items: center;
+
         .toggle-button {
             vertical-align: bottom;
             cursor: pointer;
             outline: none;
-            margin: 10px;
+            margin: 10px 15px;
             width: 42px;
             height: 42px;
             border: 1px solid #e6eaed;
@@ -207,6 +208,11 @@
         display: flex;
         align-items: center;
         padding-left: 10px;
+
+        @media all and (min-width: 768px) {
+            padding-left: 25px;
+        }
+
         .title-icon {
             margin-right: 10px;
         }
@@ -332,11 +338,16 @@
         }
 
         .reload-button-container {
-            padding: 0 10px;
+            padding: 0 15px;
             border-left: 1px solid #dfdfdf;
             height: 100%;
             display: flex;
             background-color: #f9fbfc;
+
+            @media all and (min-width: 768px) {
+                margin-left: 22px;
+            }
+
             button.reload {
                 outline: none;
             }

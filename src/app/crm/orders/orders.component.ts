@@ -71,6 +71,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
     stages = [];
     selectedOrderKeys = [];
+    rowsViewHeight: number;
 
     private _selectedOrders: any;
     get selectedOrders() {
@@ -908,6 +909,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     onContentReady(event) {
         this.setGridDataLoaded();
         this.totalCount = this.totalRowCount;
+        if (!this.rowsViewHeight)
+            this.rowsViewHeight = this.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

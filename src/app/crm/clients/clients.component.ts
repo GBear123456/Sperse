@@ -153,6 +153,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private subRouteParams: any;
     private dependencyChanged = false;
     private organizationUnits: OrganizationUnitDto[];
+    rowsViewHeight: number;
 
     formatting = AppConsts.formatting;
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
@@ -758,6 +759,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onContentReady(event) {
         this.setGridDataLoaded();
+        if (!this.rowsViewHeight)
+            this.rowsViewHeight = this.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

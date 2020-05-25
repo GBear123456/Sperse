@@ -68,6 +68,9 @@
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"
+                                [columnChooser]="{
+                                    height: rowsViewHeight
+                                }"
                                 [pager]="defaultGridPagerConfig"
                                 (onOptionChanged)="onGridOptionChanged($event)"
                                 (onContentReady)="onContentReady($event)"

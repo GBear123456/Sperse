@@ -133,6 +133,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly groupDataSourceURI = 'LeadSlice';
     private readonly dateField = 'LeadDate';
     private _selectedLeads: any;
+    rowsViewHeight: number;
     get selectedLeads() {
         return this._selectedLeads || [];
     }
@@ -799,6 +800,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 width: 40
             });
         }
+        if (!this.rowsViewHeight)
+            this.rowsViewHeight = this.getDataGridRowsViewHeight();
     }
 
     refresh(invalidateDashboard = true) {
