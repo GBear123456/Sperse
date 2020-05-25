@@ -183,14 +183,14 @@ export class TagsListComponent implements OnInit {
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
             if (this.isUpdateDeleteAllowed)
-                this.addActionButton('delete', $event.cellElement, (event) => {
+                this.addActionButton('delete', $event.cellElement, () => {
                     if ($event.data.hasOwnProperty('id'))
                         this.onRowRemoving($event);
                     else
                         $event.component.cancelEditData();
                 });
             if (this.filterModel && Number.isInteger($event.data.id))
-                this.addActionButton('filter', $event.cellElement, (event) => {
+                this.addActionButton('filter', $event.cellElement, () => {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;

@@ -40,7 +40,7 @@
                 [ngClass]="isManageAllowed() ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
-                    [texts]="{confirmDeleteMessage: ''}"
+                    [texts]="{ confirmDeleteMessage: '' }"
                     [allowUpdating]="true"
                     [allowDeleting]="isUpdateDeleteAllowed"
                     [allowAdding]="isManageAllowed()">
