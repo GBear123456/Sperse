@@ -213,11 +213,11 @@
                 margin-bottom: 0;
                 margin-top: 20px;
 
-                dx-text-box {
+                /*dx-text-box {
                     input {
                         text-align: right;
                     }
-                }
+                }*/
 
                 dx-text-box,
                 dx-select-box {
@@ -227,9 +227,8 @@
 
 
                 .alr {
-                    .dx-placeholder {
-                        right: 7px !important;
-                        left: auto !important;
+                    ::ng-deep .dx-texteditor-input {
+                        text-align: right !important;
                     }
                 }
 
@@ -578,9 +577,15 @@
         .dx-datagrid-headers {
             td {
                 padding: 14px 7px 0;
+                text-align: left !important;
+
+                &.total {
+                    text-align: right !important;
+                }
             }
+
             &, .dx-datagrid-content, td {
-                border: none!important;
+                border: none !important;
             }
             .dx-datagrid-text-content {
                 font-size: 13px;
