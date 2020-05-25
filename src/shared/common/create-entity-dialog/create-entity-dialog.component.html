@@ -30,16 +30,18 @@
             (onValueChanged)="onRatingChanged($event)">
     </rating>
     <types-list targetSelector="#PartnerTypesList"
-                    [hideButtons]="true"
-                    (onSelectedChanged)="onPartnerTypeChanged($event)">
+                [hideButtons]="true"
+                (onSelectedChanged)="onPartnerTypeChanged($event)">
     </types-list>
     <tags-list targetSelector="#ClientTags"
-                   [hideButtons]="true"
-                   (onSelectedChanged)="onTagsSelected($event)">
+               [hideButtons]="true"
+               [showSelection]="true"
+               (onSelectedChanged)="onTagsSelected($event)">
     </tags-list>
     <lists-list targetSelector="#ClientLists"
-                    [hideButtons]="true"
-                    (onSelectionChanged)="onListsSelected($event)">
+                [hideButtons]="true"
+                [showSelection]="true"
+                (onSelectionChanged)="onListsSelected($event)">
     </lists-list>
     <user-assignment-list
         targetSelector="#ClientAssign"

@@ -1118,7 +1118,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
 
             this.clearClassifiedFilter();
-            this.processFilterInternal();
         } else if (this.selectedCashflowCategoryKeys) {
             this.processFilterInternal();
         }
