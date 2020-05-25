@@ -200,8 +200,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     clearFilterIfSelected(selectedId) {
-        let modelItems = this.filterModel.items.element.value;
-        if (modelItems.length == 1 && modelItems[0] == selectedId)  {
+        let modelItems = this.filterModel && this.filterModel.items.element.value;
+        if (modelItems && modelItems.length == 1 && modelItems[0] == selectedId)  {
             this.clearFiltersHighlight();
             this.filterModel.items.element.value = [];
         }
