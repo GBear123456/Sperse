@@ -1,7 +1,7 @@
 <modal-dialog [title]="title"
               [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
-        <div *ngIf="currentStep == generateReportSteps.Step1" class="step1-container">
+        <div *ngIf="currentStep == generateReportSteps.BusinessEntities" class="businessEntities-container">
             <dx-tree-list keyExpr="id"
                           parentIdExpr="parentId"
                           [autoExpandAll]="true"
@@ -16,7 +16,7 @@
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
             </dx-tree-list>
         </div>
-        <div *ngIf="currentStep == generateReportSteps.Step2" class="step2-container">
+        <div *ngIf="currentStep == generateReportSteps.Departments" class="departments-container">
             <dx-list width="100%"
                 selectionMode="multiple"
                 selectAllMode="allPages"
@@ -26,10 +26,10 @@
                 (onInitialized)="onInitialized($event)">
             </dx-list>
         </div>
-        <div *ngIf="currentStep == generateReportSteps.Step3" class="step3-container">
+        <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
             <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
         </div>
-        <div *ngIf="currentStep == generateReportSteps.Step4" class="step4-container">
+        <div *ngIf="currentStep == generateReportSteps.Final" class="final-container">
             <div class="container">
                 <div class="row">
                     <div class="text-left">{{ ls.l('Reports_ReportsGrouping') }}</div>
@@ -50,7 +50,7 @@
                         <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
                         <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
-                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Step3)" [class.disabled]="generatingStarted"></i>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
                 </div>
                 <div class="row business-entities">
@@ -60,7 +60,7 @@
                             <li *ngFor="let entity of selectedBusinessEntities$ | async">{{ entity.name }}</li>
                         </ul>
                         <ng-template #all>{{ ls.l('All') }}</ng-template>
-                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Step1)" [class.disabled]="generatingStarted">&nbsp;</i>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.BusinessEntities)" [class.disabled]="generatingStarted">&nbsp;</i>
                     </div>
                 </div>
                 <div class="row business-entities" *ngIf="departmentsEntities.length > 1">
@@ -70,7 +70,7 @@
                             <li *ngFor="let entity of selectedDepartments">{{ entity }}</li>
                         </ul>
                         <ng-template #all>{{ ls.l('All') }}</ng-template>
-                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Step2)" [class.disabled]="generatingStarted">&nbsp;</i>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Departments)" [class.disabled]="generatingStarted">&nbsp;</i>
                     </div>
                 </div>
                 <ng-container *ngIf="!cfoService.isMainInstanceType">

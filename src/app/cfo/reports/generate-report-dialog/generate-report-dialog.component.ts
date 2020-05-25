@@ -65,7 +65,7 @@ export class GenerateReportDialogComponent implements OnInit {
     selectedDepartments: string[] = [];
     noDepartmentItem = this.ls.l('NoDepartment');
     buttons: IDialogButton[] = this.initButtons;
-    currentStep = GenerateReportStep.Step1;
+    currentStep = GenerateReportStep.BusinessEntities;
     generateReportSteps = GenerateReportStep;
     selectedBusinessEntityIds: any = [];
     selectedBusinessEntities$ = this.bankAccountsService.businessEntities$.pipe(
@@ -165,7 +165,7 @@ export class GenerateReportDialogComponent implements OnInit {
 
     private prev() {
         this.currentStep--;
-        if (this.currentStep == GenerateReportStep.Step2
+        if (this.currentStep == GenerateReportStep.Departments
             && this.departmentsEntities.length <= 1
         ) this.currentStep--;
         this.processStep();
@@ -173,12 +173,12 @@ export class GenerateReportDialogComponent implements OnInit {
 
     private next() {
         this.currentStep++;
-        if (this.currentStep == GenerateReportStep.Step2) {
+        if (this.currentStep == GenerateReportStep.Departments) {
             this.applyBusinessEntity();
             if (this.departmentsEntities.length <= 1)
                 this.currentStep++;
         }
-        if (this.currentStep == GenerateReportStep.Step4) {
+        if (this.currentStep == GenerateReportStep.Final) {
             this.applyDateRange();
         }
         this.processStep();
@@ -186,16 +186,16 @@ export class GenerateReportDialogComponent implements OnInit {
 
     private processStep() {
         this.buttons = this.initButtons;
-        if (this.currentStep == GenerateReportStep.Step1) {
+        if (this.currentStep == GenerateReportStep.BusinessEntities) {
             this.title = this.ls.l('SelectBusinessEntity');
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
-        } else if (this.currentStep == GenerateReportStep.Step2) {
+        } else if (this.currentStep == GenerateReportStep.Departments) {
             this.title = this.ls.l('SelectDepartments');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
-        } else if (this.currentStep == GenerateReportStep.Step3) {
+        } else if (this.currentStep == GenerateReportStep.Calendar) {
             this.title = this.ls.l('SelectDateRange');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
-        } else if (this.currentStep == GenerateReportStep.Step4) {
+        } else if (this.currentStep == GenerateReportStep.Final) {
             this.title = this.ls.l('ReportGenerationOptions');
             this.buttons = null;
         }
@@ -280,7 +280,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     onSelectionChanged(event) {
-        if (this.currentStep === GenerateReportStep.Step1) {
+        if (this.currentStep === GenerateReportStep.BusinessEntities) {
             this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
         }
     }
