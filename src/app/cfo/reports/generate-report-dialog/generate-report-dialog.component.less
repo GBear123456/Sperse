@@ -1,7 +1,7 @@
 :host {
     height: calc(100% - 85px);
     display: block;
-    .businessEntities-container, .departments-container, .calendar-container {
+    .businessEntities-container, .departments-container, .calendar-container, .reportTemplate-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
 
@@ -34,6 +34,18 @@
         ::ng-deep dx-list {
             .dx-list-select-all-label {
                 line-height: 24px;
+            }
+        }
+    }
+
+    .reportTemplate-container {
+        ::ng-deep .dx-radiobutton {
+            padding: 5px 0px;
+
+            .dx-item-content {
+                font-size: 16px;
+                font-weight: 400;
+                color: black;
             }
         }
     }

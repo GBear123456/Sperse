@@ -18,13 +18,18 @@
         </div>
         <div *ngIf="currentStep == generateReportSteps.Departments" class="departments-container">
             <dx-list width="100%"
-                selectionMode="multiple"
-                selectAllMode="allPages"
-                [(selectedItems)]="selectedDepartments"
-                [showSelectionControls]="true"
-                [items]="departmentsEntities"
-                (onInitialized)="onInitialized($event)">
+                     selectionMode="multiple"
+                     selectAllMode="allPages"
+                     [(selectedItems)]="selectedDepartments"
+                     [showSelectionControls]="true"
+                     [items]="departmentsEntities"
+                     (onInitialized)="onInitialized($event)">
             </dx-list>
+        </div>
+        <div *ngIf="currentStep == generateReportSteps.ReportTemplate" class="reportTemplate-container">
+            <dx-radio-group [(value)]="reportTemplate"
+                            [items]="reportTemplateItems">
+            </dx-radio-group>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
             <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
@@ -42,6 +47,13 @@
                                         name="isSeparateGrouping"
                                         [(value)]="isSeparateGrouping">
                         </dx-radio-group>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-left">{{ ls.l('Reports_ReportTemplate') }}</div>
+                    <div class="text-right">
+                        {{ reportTemplate }}
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.ReportTemplate)" [class.disabled]="generatingStarted">&nbsp;</i>
                     </div>
                 </div>
                 <div class="row date-range">
