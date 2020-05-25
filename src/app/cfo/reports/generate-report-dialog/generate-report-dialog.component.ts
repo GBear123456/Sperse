@@ -134,6 +134,7 @@ export class GenerateReportDialogComponent implements OnInit {
      */
     private getGenerateInput(currencyId: string, businessEntityIds: number[], departments: string[]): GenerateInput {
         return new GenerateInput({
+            reportTemplate: null,
             from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
             to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
             period: this.data.period,

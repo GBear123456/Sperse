@@ -62,7 +62,6 @@ import {
     LeadServiceProxy,
     OrganizationUnitDto,
     PipelineDto,
-    DeleteContactLeadOutput,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -1527,7 +1526,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.permission.isGranted(AppPermissions.CRMForceDeleteEntites));
     }
 
-    private getDeleteMethod(selectedIds: number[], forceDelete): Observable<DeleteContactLeadOutput> {
+    private getDeleteMethod(selectedIds: number[], forceDelete): Observable<void> {
         return selectedIds.length > 1 ?
             this.leadService.deleteLeads(forceDelete, selectedIds) :
             this.leadService.deleteLead(selectedIds[0], forceDelete);

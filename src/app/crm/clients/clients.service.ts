@@ -49,7 +49,8 @@ export class ClientService {
     private updateContactStatusesInternal(contactIds: number[], statusId: string, callback: (() => void)) {
         this.contactServiceProxy.updateContactStatuses(new UpdateContactStatusesInput({
             contactIds: contactIds,
-            statusId: statusId
+            statusId: statusId,
+            notifyUsers: false
         })).subscribe(() => {
             this.notify.success(this.appLocalizationService.ls(this.crmLocalizationSourceName, 'StatusSuccessfullyUpdated'));
             callback();
