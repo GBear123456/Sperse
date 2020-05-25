@@ -33,6 +33,7 @@ export class TagsListComponent implements OnInit {
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() managePermission = AppPermissions.CRMCustomersManage;
+    @Input() showSelection = false;
     @Input() set selectedItems(value) {
         this.selectedTags = value;
     }
@@ -183,7 +184,6 @@ export class TagsListComponent implements OnInit {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
             if (this.isUpdateDeleteAllowed)
                 this.addActionButton('delete', $event.cellElement, (event) => {
-                    console.log($event, event);
                     if ($event.data.hasOwnProperty('id'))
                         this.onRowRemoving($event);
                     else
@@ -207,8 +207,8 @@ export class TagsListComponent implements OnInit {
     }
 
     clearFilterIfSelected(selectedId) {
-        let modelItems = this.filterModel.items.element.value;
-        if (modelItems.length == 1 && modelItems[0] == selectedId)  {
+        let modelItems = this.filterModel && this.filterModel.items.element.value;
+        if (modelItems && modelItems.length == 1 && modelItems[0] == selectedId)  {
             this.clearFiltersHighlight();
             this.filterModel.items.element.value = [];
         }
@@ -359,8 +359,7 @@ export class TagsListComponent implements OnInit {
     }
 
     highlightSelectedFilters() {
-        let filterIds = this.filterModel &&
-            this.filterModel.items.element.value;
+        let filterIds = this.filterModel && this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             filterIds.forEach((id) => {
@@ -383,7 +382,7 @@ export class TagsListComponent implements OnInit {
 
     isManageAllowed() {
         let selected = this.selectedKeys.length;
-        return selected && this.permissionChecker.isGranted(this.managePermission) &&
-            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates)));
+        return this.showSelection || (selected && this.permissionChecker.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates))));
     }
 }
