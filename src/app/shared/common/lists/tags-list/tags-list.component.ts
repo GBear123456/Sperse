@@ -33,6 +33,7 @@ export class TagsListComponent implements OnInit {
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() managePermission = AppPermissions.CRMCustomersManage;
+    @Input() showSelection = false;
     @Input() set selectedItems(value) {
         this.selectedTags = value;
     }
@@ -381,7 +382,7 @@ export class TagsListComponent implements OnInit {
 
     isManageAllowed() {
         let selected = this.selectedKeys.length;
-        return selected && this.permissionChecker.isGranted(this.managePermission) &&
-            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates)));
+        return this.showSelection || (selected && this.permissionChecker.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates))));
     }
 }

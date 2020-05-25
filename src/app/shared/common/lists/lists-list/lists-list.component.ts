@@ -29,6 +29,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() targetSelector = '[aria-label=\'Lists\']';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
+    @Input() showSelection = false;
     @Input() set selectedItems(value) {
         this.selectedLists = value;
     }
@@ -374,7 +375,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     isManageAllowed() {
         let selected = this.selectedKeys.length;
-        return selected && this.permission.isGranted(this.managePermission) &&
-            (selected == 1 || (this.bulkUpdateMode && this.permission.isGranted(AppPermissions.CRMBulkUpdates)));
+        return this.showSelection || (selected && this.permission.isGranted(this.managePermission) &&
+            (selected == 1 || (this.bulkUpdateMode && this.permission.isGranted(AppPermissions.CRMBulkUpdates))));
     }
 }
