@@ -7474,6 +7474,58 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    mergeContact(body: MergeContactInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/MergeContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMergeContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMergeContact(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMergeContact(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @forceDelete (optional) 
      * @return Success
@@ -44929,6 +44981,265 @@ export interface ICreateOrUpdateContactOutput {
     userKey: string | undefined;
     userEmailAddress: string | undefined;
     autoLoginLink: string | undefined;
+}
+
+export enum PreferredProperties {
+    FullName = "FullName", 
+    ContactDate = "ContactDate", 
+}
+
+export class ContactMergeOptions implements IContactMergeOptions {
+    emailIdsToIgnore!: number[] | undefined;
+    phoneIdsToIgnore!: number[] | undefined;
+    addressIdsToIgnore!: number[] | undefined;
+    preferredProperties!: PreferredProperties | undefined;
+
+    constructor(data?: IContactMergeOptions) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["emailIdsToIgnore"] && data["emailIdsToIgnore"].constructor === Array) {
+                this.emailIdsToIgnore = [];
+                for (let item of data["emailIdsToIgnore"])
+                    this.emailIdsToIgnore.push(item);
+            }
+            if (data["phoneIdsToIgnore"] && data["phoneIdsToIgnore"].constructor === Array) {
+                this.phoneIdsToIgnore = [];
+                for (let item of data["phoneIdsToIgnore"])
+                    this.phoneIdsToIgnore.push(item);
+            }
+            if (data["addressIdsToIgnore"] && data["addressIdsToIgnore"].constructor === Array) {
+                this.addressIdsToIgnore = [];
+                for (let item of data["addressIdsToIgnore"])
+                    this.addressIdsToIgnore.push(item);
+            }
+            this.preferredProperties = data["preferredProperties"];
+        }
+    }
+
+    static fromJS(data: any): ContactMergeOptions {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactMergeOptions();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.emailIdsToIgnore && this.emailIdsToIgnore.constructor === Array) {
+            data["emailIdsToIgnore"] = [];
+            for (let item of this.emailIdsToIgnore)
+                data["emailIdsToIgnore"].push(item);
+        }
+        if (this.phoneIdsToIgnore && this.phoneIdsToIgnore.constructor === Array) {
+            data["phoneIdsToIgnore"] = [];
+            for (let item of this.phoneIdsToIgnore)
+                data["phoneIdsToIgnore"].push(item);
+        }
+        if (this.addressIdsToIgnore && this.addressIdsToIgnore.constructor === Array) {
+            data["addressIdsToIgnore"] = [];
+            for (let item of this.addressIdsToIgnore)
+                data["addressIdsToIgnore"].push(item);
+        }
+        data["preferredProperties"] = this.preferredProperties;
+        return data; 
+    }
+}
+
+export interface IContactMergeOptions {
+    emailIdsToIgnore: number[] | undefined;
+    phoneIdsToIgnore: number[] | undefined;
+    addressIdsToIgnore: number[] | undefined;
+    preferredProperties: PreferredProperties | undefined;
+}
+
+export class TargetContactMergeOptions implements ITargetContactMergeOptions {
+    emailIdsToRemove!: number[] | undefined;
+    phoneIdsToRemove!: number[] | undefined;
+    addressIdsToRemove!: number[] | undefined;
+
+    constructor(data?: ITargetContactMergeOptions) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["emailIdsToRemove"] && data["emailIdsToRemove"].constructor === Array) {
+                this.emailIdsToRemove = [];
+                for (let item of data["emailIdsToRemove"])
+                    this.emailIdsToRemove.push(item);
+            }
+            if (data["phoneIdsToRemove"] && data["phoneIdsToRemove"].constructor === Array) {
+                this.phoneIdsToRemove = [];
+                for (let item of data["phoneIdsToRemove"])
+                    this.phoneIdsToRemove.push(item);
+            }
+            if (data["addressIdsToRemove"] && data["addressIdsToRemove"].constructor === Array) {
+                this.addressIdsToRemove = [];
+                for (let item of data["addressIdsToRemove"])
+                    this.addressIdsToRemove.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): TargetContactMergeOptions {
+        data = typeof data === 'object' ? data : {};
+        let result = new TargetContactMergeOptions();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.emailIdsToRemove && this.emailIdsToRemove.constructor === Array) {
+            data["emailIdsToRemove"] = [];
+            for (let item of this.emailIdsToRemove)
+                data["emailIdsToRemove"].push(item);
+        }
+        if (this.phoneIdsToRemove && this.phoneIdsToRemove.constructor === Array) {
+            data["phoneIdsToRemove"] = [];
+            for (let item of this.phoneIdsToRemove)
+                data["phoneIdsToRemove"].push(item);
+        }
+        if (this.addressIdsToRemove && this.addressIdsToRemove.constructor === Array) {
+            data["addressIdsToRemove"] = [];
+            for (let item of this.addressIdsToRemove)
+                data["addressIdsToRemove"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ITargetContactMergeOptions {
+    emailIdsToRemove: number[] | undefined;
+    phoneIdsToRemove: number[] | undefined;
+    addressIdsToRemove: number[] | undefined;
+}
+
+export class PrimaryContactInfo implements IPrimaryContactInfo {
+    primaryEmailId!: number | undefined;
+    primaryPhoneId!: number | undefined;
+    primaryAddressId!: number | undefined;
+
+    constructor(data?: IPrimaryContactInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.primaryEmailId = data["primaryEmailId"];
+            this.primaryPhoneId = data["primaryPhoneId"];
+            this.primaryAddressId = data["primaryAddressId"];
+        }
+    }
+
+    static fromJS(data: any): PrimaryContactInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PrimaryContactInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["primaryEmailId"] = this.primaryEmailId;
+        data["primaryPhoneId"] = this.primaryPhoneId;
+        data["primaryAddressId"] = this.primaryAddressId;
+        return data; 
+    }
+}
+
+export interface IPrimaryContactInfo {
+    primaryEmailId: number | undefined;
+    primaryPhoneId: number | undefined;
+    primaryAddressId: number | undefined;
+}
+
+export enum MergeLeadMode {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export class MergeContactInput implements IMergeContactInput {
+    contactId!: number | undefined;
+    contactLeadId!: number | undefined;
+    contactMergeOptions!: ContactMergeOptions | undefined;
+    targetContactId!: number | undefined;
+    targetContactLeadId!: number | undefined;
+    targetContactMergeOptions!: TargetContactMergeOptions | undefined;
+    primaryContactInfo!: PrimaryContactInfo | undefined;
+    mergeLeadMode!: MergeLeadMode | undefined;
+
+    constructor(data?: IMergeContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.contactLeadId = data["contactLeadId"];
+            this.contactMergeOptions = data["contactMergeOptions"] ? ContactMergeOptions.fromJS(data["contactMergeOptions"]) : <any>undefined;
+            this.targetContactId = data["targetContactId"];
+            this.targetContactLeadId = data["targetContactLeadId"];
+            this.targetContactMergeOptions = data["targetContactMergeOptions"] ? TargetContactMergeOptions.fromJS(data["targetContactMergeOptions"]) : <any>undefined;
+            this.primaryContactInfo = data["primaryContactInfo"] ? PrimaryContactInfo.fromJS(data["primaryContactInfo"]) : <any>undefined;
+            this.mergeLeadMode = data["mergeLeadMode"];
+        }
+    }
+
+    static fromJS(data: any): MergeContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MergeContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["contactLeadId"] = this.contactLeadId;
+        data["contactMergeOptions"] = this.contactMergeOptions ? this.contactMergeOptions.toJSON() : <any>undefined;
+        data["targetContactId"] = this.targetContactId;
+        data["targetContactLeadId"] = this.targetContactLeadId;
+        data["targetContactMergeOptions"] = this.targetContactMergeOptions ? this.targetContactMergeOptions.toJSON() : <any>undefined;
+        data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
+        data["mergeLeadMode"] = this.mergeLeadMode;
+        return data; 
+    }
+}
+
+export interface IMergeContactInput {
+    contactId: number | undefined;
+    contactLeadId: number | undefined;
+    contactMergeOptions: ContactMergeOptions | undefined;
+    targetContactId: number | undefined;
+    targetContactLeadId: number | undefined;
+    targetContactMergeOptions: TargetContactMergeOptions | undefined;
+    primaryContactInfo: PrimaryContactInfo | undefined;
+    mergeLeadMode: MergeLeadMode | undefined;
 }
 
 export class SimilarContactOutput implements ISimilarContactOutput {
