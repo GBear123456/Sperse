@@ -7414,7 +7414,7 @@ export class ContactServiceProxy {
      * @forceDelete (optional) 
      * @return Success
      */
-    deleteContact(id: number | null | undefined, forceDelete: boolean | null | undefined): Observable<DeleteContactLeadOutput> {
+    deleteContact(id: number | null | undefined, forceDelete: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/DeleteContact?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
@@ -7427,7 +7427,6 @@ export class ContactServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -7438,14 +7437,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processDeleteContact(<any>response_);
                 } catch (e) {
-                    return <Observable<DeleteContactLeadOutput>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<DeleteContactLeadOutput>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDeleteContact(response: HttpResponseBase): Observable<DeleteContactLeadOutput> {
+    protected processDeleteContact(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7454,17 +7453,14 @@ export class ContactServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DeleteContactLeadOutput.fromJS(resultData200) : new DeleteContactLeadOutput();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DeleteContactLeadOutput>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -18292,7 +18288,7 @@ export class LeadServiceProxy {
      * @forceDelete (optional) 
      * @return Success
      */
-    deleteLead(leadId: number | null | undefined, forceDelete: boolean | null | undefined): Observable<DeleteContactLeadOutput> {
+    deleteLead(leadId: number | null | undefined, forceDelete: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLead?";
         if (leadId !== undefined)
             url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
@@ -18305,7 +18301,6 @@ export class LeadServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -18316,14 +18311,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processDeleteLead(<any>response_);
                 } catch (e) {
-                    return <Observable<DeleteContactLeadOutput>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<DeleteContactLeadOutput>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDeleteLead(response: HttpResponseBase): Observable<DeleteContactLeadOutput> {
+    protected processDeleteLead(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18332,17 +18327,14 @@ export class LeadServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DeleteContactLeadOutput.fromJS(resultData200) : new DeleteContactLeadOutput();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DeleteContactLeadOutput>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -18350,7 +18342,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    deleteLeads(forceDelete: boolean | null | undefined, body: number[] | null | undefined): Observable<DeleteContactLeadOutput> {
+    deleteLeads(forceDelete: boolean | null | undefined, body: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLeads?";
         if (forceDelete !== undefined)
             url_ += "forceDelete=" + encodeURIComponent("" + forceDelete) + "&"; 
@@ -18364,7 +18356,6 @@ export class LeadServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -18375,14 +18366,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processDeleteLeads(<any>response_);
                 } catch (e) {
-                    return <Observable<DeleteContactLeadOutput>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<DeleteContactLeadOutput>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDeleteLeads(response: HttpResponseBase): Observable<DeleteContactLeadOutput> {
+    protected processDeleteLeads(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18391,17 +18382,14 @@ export class LeadServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DeleteContactLeadOutput.fromJS(resultData200) : new DeleteContactLeadOutput();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DeleteContactLeadOutput>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -40252,6 +40240,7 @@ export interface IGetCategoryTreeOutput {
 
 export enum ReportTemplate {
     Personal = "Personal", 
+    Suspense = "Suspense", 
 }
 
 export class ReportSectionDto implements IReportSectionDto {
@@ -44522,74 +44511,6 @@ export interface ICreateOrUpdateContactOutput {
     autoLoginLink: string | undefined;
 }
 
-export class DeleteContactLeadOutput implements IDeleteContactLeadOutput {
-    leadErrors!: { [key: string] : string[]; } | undefined;
-    contactErrors!: { [key: string] : string[]; } | undefined;
-    success!: boolean | undefined;
-
-    constructor(data?: IDeleteContactLeadOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["leadErrors"]) {
-                this.leadErrors = {};
-                for (let key in data["leadErrors"]) {
-                    if (data["leadErrors"].hasOwnProperty(key))
-                        this.leadErrors[key] = data["leadErrors"][key];
-                }
-            }
-            if (data["contactErrors"]) {
-                this.contactErrors = {};
-                for (let key in data["contactErrors"]) {
-                    if (data["contactErrors"].hasOwnProperty(key))
-                        this.contactErrors[key] = data["contactErrors"][key];
-                }
-            }
-            this.success = data["success"];
-        }
-    }
-
-    static fromJS(data: any): DeleteContactLeadOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new DeleteContactLeadOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.leadErrors) {
-            data["leadErrors"] = {};
-            for (let key in this.leadErrors) {
-                if (this.leadErrors.hasOwnProperty(key))
-                    data["leadErrors"][key] = this.leadErrors[key];
-            }
-        }
-        if (this.contactErrors) {
-            data["contactErrors"] = {};
-            for (let key in this.contactErrors) {
-                if (this.contactErrors.hasOwnProperty(key))
-                    data["contactErrors"][key] = this.contactErrors[key];
-            }
-        }
-        data["success"] = this.success;
-        return data; 
-    }
-}
-
-export interface IDeleteContactLeadOutput {
-    leadErrors: { [key: string] : string[]; } | undefined;
-    contactErrors: { [key: string] : string[]; } | undefined;
-    success: boolean | undefined;
-}
-
 export class SimilarContactOutput implements ISimilarContactOutput {
     id!: number | undefined;
     name!: string | undefined;
@@ -44817,6 +44738,7 @@ export interface IEntityContactInfo {
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     contactId!: number;
     statusId!: string;
+    notifyUser!: boolean | undefined;
 
     constructor(data?: IUpdateContactStatusInput) {
         if (data) {
@@ -44831,6 +44753,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         if (data) {
             this.contactId = data["contactId"];
             this.statusId = data["statusId"];
+            this.notifyUser = data["notifyUser"];
         }
     }
 
@@ -44845,6 +44768,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["statusId"] = this.statusId;
+        data["notifyUser"] = this.notifyUser;
         return data; 
     }
 }
@@ -44852,11 +44776,13 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
 export interface IUpdateContactStatusInput {
     contactId: number;
     statusId: string;
+    notifyUser: boolean | undefined;
 }
 
 export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
     contactIds!: number[];
     statusId!: string;
+    notifyUsers!: boolean | undefined;
 
     constructor(data?: IUpdateContactStatusesInput) {
         if (data) {
@@ -44878,6 +44804,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                     this.contactIds.push(item);
             }
             this.statusId = data["statusId"];
+            this.notifyUsers = data["notifyUsers"];
         }
     }
 
@@ -44896,6 +44823,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                 data["contactIds"].push(item);
         }
         data["statusId"] = this.statusId;
+        data["notifyUsers"] = this.notifyUsers;
         return data; 
     }
 }
@@ -44903,6 +44831,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
 export interface IUpdateContactStatusesInput {
     contactIds: number[];
     statusId: string;
+    notifyUsers: boolean | undefined;
 }
 
 export class ContactGroupDto implements IContactGroupDto {
@@ -56423,7 +56352,6 @@ export interface IPackageInfoDto {
 }
 
 export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
-    leadRequestXref!: string | undefined;
     companyName!: string | undefined;
     paymentPeriodType!: PaymentPeriodType | undefined;
     packages!: PackageInfoDto[] | undefined;
@@ -56432,6 +56360,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     state!: string | undefined;
     stage!: string | undefined;
     tag!: string | undefined;
+    leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
     email!: string;
@@ -56454,7 +56383,6 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 
     init(data?: any) {
         if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
             this.companyName = data["companyName"];
             this.paymentPeriodType = data["paymentPeriodType"];
             if (data["packages"] && data["packages"].constructor === Array) {
@@ -56467,6 +56395,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
             this.state = data["state"];
             this.stage = data["stage"];
             this.tag = data["tag"];
+            this.leadRequestXref = data["leadRequestXref"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
@@ -56489,7 +56418,6 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
         data["companyName"] = this.companyName;
         data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.packages && this.packages.constructor === Array) {
@@ -56502,6 +56430,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
         data["state"] = this.state;
         data["stage"] = this.stage;
         data["tag"] = this.tag;
+        data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -56517,7 +56446,6 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 }
 
 export interface ISubmitTenancyRequestInput {
-    leadRequestXref: string | undefined;
     companyName: string | undefined;
     paymentPeriodType: PaymentPeriodType | undefined;
     packages: PackageInfoDto[] | undefined;
@@ -56526,6 +56454,7 @@ export interface ISubmitTenancyRequestInput {
     state: string | undefined;
     stage: string | undefined;
     tag: string | undefined;
+    leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
     email: string;
@@ -56623,13 +56552,19 @@ export interface ISubmitFreeTrialRequestInput {
 }
 
 export class SubmitClientRequestInput implements ISubmitClientRequestInput {
-    accountName!: string | undefined;
-    leadRequestXref!: string | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
+    stateName!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     zip!: string | undefined;
+    customField1!: string | undefined;
+    customField2!: string | undefined;
+    customField3!: string | undefined;
+    customField4!: string | undefined;
+    customField5!: string | undefined;
+    leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
     email!: string;
@@ -56652,13 +56587,19 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 
     init(data?: any) {
         if (data) {
-            this.accountName = data["accountName"];
-            this.leadRequestXref = data["leadRequestXref"];
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.zip = data["zip"];
+            this.customField1 = data["customField1"];
+            this.customField2 = data["customField2"];
+            this.customField3 = data["customField3"];
+            this.customField4 = data["customField4"];
+            this.customField5 = data["customField5"];
+            this.leadRequestXref = data["leadRequestXref"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
@@ -56681,13 +56622,19 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["accountName"] = this.accountName;
-        data["leadRequestXref"] = this.leadRequestXref;
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["zip"] = this.zip;
+        data["customField1"] = this.customField1;
+        data["customField2"] = this.customField2;
+        data["customField3"] = this.customField3;
+        data["customField4"] = this.customField4;
+        data["customField5"] = this.customField5;
+        data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -56703,13 +56650,19 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 }
 
 export interface ISubmitClientRequestInput {
-    accountName: string | undefined;
-    leadRequestXref: string | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
+    stateName: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     zip: string | undefined;
+    customField1: string | undefined;
+    customField2: string | undefined;
+    customField3: string | undefined;
+    customField4: string | undefined;
+    customField5: string | undefined;
+    leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
     email: string;
@@ -64787,6 +64740,7 @@ export interface ISendReportNotificationInput {
 }
 
 export class GenerateInput implements IGenerateInput {
+    reportTemplate!: ReportTemplate | undefined;
     from!: moment.Moment;
     to!: moment.Moment;
     period!: ReportPeriod;
@@ -64807,6 +64761,7 @@ export class GenerateInput implements IGenerateInput {
 
     init(data?: any) {
         if (data) {
+            this.reportTemplate = data["reportTemplate"];
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
@@ -64839,6 +64794,7 @@ export class GenerateInput implements IGenerateInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["reportTemplate"] = this.reportTemplate;
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
@@ -64864,6 +64820,7 @@ export class GenerateInput implements IGenerateInput {
 }
 
 export interface IGenerateInput {
+    reportTemplate: ReportTemplate | undefined;
     from: moment.Moment;
     to: moment.Moment;
     period: ReportPeriod;

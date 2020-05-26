@@ -1,6 +1,7 @@
 export enum GenerateReportStep {
-    Step1 = 1,
-    Step2 = 2,
-    Step3 = 3,
-    Step4 = 4
+    BusinessEntities = 1,
+    Departments = 2,
+    ReportTemplate = 3,
+    Calendar = 4,
+    Final = 5
 }

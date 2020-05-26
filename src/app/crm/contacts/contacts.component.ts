@@ -585,7 +585,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private updateStatusInternal(statusId: string) {
         return this.contactService.updateContactStatus(new UpdateContactStatusInput({
             contactId: this.contactInfo.id,
-            statusId: statusId
+            statusId: statusId,
+            notifyUser: false
         }));
     }
 
