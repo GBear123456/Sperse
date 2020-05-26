@@ -1,4 +1,3 @@
-import { DeleteContactLeadOutput } from '@shared/service-proxies/service-proxies';
 import swal from 'sweetalert';
 import extend from 'lodash/extend';
 
