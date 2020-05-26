@@ -430,7 +430,7 @@ input.form-control {
             }
         }
 
-        .dx-command-edit {
+        .dx-datagrid-rowsview .dx-command-edit {
             text-overflow: initial;
             & + td {
                 width: 100%;
@@ -448,6 +448,16 @@ input.form-control {
                     height: 18px;
                     display: inline-block;
                     opacity: 0.5;
+                }
+            }
+        }
+
+        .dx-datagrid-headers .dx-row.dx-header-row,
+        .dx-datagrid-total-footer .dx-row {
+            td.padding-right {
+                padding-right: 32px;
+                &:last-child {
+                    padding-right: 45px !important;
                 }
             }
         }
