@@ -40241,6 +40241,9 @@ export interface IGetCategoryTreeOutput {
 export enum ReportTemplate {
     Personal = "Personal", 
     Suspense = "Suspense", 
+    Business = "Business", 
+    Yacht = "Yacht", 
+    JH1 = "JH1", 
 }
 
 export class ReportSectionDto implements IReportSectionDto {
