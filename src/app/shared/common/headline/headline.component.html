@@ -11,7 +11,7 @@
                 <span class="right-arrow"></span>
             </ng-template>
         </div>
-        &nbsp;<small>{{text}}</small><div class="transclude"></div>
+        <small *ngIf="text">&nbsp;{{text}}</small><div class="transclude"></div>
     </div>
     <div class="headline-content" [ngClass]="{'menu-empty': (!buttons || !buttons.length) && !showReloadButton && !showToggleToolbarButton && !showToggleCompactViewButton && !showToggleFullScreenButton}">
         <ng-content></ng-content>
