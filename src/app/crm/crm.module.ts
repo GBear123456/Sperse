@@ -173,7 +173,8 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
         ImportLeadsService,
         DataSourceService,
         LeftMenuService,
-        CalendarService
+        CalendarService,
+        { provide: 'leftMenuCollapsed', useValue: false }
     ],
     entryComponents: [
         BankSettingsDialogComponent,

@@ -10,7 +10,7 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { LeftMenuItem } from '../../../../shared/common/left-menu/left-menu-item.interface';
+import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 
 @Component({
     templateUrl: './left-menu.component.html',

@@ -1,7 +1,14 @@
+/** Core imports */
 import { Component, Injector, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @Component({
     templateUrl: './swagger.component.html',
@@ -9,10 +16,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     link: SafeResourceUrl;
+    leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
     constructor(
         injector: Injector,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private leftMenuService: LeftMenuService
     ) {
         super(injector);
     }

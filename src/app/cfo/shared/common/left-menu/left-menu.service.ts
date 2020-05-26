@@ -1,5 +1,5 @@
 /** Cor imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, Optional } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -8,11 +8,13 @@ import { CacheService } from 'ng2-cache-service';
 /** Application imports */
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { AppService } from '../../../../app.service';
+import { AppService } from '@app/app.service';
 
 @Injectable()
 export class LeftMenuService {
-    private collapsed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    private collapsed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+        this.collapsedByDefault !== null ? this.collapsedByDefault : true
+    );
     collapsed$: Observable<boolean> = this.collapsed.asObservable();
     private readonly CACHE_KEY_COLLAPSED = 'Collapsed';
     private readonly CACHE_PREFIX = 'LeftMenu';
@@ -20,7 +22,8 @@ export class LeftMenuService {
         private appService: AppService,
         private cfoService: CFOService,
         private cacheService: CacheService,
-        private cacheHelper: CacheHelper
+        private cacheHelper: CacheHelper,
+        @Inject('leftMenuCollapsed') @Optional() private collapsedByDefault
     ) {
         let collapsed = this.cacheService.get(this.getCacheKey());
         if (collapsed && !isNaN(collapsed))

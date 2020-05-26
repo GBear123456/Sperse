@@ -21,8 +21,8 @@ import { InstanceType, LayoutType } from '@shared/service-proxies/service-proxie
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { LeftMenuItem } from '../../../../shared/common/left-menu/left-menu-item.interface';
-import { GetStatusOutput } from '../../../../../shared/service-proxies/service-proxies';
+import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
+import { GetStatusOutput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './left-menu.component.html',

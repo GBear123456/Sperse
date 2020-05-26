@@ -1,6 +1,7 @@
 <div [@routerTransition]>
     <app-headline [names]="[ l('Interactive API Documentation') ]"
-                  iconSrc="assets/common/icons/api-icon.svg">
+                  iconSrc="assets/common/icons/api-icon.svg"
+                  [showToggleLeftMenuButton]="true">
     </app-headline>
     <div class="content">
         <api-left-menu></api-left-menu>

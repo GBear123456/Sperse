@@ -1,7 +1,8 @@
 <app-headline [names]="[ l('Interactive API Documentation') ]"
-              icon="magic-wand">
+              icon="magic-wand"
+              [showToggleLeftMenuButton]="true">
 </app-headline>
 <div class="content">
     <api-left-menu></api-left-menu>
-    <iframe [src]="link" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%"></iframe>
+    <iframe [src]="link" [ngClass]="{ wide: leftMenuCollapsed$ | async }" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%"></iframe>
 </div>

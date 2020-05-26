@@ -49,7 +49,8 @@ import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.servic
         EditKeyDialog
     ],
     providers: [
-        LeftMenuService
+        LeftMenuService,
+        { provide: 'leftMenuCollapsed', useValue: false }
     ]
 })
 
