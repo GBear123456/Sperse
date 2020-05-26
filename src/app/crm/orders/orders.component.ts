@@ -632,7 +632,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 items: [{
                     name: 'rules',
                     options: {
-                        text: this.l('Settings')
+                        text: this.l('Settings'),
+                        hint: this.l('Settings')
                     },
                     visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                     action: this.invoiceSettings.bind(this)
