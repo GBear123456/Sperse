@@ -51,7 +51,7 @@
         }
 
         .dx-icon-clear {
-            right: 0px;
+            right: 0;
         }
 
         .dx-treelist-text-content {
@@ -60,9 +60,9 @@
         }
 
         .dx-toolbar-after {
-            padding-left: 0px !important;
+            padding-left: 0 !important;
             width: 300px;
-            left: 0px;
+            left: 0;
 
             .dx-treelist-addrow-button {
                 border: none !important;
@@ -81,7 +81,7 @@
             }
 
             .dx-treelist-search-panel {
-                margin: 0px !important;
+                margin: 0 !important;
 
                 input {
                     border: none;
@@ -96,6 +96,11 @@
                 width: 100% !important;
             }
         }
+
+        .dx-treelist-icon-container.dx-editor-inline-block .dx-checkbox {
+            margin-top: -5px;
+        }
+
         input {
             font-size: 15px;
             font-weight: 300;
@@ -108,12 +113,14 @@
             display: flex;
             justify-content: space-between;
             width: 300px;
+            position: relative;
             &.filtered {
                 background-color: #effafe;
             }
 
             td:first-child {
-                width: 274px;
+                width: 247px;
+                padding-right: 0;
             }
 
             td.dx-command-edit {
@@ -123,8 +130,8 @@
                 right: 0;
                 min-width: 0;
                 justify-content: center;
-                width: 36px;
-                height: 35px;
+                width: 53px;
+                height: 100%;
                 padding-left: 0;
 
                 a.dx-link {
@@ -132,8 +139,12 @@
                     display: inline-block;
                     color: transparent !important;
 
-                    &.dx-link-add, &.dx-link-edit, &.dx-link-delete {
+                    &.dx-link-add, &.dx-link-delete {
                         display: none;
+                    }
+
+                    &.dx-link-edit {
+                        background: url('../../../../../assets/common/icons/edit-pencil-icon.svg') no-repeat center;
                     }
 
                     &.dx-link-delete {
@@ -166,7 +177,8 @@
                     font-weight: 400;
                     border-bottom: none !important;
                 }
-                .dx-link-filter {
+                .dx-link-filter,
+                .dx-link-edit {
                     display: none !important;
                 }
 
