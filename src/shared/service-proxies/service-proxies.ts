@@ -44254,7 +44254,7 @@ export interface IAddressInfo {
 export class ContactInfoForMerge implements IContactInfoForMerge {
     id!: number | undefined;
     fullName!: string | undefined;
-    date!: moment.Moment | undefined;
+    contactDate!: moment.Moment | undefined;
     typeId!: string | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
@@ -44286,7 +44286,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         if (data) {
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.typeId = data["typeId"];
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
                 this.contactEmails = [];
@@ -44330,7 +44330,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["typeId"] = this.typeId;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
             data["contactEmails"] = [];
@@ -44367,7 +44367,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
 export interface IContactInfoForMerge {
     id: number | undefined;
     fullName: string | undefined;
-    date: moment.Moment | undefined;
+    contactDate: moment.Moment | undefined;
     typeId: string | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;
