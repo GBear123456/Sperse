@@ -382,7 +382,7 @@ export class TagsListComponent implements OnInit {
 
     isManageAllowed() {
         let selected = this.selectedKeys.length;
-        return this.showSelection || (selected && this.permissionChecker.isGranted(this.managePermission) &&
-            (selected == 1 || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates))));
+        return (selected || this.showSelection) && this.permissionChecker.isGranted(this.managePermission) &&
+            (selected == 1 || this.showSelection || (this.bulkUpdateMode && this.permissionChecker.isGranted(AppPermissions.CRMBulkUpdates)));
     }
 }

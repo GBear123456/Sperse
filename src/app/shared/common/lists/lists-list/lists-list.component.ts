@@ -375,7 +375,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     isManageAllowed() {
         let selected = this.selectedKeys.length;
-        return this.showSelection || (selected && this.permission.isGranted(this.managePermission) &&
-            (selected == 1 || (this.bulkUpdateMode && this.permission.isGranted(AppPermissions.CRMBulkUpdates))));
+        return (selected || this.showSelection) && this.permission.isGranted(this.managePermission) &&
+            (selected == 1 || this.showSelection || (this.bulkUpdateMode && this.permission.isGranted(AppPermissions.CRMBulkUpdates)));
     }
 }
