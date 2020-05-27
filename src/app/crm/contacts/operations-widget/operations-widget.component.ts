@@ -35,6 +35,7 @@ import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
 import { UserManagementService } from '../../../../shared/common/layout/user-management-list/user-management.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'operations-widget',
@@ -194,7 +195,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
-            let impersonationItem = {
+            let portalBaseUrl = AppConsts.appMemberPortalUrl ? AppConsts.appMemberPortalUrl + '/app' : '/code-breaker',
+                impersonationItem = {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
@@ -272,7 +274,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
-                                            '/code-breaker/products/codebreaker-ai'
+                                            portalBaseUrl + '/products/codebreaker-ai'
                                         );
                                     }
                                 },
@@ -283,7 +285,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
-                                            '/code-breaker/products/bankpass'
+                                            portalBaseUrl + '/products/bankpass'
                                         );
                                     }
                                 },
@@ -294,7 +296,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
-                                            '/code-breaker/products/bankvault'
+                                            portalBaseUrl + '/products/bankvault'
                                         );
                                     }
                                 },
@@ -305,7 +307,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
-                                            '/code-breaker/products/why-they-buy'
+                                            portalBaseUrl + '/products/why-they-buy'
                                         );
                                     }
                                 },
@@ -316,7 +318,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
-                                            '/code-breaker/products/bank-affiliate'
+                                            portalBaseUrl + '/products/bank-affiliate'
                                         );
                                     }
                                 },
@@ -327,7 +329,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
-                                            '/code-breaker/products/bank-trainer'
+                                            portalBaseUrl + '/products/bank-trainer'
                                         );
                                     }
                                 }

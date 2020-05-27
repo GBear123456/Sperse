@@ -23,7 +23,8 @@ export class ImpersonationService {
             .subscribe((result: ImpersonateOutput) => {
                 this.authService.logout(false);
 
-                let targetUrl = AppConsts.appBaseUrl + (path ? path : '') + '?secureId=' + result.impersonationToken;
+                let targetUrl = (path && path.startsWith('http') ? '' : AppConsts.appBaseUrl) +
+                    (path ? path : '') + '?secureId=' + result.impersonationToken;
                 if (input.tenantId) {
                     targetUrl = targetUrl + '&tenantId=' + input.tenantId;
                 }
