@@ -556,7 +556,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     onContentReady(event) {
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

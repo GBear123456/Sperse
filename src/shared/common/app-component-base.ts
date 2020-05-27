@@ -237,10 +237,6 @@ export abstract class AppComponentBase implements OnDestroy {
         return this.searchValue ? { name: 'quickSearchString', value: this.searchValue } : null;
     }
 
-    getDataGridRowsViewHeight() {
-        return document.querySelector('.dx-datagrid-rowsview').clientHeight;
-    }
-
     activate() {
         if (this.searchValue && this.searchClear) {
             this.searchValue = '';

@@ -800,7 +800,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
         }
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
     }
 
     refresh(invalidateDashboard = true) {

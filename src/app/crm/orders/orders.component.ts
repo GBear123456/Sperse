@@ -911,7 +911,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.setGridDataLoaded();
         this.totalCount = this.totalRowCount;
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

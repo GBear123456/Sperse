@@ -111,7 +111,7 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
+import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 
@@ -760,7 +760,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onContentReady(event) {
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
