@@ -100,11 +100,12 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
-import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
+import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -161,7 +162,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     ];
     contactGroups = Object.keys(ContactGroup)
-        .filter((group: string) => this.contactService.checkCGPermission(ContactGroup[group], ''))
+        .filter((group: string) => this.permission.checkCGPermission(ContactGroup[group], ''))
         .map((group: string) => ({
             text: this.getUserGroup(group),
             value: group
@@ -235,7 +236,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     public headlineButtons: HeadlineButton[] = [
         {
-            enabled: this.contactService.checkCGPermission(ContactGroup.Client),
+            enabled: this.permission.checkCGPermission(ContactGroup.Client),
             action: this.createLead.bind(this),
             label: this.getHeadlineButtonName()
         }
@@ -400,7 +401,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    pipelineSelectFields: string[] = ['Id', 'CustomerId', 'Name', 'CompanyName', this.dateField, 'PhotoPublicId', 'Email'];
+    isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(this.contactGroupId.value, 'ViewCommunicationHistory.SendSMSAndEmail');
+    pipelineSelectFields: string[] = [
+        'Id',
+        'CustomerId',
+        'Name',
+        'CompanyName',
+        this.dateField,
+        'PhotoPublicId',
+        'Email'
+    ].concat(
+        this.isSmsAndEmailSendingAllowed ? [ 'Phone' ] : []
+    );
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -429,6 +441,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private mapService: MapService,
         private impersonationService: ImpersonationService,
         private filterStatesService: FilterStatesService,
+        private nameParserService: NameParserService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -785,7 +798,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private createButtonEnabledSet() {
         this.headlineButtons[0].enabled =
-            this.contactService.checkCGPermission(this.contactGroupId.value);
+            this.permission.checkCGPermission(this.contactGroupId.value);
     }
 
     onContentReady(event) {
@@ -1025,8 +1038,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.contactService.checkCGPermission(this.contactGroupId.value);
-        this.manageCGPermision = this.contactService.getCGPermissionKey(this.contactGroupId.value, 'Manage');
+        this.manageDisabled = !this.permission.checkCGPermission(this.contactGroupId.value);
+        this.manageCGPermision = this.permission.getCGPermissionKey(this.contactGroupId.value, 'Manage');
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -1076,7 +1089,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -1091,7 +1104,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -1099,7 +1112,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -1107,7 +1120,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -1115,7 +1128,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -1130,9 +1143,45 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'delete',
                         disabled: !this.selectedLeads.length ||
-                            !this.contactService.checkCGPermission(this.contactGroupId.value) ||
+                            !this.permission.checkCGPermission(this.contactGroupId.value) ||
                             this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
                         action: this.deleteLeads.bind(this)
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'message',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.isSmsAndEmailSendingAllowed,
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Email'),
+                                    action: () => {
+                                        this.contactService.showEmailDialog({
+                                            to: this.selectedLeads.map(lead => lead.Email)
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('SMS'),
+                                    action: () => {
+                                        const selectedLeads = this.selectedLeads;
+                                        const contact = selectedLeads && selectedLeads[selectedLeads.length - 1];
+                                        const parsedName = contact && this.nameParserService.getParsed(contact.Name);
+                                        this.contactService.showSMSDialog({
+                                            phoneNumber: contact && contact.Phone,
+                                            firstName: parsedName && parsedName.first,
+                                            lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1225,8 +1274,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 }
                             ]
                         }
-                    },
-                    { name: 'print', action: Function(), visible: false }
+                    }
                 ]
             },
             {

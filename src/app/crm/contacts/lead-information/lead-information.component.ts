@@ -33,6 +33,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'lead-information',
@@ -163,6 +164,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         private loadingService: LoadingService,
         private permissionCheckerService: PermissionCheckerService,
         private currencyPipe: CurrencyPipe,
+        private permissionService: AppPermissionService,
         public ls: AppLocalizationService
     ) {
         this.contactsService.loadLeadInfo();
@@ -190,7 +192,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             this.initToolbarInfo();
             if (this.contactsService.settingsDialogOpened.value)
                 this.toggleOrgUnitsDialog(false);
-            this.isCGManageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+            this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
             this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                 contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
             this.updateSourceContactName();

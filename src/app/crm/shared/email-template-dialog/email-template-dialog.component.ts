@@ -1,9 +1,9 @@
   /** Core imports */
 import { Component, ChangeDetectionStrategy, ViewChild, OnInit, Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
@@ -13,19 +13,14 @@ import startCase from 'lodash/startCase';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
-import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest, ContactCommunicationServiceProxy,
-    UpdateEmailTemplateRequest, GetTemplateReponse, AttachmentDto } from '@shared/service-proxies/service-proxies';
+    UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-
-class EmailAttachment extends AttachmentDto {
-    progress!: number;
-    loader!: Subscription;
-    url!: SafeResourceUrl;
-}
+  import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
+  import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
 
 @Component({
     selector: 'email-template-dialog',
@@ -89,7 +84,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         public changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
         this.initTemplateList();
         data.from = [sessionService.user.emailAddress];
@@ -114,11 +109,11 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.saveTemplateData();
             else {
                 this.data.attachments = [];
-                if (this.attachments.every(item => {
+                if (this.attachments.every((item: Partial<EmailAttachment>) => {
                     if (item.loader)
                         this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
                     else
-                        this.data.attachments.push(item.id);
+                        this.data.attachments.push(item);
                     return !item.loader;
                 }))
                     this.onSave.emit(this.data);
@@ -275,7 +270,8 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onTemplateOptionChanged(event) {
         if (event.name == 'selectedItem' && !event.value) {
-            this.data.cc = this.data.bcc = this.data.subject = this.data.body = '';
+            this.data.cc = this.data.bcc = [];
+            this.data.subject = this.data.body = '';
             setTimeout(() => {
                 event.component.option('isValid', true);
                 event.component.focus();

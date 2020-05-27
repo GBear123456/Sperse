@@ -7,7 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 /** Application imports */
 import { ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
-import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: 'add-contact-dialog.html',

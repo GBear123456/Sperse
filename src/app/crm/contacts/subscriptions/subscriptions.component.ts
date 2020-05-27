@@ -26,12 +26,12 @@ import { ContactsService } from '../contacts.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'subscriptions',
@@ -65,7 +65,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         private impersonationService: ImpersonationService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
-        public permission: PermissionCheckerService,
+        public permission: AppPermissionService,
         public ls: AppLocalizationService
     ) {
         contactsService.invalidateSubscribe((area: string) => {
@@ -79,7 +79,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.manageAllowed = this.permission.isGranted(AppPermissions.CRMOrdersManage)
-                && this.contactsService.checkCGPermission(contactInfo.groupId);
+                && this.permission.checkCGPermission(contactInfo.groupId);
             this.data = this.contactService['data'];
             this.refreshData();
         }, this.ident);

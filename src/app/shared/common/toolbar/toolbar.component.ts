@@ -30,7 +30,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         this._config = config;
         this.initToolbarItems();
     }
-    @Input() disableToolbarUpdateAfterFitlersFixing = false;
+    @Input() disableToolbarUpdateAfterFiltersFixing = false;
     @HostBinding('style.display') display: string;
     @HostBinding('class.compact') @Input() compact = false;
     public items = [];
@@ -47,7 +47,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     ) {}
 
     ngOnInit() {
-        if (!this.disableToolbarUpdateAfterFitlersFixing) {
+        if (!this.disableToolbarUpdateAfterFiltersFixing) {
             this.fixedSubscription = this.filtersService.filterFixed$.pipe(
                 delay(100)
             ).subscribe((fixed: boolean) => {
@@ -327,6 +327,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 hint: this.ls.l('Login'),
                 accessKey: 'login',
                 text: this.ls.l('Login')
+            },
+            message: {
+                text: this.ls.l('Message'),
+                hint: this.ls.l('Message')
             }
         };
     }

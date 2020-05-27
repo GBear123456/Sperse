@@ -71,6 +71,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { StatesService } from '@root/store/states-store/states.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -214,14 +215,15 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
+        private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.company = this.data.company;
-        this.isAssignDisabled = !contactService.checkCGPermission(data.customerType, 'ManageAssignments');
-        this.isListAndTagsDisabled = !contactService.checkCGPermission(data.customerType);
-        this.isRatingAndStarsDisabled = !contactService.checkCGPermission(data.customerType);
+        this.isAssignDisabled = !this.permissionService.checkCGPermission(data.customerType, 'ManageAssignments');
+        this.isListAndTagsDisabled = !permissionService.checkCGPermission(data.customerType);
+        this.isRatingAndStarsDisabled = !permissionService.checkCGPermission(data.customerType);
     }
 
     ngOnInit() {

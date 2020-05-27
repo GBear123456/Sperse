@@ -132,7 +132,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.clientService.contactInfo$.pipe(
             takeUntil(this.destroy$)
         ).subscribe(contactInfo => {
-            this.manageAllowed = this.clientService.checkCGPermission(contactInfo.groupId);
+            this.manageAllowed = this.permission.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();
             this.loadDocuments();
         });

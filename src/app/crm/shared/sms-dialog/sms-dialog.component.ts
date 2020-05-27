@@ -23,6 +23,7 @@ import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/countr
 import { Tags } from './sms-tags.enums';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
 import { AppConsts } from '@root/shared/AppConsts';
+import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interface';
 
 @Component({
     templateUrl: 'sms-dialog.component.html',
@@ -63,12 +64,12 @@ export class SMSDialogComponent {
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService,
         appSession: AppSessionService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: SmsDialogData
     ) {
-        let person: PersonContactInfoDto = data.contact.personContactInfo,
-            primary: ContactPhoneDto = person.details.phones.find(item => item.id == person.primaryPhoneId);
-        this.phones = person.details.phones
-            .concat(data.contact.organizationContactInfo.details ? data.contact.organizationContactInfo.details.phones : [])
+        let person: PersonContactInfoDto = data.contact && data.contact.personContactInfo,
+            primary: ContactPhoneDto = person && person.details && person.details.phones.find(item => item.id == person.primaryPhoneId);
+        this.phones = person && person.details && person.details.phones
+            .concat(data.contact['organizationContactInfo'].details ? data.contact['organizationContactInfo'].details.phones : [])
             .map((item: ContactPhoneDto) => item.phoneNumber);
         if (primary)
             this.phoneNumber = primary.phoneNumber;
@@ -76,8 +77,8 @@ export class SMSDialogComponent {
         this.smsText = data.body;
         this.phoneNumber = data.phoneNumber;
         this.tags[Tags.LegalName] = appSession.tenant ? appSession.tenant.name : AppConsts.defaultTenantName;
-        this.tags[Tags.ClientFirstName] = person.person.firstName;
-        this.tags[Tags.ClientLastName] = person.person.lastName;
+        this.tags[Tags.ClientFirstName] = data.firstName || (person && person.person && person.person.firstName);
+        this.tags[Tags.ClientLastName] = data.lastName || (person && person.person && person.person.lastName);
     }
 
     save() {

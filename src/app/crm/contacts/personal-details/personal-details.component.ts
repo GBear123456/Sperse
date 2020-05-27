@@ -5,8 +5,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, first, map, skip, takeUntil } from 'rxjs/operators';
+import { filter, first, map } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -108,7 +107,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             this.personContactInfo = contactInfo.personContactInfo;
             this.person = contactInfo.personContactInfo.person;
             this.getStates(this.person && this.person.citizenship);
-            this.isEditAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+            this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
             setTimeout(() => this.updateToolbar());
             if (this.contactsService.settingsDialogOpened.value)
                 this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
@@ -136,7 +135,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                     this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId);
                 }
             }
-        })
+        });
     }
 
     private getCountries() {

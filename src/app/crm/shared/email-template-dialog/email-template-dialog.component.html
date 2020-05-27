@@ -49,7 +49,6 @@
                     <dx-tag-box
                         name="replyTo"
                         width="calc(50% - 62px)"
-                        height="40px"
                         noDataText=""
                         placeholder=""
                         [multiline]="false"
@@ -61,12 +60,11 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area">
+                <div class="field-area to">
                     <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
                     <dx-tag-box
                         name="to"
                         width="calc(100% - 31px)"
-                        height="40px"
                         noDataText=""
                         placeholder=""
                         [dataSource]="data.suggestionEmails"
@@ -132,7 +130,7 @@
                     <dx-tooltip [width]="225"
                          position="bottom"
                          [(visible)]="tagsTooltipVisible"
-                         [target]="'#tagsButton'">
+                         target="#tagsButton">
                         <div *dxTemplate="let data of 'content'" class="tags-container">
                             <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
                             <dx-list

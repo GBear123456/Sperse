@@ -23,6 +23,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     templateUrl: 'edit-contact-dialog.html',
@@ -39,7 +40,7 @@ export class EditContactDialog {
     types: any[] = [];
     validator: any;
     movePos: any;
-    isEditAllowed = this.contactsService.checkCGPermission(this.data.groupId);
+    isEditAllowed = this.permissionService.checkCGPermission(this.data.groupId);
     masks = AppConsts.masks;
     urlRegEx = AppConsts.regexPatterns.url;
     emailRegEx = AppConsts.regexPatterns.email;
@@ -52,6 +53,7 @@ export class EditContactDialog {
         private contactLinkService: ContactLinkServiceProxy,
         private contactsService: ContactsService,
         private store$: Store<AppStore.State>,
+        private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<EditContactDialog>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any,

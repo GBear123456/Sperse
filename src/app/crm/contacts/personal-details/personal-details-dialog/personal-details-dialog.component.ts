@@ -17,6 +17,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppConsts } from '@shared/AppConsts';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -68,7 +69,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private cacheService: CacheService,
         private contactProxy: ContactServiceProxy,
         private elementRef: ElementRef,
-        public contactsService: ContactsService,
+        private contactsService: ContactsService,
+        public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,

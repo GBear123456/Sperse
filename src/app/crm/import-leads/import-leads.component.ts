@@ -881,8 +881,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private initToolbarConfig() {
-        this.manageCGPermision = this.contactService.getCGPermissionKey(this.contactGroupId, 'Manage');
-        let disabledManage = !this.contactService.checkCGPermission(this.contactGroupId);
+        this.manageCGPermision = this.permission.getCGPermissionKey(this.contactGroupId, 'Manage');
+        let disabledManage = !this.permission.checkCGPermission(this.contactGroupId);
         this.toolbarConfig = [
             {
                 location: 'before',
@@ -902,7 +902,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     const contactGroup = this.importLeadsService.getContactGroupFromInputType(importType);
                                     return {
                                         disabled: importType == ImportTypeInput.Order
-                                            || !this.contactService.checkCGPermission(contactGroup),
+                                            || !this.permission.checkCGPermission(contactGroup),
                                         action: this.importTypeChanged.bind(this),
                                         contactGroupId: contactGroup,
                                         text: text,
@@ -920,7 +920,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'assign',
                         action: () => this.userAssignmentComponent.toggle(),
-                        disabled: !this.contactService.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.isUserSelected
                         }
@@ -1042,6 +1042,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getUserAssignmentPermissionKey() {
-        return this.contactService.getCGPermissionKey(this.contactGroupId, 'ManageAssignments');
+        return this.permission.getCGPermissionKey(this.contactGroupId, 'ManageAssignments');
     }
 }

@@ -550,6 +550,26 @@
                 }
             }
 
+            &[accesskey="message"] {
+                padding: 6px 10px;
+
+                .dx-button-content {
+                    display: none;
+                }
+
+                &::before {
+                    content: attr(title);
+                    font-weight: 300;
+                    font-size: 13px;
+                    line-height: 1.85;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    display: inline-block;
+                    font-family: Montserrat;
+                    white-space: nowrap;
+                }
+            }
+
             &[accesskey="addEntity"] {
                 padding: 6px 0;
 

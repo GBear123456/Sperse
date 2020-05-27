@@ -31,6 +31,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'company-dialog',
@@ -80,7 +81,7 @@ export class CompanyDialogComponent implements OnInit {
         primaryPhoto: null,
         affiliateCode: null
     };
-    manageAllowed = this.contactService.checkCGPermission(this.data.contactInfo.groupId);
+    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groupId);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     affiliateRegex = AppConsts.regexPatterns.affiliateCode;
@@ -113,6 +114,7 @@ export class CompanyDialogComponent implements OnInit {
         private maskPipe: MaskPipe,
         private contactService: ContactsService,
         private notifyService: NotifyService,
+        private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) private data: any
