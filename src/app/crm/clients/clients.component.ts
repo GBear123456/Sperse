@@ -114,6 +114,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -250,6 +251,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
+    selectedClients: any = [];
     headlineButtons: HeadlineButton[] = [
         {
             enabled: this.permission.checkCGPermission(ContactGroup.Client),
@@ -530,6 +532,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private sessionService: AppSessionService,
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
+        private nameParserService: NameParserService,
         public crmService: CrmService,
         public dialog: MatDialog,
         public appService: AppService,
@@ -769,6 +772,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onSelectionChanged($event) {
         this.selectedClientKeys = $event.component.getSelectedRowKeys();
+        this.selectedClients = $event.component.getSelectedRowsData();
         this.initToolbarConfig();
     }
 
@@ -966,7 +970,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-       this.toolbarConfig = [
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -1060,6 +1064,42 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         }
                     }
                 ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'message',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Email'),
+                                    action: () => {
+                                        this.contactService.showEmailDialog({
+                                            to: this.selectedClients.map(lead => lead.Email)
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('SMS'),
+                                    action: () => {
+                                        const selectedClients = this.selectedClients;
+                                        const contact = selectedClients && selectedClients[selectedClients.length - 1];
+                                        const parsedName = contact && this.nameParserService.getParsed(contact.Name);
+                                        this.contactService.showSMSDialog({
+                                            phoneNumber: contact && contact.Phone,
+                                            firstName: parsedName && parsedName.first,
+                                            lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                }
+                           ]
+                       }
+                   }
+               ]
             },
             {
                 location: 'after',
@@ -1178,7 +1218,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             }
         ];
-       return this.toolbarConfig;
+        return this.toolbarConfig;
     }
 
     toggleColumnChooser() {

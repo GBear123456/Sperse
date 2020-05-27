@@ -102,6 +102,7 @@ import { SourceFilterModel } from '../shared/filters/source-filter/source-filter
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -192,6 +193,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelStar: FilterModel;
 
     selectedPartnerKeys: any = [];
+    selectedPartners: any = [];
     public headlineButtons: HeadlineButton[] = [
         {
             enabled: this.permission.checkCGPermission(ContactGroup.Partner),
@@ -353,6 +355,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private impersonationService: ImpersonationService,
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
+        private nameParserService: NameParserService,
         public appService: AppService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
@@ -565,6 +568,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     onSelectionChanged($event) {
         this.selectedPartnerKeys = $event.component.getSelectedRowKeys();
+        this.selectedPartners = $event.component.getSelectedRowsData();
         this.initToolbarConfig();
     }
 
@@ -923,6 +927,42 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'message',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Email'),
+                                    action: () => {
+                                        this.contactService.showEmailDialog({
+                                            to: this.selectedPartners.map(lead => lead.Email)
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('SMS'),
+                                    action: () => {
+                                        const selectedPartners = this.selectedPartners;
+                                        const contact = selectedPartners && selectedPartners[selectedPartners.length - 1];
+                                        const parsedName = contact && this.nameParserService.getParsed(contact.Name);
+                                        this.contactService.showSMSDialog({
+                                            phoneNumber: contact && contact.Phone,
+                                            firstName: parsedName && parsedName.first,
+                                            lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
