@@ -222,7 +222,7 @@ let COMPONENTS = [
             deps: [ CFOService ],
             useFactory: (cfoService: CFOService) => {
                 return !cfoService.hasStaticInstance && !cfoService.isInstanceAdmin ||
-                    cfoService.isInstanceAdmin || cfoService.isMainInstanceType
+                    cfoService.isInstanceAdmin || cfoService.isMainInstanceType;
             }
         }
     ]

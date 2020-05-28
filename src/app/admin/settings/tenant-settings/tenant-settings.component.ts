@@ -138,20 +138,20 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.loading = true;
 
         let requests: Observable<any>[] = [
-                this.tenantSettingsService.getAllSettings(),
-                this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
-                this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
-                this.tenantPaymentSettingsService.getPayPalSettings(),
-                this.tenantPaymentSettingsService.getACHWorksSettings(),
-                this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
-                this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-                this.tenantSettingsService.getYTelSettings(),
-                this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
-            ];
+            this.tenantSettingsService.getAllSettings(),
+            this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
+            this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
+            this.tenantPaymentSettingsService.getPayPalSettings(),
+            this.tenantPaymentSettingsService.getACHWorksSettings(),
+            this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
+            this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
+            this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
+            this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
+            this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
+            this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
+            this.tenantSettingsService.getYTelSettings(),
+            this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
+        ];
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPServer);
         }

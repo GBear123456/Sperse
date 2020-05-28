@@ -38,9 +38,6 @@ export class LeftMenuComponent extends CFOComponentBase implements OnInit{
     @Input() items: LeftMenuItem[];
     @Input() headerTitle: string = this.l(this.cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = this.instanceUri + '/start';
-    @Input() showToggleButton =
-         !this.cfoService.hasStaticInstance && !this.instanceId ||
-         this.isInstanceAdmin || this.cfoService.isMainInstanceType;
     @Output() onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() collapsedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
