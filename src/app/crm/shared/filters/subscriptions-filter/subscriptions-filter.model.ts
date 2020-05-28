@@ -66,7 +66,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args: any, id: string) {
-        if (id) {
+        if (id !== undefined) {
             let item = filter.items.element.dataSource.find((item) => item.id === id);
             this.clearItem(item);
         } else {
