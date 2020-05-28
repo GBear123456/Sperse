@@ -94,7 +94,7 @@
                                 </dxi-column>
                                 <dxi-column dataField="Number" [caption]="l('Number')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column dataField="Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
-                                <dxi-column dataField="Amount" cssClass="padding-right" [caption]="l('Amount')" cellTemplate="amountCell"></dxi-column>
+                                <dxi-column dataField="Amount" [caption]="l('Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right" ></dxi-column>
                                 <dxi-column dataField="OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column dataField="OrderDate" [caption]="l('Created')" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
                                 <dxi-column dataField="PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
@@ -115,16 +115,19 @@
                                 <dxo-summary>
                                     <dxi-group-item column="Id"
                                                     summaryType="count"
-                                                    displayFormat="{0} orders">
+                                                    [displayFormat]="'{0} ' + l('Orders').toLowerCase()">
                                     </dxi-group-item>
                                     <dxi-group-item column="Amount"
                                                     summaryType="sum"
                                                     [customizeText]="customizeAmountCell"
                                                     [alignByColumn]="true"
-                                                    displayFormat="Total: {0}">
+                                                    [displayFormat]="l('Total') + ': {0}'">
                                     </dxi-group-item>
-                                    <dxi-total-item [customizeText]="customizeAmountCell"
-                                                    alignment="center"
+                                    <dxi-total-item column="Name"
+                                                    summaryType="count"
+                                                    [displayFormat]="l('Count') + ': {0}'">
+                                    </dxi-total-item>
+                                    <dxi-total-item [customizeText]="customizeAmountSummary"
                                                     column="Amount"
                                                     summaryType="sum">
                                     </dxi-total-item>
@@ -244,13 +247,16 @@
                                         [alignByColumn]="true"
                                         displayFormat="Total: {0}">
                         </dxi-group-item>
-                        <dxi-total-item [customizeText]="customizeAmountCell"
+                        <dxi-total-item column="FirstName"
+                                        summaryType="count"
+                                        [displayFormat]="l('Count') + ': {0}'">
+                        </dxi-total-item>
+                        <dxi-total-item [customizeText]="customizeAmountSummary"
                                         alignment="center"
                                         column="Fee"
                                         summaryType="sum">
                         </dxi-total-item>
-                        <dxi-total-item [customizeText]="customizeAmountCell"
-                                        alignment="center"
+                        <dxi-total-item [customizeText]="customizeAmountSummary"
                                         column="OrderAmount"
                                         summaryType="sum">
                         </dxi-total-item>

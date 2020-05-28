@@ -869,6 +869,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.currencyPipe.transform(cellInfo.value, this.currency, 'symbol', '1.2-2');
     }
 
+    customizeAmountSummary = (cellInfo) => {
+        return this.l('Sum') + ': ' + this.customizeAmountCell(cellInfo);
+    }
+
     toggleToolbar() {
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
         this.filtersService.fixed = false;
