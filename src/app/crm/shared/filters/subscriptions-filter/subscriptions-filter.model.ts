@@ -61,10 +61,18 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         return result;
     }
 
+    clearItem(item) {
+        item.current = item.past = item.never = null;
+    }
+
     removeFilterItem(filter: FilterModel, args: any, id: string) {
         if (id) {
             let item = filter.items.element.dataSource.find((item) => item.id === id);
-            item.current = item.past = item.never = null;
+            this.clearItem(item);
+        } else {
+            filter.items.element.dataSource.forEach((item) => {
+                this.clearItem(item);
+            });
         }
     }
 }
