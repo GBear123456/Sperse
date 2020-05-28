@@ -31,7 +31,7 @@ export class PrimengTableHelper {
 
     getSorting(table: Table): string {
         let sorting;
-        if (table.sortField) {
+        if (table && table.sortField) {
             sorting = table.sortField;
             if (table.sortOrder === 1) {
                 sorting += ' ASC';
@@ -44,7 +44,7 @@ export class PrimengTableHelper {
     }
 
     getMaxResultCount(paginator: Paginator, event: LazyLoadEvent): number {
-        if (paginator.rows) {
+        if (paginator && paginator.rows) {
             return paginator.rows;
         }
 
@@ -56,7 +56,7 @@ export class PrimengTableHelper {
     }
 
     getSkipCount(paginator: Paginator, event: LazyLoadEvent): number {
-        if (paginator.first) {
+        if (paginator && paginator.first) {
             return paginator.first;
         }
 
