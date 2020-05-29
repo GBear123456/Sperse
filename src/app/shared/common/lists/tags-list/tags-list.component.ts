@@ -23,7 +23,7 @@ import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permissio
 @Component({
   selector: 'tags-list',
   templateUrl: './tags-list.component.html',
-  styleUrls: ['./tags-list.component.less'],
+  styleUrls: ['../styles/lists.less'],
   providers: [ ContactTagsServiceProxy ]
 })
 export class TagsListComponent implements OnInit {
