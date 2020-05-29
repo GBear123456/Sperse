@@ -62,7 +62,10 @@ export class ODataService {
         if (params && params.length) {
             params.forEach(param => {
                 url += (url.indexOf('?') == -1 ? '?' : '&');
-                url += param.name + '=' + encodeURIComponent(param.value).replace(/[?&]$/, '');
+                url += param.name + '=';
+                if (param.value != null && param.value != undefined) {
+                    url += encodeURIComponent(param.value).replace(/[?&]$/, '');
+                }
             });
         }
 

@@ -21,6 +21,7 @@ import {
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'contacts-area',
@@ -34,7 +35,7 @@ export class ContactsAreaComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.contactsService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -60,6 +61,7 @@ export class ContactsAreaComponent {
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
         private dialogService: DialogService,
+        private permissionService: AppPermissionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {}

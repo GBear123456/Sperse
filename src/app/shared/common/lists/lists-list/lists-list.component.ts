@@ -19,7 +19,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 @Component({
   selector: 'lists-list',
   templateUrl: './lists-list.component.html',
-  styleUrls: ['./lists-list.component.less'],
+  styleUrls: ['../styles/lists.less'],
   providers: [ ContactListsServiceProxy ]
 })
 export class ListsListComponent extends AppComponentBase implements OnInit {

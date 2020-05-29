@@ -29,6 +29,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
 
     @Input() staticItemsText;
     @Input() applyFilter = true;
+    @Input() width = '330px';
     @Input() popupWidth: string;
     @Input() allSelectedTitle = false;
 

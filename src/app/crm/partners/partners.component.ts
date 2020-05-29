@@ -102,6 +102,7 @@ import { SourceFilterModel } from '../shared/filters/source-filter/source-filter
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -192,9 +193,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelStar: FilterModel;
 
     selectedPartnerKeys: any = [];
+    selectedPartners: any = [];
     public headlineButtons: HeadlineButton[] = [
         {
-            enabled: this.contactService.checkCGPermission(ContactGroup.Partner),
+            enabled: this.permission.checkCGPermission(ContactGroup.Partner),
             action: this.createPartner.bind(this),
             label: this.l('CreateNewPartner')
         }
@@ -353,6 +355,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private impersonationService: ImpersonationService,
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
+        private nameParserService: NameParserService,
         public appService: AppService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
@@ -556,7 +559,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     onContentReady(event) {
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -565,6 +568,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     onSelectionChanged($event) {
         this.selectedPartnerKeys = $event.component.getSelectedRowKeys();
+        this.selectedPartners = $event.component.getSelectedRowsData();
         this.initToolbarConfig();
     }
 
@@ -873,7 +877,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -888,7 +892,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -896,7 +900,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -904,7 +908,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -912,7 +916,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -920,9 +924,45 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'message',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Email'),
+                                    action: () => {
+                                        this.contactService.showEmailDialog({
+                                            to: this.selectedPartners.map(lead => lead.Email)
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('SMS'),
+                                    action: () => {
+                                        const selectedPartners = this.selectedPartners;
+                                        const contact = selectedPartners && selectedPartners[selectedPartners.length - 1];
+                                        const parsedName = contact && this.nameParserService.getParsed(contact.Name);
+                                        this.contactService.showSMSDialog({
+                                            phoneNumber: contact && contact.Phone,
+                                            firstName: parsedName && parsedName.first,
+                                            lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]

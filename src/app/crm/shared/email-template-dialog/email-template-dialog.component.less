@@ -12,7 +12,7 @@
     ::ng-deep .mat-dialog-header {
         label {
             color: #8a969b;
-            padding: 20px 0px;
+            padding: 20px 0;
             font-size: 28px;
             position: relative;
         }
@@ -27,7 +27,7 @@
             font-size: 12px;
             border-bottom: 1px solid #dfdfdf;
             padding-top: 12px;
-            margin: 0px;
+            margin: 0;
             height: 40px;
             width: 80px;
             text-transform: uppercase;
@@ -72,7 +72,7 @@
                 font-weight: 400;
                 line-height: 1.79;
                 letter-spacing: 0.3px;
-                padding: 0px;
+                padding: 0;
             }
             &.dx-state-focused {
                 .dx-placeholder {
@@ -104,7 +104,7 @@
 
     .char-count {
         position: absolute;
-        bottom: 0px;
+        bottom: 0;
         right: 24px;
     }
 
@@ -129,7 +129,7 @@
                 margin: 4px 0 2px!important;
             }
             .cke_resizer_ltr {
-                margin: 8px 0px!important;
+                margin: 8px 0!important;
             }
         }    
     }
@@ -137,13 +137,13 @@
     .form-content {
         display: flex;
         flex-direction: column;
-        padding: 30px 0px 30px 50px;
+        padding: 30px 0 30px 50px;
         height: calc(~"100vh - 82px");
         width: 900px;
 
         .row {
             width: 820px;
-            margin-left: 0px !important;
+            margin-left: 0 !important;
         }
 
         .bank-decode-wrapper {
@@ -155,18 +155,29 @@
             display: block;
             position: relative;
             white-space: nowrap;
+            border-bottom: 1px solid #dfdfdf;
+
+            &.to {
+                padding: 5px 83px 5px 0;
+            }
+
+            &.to,
+            &.from {
+                border-bottom: 1px solid #dfdfdf;
+            }
 
             &.subject {
+                border-bottom: none;
                 label {
-                    border: none;
                     line-height: 42px;
                 } 
-                ::ng-deep dx-text-box input {
+                dx-text-box input {
                     border: none;
                 }
             }
 
             &.attachments {
+                border-bottom: none;
                 .attachment {
                     background: linear-gradient(to right, #00ef0c47, #00ef0c47);
                     background-repeat: no-repeat;
@@ -198,7 +209,7 @@
                 & > p {
                     font-size: 12px;
                     color: #8a969b;
-                    margin: 10px 0px;
+                    margin: 10px 0;
                     white-space: initial;
                 }
 
@@ -219,12 +230,12 @@
             }
 
             label {
-                line-height: 38px;
-                border-bottom: 1px solid #dfdfdf;
+                line-height: 33px;
                 vertical-align: top;
                 padding-top: 1px;
                 color: #8a969b;
                 padding-right: 10px;
+                margin-bottom: 0;
                 &.disabled {
                     opacity: 0.5;
                 }
@@ -261,14 +272,13 @@
                 }
                 input {
                     border-bottom: none;
+                    height: 30px;
                 }
-                .dx-texteditor-container {
-                    border-bottom: 1px solid #dfdfdf;
+                .dx-texteditor-input-container {
+                    flex-wrap: wrap;
                 }
-                &[name="to"] {
-                    .dx-texteditor-container:after {
-                        margin-right: 75px;
-                    }
+                &[name="to"] .dx-texteditor-container:after {
+                    margin-right: 75px;
                 }
             }
 
@@ -293,7 +303,7 @@
                     font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
-                    padding: 0px;
+                    padding: 0;
                 }
             }
         }

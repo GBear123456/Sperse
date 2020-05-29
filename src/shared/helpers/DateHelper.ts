@@ -50,7 +50,7 @@ export class DateHelper {
         let startDate;
         if (date) {
             const periodFrom = DateHelper.getDateWithoutTime(DateHelper.removeTimezoneOffset(new Date(date)));
-            startDate = periodFrom.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodFrom
+            startDate = periodFrom.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodFrom;
         }
         return startDate;
     }

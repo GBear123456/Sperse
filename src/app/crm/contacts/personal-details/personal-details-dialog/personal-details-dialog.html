@@ -12,7 +12,7 @@
                                     [editPlaceholder]="ls.l('Affiliate')"
                                     [value]="affiliateCode$ | async"
                                     [validationRules]="affiliateValidationRules"
-                                    [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
+                                    [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
                                     (valueChanged)="updateAffiliateCode($event)">
                         </inplace-edit>
                     </div>
@@ -24,7 +24,7 @@
                                     [value]="contactXref$ | async"
                                     [isOptional]="true"
                                     [validationRules]="xrefValidationRules"
-                                    [isReadOnlyField]="!contactsService.checkCGPermission(contactInfo.groupId)"
+                                    [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
                                     (valueChanged)="updateXref($event)">
                         </inplace-edit>
                     </div>

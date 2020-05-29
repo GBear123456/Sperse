@@ -1,14 +1,17 @@
 <div #becFilterContainer class="bec-filter">
     <business-entities-chooser
+        width="130px"
+        popupWidth="330px"
         (onChanged)="applyTotalBankAccountFilter(true)">
     </business-entities-chooser>
 </div>
 <div #categoryFilterContainer class="category-filter">
     <dx-drop-down-box
         #categoryFilter
-        width="340px"
+        width="130px"
         [value]=""
-        [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'">
+        [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'"
+        (onOpened)="onPopupOpened($event)">
         <div *dxTemplate="let data of 'content'">
             <categorization
                 width="340px"
@@ -21,7 +24,7 @@
                 [showClearSelection]="true"
                 [filteredRowsData]="categoriesRowsData"
                 [transactionsFilter]="transactionsFilterQuery"
-                (onFilterSelected)="filterByCashflowCategories($event, data)">
+                (onFilterSelected)="filterByCashflowCategories($event)">
             </categorization>
         </div>
     </dx-drop-down-box>
@@ -29,9 +32,10 @@
 <div #counterpartyFilterContainer class="counterparty-filter">
     <dx-drop-down-box
         #counterpartyFilter
-        width="340px"
+        width="130px"
         [value]=""
-        [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'">
+        [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'"
+        (onOpened)="onPopupOpened($event)">
         <div *dxTemplate="let data of 'content'" style="padding-bottom: 20px;">
             <dx-list
                 width="340px"
@@ -66,7 +70,7 @@
                   (onToggleTotals)="toggleDataGridToolbar()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount" class="total-count"> ({{ totalCount | number }})</span>
+        <span *ngIf="totalCount" class="total-count">({{ totalCount | number }})</span>
         <business-entities-chooser class="accounts-chooser" (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">
         </business-entities-chooser>
@@ -143,6 +147,7 @@
                         <dxi-column dataField="BusinessEntityId"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BusinessEntity')"
+                                    [minWidth]="160"
                                     [lookup]="{
                                         allowClearing: false,
                                         dataSource: filtersInitialData?.businessEntities,
@@ -152,6 +157,7 @@
                         </dxi-column>
                         <dxi-column [caption]="l('Transactions_CashflowCategoryName')"
                                     dataField="CashflowCategoryName"
+                                    [minWidth]="200"
                                     dataType="string"
                                     [renderAsync]="true"
                                     cellTemplate="CashflowCategoryNameTemplate"

@@ -9,14 +9,14 @@
     <div *dxTemplate="let data of 'selectTemplate'">
         <div class="select-header">
             <span>{{data.text}}</span>
-            <span *ngIf="totalCount !== undefined" class="total-count"> ({{ totalCount | number }})</span>
+            <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount | number }})</span>
             <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
         </div>
     </div>
 </dx-select-box>
 <ng-template #text>
-    <div  class="select-header" *ngIf="items.length === 1">
+    <div class="select-header" *ngIf="items.length === 1">
         <span>{{items[0].text}}</span>
-        <span *ngIf="totalCount !== undefined" class="total-count"> ({{ totalCount | number }})</span>
+        <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount | number }})</span>
     </div>
 </ng-template>

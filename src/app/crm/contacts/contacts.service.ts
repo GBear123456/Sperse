@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of, BehaviorSubject } from 'rxjs';
 import { filter, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
-import invert from 'lodash/invert';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -33,22 +32,20 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
-import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { MergeContactDialogComponent } from '@app/crm/contacts/merge-contact-dialog/merge-contact-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
-import { CacheHelper } from '../../../shared/common/cache-helper/cache-helper';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CacheService } from 'ng2-cache-service';
+import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interface';
 
 @Injectable()
 export class ContactsService {
     private verificationSubject: Subject<any> = new Subject<any>();
     private toolbarSubject: Subject<any> = new Subject<any>();
-    private toolbarItemSubject: Subject<any> = new Subject<any>();
     private userId: ReplaySubject<number> = new ReplaySubject(1);
     userId$: Observable<number> = this.userId.asObservable();
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
@@ -65,8 +62,6 @@ export class ContactsService {
     };
     private personContactInfo: ReplaySubject<PersonContactInfoDto> = new ReplaySubject(1);
     personContactInfo$: Observable<PersonContactInfoDto> = this.personContactInfo.asObservable();
-
-    readonly CONTACT_GROUP_KEYS = invert(ContactGroup);
     readonly settingsDialogOpenedCacheKey: string = this.cacheHelper.getCacheKey('save_option_opened_settings');
     settingsDialogOpened: BehaviorSubject<boolean> = new BehaviorSubject(this.cacheService.get(this.settingsDialogOpenedCacheKey) || true);
     settingsDialogOpened$: Observable<boolean> = this.settingsDialogOpened.asObservable().pipe(
@@ -99,16 +94,6 @@ export class ContactsService {
 
     updatePersonContactInfo(personContactInfo: PersonContactInfoDto) {
         this.personContactInfo.next(personContactInfo);
-    }
-
-    getCGPermissionKey(contactGroup: ContactGroup, permission = ''): string {
-        return ContactGroupPermission[
-            this.CONTACT_GROUP_KEYS[contactGroup ? contactGroup.toString() : undefined]
-        ] + (permission ? '.' : '') + permission;
-    }
-
-    checkCGPermission(contactGroup: ContactGroup, permission = 'Manage') {
-        return this.permission.isGranted(this.getCGPermissionKey(contactGroup, permission) as AppPermissions);
     }
 
     verificationSubscribe(callback, ident?: string) {
@@ -384,7 +369,7 @@ export class ContactsService {
         }).afterClosed();
     }
 
-    showSMSDialog(data) {
+    showSMSDialog(data: SmsDialogData) {
         this.dialog.closeAll();
         this.dialog.open(SMSDialogComponent, {
             id: 'permanent',

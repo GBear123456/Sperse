@@ -191,7 +191,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     initToolbarConfig(ms = 300) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
-            this.manageCGPermision = this.contactService.getCGPermissionKey(this.customerType, 'Manage');
+            this.manageCGPermision = this.permission.getCGPermissionKey(this.customerType, 'Manage');
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
@@ -351,46 +351,46 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'assign',
                             action: this.toggleUserAssignment.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, 'ManageAssignments')
+                            disabled: !this.permission.checkCGPermission(this.customerType, 'ManageAssignments')
                         },
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType),
+                            disabled: !this.permission.checkCGPermission(this.customerType),
                             visible: this.contactInfo.statusId == ContactStatus.Prospective
                         },
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType),
+                            disabled: !this.permission.checkCGPermission(this.customerType),
                             visible: this.contactInfo.statusId != ContactStatus.Prospective
                         },
                         {
                             name: 'partnerType',
                             action: this.togglePartnerTypes.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, ''),
+                            disabled: !this.permission.checkCGPermission(this.customerType, ''),
                             visible: this.customerType == ContactGroup.Partner
                         },
                         {
                             name: 'lists',
                             action: this.toggleLists.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'tags',
                             action: this.toggleTags.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
-                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.customerType, '')
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
                             visible: !this.isBankCodeLayout,
-                            disabled: !this.contactService.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.customerType, '')
                         }
                     ]
                 },
@@ -402,7 +402,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             name: 'delete',
                             action: this.delete.bind(this),
                             visible: Boolean(this.leadId) &&
-                                this.contactService.checkCGPermission(this.customerType)
+                                this.permission.checkCGPermission(this.customerType)
                         }
                     ]
                 },

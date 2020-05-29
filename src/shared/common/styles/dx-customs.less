@@ -433,7 +433,6 @@ input.form-control {
         .dx-datagrid-rowsview .dx-command-edit {
             text-overflow: initial;
             & + td {
-                width: 100%;
                 position: relative;
                 &.stars {
                     line-height: 13px;
@@ -450,6 +449,10 @@ input.form-control {
                     opacity: 0.5;
                 }
             }
+        }
+
+        .dx-command-edit td {
+            width: 100%;
         }
 
         .dx-datagrid-headers .dx-row.dx-header-row,

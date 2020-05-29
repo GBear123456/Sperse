@@ -38,6 +38,10 @@ export class DataGridService {
         return dataGrid && dataGrid.instance && dataGrid.instance.option(option);
     }
 
+    static getDataGridRowsViewHeight() {
+        return document.querySelector('.dx-datagrid-rowsview').clientHeight;
+    }
+
     static getOrganizationUnitName(organizationUnitId: number, organizationUnits: OrganizationUnitDto[]): string {
         let organizationUnitName = '';
         if (organizationUnits && organizationUnits.length) {

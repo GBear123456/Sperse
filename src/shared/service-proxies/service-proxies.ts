@@ -44987,8 +44987,8 @@ export interface ICreateOrUpdateContactOutput {
 }
 
 export enum PreferredProperties {
-    FullName = "FullName", 
-    ContactDate = "ContactDate", 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export class ContactMergeOptions implements IContactMergeOptions {
@@ -45176,9 +45176,9 @@ export interface IPrimaryContactInfo {
 }
 
 export enum MergeLeadMode {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    KeepSource = "KeepSource", 
+    KeepTarget = "KeepTarget", 
+    KeepBoth = "KeepBoth", 
 }
 
 export class MergeContactInput implements IMergeContactInput {
@@ -67813,7 +67813,7 @@ export interface IAddSslBindingInput {
 
 export class UpdateSslBindingInput implements IUpdateSslBindingInput {
     id!: number;
-    sslCertificateId!: number;
+    sslCertificateId!: number | undefined;
     organizationUnitId!: number | undefined;
     isActive!: boolean;
 
@@ -67854,7 +67854,7 @@ export class UpdateSslBindingInput implements IUpdateSslBindingInput {
 
 export interface IUpdateSslBindingInput {
     id: number;
-    sslCertificateId: number;
+    sslCertificateId: number | undefined;
     organizationUnitId: number | undefined;
     isActive: boolean;
 }

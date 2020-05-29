@@ -1,8 +1,7 @@
 /** Core imports */
-import { Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 
 /** Third party imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -13,16 +12,12 @@ import { FilterTreeListModel } from './tree-list.model';
     templateUrl: './tree-list.component.html',
     styleUrls: ['./tree-list.component.less']
 })
-export class FilterTreeListComponent extends AppComponentBase implements FilterComponent {
+export class FilterTreeListComponent implements FilterComponent {
     items: {
         element: FilterTreeListModel
     };
     component: any;
     apply: (event) => void;
-
-    constructor(injector: Injector) {
-        super(injector);
-    }
 
     onSelect($event) {
         this.items.element.value = _.union(_.difference(

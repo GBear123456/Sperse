@@ -38,6 +38,7 @@ import { GooglePlaceService } from '@shared/common/google-place/google-place.ser
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AddressUsageTypeDto } from '../../../../shared/service-proxies/service-proxies';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'addresses',
@@ -53,7 +54,7 @@ export class AddressesComponent implements OnInit {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.contactsService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -88,6 +89,7 @@ export class AddressesComponent implements OnInit {
         private store$: Store<RootStore.State>,
         private googlePlaceService: GooglePlaceService,
         private statesService: StatesService,
+        private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
     ) {}

@@ -1017,6 +1017,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams);
     }
 
+    onPopupOpened(event) {
+        event.component._popup.option('width', '340px');
+    }
+
     setDataSource() {
         if (this.dataGrid && !this.dataGrid.dataSource)
             this.dataGrid.dataSource = this.dataSource;

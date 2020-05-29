@@ -12,6 +12,5 @@ export class PersonalInfoComponent {
 
     constructor(
         public ls: AppLocalizationService
-    ) {
-    }
+    ) {}
 }

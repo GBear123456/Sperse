@@ -5,7 +5,7 @@
 
     <div class="wrapper">
         <mat-tab-group *ngIf="settings">
-            <mat-tab label="{{l('General')}}" *ngIf="showTimezoneSelection">
+            <mat-tab [label]="l('General')" *ngIf="showTimezoneSelection">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group" *ngIf="showTimezoneSelection">
                         <label for="Timezone">{{l("Timezone")}}</label>
@@ -53,7 +53,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Appearance')}}" *ngIf="isAdminCustomizations">
+            <mat-tab [label]="l('Appearance')" *ngIf="isAdminCustomizations">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="row m-form">
                         <div class="col-md-4">
@@ -99,7 +99,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('UserManagement')}}">
+            <mat-tab [label]="l('UserManagement')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="m-form">
                         <h5>{{l("FormBasedRegistration")}}</h5>
@@ -157,7 +157,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Security')}}">
+            <mat-tab [label]="l('Security')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <h5>{{l("PasswordComplexity")}}</h5>
@@ -266,12 +266,12 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Domain')}}" *ngIf="isAdminCustomizations && isTenantHosts">
+            <mat-tab [label]="l('Domain')" *ngIf="isAdminCustomizations && isTenantHosts">
                 <dx-scroll-view showScrollbar="onHover">
                     <system-settings></system-settings>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('MemberPortal')}}" *ngIf="isAdminCustomizations">
+            <mat-tab [label]="l('MemberPortal')" *ngIf="isAdminCustomizations">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="MemberPortalUrl">{{l("MemberPortalUrl")}}</label>
@@ -282,7 +282,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('EmailSmtp')}}">
+            <mat-tab [label]="l('EmailSmtp')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
@@ -339,7 +339,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('IDCS Link')}}" *ngIf="isCreditReportFeatureEnabled">
+            <mat-tab [label]="l('IDCS Link')" *ngIf="isCreditReportFeatureEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -365,7 +365,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Base Commerce Link')}}">
+            <mat-tab [label]="l('Base Commerce Link')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -391,7 +391,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('PayPal')}}">
+            <mat-tab [label]="l('PayPal')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -409,7 +409,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('ACH Works')}}">
+            <mat-tab [label]="l('ACH Works')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -431,7 +431,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('RecurlyLink')}}">
+            <mat-tab [label]="l('RecurlyLink')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -453,7 +453,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('EPCVIPLink')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+            <mat-tab [label]="l('EPCVIPLink')" *ngIf="isPFMApplicationsFeatureEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -463,7 +463,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+            <mat-tab [label]="l('EPCVIPEmail')" *ngIf="isPFMApplicationsFeatureEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -490,7 +490,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('IAge')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+            <mat-tab [label]="l('IAge')" *ngIf="isPFMApplicationsFeatureEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -523,7 +523,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Ongage')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+            <mat-tab [label]="l('Ongage')" *ngIf="isPFMApplicationsFeatureEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -572,7 +572,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('YTel')}}">
+            <mat-tab [label]="l('YTel')">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -604,7 +604,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Rapid')}}" *ngIf="isRapidTenantLayout">
+            <mat-tab [label]="l('Rapid')" *ngIf="isRapidTenantLayout">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">

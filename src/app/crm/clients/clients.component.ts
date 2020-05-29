@@ -111,9 +111,10 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
+import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -250,9 +251,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
+    selectedClients: any = [];
     headlineButtons: HeadlineButton[] = [
         {
-            enabled: this.contactService.checkCGPermission(ContactGroup.Client),
+            enabled: this.permission.checkCGPermission(ContactGroup.Client),
             action: this.createClient.bind(this),
             label: this.l('CreateNewCustomer')
         }
@@ -530,6 +532,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private sessionService: AppSessionService,
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
+        private nameParserService: NameParserService,
         public crmService: CrmService,
         public dialog: MatDialog,
         public appService: AppService,
@@ -760,7 +763,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onContentReady(event) {
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -769,6 +772,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     onSelectionChanged($event) {
         this.selectedClientKeys = $event.component.getSelectedRowKeys();
+        this.selectedClients = $event.component.getSelectedRowsData();
         this.initToolbarConfig();
     }
 
@@ -966,7 +970,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-       this.toolbarConfig = [
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
                     {
@@ -1015,7 +1019,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -1030,7 +1034,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -1038,7 +1042,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -1046,7 +1050,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -1054,12 +1058,48 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.contactService.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
                     }
                 ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'message',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Email'),
+                                    action: () => {
+                                        this.contactService.showEmailDialog({
+                                            to: this.selectedClients.map(lead => lead.Email)
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('SMS'),
+                                    action: () => {
+                                        const selectedClients = this.selectedClients;
+                                        const contact = selectedClients && selectedClients[selectedClients.length - 1];
+                                        const parsedName = contact && this.nameParserService.getParsed(contact.Name);
+                                        this.contactService.showSMSDialog({
+                                            phoneNumber: contact && contact.Phone,
+                                            firstName: parsedName && parsedName.first,
+                                            lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                }
+                           ]
+                       }
+                   }
+               ]
             },
             {
                 location: 'after',
@@ -1178,7 +1218,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             }
         ];
-       return this.toolbarConfig;
+        return this.toolbarConfig;
     }
 
     toggleColumnChooser() {
@@ -1308,7 +1348,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        if (this.contactService.checkCGPermission(ContactGroup.Client)) {
+        if (this.permission.checkCGPermission(ContactGroup.Client)) {
             let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
             this.clientService.updateContactStatuses(
                 selectedIds,

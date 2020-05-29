@@ -5,6 +5,8 @@
                   [parentIdExpr]="items.element.parentExpr"
                   [showColumnHeaders]="false"
                   [autoExpandAll]="true"
+                  height="calc(100vh - 172px)"
+                  [scrolling]="{ preloadEnabled: true, rowRenderingMode: 'virtual' }"
                   [(selectedRowKeys)]="items.element.value">
         <dxi-column [dataField]="items.element.nameField" [cellTemplate]="items.element.templateFunc ? 'checkBoxTemplate' : null"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">

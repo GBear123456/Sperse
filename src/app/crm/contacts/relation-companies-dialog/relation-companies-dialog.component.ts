@@ -9,8 +9,9 @@ import * as _ from 'underscore';
 import { PersonOrgRelationServiceProxy } from 'shared/service-proxies/service-proxies';
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
 import { ContactsService } from '../contacts.service';
-import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'relation-companies-dialog',
@@ -26,6 +27,7 @@ export class RelationCompaniesDialogComponent implements OnInit {
         private relationsServiceProxy: PersonOrgRelationServiceProxy,
         private contactsService: ContactsService,
         private notifyService: NotifyService,
+        private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<ContactListDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -37,7 +39,7 @@ export class RelationCompaniesDialogComponent implements OnInit {
         this.contactList.photoType = 'Organization';
         this.contactList.data = this.data;
         this.contactList.manageAllowed = this.manageAllowed =
-            this.contactsService.checkCGPermission(this.data.groupId);
+            this.permissionService.checkCGPermission(this.data.groupId);
 
         this.contactList.filter = (search?) => {
             return this.data.personContactInfo.orgRelations.map((item) => {
@@ -47,7 +49,6 @@ export class RelationCompaniesDialogComponent implements OnInit {
                     && (contact.name.toLowerCase().indexOf(search) >= 0) ? contact : null;
             }).filter(Boolean).sort((item) => (item.id == this.data.primaryOrganizationContactId ? -1 : 1));
         };
-
         this.contactList.filterList();
     }
 

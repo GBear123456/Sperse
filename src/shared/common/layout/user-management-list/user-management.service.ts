@@ -316,7 +316,7 @@ export class UserManagementService {
 
     checkBankCodeFeature(): boolean {
         const tenant = this.appSession.tenant;
-        return tenant && (this.feature.isEnabled(AppFeatures.CRMBANKCode));
+        return !!tenant && (this.feature.isEnabled(AppFeatures.CRMBANKCode));
     }
 
     showLoginAttempts(e): void {

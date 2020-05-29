@@ -51,6 +51,7 @@ import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'details-header',
@@ -138,6 +139,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         private loadingService: LoadingService,
         private permissionChecker: PermissionCheckerService,
         private profileService: ProfileService,
+        private permissionService: AppPermissionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {}
@@ -153,7 +155,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
                 this.contactGroup = contactInfo.groupId;
-                this.manageAllowed = this.contactsService.checkCGPermission(contactInfo.groupId);
+                this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
                 this.addContextMenuItems = this.getDefaultContextMenuItems().filter(menuItem => {
                     return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
                 });

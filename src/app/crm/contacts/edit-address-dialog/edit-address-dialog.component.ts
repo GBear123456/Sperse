@@ -25,6 +25,7 @@ import { ContactsService } from '../contacts.service';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StatesService } from '@root/store/states-store/states.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -58,11 +59,12 @@ export class EditAddressDialog {
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
         private googlePlaceService: GooglePlaceService,
+        private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<EditAddressDialog>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.isEditAllowed = this.contactsService.checkCGPermission(this.data.groupId);
+        this.isEditAllowed = this.permissionService.checkCGPermission(this.data.groupId);
         if (this.validateAddress(data)) {
             this.action = 'Edit';
             this.address =

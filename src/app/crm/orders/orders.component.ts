@@ -869,6 +869,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.currencyPipe.transform(cellInfo.value, this.currency, 'symbol', '1.2-2');
     }
 
+    customizeAmountSummary = (cellInfo) => {
+        return this.l('Sum') + ': ' + this.customizeAmountCell(cellInfo);
+    }
+
     toggleToolbar() {
         setTimeout(() => this.dataGrid.instance.repaint(), 0);
         this.filtersService.fixed = false;
@@ -911,7 +915,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.setGridDataLoaded();
         this.totalCount = this.totalRowCount;
         if (!this.rowsViewHeight)
-            this.rowsViewHeight = this.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
