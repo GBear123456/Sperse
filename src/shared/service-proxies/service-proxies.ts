@@ -44987,8 +44987,8 @@ export interface ICreateOrUpdateContactOutput {
 }
 
 export enum PreferredProperties {
-    FullName = "FullName", 
-    ContactDate = "ContactDate", 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export class ContactMergeOptions implements IContactMergeOptions {
