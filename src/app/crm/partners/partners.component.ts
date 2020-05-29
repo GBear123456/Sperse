@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, forkJoin, from } from 'rxjs';
 import {
     filter,
     first,
@@ -1275,4 +1275,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         e.component.hide();
     }
 
+    onDragEnd = e => {
+        if (e && e.fromIndex != e.toIndex) {
+            forkJoin(
+                from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
+                from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
+            ).subscribe(([source, target]: [any, any]) => {
+                this.startLoading();
+                this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
+                    this.finishLoading();
+                }).subscribe(res => {
+                    console.log('close', res);
+                });
+            });
+        }
+    }
 }

@@ -37,6 +37,7 @@ import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { MergeContactDialogComponent } from '@app/crm/contacts/merge-contact-dialog/merge-contact-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
@@ -394,5 +395,23 @@ export class ContactsService {
         }).afterClosed().subscribe(res => {
             res && this.invalidate('user-inbox');
         });
+    }
+
+    showMergeContactDialog(sourceInfo, targetInfo, loadFinalize = () => {}) {
+        return this.contactProxy.getContactInfoForMerge(
+            sourceInfo.id, sourceInfo.leadId, 
+            targetInfo.id, targetInfo.leadId
+        ).pipe(finalize(
+            () => loadFinalize()
+        ), switchMap(responce => {
+            return this.dialog.open(MergeContactDialogComponent, {
+                panelClass: 'slider',
+                disableClose: true,
+                closeOnNavigation: false,
+                data: {
+                    mergeInfo: responce
+                }
+            }).afterClosed();
+        }));
     }
 }

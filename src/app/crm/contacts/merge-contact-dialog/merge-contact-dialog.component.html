@@ -1,0 +1,53 @@
+<modal-dialog 
+    [title]="ls.l('Merge records')"
+    [titleClearButton]="false"
+    [buttons]="buttons"
+    [isTitleValid]="isTitleValid"
+    [editTitle]="false">
+
+    <div class="form-content">
+        <dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 80px)'">
+            <div class="table-view">
+                <div class="header">
+                    <div class="fields">
+                        <span>{{ls.l('Fields')}}</span>
+                    </div>
+                    <div class="result">
+                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
+                         <span>{{getResultFullName()}}</span>
+                    </div>
+                    <div class="target">
+                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(data?.mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
+                        <span>{{data?.mergeInfo?.targetContactInfo?.fullName}}</span>
+                    </div>
+                    <div class="source">
+                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(data?.mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
+                        <span>{{data?.mergeInfo?.contactInfo?.fullName}}</span>    
+                    </div>
+                </div>
+                <ng-container *ngFor="let field of fields">
+                    <div class="contact-field" *ngIf="!field.hidden">
+                        <div class="fields">
+                            <p>{{field.caption}}</p>
+                            <p>{{field.alt}}</p>
+                        </div>
+                        <ng-container *ngFor="let column of ['result', 'target', 'source']">
+                            <div class="{{column}}">
+                                <ng-container *ngFor="let value of field[column].values">
+                                    <p *ngIf="field.disabled">{{value.text}}</p>
+                                    <dx-check-box 
+                                        [text]="value.text" 
+                                        [(value)]="value.selected"
+                                        [visible]="!field.disabled" 
+                                        [ngClass]="{primary: value.isPrimary}"
+                                        (click)="onSelectChange(field, value)">
+                                    </dx-check-box>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

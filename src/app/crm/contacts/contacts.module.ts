@@ -81,6 +81,7 @@ import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { PersonInfoComponent } from './person-info/person-info.component';
 import { UserInboxComponent } from './user-inbox/user-inbox.component';
+import { MergeContactDialogComponent } from './merge-contact-dialog/merge-contact-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
@@ -194,6 +195,7 @@ import { ListsModule } from '../../shared/common/lists/lists.module';
         SMSDialogComponent,
         AddSubscriptionDialogComponent,
         CancelSubscriptionDialogComponent,
+        MergeContactDialogComponent,
         MarkAsPaidDialogComponent
     ],
     imports: [
@@ -274,6 +276,7 @@ import { ListsModule } from '../../shared/common/lists/lists.module';
         AddSubscriptionDialogComponent,
         CancelSubscriptionDialogComponent,
         OrganizationUnitsDialogComponent,
+        MergeContactDialogComponent,
         MarkAsPaidDialogComponent
     ],
     providers: [

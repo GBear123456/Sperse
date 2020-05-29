@@ -58,6 +58,7 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="main-component-view"
                                   accesskey="narrowHeaderPanel"
+                                  [rowDragging]="{allowDropInsideItem: true, onDragEnd: onDragEnd}"
                                   [renderAsync]="true"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"

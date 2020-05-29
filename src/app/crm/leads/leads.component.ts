@@ -9,7 +9,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, forkJoin, from } from 'rxjs';
 import {
     filter,
     first,
@@ -1618,4 +1618,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
+    onDragEnd = e => {
+        if (e && e.fromIndex != e.toIndex) {
+            forkJoin(
+                from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
+                from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
+            ).subscribe(([source, target]: [any, any]) => {
+                this.startLoading();
+                this.contactService.showMergeContactDialog({
+                    id: source.CustomerId,
+                    leadId: source.Id
+                }, {
+                    id: target.CustomerId,
+                    leadId: target.Id
+                }, () => {
+                    this.finishLoading();
+                }).subscribe(res => {
+                    console.log('close', res);
+                });
+            });
+        }
+    }
 }

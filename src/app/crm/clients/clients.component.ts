@@ -15,7 +15,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription, forkJoin, from } from 'rxjs';
 import {
     filter,
     finalize,
@@ -1445,5 +1445,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
+    }
+
+    onDragEnd = e => {
+        if (e && e.fromIndex != e.toIndex) {
+            forkJoin(
+                from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
+                from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
+            ).subscribe(([source, target]: [any, any]) => {
+                this.startLoading();
+                this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
+                    this.finishLoading();
+                }).subscribe(success => {
+                    if (success)
+                        this.refresh();
+                });
+            });
+        }
     }
 }
