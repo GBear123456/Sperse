@@ -29,7 +29,7 @@ export class DashboardWidgetsService  {
                     : {
                         from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
                         to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to')
-                    } as PeriodModel
+                    } as PeriodModel;
             }
         )
     );
