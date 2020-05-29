@@ -45176,9 +45176,9 @@ export interface IPrimaryContactInfo {
 }
 
 export enum MergeLeadMode {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    KeepSource = "KeepSource", 
+    KeepTarget = "KeepTarget", 
+    KeepBoth = "KeepBoth", 
 }
 
 export class MergeContactInput implements IMergeContactInput {
