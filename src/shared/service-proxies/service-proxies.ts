@@ -67813,7 +67813,7 @@ export interface IAddSslBindingInput {
 
 export class UpdateSslBindingInput implements IUpdateSslBindingInput {
     id!: number;
-    sslCertificateId!: number;
+    sslCertificateId!: number | undefined;
     organizationUnitId!: number | undefined;
     isActive!: boolean;
 
@@ -67854,7 +67854,7 @@ export class UpdateSslBindingInput implements IUpdateSslBindingInput {
 
 export interface IUpdateSslBindingInput {
     id: number;
-    sslCertificateId: number;
+    sslCertificateId: number | undefined;
     organizationUnitId: number | undefined;
     isActive: boolean;
 }
