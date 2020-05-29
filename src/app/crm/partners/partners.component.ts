@@ -1324,8 +1324,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.startLoading();
                 this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
                     this.finishLoading();
-                }).subscribe(res => {
-                    console.log('close', res);
+                }).subscribe(success => {
+                    if (success)
+                        this.invalidate();
                 });
             });
         }

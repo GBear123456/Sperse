@@ -1681,8 +1681,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     leadId: target.Id
                 }, () => {
                     this.finishLoading();
-                }).subscribe(res => {
-                    console.log('close', res);
+                }).subscribe(success => {
+                    if (success)
+                        this.refresh();
                 });
             });
         }
