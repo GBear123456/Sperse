@@ -135,6 +135,8 @@ export class MergeContactDialogComponent {
         }
     ];
 
+    isTitleValid: true;
+
     constructor(
         private elementRef: ElementRef,
         private loadingService: LoadingService,
