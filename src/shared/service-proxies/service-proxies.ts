@@ -44259,6 +44259,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     fullName!: string | undefined;
     contactDate!: moment.Moment | undefined;
     typeId!: string | undefined;
+    userId!: number | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
     contactAddresses!: AddressInfo[] | undefined;
@@ -44291,6 +44292,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.fullName = data["fullName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.typeId = data["typeId"];
+            this.userId = data["userId"];
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
                 this.contactEmails = [];
                 for (let item of data["contactEmails"])
@@ -44335,6 +44337,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["fullName"] = this.fullName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["typeId"] = this.typeId;
+        data["userId"] = this.userId;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
             data["contactEmails"] = [];
             for (let item of this.contactEmails)
@@ -44372,6 +44375,7 @@ export interface IContactInfoForMerge {
     fullName: string | undefined;
     contactDate: moment.Moment | undefined;
     typeId: string | undefined;
+    userId: number | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;
     contactAddresses: AddressInfo[] | undefined;
@@ -53256,14 +53260,14 @@ export interface IImportAddressInput {
     countryId: string | undefined;
 }
 
-export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
+export class CustomFieldsInput implements ICustomFieldsInput {
     customField1!: string | undefined;
     customField2!: string | undefined;
     customField3!: string | undefined;
     customField4!: string | undefined;
     customField5!: string | undefined;
 
-    constructor(data?: IImportCustomFieldsInput) {
+    constructor(data?: ICustomFieldsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -53282,9 +53286,9 @@ export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
         }
     }
 
-    static fromJS(data: any): ImportCustomFieldsInput {
+    static fromJS(data: any): CustomFieldsInput {
         data = typeof data === 'object' ? data : {};
-        let result = new ImportCustomFieldsInput();
+        let result = new CustomFieldsInput();
         result.init(data);
         return result;
     }
@@ -53300,7 +53304,7 @@ export class ImportCustomFieldsInput implements IImportCustomFieldsInput {
     }
 }
 
-export interface IImportCustomFieldsInput {
+export interface ICustomFieldsInput {
     customField1: string | undefined;
     customField2: string | undefined;
     customField3: string | undefined;
@@ -53348,7 +53352,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     interests!: string[] | undefined;
     affiliateCode!: string | undefined;
     isActive!: boolean | undefined;
-    customFields!: ImportCustomFieldsInput | undefined;
+    customFields!: CustomFieldsInput | undefined;
     rating!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
@@ -53405,7 +53409,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             }
             this.affiliateCode = data["affiliateCode"];
             this.isActive = data["isActive"];
-            this.customFields = data["customFields"] ? ImportCustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
+            this.customFields = data["customFields"] ? CustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
             this.rating = data["rating"];
         }
     }
@@ -53508,7 +53512,7 @@ export interface IImportPersonalInput {
     interests: string[] | undefined;
     affiliateCode: string | undefined;
     isActive: boolean | undefined;
-    customFields: ImportCustomFieldsInput | undefined;
+    customFields: CustomFieldsInput | undefined;
     rating: string | undefined;
 }
 
@@ -53761,7 +53765,7 @@ export class ImportItemInput implements IImportItemInput {
     utmKeyword!: string | undefined;
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
-    requestCustomInfo!: ImportCustomFieldsInput | undefined;
+    requestCustomInfo!: CustomFieldsInput | undefined;
     subscription1!: ImportSubscriptionInput | undefined;
     subscription2!: ImportSubscriptionInput | undefined;
     subscription3!: ImportSubscriptionInput | undefined;
@@ -53807,7 +53811,7 @@ export class ImportItemInput implements IImportItemInput {
             this.utmKeyword = data["utmKeyword"];
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
-            this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
+            this.requestCustomInfo = data["requestCustomInfo"] ? CustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
             this.subscription1 = data["subscription1"] ? ImportSubscriptionInput.fromJS(data["subscription1"]) : <any>undefined;
             this.subscription2 = data["subscription2"] ? ImportSubscriptionInput.fromJS(data["subscription2"]) : <any>undefined;
             this.subscription3 = data["subscription3"] ? ImportSubscriptionInput.fromJS(data["subscription3"]) : <any>undefined;
@@ -53892,7 +53896,7 @@ export interface IImportItemInput {
     utmKeyword: string | undefined;
     utmAdGroup: string | undefined;
     utmName: string | undefined;
-    requestCustomInfo: ImportCustomFieldsInput | undefined;
+    requestCustomInfo: CustomFieldsInput | undefined;
     subscription1: ImportSubscriptionInput | undefined;
     subscription2: ImportSubscriptionInput | undefined;
     subscription3: ImportSubscriptionInput | undefined;
@@ -54208,7 +54212,7 @@ export class ImportContactInput implements IImportContactInput {
     utmKeyword!: string | undefined;
     utmAdGroup!: string | undefined;
     utmName!: string | undefined;
-    requestCustomInfo!: ImportCustomFieldsInput | undefined;
+    requestCustomInfo!: CustomFieldsInput | undefined;
     subscription1!: ImportSubscriptionInput | undefined;
     subscription2!: ImportSubscriptionInput | undefined;
     subscription3!: ImportSubscriptionInput | undefined;
@@ -54274,7 +54278,7 @@ export class ImportContactInput implements IImportContactInput {
             this.utmKeyword = data["utmKeyword"];
             this.utmAdGroup = data["utmAdGroup"];
             this.utmName = data["utmName"];
-            this.requestCustomInfo = data["requestCustomInfo"] ? ImportCustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
+            this.requestCustomInfo = data["requestCustomInfo"] ? CustomFieldsInput.fromJS(data["requestCustomInfo"]) : <any>undefined;
             this.subscription1 = data["subscription1"] ? ImportSubscriptionInput.fromJS(data["subscription1"]) : <any>undefined;
             this.subscription2 = data["subscription2"] ? ImportSubscriptionInput.fromJS(data["subscription2"]) : <any>undefined;
             this.subscription3 = data["subscription3"] ? ImportSubscriptionInput.fromJS(data["subscription3"]) : <any>undefined;
@@ -54385,7 +54389,7 @@ export interface IImportContactInput {
     utmKeyword: string | undefined;
     utmAdGroup: string | undefined;
     utmName: string | undefined;
-    requestCustomInfo: ImportCustomFieldsInput | undefined;
+    requestCustomInfo: CustomFieldsInput | undefined;
     subscription1: ImportSubscriptionInput | undefined;
     subscription2: ImportSubscriptionInput | undefined;
     subscription3: ImportSubscriptionInput | undefined;
@@ -57238,6 +57242,7 @@ export interface ISubmitFreeTrialRequestInput {
 }
 
 export class SubmitClientRequestInput implements ISubmitClientRequestInput {
+    tenancyName!: string;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -57245,11 +57250,8 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
     countryId!: string | undefined;
     countryName!: string | undefined;
     zip!: string | undefined;
-    customField1!: string | undefined;
-    customField2!: string | undefined;
-    customField3!: string | undefined;
-    customField4!: string | undefined;
-    customField5!: string | undefined;
+    customContactInfo!: CustomFieldsInput | undefined;
+    customRequestInfo!: CustomFieldsInput | undefined;
     leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
@@ -57273,6 +57275,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 
     init(data?: any) {
         if (data) {
+            this.tenancyName = data["tenancyName"];
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.stateId = data["stateId"];
@@ -57280,11 +57283,8 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
             this.countryId = data["countryId"];
             this.countryName = data["countryName"];
             this.zip = data["zip"];
-            this.customField1 = data["customField1"];
-            this.customField2 = data["customField2"];
-            this.customField3 = data["customField3"];
-            this.customField4 = data["customField4"];
-            this.customField5 = data["customField5"];
+            this.customContactInfo = data["customContactInfo"] ? CustomFieldsInput.fromJS(data["customContactInfo"]) : <any>undefined;
+            this.customRequestInfo = data["customRequestInfo"] ? CustomFieldsInput.fromJS(data["customRequestInfo"]) : <any>undefined;
             this.leadRequestXref = data["leadRequestXref"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -57308,6 +57308,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["tenancyName"] = this.tenancyName;
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
@@ -57315,11 +57316,8 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
         data["countryId"] = this.countryId;
         data["countryName"] = this.countryName;
         data["zip"] = this.zip;
-        data["customField1"] = this.customField1;
-        data["customField2"] = this.customField2;
-        data["customField3"] = this.customField3;
-        data["customField4"] = this.customField4;
-        data["customField5"] = this.customField5;
+        data["customContactInfo"] = this.customContactInfo ? this.customContactInfo.toJSON() : <any>undefined;
+        data["customRequestInfo"] = this.customRequestInfo ? this.customRequestInfo.toJSON() : <any>undefined;
         data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -57336,6 +57334,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 }
 
 export interface ISubmitClientRequestInput {
+    tenancyName: string;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -57343,11 +57342,8 @@ export interface ISubmitClientRequestInput {
     countryId: string | undefined;
     countryName: string | undefined;
     zip: string | undefined;
-    customField1: string | undefined;
-    customField2: string | undefined;
-    customField3: string | undefined;
-    customField4: string | undefined;
-    customField5: string | undefined;
+    customContactInfo: CustomFieldsInput | undefined;
+    customRequestInfo: CustomFieldsInput | undefined;
     leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
@@ -58638,6 +58634,7 @@ export interface ISubscriptionShortInfoOutput {
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
     subscriptions!: SubscriptionShortInfoOutput[] | undefined;
     userKey!: string | undefined;
+    contactId!: number | undefined;
 
     constructor(data?: IGetMemberInfoOutput) {
         if (data) {
@@ -58656,6 +58653,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                     this.subscriptions.push(SubscriptionShortInfoOutput.fromJS(item));
             }
             this.userKey = data["userKey"];
+            this.contactId = data["contactId"];
         }
     }
 
@@ -58674,6 +58672,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                 data["subscriptions"].push(item.toJSON());
         }
         data["userKey"] = this.userKey;
+        data["contactId"] = this.contactId;
         return data; 
     }
 }
@@ -58681,6 +58680,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
 export interface IGetMemberInfoOutput {
     subscriptions: SubscriptionShortInfoOutput[] | undefined;
     userKey: string | undefined;
+    contactId: number | undefined;
 }
 
 export enum NoteType {
