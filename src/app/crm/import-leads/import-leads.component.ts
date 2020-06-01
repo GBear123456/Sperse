@@ -31,7 +31,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportSubscriptionInput, ImportCustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
+    ImportSubscriptionInput, CustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
     GetImportStatusOutput, LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
@@ -315,8 +315,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         businessInfo: ImportBusinessInput.fromJS({}),
         companyFullAddress: ImportAddressInput.fromJS({}),
         workFullAddress: ImportAddressInput.fromJS({}),
-        customFields: ImportCustomFieldsInput.fromJS({}),
-        requestCustomInfo: ImportCustomFieldsInput.fromJS({}),
+        customFields: CustomFieldsInput.fromJS({}),
+        requestCustomInfo: CustomFieldsInput.fromJS({}),
         subscription1: ImportSubscriptionInput.fromJS({}),
         subscription2: ImportSubscriptionInput.fromJS({}),
         subscription3: ImportSubscriptionInput.fromJS({}),
