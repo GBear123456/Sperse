@@ -148,7 +148,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Contact';
     private readonly totalDataSourceURI: string = 'Contact/$count';
-    private readonly groupDataSourceURI: string = 'CustomerSlice';
+    private readonly groupDataSourceURI: string = 'ContactSlice';
     private readonly dateField = 'ContactDate';
     private rootComponent: any;
     private subRouteParams: any;
