@@ -54,7 +54,7 @@ export class AddOrEditSSLBindingModalComponent {
         private notify: NotifyService,
         public ls: AppLocalizationService,
         private dialogRef: MatDialogRef<AddOrEditSSLBindingModalComponent>,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.editing = Boolean(data.item && data.item.id);
         if (this.editing) {

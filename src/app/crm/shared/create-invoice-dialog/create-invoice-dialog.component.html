@@ -86,7 +86,6 @@
                         [visible]="contactId && !selectedBillingAddress"
                         itemTemplate="addressTemplate"
                         [disabled]="disabledForUpdate"
-                        [visible]="contactId && !selectedBillingAddress"
                         [placeholder]="ls.l('Select Address')"
                         [(value)]="selectedBillingAddress"
                         [dataSource]="billingAddresses"
@@ -244,7 +243,7 @@
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
                                 [showClearButton]="false"
                                 [(value)]="cellData.data.quantity"
-                                (onKeyDown)="allowDigitsOnly($event)"
+                                (onKeyDown)="allowDigitsOnly($event, ['.'])"
                                 (onValueChanged)="calculateLineTotal(cellData.data)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
