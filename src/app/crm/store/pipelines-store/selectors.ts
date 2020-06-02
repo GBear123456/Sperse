@@ -86,16 +86,9 @@ export const getPipelineTreeSource = (filter: Filter) => createSelector(
     (pipeline: PipelineDto) => {
         let result = [];
         if (pipeline) {
-            result.push({
-                id: pipeline.id.toString(),
-                parent: 0,
-                name: pipeline.name
-            });
             pipeline.stages.forEach(stage => {
                 result.push({
                     id: pipeline.id + ':' + stage.id,
-                    parent: pipeline.name,
-                    parentId: pipeline.id,
                     name: stage.name
                 });
             });
