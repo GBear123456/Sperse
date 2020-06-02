@@ -1,19 +1,13 @@
-<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form *ngIf="active" #clientForm="ngForm" novalidate>
-                <div class="modal-header">
-                    <button type="button" class="close" (click)="close()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title">
-                        <span>{{titleText}}</span>
-                    </h4>
-                </div>
-
+<modal-dialog [title]="titleText" [buttons]="buttons">
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="content">
+            <form #clientForm="ngForm" novalidate>
                 <div class="modal-body">
-                    <div class="dx-field">
-                        <dx-select-box [(value)]="model.tenantHostType" [dataSource]="hostTypes" [placeholder]="ls.l('Type')" [readOnly]="editing"
+                    <div class="dx-field" hidden>
+                        <dx-select-box [(value)]="model.tenantHostType"
+                                       [dataSource]="data.hostTypes"
+                                       [placeholder]="ls.l('Type')"
+                                       [readOnly]="editing"
                                        valueExpr="id" displayExpr="name">
                         </dx-select-box>
                     </div>
@@ -26,14 +20,17 @@
                     </div>
 
                     <div class="dx-field">
-                        <dx-select-box [(value)]="model.sslCertificateId" [dataSource]="sslCertificates" [placeholder]="ls.l('SSLCertificate')"
-                                       valueExpr="id" displayExpr="hostNames">
+                        <dx-select-box [(value)]="model.sslCertificateId"
+                                       [dataSource]="sslCertificates"
+                                       [placeholder]="ls.l('SSLCertificate')"
+                                       valueExpr="id"
+                                       displayExpr="hostNames">
                         </dx-select-box>
                     </div>
 
                     <div class="dx-field">
                         <dx-select-box [(value)]="model.organizationUnitId"
-                                       [dataSource]="orgUnits | async"
+                                       [dataSource]="data.orgUnits | async"
                                        [placeholder]="ls.l('OrganizationUnits')"
                                        valueExpr="id"
                                        displayExpr="displayName"
@@ -41,20 +38,7 @@
                         </dx-select-box>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <dx-button [text]="ls.l('Cancel')"
-                               type="normal"
-                               (onClick)="close()">
-                    </dx-button>
-                    <dx-button [text]="ls.l('Save')"
-                               type="success"
-                               useSubmitBehavior="true"
-                               (onClick)="save($event)"
-                               [disabled]="saving">
-                    </dx-button>
-                </div>
             </form>
         </div>
-    </div>
-</div>
+    </dx-scroll-view>
+</modal-dialog>

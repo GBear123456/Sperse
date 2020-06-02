@@ -1,15 +1,17 @@
 /** Core imports */
-import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
+import {Component, ViewChild, Output, EventEmitter, Inject } from '@angular/core';
 
 /** Third party imports */
 import { DxFileUploaderComponent } from 'devextreme-angular/ui/file-uploader';
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { TenantSslCertificateServiceProxy, AddTenantSslCertificateInput } from '@shared/service-proxies/service-proxies';
-import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'uploadSSLCertificateModal',
@@ -18,28 +20,28 @@ import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
     providers: [ TenantSslCertificateServiceProxy ]
 })
 export class UploadSSLCertificateModalComponent {
-    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
     @ViewChild('uploader', { static: false }) uploader: DxFileUploaderComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active = false;
     saving = false;
     model: AddTenantSslCertificateInput = new AddTenantSslCertificateInput();
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
         private sslService: TenantSslCertificateServiceProxy,
         private notify: NotifyService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private dialogRef: MatDialogRef<UploadSSLCertificateModalComponent>,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {}
 
-    show(): void {
-        this.model = new AddTenantSslCertificateInput();
-        this.active = true;
-        this.modal.show();
-    }
-
-    save(event): void {
-        if (!this.validate(event)) return;
+    save(): void {
         this.saving = true;
         let file = this.uploader.value[0];
         let reader = new FileReader();
@@ -49,17 +51,12 @@ export class UploadSSLCertificateModalComponent {
                 .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
-                    this.close();
                     this.modalSave.emit(null);
+                    this.dialogRef.close();
                 });
         };
 
         reader.readAsBinaryString(file);
-    }
-
-    close(): void {
-        this.active = false;
-        this.modal.hide();
     }
 
     validate(event): boolean {

@@ -1,17 +1,27 @@
 /** Core imports */
-import { Component, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+    Component,
+    ViewChild,
+    Output,
+    EventEmitter,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Inject
+} from '@angular/core';
 
 /** Third party imports */
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import {
     TenantHostServiceProxy, AddSslBindingInput, TenantSslCertificateServiceProxy,
-    TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingInput
+    TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingInput, IAddSslBindingInput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
-import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'addOrEditSSLBindingModal',
@@ -20,49 +30,58 @@ import { AppLocalizationService } from '../../../shared/common/localization/app-
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
-export class AddOrEditSSLBindingModal {
+export class AddOrEditSSLBindingModalComponent {
     @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
-    @Input() hostTypes: any;
-    @Input() orgUnits: any;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active = false;
     saving = false;
     model: any;
     sslCertificates: TenantSslCertificateInfo[];
     editing = false;
-    titleText: string;
+    titleText = this.ls.l('AddSSLBinding');
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
         private changeDetection: ChangeDetectorRef,
         private tenantHostService: TenantHostServiceProxy,
         private tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private notify: NotifyService,
-        public ls: AppLocalizationService
-    ) {}
-
-    show(data: TenantSslBindingInfo): void {
-        this.model = {
-            id: undefined,
-            sslCertificateId: undefined,
-            organizationUnitId: undefined,
-            isActive: undefined,
-            tenantHostType: undefined,
-            domainName: undefined
-        };
-
-        if (this.editing = Boolean(data && data.id)) {
-            this.model.id = data.id;
-            this.model.tenantHostType = data.hostType;
-            this.model.isActive = data.isActive;
-            this.model.organizationUnitId = data.organizationUnitId;
+        public ls: AppLocalizationService,
+        private dialogRef: MatDialogRef<AddOrEditSSLBindingModalComponent>,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {
+        this.editing = Boolean(data.item && data.item.id);
+        if (this.editing) {
+            this.model = new UpdateSslBindingInput({
+                id: data.item.id,
+                organizationUnitId: data.item.organizationUnitId,
+                sslCertificateId: data.item.sslCertificateId,
+                isActive: data.item.isActive
+            }); // ...data.item added a lot of no needed items
             this.titleText = this.ls.l('EditSSLBinding');
-        } else
-            this.titleText = this.ls.l('AddSSLBinding');
+        } else {
+            this.model = new AddSslBindingInput();
+            this.model.tenantHostType = data.hostTypes[0].id;
+        }
+        this.getTenantSslCertificates(data.item);
+    }
 
+    getTenantSslCertificates(data) {
         this.tenantSslCertificateService.getTenantSslCertificates()
             .subscribe(result => {
                 this.sslCertificates = result;
+                this.sslCertificates.unshift(new TenantSslCertificateInfo({
+                    id: null,
+                    hostNames: this.ls.l('LetsEncrypt_FreeSSLCertificate'),
+                    expiration: undefined,
+                    thumbprint: undefined
+                }));
 
                 if (data) {
                     this.model.tenantHostType = <any>data.hostType;
@@ -70,15 +89,11 @@ export class AddOrEditSSLBindingModal {
                     this.model.sslCertificateId = data.sslCertificateId;
                 }
 
-                this.active = true;
-                this.modal.show();
-
                 this.changeDetection.markForCheck();
             });
     }
 
-    save(event): void {
-        if (!this.validate(event)) return;
+    save(): void {
         this.saving = true;
 
         if (this.editing) {
@@ -97,9 +112,7 @@ export class AddOrEditSSLBindingModal {
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
-
+        this.dialogRef.close();
         this.changeDetection.markForCheck();
     }
 

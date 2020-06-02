@@ -73,7 +73,7 @@ import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
 import { SystemSettingsComponent } from './settings/system-settings/system-settings.component';
 import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
-import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
+import { AddOrEditSSLBindingModalComponent } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
@@ -81,7 +81,7 @@ import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-s
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
-import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @NgModule({
@@ -163,7 +163,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         TenantSettingsComponent,
         SystemSettingsComponent,
         UploadSSLCertificateModalComponent,
-        AddOrEditSSLBindingModal,
+        AddOrEditSSLBindingModalComponent,
         HostDashboardComponent,
         AddMemberModalComponent,
         UiCustomizationComponent,
@@ -185,7 +185,9 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent,
         EditTextModalComponent,
-        AuditLogDetailModalComponent
+        AuditLogDetailModalComponent,
+        UploadSSLCertificateModalComponent,
+        AddOrEditSSLBindingModalComponent
     ],
     exports: [
         AddMemberModalComponent

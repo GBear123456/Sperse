@@ -1,8 +1,9 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, Input} from '@angular/core';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -10,14 +11,14 @@ import {
     TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantHostType,
     TenantSslBindingInfo, DictionaryServiceProxy, TenantSslCertificateInfo
 } from '@shared/service-proxies/service-proxies';
-import { UploadSSLCertificateModalComponent } from '../modals/upload-ssl-cert-modal.component';
-import { AddOrEditSSLBindingModal } from '../modals/add-or-edit-ssl-binding-modal.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
+import { AddOrEditSSLBindingModalComponent } from '../modals/add-or-edit-ssl-binding-modal.component';
+import { UploadSSLCertificateModalComponent } from '../modals/upload-ssl-cert-modal.component';
 
 @Component({
     selector: 'system-settings',
@@ -29,9 +30,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class SystemSettingsComponent implements OnInit {
     @ViewChild('customDomainsGrid', { static: false }) customDomainsGrid: DxDataGridComponent;
-    @ViewChild('addOrEditSSLBindingModal', { static: false }) addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
     @ViewChild('sslGrid', { static: false }) sslGrid: DxDataGridComponent;
-    @ViewChild('uploadSSLCertificateModal', { static: false }) uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
     public sslGridDataSource: any;
     public sslBindingsDataSource: any;
 
@@ -51,6 +50,7 @@ export class SystemSettingsComponent implements OnInit {
         private notifyService: NotifyService,
         private permission: AppPermissionService,
         public httpInterceptor: AppHttpInterceptor,
+        private dialog: MatDialog,
         public ls: AppLocalizationService
     ) {}
 
@@ -62,13 +62,29 @@ export class SystemSettingsComponent implements OnInit {
     }
 
     showSSLDialog() {
-        this.uploadSSLCertificateModal.show();
+        const dialogRef = this.dialog.open(UploadSSLCertificateModalComponent, {
+            panelClass: 'slider',
+            data: {}
+        });
+        dialogRef.afterClosed().subscribe(() => {
+            this.refreshSSLGrid();
+        });
     }
 
-    showSSLBindingDialog(row) {
+    showSSLBindingDialog(item) {
         let data: TenantSslBindingInfo;
-        if (row) data = row.data;
-        this.addOrEditSSLBindingModal.show(data);
+        if (item) data = item.data;
+        const dialogRef = this.dialog.open(AddOrEditSSLBindingModalComponent, {
+            panelClass: 'slider',
+            data: {
+                hostTypes: this.hostTypes,
+                orgUnits: this.orgUnits,
+                item: data
+            }
+        });
+        dialogRef.afterClosed().subscribe(() => {
+            this.refreshSSLBindingGrid();
+        });
         this.changeDetection.detectChanges();
     }
 
