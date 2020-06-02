@@ -215,9 +215,9 @@
                     <dxi-column dataField="ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column dataField="StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
                     <dxi-column dataField="EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
-                    <dxi-column dataField="Fee" cssClass="padding-right" [caption]="l('Fee')" cellTemplate="amountTemplate"></dxi-column>
+                    <dxi-column dataField="Fee" [width]="160" cssClass="padding-right" [caption]="l('Fee')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column dataField="StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column dataField="OrderAmount" [width]="180" cssClass="padding-right" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
+                    <dxi-column dataField="OrderAmount" [width]="190" cssClass="padding-right" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column dataField="SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column dataField="EntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
                     <div *dxTemplate="let data of 'photoTemplate'">
@@ -252,7 +252,6 @@
                                         [displayFormat]="l('Count') + ': {0}'">
                         </dxi-total-item>
                         <dxi-total-item [customizeText]="customizeAmountSummary"
-                                        alignment="center"
                                         column="Fee"
                                         summaryType="sum">
                         </dxi-total-item>
