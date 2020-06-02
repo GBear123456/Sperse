@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 import findIndex from 'lodash/findIndex';
 import * as moment from 'moment';
@@ -10,7 +10,6 @@ import * as moment from 'moment';
 /** Application imports */
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import {
     MergeLeadMode,
     MergeContactInput,
@@ -19,12 +18,12 @@ import {
     PreferredProperties,
     TargetContactMergeOptions,
     PrimaryContactInfo,
+    GetContactInfoForMergeOutput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -106,7 +105,7 @@ export class MergeContactDialogComponent {
             disabled: true
         }
     };
-
+    mergeInfo: GetContactInfoForMergeOutput = this.data.mergeInfo;
     fields = Object.keys(this.fieldsConfig).map(field => {
         let source = this.data.mergeInfo.contactInfo,
             target = this.data.mergeInfo.targetContactInfo,
@@ -119,7 +118,6 @@ export class MergeContactDialogComponent {
                 result: { values: this.getResultFieldValues(field, sourceValues, targetValues) }
             }) : (source.hasOwnProperty(field) ? null : this.fieldsConfig[field]);
     }).filter(Boolean);
-
     buttons: IDialogButton[] = [
         {
             id: 'Cancel',
@@ -134,8 +132,6 @@ export class MergeContactDialogComponent {
             action: this.save.bind(this)
         }
     ];
-
-    isTitleValid: true;
 
     constructor(
         private elementRef: ElementRef,
@@ -164,7 +160,7 @@ export class MergeContactDialogComponent {
         let data = contactInfo[field];
         if (data) {
             if (data instanceof Array)
-                return data.sort((prev, next) => prev.isPrimary ? -1 : 1).map(item => {
+                return data.sort((prev) => prev.isPrimary ? -1 : 1).map(item => {
                     let method = this.fieldsConfig[field].getText;
                     return {
                         id: item.id,

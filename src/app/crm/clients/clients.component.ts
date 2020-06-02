@@ -1496,7 +1496,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.startLoading();
                 this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
                     this.finishLoading();
-                }).subscribe(success => {
+                }).subscribe((success: boolean) => {
                     if (success)
                         this.refresh();
                 });

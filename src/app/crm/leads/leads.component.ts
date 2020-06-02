@@ -1669,19 +1669,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onDragEnd = e => {
         if (e && e.fromIndex != e.toIndex) {
             forkJoin(
-                from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
-                from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
+                from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
+                from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
                 this.startLoading();
-                this.contactService.showMergeContactDialog({
-                    id: source.CustomerId,
-                    leadId: source.Id
-                }, {
-                    id: target.CustomerId,
-                    leadId: target.Id
-                }, () => {
-                    this.finishLoading();
-                }).subscribe(success => {
+                this.contactService.showMergeContactDialog(
+                    {
+                        id: source.CustomerId,
+                        leadId: source.Id
+                    },
+                    {
+                        id: target.CustomerId,
+                        leadId: target.Id
+                    },
+                    () => this.finishLoading()
+                ).subscribe((success: boolean) => {
                     if (success)
                         this.refresh();
                 });

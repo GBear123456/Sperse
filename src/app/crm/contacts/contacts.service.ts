@@ -26,7 +26,8 @@ import {
     CreateContactPhotoInput,
     ContactPhotoServiceProxy,
     InvoiceServiceProxy,
-    PersonContactInfoDto
+    PersonContactInfoDto,
+    GetContactInfoForMergeOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -384,17 +385,17 @@ export class ContactsService {
 
     showMergeContactDialog(sourceInfo, targetInfo, loadFinalize = () => {}) {
         return this.contactProxy.getContactInfoForMerge(
-            sourceInfo.id, sourceInfo.leadId, 
+            sourceInfo.id, sourceInfo.leadId,
             targetInfo.id, targetInfo.leadId
         ).pipe(finalize(
             () => loadFinalize()
-        ), switchMap(responce => {
+        ), switchMap((response: GetContactInfoForMergeOutput) => {
             return this.dialog.open(MergeContactDialogComponent, {
                 panelClass: 'slider',
                 disableClose: true,
                 closeOnNavigation: false,
                 data: {
-                    mergeInfo: responce
+                    mergeInfo: response
                 }
             }).afterClosed();
         }));
