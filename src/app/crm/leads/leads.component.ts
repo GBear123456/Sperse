@@ -1,15 +1,14 @@
 /** Core imports */
-import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Params, RouteReuseStrategy } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-
+import {AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Params, RouteReuseStrategy} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, merge, Observable, of, forkJoin, from } from 'rxjs';
+import {DxDataGridComponent} from 'devextreme-angular/ui/data-grid';
+import {select, Store} from '@ngrx/store';
+import {BehaviorSubject, combineLatest, forkJoin, from, merge, Observable, of} from 'rxjs';
 import {
     filter,
     first,
@@ -24,14 +23,13 @@ import {
     takeUntil,
     tap
 } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
+import {CacheService} from 'ng2-cache-service';
 import invert from 'lodash/invert';
 import cloneDeep from 'lodash/cloneDeep';
-
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
-import { AppService } from '@app/app.service';
+import {AppConsts} from '@shared/AppConsts';
+import {ContactGroup} from '@shared/AppEnums';
+import {AppService} from '@app/app.service';
 import {
     AppStore,
     ContactAssignedUsersStoreSelectors,
@@ -40,72 +38,69 @@ import {
     StarsStoreSelectors,
     TagsStoreSelectors
 } from '@app/store';
-import {
-    OrganizationUnitsStoreActions,
-    OrganizationUnitsStoreSelectors,
-    PipelinesStoreSelectors
-} from '@app/crm/store';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
-import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import {OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors, PipelinesStoreSelectors} from '@app/crm/store';
+import {AppComponentBase} from '@shared/common/app-component-base';
+import {FiltersService} from '@shared/filters/filters.service';
+import {FilterModel} from '@shared/filters/models/filter.model';
+import {FilterItemModel} from '@shared/filters/models/filter-item.model';
+import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
+import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
+import {FilterCheckBoxesComponent} from '@shared/filters/check-boxes/filter-check-boxes.component';
+import {FilterCheckBoxesModel} from '@shared/filters/check-boxes/filter-check-boxes.model';
+import {FilterRangeComponent} from '@shared/filters/range/filter-range.component';
+import {FilterStatesComponent} from '@shared/filters/states/filter-states.component';
+import {FilterStatesModel} from '@shared/filters/states/filter-states.model';
+import {DataLayoutType} from '@app/shared/layout/data-layout-type';
 import {
     ContactServiceProxy,
+    LayoutType,
     LeadServiceProxy,
     OrganizationUnitDto,
     PipelineDto,
-    LayoutType
+    UserGroup
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
-import { ListsListComponent } from '@app/shared/common/lists/lists-list/lists-list.component';
-import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
-import { StarsListComponent } from '../shared/stars-list/stars-list.component';
-import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
-import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
-import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { AppPermissions } from '@shared/AppPermissions';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
-import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
-import { CrmService } from '@app/crm/crm.service';
-import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
-import { MapData } from '@app/shared/common/slice/map/map-data.model';
-import { MapComponent } from '@app/shared/common/slice/map/map.component';
-import { ImageFormat } from '@shared/common/export/image-format.enum';
-import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
-import { MapService } from '@app/shared/common/slice/map/map.service';
-import { ImpersonationService } from '@admin/users/impersonation.service';
-import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
-import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
-import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
-import { FilterStatesService } from '@shared/filters/states/filter-states.service';
-import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
-import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
-import { NameParserService } from '@shared/common/name-parser/name-parser.service';
+import {appModuleAnimation} from '@shared/animations/routerTransition';
+import {CreateEntityDialogComponent} from '@shared/common/create-entity-dialog/create-entity-dialog.component';
+import {PipelineComponent} from '@app/shared/pipeline/pipeline.component';
+import {PipelineService} from '@app/shared/pipeline/pipeline.service';
+import {TagsListComponent} from '@app/shared/common/lists/tags-list/tags-list.component';
+import {ListsListComponent} from '@app/shared/common/lists/lists-list/lists-list.component';
+import {UserAssignmentComponent} from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
+import {RatingComponent} from '@app/shared/common/lists/rating/rating.component';
+import {StarsListComponent} from '../shared/stars-list/stars-list.component';
+import {StaticListComponent} from '@app/shared/common/static-list/static-list.component';
+import {CustomReuseStrategy} from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import {LifecycleSubjectsService} from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import {ItemTypeEnum} from '@shared/common/item-details-layout/item-type.enum';
+import {ItemDetailsService} from '@shared/common/item-details-layout/item-details.service';
+import {ContactsService} from '@app/crm/contacts/contacts.service';
+import {AppPermissions} from '@shared/AppPermissions';
+import {UserManagementService} from '@shared/common/layout/user-management-list/user-management.service';
+import {DataGridService} from '@app/shared/common/data-grid.service/data-grid.service';
+import {PivotGridComponent} from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
+import {AppSessionService} from '@shared/common/session/app-session.service';
+import {ChartComponent} from '@app/shared/common/slice/chart/chart.component';
+import {CrmService} from '@app/crm/crm.service';
+import {InfoItem} from '@app/shared/common/slice/info/info-item.model';
+import {MapData} from '@app/shared/common/slice/map/map-data.model';
+import {MapComponent} from '@app/shared/common/slice/map/map.component';
+import {ImageFormat} from '@shared/common/export/image-format.enum';
+import {MapArea} from '@app/shared/common/slice/map/map-area.enum';
+import {MapService} from '@app/shared/common/slice/map/map.service';
+import {ImpersonationService} from '@admin/users/impersonation.service';
+import {HeadlineButton} from '@app/shared/common/headline/headline-button.model';
+import {ToolbarGroupModel} from '@app/shared/common/toolbar/toolbar.model';
+import {ActionMenuService} from '@app/shared/common/action-menu/action-menu.service';
+import {ActionMenuItem} from '@app/shared/common/action-menu/action-menu-item.interface';
+import {ToolBarComponent} from '@app/shared/common/toolbar/toolbar.component';
+import {FilterSourceComponent} from '../shared/filters/source-filter/source-filter.component';
+import {SourceFilterModel} from '../shared/filters/source-filter/source-filter.model';
+import {FilterStatesService} from '@shared/filters/states/filter-states.service';
+import {ContactsHelper} from '@shared/crm/helpers/contacts-helper';
+import {FilterMultilineInputComponent} from '@root/shared/filters/multiline-input/filter-multiline-input.component';
+import {FilterHelpers} from '../shared/helpers/filter.helper';
+import {FilterMultilineInputModel} from '@root/shared/filters/multiline-input/filter-multiline-input.model';
+import {NameParserService} from '@shared/common/name-parser/name-parser.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -872,6 +867,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterMultilineInputComponent,
                     caption: 'xref',
+                    hidden: this.appSession.userIsMember,
                     filterMethod: FilterHelpers.filterByMultiline,
                     field: 'ContactXref',
                     items: {
@@ -951,6 +947,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filterModelAssignment = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'assignedUser',
+                    hidden: this.appSession.userIsMember,
                     field: 'AssignedUserId',
                     items: {
                         element: new FilterCheckBoxesModel(
@@ -964,6 +961,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'SourceOrganizationUnitId',
+                    hidden: this.appSession.userIsMember,
                     field: 'SourceOrganizationUnitId',
                     items: {
                         element: new FilterCheckBoxesModel(
@@ -977,6 +975,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterSourceComponent,
                     caption: 'Source',
+                    hidden: this.appSession.userIsMember,
                     items: {
                         element: new SourceFilterModel({
                             ls: this.localizationService
@@ -999,6 +998,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filterModelTags = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'Tag',
+                    hidden: this.appSession.userIsMember,
                     field: 'TagId',
                     items: {
                         element: new FilterCheckBoxesModel(
@@ -1013,6 +1013,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterRangeComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'Rating',
+                    hidden: this.appSession.userIsMember,
                     field: 'Rating',
                     items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
                 }),

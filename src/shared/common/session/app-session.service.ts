@@ -5,6 +5,7 @@ import {
     LayoutType,
     SessionServiceProxy,
     TenantLoginInfoDto,
+    UserGroup,
     UserLoginInfoDto
 } from '@shared/service-proxies/service-proxies';
 
@@ -57,6 +58,10 @@ export class AppSessionService {
 
     get layoutType(): string {
         return this.tenant && this.tenant.customLayoutType ? this.tenant.customLayoutType : LayoutType.Default;
+    }
+
+    get userIsMember(): boolean {
+        return !!(this.user && this.user.group === UserGroup.Member);
     }
 
     getShownLoginName(): string {

@@ -655,6 +655,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'xref',
+                hidden: this.appSession.userIsMember,
                 filterMethod: FilterHelpers.filterByMultiline,
                 field: 'Xref',
                 items: {
@@ -744,6 +745,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.filterModelAssignment = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'assignedUser',
+                hidden: this.appSession.userIsMember,
                 field: 'AssignedUserId',
                 items: {
                     element: new FilterCheckBoxesModel(
@@ -757,6 +759,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'SourceOrganizationUnitId',
+                hidden: this.appSession.userIsMember,
                 field: 'SourceOrganizationUnitId',
                 items: {
                     element: new FilterCheckBoxesModel(
@@ -769,6 +772,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             }),
             new FilterModel({
                 component: FilterSourceComponent,
+                hidden: this.appSession.userIsMember,
                 caption: 'Source',
                 items: {
                     element: new SourceFilterModel({
@@ -792,6 +796,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.filterModelTags = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Tag',
+                hidden: this.appSession.userIsMember,
                 field: 'TagId',
                 items: {
                     element: new FilterCheckBoxesModel(
@@ -806,6 +811,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 component: FilterRangeComponent,
                 operator: { from: 'ge', to: 'le' },
                 caption: 'Rating',
+                hidden: this.appSession.userIsMember,
                 field: 'Rating',
                 items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
             }),

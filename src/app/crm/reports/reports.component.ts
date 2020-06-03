@@ -39,6 +39,7 @@ import { ReportType } from '@app/crm/reports/report-type.enum';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ToolbarGroupModel } from '../../shared/common/toolbar/toolbar.model';
+import {AppSessionService} from "@shared/common/session/app-session.service";
 
 @Component({
     selector: 'reports-component',
@@ -175,6 +176,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'SourceOrganizationUnitId',
+            hidden: this.appSessionService.userIsMember,
             field: 'sourceOrganizationUnits',
             items: {
                 element: new FilterCheckBoxesModel(
@@ -228,6 +230,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         private cacheService: CacheService,
         private cacheHelper: CacheHelper,
         private invoiceService: InvoicesService,
+        private appSessionService: AppSessionService,
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService,
         public appService: AppService,
