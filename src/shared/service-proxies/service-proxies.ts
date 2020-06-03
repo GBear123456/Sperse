@@ -58634,7 +58634,6 @@ export interface ISubscriptionShortInfoOutput {
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
     subscriptions!: SubscriptionShortInfoOutput[] | undefined;
     userKey!: string | undefined;
-    contactId!: number | undefined;
 
     constructor(data?: IGetMemberInfoOutput) {
         if (data) {
@@ -58653,7 +58652,6 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                     this.subscriptions.push(SubscriptionShortInfoOutput.fromJS(item));
             }
             this.userKey = data["userKey"];
-            this.contactId = data["contactId"];
         }
     }
 
@@ -58672,7 +58670,6 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                 data["subscriptions"].push(item.toJSON());
         }
         data["userKey"] = this.userKey;
-        data["contactId"] = this.contactId;
         return data; 
     }
 }
@@ -58680,7 +58677,6 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
 export interface IGetMemberInfoOutput {
     subscriptions: SubscriptionShortInfoOutput[] | undefined;
     userKey: string | undefined;
-    contactId: number | undefined;
 }
 
 export enum NoteType {
@@ -65894,6 +65890,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     bankCode!: string | undefined;
     affiliateCode!: string | undefined;
     group!: UserGroup | undefined;
+    contactId!: number | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -65916,6 +65913,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.bankCode = data["bankCode"];
             this.affiliateCode = data["affiliateCode"];
             this.group = data["group"];
+            this.contactId = data["contactId"];
             this.id = data["id"];
         }
     }
@@ -65938,6 +65936,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["bankCode"] = this.bankCode;
         data["affiliateCode"] = this.affiliateCode;
         data["group"] = this.group;
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         return data; 
     }
@@ -65953,6 +65952,7 @@ export interface IUserLoginInfoDto {
     bankCode: string | undefined;
     affiliateCode: string | undefined;
     group: UserGroup | undefined;
+    contactId: number | undefined;
     id: number | undefined;
 }
 
