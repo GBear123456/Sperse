@@ -13,7 +13,7 @@ import values from 'lodash/values';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeGroup } from '@root/bank-code/products/bank-pass/bank-code-group.interface';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { BankCodeTime } from '@app/shared/common/bank-code/bank-code-time.enum';
 import { GoalType } from '@app/shared/common/bank-code/goal-type.interface';
@@ -145,6 +145,13 @@ export class BankCodeService {
         map((count) => count.toString())
     );
 
+    static getCustomerFilters() {
+        return [
+            { 'GroupId': { 'eq': ContactGroup.Client }},
+            { 'StatusId': { 'eq': ContactStatus.Active }}
+        ];
+    }
+
     constructor(
         private ls: AppLocalizationService,
         private httpClient: HttpClient
@@ -180,11 +187,15 @@ export class BankCodeService {
             group: '[{"selector":"BankCode","isExpanded":false}]',
             contactGroupId: ContactGroup.Client
         };
-        filters.push({ 'BankCode': { 'ne': null }}, { 'BankCode': { 'ne': '' }});
+        filters.push(
+            { 'BankCode': { 'ne': null }},
+            { 'BankCode': { 'ne': '' }},
+            ...BankCodeService.getCustomerFilters()
+        );
         let filter = buildQuery({
             filter: filters
         });
-        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/LeadSlice' + filter, {
+        return this.httpClient.get(AppConsts.remoteServiceBaseUrl + '/odata/ContactSlice' + filter, {
             params: params,
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()

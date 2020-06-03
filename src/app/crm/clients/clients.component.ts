@@ -9,6 +9,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { Params, RouteReuseStrategy } from '@angular/router';
+
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
@@ -32,6 +33,7 @@ import {
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
+
 /** Application imports */
 import { AppService } from '@app/app.service';
 import {

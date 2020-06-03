@@ -50,8 +50,8 @@ import { AvailableBankCodes } from '@root/bank-code/products/bank-pass/available
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { Param } from '@shared/common/odata/param.model';
 import { InstanceModel } from '@shared/cfo/instance.model';
-import { ExportService } from '../../../shared/common/export/export.service';
-import { ExportGoogleSheetService } from '../../../shared/common/export/export-google-sheets/export-google-sheets';
+import { ExportService } from '@shared/common/export/export.service';
+import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
@@ -74,8 +74,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
     totalCount: number;
     currentTabIndex = 0;
     searchValue: '';
-    private readonly dataSourceURI = 'Lead';
-    private readonly totalDataSourceURI = 'Lead/$count';
+    private readonly dataSourceURI = 'Contact';
+    private readonly totalDataSourceURI = 'Contact/$count';
     dataSource = new DataSource({
         requireTotalCount: true,
         select: [
@@ -88,13 +88,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
             'State',
             'BankCode',
             'BankCodeDate',
-            'LeadDate'
+            'ContactDate'
         ],
         sort: [{ selector: 'Id', desc: true }],
         store: {
             key: 'Id',
             type: 'odata',
-            url: this.getODataUrl(this.dataSourceURI),
+            url: this.getODataUrl(this.dataSourceURI, BankCodeService.getCustomerFilters()),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
                 /** To avoid double spinner after export to excel */
@@ -116,7 +116,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     totalDataSource = new DataSource({
         paginate: false,
         store: new ODataStore({
-            url: this.getODataUrl(this.totalDataSourceURI),
+            url: this.getODataUrl(this.totalDataSourceURI, BankCodeService.getCustomerFilters()),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
                 this.transformRequest(request);

@@ -138,6 +138,6 @@ export class FilterHelpers {
     }
 
     static filterByGroupId() {
-        return {'GroupId': {'eq': 'C'}};
+        return { 'GroupId': {'eq': 'C'} };
     }
 }
