@@ -20,6 +20,7 @@ import {
     CountryStateDto,
     DictionaryServiceProxy,
     Gender,
+    LayoutType,
     MaritalStatus,
     PersonContactInfoDto,
     PersonContactServiceProxy,
@@ -34,7 +35,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { InplaceSelectBox } from '@app/shared/common/inplace-select-box/inplace-select-box.interface';
 import { SelectListItem } from '@app/crm/contacts/personal-details/select-list-item.interface';
-import { LifecycleSubjectsService } from '../../../../shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: './personal-details.component.html',
@@ -58,16 +60,20 @@ export class PersonalDetailsComponent implements OnDestroy {
             { name: 'preferredToD', type: 'select' },
             { name: 'interests', type: 'list', source: this.dictionaryProxy.getInterests() }
         ], [
-            { name: 'Personal Info', type: 'head', icon: 'social' },
-            { name: 'maritalStatus', type: 'select' },
-            { name: 'marriageDate', type: 'date' },
-            { name: 'divorceDate', type: 'date', isVisible: () => this.person.marriageDate },
-            { name: 'drivingLicense', type: 'string', confidential: true },
-            { name: 'drivingLicenseState', type: 'select' },
-            { name: 'ssn', type: 'string', confidential: true },
-            { name: 'citizenship', type: 'select' },
-            { name: 'isUSCitizen', type: 'bool' },
-            { name: 'isActiveMilitaryDuty', type: 'bool' }
+            ...( !this.appSessionService.tenant || this.appSessionService.tenant.customLayoutType !== LayoutType.BankCode ?
+                [
+                    { name: 'Personal Info', type: 'head', icon: 'social' },
+                    { name: 'maritalStatus', type: 'select' },
+                    { name: 'marriageDate', type: 'date' },
+                    { name: 'divorceDate', type: 'date', isVisible: () => this.person.marriageDate },
+                    { name: 'drivingLicense', type: 'string', confidential: true },
+                    { name: 'drivingLicenseState', type: 'select' },
+                    { name: 'ssn', type: 'string', confidential: true },
+                    { name: 'citizenship', type: 'select' },
+                    { name: 'isUSCitizen', type: 'bool' },
+                    { name: 'isActiveMilitaryDuty', type: 'bool' }
+                ] : []
+            )
         ], [
             { name: 'Profile Summary', type: 'head', icon: 'blog' },
             { name: 'profileSummary', type: 'string', multiline: true }
@@ -100,6 +106,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private personalDetailsService: PersonalDetailsService,
         private lifecycleService: LifecycleSubjectsService,
         public dialog: MatDialog,
+        private appSessionService: AppSessionService,
         public ls: AppLocalizationService
     ) {
         this.getStates(this.person && this.person.citizenship);
