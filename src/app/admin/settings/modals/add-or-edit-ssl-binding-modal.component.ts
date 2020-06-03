@@ -32,7 +32,6 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class AddOrEditSSLBindingModalComponent {
     @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
-    @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;
     model: any;
@@ -111,15 +110,14 @@ export class AddOrEditSSLBindingModalComponent {
         }
     }
 
-    close(): void {
-        this.dialogRef.close();
+    close(success = false): void {
+        this.dialogRef.close(success);
         this.changeDetection.markForCheck();
     }
 
     closeSuccess(): void {
         this.notify.info(this.ls.l('SavedSuccessfully'));
-        this.close();
-        this.modalSave.emit(null);
+        this.close(true);
     }
 
     validate(event): boolean {

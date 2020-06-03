@@ -21,7 +21,6 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class UploadSSLCertificateModalComponent {
     @ViewChild('uploader', { static: false }) uploader: DxFileUploaderComponent;
-    @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;
     model: AddTenantSslCertificateInput = new AddTenantSslCertificateInput();
@@ -51,8 +50,7 @@ export class UploadSSLCertificateModalComponent {
                 .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
-                    this.modalSave.emit(null);
-                    this.dialogRef.close();
+                    this.dialogRef.close(true);
                 });
         };
 

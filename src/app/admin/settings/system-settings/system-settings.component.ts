@@ -66,8 +66,9 @@ export class SystemSettingsComponent implements OnInit {
             panelClass: 'slider',
             data: {}
         });
-        dialogRef.afterClosed().subscribe(() => {
-            this.refreshSSLGrid();
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result)
+                this.refreshSSLGrid();
         });
     }
 
@@ -82,8 +83,11 @@ export class SystemSettingsComponent implements OnInit {
                 item: data
             }
         });
-        dialogRef.afterClosed().subscribe(() => {
-            this.refreshSSLBindingGrid();
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.refreshSSLGrid();
+                this.refreshSSLBindingGrid();
+            }
         });
         this.changeDetection.detectChanges();
     }

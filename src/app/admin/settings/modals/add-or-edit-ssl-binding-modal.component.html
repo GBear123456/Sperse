@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="dx-field">
-                        <dx-text-box name="DomainName" [placeholder]="ls.l('HostName')"
+                        <dx-text-box name="DomainName" [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
                                      [maxLength]="256" [readOnly]="editing"
                                      [(value)]="model.domainName">
                         </dx-text-box>
