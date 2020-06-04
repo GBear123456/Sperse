@@ -73,7 +73,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
     private getMemberAreaLinks(showTrainerLink?: boolean, showAffiliateLink?: boolean, showResourcesLink?: boolean, bcrmLink?: string) {
         return [
             {
-                name: this.ls.l('Home'),
+                name: this.ls.l('Navigation_Home'),
                 routerUrl: 'home'
             },
             {
