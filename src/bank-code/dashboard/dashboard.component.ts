@@ -20,8 +20,10 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
-    bankCodeTotalCount$: Observable<string> = this.bankCodeService.bankCodeTotalCount$;
-    bankCodesGroupsCountsWithPercents$ = this.bankCodeService.bankCodesGroupsCountsWithPercents$;
+    contactBankCodesGroupsCountsWithPercents$ = this.bankCodeService.contactBankCodesGroupsCountsWithPercents$;
+    allBankCodesGroupsCountsWithPercents$ = this.bankCodeService.allBankCodesGroupsCountsWithPercents$;
+    contactBankCodeTotalCount$: Observable<string> = this.bankCodeService.contactBankCodeTotalCount$;
+    allBankCodeTotalCount$: Observable<string> = this.bankCodeService.allBankCodeTotalCount$;
     hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
 
     constructor(

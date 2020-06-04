@@ -8,8 +8,9 @@ import { Store } from '@ngrx/store';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ContactStarsServiceProxy, MarkContactInput, MarkContactsInput } from '@shared/service-proxies/service-proxies';
+import { ContactStarsServiceProxy, MarkContactInput, MarkContactsInput, LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppStore, StarsStoreSelectors } from '@app/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
@@ -39,7 +40,7 @@ export class StarsListComponent implements OnInit {
     @Input() targetSelector = '[aria-label=\'star-icon\']';
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     list: any;
-
+    layoutType = LayoutType;
     listComponent: any;
     tooltipVisible = false;
 
@@ -50,8 +51,12 @@ export class StarsListComponent implements OnInit {
         private messageService: MessageService,
         private notifyService: NotifyService,
         private permissionCheckerService: PermissionCheckerService,
+        public appSessionService: AppSessionService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        if (this.appSessionService.tenant && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode)
+            this.targetSelector = '[aria-label=\'focus\']';
+    }
 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)

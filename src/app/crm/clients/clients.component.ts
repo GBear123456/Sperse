@@ -1069,6 +1069,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        },
+                        options: {
+                            icon: this.isBankCodeLayoutType ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
                         }
                     }
                 ]

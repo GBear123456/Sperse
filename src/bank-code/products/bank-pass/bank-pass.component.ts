@@ -57,6 +57,7 @@ import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
     selector: 'bank-pass',
@@ -94,7 +95,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
         store: {
             key: 'Id',
             type: 'odata',
-            url: this.getODataUrl(this.dataSourceURI, BankCodeService.getCustomerFilters()),
+            url: this.getODataUrl(
+                this.dataSourceURI,
+                [
+                    ...FiltersService.getCustomerFilters(),
+                    this.bankCodeService.getSourceFilters()
+                ]
+            ),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
                 /** To avoid double spinner after export to excel */
@@ -116,7 +123,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
     totalDataSource = new DataSource({
         paginate: false,
         store: new ODataStore({
-            url: this.getODataUrl(this.totalDataSourceURI, BankCodeService.getCustomerFilters()),
+            url: this.getODataUrl(
+                this.totalDataSourceURI,
+                [
+                    ...FiltersService.getCustomerFilters(),
+                    this.bankCodeService.getSourceFilters()
+                ]
+            ),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
                 this.transformRequest(request);
@@ -154,7 +167,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     goalValues = [ 3, 4, 5 ];
     hasOverflowClass;
     bankCodeBadges = this.bankCodeService.bankCodeBadges;
-    availableBankCodes$: Observable<AvailableBankCodes> = this.bankCodeService.getAvailableBankCodes();
+    contactAvailableBankCodes$: Observable<AvailableBankCodes> = this.bankCodeService.contactAvailableBankCodes$;
     bankCodeGroups: string[][] = [
         [ 'BANK', 'BAKN', 'BNAK', 'BNKA', 'BKNA', 'BKAN' ],
         [ 'ABNK', 'ABKN', 'ANBK', 'ANKB', 'AKNB', 'AKBN' ],
@@ -167,11 +180,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
             return showAi && showAi === 'true';
         })
     );
-    bankCodesGroupsCountsWithPercents$ = this.bankCodeService.bankCodesGroupsCountsWithPercents$;
     bankCodeLevel$ = this.bankCodeService.bankCodeLevel$;
-    bankCodeTotalCount$: Observable<string> = this.bankCodeService.bankCodeTotalCount$;
     bankFunnelLink = 'https://www.dropbox.com/s/bktc65pq15d513t/BANKPASS%20Swipe%20Copy.pdf';
     showBankFunnels: boolean = location.href.indexOf('successfactory.com') < 0;
+    contactBankCodesGroupsCountsWithPercents$ = this.bankCodeService.contactBankCodesGroupsCountsWithPercents$;
+    allBankCodesGroupsCountsWithPercents$ = this.bankCodeService.allBankCodesGroupsCountsWithPercents$;
+    contactBankCodeTotalCount$: Observable<string> = this.bankCodeService.contactBankCodeTotalCount$;
+    allBankCodeTotalCount$: Observable<string> = this.bankCodeService.allBankCodeTotalCount$;
 
     constructor(
         private oDataService: ODataService,
@@ -280,7 +295,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     isBankCodeActive(bankCode: string): Observable<boolean> {
-        return this.availableBankCodes$.pipe(
+        return this.contactAvailableBankCodes$.pipe(
             map((availableBankCodes: AvailableBankCodes) => !!(availableBankCodes && availableBankCodes[bankCode]))
         );
     }

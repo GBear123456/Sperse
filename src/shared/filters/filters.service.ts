@@ -14,6 +14,7 @@ import { FilterHelpers as CrmFilterHelpers } from '@app/crm/shared/helpers/filte
 import { FilterHelpers as CfoFilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
 import { FilterHelpers as PfmFilterHelpers } from '@app/pfm/shared/helpers/filter.helper';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { ContactGroup, ContactStatus } from '../AppEnums';
 
 @Injectable()
 export class FiltersService {
@@ -212,6 +213,13 @@ export class FiltersService {
 
     static filterByGroupId() {
         return CrmFilterHelpers.filterByGroupId();
+    }
+
+    static getCustomerFilters(): any[] {
+        return [
+            { 'GroupId': { 'eq': ContactGroup.Client }},
+            { 'StatusId': { 'eq': ContactStatus.Active }}
+        ];
     }
 
     setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true): boolean {
