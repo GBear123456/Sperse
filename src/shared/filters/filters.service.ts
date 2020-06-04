@@ -218,7 +218,12 @@ export class FiltersService {
     static getCustomerFilters(): any[] {
         return [
             { 'GroupId': { 'eq': ContactGroup.Client }},
-            { 'StatusId': { 'eq': ContactStatus.Active }}
+            {
+                'or': [
+                    { 'StatusId': { 'eq': ContactStatus.Active }},
+                    { 'StatusId': { 'eq': ContactStatus.Prospective }}
+                ]
+            }
         ];
     }
 
