@@ -259,7 +259,7 @@ export class BankCodeService {
         const currentDate = moment();
         return [
             {
-                LeadDate: {
+                ContactDate: {
                     ge: currentDate.startOf(time.toString()).toDate(),
                     le: currentDate.endOf(time.toString()).toDate()
                 }
