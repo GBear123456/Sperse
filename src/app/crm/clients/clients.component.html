@@ -123,6 +123,7 @@
                                         [showInColumnChooser]="tenantHasBankCodeFeature">
                             </dxi-column>
                         </ng-container>
+                        <dxi-column dataField="AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">

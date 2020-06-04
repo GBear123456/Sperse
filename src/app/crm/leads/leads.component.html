@@ -137,6 +137,7 @@
                             <dxi-column dataField="ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column dataField="ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column dataField="SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column dataField="AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                                 {{cellData.value | phone}}
                             </div>
