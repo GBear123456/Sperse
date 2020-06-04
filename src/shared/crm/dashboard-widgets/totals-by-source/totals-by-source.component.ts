@@ -66,54 +66,68 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     rangeColor: string;
     totalNumbersTop: string;
     totalsOptions: ITotalOption[] = [
-        {
-            key: 'star',
-            label: this.ls.l('TotalsByStar/CreditRating'),
-            method: this.dashboardServiceProxy.getContactsByStar,
-            argumentField: 'key',
-            valueField: 'count',
-            getColor: (item) => {
-                return StarsHelper.getStarColorByType(this.rawData[item.index].colorType);
-            }
-        },
-        {
-            key: 'stageDistribution',
-            label: this.ls.l('TotalsByStageDistribution'),
-            method: this.dashboardServiceProxy.getLeadsCountByStage,
-            argumentField: 'key',
-            valueField: 'count',
-            getColor: (item) => {
-                const stage: StageDto = this.pipelineService.getStageByName('Lead', item.argument);
-                return this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
-            }
-        },
-        {
-            key: 'ageDistribution',
-            label: this.ls.l('TotalsByLeadAgeDistribution'),
-            method: this.dashboardServiceProxy.getLeadsCountByAge,
-            argumentField: 'key',
-            valueField: 'count'
-        },
-        {
-            key: 'companySize',
-            label: this.ls.l('TotalsByCompanySize'),
-            method: this.dashboardServiceProxy.getContactsByCompanySize,
-            argumentField: 'companySizeRange',
-            valueField: 'contactCount',
-            sorting: (a, b) => {
-                return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
-            }
-        },
-        {
-            key: 'rating',
-            label: this.ls.l('TotalsByRating'),
-            method: this.dashboardServiceProxy.getContactsByRating,
-            argumentField: 'key',
-            valueField: 'count'
-        }
+        ...(!this.appSession.tenant || this.appSession.tenant.customLayoutType !== LayoutType.BankCode ?
+            [
+                {
+                    key: 'star',
+                    label: this.ls.l('TotalsByStar/CreditRating'),
+                    method: this.dashboardServiceProxy.getContactsByStar,
+                    argumentField: 'key',
+                    valueField: 'count',
+                    getColor: (item) => {
+                        return StarsHelper.getStarColorByType(this.rawData[item.index].colorType);
+                    }
+                },
+                {
+                    key: 'stageDistribution',
+                    label: this.ls.l('TotalsByStageDistribution'),
+                    method: this.dashboardServiceProxy.getLeadsCountByStage,
+                    argumentField: 'key',
+                    valueField: 'count',
+                    getColor: (item) => {
+                        const stage: StageDto = this.pipelineService.getStageByName('Lead', item.argument);
+                        return this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
+                    }
+                },
+                {
+                    key: 'ageDistribution',
+                    label: this.ls.l('TotalsByLeadAgeDistribution'),
+                    method: this.dashboardServiceProxy.getLeadsCountByAge,
+                    argumentField: 'key',
+                    valueField: 'count'
+                },
+                {
+                    key: 'companySize',
+                    label: this.ls.l('TotalsByCompanySize'),
+                    method: this.dashboardServiceProxy.getContactsByCompanySize,
+                    argumentField: 'companySizeRange',
+                    valueField: 'contactCount',
+                    sorting: (a, b) => {
+                        return (parseInt(a.companySizeRange) || Infinity) > (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
+                    }
+                },
+                {
+                    key: 'rating',
+                    label: this.ls.l('TotalsByRating'),
+                    method: this.dashboardServiceProxy.getContactsByRating,
+                    argumentField: 'key',
+                    valueField: 'count'
+                }
+            ] : [{
+                key: 'star',
+                label: this.ls.l('TotalsByStar/CreditRating'),
+                method: this.dashboardServiceProxy.getContactsByStar,
+                argumentField: 'key',
+                valueField: 'count',
+                getColor: (item) => {
+                    return StarsHelper.getStarColorByType(this.rawData[item.index].colorType);
+                }
+            }]
+        )
     ];
     selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
         this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace
+        || this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
         ? this.totalsOptions.find(option => option.key === 'star')
         : this.totalsOptions.find(option => option.key === 'companySize')
     );
