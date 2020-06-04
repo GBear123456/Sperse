@@ -170,7 +170,7 @@
                                         cellTemplate="phoneCell" cssClass="tabular" [width]="160"></dxi-column>
                             <dxi-column dataField="CountryId" [caption]="ls.l('State')"
                                         cellTemplate="location" [width]="150"></dxi-column>
-                            <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="ContactDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <dxi-column [width]="47" cssClass="delete-button-container" cellTemplate="deleteCellTemplate"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
