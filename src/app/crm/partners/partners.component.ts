@@ -933,9 +933,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
-                        },
-                        options: {
-                            icon: this.isBankCodeLayoutType ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
                         }
                     }
                 ]

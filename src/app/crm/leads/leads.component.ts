@@ -1133,9 +1133,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
-                        },
-                        options: {
-                            icon: this.isBankCodeLayoutType ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
                         }
                     }
                 ]
