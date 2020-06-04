@@ -288,6 +288,7 @@ export class CreateActivityDialogComponent implements OnInit {
                         action: this.toggleStarsList.bind(this),
                         options: {
                             width: 20,
+                            icon: this.userManagementService.isLayout(LayoutType.BankCode) ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
                         },
                         attr: {
                             'filter-selected': this.isStarSelected
