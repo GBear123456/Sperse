@@ -135,7 +135,7 @@
         <dxi-item location="before" template="tags" [disabled]="isListAndTagsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'tags'">
             <dx-button [icon]="'./assets/common/icons/pen.svg'"
-                       [text]="ls.l('Tags')"
+                       [text]="ls.l('Toolbar_Tags')"
                        id="ClientTags"
                        [ngClass]="{ 'filter-selected': isTagsSelected }"
                        (onClick)="toggleTags()">

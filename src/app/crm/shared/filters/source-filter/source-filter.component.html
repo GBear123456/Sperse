@@ -12,14 +12,14 @@
         </dx-text-box>
     </div>
     <div class="field">
-        <label for="filterAccessCode">{{ ls.l('AffiliateCode') }}</label>
+        <label for="filterAccessCode">{{ ls.l('SourceAffiliateCode') }}</label>
         <dx-text-box [placeholder]="ls.l('EnterValue')"
                      [elementAttr]="{ id: 'filterAccessCode' }"
                      [(value)]="items.element.affiliateCode">
         </dx-text-box>
     </div>
     <div class="field">
-        <label for="filterContact">{{ ls.l('Contact') }}</label>
+        <label for="filterContact">{{ ls.l('SourceContact') }}</label>
         <a id="contactLink"
            [class.selected]="!!items.element.contact"
            (click)="sourceComponent.toggle()">{{items.element.contact?.name || ls.l('Search')}}
