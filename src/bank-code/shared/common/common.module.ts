@@ -13,6 +13,7 @@ import { TotalCodesCrackedComponent } from '@root/bank-code/shared/common/total-
 import { GoalsCrackedComponent } from '@root/bank-code/shared/common/goals-cracked/goals-cracked.component';
 import { CountersComponent } from '@root/bank-code/shared/common/counters/counters.component';
 import { GlanceComponent } from '@root/bank-code/shared/common/glance/glance.component';
+import { CounterComponent } from "@root/bank-code/shared/common/counters/counter/counter.component";
 
 @NgModule({
     imports: [
@@ -41,12 +42,14 @@ import { GlanceComponent } from '@root/bank-code/shared/common/glance/glance.com
     exports: [
         TotalCodesCrackedComponent,
         GoalsCrackedComponent,
+        CounterComponent,
         CountersComponent,
         GlanceComponent
     ],
     declarations: [
         TotalCodesCrackedComponent,
         GoalsCrackedComponent,
+        CounterComponent,
         CountersComponent,
         GlanceComponent
     ],

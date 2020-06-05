@@ -28,8 +28,10 @@
             <section class="counters mb-5">
                 <div class="row">
                     <div class="col-md-12">
-                        <bank-code-counters [crackedCodesNumbers]="bankCodesGroupsCountsWithPercents$ | async"
-                                            [totalCrackedCodesNumber]="bankCodeTotalCount$ | async">
+                        <bank-code-counters [contactCrackedCodesNumbers]="contactBankCodesGroupsCountsWithPercents$ | async"
+                                            [allCrackedCodesNumbers]="allBankCodesGroupsCountsWithPercents$ | async"
+                                            [contactTotalCrackedCodesNumbers]="contactBankCodeTotalCount$ | async"
+                                            [allTotalCrackedCodesNumbers]="allBankCodeTotalCount$ | async">
                         </bank-code-counters>
                     </div>
                 </div>
