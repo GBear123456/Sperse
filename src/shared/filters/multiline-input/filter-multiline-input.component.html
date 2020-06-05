@@ -1,9 +1,10 @@
 <div class="wrapper">
     <dx-text-area
         name="items.element.name"
+        [autoResizeEnabled]="true"
+        [maxHeight]="maxHeight$ | async"
         [(value)]="items.element.value"
         [placeholder]="ls.l(capitalize(items.element.name))"
-        height="650"
         maxLength="16000">
     </dx-text-area>
 </div>
