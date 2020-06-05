@@ -71,7 +71,7 @@
         <dxi-item location="before" template="clientAssign" [disabled]="isAssignDisabled"></dxi-item>
         <div *dxTemplate="let data of 'clientAssign'">
             <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
-                       [text]="ls.l('Assign')"
+                       [text]="ls.l('Toolbar_Assign')"
                        id="ClientAssign"
                        [ngClass]="{ 'filter-selected': isUserSelected }"
                        (onClick)="toggleUserAssignment()">
