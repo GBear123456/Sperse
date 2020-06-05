@@ -1502,9 +1502,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
                 this.startLoading();
-                this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
-                    this.finishLoading();
-                }).subscribe((success: boolean) => {
+                this.contactService.showMergeContactDialog(
+                    { id: source.Id },
+                    { id: target.Id },
+                    () => this.finishLoading()
+                ).subscribe((success: boolean) => {
                     if (success)
                         this.refresh();
                 });

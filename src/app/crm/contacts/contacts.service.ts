@@ -383,7 +383,13 @@ export class ContactsService {
         });
     }
 
-    showMergeContactDialog(sourceInfo, targetInfo, loadFinalize = () => {}) {
+    showMergeContactDialog(
+        sourceInfo,
+        targetInfo,
+        loadFinalize = () => {},
+        keepSource = true,
+        keepTarget = true
+    ) {
         return this.contactProxy.getContactInfoForMerge(
             sourceInfo.id, sourceInfo.leadId,
             targetInfo.id, targetInfo.leadId
@@ -395,7 +401,9 @@ export class ContactsService {
                 disableClose: true,
                 closeOnNavigation: false,
                 data: {
-                    mergeInfo: response
+                    mergeInfo: response,
+                    keepSource: keepSource,
+                    keepTarget: keepTarget
                 }
             }).afterClosed();
         }));

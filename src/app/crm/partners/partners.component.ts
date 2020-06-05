@@ -1328,9 +1328,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
                 this.startLoading();
-                this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
-                    this.finishLoading();
-                }).subscribe(success => {
+                this.contactService.showMergeContactDialog(
+                    { id: source.Id },
+                    { id: target.Id },
+                    () => this.finishLoading()
+                ).subscribe(success => {
                     if (success)
                         this.invalidate();
                 });
