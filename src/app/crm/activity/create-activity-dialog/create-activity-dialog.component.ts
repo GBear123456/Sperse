@@ -287,7 +287,7 @@ export class CreateActivityDialogComponent implements OnInit {
                         disabled: true,
                         action: this.toggleStarsList.bind(this),
                         options: {
-                            width: 20,
+                            width: 20
                         },
                         attr: {
                             'filter-selected': this.isStarSelected

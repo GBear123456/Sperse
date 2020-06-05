@@ -110,3 +110,56 @@ body.bank-code .swal-modal .checkbox-container {
         background-color: #004a84;
     }
 }
+
+.checkbox-container {
+    display: inline-block;
+
+    input[type="checkbox"] {
+        display: none;
+    }
+
+    input[type="checkbox"] + label {
+        color: rgba(0, 0, 0, 0.64);
+        position: relative;
+        padding-left: 26px;
+        margin-bottom: 0;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+    input[type="checkbox"] + label:before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        border: 1px solid #DADEE1;
+        position: absolute;
+        left: 0;
+        top: 2px;
+        border-radius: 2px;
+    }
+
+    input[type="checkbox"]:hover + label:before {
+        border-color: #00aeef;
+    }
+
+    input[type="checkbox"]:checked + label:before {
+        border-color: #00aeef;
+        background-color: #00aeef;
+    }
+
+    input[type="checkbox"]:checked + label:after {
+        border: 2px solid #fff;
+        left: 5px;
+        top: 7px;
+        width: 10px;
+        height: 6px;
+        position: absolute;
+        transform: rotate(-45deg);
+        display: block;
+        content: '';
+        border-right: 0;
+        border-top: 0;
+    }
+}

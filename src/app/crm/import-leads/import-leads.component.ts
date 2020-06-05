@@ -968,7 +968,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'star',
                         options: {
-                            width: 30,
+                            width: 30
                         },
                         action: () => this.starsListComponent.toggle(),
                         disabled: disabledManage,

@@ -54,6 +54,7 @@ export enum AppPermissions {
     CRMManageEventsAssignments = 'Pages.CRM.ManageEventsAssignments',
     CRMManageListsAndTags = 'Pages.CRM.ManageListsAndTags',
     CRMForceDeleteEntites = 'Pages.CRM.ForceDeleteEntites',
+    CRMMerge = 'Pages.CRM.Merge',
     CRMCustomers = 'Pages.CRM.Customers',
     CRMCustomersManage = 'Pages.CRM.Customers.Manage',
     CRMCustomersManageAssignments = 'Pages.CRM.Customers.ManageAssignments',

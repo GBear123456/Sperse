@@ -46,7 +46,7 @@
                         <div class="collect-bankcodes">
                             <h6>{{ ls.l('CollectAllBankCodes') }}</h6>
                             <div class="bank-code-groups">
-                                <ng-container *ngIf="availableBankCodes$ | async; else loading">
+                                <ng-container *ngIf="contactAvailableBankCodes$ | async; else loading">
                                     <div *ngFor="let bankCodeGroup of bankCodeGroups; let i = index" class="bank-code-group">
                                         <figure>
                                             <img src="./assets/common/images/bank-code/{{bankCodeGroups[i][0][0]}}1.png"
@@ -110,11 +110,11 @@
                                              [innerStrokeColor]="goal.innerColor"
                                              [title]="bankCodeService.getPercentString(goal.currentNumber$, goal.number) | async"
                                              [radius]="42"
-                                             [titleFontWeight]="900"
+                                             titleFontWeight="900"
                                              [titleColor]="goal.innerColor"
                                              titleFontSize="21px"
                                              subtitleFontSize="12px"
-                                             [subtitleFontWeight]="700"
+                                             subtitleFontWeight="700"
                                              [subtitleColor]="goal.innerColor"
                                              [subtitle]="goal.currentNumber$ | async | number">
                             </circle-progress>
@@ -122,8 +122,10 @@
                     </div>
                 </div>
                 <div class="counters">
-                    <bank-code-counters [crackedCodesNumbers]="bankCodesGroupsCountsWithPercents$ | async"
-                                        [totalCrackedCodesNumber]="bankCodeTotalCount$ | async">
+                    <bank-code-counters [contactCrackedCodesNumbers]="contactBankCodesGroupsCountsWithPercents$ | async"
+                                        [allCrackedCodesNumbers]="allBankCodesGroupsCountsWithPercents$ | async"
+                                        [contactTotalCrackedCodesNumbers]="contactBankCodeTotalCount$ | async"
+                                        [allTotalCrackedCodesNumbers]="allBankCodeTotalCount$ | async">
                     </bank-code-counters>
                 </div>
             </mat-tab>
@@ -170,7 +172,7 @@
                                         cellTemplate="phoneCell" cssClass="tabular" [width]="160"></dxi-column>
                             <dxi-column dataField="CountryId" [caption]="ls.l('State')"
                                         cellTemplate="location" [width]="150"></dxi-column>
-                            <dxi-column dataField="LeadDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="ContactDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <dxi-column [width]="47" cssClass="delete-button-container" cellTemplate="deleteCellTemplate"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}

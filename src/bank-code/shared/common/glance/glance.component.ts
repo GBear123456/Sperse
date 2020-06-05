@@ -15,8 +15,8 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
 })
 export class GlanceComponent {
     bankCodeLevel$: Observable<number> = this.bankCodeService.bankCodeLevel$.pipe(skip(1));
-    bankCodeGroupsCounts$: Observable<number[]> = this.bankCodeService.bankCodeGroupsCounts$;
-    bankCodeClientsCount$: Observable<number> = this.bankCodeService.bankCodeClientsCount$;
+    bankCodeGroupsCounts$: Observable<number[]> = this.bankCodeService.contactBankCodeGroupsCounts$;
+    bankCodeClientsCount$: Observable<number> = this.bankCodeService.contactBankCodeClientsCount$;
 
     constructor(private bankCodeService: BankCodeService) {}
 }
