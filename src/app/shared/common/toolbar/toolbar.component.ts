@@ -118,8 +118,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('assign-icon')
             },
             assign: {
-                text: this.ls.l('Assign'),
-                hint: this.ls.l('Assign'),
+                text: this.ls.l('Toolbar_Assign'),
+                hint: this.ls.l('Toolbar_Assign'),
                 icon: this.getImgURI('assign-icon')
             },
             status: {
@@ -277,12 +277,12 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('add-button')
             },
             tags: {
-                text: this.ls.l('Tags'),
-                hint: this.ls.l('Tags'),
+                text: this.ls.l('Toolbar_Tags'),
+                hint: this.ls.l('Toolbar_Tags'),
                 icon: this.getImgURI('pen')
             },
             tagsSmall: {
-                hint: this.ls.l('Tags'),
+                hint: this.ls.l('Toolbar_Tags'),
                 icon: this.getImgURI('pen')
             },
             lists: {
