@@ -146,7 +146,7 @@
                                     [allowEditing]="false">
                         </dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                            <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription.closed">
+                            <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription && usersInstancesLoadingSubscription.closed">
                                 <ng-container *ngIf="crmService.isCfoAvailable(data.data.UserId) | async; else verify">
                                     <span>
                                         <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
