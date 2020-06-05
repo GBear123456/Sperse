@@ -31,9 +31,9 @@
             <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
-                <dx-select-box *ngIf="isBankCodeLayout; else textBox"
+                <dx-select-box *ngIf="serviceTypes; else textBox"
                                [inputAttr]="{ id: 'code' }"
-                               [items]="bankCodeServiceTypes"
+                               [items]="serviceTypes"
                                [(value)]="subscription.code"
                                (onValueChanged)="onServiceTypeChanged($event, subscription)">
                 </dx-select-box>

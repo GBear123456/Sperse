@@ -17,9 +17,26 @@ import { CrackedCodeColor } from './cracked-code-color.type';
 })
 export class CountersComponent implements OnChanges {
     @Input() contactCrackedCodesNumbers: CrackedNumber[];
-    @Input() allCrackedCodesNumbers: CrackedNumber[];
+    @Input() allCrackedCodesNumbers: CrackedNumber[] = [
+        {
+            percent: 20.31,
+            count: 27321
+        },
+        {
+            percent: 26.53,
+            count: 35692
+        },
+        {
+            percent: 36.74,
+            count: 49419
+        },
+        {
+            percent: 16.42,
+            count: 22096
+        },
+    ];
     @Input() contactTotalCrackedCodesNumbers: string;
-    @Input() allTotalCrackedCodesNumbers: string;
+    @Input() allTotalCrackedCodesNumbers: string = '134528';
     crackedCodesColors: CrackedCodeColor[] = [
         { outerColor: '#004a81', innerColor: '#91bfdd' },
         { outerColor: '#ac1f22', innerColor: '#ce767f' },
@@ -32,6 +49,10 @@ export class CountersComponent implements OnChanges {
         private decimalPipe: DecimalPipe,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.codesCrackedAtAGlance = this.getCodesCracked(this.allCrackedCodesNumbers);
+    }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes) {

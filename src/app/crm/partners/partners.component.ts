@@ -824,7 +824,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         {
                             dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
                             nameField: 'name',
-                            keyExpr: 'id'
+                            keyExpr: 'id',
+                            templateFunc: (itemData) => {
+                                return `<div class="star-item">
+                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                    <span>${this.l(itemData.name)}</span>
+                                </div>`;
+                            }
                         })
                 }
             })
