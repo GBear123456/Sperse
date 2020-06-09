@@ -191,7 +191,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelStatus: FilterModel;
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
-
+    tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     selectedPartnerKeys: any = [];
     selectedPartners: any = [];
     public headlineButtons: HeadlineButton[] = [
@@ -356,13 +356,33 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private mapService: MapService,
         private filterStatesService: FilterStatesService,
         private nameParserService: NameParserService,
+        private userManagementService: UserManagementService,
         public appService: AppService,
         public dialog: MatDialog,
-        public contactProxy: ContactServiceProxy,
-        public userManagementService: UserManagementService,
+        public contactProxy: ContactServiceProxy
     ) {
         super(injector);
         this.dataSource = {
+            select: [
+                'Name',
+                'CompanyName',
+                'SourceOrganizationUnitId',
+                'PhotoPublicId',
+                'Email',
+                'Phone',
+                'City',
+                'State',
+                'Status',
+                'ContactDate',
+                'Id',
+                'PartnerType',
+                'Xref',
+                'AffiliateCode'
+            ].concat(
+                this.tenantHasBankCodeFeature
+                    ? [ 'BankCode' ]
+                    : []
+            ),
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -1205,7 +1225,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getOrganizationUnitName = (e) => {
-        return DataGridService.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+        return DataGridService.getOrganizationUnitName(e.SourceOrganizationUnitId, this.organizationUnits);
     }
 
     updatePartnerStatuses(status) {

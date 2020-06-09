@@ -456,6 +456,39 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
+            select: [
+                'Name',
+                'CompanyName',
+                'SourceOrganizationUnitId',
+                'Email',
+                'PhotoPublicId',
+                'Phone',
+                'City',
+                'State',
+                'LeadDate',
+                'Id',
+                'OrganizationId',
+                'AssignedUserName',
+                'SourceAffiliateCode',
+                'SourceCampaignCode',
+                'SourceChannelCode',
+                'EntryUrl',
+                'LastModificationTime',
+                'SourceCode',
+                'StreetAddress',
+                'ZipCode',
+                'Website',
+                'PhoneExtension',
+                'Title',
+                'ContactXref',
+                'ContactAffiliateCode',
+                'SourceContactName',
+                'AssignedUserName'
+            ].concat(
+                this.tenantHasBankCodeFeature
+                    ? [ 'BankCode' ]
+                    : []
+            ),
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -773,7 +806,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     getOrganizationUnitName = (e) => {
-        return DataGridService.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+        return DataGridService.getOrganizationUnitName(e.SourceOrganizationUnitId, this.organizationUnits);
     }
 
     toggleToolbar() {

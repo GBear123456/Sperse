@@ -552,6 +552,27 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             });
         }
         this.dataSource = new DataSource({
+            select: [
+                'Name',
+                'CompanyName',
+                'SourceOrganizationUnitId',
+                'Email',
+                'PhotoPublicId',
+                'Phone',
+                'City',
+                'State',
+                'Status',
+                'ContactDate',
+                'Id',
+                'OrganizationId',
+                'Xref',
+                'AffiliateCode',
+                'AssignedUserName'
+            ].concat(
+                this.tenantHasBankCodeFeature
+                    ? [ 'BankCode' ]
+                    : []
+            ),
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -1371,7 +1392,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     getOrganizationUnitName = (e) => {
-        return DataGridService.getOrganizationUnitName(e.OrganizationUnitId, this.organizationUnits);
+        return DataGridService.getOrganizationUnitName(e.SourceOrganizationUnitId, this.organizationUnits);
     }
 
     onCellClick($event) {
