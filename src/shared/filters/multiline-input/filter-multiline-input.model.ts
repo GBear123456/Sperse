@@ -2,11 +2,13 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import uniq from 'lodash/uniq';
 import remove from 'lodash/remove';
+import capitalize from 'underscore.string/capitalize';
 
 export class FilterMultilineInputModel extends FilterItemModel {
     public name: string;
     public normalize: (value: string) => string;
     private _valuesArray: string[];
+    tip = this.ls.l('BatchFilterTip', this.ls.l(capitalize(this.name + 's')).toLocaleLowerCase());
 
     public constructor(init?: Partial<FilterMultilineInputModel>) {
         super(init, true);

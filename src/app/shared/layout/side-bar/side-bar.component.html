@@ -37,10 +37,25 @@
     </dx-scroll-view>
 </div>
 
-<div class="sidebar-filters" *ngIf="activeFilter">
+<div class="sidebar-filters" *ngIf="activeFilter" [ngClass]="{ 'toolbar-is-hidden': toolbarIsHidden$ | async }">
     <div class="close-button"></div>
     <div class="sidebar-filter-head">
         {{ls.ls('Platform', 'SideBarFilterHeader')}} {{ls.l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
+        <ng-container *ngIf="activeFilterTip">
+            <img
+                id="filterInfoButton"
+                (mouseenter)="toggleTooltip()"
+                (mouseleave)="toggleTooltip()"
+                src="./assets/common/icons/info-icon.svg">
+            <dx-tooltip
+                target="#filterInfoButton"
+                [(visible)]="tooltipVisible"
+                [closeOnOutsideClick]="false">
+                <div *dxTemplate="let data = data of 'content'">
+                    {{ activeFilterTip }}
+                </div>
+            </dx-tooltip>
+        </ng-container>
         <button class="button-layout button-primary" (click)="filterApply($event)">
             <i class="fa fa-check" aria-hidden="true"></i>
             {{ls.ls('Platform', 'Apply')}}

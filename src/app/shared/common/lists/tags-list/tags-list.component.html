@@ -4,7 +4,7 @@
     <div *dxTemplate="let data of 'content'">
         <div class="tags-tooltip-container">
             <div class="actions clearfix">
-                <span class="title">{{ls.l('Tags')}}</span>
+                <span class="title">{{ls.l('Toolbar_Tags')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode">
                     <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
                     <span class="filter-apply" [class.disabled]="!isManageAllowed()" (click)="apply()">{{ls.l('Apply')}}</span>

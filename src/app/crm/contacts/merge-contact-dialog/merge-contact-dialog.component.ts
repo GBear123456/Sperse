@@ -38,6 +38,8 @@ export class MergeContactDialogComponent {
     private readonly CONTACT_PHONES_FIELD    = 'contactPhones';
     private readonly CONTACT_EMAILS_FIELD    = 'contactEmails';
     private readonly CONTACT_ADDRESSES_FIELD = 'contactAddresses';
+    keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
+    keepTarget: boolean = this.data.keepTarget !== undefined ? this.data.keepTarget : true;
     fieldsConfig = {
         id: {
             hidden: true
@@ -79,18 +81,24 @@ export class MergeContactDialogComponent {
         [this.MERGE_OPTIONS_FIELD]: {
             name: this.MERGE_OPTIONS_FIELD,
             caption: this.ls.l('Leads Merge Options'),
-            source: {values: [{
-                text: this.ls.l('Keep Source'),
-                selected: true
-            }]},
-            target: {values: [{
-                text: this.ls.l('Keep Target'),
-                selected: true
-            }]},
-            result: {values: [{
-                text: this.ls.l('Keep Both'),
-                selected: true
-            }]}
+            source: {
+                values: [{
+                    text: this.ls.l('Keep Source'),
+                    selected: this.keepSource
+                }]
+            },
+            target: {
+                values: [{
+                    text: this.ls.l('Keep Target'),
+                    selected: this.keepTarget
+                }]
+            },
+            result: {
+                values: [{
+                    text: this.ls.l('Keep Both'),
+                    selected: this.keepSource && this.keepTarget
+                }]
+            }
         },
         leadDate: {
             caption: this.ls.l('Date'),

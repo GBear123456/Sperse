@@ -1059,7 +1059,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             {
                                 dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
                                 nameField: 'name',
-                                keyExpr: 'id'
+                                keyExpr: 'id',
+                                templateFunc: (itemData) => {
+                                    return `<div class="star-item">
+                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                    <span>${this.l(itemData.name)}</span>
+                                </div>`;
+                                }
                             })
                     }
                 })
@@ -1716,7 +1722,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         id: target.CustomerId,
                         leadId: target.Id
                     },
-                    () => this.finishLoading()
+                    () => this.finishLoading(),
+                    false,
+                    true
                 ).subscribe((success: boolean) => {
                     if (success)
                         this.refresh();

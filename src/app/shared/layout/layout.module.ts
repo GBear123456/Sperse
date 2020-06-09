@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DxMenuModule } from 'devextreme-angular/ui/menu';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
@@ -61,6 +62,7 @@ let COMPONENTS = [
         DxMenuModule,
         DxScrollViewModule,
         DxButtonModule,
+        DxTooltipModule,
         DxNavBarModule,
         DxDropDownBoxModule,
 
