@@ -371,6 +371,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 'Email',
                 'Phone',
                 'City',
+                'OrganizationId',
                 'State',
                 'Status',
                 'ContactDate',

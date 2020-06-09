@@ -17,6 +17,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
+    ContactInfoDto,
     CountryStateDto,
     DictionaryServiceProxy,
     Gender,
@@ -110,7 +111,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         public ls: AppLocalizationService
     ) {
         this.getStates(this.person && this.person.citizenship);
-        this.contactsService.contactInfoSubscribe((contactInfo) => {
+        this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             this.personContactInfo = contactInfo.personContactInfo;
             this.person = contactInfo.personContactInfo.person;
             this.getStates(this.person && this.person.citizenship);

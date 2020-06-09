@@ -6,16 +6,28 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
-import { finalize, filter, map, startWith } from 'rxjs/operators';
+import { finalize, filter, first, map, startWith } from 'rxjs/operators';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
-    UpdateUserOptionsDto, UpdateUserRoleInput, ContactServiceProxy, PersonContactServiceProxy,
-    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput, RoleListDto, UserRoleDto
+    UserServiceProxy,
+    GetUserForEditOutput,
+    UpdateUserPhoneDto,
+    RoleServiceProxy,
+    UpdateUserOptionsDto,
+    UpdateUserRoleInput,
+    ContactServiceProxy,
+    PersonContactServiceProxy,
+    CreateOrUpdateUserInput,
+    TenantHostType,
+    UpdateUserEmailDto,
+    CreateUserForContactInput,
+    RoleListDto,
+    UserRoleDto,
+    ContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -185,9 +197,12 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     getPhonesAndEmails() {
-        let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
-        this.phones = contactInfo.details.phones.filter(item => item.isActive);
-        this.emails = contactInfo.details.emails.filter(item => item.isActive);
+        this.contactsService.contactInfo$.pipe(
+            first()
+        ).subscribe((contactInfo: ContactInfoDto) => {
+            this.phones = contactInfo.personContactInfo.details.phones.filter(item => item.isActive);
+            this.emails = contactInfo.personContactInfo.details.emails.filter(item => item.isActive);
+        });
         this.inviteData.emailAddress = undefined;
         this.inviteData.phoneNumber = undefined;
 

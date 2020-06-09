@@ -254,8 +254,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private updateLocation(itemFullInfo) {
         switch (this.getSection()) {
             case 'leads':
-                this.contactsService.updateLocation(itemFullInfo.itemData.CustomerId,
-                    itemFullInfo.itemData.Id, itemFullInfo.itemData.OrganizationId);
+                this.contactsService.updateLocation(
+                    itemFullInfo.itemData.CustomerId,
+                    itemFullInfo.itemData.Id,
+                    itemFullInfo.itemData.OrganizationId
+                );
                 break;
             case 'clients':
                 this.contactsService.updateLocation(itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
