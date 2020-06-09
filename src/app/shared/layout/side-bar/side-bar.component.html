@@ -41,7 +41,7 @@
     <div class="close-button"></div>
     <div class="sidebar-filter-head">
         {{ls.ls('Platform', 'SideBarFilterHeader')}} {{ls.l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
-        <ng-container *ngIf="activeFilter.items.element.tip">
+        <ng-container *ngIf="activeFilterTip">
             <img
                 id="filterInfoButton"
                 (mouseenter)="toggleTooltip()"
@@ -52,7 +52,7 @@
                 [(visible)]="tooltipVisible"
                 [closeOnOutsideClick]="false">
                 <div *dxTemplate="let data = data of 'content'">
-                    {{ activeFilter.items.element.tip }}
+                    {{ activeFilterTip }}
                 </div>
             </dx-tooltip>
         </ng-container>

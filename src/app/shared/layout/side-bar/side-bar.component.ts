@@ -61,6 +61,10 @@ export class SideBarComponent implements OnDestroy {
         });
     }
 
+    get activeFilterTip() {
+        return this.activeFilter && this.activeFilter.items && this.activeFilter.items.element && this.activeFilter.items.element.tip;
+    }
+
     toggleTooltip() {
         this.tooltipVisible = !this.tooltipVisible;
     }
