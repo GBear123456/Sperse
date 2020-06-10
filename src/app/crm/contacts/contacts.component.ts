@@ -677,8 +677,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     deleteContact() {
-        let id = this.contactInfo.statusId == ContactStatus.Prospective ? this.leadId : this.contactInfo.id;
-        this.contactsService.deleteContact(this.contactInfo.statusId, this.getCustomerName(), this.contactGroupId.value, id, this.close());
+        let id = this.contactInfo.statusId == ContactStatus.Prospective || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id;
+        this.contactsService.deleteContact(this.contactInfo.statusId, this.getCustomerName(), this.contactGroupId.value, id, () => this.close());
     }
 
     updateStatus(statusId: string) {

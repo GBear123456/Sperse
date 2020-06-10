@@ -423,7 +423,7 @@ export class ContactsService {
                     this.leadService.deleteLead(contactId, forceDelete).subscribe(() => {
                         abp.notify.success(this.ls.l('SuccessfullyDeleted'));
                         this.contactProxy['data']['deleted'] = true;
-                        // callback && callback();
+                        callback && callback();
                     });
                 }
             },
@@ -435,7 +435,7 @@ export class ContactsService {
                     if (isConfirmed) {
                         this.contactProxy.deleteContact(contactId, forceDelete).subscribe(() => {
                             abp.notify.success(this.ls.l('SuccessfullyDeleted'));
-                            // callback && callback();
+                            callback && callback();
                         });
                     }
                 },

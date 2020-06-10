@@ -338,7 +338,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.contactStatus,
                             this.actionEvent.Name,
                             ContactGroup.Client,
-                            (this.actionEvent.data || this.actionEvent).Id
+                            (this.actionEvent.data || this.actionEvent).Id,
+                            () => this.refresh()
                         );
                     }
                 },
