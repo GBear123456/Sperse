@@ -37,6 +37,7 @@ import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/sou
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { FilterStatesService } from './states/filter-states.service';
 import { FilterMultilineInputComponent } from './multiline-input/filter-multiline-input.component';
+import { ServerCacheService } from '@shared/common/server-cache-service/server-cache.service';
 
 @NgModule({
     imports: [
@@ -102,6 +103,7 @@ export class FiltersModule {
             ngModule: FiltersModule,
             providers: [
                 FiltersService,
+                ServerCacheService,
                 FilterStatesService
             ]
         };

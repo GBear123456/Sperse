@@ -36,8 +36,7 @@ export class FilterMultilineInputModel extends FilterItemModel {
                     values.splice(i, 1);
             }
             values = uniq(values);
-        }
-        else if (Array.isArray(value)) {
+        } else if (Array.isArray(value)) {
             values = value;
         }
 

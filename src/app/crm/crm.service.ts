@@ -6,7 +6,7 @@ import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, combineLatest, fromEvent, of } from 'rxjs';
-import { map, publishReplay, refCount, startWith } from 'rxjs/operators';
+import { map, publishReplay, refCount, startWith, switchMap, tap } from 'rxjs/operators';
 import flatten from 'lodash/flatten';
 
 /** Application imports */
@@ -24,9 +24,11 @@ import {
     InstanceServiceProxy,
     UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { DateHelper } from '../../shared/helpers/DateHelper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { environment } from '../../environments/environment';
-import { AppPermissions } from '../../shared/AppPermissions';
+import { AppPermissions } from '@shared/AppPermissions';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { Param } from '@shared/common/odata/param.model';
 
 @Injectable()
 export class CrmService {
@@ -105,16 +107,24 @@ export class CrmService {
         if (loadOptions.skip !== undefined) {
             params['skip'] = loadOptions.skip;
         }
-        const filter = this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom);
-        if (filter) {
-            params['$filter'] = filter;
-        }
-        this.http.get(sourceUri, {
-            params: params,
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            })
-        }).subscribe((result) => {
+        this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom).pipe(
+            tap((oDataRequestValues: ODataRequestValues) => {
+                if (oDataRequestValues.filter) {
+                    params['$filter'] = oDataRequestValues.filter;
+                }
+                if (oDataRequestValues.params && oDataRequestValues.params.length) {
+                    oDataRequestValues.params.forEach((param: Param) => {
+                        params[param.name] = param.value;
+                    })
+                }
+            }),
+            switchMap(() => this.http.get(sourceUri, {
+                params: params,
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                })
+            }))
+        ).subscribe((result) => {
             if ('data' in result) {
                 d.resolve(result['data'], {
                     summary: result['summary'],
@@ -156,16 +166,24 @@ export class CrmService {
             groupSummary: `[{"selector":"${dateField}","summaryType":"min"}]`,
             ...additionalParams
         };
-        const filter = this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom);
-        if (filter) {
-            params['$filter'] = filter;
-        }
-        return this.http.get(sourceUri, {
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
+        return this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom).pipe(
+            tap((oDataRequestValues: ODataRequestValues) => {
+                if (oDataRequestValues.filter) {
+                    params['$filter'] = oDataRequestValues.filter;
+                }
+                if (oDataRequestValues.params && oDataRequestValues.params.length) {
+                    oDataRequestValues.params.forEach((param: Param) => {
+                        params[param.name] = param.value;
+                    })
+                }
             }),
-            params: params
-        }).toPromise().then((result: any) => {
+            switchMap(() => this.http.get(sourceUri, {
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                }),
+                params: params
+            }))
+        ).toPromise().then((result: any) => {
             const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
             let minGroupValue, maxGroupValue;
             const data = result.data[0] && result.data[0].items ? flatten(result.data.map(a => a.items)) : result.data;

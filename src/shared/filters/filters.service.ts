@@ -15,6 +15,8 @@ import { FilterHelpers as CfoFilterHelpers } from '@app/cfo/shared/helpers/filte
 import { FilterHelpers as PfmFilterHelpers } from '@app/pfm/shared/helpers/filter.helper';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { ContactGroup, ContactStatus } from '../AppEnums';
+import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
+import { ServerCacheService } from '@shared/common/server-cache-service/server-cache.service';
 
 @Injectable()
 export class FiltersService {
@@ -225,6 +227,40 @@ export class FiltersService {
                 ]
             }
         ];
+    }
+
+    constructor(private serverCacheService: ServerCacheService) {}
+
+    filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: Observable<string>} {
+        let data: string[] | {[uuidName: string]: Observable<string>} = [];
+        let element = filter.items.element as FilterMultilineInputModel;
+        if (element) {
+            let valuesArray: string[] = element.valuesArray;
+            if (valuesArray && valuesArray.length) {
+                /** Convert long values array into server cache id */
+                if (valuesArray.length > 20) {
+                    data = {
+                        [ServerCacheService.filterNamesToCacheIdNames[filter.field]]: this.serverCacheService.getServerCacheId(
+                            filter.field,
+                            valuesArray
+                        )
+                    };
+                } else {
+                    let inExpression = '';
+                    for (var i = 0; i < valuesArray.length; i++) {
+                        let value = valuesArray[i];
+                        if (element.normalize)
+                            value = element.normalize(value);
+                        inExpression += `'${value.replace(/'/g, "''")}'`;
+                        if (i != valuesArray.length - 1)
+                            inExpression += ',';
+                    }
+                    data = [`${filter.field} in (${encodeURIComponent(inExpression)})`];
+                }
+            }
+        }
+
+        return data;
     }
 
     setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true): boolean {

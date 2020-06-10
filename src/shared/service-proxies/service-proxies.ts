@@ -3281,6 +3281,68 @@ export class CachingServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    cacheStrings(body: { [key: string] : string[]; } | null | undefined): Observable<{ [key: string] : moment.Moment; }> {
+        let url_ = this.baseUrl + "/api/services/Platform/Caching/CacheStrings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCacheStrings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCacheStrings(<any>response_);
+                } catch (e) {
+                    return <Observable<{ [key: string] : moment.Moment; }>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<{ [key: string] : moment.Moment; }>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCacheStrings(response: HttpResponseBase): Observable<{ [key: string] : moment.Moment; }> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200) {
+                result200 = {};
+                for (let key in resultData200) {
+                    if (resultData200.hasOwnProperty(key))
+                        result200[key] = resultData200[key];
+                }
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<{ [key: string] : moment.Moment; }>(<any>null);
+    }
 }
 
 @Injectable()
@@ -44683,7 +44745,7 @@ export interface ITrackingInfo {
 }
 
 export class SubmitQuestionnaireDto implements ISubmitQuestionnaireDto {
-    xref!: string;
+    xref!: string | undefined;
     name!: string | undefined;
 
     constructor(data?: ISubmitQuestionnaireDto) {
@@ -44718,7 +44780,7 @@ export class SubmitQuestionnaireDto implements ISubmitQuestionnaireDto {
 }
 
 export interface ISubmitQuestionnaireDto {
-    xref: string;
+    xref: string | undefined;
     name: string | undefined;
 }
 
@@ -44727,8 +44789,8 @@ export enum QuestionType {
 }
 
 export class SubmitQuestionDto implements ISubmitQuestionDto {
-    xref!: string;
-    type!: QuestionType;
+    xref!: string | undefined;
+    type!: QuestionType | undefined;
     text!: string | undefined;
     sortOrder!: number | undefined;
 
@@ -44768,14 +44830,14 @@ export class SubmitQuestionDto implements ISubmitQuestionDto {
 }
 
 export interface ISubmitQuestionDto {
-    xref: string;
-    type: QuestionType;
+    xref: string | undefined;
+    type: QuestionType | undefined;
     text: string | undefined;
     sortOrder: number | undefined;
 }
 
 export class SubmitAnswerDto implements ISubmitAnswerDto {
-    xref!: string;
+    xref!: string | undefined;
     sortOrder!: number | undefined;
     text!: string | undefined;
 
@@ -44813,14 +44875,14 @@ export class SubmitAnswerDto implements ISubmitAnswerDto {
 }
 
 export interface ISubmitAnswerDto {
-    xref: string;
+    xref: string | undefined;
     sortOrder: number | undefined;
     text: string | undefined;
 }
 
 export class SubmitQuestionAndAnswersDto implements ISubmitQuestionAndAnswersDto {
-    question!: SubmitQuestionDto;
-    answers!: SubmitAnswerDto[];
+    question!: SubmitQuestionDto | undefined;
+    answers!: SubmitAnswerDto[] | undefined;
 
     constructor(data?: ISubmitQuestionAndAnswersDto) {
         if (data) {
@@ -44829,15 +44891,11 @@ export class SubmitQuestionAndAnswersDto implements ISubmitQuestionAndAnswersDto
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.question = new SubmitQuestionDto();
-            this.answers = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
-            this.question = data["question"] ? SubmitQuestionDto.fromJS(data["question"]) : new SubmitQuestionDto();
+            this.question = data["question"] ? SubmitQuestionDto.fromJS(data["question"]) : <any>undefined;
             if (data["answers"] && data["answers"].constructor === Array) {
                 this.answers = [];
                 for (let item of data["answers"])
@@ -44866,30 +44924,26 @@ export class SubmitQuestionAndAnswersDto implements ISubmitQuestionAndAnswersDto
 }
 
 export interface ISubmitQuestionAndAnswersDto {
-    question: SubmitQuestionDto;
-    answers: SubmitAnswerDto[];
+    question: SubmitQuestionDto | undefined;
+    answers: SubmitAnswerDto[] | undefined;
 }
 
-export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersDto {
-    questionnaire!: SubmitQuestionnaireDto;
-    questionsAndAnswers!: SubmitQuestionAndAnswersDto[];
+export class SubmitQuestionsAndAnswersDtoWithoutCheck implements ISubmitQuestionsAndAnswersDtoWithoutCheck {
+    questionnaire!: SubmitQuestionnaireDto | undefined;
+    questionsAndAnswers!: SubmitQuestionAndAnswersDto[] | undefined;
 
-    constructor(data?: ISubmitQuestionsAndAnswersDto) {
+    constructor(data?: ISubmitQuestionsAndAnswersDtoWithoutCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.questionnaire = new SubmitQuestionnaireDto();
-            this.questionsAndAnswers = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
-            this.questionnaire = data["questionnaire"] ? SubmitQuestionnaireDto.fromJS(data["questionnaire"]) : new SubmitQuestionnaireDto();
+            this.questionnaire = data["questionnaire"] ? SubmitQuestionnaireDto.fromJS(data["questionnaire"]) : <any>undefined;
             if (data["questionsAndAnswers"] && data["questionsAndAnswers"].constructor === Array) {
                 this.questionsAndAnswers = [];
                 for (let item of data["questionsAndAnswers"])
@@ -44898,9 +44952,9 @@ export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersD
         }
     }
 
-    static fromJS(data: any): SubmitQuestionsAndAnswersDto {
+    static fromJS(data: any): SubmitQuestionsAndAnswersDtoWithoutCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitQuestionsAndAnswersDto();
+        let result = new SubmitQuestionsAndAnswersDtoWithoutCheck();
         result.init(data);
         return result;
     }
@@ -44917,9 +44971,9 @@ export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersD
     }
 }
 
-export interface ISubmitQuestionsAndAnswersDto {
-    questionnaire: SubmitQuestionnaireDto;
-    questionsAndAnswers: SubmitQuestionAndAnswersDto[];
+export interface ISubmitQuestionsAndAnswersDtoWithoutCheck {
+    questionnaire: SubmitQuestionnaireDto | undefined;
+    questionsAndAnswers: SubmitQuestionAndAnswersDto[] | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -44965,7 +45019,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
     noWelcomeEmail!: boolean | undefined;
-    questionnaireAnswers!: SubmitQuestionsAndAnswersDto | undefined;
+    questionnaireAnswers!: SubmitQuestionsAndAnswersDtoWithoutCheck | undefined;
     bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
@@ -45049,7 +45103,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
-            this.questionnaireAnswers = data["questionnaireAnswers"] ? SubmitQuestionsAndAnswersDto.fromJS(data["questionnaireAnswers"]) : <any>undefined;
+            this.questionnaireAnswers = data["questionnaireAnswers"] ? SubmitQuestionsAndAnswersDtoWithoutCheck.fromJS(data["questionnaireAnswers"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
     }
@@ -45182,7 +45236,7 @@ export interface ICreateOrUpdateContactInput {
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
     noWelcomeEmail: boolean | undefined;
-    questionnaireAnswers: SubmitQuestionsAndAnswersDto | undefined;
+    questionnaireAnswers: SubmitQuestionsAndAnswersDtoWithoutCheck | undefined;
     bypassValidation: boolean | undefined;
 }
 
@@ -56974,7 +57028,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
     noWelcomeEmail!: boolean | undefined;
-    questionnaireAnswers!: SubmitQuestionsAndAnswersDto | undefined;
+    questionnaireAnswers!: SubmitQuestionsAndAnswersDtoWithoutCheck | undefined;
     bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
@@ -57057,7 +57111,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
-            this.questionnaireAnswers = data["questionnaireAnswers"] ? SubmitQuestionsAndAnswersDto.fromJS(data["questionnaireAnswers"]) : <any>undefined;
+            this.questionnaireAnswers = data["questionnaireAnswers"] ? SubmitQuestionsAndAnswersDtoWithoutCheck.fromJS(data["questionnaireAnswers"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
     }
@@ -57188,7 +57242,7 @@ export interface ICreateOrUpdateLeadInput {
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
     noWelcomeEmail: boolean | undefined;
-    questionnaireAnswers: SubmitQuestionsAndAnswersDto | undefined;
+    questionnaireAnswers: SubmitQuestionsAndAnswersDtoWithoutCheck | undefined;
     bypassValidation: boolean | undefined;
 }
 
@@ -65185,6 +65239,54 @@ export class QuestionnaireResponseDto implements IQuestionnaireResponseDto {
 export interface IQuestionnaireResponseDto {
     questionnaireId: number | undefined;
     answers: AnswerDto[] | undefined;
+}
+
+export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersDto {
+    questionnaire!: SubmitQuestionnaireDto | undefined;
+    questionsAndAnswers!: SubmitQuestionAndAnswersDto[] | undefined;
+
+    constructor(data?: ISubmitQuestionsAndAnswersDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.questionnaire = data["questionnaire"] ? SubmitQuestionnaireDto.fromJS(data["questionnaire"]) : <any>undefined;
+            if (data["questionsAndAnswers"] && data["questionsAndAnswers"].constructor === Array) {
+                this.questionsAndAnswers = [];
+                for (let item of data["questionsAndAnswers"])
+                    this.questionsAndAnswers.push(SubmitQuestionAndAnswersDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SubmitQuestionsAndAnswersDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitQuestionsAndAnswersDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["questionnaire"] = this.questionnaire ? this.questionnaire.toJSON() : <any>undefined;
+        if (this.questionsAndAnswers && this.questionsAndAnswers.constructor === Array) {
+            data["questionsAndAnswers"] = [];
+            for (let item of this.questionsAndAnswers)
+                data["questionsAndAnswers"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISubmitQuestionsAndAnswersDto {
+    questionnaire: SubmitQuestionnaireDto | undefined;
+    questionsAndAnswers: SubmitQuestionAndAnswersDto[] | undefined;
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {

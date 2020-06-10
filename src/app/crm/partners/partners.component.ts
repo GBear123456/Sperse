@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, merge, Observable, of, forkJoin, from } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, merge, Observable, of, forkJoin, from } from 'rxjs';
 import {
     filter,
     first,
@@ -17,7 +17,6 @@ import {
     publishReplay,
     refCount,
     skip,
-    startWith,
     switchMap,
     takeUntil,
     tap
@@ -96,13 +95,14 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
-import { FilterStatesService } from '../../../shared/filters/states/filter-states.service';
+import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { Param } from '@shared/common/odata/param.model';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -326,9 +326,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
-    odataFilter$: Observable<string> = this.filterChanged$.pipe(
-        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
-        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+    odataRequestValues$: Observable<ODataRequestValues> = concat(
+        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
+        this.filterChanged$.pipe(
+            switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+        )
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
@@ -450,7 +452,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -466,14 +468,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([filter, ]) => {
+        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
             this.totalDataSource['_store']['_url'] = this.getODataUrl(
                 this.totalDataSourceURI,
-                filter
+                odataRequestValues.filter,
+                null,
+                odataRequestValues.params
             );
             this.totalDataSource.load();
         });
@@ -514,12 +518,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.selectedMapArea$
         ).pipe(
             tap(() => this.mapDataIsLoading = true),
-            switchMap(([[filter, ], mapArea]: [[any, null], MapArea]) => this.mapService.loadSliceMapData(
-                this.getODataUrl(this.groupDataSourceURI),
-                filter,
-                mapArea,
-                this.dateField
-            )),
+            switchMap(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+                let params = {};
+                if (odataRequestValues.params && odataRequestValues.params.length) {
+                    odataRequestValues.params.forEach((param: Param) => {
+                        params[param.name] = param.value;
+                    })
+                }
+                return this.mapService.loadSliceMapData(
+                    this.getODataUrl(this.groupDataSourceURI),
+                    odataRequestValues.filter,
+                    mapArea,
+                    this.dateField,
+                    params
+                )
+            }),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)
@@ -643,7 +656,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'email',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'Email',
                 items: {
                     element: new FilterMultilineInputModel({
@@ -656,7 +669,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 component: FilterMultilineInputComponent,
                 caption: 'xref',
                 hidden: this.appSession.userIsMember,
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'Xref',
                 items: {
                     element: new FilterMultilineInputModel({
@@ -668,7 +681,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'affiliateCode',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'AffiliateCode',
                 items: {
                     element: new FilterMultilineInputModel({
@@ -714,7 +727,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'phone',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'Phone',
                 items: {
                     element: new FilterMultilineInputModel({
