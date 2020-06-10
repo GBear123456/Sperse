@@ -332,8 +332,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('Delete'),
                     class: 'delete',
-                    disabled: true,
-                    action: () => {}
+                    disabled: false,
+                    action: () => {
+                        this.contactService.deleteContact(
+                            this.contactStatus,
+                            this.actionEvent.Name,
+                            ContactGroup.Client,
+                            (this.actionEvent.data || this.actionEvent).Id
+                        );
+                    }
                 },
                 {
                     text: this.l('EditRow'),
