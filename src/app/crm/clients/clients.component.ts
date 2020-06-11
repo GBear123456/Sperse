@@ -158,6 +158,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private dependencyChanged = false;
     private organizationUnits: OrganizationUnitDto[];
     rowsViewHeight: number;
+    isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
 
     formatting = AppConsts.formatting;
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
@@ -696,7 +697,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
             this.totalDataSource['_store']['_url'] = this.getODataUrl(
                 this.totalDataSourceURI,
-                filter,
+                odataRequestValues.filter,
                 null,
                 [ ...this.subscriptionStatusFilter.items.element.value, ...odataRequestValues.params]
             );
@@ -1109,6 +1110,42 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'actions',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.selectedClients.length || !this.isGranted(AppPermissions.CRMCustomersManage) && this.selectedClients.length > 2,
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Delete'),
+                                    disabled: this.selectedClients.length != 1, // need update
+                                    action: () => {
+                                        let client =  this.selectedClients[0];
+                                        this.contactService.deleteContact(
+                                            this.contactStatus,
+                                            client.Name,
+                                            ContactGroup.Client,
+                                            client.Id,
+                                            () => this.refresh()
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('Merge'),
+                                    disabled: this.selectedClients.length != 2 || !this.isMergeAllowed,
+                                    action: () => {
+                                        this.contactService.mergeContact(this.selectedClients[0], this.selectedClients[1], true, true, () => this.refresh());
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -1541,15 +1578,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
-                this.startLoading();
-                this.contactService.showMergeContactDialog(
-                    { id: source.Id },
-                    { id: target.Id },
-                    () => this.finishLoading()
-                ).subscribe((success: boolean) => {
-                    if (success)
-                        this.refresh();
-                });
+                this.contactService.mergeContact(source, target, true, true, () => this.refresh());
             });
         }
     }
