@@ -676,7 +676,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
             this.totalDataSource['_store']['_url'] = this.getODataUrl(
                 this.totalDataSourceURI,
-                filter,
+                odataRequestValues.filter,
                 null,
                 [ ...this.subscriptionStatusFilter.items.element.value, ...odataRequestValues.params]
             );
