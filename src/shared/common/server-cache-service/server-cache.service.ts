@@ -15,13 +15,16 @@ import { ServerCache } from '@shared/common/server-cache-service/server-cache.in
 @Injectable()
 export class ServerCacheService {
     static readonly filterNamesToCacheIdNames = {
-        'Email': 'EmailAddressesCachedId'
+        'email': 'EmailAddressesCachedId',
+        'xref': 'XRefsCachedId',
+        'affiliateCode': 'AffiliateCodesCachedId',
+        'phone': 'PhoneNumbersCachedId'
     }
     localCache: ServerCache = {};
     constructor(private cachingServiceProxy: CachingServiceProxy) {}
 
-    getServerCacheId(name: string, values: string[]): Observable<string> {
-        const valuesHash: string = Md5.hashStr(name + values.join('')).toString();
+    getServerCacheId(values: string[]): Observable<string> {
+        const valuesHash: string = Md5.hashStr(values.join('')).toString();
         /** If local cache is older then 5 minutes - 30 second (to avoid cases with bad connection) - then load another one */
         if (!this.localCache[valuesHash]
             || (this.localCache[valuesHash].date && moment(this.localCache[valuesHash].date).diff(moment(), 'second') < 30)) {
