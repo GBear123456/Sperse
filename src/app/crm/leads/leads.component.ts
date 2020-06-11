@@ -1431,7 +1431,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (this.showPipeline || dataGridInstance) {
-                        const filterQuery = context.processODataFilter.call(
+                        const filterQuery$: Observable<string> = context.processODataFilter.call(
                             context,
                             dataGridInstance,
                             this.dataSourceURI,
@@ -1439,8 +1439,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.filtersService.getCheckCustom
                         );
                         if (this.showDataGrid) {
-                            this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
-                            this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
+                            filterQuery$.subscribe((filterQuery: string) => {
+                                this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                                this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
+                            })
                         }
                     }
                 }
