@@ -1,14 +1,15 @@
 /** Core imports */
-import {AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Params, RouteReuseStrategy} from '@angular/router';
-import {HttpClient} from '@angular/common/http';
+import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Params, RouteReuseStrategy } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
 /** Third party imports */
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import {DxDataGridComponent} from 'devextreme-angular/ui/data-grid';
-import {select, Store} from '@ngrx/store';
-import {BehaviorSubject, combineLatest, forkJoin, from, merge, Observable, of} from 'rxjs';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { select, Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest, concat, forkJoin, from, merge, Observable, of } from 'rxjs';
 import {
     filter,
     first,
@@ -18,18 +19,18 @@ import {
     publishReplay,
     refCount,
     skip,
-    startWith,
     switchMap,
     takeUntil,
     tap
 } from 'rxjs/operators';
-import {CacheService} from 'ng2-cache-service';
+import { CacheService } from 'ng2-cache-service';
 import invert from 'lodash/invert';
 import cloneDeep from 'lodash/cloneDeep';
+
 /** Application imports */
-import {AppConsts} from '@shared/AppConsts';
-import {ContactGroup} from '@shared/AppEnums';
-import {AppService} from '@app/app.service';
+import { AppConsts } from '@shared/AppConsts';
+import { ContactGroup } from '@shared/AppEnums';
+import { AppService } from '@app/app.service';
 import {
     AppStore,
     ContactAssignedUsersStoreSelectors,
@@ -38,69 +39,74 @@ import {
     StarsStoreSelectors,
     TagsStoreSelectors
 } from '@app/store';
-import {OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors, PipelinesStoreSelectors} from '@app/crm/store';
-import {AppComponentBase} from '@shared/common/app-component-base';
-import {FiltersService} from '@shared/filters/filters.service';
-import {FilterModel} from '@shared/filters/models/filter.model';
-import {FilterItemModel} from '@shared/filters/models/filter-item.model';
-import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
-import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
-import {FilterCheckBoxesComponent} from '@shared/filters/check-boxes/filter-check-boxes.component';
-import {FilterCheckBoxesModel} from '@shared/filters/check-boxes/filter-check-boxes.model';
-import {FilterRangeComponent} from '@shared/filters/range/filter-range.component';
-import {FilterStatesComponent} from '@shared/filters/states/filter-states.component';
-import {FilterStatesModel} from '@shared/filters/states/filter-states.model';
-import {DataLayoutType} from '@app/shared/layout/data-layout-type';
+import {
+    OrganizationUnitsStoreActions,
+    OrganizationUnitsStoreSelectors,
+    PipelinesStoreSelectors
+} from '@app/crm/store';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
+import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
+import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     ContactServiceProxy,
     LayoutType,
     LeadServiceProxy,
     OrganizationUnitDto,
-    PipelineDto,
-    UserGroup
+    PipelineDto
 } from '@shared/service-proxies/service-proxies';
-import {appModuleAnimation} from '@shared/animations/routerTransition';
-import {CreateEntityDialogComponent} from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import {PipelineComponent} from '@app/shared/pipeline/pipeline.component';
-import {PipelineService} from '@app/shared/pipeline/pipeline.service';
-import {TagsListComponent} from '@app/shared/common/lists/tags-list/tags-list.component';
-import {ListsListComponent} from '@app/shared/common/lists/lists-list/lists-list.component';
-import {UserAssignmentComponent} from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
-import {RatingComponent} from '@app/shared/common/lists/rating/rating.component';
-import {StarsListComponent} from '../shared/stars-list/stars-list.component';
-import {StaticListComponent} from '@app/shared/common/static-list/static-list.component';
-import {CustomReuseStrategy} from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
-import {LifecycleSubjectsService} from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import {ItemTypeEnum} from '@shared/common/item-details-layout/item-type.enum';
-import {ItemDetailsService} from '@shared/common/item-details-layout/item-details.service';
-import {ContactsService} from '@app/crm/contacts/contacts.service';
-import {AppPermissions} from '@shared/AppPermissions';
-import {UserManagementService} from '@shared/common/layout/user-management-list/user-management.service';
-import {DataGridService} from '@app/shared/common/data-grid.service/data-grid.service';
-import {PivotGridComponent} from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
-import {AppSessionService} from '@shared/common/session/app-session.service';
-import {ChartComponent} from '@app/shared/common/slice/chart/chart.component';
-import {CrmService} from '@app/crm/crm.service';
-import {InfoItem} from '@app/shared/common/slice/info/info-item.model';
-import {MapData} from '@app/shared/common/slice/map/map-data.model';
-import {MapComponent} from '@app/shared/common/slice/map/map.component';
-import {ImageFormat} from '@shared/common/export/image-format.enum';
-import {MapArea} from '@app/shared/common/slice/map/map-area.enum';
-import {MapService} from '@app/shared/common/slice/map/map.service';
-import {ImpersonationService} from '@admin/users/impersonation.service';
-import {HeadlineButton} from '@app/shared/common/headline/headline-button.model';
-import {ToolbarGroupModel} from '@app/shared/common/toolbar/toolbar.model';
-import {ActionMenuService} from '@app/shared/common/action-menu/action-menu.service';
-import {ActionMenuItem} from '@app/shared/common/action-menu/action-menu-item.interface';
-import {ToolBarComponent} from '@app/shared/common/toolbar/toolbar.component';
-import {FilterSourceComponent} from '../shared/filters/source-filter/source-filter.component';
-import {SourceFilterModel} from '../shared/filters/source-filter/source-filter.model';
-import {FilterStatesService} from '@shared/filters/states/filter-states.service';
-import {ContactsHelper} from '@shared/crm/helpers/contacts-helper';
-import {FilterMultilineInputComponent} from '@root/shared/filters/multiline-input/filter-multiline-input.component';
-import {FilterHelpers} from '../shared/helpers/filter.helper';
-import {FilterMultilineInputModel} from '@root/shared/filters/multiline-input/filter-multiline-input.model';
-import {NameParserService} from '@shared/common/name-parser/name-parser.service';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
+import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/shared/common/lists/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
+import { StarsListComponent } from '../shared/stars-list/stars-list.component';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppPermissions } from '@shared/AppPermissions';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
+import { CrmService } from '@app/crm/crm.service';
+import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
+import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { MapComponent } from '@app/shared/common/slice/map/map.component';
+import { ImageFormat } from '@shared/common/export/image-format.enum';
+import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
+import { MapService } from '@app/shared/common/slice/map/map.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
+import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { FilterStatesService } from '@shared/filters/states/filter-states.service';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
+import { NameParserService } from '@shared/common/name-parser/name-parser.service';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { Param } from '@shared/common/odata/param.model';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -381,7 +387,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    odataFilter$: Observable<string>;
+    odataRequestValues$: Observable<ODataRequestValues>;
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -406,7 +412,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         'PhotoPublicId',
         'Email'
     ].concat(
-        this.isSmsAndEmailSendingAllowed ? [ 'Phone' ] : []
+        this.isSmsAndEmailSendingAllowed ? ['Phone'] : []
     );
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
@@ -446,12 +452,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.contactGroupOptionInit();
         this.crmService.updateDateFilter(this._activatedRoute.snapshot.queryParams, this.filterDate);
         this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
-        this.odataFilter$ = this.filterChanged$.pipe(
-            map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
-            startWith(this.oDataService.getODataFilter(
-                [ this.filterDate, this.filterCountryStates ],
+        this.odataRequestValues$ = concat(
+            this.oDataService.getODataFilter(
+                [this.filterDate, this.filterCountryStates],
                 this.filtersService.getCheckCustom
-            ))
+            ).pipe(first()),
+            this.filterChanged$.pipe(
+                switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+            )
         );
         this.dataSource = {
             uri: this.dataSourceURI,
@@ -551,15 +559,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.refresh$,
             this.contactGroupId$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([filter, ]) => {
+        ).subscribe(([odataRequestValues, ]) => {
             this.totalDataSource['_store']['_url'] = this.getODataUrl(
                 this.totalDataSourceURI,
-                filter
+                odataRequestValues.filter,
+                null,
+                odataRequestValues.params
             );
             this.totalDataSource.load();
         });
@@ -567,7 +577,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handlePipelineUpdate() {
         combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -698,7 +708,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.contactGroupId$,
             this.refresh$
         ).pipe(
@@ -721,13 +731,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Map)
         ).pipe(
             tap(() => this.mapDataIsLoading = true),
-            switchMap(([mapArea, [filter, contactGroupId, ] ]: [MapArea, [any, ContactGroup, null]]) => this.mapService.loadSliceMapData(
-                this.getODataUrl(this.groupDataSourceURI),
-                filter,
-                mapArea,
-                this.dateField,
-                { contactGroupId: contactGroupId.toString() }
-            )),
+            switchMap(([mapArea, [odataRequestValues, contactGroupId,]]: [MapArea, [ODataRequestValues, ContactGroup, null]]) => {
+                let params = { contactGroupId: contactGroupId.toString() };
+                if (odataRequestValues.params && odataRequestValues.params.length) {
+                    odataRequestValues.params.forEach((param: Param) => {
+                        params[param.name] = param.value;
+                    })
+                }
+                return this.mapService.loadSliceMapData(
+                    this.getODataUrl(this.groupDataSourceURI),
+                    odataRequestValues.filter,
+                    mapArea,
+                    this.dateField,
+                    params
+                );
+            }),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)
@@ -850,12 +868,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     operator: 'startswith',
                     caption: 'name',
-                    items: { Name: new FilterItemModel() }
+                    items: {Name: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterMultilineInputComponent,
                     caption: 'email',
-                    filterMethod: FilterHelpers.filterByMultiline,
+                    filterMethod: this.filtersService.filterByMultiline,
                     field: 'Email',
                     items: {
                         element: new FilterMultilineInputModel({
@@ -868,7 +886,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterMultilineInputComponent,
                     caption: 'xref',
                     hidden: this.appSession.userIsMember,
-                    filterMethod: FilterHelpers.filterByMultiline,
+                    filterMethod: this.filtersService.filterByMultiline,
                     field: 'ContactXref',
                     items: {
                         element: new FilterMultilineInputModel({
@@ -880,7 +898,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterMultilineInputComponent,
                     caption: 'affiliateCode',
-                    filterMethod: FilterHelpers.filterByMultiline,
+                    filterMethod: this.filtersService.filterByMultiline,
                     field: 'ContactAffiliateCode',
                     items: {
                         element: new FilterMultilineInputModel({
@@ -909,7 +927,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterMultilineInputComponent,
                     caption: 'phone',
-                    filterMethod: FilterHelpers.filterByMultiline,
+                    filterMethod: this.filtersService.filterByMultiline,
                     field: 'Phone',
                     items: {
                         element: new FilterMultilineInputModel({
@@ -1026,7 +1044,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             {
                                 dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
                                 nameField: 'name',
-                                keyExpr: 'id'
+                                keyExpr: 'id',
+                                templateFunc: (itemData) => {
+                                    return `<div class="star-item">
+                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                    <span>${this.l(itemData.name)}</span>
+                                </div>`;
+                                }
                             })
                     }
                 })
@@ -1133,9 +1157,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
-                        },
-                        options: {
-                            icon: this.isBankCodeLayoutType ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
                         }
                     }
                 ]
@@ -1406,7 +1427,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             contexts = contexts && contexts.length ? contexts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
                 if (context && context.processODataFilter) {
-                    const dataGridInstance =  this.showPivotGrid
+                    const dataGridInstance = this.showPivotGrid
                         ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (this.showPipeline || dataGridInstance) {
@@ -1570,11 +1591,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (isConfirmed) {
                 let request = this.getDeleteMethod(selectedIds, forceDelete);
                 request.subscribe(() => {
-                        this.refresh();
-                        if (this.dataGrid && this.dataGrid.instance) {
-                            this.dataGrid.instance.deselectAll();
-                        }
-                        this.notify.success(this.l('SuccessfullyDeleted'));
+                    this.refresh();
+                    if (this.dataGrid && this.dataGrid.instance) {
+                        this.dataGrid.instance.deselectAll();
+                    }
+                    this.notify.success(this.l('SuccessfullyDeleted'));
                 });
             }
         },
@@ -1686,7 +1707,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         id: target.CustomerId,
                         leadId: target.Id
                     },
-                    () => this.finishLoading()
+                    () => this.finishLoading(),
+                    false,
+                    true
                 ).subscribe((success: boolean) => {
                     if (success)
                         this.refresh();

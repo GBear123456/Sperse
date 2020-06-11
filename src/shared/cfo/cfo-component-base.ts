@@ -1,6 +1,9 @@
 /** Core imports */
 import { OnDestroy, Injector } from '@angular/core';
 
+/** Third party imports */
+import { Observable } from 'rxjs';
+
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
@@ -42,7 +45,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
         });
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom) {
+    processODataFilter(grid, uri, filters, getCheckCustom): Observable<string> {
         return super.processODataFilter(grid, uri, filters, getCheckCustom, {
             instanceType: this.instanceType,
             instanceId: this.instanceId

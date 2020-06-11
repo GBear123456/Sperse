@@ -318,6 +318,9 @@
         padding: 0 20px;
         border: 1px solid #dfdfdf;
         background-color: #fff;
+        &.toolbar-is-hidden {
+            height: calc(~"100vh - 21px");
+        }
 
         .close-button {
             top: 15px;
@@ -332,6 +335,17 @@
         line-height: 37px;
         font-weight: bold;
         color: #212c36;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        #filterInfoButton {
+            cursor: pointer;
+            margin-left: 7px;
+            margin-right: auto;
+        }
+        dx-tooltip {
+            display: none;
+        }
         button {
             float: right;
             min-width: 130px;

@@ -364,7 +364,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     fieldsConfig = {};
     assignedUsersSelector = this.getAssignedUsersSelector(ContactGroup.Client);
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
-    isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         injector: Injector,
@@ -969,8 +968,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'star',
                         options: {
-                            width: 30,
-                            icon: this.isBankCodeLayoutType ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
+                            width: 30
                         },
                         action: () => this.starsListComponent.toggle(),
                         disabled: disabledManage,

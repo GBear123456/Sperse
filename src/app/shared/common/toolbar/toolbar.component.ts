@@ -14,6 +14,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppService } from '@app/app.service';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'app-toolbar',
@@ -43,6 +45,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     constructor(
         private filtersService: FiltersService,
         private ls: AppLocalizationService,
+        private userManagementService: UserManagementService,
         public appService: AppService
     ) {}
 
@@ -115,8 +118,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('assign-icon')
             },
             assign: {
-                text: this.ls.l('Assign'),
-                hint: this.ls.l('Assign'),
+                text: this.ls.l('Toolbar_Assign'),
+                hint: this.ls.l('Toolbar_Assign'),
                 icon: this.getImgURI('assign-icon')
             },
             status: {
@@ -274,12 +277,12 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('add-button')
             },
             tags: {
-                text: this.ls.l('Tags'),
-                hint: this.ls.l('Tags'),
+                text: this.ls.l('Toolbar_Tags'),
+                hint: this.ls.l('Toolbar_Tags'),
                 icon: this.getImgURI('pen')
             },
             tagsSmall: {
-                hint: this.ls.l('Tags'),
+                hint: this.ls.l('Toolbar_Tags'),
                 icon: this.getImgURI('pen')
             },
             lists: {
@@ -298,7 +301,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             star: {
                 hint: this.ls.l('Star'),
-                icon: this.getImgURI('star-icon')
+                icon: this.userManagementService.isLayout(LayoutType.BankCode) ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
             },
             close: {
                 hint: this.ls.l('Close'),

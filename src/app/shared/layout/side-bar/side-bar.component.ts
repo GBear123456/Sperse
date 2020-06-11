@@ -3,7 +3,7 @@ import { Component, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import capitalize from 'underscore.string/capitalize';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -33,6 +33,8 @@ export class SideBarComponent implements OnDestroy {
     disableFilterScroll: boolean;
     capitalize = capitalize;
     destroy$: Subject<null> = new Subject<null>();
+    tooltipVisible = false;
+    toolbarIsHidden$: Observable<boolean> = this.appService.toolbarIsHidden$;
 
     constructor(
         private eref: ElementRef,
@@ -59,6 +61,14 @@ export class SideBarComponent implements OnDestroy {
         });
     }
 
+    get activeFilterTip() {
+        return this.activeFilter && this.activeFilter.items && this.activeFilter.items.element && this.activeFilter.items.element.tip;
+    }
+
+    toggleTooltip() {
+        this.tooltipVisible = !this.tooltipVisible;
+    }
+
     excludeFilter(event, filter: FilterModel, displayElement: DisplayElement) {
         filter.displayElements = undefined;
         if (displayElement.item.removeFilterItem)
@@ -81,7 +91,7 @@ export class SideBarComponent implements OnDestroy {
             event.stopPropagation();
     }
 
-    showFilterDialog(event, filter) {
+    showFilterDialog(event, filter: FilterModel) {
         this.activeFilter = filter;
         if (filter && filter.items && filter.items.element && filter.items.element.dispatch) {
             filter.items.element.dispatch();

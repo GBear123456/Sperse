@@ -39,7 +39,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     BANKCodeServiceProxy,
-    CreateLeadInput, LeadServiceProxy,
+    ContactServiceProxy,
+    CreateLeadInput,
     MemberSettingsServiceProxy,
     UpdateUserAffiliateCodeDto
 } from '@shared/service-proxies/service-proxies';
@@ -184,9 +185,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     bankFunnelLink = 'https://www.dropbox.com/s/bktc65pq15d513t/BANKPASS%20Swipe%20Copy.pdf';
     showBankFunnels: boolean = location.href.indexOf('successfactory.com') < 0;
     contactBankCodesGroupsCountsWithPercents$ = this.bankCodeService.contactBankCodesGroupsCountsWithPercents$;
-    allBankCodesGroupsCountsWithPercents$ = this.bankCodeService.allBankCodesGroupsCountsWithPercents$;
     contactBankCodeTotalCount$: Observable<string> = this.bankCodeService.contactBankCodeTotalCount$;
-    allBankCodeTotalCount$: Observable<string> = this.bankCodeService.allBankCodeTotalCount$;
 
     constructor(
         private oDataService: ODataService,
@@ -202,7 +201,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private bankCodeServiceProxy: BANKCodeServiceProxy,
         private messageService: MessageService,
-        private leadService: LeadServiceProxy,
+        private contactServiceProxy: ContactServiceProxy,
         private notifyService: NotifyService,
         private permissionService: AppPermissionService,
         public bankCodeService: BankCodeService,
@@ -356,7 +355,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     deleteLead(e) {
         ContactsHelper.showConfirmMessage(this.ls.l('BankCodeLeadDeleteWarningMessage'), this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
             if (isConfirmed) {
-                this.leadService.deleteLead(e.data.Id, forceDelete).subscribe(() => {
+                this.contactServiceProxy.deleteContact(e.data.Id, forceDelete).subscribe(() => {
                     this.refresh();
                     if (this.dataGrid && this.dataGrid.instance) {
                         this.dataGrid.instance.deselectAll();

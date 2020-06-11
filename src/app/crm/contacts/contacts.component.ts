@@ -298,7 +298,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 route: 'invoices',
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },
-            { name: 'subscriptions', label: 'Subscriptions', route: 'subscriptions', hidden: !contact.userId && !this.isClientDetailPage() },
+            { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !contact.userId && !this.isClientDetailPage() },
             { name: 'payment-information', label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage() },
             { name: 'lead-information', label: 'Lead Information', route: 'lead-information' },
             {
@@ -676,19 +676,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         super.ngOnDestroy();
     }
 
-    deleteLead() {
-        let text = this.l('LeadDeleteWarningMessage', this.getCustomerName());
-        let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
-        ContactsHelper.showConfirmMessage(text, this.l('ForceDelete'), (isConfirmed, forceDelete) => {
-            if (isConfirmed) {
-                this.leadService.deleteLead(this.leadId, forceDelete).subscribe(() => {
-                    this.notify.success(this.l('SuccessfullyDeleted'));
-                    this.contactService['data']['deleted'] = true;
-                    this.close();
-                });
-            }
-        },
-        canForceDelete);
+    deleteContact() {
+        let id = this.contactInfo.statusId == ContactStatus.Prospective || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id;
+        this.contactsService.deleteContact(this.contactInfo.statusId, this.getCustomerName(), this.contactGroupId.value, id, () => this.close());
     }
 
     updateStatus(statusId: string) {

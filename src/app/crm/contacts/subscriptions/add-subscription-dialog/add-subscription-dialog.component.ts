@@ -33,6 +33,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AppSessionService } from "@shared/common/session/app-session.service";
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -47,8 +48,19 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
     private slider: any;
+    private readonly performancePartnersServiceTypes = [
+        'EDAG',
+        'Call Rollover',
+        'Appointment Setting',
+        'List Generation',
+        'Insurance Billing',
+        'Misc Services',
+        'Collections'
+    ];
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
-    bankCodeServiceTypes = values(BankCodeServiceType);
+    serviceTypes = this.isBankCodeLayout
+        ? values(BankCodeServiceType)
+        : (this.appSession.tenancyName === 'performancepartners' ? this.performancePartnersServiceTypes : null);
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
         leadId: this.data.leadId,
@@ -76,7 +88,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
         private invoicesService: InvoicesService,
-        private route: ActivatedRoute,
+        private appSession: AppSessionService,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any

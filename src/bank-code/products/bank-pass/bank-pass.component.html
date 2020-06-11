@@ -123,9 +123,7 @@
                 </div>
                 <div class="counters">
                     <bank-code-counters [contactCrackedCodesNumbers]="contactBankCodesGroupsCountsWithPercents$ | async"
-                                        [allCrackedCodesNumbers]="allBankCodesGroupsCountsWithPercents$ | async"
-                                        [contactTotalCrackedCodesNumbers]="contactBankCodeTotalCount$ | async"
-                                        [allTotalCrackedCodesNumbers]="allBankCodeTotalCount$ | async">
+                                        [contactTotalCrackedCodesNumbers]="contactBankCodeTotalCount$ | async">
                     </bank-code-counters>
                 </div>
             </mat-tab>

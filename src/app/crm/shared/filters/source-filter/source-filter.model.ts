@@ -25,13 +25,13 @@ export class SourceFilterModel extends FilterItemModel {
             },
             {
                 property: 'affiliateCode',
-                label: this.ls.l('AffiliateCode'),
+                label: this.ls.l('SourceAffiliateCode'),
                 name: 'SourceAffiliateCode',
                 value: this.affiliateCode
             },
             {
                 property: 'contact',
-                label: this.ls.l('Contact'),
+                label: this.ls.l('SourceContact'),
                 name: 'SourceContactId',
                 value: this.contact && this.contact.id,
                 displayValue: this.contact && this.contact.name

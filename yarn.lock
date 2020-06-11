@@ -9830,6 +9830,11 @@ ts-helpers@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/ts-helpers/-/ts-helpers-1.1.2.tgz#fc69be9f1f3baed01fb1a0ef8d4cfe748814d835"
 
+ts-md5@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/ts-md5/-/ts-md5-1.2.7.tgz#b76471fc2fd38f0502441f6c3b9494ed04537401"
+  integrity sha512-emODogvKGWi1KO1l9c6YxLMBn6CEH3VrH5mVPIyOtxBG52BvV4jP3GWz6bOZCz61nLgBc3ffQYE4+EHfCD+V7w==
+
 ts-node@~3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-3.3.0.tgz#c13c6a3024e30be1180dd53038fc209289d4bf69"

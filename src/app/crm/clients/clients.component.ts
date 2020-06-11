@@ -16,7 +16,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription, forkJoin, from } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, merge, Observable, of, Subscription, forkJoin, from } from 'rxjs';
 import {
     filter,
     finalize,
@@ -27,7 +27,6 @@ import {
     publishReplay,
     refCount,
     skip,
-    startWith,
     switchMap,
     takeUntil,
     tap
@@ -117,6 +116,8 @@ import { FilterStatesService } from '@shared/filters/states/filter-states.servic
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { Param } from '@shared/common/odata/param.model';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -332,8 +333,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('Delete'),
                     class: 'delete',
-                    disabled: true,
-                    action: () => {}
+                    disabled: false,
+                    action: () => {
+                        this.contactService.deleteContact(
+                            this.contactStatus,
+                            this.actionEvent.Name,
+                            ContactGroup.Client,
+                            (this.actionEvent.data || this.actionEvent).Id,
+                            () => this.refresh()
+                        );
+                    }
                 },
                 {
                     text: this.l('EditRow'),
@@ -509,9 +518,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     });
     private filters: FilterModel[] = this.getFilters();
-    odataFilter$: Observable<string> = this.filterChanged$.pipe(
-        startWith(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom)),
-        map(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+    odataRequestValues$: Observable<ODataRequestValues> = concat(
+        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
+        this.filterChanged$.pipe(
+            switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+        )
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
@@ -659,14 +670,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private handleTotalCountUpdate(): void {
         combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.refresh$
-        ).subscribe(([filter, ]) => {
+        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
             this.totalDataSource['_store']['_url'] = this.getODataUrl(
                 this.totalDataSourceURI,
                 filter,
                 null,
-                this.subscriptionStatusFilter.items.element.value
+                [ ...this.subscriptionStatusFilter.items.element.value, ...odataRequestValues.params]
             );
             this.totalDataSource.load();
         });
@@ -713,13 +724,21 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.selectedMapArea$
         ).pipe(
             tap(() => this.mapDataIsLoading = true),
-            switchMap(([[filter, ], mapArea]: [any, MapArea]) => this.mapService.loadSliceMapData(
-                this.getODataUrl(this.groupDataSourceURI),
-                filter,
-                mapArea,
-                this.dateField,
-                this.subscriptionStatusFilter.items.element['getObjectValue']()
-            )),
+            switchMap(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+                let params = this.subscriptionStatusFilter.items.element['getObjectValue']();
+                if (odataRequestValues.params && odataRequestValues.params.length) {
+                    odataRequestValues.params.forEach((param: Param) => {
+                        params[param.name] = param.value;
+                    })
+                }
+                return this.mapService.loadSliceMapData(
+                    this.getODataUrl(this.groupDataSourceURI),
+                    odataRequestValues.filter,
+                    mapArea,
+                    this.dateField,
+                    params
+                )
+            }),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)
@@ -798,7 +817,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
-            this.odataFilter$,
+            this.odataRequestValues$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -865,7 +884,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'email',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'Email',
                 items: {
                     element: new FilterMultilineInputModel({
@@ -877,7 +896,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'xref',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'Xref',
                 hidden: this.appSession.userIsMember,
                 items: {
@@ -890,7 +909,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'affiliateCode',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'AffiliateCode',
                 items: {
                     element: new FilterMultilineInputModel({
@@ -912,7 +931,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'phone',
-                filterMethod: FilterHelpers.filterByMultiline,
+                filterMethod: this.filtersService.filterByMultiline,
                 field: 'Phone',
                 items: {
                     element: new FilterMultilineInputModel({
@@ -1069,9 +1088,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
-                        },
-                        options: {
-                            icon: this.isBankCodeLayoutType ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
                         }
                     }
                 ]
@@ -1505,9 +1521,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
                 this.startLoading();
-                this.contactService.showMergeContactDialog({id: source.Id}, {id: target.Id}, () => {
-                    this.finishLoading();
-                }).subscribe((success: boolean) => {
+                this.contactService.showMergeContactDialog(
+                    { id: source.Id },
+                    { id: target.Id },
+                    () => this.finishLoading()
+                ).subscribe((success: boolean) => {
                     if (success)
                         this.refresh();
                 });

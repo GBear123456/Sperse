@@ -5,21 +5,14 @@
         (onItemSelected)="onSourceContactChanged($event)">
     </source-contact-list>
     <div class="field">
-        <label for="filterCampaign">{{ ls.l('CampaignCode') }}</label>
-        <dx-text-box [placeholder]="ls.l('EnterValue')"
-                     [elementAttr]="{ id: 'filterCampaign' }"
-                     [(value)]="items.element.campaignCode">
-        </dx-text-box>
-    </div>
-    <div class="field">
-        <label for="filterAccessCode">{{ ls.l('AffiliateCode') }}</label>
+        <label for="filterAccessCode">{{ ls.l('LeadInformation_SourceAffiliateCode') }}</label>
         <dx-text-box [placeholder]="ls.l('EnterValue')"
                      [elementAttr]="{ id: 'filterAccessCode' }"
                      [(value)]="items.element.affiliateCode">
         </dx-text-box>
     </div>
     <div class="field">
-        <label for="filterContact">{{ ls.l('Contact') }}</label>
+        <label for="filterContact">{{ ls.l('SourceContact') }}</label>
         <a id="contactLink"
            [class.selected]="!!items.element.contact"
            (click)="sourceComponent.toggle()">{{items.element.contact?.name || ls.l('Search')}}
@@ -28,6 +21,13 @@
                (click)="clearContact($event)">
             </i>
         </a>
+    </div>
+    <div class="field">
+        <label for="filterCampaign">{{ ls.l('CampaignCode') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterCampaign' }"
+                     [(value)]="items.element.campaignCode">
+        </dx-text-box>
     </div>
     <div class="field">
         <label for="filterChannel">{{ ls.l('Channel') }}</label>

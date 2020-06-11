@@ -11,7 +11,7 @@ import DataSource from 'devextreme/data/data_source';
 import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
-import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, delayWhen, map, mergeMap, pluck, switchMap, takeUntil } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
@@ -44,6 +44,8 @@ import { Stage } from '@app/shared/pipeline/stage.model';
 import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 
 @Component({
     selector: 'app-pipeline',
@@ -604,14 +606,29 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.stages && this.stages.some((stage: Stage) => stage.isLoading);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData: InstanceModel = null, params: Param[] = null) {
-        this.queryWithSearch = filters.map((filter) => {
-            return getCheckCustom && getCheckCustom(filter) ||
-                filter.getODataFilterObject();
-        }).concat(this.getSearchFilter());
-        this.params = params;
-        this.loadData(0, null, false);
-        return this.queryWithSearch;
+    processODataFilter(
+        grid,
+        uri: string,
+        filters: FilterModel[],
+        getCheckCustom,
+        instanceData: InstanceModel = null,
+        params: Param[] = null
+    ): Observable<string> {
+        filters = filters.map((filter: FilterModel) => {
+            return getCheckCustom && getCheckCustom(filter) || filter.getODataFilterObject();
+        });
+        const requestValuesWithSearch$ = this.odataService.getODataRequestValues(filters).pipe(
+            map((requestValues: ODataRequestValues) => ({
+                filter: requestValues.filter.concat(this.getSearchFilter()),
+                params: requestValues.params
+            }))
+        )
+        requestValuesWithSearch$.subscribe((requestValues: ODataRequestValues) => {
+            this.queryWithSearch = requestValues.filter;
+            this.params = [ ...(params || []), ...requestValues.params ];
+            this.loadData(0, null, false);
+        });
+        return requestValuesWithSearch$.pipe(pluck('filter'));
     }
 
     loadMore(stageIndex): Observable<any> {

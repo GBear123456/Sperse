@@ -390,10 +390,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             name: 'star',
                             action: this.toggleStars.bind(this),
                             visible: !this.isBankCodeLayout,
-                            disabled: !this.permission.checkCGPermission(this.customerType, ''),
-                            options: {
-                                icon: this.isBankCodeLayout ? './assets/common/icons/focus.svg' : './assets/common/icons/star-icon.svg'
-                            }
+                            disabled: !this.permission.checkCGPermission(this.customerType, '')
                         }
                     ]
                 },

@@ -27,7 +27,8 @@ import {
     ContactPhotoServiceProxy,
     InvoiceServiceProxy,
     PersonContactInfoDto,
-    GetContactInfoForMergeOutput
+    GetContactInfoForMergeOutput,
+    LeadServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -42,6 +43,9 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CacheService } from 'ng2-cache-service';
 import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interface';
+import { AppPermissions } from '@shared/AppPermissions';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Injectable()
 export class ContactsService {
@@ -71,6 +75,7 @@ export class ContactsService {
 
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
+        private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
@@ -383,7 +388,13 @@ export class ContactsService {
         });
     }
 
-    showMergeContactDialog(sourceInfo, targetInfo, loadFinalize = () => {}) {
+    showMergeContactDialog(
+        sourceInfo,
+        targetInfo,
+        loadFinalize = () => {},
+        keepSource = true,
+        keepTarget = true
+    ) {
         return this.contactProxy.getContactInfoForMerge(
             sourceInfo.id, sourceInfo.leadId,
             targetInfo.id, targetInfo.leadId
@@ -395,9 +406,40 @@ export class ContactsService {
                 disableClose: true,
                 closeOnNavigation: false,
                 data: {
-                    mergeInfo: response
+                    mergeInfo: response,
+                    keepSource: keepSource,
+                    keepTarget: keepTarget
                 }
             }).afterClosed();
         }));
+    }
+
+    deleteContact(statusId, customerName, contactGroup, contactId, callback?) {
+        let text = this.ls.l('LeadDeleteWarningMessage', customerName);
+        let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
+        if (statusId == ContactStatus.Prospective) {
+            ContactsHelper.showConfirmMessage(text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
+                if (isConfirmed) {
+                    this.leadService.deleteLead(contactId, forceDelete).subscribe(() => {
+                        abp.notify.success(this.ls.l('SuccessfullyDeleted'));
+                        this.contactProxy['data']['deleted'] = true;
+                        callback && callback();
+                    });
+                }
+            },
+            canForceDelete);
+        } else {
+            let text = contactGroup == ContactGroup.Partner ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
+            ContactsHelper.showConfirmMessage(
+                text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
+                    if (isConfirmed) {
+                        this.contactProxy.deleteContact(contactId, forceDelete).subscribe(() => {
+                            abp.notify.success(this.ls.l('SuccessfullyDeleted'));
+                            callback && callback();
+                        });
+                    }
+                },
+                canForceDelete);
+        }
     }
 }
