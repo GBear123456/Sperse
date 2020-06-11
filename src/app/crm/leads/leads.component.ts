@@ -424,6 +424,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
 
     constructor(
         injector: Injector,
@@ -1166,11 +1167,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 locateInMenu: 'auto',
                 items: [
                     {
-                        name: 'delete',
-                        disabled: !this.selectedLeads.length ||
-                            !this.permission.checkCGPermission(this.contactGroupId.value) ||
-                            this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
-                        action: this.deleteLeads.bind(this)
+                        name: 'actions',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.selectedLeads.length || !this.permission.checkCGPermission(this.contactGroupId.value),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Delete'),
+                                    disabled: this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
+                                    action: this.deleteLeads.bind(this)
+                                },
+                                {
+                                    text: this.l('Merge'),
+                                    disabled: this.selectedLeads.length != 2 || !this.isMergeAllowed,
+                                    action: () => {
+                                        this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), true);
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             },
@@ -1697,23 +1712,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
-                this.startLoading();
-                this.contactService.showMergeContactDialog(
-                    {
-                        id: source.CustomerId,
-                        leadId: source.Id
-                    },
-                    {
-                        id: target.CustomerId,
-                        leadId: target.Id
-                    },
-                    () => this.finishLoading(),
-                    false,
-                    true
-                ).subscribe((success: boolean) => {
-                    if (success)
-                        this.refresh();
-                });
+                this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }
     }

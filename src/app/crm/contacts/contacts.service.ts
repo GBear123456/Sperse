@@ -442,4 +442,24 @@ export class ContactsService {
                 canForceDelete);
         }
     }
+
+    mergeContact(source, target, keepSource?: boolean, keepTarget?: boolean, callback?, isLead = false) {
+        abp.ui.setBusy();
+        this.showMergeContactDialog(
+            {
+                id: isLead ? source.CustomerId : target.Id,
+                leadId: isLead ? source.Id : ''
+            },
+            {
+                id: isLead ? target.CustomerId : target.Id,
+                leadId: isLead ? target.Id : ''
+            },
+            () => abp.ui.clearBusy(),
+            keepSource,
+            keepTarget
+        ).subscribe((success: boolean) => {
+            if (success && callback)
+                callback();
+        });
+    }
 }

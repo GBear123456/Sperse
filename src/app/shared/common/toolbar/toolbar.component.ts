@@ -334,6 +334,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             message: {
                 text: this.ls.l('Message'),
                 hint: this.ls.l('Message')
+            },
+            actions: {
+                text: this.ls.l('Actions'),
+                hint: this.ls.l('Actions')
             }
         };
     }

@@ -340,6 +340,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     );
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     rowsViewHeight: number;
+    isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
 
     constructor(
         injector: Injector,
@@ -961,6 +962,42 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 locateInMenu: 'auto',
                 items: [
                     {
+                        name: 'actions',
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.selectedPartners.length || !this.isGranted(AppPermissions.CRMPartnersManage) || this.selectedPartners.length > 2,
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Delete'),
+                                    disabled: this.selectedPartners.length != 1, // need update
+                                    action: () => {
+                                        let client =  this.selectedPartners[0];
+                                        this.contactService.deleteContact(
+                                            null,
+                                            client.Name,
+                                            ContactGroup.Client,
+                                            client.Id,
+                                            () => this.invalidate()
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('Merge'),
+                                    disabled: this.selectedPartners.length != 2 || !this.isMergeAllowed,
+                                    action: () => {
+                                        this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => this.invalidate());
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
                         name: 'message',
                         widget: 'dxDropDownMenu',
                         disabled: !this.permission.checkCGPermission(ContactGroup.Partner, 'ViewCommunicationHistory.SendSMSAndEmail'),
@@ -1346,15 +1383,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
-                this.startLoading();
-                this.contactService.showMergeContactDialog(
-                    { id: source.Id },
-                    { id: target.Id },
-                    () => this.finishLoading()
-                ).subscribe(success => {
-                    if (success)
-                        this.invalidate();
-                });
+                this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => this.invalidate());
             });
         }
     }
