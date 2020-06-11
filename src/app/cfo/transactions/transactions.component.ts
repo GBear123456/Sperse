@@ -1044,7 +1044,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
-        let filterQuery = this.processODataFilter(
+        let filterQuery$: Observable<string> = this.processODataFilter(
             this.dataGrid.instance,
             this.dataSourceURI,
             this.filters.concat(
@@ -1060,17 +1060,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
         );
 
-        this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
-        this.countDataSource.load();
-        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
-        this.totalDataSource.load();
+        filterQuery$.subscribe((filterQuery: string) => {
+            this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
+            this.countDataSource.load();
+            this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+            this.totalDataSource.load();
 
-        this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
-            || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
-            || (_.has(x, 'or') &&  _.has(x.or[0], 'CashflowCategoryId'))
-            || _.has(x, 'CashflowSubCategoryId')
-        );
-        this.changeDetectionRef.detectChanges();
+            this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
+                || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
+                || (_.has(x, 'or') &&  _.has(x.or[0], 'CashflowCategoryId'))
+                || _.has(x, 'CashflowSubCategoryId')
+            );
+            this.changeDetectionRef.detectChanges();
+        })
     }
 
     getODataUrl(uri: string, filter?: Object) {

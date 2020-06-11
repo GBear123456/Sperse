@@ -138,7 +138,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'email',
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'Email',
             items: {
                 element: new FilterMultilineInputModel({
@@ -151,7 +151,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'xref',
             hidden: this.appSession.userIsMember,
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'ContactXref',
             items: {
                 element: new FilterMultilineInputModel({
@@ -163,7 +163,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'PersonalAffiliateCode',
             items: {
                 element: new FilterMultilineInputModel({
@@ -175,7 +175,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'phone',
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'Phone',
             items: {
                 element: new FilterMultilineInputModel({
@@ -242,7 +242,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'email',
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'EmailAddress',
             items: {
                 element: new FilterMultilineInputModel({
@@ -255,7 +255,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'xref',
             hidden: this.appSession.userIsMember,
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'ContactXref',
             items: {
                 element: new FilterMultilineInputModel({
@@ -267,7 +267,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'PersonalAffiliateCode',
             items: {
                 element: new FilterMultilineInputModel({
@@ -279,7 +279,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'phone',
-            filterMethod: FilterHelpers.filterByMultiline,
+            filterMethod: this.filtersService.filterByMultiline,
             field: 'PhoneNumber',
             items: {
                 element: new FilterMultilineInputModel({

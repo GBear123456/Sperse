@@ -191,6 +191,7 @@
     "toastr": "^2.1.2",
     "topojson": "^3.0.2",
     "ts-helpers": "^1.1.2",
+    "ts-md5": "^1.2.7",
     "ts-node": "~3.3.0",
     "tslib": "^1.10.0",
     "typeahead.js": "^0.11.1",

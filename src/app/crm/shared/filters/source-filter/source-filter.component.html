@@ -5,14 +5,7 @@
         (onItemSelected)="onSourceContactChanged($event)">
     </source-contact-list>
     <div class="field">
-        <label for="filterCampaign">{{ ls.l('CampaignCode') }}</label>
-        <dx-text-box [placeholder]="ls.l('EnterValue')"
-                     [elementAttr]="{ id: 'filterCampaign' }"
-                     [(value)]="items.element.campaignCode">
-        </dx-text-box>
-    </div>
-    <div class="field">
-        <label for="filterAccessCode">{{ ls.l('SourceAffiliateCode') }}</label>
+        <label for="filterAccessCode">{{ ls.l('LeadInformation_SourceAffiliateCode') }}</label>
         <dx-text-box [placeholder]="ls.l('EnterValue')"
                      [elementAttr]="{ id: 'filterAccessCode' }"
                      [(value)]="items.element.affiliateCode">
@@ -28,6 +21,13 @@
                (click)="clearContact($event)">
             </i>
         </a>
+    </div>
+    <div class="field">
+        <label for="filterCampaign">{{ ls.l('CampaignCode') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterCampaign' }"
+                     [(value)]="items.element.campaignCode">
+        </dx-text-box>
     </div>
     <div class="field">
         <label for="filterChannel">{{ ls.l('Channel') }}</label>
