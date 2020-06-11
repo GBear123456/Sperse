@@ -567,7 +567,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             select: [
                 'Name',
                 'CompanyName',
-                'SourceOrganizationUnitId',
                 'Email',
                 'PhotoPublicId',
                 'Phone',
@@ -1445,10 +1444,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             );
         }
-    }
-
-    getOrganizationUnitName = (e) => {
-        return DataGridService.getOrganizationUnitName(e.SourceOrganizationUnitId, this.organizationUnits);
     }
 
     onCellClick($event) {

@@ -369,7 +369,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             select: [
                 'Name',
                 'CompanyName',
-                'SourceOrganizationUnitId',
                 'PhotoPublicId',
                 'Email',
                 'Phone',
@@ -1279,10 +1278,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private setChartInstance() {
         const chartInstance = this.chartComponent && this.chartComponent.chart && this.chartComponent.chart.instance;
         CrmService.setDataSourceToComponent(this.chartDataSource, chartInstance);
-    }
-
-    getOrganizationUnitName = (e) => {
-        return DataGridService.getOrganizationUnitName(e.SourceOrganizationUnitId, this.organizationUnits);
     }
 
     updatePartnerStatuses(status) {
