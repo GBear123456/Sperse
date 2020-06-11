@@ -91,7 +91,7 @@ export class ODataService {
         )
     }
 
-    private getODataRequestValues(filter): Observable<ODataRequestValues> {
+    getODataRequestValues(filter): Observable<ODataRequestValues> {
         let simpleFilters = [], serverCachedFilters: Observable<any>[] = [];
         let params = [];
         filter.forEach((filterData) => {

@@ -240,8 +240,7 @@ export class FiltersService {
                 /** Convert long values array into server cache id */
                 if (valuesArray.length > 20) {
                     data = {
-                        [ServerCacheService.filterNamesToCacheIdNames[filter.field]]: this.serverCacheService.getServerCacheId(
-                            filter.field,
+                        [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: this.serverCacheService.getServerCacheId(
                             valuesArray
                         )
                     };
