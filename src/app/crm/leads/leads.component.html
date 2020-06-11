@@ -64,7 +64,7 @@
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [cacheEnabled]="false"
-                                [rowDragging]="{ allowDropInsideItem: true, onDragEnd: onDragEnd }"
+                                [rowDragging]="{ allowDropInsideItem: isMergeAllowed, onDragEnd: onDragEnd }"
                                 [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
