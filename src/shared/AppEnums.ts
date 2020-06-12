@@ -112,6 +112,7 @@ export class ContactGroup {
     static UserProfile = 'U';
     static Investor = 'I';
     static Vendor = 'V';
+    static Other = 'O';
 }
 
 export class ContactGroupPermission {
@@ -120,6 +121,7 @@ export class ContactGroupPermission {
     static UserProfile = AppPermissions.CRMEmployees;
     static Investor = AppPermissions.CRMInvestors;
     static Vendor = AppPermissions.CRMVendors;
+    static Other = AppPermissions.CRMOthers;
 }
 
 export class PersonOrgRelationType {

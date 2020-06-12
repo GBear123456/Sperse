@@ -54307,6 +54307,7 @@ export enum ImportTypeInput {
     Investor = "Investor", 
     Vendor = "Vendor", 
     Employee = "Employee", 
+    Other = "Other", 
     Order = "Order", 
 }
 
@@ -54955,6 +54956,7 @@ export enum UserGroup {
     Partner = "Partner", 
     Investor = "Investor", 
     Vendor = "Vendor", 
+    Other = "Other", 
 }
 
 export class GetUsersInfoDto implements IGetUsersInfoDto {

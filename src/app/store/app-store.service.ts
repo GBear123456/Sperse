@@ -34,6 +34,7 @@ export class AppStoreService {
             || this.permission.isGranted(AppPermissions.CRMInvestors)
             || this.permission.isGranted(AppPermissions.CRMVendors)
             || this.permission.isGranted(AppPermissions.CRMEmployees)
+            || this.permission.isGranted(AppPermissions.CRMOthers)
             || this.permission.isGranted(AppPermissions.AdministrationUsers)
         );
 
