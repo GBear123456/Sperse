@@ -15,12 +15,12 @@
                          <span>{{getResultFullName()}}</span>
                     </div>
                     <div class="target">
-                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(data?.mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
-                        <span>{{data?.mergeInfo?.targetContactInfo?.fullName}}</span>
+                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
+                        <span>{{mergeInfo?.targetContactInfo?.fullName}}</span>
                     </div>
                     <div class="source">
-                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(data?.mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
-                        <span>{{data?.mergeInfo?.contactInfo?.fullName}}</span>
+                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
+                        <span>{{mergeInfo?.contactInfo?.fullName}}</span>
                     </div>
                 </div>
                 <ng-container *ngFor="let field of fields">
@@ -37,7 +37,7 @@
                                         [text]="value.text"
                                         [(value)]="value.selected"
                                         [visible]="!field.disabled"
-                                        [ngClass]="{primary: value.isPrimary}"
+                                        [ngClass]="{ primary: value.isPrimary }"
                                         (click)="onSelectChange(field, value)">
                                     </dx-check-box>
                                 </ng-container>

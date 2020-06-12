@@ -114,9 +114,9 @@ export class MergeContactDialogComponent {
         }
     };
     mergeInfo: GetContactInfoForMergeOutput = this.data.mergeInfo;
-    fields = Object.keys(this.fieldsConfig).map(field => {
-        let source = this.data.mergeInfo.contactInfo,
-            target = this.data.mergeInfo.targetContactInfo,
+    fields = Object.keys(this.fieldsConfig).map((field: string) => {
+        let source = { ...this.mergeInfo.contactInfo, ...this.mergeInfo.contactLeadInfo },
+            target = { ...this.mergeInfo.targetContactInfo, ...this.mergeInfo.targetContactLeadInfo },
             sourceValues = this.getFieldValues(source, field),
             targetValues = this.getFieldValues(target, field);
         return sourceValues.length || targetValues.length ?
@@ -164,7 +164,7 @@ export class MergeContactDialogComponent {
         ].filter(Boolean).join(', ');
     }
 
-    getFieldValues(contactInfo, field) {
+    getFieldValues(contactInfo, field: string) {
         let data = contactInfo[field];
         if (data) {
             if (data instanceof Array)
@@ -198,7 +198,7 @@ export class MergeContactDialogComponent {
         return field.hasOwnProperty('alt');
     }
 
-    getResultFieldValues(field, sourceValues, targetValues) {
+    getResultFieldValues(field: string, sourceValues, targetValues) {
         let isMultiField = this.isMultiField(this.fieldsConfig[field]);
         return targetValues.concat(sourceValues.map(item => {
             if (isMultiField) {
@@ -269,9 +269,9 @@ export class MergeContactDialogComponent {
     }
 
     getResultPhotoId() {
-        return this.getResultFullName() != this.data.mergeInfo.contactInfo.fullName ?
-            this.data.mergeInfo.targetContactInfo.photoPublicId :
-            this.data.mergeInfo.contactInfo.photoPublicId;
+        return this.getResultFullName() != this.mergeInfo.contactInfo.fullName ?
+            this.mergeInfo.targetContactInfo.photoPublicId :
+            this.mergeInfo.contactInfo.photoPublicId;
     }
 
     getResultFullName() {
@@ -346,19 +346,17 @@ export class MergeContactDialogComponent {
     }
 
     getMergeContactInput() {
-        let sourceInfo = this.data.mergeInfo.contactInfo,
-            targetInfo = this.data.mergeInfo.targetContactInfo;
         return new MergeContactInput({
-            contactId: sourceInfo.id,
-            contactLeadId: sourceInfo.leadId,
+            contactId: this.mergeInfo.contactInfo.id,
+            contactLeadId: this.mergeInfo.contactLeadInfo.id,
             contactMergeOptions: new ContactMergeOptions({
                 emailIdsToIgnore: this.getEmailIdsToIgnore(),
                 phoneIdsToIgnore: this.getPhoneIdsToIgnore(),
                 addressIdsToIgnore: this.getAddressIdsToIgnore(),
                 preferredProperties: this.getPreferredProperties()
             }),
-            targetContactId: targetInfo.id,
-            targetContactLeadId: targetInfo.leadId,
+            targetContactId: this.mergeInfo.targetContactInfo.id,
+            targetContactLeadId: this.mergeInfo.targetContactLeadInfo.id,
             targetContactMergeOptions: new TargetContactMergeOptions({
                 emailIdsToRemove: this.getEmailIdsToRemove(),
                 phoneIdsToRemove: this.getPhoneIdsToRemove(),
