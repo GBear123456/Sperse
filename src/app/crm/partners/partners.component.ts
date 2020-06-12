@@ -1383,7 +1383,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [any, any]) => {
-                this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => this.invalidate());
+                this.contactService.mergeContact(source, target, true, true, () => this.invalidate());
             });
         }
     }
