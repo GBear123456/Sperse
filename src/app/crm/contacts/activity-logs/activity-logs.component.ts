@@ -1,39 +1,46 @@
-import { Component, Injector, OnInit } from '@angular/core';
+/** Core imports */
+import { Component, Injector } from '@angular/core';
 
+/** Third party imports */
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { ActivityLogsFields } from '@app/crm/contacts/activity-logs/activity-logs-fields.enum';
+import { ActivityLogsDto } from '@app/crm/contacts/activity-logs/activity-logs-dto.interface';
 
 @Component({
-    selector: 'activity-logs.component',
+    selector: 'activity-logs',
     templateUrl: './activity-logs.component.html',
     styleUrls: ['./activity-logs.component.less']
 })
-export class ActivityLogsComponent extends AppComponentBase implements OnInit {
+export class ActivityLogsComponent extends AppComponentBase {
     dataSource: any;
     private readonly dataSourceURI = 'PfmOfferRequest';
+    readonly activityLogsFields: KeysEnum<ActivityLogsDto> = ActivityLogsFields;
 
     constructor(
         injector: Injector,
-        private _userService: UserServiceProxy
+        private userService: UserServiceProxy
     ) {
         super(injector);
-        this.dataSource = {
-            store: {
-                type: 'odata',
+        this.dataSource = new DataSource({
+            select: Object.keys(this.activityLogsFields),
+            store: new ODataStore({
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                },
-                paginate: true
-            },
-            filter: [ 'ApplicantUserId', '=', +this._userService['data'].userId ]
-        };
+                }
+            }),
+            filter: [ 'ApplicantUserId', '=', +this.userService['data'].userId ]
+        });
     }
-
-    ngOnInit() {}
 
     onToolbarPreparing($event) {
         $event.toolbarOptions.items.push({

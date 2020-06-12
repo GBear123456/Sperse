@@ -9,6 +9,8 @@ import buildQuery from 'odata-query';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { ActivityAssignedUsersStoreActions, AppStore } from '@app/store';
@@ -26,6 +28,9 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { ActivityDto } from '@app/crm/activity/activity-dto.interface';
+import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -103,6 +108,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     layoutTypes = DataLayoutType;
+    readonly activityFields: KeysEnum<ActivityDto> = ActivityFields;
 
     constructor(
         injector: Injector,
@@ -132,14 +138,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     initDataSource() {
-        this.dataSource = {
+        this.dataSource = new DataSource({
             requireTotalCount: false,
+            select: Object.keys(this.activityFields),
             onLoadError: (error) => {
                 this.httpInterceptor.handleError(error);
             },
-            store: {
-                key: 'Id',
-                type: 'odata',
+            store: new ODataStore({
+                key: this.activityFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
@@ -179,10 +185,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     res.forEach((record) => {
                         record.fieldTimeZone = 'Etc/UTC';
                     });
-                },
-                paginate: false
-            }
-        };
+                }
+            })
+        });
     }
 
     parseODataURL(url) {
@@ -444,21 +449,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     setPipelineDataSource(refresh: boolean = true) {
-        let dataSource = {
-            uri: this.dataSourceURI,
+        let dataSource = new DataSource({
             requireTotalCount: true,
-            store: {
-                key: 'Id',
-                type: 'odata',
+            store: new ODataStore({
+                key: this.activityFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                deserializeDates: false,
-                paginate: true
-            }
-        };
+                deserializeDates: false
+            })
+        });
         if (this.pipelineView)
             dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
 
@@ -476,9 +478,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             closeOnNavigation: false,
             data: {
                 stages: this.stages,
-                appointment: appointment instanceof Date ? {
-                    startDate: appointment
-                } : (appointment.entity || appointment),
+                appointment: appointment instanceof Date
+                    ? { startDate: appointment }
+                    : (appointment.entity || appointment) as ActivityDto,
                 refreshParent: this.refresh.bind(this)
             }
         });
@@ -540,7 +542,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             });
     }
 
-    deleteAppointment(appointment) {
+    deleteAppointment(appointment: ActivityDto) {
         this.schedulerComponent.instance.deleteAppointment(appointment);
     }
 
@@ -552,14 +554,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         let period = <any>this.getPeriodType();
         if (period == 'month') {
             const delimiter = 'T';
-            let diff = moment(event.newData.StartDate).diff(event.oldData.StartDate, 'days'),
-                newDateParts = event.newData.StartDate.split(delimiter),
-                oldDateParts = event.oldData.StartDate.split(delimiter);
-            event.newData.StartDate = newDateParts.shift() + delimiter + oldDateParts.pop();
+            const oldActivity: ActivityDto = event.oldData;
+            const newActivity: ActivityDto = event.newData;
+            let diff = moment(newActivity.StartDate).diff(event.oldData.StartDate, 'days'),
+                newDateParts = newActivity.StartDate.split(delimiter),
+                oldDateParts = oldActivity.StartDate.split(delimiter);
+            newActivity.StartDate = newDateParts.shift() + delimiter + oldDateParts.pop();
 
-            let endDate = moment(event.oldData.EndDate).add(diff, 'days').format('YYYY-MM-DDTHH:mm:ss');
+            let endDate = moment(oldActivity.EndDate).add(diff, 'days').format('YYYY-MM-DDTHH:mm:ss');
             newDateParts = endDate.split(delimiter);
-            oldDateParts = event.oldData.EndDate.split(delimiter);
+            oldDateParts = oldActivity.EndDate.split(delimiter);
             event.newData.EndDate = newDateParts.shift() + delimiter + oldDateParts.pop();
         }
     }

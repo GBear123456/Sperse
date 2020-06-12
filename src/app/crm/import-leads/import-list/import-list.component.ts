@@ -3,6 +3,8 @@ import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angul
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { forkJoin, Observable } from 'rxjs';
 
 /** Application imports */
@@ -10,11 +12,14 @@ import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+import { GetFileUrlOutput, ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from '../import-leads.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { ImportListDto } from '@app/crm/import-leads/import-list/import-list-dto.interface';
+import { ImportListFields } from '@app/crm/import-leads/import-list/import-list.enum';
 
 @Component({
     templateUrl: './import-list.component.html',
@@ -38,6 +43,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         }
     ];
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
+    readonly importListFields: KeysEnum<ImportListDto> = ImportListFields;
 
     constructor(injector: Injector,
         private importLeadsService: ImportLeadsService,
@@ -46,18 +52,17 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         private leftMenuService: LeftMenuService
     ) {
         super(injector);
-        this.dataSource = {
-            store: {
-                type: 'odata',
+        this.dataSource = new DataSource({
+            select: Object.keys(this.importListFields),
+            store: new ODataStore({
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                paginate: true,
-                key: 'Id'
-            }
-        };
+                key: this.importListFields.Id
+            })
+        });
         this.initToolbarConfig();
     }
 
@@ -179,9 +184,10 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     onCellClick($event) {
         if ($event.rowType == 'data' && $event.column.dataField == 'FileName') {
-            this.importProxy.getFileUrl($event.data.Id).subscribe((responce) => {
-                if (responce && responce.url)
-                    window.open(responce.url, '_self');
+            const importList: ImportListDto = $event.data;
+            this.importProxy.getFileUrl(importList.Id).subscribe((response: GetFileUrlOutput) => {
+                if (response && response.url)
+                    window.open(response.url, '_self');
             });
         }
     }

@@ -135,7 +135,7 @@
                         <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>
                         <dxo-export [enabled]="false" [customizeExcelCell]="customizeExcelCell"></dxo-export>
 
-                        <dxi-column dataField="Date"
+                        <dxi-column [dataField]="transactionFields.Date"
                                     cssClass="tabular"
                                     sortOrder="desc"
                                     calculateSortValue="Date"
@@ -143,8 +143,7 @@
                                     [caption]="l('Transactions_Date')"
                                     [calculateDisplayValue]="calculateDateDisplayValue">
                         </dxi-column>
-
-                        <dxi-column dataField="BusinessEntityId"
+                        <dxi-column [dataField]="transactionFields.BusinessEntityId"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BusinessEntity')"
                                     [minWidth]="160"
@@ -156,7 +155,7 @@
                                     }">
                         </dxi-column>
                         <dxi-column [caption]="l('Transactions_CashflowCategoryName')"
-                                    dataField="CashflowCategoryName"
+                                    [dataField]="transactionFields.CashflowCategoryName"
                                     [minWidth]="200"
                                     dataType="string"
                                     [renderAsync]="true"
@@ -164,20 +163,20 @@
                                     [calculateDisplayValue]="calculateCashflowCategoryNameDisplayValue"
                                     cssClass="category">
                         </dxi-column>
-                        <dxi-column dataField="CounterpartyName"
+                        <dxi-column [dataField]="transactionFields.CounterpartyName"
                                     dataType="string"
                                     [caption]="l('Transactions_Vendor')"
                                     [minWidth]="200"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Description"
+                        <dxi-column [dataField]="transactionFields.Description"
                                     cssClass="description-column"
                                     dataType="string"
                                     [name]="l('Description')"
                                     cellTemplate="descriptionTemplate"
                                     [caption]="l('Transactions_Description')">
                         </dxi-column>
-                        <dxi-column dataField="Amount"
+                        <dxi-column [dataField]="transactionFields.Amount"
                                     dataType="number"
                                     cssClass="tabular"
                                     name="Amount"
@@ -186,7 +185,7 @@
                                     calculateSortValue="Amount"
                                     [calculateDisplayValue]="calculateTransactionsAmountDisplayValue">
                         </dxi-column>
-                        <dxi-column dataField="BankAccountId"
+                        <dxi-column [dataField]="transactionFields.BankAccountId"
                                     cssClass="tabular clipboard-holder"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BankAccountNumber')"
@@ -197,25 +196,25 @@
                                         valueExpr: 'id'
                                     }">
                         </dxi-column>
-                        <dxi-column dataField="Comments"
+                        <dxi-column [dataField]="transactionFields.Comments"
                                     dataType="string"
                                     [caption]="l('Transactions_Comments')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="CategoryName"
+                        <dxi-column [dataField]="transactionFields.CategoryName"
                                     dataType="string"
                                     [caption]="l('Transactions_CategoryName')"
                                     [lookup]="{ dataSource: categories }"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="CashflowSubCategoryName"
+                        <dxi-column [dataField]="transactionFields.CashflowSubCategoryName"
                                     dataType="string"
                                     [caption]="l('Transactions_CashflowSubCategoryName')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="EndingBalance"
+                        <dxi-column [dataField]="transactionFields.EndingBalance"
                                     dataType="number"
                                     cssClass="tabular"
                                     [caption]="l('Transactions_EndingBalance')"
@@ -224,7 +223,7 @@
                                     calculateSortValue="EndingBalance"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="CashFlowTypeName"
+                        <dxi-column [dataField]="transactionFields.CashFlowTypeName"
                                     dataType="string"
                                     cellTemplate="CashFlowTypeNameTemplate"
                                     cssClass="cashflow-type"
@@ -233,50 +232,50 @@
                                     [visible]="false"
                                     [caption]="l('Transactions_CashFlowType')">
                         </dxi-column>
-                        <dxi-column dataField="AccountingTypeName"
+                        <dxi-column [dataField]="transactionFields.AccountingTypeName"
                                     dataType="string"
                                     [caption]="l('Transactions_AccountingTypeName')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Descriptor"
+                        <dxi-column [dataField]="transactionFields.Descriptor"
                                     dataType="string"
                                     [caption]="l('Transactions_Descriptor')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="BankAccountBankName"
+                        <dxi-column [dataField]="transactionFields.BankAccountBankName"
                                     dataType="string"
                                     [caption]="l('Transactions_BankName')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Id"
+                        <dxi-column [dataField]="transactionFields.Id"
                                     cssClass="tabular id-column clipboard-holder"
                                     [caption]="l('Transactions_Id')"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="BankCode"
+                        <dxi-column [dataField]="transactionFields.BankCode"
                                     [caption]="l('Transactions_BankCode')"
                                     [visible]="false"
                                     [filterOperations]="'='"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="IsPending"
+                        <dxi-column [dataField]="transactionFields.IsPending"
                                     [caption]="l('Transactions_IsPending')"
                                     [visible]="false"
                                     [renderAsync]="true"
                                     [calculateDisplayValue]="calculateIsPendingDisplayValue"
                                     cellTemplate="isPendingTemplate">
                         </dxi-column>
-                        <dxi-column dataField="MonthYear"
+                        <dxi-column [dataField]="transactionFields.MonthYear"
                                     [caption]="l('Transactions_MonthYear')"
                                     calculateSortValue="Date"
                                     [renderAsync]="true"
                                     [calculateDisplayValue]="calculateMonthYearDisplayValue"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="Debit"
+                        <dxi-column [dataField]="transactionFields.Debit"
                                     dataType="number"
                                     cssClass="tabular"
                                     name="Debit"
@@ -287,7 +286,7 @@
                                     cellTemplate="amountTemplate"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="Credit"
+                        <dxi-column [dataField]="transactionFields.Credit"
                                     dataType="number"
                                     cssClass="tabular"
                                     name="Credit"
@@ -298,40 +297,40 @@
                                     cellTemplate="amountTemplate"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="BankAccountTypeName"
+                        <dxi-column [dataField]="transactionFields.BankAccountTypeName"
                                     [caption]="l('Transactions_BankAccountType')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Currency"
+                        <dxi-column [dataField]="transactionFields.Currency"
                                     [caption]="l('Transactions_Currency')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Fees"
+                        <dxi-column [dataField]="transactionFields.Fees"
                                     dataType="number"
                                     cssClass="tabular clipboard-holder"
                                     [caption]="l('Transactions_Fees')"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="TypeName"
+                        <dxi-column [dataField]="transactionFields.TypeName"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_Type')"
                                     [visible]="false"
                                     [lookup]="{dataSource: types}"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ProviderCashFlowCategoryName"
+                        <dxi-column [dataField]="transactionFields.ProviderCashFlowCategoryName"
                                     [caption]="l('Transactions_ProviderCashFlowCategory')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ProviderCashFlowSubCategoryName"
+                        <dxi-column [dataField]="transactionFields.ProviderCashFlowSubCategoryName"
                                     [caption]="l('Transactions_ProviderCashFlowSubCategory')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Department"
+                        <dxi-column [dataField]="transactionFields.Department"
                                     dataType="string"
                                     cssClass="clipboard-holder"
                                     [caption]="l('Transactions_Department')"
@@ -513,11 +512,11 @@
                         </div>
 
                         <dxo-summary>
-                            <dxi-group-item column="Id"
+                            <dxi-group-item [column]="transactionFields.Id"
                                             summaryType="count"
                                             [displayFormat]="'{0} ' + l('Transactions').toLocaleLowerCase()">
                             </dxi-group-item>
-                            <dxi-group-item column="Amount"
+                            <dxi-group-item [column]="transactionFields.Amount"
                                             summaryType="sum"
                                             [customizeText]="customizeGroupAmountCell"
                                             [alignByColumn]="true"

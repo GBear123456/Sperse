@@ -118,6 +118,10 @@ import { SourceFilterModel } from '../shared/filters/source-filter/source-filter
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
+import { ContactDto } from "@app/crm/clients/contact.dto";
+import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { ClientFields } from '@app/crm/clients/client-fields.enum';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -478,7 +482,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.chartComponent.summaryBy.value,
                 this.dateField,
                 this.subscriptionStatusFilter.items.element['getObjectValue']()
-            ).then((result) => {
+            ).then((result: SliceChartData) => {
                 this.chartInfoItems = result.infoItems;
                 return result.items;
             });
@@ -532,6 +536,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         filter(() => this.componentIsActivated)
     );
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    readonly clientFields: KeysEnum<ContactDto> = ClientFields;
 
     constructor(
         injector: Injector,
@@ -564,30 +569,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             });
         }
         this.dataSource = new DataSource({
-            select: [
-                'Name',
-                'CompanyName',
-                'SourceOrganizationUnitId',
-                'Email',
-                'PhotoPublicId',
-                'Phone',
-                'City',
-                'State',
-                'Status',
-                'ContactDate',
-                'Id',
-                'OrganizationId',
-                'Xref',
-                'AffiliateCode',
-                'AssignedUserName'
-            ].concat(
-                this.tenantHasBankCodeFeature
-                    ? [ 'BankCode' ]
-                    : []
-            ),
-            store: {
-                key: 'Id',
-                type: 'odata',
+            select: Object.keys(this.clientFields).filter((field: string) => field !== 'BankCode' || this.tenantHasBankCodeFeature),
+            store: new ODataStore({
+                key: this.clientFields.Id,
                 url: this.getODataUrl(
                     this.dataSourceURI,
                     [
@@ -608,7 +592,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.changeDetectorRef.markForCheck();
                         });
                 }
-            }
+            })
         });
         this.totalDataSource = new DataSource({
             paginate: false,
@@ -860,9 +844,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     showClientDetails(event, section?: string, queryParams?: Params) {
-        let data = event.data || event,
-            orgId = data.OrganizationId,
-            clientId = data.Id;
+        let client: ContactDto = event.data || event,
+            orgId = client.OrganizationId,
+            clientId = client.Id;
         if (clientId) {
             if (event.component)
                 event.component.cancelEditData();
@@ -1142,9 +1126,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Merge'),
                                     disabled: this.selectedClients.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedClients[0], this.selectedClients[1], true, true, () => this.refresh());
+                                        this.contactService.mergeContact(
+                                            this.selectedClients[0],
+                                            this.selectedClients[1],
+                                            true,
+                                            true,
+                                            () => this.refresh()
+                                        );
                                     }
-                                }
+
+                               }
                             ]
                         }
                     }
@@ -1469,16 +1460,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         );
     }
 
-    requestVerification(data) {
-        if (data.Email)
-            this.requestVerificationInternal(data.Id);
+    requestVerification(contact: ContactDto) {
+        if (contact.Email)
+            this.requestVerificationInternal(contact.Id);
         else {
             let dialogData = {
                 groupId: ContactGroup.Client,
                 field: 'emailAddress',
                 emailAddress: '',
                 name: 'Email',
-                contactId: data.Id,
+                contactId: contact.Id,
                 usageTypeId: '',
                 isConfirmed: true,
                 isActive: true,
@@ -1494,7 +1485,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 if (result) {
                     this.startLoading();
                     this.contactEmailService.createContactEmail(new CreateContactEmailInput({
-                        contactId: data.Id,
+                        contactId: contact.Id,
                         emailAddress: dialogData.emailAddress,
                         isActive: dialogData.isActive,
                         isConfirmed: dialogData.isConfirmed,
@@ -1503,7 +1494,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
                         this.dataGrid.instance.refresh();
-                        this.requestVerificationInternal(data.Id);
+                        this.requestVerificationInternal(contact.Id);
                     });
                 }
             });
@@ -1548,7 +1539,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     toggleActionsMenu(event) {
-        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+        const client: ContactDto = event.data;
+        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(client.UserId)
             && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionEvent => {
             this.actionEvent = actionEvent;
@@ -1577,7 +1569,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             forkJoin(
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
-            ).subscribe(([source, target]: [any, any]) => {
+            ).subscribe(([source, target]: [ContactDto, ContactDto]) => {
                 this.contactService.mergeContact(source, target, true, true, () => this.refresh());
             });
         }

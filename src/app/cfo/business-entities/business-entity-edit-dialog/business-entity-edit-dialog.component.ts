@@ -69,7 +69,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         address: null
     };
     isNew = false;
-    businessEntity = new BusinessEntityInfoDto();
+    businessEntity: BusinessEntityInfoDto = new BusinessEntityInfoDto();
     title: string;
     buttons: IDialogButton[] = [
         {
@@ -110,7 +110,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
             this.modalDialog.startLoading();
             this.businessEntityService.get(this.cfoService.instanceType as any, this.cfoService.instanceId, this.data.id)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
-                .subscribe(result => {
+                .subscribe((result: BusinessEntityInfoDto) => {
                     this.businessEntity = result;
                     Object.keys(this.businessEntity).forEach(key => {
                         let component = this[key + 'Component'];

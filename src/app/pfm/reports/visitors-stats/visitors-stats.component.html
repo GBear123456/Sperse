@@ -13,32 +13,32 @@
                 [calculateDisplayValue]="getVisitorFullName"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column dataField="State"
+    <dxi-column [dataField]="visitorStatsFields.State"
                 [caption]="l('State')"
                 [width]="160"
                 calculateSortValue="StateCode"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column dataField="Email"
+    <dxi-column [dataField]="visitorStatsFields.Email"
                 [caption]="l('Email')"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column dataField="PhoneNumber"
+    <dxi-column [dataField]="visitorStatsFields.PhoneNumber"
                 [caption]="l('PhoneNumber')"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column dataField="Date"
+    <dxi-column [dataField]="visitorStatsFields.Date"
                 [caption]="l('Created')"
                 [calculateDisplayValue]="getCreatedDate"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column dataField="DoB"
+    <dxi-column [dataField]="visitorStatsFields.DoB"
                 [caption]="l('Birthday')"
                 dataType="date"
                 format="dd/MM/yyyy"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column dataField="CampaignName"
+    <dxi-column [dataField]="visitorStatsFields.CampaignName"
                 [caption]="l('CampaignName')"
                 cssClass="clipboard-holder">
     </dxi-column>

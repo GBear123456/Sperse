@@ -3,6 +3,7 @@ import { OnInit, AfterViewInit, Component, Inject, Injector, ViewChild, ElementR
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
@@ -31,6 +32,9 @@ import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog
 import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.type';
+import { InvoiceFields } from '@app/crm/contacts/notes/note-add-dialog/invoice-fields.enum';
 
 class PhoneNumber {
     id: any;
@@ -71,6 +75,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     contacts: (OrganizationShortInfo|PersonShortInfoDto)[] = [];
     phones: PhoneNumber[];
     ordersDataSource: any;
+    invoicesFields: KeysEnum<InvoiceDto> = InvoiceFields;
 
     constructor(
         injector: Injector,
@@ -124,19 +129,17 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
         this.ordersDataSource = new DataSource({
             sort: [{ selector: 'Date', desc: true }],
-            select: ['OrderId', 'ContactId', 'OrderStage', 'OrderType', 'Date'],
+            select: Object.keys(this.invoicesFields),
             requireTotalCount: false,
-            store: {
-                key: 'Id',
-                type: 'odata',
+            store: new ODataStore({
+                key: this.invoicesFields.Key,
                 url: this.getODataUrl('OrderInvoices'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                deserializeDates: false,
-                paginate: false
-            }
+                deserializeDates: false
+            })
         });
         this.applyOrdersFilter();
     }
@@ -317,7 +320,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
     }
 
-    orderDisplayValue(data) {
+    orderDisplayValue(data: InvoiceDto) {
         if (data)
             return data.Date.split('T').shift() +
                 ' ' + data.OrderType + ' - ' + data.OrderStage;

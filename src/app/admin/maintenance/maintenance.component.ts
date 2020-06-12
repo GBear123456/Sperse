@@ -7,7 +7,13 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { CachingServiceProxy, StringEntityDto, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    CacheDto,
+    CacheDtoListResultDto,
+    CachingServiceProxy,
+    StringEntityDto,
+    WebLogServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -21,7 +27,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 export class MaintenanceComponent implements OnInit, AfterViewInit {
 
     loading = false;
-    caches: any = null;
+    caches: CacheDto[] = null;
     logs: any = '';
     public gridPagerConfig = DataGridService.defaultGridPagerConfig;
 
@@ -56,7 +62,7 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
         this.loading = true;
         this.cacheService.getAllCaches()
             .pipe(finalize(() => { this.loading = false; }))
-            .subscribe((result) => {
+            .subscribe((result: CacheDtoListResultDto) => {
                 this.caches = result.items;
             });
     }

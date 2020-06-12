@@ -4,11 +4,15 @@ import { DatePipe } from '@angular/common';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@root/shared/AppConsts';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { VisitorStatsDto } from '@app/pfm/reports/visitors-stats/visitor-stats-dto.inteface';
+import { VisitorStatsFields } from '@app/pfm/reports/visitors-stats/visitor-stats-fields.enum';
 
 @Component({
     selector: 'pfm-visitors-stats',
@@ -18,10 +22,11 @@ import { AppConsts } from '@root/shared/AppConsts';
 })
 export class VisitorsStatsComponent extends AppComponentBase {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    readonly visitorStatsFields: KeysEnum<VisitorStatsDto> = VisitorStatsFields;
     dataSource: DataSource = new DataSource({
-        store: {
-            key: 'Id',
-            type: 'odata',
+        select: Object.keys(this.visitorStatsFields),
+        store: new ODataStore({
+            key: this.visitorStatsFields.Id,
             url: this.getODataUrl('PfmOfferRequest'),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
@@ -30,7 +35,7 @@ export class VisitorsStatsComponent extends AppComponentBase {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             }
-        }
+        })
     });
     campaignId: number;
     quickSearch: string;
@@ -42,16 +47,17 @@ export class VisitorsStatsComponent extends AppComponentBase {
     }
 
     onVisitorCellClick(event) {
-        this._router.navigate(['app/pfm/user', event.data.ApplicantUserId],
+        const visitorStats: VisitorStatsDto = event.data;
+        this._router.navigate(['app/pfm/user', visitorStats.ApplicantUserId],
             { queryParams: { referrer: location.pathname } });
     }
 
-    getVisitorFullName = (e) => {
-        return e.FirstName + ' ' + e.LastName;
+    getVisitorFullName = (visitorStats: VisitorStatsDto) => {
+        return visitorStats.FirstName + ' ' + visitorStats.LastName;
     }
 
-    getCreatedDate = (e) => {
-        return this.datePipe.transform(e.Date, AppConsts.formatting.dateTime, this.userTimezone);
+    getCreatedDate = (visitorStats: VisitorStatsDto) => {
+        return this.datePipe.transform(visitorStats.Date, AppConsts.formatting.dateTime, this.userTimezone);
     }
 
     contentReady() {

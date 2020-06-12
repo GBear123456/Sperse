@@ -18,7 +18,8 @@ import {
     ActivityType,
     CreateActivityDto,
     UpdateActivityDto,
-    LayoutType
+    LayoutType,
+    ActivityDto
 } from '@shared/service-proxies/service-proxies';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
@@ -34,6 +35,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-dto.interface';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -105,7 +107,8 @@ export class CreateActivityDialogComponent implements OnInit {
     permissions = AppPermissions;
     assignedUsersSelector = select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     hasManagePermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments);
-
+    appointment: InternalActivityDto = this.data.appointment;
+    
     constructor(
         private cacheService: CacheService,
         private dialogService: DialogService,
@@ -126,16 +129,16 @@ export class CreateActivityDialogComponent implements OnInit {
             { text: this.ls.l('SaveAndClose'), selected: false }
         ];
 
-        if (this.data.appointment && this.data.appointment.Id) {
-            this.isAllDay = Boolean(this.data.appointment.AllDay);
-            if (this.data.appointment.StartDate)
-                this.startDate = this.getDateWithTimezone(new Date(this.data.appointment.StartDate));
-            if (this.data.appointment.EndDate)
-                this.endDate = this.getDateWithTimezone(new Date(this.data.appointment.EndDate));
+        if (this.appointment && this.appointment.Id) {
+            this.isAllDay = Boolean(this.appointment.AllDay);
+            if (this.appointment.StartDate)
+                this.startDate = this.getDateWithTimezone(new Date(this.appointment.StartDate));
+            if (this.appointment.EndDate)
+                this.endDate = this.getDateWithTimezone(new Date(this.appointment.EndDate));
 
-            this.activityProxy.get(this.data.appointment.Id).subscribe((res) => {
-                this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
-                this.isUserSelected = !!this.data.appointment.AssignedUserIds;
+            this.activityProxy.get(this.appointment.Id).subscribe((res: ActivityDto) => {
+                this.appointment.AssignedUserIds = res.assignedUserIds || [];
+                this.isUserSelected = !!this.appointment.AssignedUserIds;
                 this.initToolbarConfig();
                 this.changeDetectorRef.detectChanges();
             });
@@ -145,11 +148,11 @@ export class CreateActivityDialogComponent implements OnInit {
 
     initAppointmentDate() {
         let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
-        if (this.data.appointment.AllDay)
+        if (this.appointment.AllDay)
             this.isAllDay = true;
 
-        if (this.data.appointment.StartDate) {
-            this.startDate = new Date(this.data.appointment.StartDate);
+        if (this.appointment.StartDate) {
+            this.startDate = new Date(this.appointment.StartDate);
             if (!this.isAllDay) {
                 this.startDate.setHours(dateNow.getHours());
                 this.startDate.setMinutes(dateNow.getMinutes());
@@ -159,8 +162,8 @@ export class CreateActivityDialogComponent implements OnInit {
             this.startDate = new Date(dateNow);
         }
 
-        if (this.data.appointment.EndDate) {
-            this.endDate = new Date(this.data.appointment.EndDate);
+        if (this.appointment.EndDate) {
+            this.endDate = new Date(this.appointment.EndDate);
             if (!this.isAllDay) {
                 this.endDate.setHours(dateNow.getHours());
                 this.endDate.setMinutes(dateNow.getMinutes());
@@ -173,15 +176,15 @@ export class CreateActivityDialogComponent implements OnInit {
 
     ngOnInit() {
         this.loadResourcesData();
-        if (!this.data.appointment.StageId && this.data.stages)
-            this.initialStageId = this.data.appointment.StageId =
+        if (!this.appointment.StageId && this.data.stages)
+            this.initialStageId = this.appointment.StageId =
                 this.data.stages[Math.floor(this.data.stages.length / 2)].id;
 
-        if (!this.data.appointment.Type)
-            this.data.appointment.Type = ActivityType.Task;
+        if (!this.appointment.Type)
+            this.appointment.Type = ActivityType.Task;
 
-        this.data.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
-        this.title = this.data.appointment.Title ? this.data.appointment.Title : '';
+        this.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
+        this.title = this.appointment.Title ? this.appointment.Title : '';
         this.initToolbarConfig();
         this.saveOptionsInit();
         this.changeDetectorRef.detectChanges();
@@ -311,7 +314,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     private activityTypeChanged(event) {
         this.activityTypeIndex = event.itemIndex;
-        this.data.appointment.Type = event.itemData.value;
+        this.appointment.Type = event.itemData.value;
         this.initToolbarConfig();
     }
 
@@ -336,13 +339,14 @@ export class CreateActivityDialogComponent implements OnInit {
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
 
-        (this.data.appointment.Id ? this.updateAppointment() : this.createAppointment())
+        (this.appointment.Id ? this.updateAppointment() : this.createAppointment())
             .pipe(finalize(() => {
                 this.modalDialog.finishLoading();
                 saveButton.disabled = false;
             }))
             .subscribe((res) => {
-                this.data.appointment.Id = res;
+                /** @todo check why create don't return appointmentId  */
+                //this.appointment.Id = res;
                 this.afterSave();
             });
     }
@@ -350,16 +354,16 @@ export class CreateActivityDialogComponent implements OnInit {
     getEntityData(id?: number) {
         return {
             id: id,
-            type: this.data.appointment.Type,
-            title: this.data.appointment.Title,
-            description: this.data.appointment.Description,
-            assignedUserIds: this.data.appointment.AssignedUserIds,
+            type: this.appointment.Type,
+            title: this.appointment.Title,
+            description: this.appointment.Description,
+            assignedUserIds: this.appointment.AssignedUserIds,
             startDate: this.getDateWithoutTimezone(this.startDate, 'startDate'),
             endDate: this.getDateWithoutTimezone(this.endDate, 'endDate'),
             allDay: this.isAllDay,
-            stageId: this.data.appointment.StageId,
-            leadId: this.data.appointment.LeadId,
-            contactId: this.data.appointment.ContactId
+            stageId: this.appointment.StageId,
+            leadId: this.appointment.LeadId,
+            contactId: this.appointment.ContactId
         };
     }
 
@@ -371,7 +375,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     updateAppointment() {
         return this.activityProxy.update(
-            UpdateActivityDto.fromJS(this.getEntityData(this.data.appointment.Id))
+            UpdateActivityDto.fromJS(this.getEntityData(this.appointment.Id))
         );
     }
 
@@ -390,14 +394,14 @@ export class CreateActivityDialogComponent implements OnInit {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true,
-                this.data.appointment.StageId);
+                this.appointment.StageId);
             // } else if (this.saveContextMenuItems[1].selected) {
             // @Todo: after add new button uncomment else if and update it, there can be bug with 'Save' button, but I can't reproduce it
         } else {
             this.dialogRef.close();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(false,
-                this.data.appointment.StageId);
+                this.appointment.StageId);
        }
     }
 
@@ -411,7 +415,7 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     validateData() {
-        if (!this.data.appointment.Title) {
+        if (!this.appointment.Title) {
             this.isTitleValid = false;
             return this.notifyService.error(this.ls.l('TitleIsRequired'));
         }
@@ -443,7 +447,7 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     onLeadSelected(e) {
-        this.data.appointment.LeadId = e.id;
+        this.appointment.LeadId = e.id;
         this.isLeadsSelected = !!e.id;
         this.initToolbarConfig();
     }
@@ -468,16 +472,16 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     onClientSelected(e) {
-        this.data.appointment.ContactId = e.id;
+        this.appointment.ContactId = e.id;
         this.isClientSelected = !!e.id;
         this.initToolbarConfig();
     }
 
-    onStarsChanged(e) {
-        this.isStarSelected = !!e.addedItems.length;
-        this.data.appointment.Stars = e.addedItems.id;
-        this.initToolbarConfig();
-    }
+    // onStarsChanged(e) {
+    //     this.isStarSelected = !!e.addedItems.length;
+    //     this.appointment['Stars'] = e.addedItems.id;
+    //     this.initToolbarConfig();
+    // }
 
     toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
@@ -492,10 +496,10 @@ export class CreateActivityDialogComponent implements OnInit {
         let resetInternal = () => {
             this.title = '';
             this.isTitleValid = true;
-            this.data.appointment = {
+            this.appointment = {
                 Type: ActivityType.Task,
                 StageId: this.initialStageId
-            };
+            } as any;
 
             this.isAllDay = false;
             this.isUserSelected = false;
@@ -560,13 +564,13 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     onStagesChanged(event) {
-        this.data.appointment.StageId = event.id;
+        this.appointment.StageId = event.id;
         this.isStatusSelected = !!event.id;
         this.initToolbarConfig();
     }
 
     titleChanged(event) {
-        this.data.appointment.Title = event;
+        this.appointment.Title = event;
     }
 
     initDateValidationGroup($event) {

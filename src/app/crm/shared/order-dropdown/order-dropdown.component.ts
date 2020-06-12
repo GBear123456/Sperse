@@ -1,7 +1,17 @@
+/** Core imports */
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+/** Third party imports */
+import DataSource from '@root/node_modules/devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
+
+/** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataService } from '@shared/common/odata/odata.service';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { OrderDto } from '@app/crm/shared/order-dropdown/order-dto.type';
+import { OrderFields } from '@app/crm/shared/order-dropdown/order-fields.enum';
 
 @Component({
     selector: 'order-dropdown',
@@ -23,6 +33,7 @@ export class OrderDropdownComponent {
         public ls: AppLocalizationService
     ) {}
     ordersDataSource;
+    orderFields: KeysEnum<OrderDto> = OrderFields;
 
     orderFocusIn(event) {
         if (event.event.target.tagName == 'INPUT')
@@ -30,12 +41,11 @@ export class OrderDropdownComponent {
     }
 
     initOrderDataSource() {
-        this.ordersDataSource = {
-            uri: 'order',
+        this.ordersDataSource = new DataSource({
             requireTotalCount: true,
-            store: {
-                key: 'Id',
-                type: 'odata',
+            select: Object.keys(this.orderFields),
+            store: new ODataStore({
+                key: this.orderFields.Id,
                 url: this.oDataService.getODataUrl('order'),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -46,10 +56,9 @@ export class OrderDropdownComponent {
                     else
                         request.params.$filter = contactFilter;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                },
-                paginate: true
-            }
-        };
+                }
+            })
+        });
     }
 
     onOrderNumberValueChanged(event) {
@@ -60,10 +69,10 @@ export class OrderDropdownComponent {
 
 
     onOrderSelected(event, dropBox) {
-        let data = event.data;
-        if (data) {
-            this.orderId = data.Id;
-            this.orderNumber = data.Number;
+        let order: OrderDto = event.data;
+        if (order) {
+            this.orderId = order.Id;
+            this.orderNumber = order.Number;
             this.orderIdChange.emit(this.orderId);
             this.orderNumberChange.emit(this.orderNumber);
             dropBox.instance.option('opened', false);

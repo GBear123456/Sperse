@@ -10,6 +10,8 @@ import {
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, switchMap, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
@@ -26,8 +28,7 @@ import {
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
-    InvoiceSettings,
-    UpdateInvoiceStatusInput
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
@@ -35,6 +36,9 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { HistoryListDialogComponent } from '../orders/history-list-dialog/history-list-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { InvoiceDto } from '@app/crm/contacts/invoices/invoice-dto.interface';
+import { InvoiceFields } from '@app/crm/contacts/invoices/invoice-fields.enum';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -46,7 +50,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
-    private actionRecordData;
+    private actionRecordData: InvoiceDto;
     private settings = new InvoiceSettings();
     private readonly dataSourceURI = 'OrderInvoices';
     private filters: FilterModel[];
@@ -72,6 +76,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             return pipeline.stages;
         })
     );
+    readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -109,14 +114,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.setGridDataLoaded();
     }
 
-    private getDataSource() {
-        return {
-            uri: this.dataSourceURI,
+    private getDataSource(): DataSource {
+        return new DataSource({
+            select: Object.keys(this.invoiceFields),
             requireTotalCount: true,
-            filter: [ 'ContactId', '=', this.contactId],
-            store: {
-                key: 'Key',
-                type: 'odata',
+            filter: [ this.invoiceFields.ContactId, '=', this.contactId],
+            store: new ODataStore({
+                key: this.invoiceFields.Key,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
@@ -130,10 +134,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             && this.dataGrid.instance.repaint());
                     }
                 },
-                deserializeDates: false,
-                paginate: true
-            }
-        };
+                deserializeDates: false
+            })
+        });
     }
 
     processFilterInternal() {
@@ -167,29 +170,30 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         if (event.rowType === 'data' && event.column.caption != 'Stage'
             && this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
         ) {
+            const invoice: InvoiceDto = event.data;
             /** If user click on actions icon */
-            if (event.columnIndex > 1 && event.data) {
-                this.actionRecordData = event.data;
+            if (event.columnIndex > 1 && invoice) {
+                this.actionRecordData = invoice;
                 setTimeout(() => this.editInvoice());
             } else {
                 if (event.event.target.closest('.dx-link.dx-link-edit')) {
-                    const isOrder: boolean = !event.data.InvoiceId;
+                    const isOrder: boolean = !invoice.InvoiceId;
                     this.downloadPdfDisabled =
                     this.duplicateInvoiceDisabled =
                     this.previewDisabled = isOrder;
                     this.markAsPaidDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid
-                    ].indexOf(event.data.InvoiceStatus) < 0;
+                    ].indexOf(invoice.InvoiceStatus) < 0;
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
-                    ].indexOf(event.data.InvoiceStatus) < 0;
+                    ].indexOf(invoice.InvoiceStatus) < 0;
                     this.resendInvoiceDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
-                    ].indexOf(event.data.InvoiceStatus) < 0;
-                    this.markAsCancelledDisabled = isOrder || event.data.InvoiceStatus != InvoiceStatus.Sent;
+                    ].indexOf(invoice.InvoiceStatus) < 0;
+                    this.markAsCancelledDisabled = isOrder || invoice.InvoiceStatus != InvoiceStatus.Sent;
                     this.deleteDisabled = isOrder || [
                         InvoiceStatus.Draft, InvoiceStatus.Final, InvoiceStatus.Canceled
-                    ].indexOf(event.data.InvoiceStatus) < 0;
+                    ].indexOf(invoice.InvoiceStatus) < 0;
                     this.actionRecordData = event.data;
                     this.toggleActionMenu(event.event.target);
                 }
@@ -309,22 +313,23 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     updateOrderStage(event) {
         this.startLoading(true);
+        const invoice: InvoiceDto = event.data;
         this.pipelineService.updateEntitiesStage(
             AppConsts.PipelinePurposeIds.order, [{
-                Id: event.data.OrderId,
-                ContactId: event.data.ContactId,
-                CreationTime: event.data.Date,
-                Stage: event.data.OrderStage
+                Id: invoice.OrderId,
+                ContactId: invoice.ContactId,
+                CreationTime: invoice.Date,
+                Stage: invoice.OrderStage
             }], event.value
         ).subscribe(declinedList => {
             this.finishLoading(true);
             if (declinedList.length)
-                event.value = event.data.OrderStage;
+                event.value = invoice.OrderStage;
             else {
                 this.contactService['data'].refresh = true;
                 this.notify.success(this.l('StageSuccessfullyUpdated'));
                 this.dataGrid.instance.getVisibleRows().map(row => {
-                    if (event.data.OrderId == row.data.OrderId)
+                    if (invoice.OrderId == row.data.OrderId)
                         row.data.OrderStage = event.value;
                 });
             }
@@ -338,7 +343,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 stages$: this.stages$,
                 invoice: this.actionRecordData
             }
-        }).beforeClose().subscribe(successed => {
+        }).beforeClose().subscribe((successed: boolean) => {
             if (successed) {
                 this.notify.success(this.l('SuccessfullyUpdated'));
                 this.dataGrid.instance.refresh();

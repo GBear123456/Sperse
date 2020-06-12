@@ -107,6 +107,10 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
+import { LeadDto } from '@app/crm/leads/lead-dto.interface';
+import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -115,33 +119,33 @@ import { Param } from '@shared/common/odata/param.model';
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent, {static: false}) pipelineComponent: PipelineComponent;
+    @ViewChild(TagsListComponent, {static: false}) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, {static: false}) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent, {static: false}) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent, {static: false}) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent, {static: false}) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent, {static: false}) stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent, {static: false}) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ChartComponent, {static: true}) chartComponent: ChartComponent;
+    @ViewChild(MapComponent, {static: false}) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent, {static: false}) toolbar: ToolBarComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';
     private readonly groupDataSourceURI = 'LeadSlice';
     private readonly dateField = 'LeadDate';
-    private _selectedLeads: any;
+    private _selectedLeads: LeadDto[];
     rowsViewHeight: number;
-    get selectedLeads() {
+    get selectedLeads(): LeadDto[] {
         return this._selectedLeads || [];
     }
-    set selectedLeads(leads) {
+    set selectedLeads(leads: LeadDto[]) {
         this._selectedLeads = leads;
         this.selectedClientKeys = [];
-        leads.forEach((lead) => {
+        leads.forEach((lead: LeadDto) => {
             if (lead && lead.CustomerId)
                 this.selectedClientKeys.push(lead.CustomerId);
         });
@@ -378,7 +382,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.chartComponent.summaryBy.value,
                 this.dateField,
                 { contactGroupId: this.contactGroupId.value.toString() }
-            ).then((result) => {
+            ).then((result: SliceChartData) => {
                 this.chartInfoItems = result.infoItems;
                 return result.items;
             });
@@ -425,6 +429,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private activate$: Observable<boolean> = this._activate.asObservable();
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
+    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
 
     constructor(
         injector: Injector,
@@ -465,43 +470,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
-            select: [
-                'Name',
-                'CompanyName',
-                'SourceOrganizationUnitId',
-                'Email',
-                'PhotoPublicId',
-                'Phone',
-                'City',
-                'State',
-                'LeadDate',
-                'OrganizationId',
-                'Id',
-                'OrganizationId',
-                'AssignedUserName',
-                'SourceAffiliateCode',
-                'SourceCampaignCode',
-                'SourceChannelCode',
-                'EntryUrl',
-                'LastModificationTime',
-                'SourceCode',
-                'StreetAddress',
-                'CustomerId',
-                'ZipCode',
-                'Website',
-                'PhoneExtension',
-                'Title',
-                'ContactXref',
-                'ContactAffiliateCode',
-                'SourceContactName',
-                'AssignedUserName'
-            ].concat(
-                this.tenantHasBankCodeFeature
-                    ? [ 'BankCode' ]
-                    : []
-            ),
+            select: Object.keys(this.leadFields).filter((field: string) => field !== 'BankCode' || this.tenantHasBankCodeFeature),
             store: {
-                key: 'Id',
+                key: this.leadFields.Id,
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
                 version: AppConsts.ODataVersion,
@@ -1572,7 +1543,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
-                        gridInstance.selectRows(declinedList.map(item => item.Id), false);
+                        gridInstance.selectRows(declinedList.map((item: LeadDto) => item.Id), false);
                     else
                         gridInstance.clearSelection();
                 } else {
@@ -1584,13 +1555,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     showLeadDetails(event) {
-        let leadId = event.data && event.data.Id,
-            clientId = event.data && event.data.CustomerId;
+        const lead: LeadDto = event.data;
+        let leadId = lead && lead.Id,
+            clientId = lead && lead.CustomerId;
         if (!leadId || !clientId)
             return;
 
         this.searchClear = false;
-        let orgId = event.data.OrganizationId;
+        let orgId = lead.OrganizationId;
         event.component && event.component.cancelEditData();
         setTimeout(() => {
             this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
@@ -1718,7 +1690,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     toggleActionsMenu(event) {
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
-            this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
+            const lead: LeadDto = event.data;
+            this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(lead.UserId)
                 && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
             this.actionEvent = actionRecord;
         });
@@ -1748,7 +1721,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             forkJoin(
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
-            ).subscribe(([source, target]: [any, any]) => {
+            ).subscribe(([source, target]: [LeadDto, LeadDto]) => {
                 this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }

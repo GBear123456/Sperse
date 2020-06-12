@@ -36,49 +36,60 @@
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxi-column [caption]="l('BusinessEntities_Name')"
                                 cssClass="clipboard-holder"
-                                dataField="Name"
-                                [width]="250"></dxi-column>
+                                [dataField]="businessEntityFields.Name"
+                                [width]="250">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Accounts')"
                                 name="BankAccountIds"
-                                dataField="BankAccountIds"
+                                [dataField]="businessEntityFields.BankAccountIds"
                                 [width]="200"
                                 [allowSorting]="false"
-                                cellTemplate="accountsTemplate"></dxi-column>
+                                cellTemplate="accountsTemplate">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Parent')"
                                 cssClass="clipboard-holder"
-                                dataField="ParentName"
-                                [width]="250"></dxi-column>
+                                [dataField]="businessEntityFields.ParentName"
+                                [width]="250">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Location')"
                                 cssClass="clipboard-holder"
-                                [calculateCellValue]="locationColumn_calculateCellValue"></dxi-column>
+                                [calculateCellValue]="locationColumn_calculateCellValue">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_DateOpened')"
                                 cssClass="clipboard-holder"
-                                dataField="DateOpened"
-                                cellTemplate="dateOpenedTemplate"></dxi-column>
+                                [dataField]="businessEntityFields.DateOpened"
+                                cellTemplate="dateOpenedTemplate">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_TaxNumber')"
                                 cssClass="clipboard-holder"
-                                dataField="TaxNumber"></dxi-column>
+                                [dataField]="businessEntityFields.TaxNumber">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Phone')"
-                                dataField="Phone"
+                                [dataField]="businessEntityFields.Phone"
                                 cellTemplate="phoneCell"
                                 cssClass="tabular"
-                                [visible]="false"></dxi-column>
+                                [visible]="false">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Type')"
                                 cssClass="clipboard-holder"
-                                dataField="Type"></dxi-column>
+                                [dataField]="businessEntityFields.Type">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Industry')"
                                 cssClass="clipboard-holder"
-                                dataField="Industry"
-                                [visible]="false"></dxi-column>
+                                [dataField]="businessEntityFields.Industry"
+                                [visible]="false">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Status')"
                                 [width]="150"
-                                dataField="Status"
+                                [dataField]="businessEntityFields.Status"
                                 cssClass="status"
                                 alignment="center"
-                                cellTemplate="statusTemplate"></dxi-column>
+                                cellTemplate="statusTemplate">
+                    </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Default')"
                                 cssClass="clipboard-holder"
-                                dataField="IsDefault"></dxi-column>
+                                [dataField]="businessEntityFields.IsDefault">
+                    </dxi-column>
 
                     <div *dxTemplate="let data of 'dateOpenedTemplate'" class="clipboard-holder">{{data.value | date: 'EEE dd, yyyy' : userTimezone }}</div>
                     <div *dxTemplate="let data of 'phoneCell'" class="clipboard-holder">{{data.value | phone}}</div>
