@@ -414,7 +414,7 @@ export class ContactsService {
         }));
     }
 
-    deleteContact(statusId, customerName, contactGroup, contactId, callback?) {
+    deleteContact(statusId, customerName, contactGroup, contactId, callback?, clearSelection?) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (statusId == ContactStatus.Prospective) {
@@ -424,6 +424,7 @@ export class ContactsService {
                         abp.notify.success(this.ls.l('SuccessfullyDeleted'));
                         this.contactProxy['data']['deleted'] = true;
                         callback && callback();
+                        clearSelection && clearSelection();
                     });
                 }
             },
@@ -436,6 +437,7 @@ export class ContactsService {
                         this.contactProxy.deleteContact(contactId, forceDelete).subscribe(() => {
                             abp.notify.success(this.ls.l('SuccessfullyDeleted'));
                             callback && callback();
+                            clearSelection && clearSelection();
                         });
                     }
                 },
@@ -443,11 +445,11 @@ export class ContactsService {
         }
     }
 
-    mergeContact(source, target, keepSource?: boolean, keepTarget?: boolean, callback?, isLead = false) {
+    mergeContact(source, target, keepSource?: boolean, keepTarget?: boolean, callback?, clearSelection?, isLead = false) {
         abp.ui.setBusy();
         this.showMergeContactDialog(
             {
-                id: isLead ? source.CustomerId : target.Id,
+                id: isLead ? source.CustomerId : source.Id,
                 leadId: isLead ? source.Id : ''
             },
             {
@@ -460,6 +462,7 @@ export class ContactsService {
         ).subscribe((success: boolean) => {
             if (success && callback)
                 callback();
+                clearSelection();
         });
     }
 }

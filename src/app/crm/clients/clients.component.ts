@@ -1100,20 +1100,21 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClients.length || !this.isGranted(AppPermissions.CRMCustomersManage) && this.selectedClients.length > 2,
+                        disabled: !this.selectedClients.length || !this.isGranted(AppPermissions.CRMCustomersManage) || this.selectedClients.length > 2,
                         options: {
                             items: [
                                 {
                                     text: this.l('Delete'),
                                     disabled: this.selectedClients.length != 1, // need update
                                     action: () => {
-                                        let client =  this.selectedClients[0];
+                                        const client =  this.selectedClients[0];
                                         this.contactService.deleteContact(
                                             this.contactStatus,
                                             client.Name,
                                             ContactGroup.Client,
                                             client.Id,
-                                            () => this.refresh()
+                                            () => this.refresh(),
+                                            () => this.dataGrid.instance.deselectAll()
                                         );
                                     }
                                 },
@@ -1121,7 +1122,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Merge'),
                                     disabled: this.selectedClients.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedClients[0], this.selectedClients[1], true, true, () => this.refresh());
+                                        this.contactService.mergeContact(this.selectedClients[0], this.selectedClients[1], true, true, () => this.refresh(), () => this.dataGrid.instance.deselectAll());
                                     }
                                 }
                             ]
