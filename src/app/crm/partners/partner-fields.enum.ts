@@ -4,7 +4,6 @@ import { PartnerDto } from '@app/crm/partners/partner-dto.interface';
 export const PartnerFields: KeysEnum<PartnerDto> = {
     Name: 'Name',
     CompanyName: 'CompanyName',
-    SourceOrganizationUnitId: 'SourceOrganizationUnitId',
     PhotoPublicId: 'PhotoPublicId',
     Email: 'Email',
     Phone: 'Phone',

@@ -5,7 +5,6 @@ export const ClientFields: KeysEnum<ContactDto> = {
     Id: 'Id',
     Name: 'Name',
     CompanyName: 'CompanyName',
-    SourceOrganizationUnitId: 'SourceOrganizationUnitId',
     Email: 'Email',
     PhotoPublicId: 'PhotoPublicId',
     Phone: 'Phone',
