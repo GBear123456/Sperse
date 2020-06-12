@@ -2,7 +2,6 @@ export interface ContactDto {
     Id: number;
     Name: string;
     CompanyName: string;
-    SourceOrganizationUnitId: number;
     Email: string;
     PhotoPublicId: string;
     Phone: string;

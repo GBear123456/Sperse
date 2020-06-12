@@ -90,7 +90,6 @@
                         <dxi-column cssClass="stars" [width]="40"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column [dataField]="partnerFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                        <dxi-column [dataField]="partnerFields.SourceOrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
                         <dxi-column [dataField]="partnerFields.PhotoPublicId" caption="" cellTemplate="photoTemplate"
                                     [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>

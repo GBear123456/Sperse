@@ -1,7 +1,6 @@
 export interface PartnerDto {
     Name: string;
     CompanyName: string;
-    SourceOrganizationUnitId: number;
     PhotoPublicId: string;
     Email: string;
     Phone: string;
