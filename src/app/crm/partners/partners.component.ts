@@ -971,13 +971,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     text: this.l('Delete'),
                                     disabled: this.selectedPartners.length != 1, // need update
                                     action: () => {
-                                        let client =  this.selectedPartners[0];
+                                        const client =  this.selectedPartners[0];
                                         this.contactService.deleteContact(
                                             null,
                                             client.Name,
                                             ContactGroup.Client,
                                             client.Id,
-                                            () => this.invalidate()
+                                            () => this.invalidate(),
+                                            () => this.dataGrid.instance.deselectAll()
                                         );
                                     }
                                 },
@@ -985,7 +986,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     text: this.l('Merge'),
                                     disabled: this.selectedPartners.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => this.invalidate());
+                                        this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => this.invalidate(), () => this.dataGrid.instance.deselectAll());
                                     }
                                 }
                             ]

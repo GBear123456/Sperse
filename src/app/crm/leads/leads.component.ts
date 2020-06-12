@@ -1181,7 +1181,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     text: this.l('Merge'),
                                     disabled: this.selectedLeads.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), true);
+                                        this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), null, true);
                                     }
                                 }
                             ]
