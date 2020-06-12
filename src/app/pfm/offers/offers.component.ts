@@ -7,6 +7,7 @@ import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import 'devextreme/data/odata/store';
 import difference from 'lodash/difference';
 import startCase from 'lodash/startCase';
@@ -37,6 +38,9 @@ import { AppStore, RatingsStoreSelectors } from '@app/store';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { OfferDto } from '@app/pfm/offers/offer-dto.interface';
+import { OfferFields } from '@app/pfm/offers/offer-fields.enum';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -146,6 +150,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         })
     ];
     toolbarConfig: ToolbarGroupModel[];
+    readonly offerFields: KeysEnum<OfferDto> = OfferFields;
 
     constructor(
         private injector: Injector,
@@ -165,8 +170,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     ngOnInit(): void {
         this.rootComponent = this.getRootComponent();
         this.dataSource = new DataSource({
-            store: {
-                type: 'odata',
+            store: new ODataStore({
+                key: this.offerFields.Id,
                 url: this.getODataUrl(this.dataSourceURI,
                     [FiltersService.filterByStatus(this.filterModelStatuses), FiltersService.filterByTrafficSource()]),
                 deserializeDates: false,
@@ -175,10 +180,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            },
-            select: ['Id', 'CampaignId', 'LogoUrl', 'Name', 'CardNetwork', 'Categories', 'Status', 'Rank', 'OverallRating', 'IsPublished', 'Created'],
+            }),
+            select: Object.keys(this.offerFields),
             sort: [
-                { selector: 'Created', desc: true }
+                { selector: this.offerFields.Created, desc: true }
             ]
         });
         this.activate();
@@ -395,8 +400,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     onSelectionChanged(event) {
-        const selectedOffers = event.component.getSelectedRowKeys();
-        this.selectedOfferKeys = selectedOffers.map(item => item.CampaignId);
+        const selectedOffers: OfferDto[] = event.component.getSelectedRowKeys();
+        this.selectedOfferKeys = selectedOffers.map((item: OfferDto) => item.CampaignId);
         this.displayedRatingValue = this.getSelectedOffersValue(selectedOffers);
     }
 
@@ -404,7 +409,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
      * If only one offer is selected - get its rating value, else - get the minimal rating
      * @return {undefined}
      */
-    getSelectedOffersValue(selectedOffers): number {
+    getSelectedOffersValue(selectedOffers: OfferDto[]): number {
         return selectedOffers.length === 1
             ? selectedOffers[0].Rank
             : this.ratingComponent.ratingMin;
@@ -412,7 +417,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     openOfferEdit(e) {
         this.searchClear = false;
-        this._router.navigate(['./', e.data.CampaignId], {
+        const offer: OfferDto = e.data;
+        this._router.navigate(['./', offer.CampaignId], {
             relativeTo: this._activatedRoute
         });
     }

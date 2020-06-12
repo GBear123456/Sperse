@@ -92,8 +92,9 @@
                                     [showInColumnChooser]="false"
                                     [allowExporting]="false">
                         </dxi-column>
-                        <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId"
+                        <dxi-column [dataField]="clientFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column [dataField]="clientFields.SourceOrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
+                        <dxi-column [dataField]="clientFields.PhotoPublicId"
                                     caption=""
                                     cellTemplate="photoTemplate"
                                     [width]="50"
@@ -105,16 +106,16 @@
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
-                        <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular" [renderAsync]="true"></dxi-column>
-                        <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular" [renderAsync]="true"></dxi-column>
+                        <dxi-column [dataField]="clientFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <ng-container *ngIf="tenantHasBankCodeFeature">
-                            <dxi-column dataField="BankCode"
+                            <dxi-column [dataField]="clientFields.BankCode"
                                         cellTemplate="bankCodeCell"
                                         [caption]="l('BankCode')"
                                         [renderAsync]="true"
@@ -122,8 +123,8 @@
                                         [showInColumnChooser]="tenantHasBankCodeFeature">
                             </dxi-column>
                         </ng-container>
-                        <dxi-column dataField="AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
+                        <dxi-column [dataField]="clientFields.AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
                                 {{cellData.value}}
@@ -135,7 +136,7 @@
                                                [showReportLink]="true">
                             </bank-code-letters>
                         </div>
-                        <dxi-column dataField="ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column [dataField]="clientFields.ContactDate" dataType="string" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column [visible]="isCfoLinkOrVerifyEnabled"
                                     name="LinkToCFO"
                                     cellTemplate="linkToCFOTemplate"
@@ -149,7 +150,7 @@
                             <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription && usersInstancesLoadingSubscription.closed">
                                 <ng-container *ngIf="crmService.isCfoAvailable(data.data.UserId) | async; else verify">
                                     <span>
-                                        <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
+                                        <span class="link-to-cfo-column" (click)="appService.redirectToCFO(data.data.UserId)"></span>
                                     </span>
                                 </ng-container>
                                 <ng-template #verify>
@@ -169,7 +170,7 @@
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-summary>
-                            <dxi-group-item column="Id"
+                            <dxi-group-item [column]="clientFields.Id"
                                             summaryType="count"
                                             [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
                             </dxi-group-item>

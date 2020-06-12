@@ -4,10 +4,12 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild, Chang
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
 import { ImageViewerComponent } from 'ng2-image-viewer';
-import '@node_modules/ng2-image-viewer/imageviewer.js';
+import 'ng2-image-viewer/imageviewer.js';
 import { flatMap, finalize, map } from 'rxjs/operators';
 
 /** Application imports */
@@ -30,8 +32,11 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { AppService } from '@app/app.service';
-import { DataGridService } from '../../shared/common/data-grid.service/data-grid.service';
-import { LeftMenuItem } from '../../shared/common/left-menu/left-menu-item.interface';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
+import { ReportFields } from '@app/cfo/reports/report-fields.enum';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { ReportDto } from '@app/cfo/reports/report-dto.interface';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -78,7 +83,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         }
     ];
 
-    visibleReports: any[];
+    visibleReports: ReportDto[];
     viewerToolbarConfig: any = [];
     actionMenuItems: any = [
         {
@@ -99,7 +104,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         }
     ];
     actionRecordData: any;
-    currentReportInfo: any;
+    currentReportInfo: ReportDto;
     openReportMode = false;
     previewContent: string;
     reportUrls = {};
@@ -116,6 +121,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     readonly RESERVED_TIME_SECONDS = 30;
     toolbarConfig: ToolbarGroupModel[];
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
+    readonly reportsFields: KeysEnum<ReportDto> = ReportFields;
 
     constructor(
         private injector: Injector,
@@ -130,10 +136,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        this.dataSource = {
-            store: {
-                key: 'Id',
-                type: 'odata',
+        this.dataSource = new DataSource({
+            select: Object.keys(this.reportsFields),
+            store: new ODataStore({
+                key: this.reportsFields.Id,
                 url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
@@ -157,8 +163,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                         }).join('&');
                     }
                 }
-            }
-        };
+            })
+        });
     }
 
     ngOnInit(): void {
@@ -298,15 +304,15 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 location: 'after', items: [
                     {
                         name: 'prev',
-                        action: e => {
-                            this.viewReport.call(this, NavigationState.Prev, e.event.originalEvent);
+                        action: () => {
+                            this.viewReport.call(this, NavigationState.Prev);
                         },
                         disabled: conf.prevButtonDisabled
                     },
                     {
                         name: 'next',
-                        action: e => {
-                            this.viewReport.call(this, NavigationState.Next, e.event.originalEvent);
+                        action: () => {
+                            this.viewReport.call(this, NavigationState.Next);
                         },
                         disabled: conf.nextButtonDisabled
                     }
@@ -383,15 +389,16 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     onCellClick($event) {
         const target = $event.event.target;
         if ($event.rowType === 'data') {
+            const report: ReportDto = $event.data;
             /** If user click on actions icon */
             if (target.closest('.dx-link.dx-link-edit')) {
-                this.toggleActionsMenu($event.data, target);
+                this.toggleActionsMenu(report, target);
             } else {
-                this.currentReportInfo = $event.data;
+                this.currentReportInfo = report;
                 /** Save sorted visible rows to get next and prev properly */
                 this.visibleReports = $event.component.getVisibleRows().map(row => row.data);
                 /** If user click the whole row */
-                this.viewReport(NavigationState.Current, $event);
+                this.viewReport(NavigationState.Current);
             }
         }
     }
@@ -408,14 +415,14 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         }
 
         return this.reportsProxy.getUrl(<any>this.instanceType, this.instanceId, id).pipe(
-            flatMap((urlInfo) => {
+            flatMap((urlInfo: GetReportUrlOutput) => {
                 this.storeUrlToCache(id, urlInfo);
                 this.reportUrls[id] = urlInfo.url;
                 return of(urlInfo);
             }));
     }
 
-    viewReport(state: NavigationState = NavigationState.Current, event?: any) {
+    viewReport(state: NavigationState = NavigationState.Current) {
         super.startLoading(true);
         let dataSource = this.dataGrid.instance.getDataSource();
         let currentReportIndex = this.visibleReports.indexOf(this.currentReportInfo) + state;
@@ -475,7 +482,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if (this.reportUrls[id])
             window.open(this.reportUrls[id], '_self');
         else {
-            this.getReportUrlInfoObservable(id).subscribe((urlInfo) => {
+            this.getReportUrlInfoObservable(id).subscribe((urlInfo: GetReportUrlOutput) => {
                 this.reportUrls[id] = urlInfo.url;
                 window.open(urlInfo.url, '_self');
             });
@@ -546,11 +553,11 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         if (this.openReportMode) {
             /** Arrow left is pressed */
             if (event.keyCode === 37) {
-                this.viewReport(NavigationState.Prev, event);
+                this.viewReport(NavigationState.Prev);
             }
             /** Arrow right is pressed */
             if (event.keyCode === 39) {
-                this.viewReport(NavigationState.Next, event);
+                this.viewReport(NavigationState.Next);
             }
         }
     }

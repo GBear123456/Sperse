@@ -10,6 +10,8 @@ import {
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { first } from 'rxjs/operators';
 
@@ -21,6 +23,10 @@ import { ContactServiceProxy, OrderServiceProxy } from '@shared/service-proxies/
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { OrderDto } from '@app/crm/contacts/orders/order-dto.type';
+import { OrderFields } from '@app/crm/contacts/orders/order-fields.enum';
+import Order = jasmine.Order;
 
 @Component({
     templateUrl: './orders.component.html',
@@ -34,6 +40,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     private formatting = AppConsts.formatting;
     currency: string;
     private readonly ident = 'Orders';
+    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -70,13 +77,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     private getDataSource(contactId) {
-        return {
-            uri: this.dataSourceURI,
+        return new DataSource({
+            select: Object.keys(this.orderFields),
             requireTotalCount: true,
             filter: [ 'ContactId', '=', contactId],
-            store: {
-                key: 'Id',
-                type: 'odata',
+            store: new ODataStore({
+                key: this.orderFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
@@ -86,10 +92,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                     this.dataGrid.instance.cancelEditData();
                     this.dataGrid.instance.endCustomLoading();
                 },
-                deserializeDates: false,
-                paginate: true
-            }
-        };
+                deserializeDates: false
+            })
+        });
     }
 
     processFilterInternal() {
@@ -103,14 +108,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         }
     }
 
-    showHistory(data) {
+    showHistory(order: OrderDto) {
         setTimeout(() =>
             this.dialog.open(HistoryListDialogComponent, {
                 panelClass: ['slider'],
                 disableClose: true,
                 hasBackdrop: false,
                 closeOnNavigation: true,
-                data: data
+                data: { orderId: order.Id }
             })
         );
     }

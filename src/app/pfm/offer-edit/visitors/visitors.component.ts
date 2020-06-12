@@ -14,6 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import * as moment from 'moment-timezone';
 import capitalize from 'lodash/capitalize';
+import DataSource from '@root/node_modules/devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -21,6 +23,9 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { VisitorDto } from '@app/pfm/offer-edit/visitors/visitor-dto.interface';
+import { VisitorFields } from '@app/pfm/offer-edit/visitors/visitor-fields.enum';
 
 @Component({
     selector: 'pfm-offer-visitors',
@@ -38,6 +43,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     dataSourceURI = 'PfmOfferRequest';
     formatting = AppConsts.formatting;
     queryParamsSubscription: any;
+    readonly visitorFields: KeysEnum<VisitorDto> = VisitorFields;
 
     constructor(injector: Injector,
         private dialog: MatDialog
@@ -52,19 +58,20 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
             });
         });
 
-        this.searchColumns = ['FirstName', 'LastName', 'Email', 'PhoneNumber'];
+        this.searchColumns = [
+            this.visitorFields.FirstName,
+            this.visitorFields.LastName,
+            this.visitorFields.Email,
+            this.visitorFields.PhoneNumber
+        ];
         this.searchValue = '';
     }
 
-    refreshDataGrid() {
-        this.dataGrid.instance.refresh();
-    }
-
     ngOnInit() {
-        this.dataSource = {
-            store: {
-                key: 'Id',
-                type: 'odata',
+        this.dataSource = new DataSource({
+            select: Object.keys(this.visitorFields),
+            store: new ODataStore({
+                key: this.visitorFields.Id,
                 url: this.getODataUrl(this.dataSourceURI, this.getInputFilter()),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -72,12 +79,16 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
-            }
-        };
+            })
+        });
     }
 
     ngAfterViewInit() {
         this.initToolbarConfig();
+    }
+
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
     }
 
     getInputFilter() {
@@ -90,7 +101,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
         return result;
     }
 
-    onDataGridInit(e) {
+    onDataGridInit() {
         this.startLoading();
     }
 
@@ -121,7 +132,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                     options: {
                         text: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
                             ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date')),
-                        onClick: (event) => {
+                        onClick: () => {
                             this.showCalendarDialog();
                         }
                     }
@@ -230,7 +241,8 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     }
 
     onCellClick(event) {
-        this._router.navigate(['app/pfm/user', event.data.ApplicantUserId],
+        const visitor: VisitorDto = event.data;
+        this._router.navigate(['app/pfm/user', visitor.ApplicantUserId],
             { queryParams: { referrer: location.pathname } });
     }
 

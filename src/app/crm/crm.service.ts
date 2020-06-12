@@ -29,6 +29,7 @@ import { environment } from '../../environments/environment';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
+import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
 
 @Injectable()
 export class CrmService {
@@ -143,7 +144,7 @@ export class CrmService {
         summaryBy: SummaryBy,
         dateField: 'LeadDate' | 'ContactDate',
         additionalParams?: { [name: string]: any}
-    ): Promise<{ items: any[], infoItems: InfoItem[] }> {
+    ): Promise<SliceChartData> {
         let group = [
             {
                 selector: dateField,

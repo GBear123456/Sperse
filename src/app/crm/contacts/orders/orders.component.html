@@ -14,12 +14,12 @@
                 <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
 
                 <dxi-column [width]="40" alignment="center" [allowEditing]="false" [showInColumnChooser]="false" [allowExporting]="false" cellTemplate="historyCell"></dxi-column>
-                <dxi-column dataField="Number" [caption]="l('Number')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="Amount" alignment="left" [caption]="l('Amount')" [allowEditing]="false" [customizeText]="customizeAmountValue" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="OrderType" [caption]="l('Type')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="Stage" [caption]="l('Stage')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column dataField="CreationTime" [caption]="l('Created')" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
-                <dxi-column dataField="DateProcessed" [caption]="l('Processed')" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
+                <dxi-column [dataField]="orderFields.Number" [caption]="l('Number')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="orderFields.Amount" alignment="left" [caption]="l('Amount')" [allowEditing]="false" [customizeText]="customizeAmountValue" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="orderFields.OrderType" [caption]="l('Type')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="orderFields.Stage" [caption]="l('Stage')" [allowEditing]="false" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="orderFields.OrderDate" [caption]="l('Created')" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
+                <dxi-column [dataField]="orderFields.DateProcessed" [caption]="l('Processed')" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
                 <dxo-sorting mode="multiple"></dxo-sorting>
                 <dxo-paging [pageSize]="20"></dxo-paging>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">

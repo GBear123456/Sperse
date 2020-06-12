@@ -1,45 +1,45 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Observable, from, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
+
+/** Application imports */
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataService } from '@shared/common/odata/odata.service';
-import { UserServiceProxy } from '@shared/service-proxies/service-proxies';
-import DataSource from 'devextreme/data/data_source';
-import { Observable, from, of } from 'rxjs';
-import { switchMap } from '@node_modules/rxjs/internal/operators';
 
 @Injectable()
 export class DataSourceService {
     constructor(
-        private oDataService: ODataService,
-        private userServiceProxy: UserServiceProxy
+        private oDataService: ODataService
     ) {}
     dataSourcesConfigs = {
-        [ItemTypeEnum.Lead]: {
-            uri: 'Lead',
+        [ItemTypeEnum.Lead]: new DataSource({
             requireTotalCount: true,
-            store: {
+            store: new ODataStore({
                 key: 'Id',
-                type: 'odata',
                 url: this.oDataService.getODataUrl('Lead'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                deserializeDates: false,
-                paginate: true
-            }
-        },
-        [ItemTypeEnum.Customer]: {
-            store: {
+                deserializeDates: false
+            })
+        }),
+        [ItemTypeEnum.Customer]: new DataSource({
+            store: new ODataStore({
                 key: 'Id',
-                type: 'odata',
                 url: this.oDataService.getODataUrl('Customer'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            }
-        },
+            })
+        }),
         // [ItemTypeEnum.User]: {
         //     key: 'id',
         //     load: (loadOptions) => {
@@ -60,30 +60,28 @@ export class DataSourceService {
         //         });
         //     }
         // },
-        [ItemTypeEnum.Partner]: {
-            store: {
+        [ItemTypeEnum.Partner]: new DataSource({
+            store: new ODataStore({
                 key: 'Id',
-                type: 'odata',
                 url: this.oDataService.getODataUrl('Partner'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            }
-        },
-        [ItemTypeEnum.Offer]: {
-            store: {
-                type: 'odata',
+            })
+        }),
+        [ItemTypeEnum.Offer]: new DataSource({
+            store: new ODataStore({
                 url: this.oDataService.getODataUrl('Offer'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            },
+            }),
             sort: [
                 { selector: 'Created', desc: true }
             ]
-        }
+        })
     };
     dataSources = {
         [ItemTypeEnum.Lead]: null,

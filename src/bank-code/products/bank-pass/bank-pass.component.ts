@@ -59,6 +59,9 @@ import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FiltersService } from '@shared/filters/filters.service';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { ContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type';
+import { BankPassFields } from '@root/bank-code/products/bank-pass/bank-pass-fields.enum';
 
 @Component({
     selector: 'bank-pass',
@@ -78,24 +81,13 @@ export class BankPassComponent implements OnInit, OnDestroy {
     searchValue: '';
     private readonly dataSourceURI = 'Contact';
     private readonly totalDataSourceURI = 'Contact/$count';
+    readonly bankPassFields: KeysEnum<ContactDto> = BankPassFields;
     dataSource = new DataSource({
         requireTotalCount: true,
-        select: [
-            'Id',
-            'PhotoPublicId',
-            'Name',
-            'Email',
-            'Phone',
-            'CountryId',
-            'State',
-            'BankCode',
-            'BankCodeDate',
-            'ContactDate'
-        ],
-        sort: [{ selector: 'Id', desc: true }],
-        store: {
-            key: 'Id',
-            type: 'odata',
+        select: Object.keys(this.bankPassFields),
+        sort: [{ selector: this.bankPassFields.Id, desc: true }],
+        store: new ODataStore({
+            key: this.bankPassFields.Id,
             url: this.getODataUrl(
                 this.dataSourceURI,
                 [
@@ -112,9 +104,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 }
                 this.transformRequest(request);
             },
-            deserializeDates: false,
-            paginate: true
-        },
+            deserializeDates: false
+        }),
         onChanged: () => {
             this.dataIsLoading = false;
             this.gridInitialized = true;
@@ -352,10 +343,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         this.changeDetectorRef.detectChanges();
     }
 
-    deleteLead(e) {
+    deleteContact(contact: ContactDto) {
         ContactsHelper.showConfirmMessage(this.ls.l('BankCodeLeadDeleteWarningMessage'), this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
             if (isConfirmed) {
-                this.contactServiceProxy.deleteContact(e.data.Id, forceDelete).subscribe(() => {
+                this.contactServiceProxy.deleteContact(contact.Id, forceDelete).subscribe(() => {
                     this.refresh();
                     if (this.dataGrid && this.dataGrid.instance) {
                         this.dataGrid.instance.deselectAll();
@@ -365,6 +356,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
             }
         },
         this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites));
+    }
+
+    getContactPhotoUrl(contact: ContactDto) {
+        return this.profileService.getContactPhotoUrl(contact.PhotoPublicId);
     }
 
     ngOnDestroy() {

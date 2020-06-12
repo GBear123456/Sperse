@@ -7416,22 +7416,24 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @contactLeadId (optional) 
-     * @targetContactId (optional) 
-     * @targetContacLeadId (optional) 
+     * @targetContactLeadId (optional) 
      * @return Success
      */
-    getContactInfoForMerge(contactId: number | null | undefined, contactLeadId: number | null | undefined, targetContactId: number | null | undefined, targetContacLeadId: number | null | undefined): Observable<GetContactInfoForMergeOutput> {
+    getContactInfoForMerge(contactId: number, contactLeadId: number | null | undefined, targetContactId: number, targetContactLeadId: number | null | undefined): Observable<GetContactInfoForMergeOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoForMerge?";
-        if (contactId !== undefined)
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (contactLeadId !== undefined)
             url_ += "ContactLeadId=" + encodeURIComponent("" + contactLeadId) + "&"; 
-        if (targetContactId !== undefined)
+        if (targetContactId === undefined || targetContactId === null)
+            throw new Error("The parameter 'targetContactId' must be defined and cannot be null.");
+        else
             url_ += "TargetContactId=" + encodeURIComponent("" + targetContactId) + "&"; 
-        if (targetContacLeadId !== undefined)
-            url_ += "TargetContacLeadId=" + encodeURIComponent("" + targetContacLeadId) + "&"; 
+        if (targetContactLeadId !== undefined)
+            url_ += "TargetContactLeadId=" + encodeURIComponent("" + targetContactLeadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -7539,7 +7541,7 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    mergeContact(body: MergeContactInfo | null | undefined): Observable<void> {
+    mergeContact(body: MergeContactInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/MergeContact";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -44331,14 +44333,6 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     jobTitle!: string | undefined;
     assignedToUserId!: number | undefined;
     assignedToUserName!: string | undefined;
-    leadId!: number | undefined;
-    stage!: string | undefined;
-    sourceContactId!: number | undefined;
-    sourceContactName!: string | undefined;
-    sourceOrganizationUnitId!: number | undefined;
-    sourceOrganizationUnitName!: string | undefined;
-    leadDate!: moment.Moment | undefined;
-    leadDateCompleted!: moment.Moment | undefined;
     orderCount!: number | undefined;
 
     constructor(data?: IContactInfoForMerge) {
@@ -44378,14 +44372,6 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.jobTitle = data["jobTitle"];
             this.assignedToUserId = data["assignedToUserId"];
             this.assignedToUserName = data["assignedToUserName"];
-            this.leadId = data["leadId"];
-            this.stage = data["stage"];
-            this.sourceContactId = data["sourceContactId"];
-            this.sourceContactName = data["sourceContactName"];
-            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
-            this.sourceOrganizationUnitName = data["sourceOrganizationUnitName"];
-            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
-            this.leadDateCompleted = data["leadDateCompleted"] ? moment(data["leadDateCompleted"].toString()) : <any>undefined;
             this.orderCount = data["orderCount"];
         }
     }
@@ -44425,14 +44411,6 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["jobTitle"] = this.jobTitle;
         data["assignedToUserId"] = this.assignedToUserId;
         data["assignedToUserName"] = this.assignedToUserName;
-        data["leadId"] = this.leadId;
-        data["stage"] = this.stage;
-        data["sourceContactId"] = this.sourceContactId;
-        data["sourceContactName"] = this.sourceContactName;
-        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
-        data["sourceOrganizationUnitName"] = this.sourceOrganizationUnitName;
-        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
-        data["leadDateCompleted"] = this.leadDateCompleted ? this.leadDateCompleted.toISOString() : <any>undefined;
         data["orderCount"] = this.orderCount;
         return data; 
     }
@@ -44453,20 +44431,86 @@ export interface IContactInfoForMerge {
     jobTitle: string | undefined;
     assignedToUserId: number | undefined;
     assignedToUserName: string | undefined;
-    leadId: number | undefined;
+    orderCount: number | undefined;
+}
+
+export class LeadInfoForMerge implements ILeadInfoForMerge {
+    id!: number | undefined;
+    contactGroupId!: string | undefined;
+    contactId!: number | undefined;
+    stage!: string | undefined;
+    sourceContactId!: number | undefined;
+    sourceContactName!: string | undefined;
+    sourceOrganizationUnitId!: number | undefined;
+    sourceOrganizationUnitName!: string | undefined;
+    leadDate!: moment.Moment | undefined;
+    dateCompleted!: moment.Moment | undefined;
+
+    constructor(data?: ILeadInfoForMerge) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactGroupId = data["contactGroupId"];
+            this.contactId = data["contactId"];
+            this.stage = data["stage"];
+            this.sourceContactId = data["sourceContactId"];
+            this.sourceContactName = data["sourceContactName"];
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+            this.sourceOrganizationUnitName = data["sourceOrganizationUnitName"];
+            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
+            this.dateCompleted = data["dateCompleted"] ? moment(data["dateCompleted"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): LeadInfoForMerge {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadInfoForMerge();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactGroupId"] = this.contactGroupId;
+        data["contactId"] = this.contactId;
+        data["stage"] = this.stage;
+        data["sourceContactId"] = this.sourceContactId;
+        data["sourceContactName"] = this.sourceContactName;
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        data["sourceOrganizationUnitName"] = this.sourceOrganizationUnitName;
+        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
+        data["dateCompleted"] = this.dateCompleted ? this.dateCompleted.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ILeadInfoForMerge {
+    id: number | undefined;
+    contactGroupId: string | undefined;
+    contactId: number | undefined;
     stage: string | undefined;
     sourceContactId: number | undefined;
     sourceContactName: string | undefined;
     sourceOrganizationUnitId: number | undefined;
     sourceOrganizationUnitName: string | undefined;
     leadDate: moment.Moment | undefined;
-    leadDateCompleted: moment.Moment | undefined;
-    orderCount: number | undefined;
+    dateCompleted: moment.Moment | undefined;
 }
 
 export class GetContactInfoForMergeOutput implements IGetContactInfoForMergeOutput {
     contactInfo!: ContactInfoForMerge | undefined;
+    contactLeadInfo!: LeadInfoForMerge | undefined;
     targetContactInfo!: ContactInfoForMerge | undefined;
+    targetContactLeadInfo!: LeadInfoForMerge | undefined;
 
     constructor(data?: IGetContactInfoForMergeOutput) {
         if (data) {
@@ -44480,7 +44524,9 @@ export class GetContactInfoForMergeOutput implements IGetContactInfoForMergeOutp
     init(data?: any) {
         if (data) {
             this.contactInfo = data["contactInfo"] ? ContactInfoForMerge.fromJS(data["contactInfo"]) : <any>undefined;
+            this.contactLeadInfo = data["contactLeadInfo"] ? LeadInfoForMerge.fromJS(data["contactLeadInfo"]) : <any>undefined;
             this.targetContactInfo = data["targetContactInfo"] ? ContactInfoForMerge.fromJS(data["targetContactInfo"]) : <any>undefined;
+            this.targetContactLeadInfo = data["targetContactLeadInfo"] ? LeadInfoForMerge.fromJS(data["targetContactLeadInfo"]) : <any>undefined;
         }
     }
 
@@ -44494,14 +44540,18 @@ export class GetContactInfoForMergeOutput implements IGetContactInfoForMergeOutp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactInfo"] = this.contactInfo ? this.contactInfo.toJSON() : <any>undefined;
+        data["contactLeadInfo"] = this.contactLeadInfo ? this.contactLeadInfo.toJSON() : <any>undefined;
         data["targetContactInfo"] = this.targetContactInfo ? this.targetContactInfo.toJSON() : <any>undefined;
+        data["targetContactLeadInfo"] = this.targetContactLeadInfo ? this.targetContactLeadInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IGetContactInfoForMergeOutput {
     contactInfo: ContactInfoForMerge | undefined;
+    contactLeadInfo: LeadInfoForMerge | undefined;
     targetContactInfo: ContactInfoForMerge | undefined;
+    targetContactLeadInfo: LeadInfoForMerge | undefined;
 }
 
 export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInputWithoutCheck {
@@ -45491,17 +45541,17 @@ export enum MergeLeadMode {
     KeepBoth = "KeepBoth", 
 }
 
-export class MergeContactInfo implements IMergeContactInfo {
-    contactId!: number | undefined;
-    contactLeadId!: number | undefined;
+export class MergeContactInput implements IMergeContactInput {
+    contactId!: number;
+    contactLeadId!: number;
     contactMergeOptions!: ContactMergeOptions | undefined;
-    targetContactId!: number | undefined;
-    targetContactLeadId!: number | undefined;
+    targetContactId!: number;
+    targetContactLeadId!: number;
     targetContactMergeOptions!: TargetContactMergeOptions | undefined;
     primaryContactInfo!: PrimaryContactInfo | undefined;
-    mergeLeadMode!: MergeLeadMode | undefined;
+    mergeLeadMode!: MergeLeadMode;
 
-    constructor(data?: IMergeContactInfo) {
+    constructor(data?: IMergeContactInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -45523,9 +45573,9 @@ export class MergeContactInfo implements IMergeContactInfo {
         }
     }
 
-    static fromJS(data: any): MergeContactInfo {
+    static fromJS(data: any): MergeContactInput {
         data = typeof data === 'object' ? data : {};
-        let result = new MergeContactInfo();
+        let result = new MergeContactInput();
         result.init(data);
         return result;
     }
@@ -45544,15 +45594,15 @@ export class MergeContactInfo implements IMergeContactInfo {
     }
 }
 
-export interface IMergeContactInfo {
-    contactId: number | undefined;
-    contactLeadId: number | undefined;
+export interface IMergeContactInput {
+    contactId: number;
+    contactLeadId: number;
     contactMergeOptions: ContactMergeOptions | undefined;
-    targetContactId: number | undefined;
-    targetContactLeadId: number | undefined;
+    targetContactId: number;
+    targetContactLeadId: number;
     targetContactMergeOptions: TargetContactMergeOptions | undefined;
     primaryContactInfo: PrimaryContactInfo | undefined;
-    mergeLeadMode: MergeLeadMode | undefined;
+    mergeLeadMode: MergeLeadMode;
 }
 
 export class SimilarContactOutput implements ISimilarContactOutput {

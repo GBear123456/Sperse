@@ -8,6 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
@@ -540,13 +541,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!this._totalDataSource) {
             this._totalDataSource = new DataSource({
                 requireTotalCount: false,
-                store: {
-                    type: 'odata',
+                store: new ODataStore({
                     url: this.getTotalsRequestUrl(filter),
                     version: AppConsts.ODataVersion,
-                    beforeSend: this.getBeforeSendEvent(),
-                    paginate: false
-                }
+                    beforeSend: this.getBeforeSendEvent()
+                })
             });
         } else {
             /** Update total source url in a case custom filter has changed */

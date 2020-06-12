@@ -12,7 +12,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import {
     MergeLeadMode,
-    MergeContactInfo,
+    MergeContactInput,
     ContactMergeOptions,
     ContactServiceProxy,
     PreferredProperties,
@@ -348,7 +348,7 @@ export class MergeContactDialogComponent {
     getMergeContactInput() {
         let sourceInfo = this.data.mergeInfo.contactInfo,
             targetInfo = this.data.mergeInfo.targetContactInfo;
-        return new MergeContactInfo({
+        return new MergeContactInput({
             contactId: sourceInfo.id,
             contactLeadId: sourceInfo.leadId,
             contactMergeOptions: new ContactMergeOptions({

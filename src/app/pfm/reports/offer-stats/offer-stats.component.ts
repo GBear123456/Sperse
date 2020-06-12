@@ -3,12 +3,16 @@ import { Component, Output, EventEmitter, ViewChild, Injector } from '@angular/c
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AppConsts } from '@root/shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { OfferStatsDto } from '@app/pfm/reports/offer-stats/offer-stats-dto.type';
+import { OfferStatsFields } from '@app/pfm/reports/offer-stats/offer-stats-fields.enum';
 
 @Component({
     selector: 'pfm-offer-stats',
@@ -17,11 +21,11 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class OfferStatsComponent extends AppComponentBase {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @Output() onOfferClicksClick: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onOfferClicksClick: EventEmitter<OfferStatsDto> = new EventEmitter<OfferStatsDto>();
     offersStaticFilter = { 'RequestCount': { gt: 0 } };
+    readonly offerStatsFields: KeysEnum<OfferStatsDto> = OfferStatsFields;
     dataSource: DataSource = new DataSource({
-        store: {
-            type: 'odata',
+        store: new ODataStore({
             url: this.getODataUrl('Offer', this.offersStaticFilter),
             deserializeDates: false,
             version: AppConsts.ODataVersion,
@@ -29,14 +33,8 @@ export class OfferStatsComponent extends AppComponentBase {
                 this.isDataLoaded = false;
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             }
-        },
-        select: [
-            'CampaignId',
-            'LogoUrl',
-            'Name',
-            'Categories',
-            'RequestCount'
-        ],
+        }),
+        select: Object.keys(this.offerStatsFields),
         sort: [
             { selector: 'Created', desc: true }
         ]
@@ -67,8 +65,8 @@ export class OfferStatsComponent extends AppComponentBase {
         return data.Categories.map(item => item.Name).join(', ');
     }
 
-    offerClicksClick(field) {
-        this.onOfferClicksClick.emit(field);
+    offerClicksClick(offer: OfferStatsDto) {
+        this.onOfferClicksClick.emit(offer);
     }
 
     contentReady() {

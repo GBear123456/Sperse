@@ -22,6 +22,7 @@ import {
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
+import DataSource from '@root/node_modules/devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
@@ -82,7 +83,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { CrmService } from '@app/crm/crm.service';
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
-import DataSource from '@root/node_modules/devextreme/data/data_source';
 import { ChartComponent } from '@app/shared/common/slice/chart/chart.component';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
@@ -103,6 +103,10 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
+import { PartnerDto } from '@app/crm/partners/partner-dto.interface';
+import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -309,7 +313,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.filters,
                 this.chartComponent.summaryBy.value,
                 this.dateField
-            ).then((result) => {
+            ).then((result: SliceChartData) => {
                 this.chartInfoItems = result.infoItems;
                 return result.items;
             });
@@ -341,6 +345,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
+    readonly partnerFields: KeysEnum<PartnerDto> = PartnerFields;
 
     constructor(
         injector: Injector,
@@ -365,30 +370,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         public contactProxy: ContactServiceProxy
     ) {
         super(injector);
-        this.dataSource = {
-            select: [
-                'Name',
-                'CompanyName',
-                'PhotoPublicId',
-                'Email',
-                'Phone',
-                'City',
-                'OrganizationId',
-                'State',
-                'Status',
-                'ContactDate',
-                'Id',
-                'PartnerType',
-                'Xref',
-                'AffiliateCode'
-            ].concat(
-                this.tenantHasBankCodeFeature
-                    ? [ 'BankCode' ]
-                    : []
-            ),
-            store: {
-                key: 'Id',
-                type: 'odata',
+        this.dataSource = new DataSource({
+            select: Object.keys(this.partnerFields).filter((field: string) => field !== 'BankCode' || this.tenantHasBankCodeFeature),
+            store: new ODataStore({
+                key: this.partnerFields.Id,
                 deserializeDates: false,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
@@ -396,8 +381,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
-            }
-        };
+            })
+        });
         this.searchValue = '';
         this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
@@ -625,9 +610,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showPartnerDetails(event) {
-        let data = event.data || event,
-            orgId = data.OrganizationId,
-            partnerId = data.Id;
+        let partner: PartnerDto = event.data || event,
+            orgId = partner.OrganizationId,
+            partnerId = partner.Id;
 
         if (partnerId) {
             if (event.component)
@@ -1401,7 +1386,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             forkJoin(
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
-            ).subscribe(([source, target]: [any, any]) => {
+            ).subscribe(([source, target]: [PartnerDto, PartnerDto]) => {
                 this.contactService.mergeContact(source, target, true, true, () => this.invalidate());
             });
         }

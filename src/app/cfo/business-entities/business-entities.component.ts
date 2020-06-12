@@ -5,6 +5,8 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as _ from 'underscore';
@@ -20,6 +22,9 @@ import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { LeftMenuService } from '../shared/common/left-menu/left-menu.service';
+import { BusinessEntityDto } from '@app/cfo/business-entities/business-entity-dto.interface';
+import { BusinessEntityFields } from '@app/cfo/business-entities/business-entity-fields.enum';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 
 @Component({
     selector: 'business-entities',
@@ -41,10 +46,11 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             class: 'btn-layout next-button'
         }
     ];
-    private lastSelectedBusinessEntity;
+    private lastSelectedBusinessEntity: BusinessEntityDto;
     contentWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
         map((collapsed: boolean) => window.innerWidth - (collapsed || AppConsts.isMobile ? 0 : 324 ))
     );
+    readonly businessEntityFields: KeysEnum<BusinessEntityDto> = BusinessEntityFields;
 
     constructor(
         injector: Injector,
@@ -59,9 +65,10 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     ngOnInit() {
         this.rootComponent.overflowHidden(true);
-        this.dataSource = {
-            store: {
-                type: 'odata',
+        this.dataSource = new DataSource({
+            key: this.businessEntityFields.Id,
+            select: Object.keys(this.businessEntityFields),
+            store: new ODataStore({
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -69,8 +76,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                     this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            }
-        };
+            })
+        });
         this.bankAccountsService.load();
     }
 
@@ -90,7 +97,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     onCellPrepared($event) {
         if ($event.rowType === 'data') {
-            if ($event.column.dataField == 'Status' && $event.data.Status === 'Inactive') {
+            const businessEntity: BusinessEntityDto = $event.data;
+            if ($event.column.dataField == this.businessEntityFields.Status && businessEntity.Status === 'Inactive') {
                 $event.cellElement.parentElement.classList.add('inactive');
             }
         }
@@ -128,12 +136,10 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         return values.length > 0 ? values.join(', ') : null;
     }
 
-    openBankAccountSelectComponent(businessEntity) {
+    openBankAccountSelectComponent(businessEntity: BusinessEntityDto) {
         this.lastSelectedBusinessEntity = businessEntity;
-
         this.bankAccountsService.changeSelectedBusinessEntities([], false);
         this.bankAccountsService.changeSelectedBankAccountsIds(businessEntity.BankAccountIds, false);
-
         this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: {
@@ -229,8 +235,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         if (col && (col.command || col.name == 'BankAccountIds')) {
             return;
         }
-
-        let businessEntityId = event.data && event.data.Id;
+        const businessEntity: BusinessEntityDto = event.data;
+        let businessEntityId = businessEntity && businessEntity.Id;
         if (businessEntityId && !this.isAddButtonDisabled) {
             this.showEditDialog(businessEntityId);
         }

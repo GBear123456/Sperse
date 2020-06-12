@@ -89,19 +89,20 @@
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                         <dxi-column cssClass="stars" [width]="40"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                        <dxi-column dataField="PhotoPublicId" caption="" cellTemplate="photoTemplate"
+                        <dxi-column [dataField]="partnerFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.SourceOrganizationUnitId" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.PhotoPublicId" caption="" cellTemplate="photoTemplate"
                                     [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
-                        <dxi-column dataField="Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <ng-container *ngIf="tenantHasBankCodeFeature">
                             <dxi-column dataField="BankCode"
                                         cellTemplate="bankCodeCell"
@@ -111,16 +112,16 @@
                                         [showInColumnChooser]="tenantHasBankCodeFeature">
                             </dxi-column>
                         </ng-container>
-                        <dxi-column dataField="Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
-                        <dxi-column dataField="PartnerType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.PartnerType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
                                 {{cellData.value}}
                             </div>
                         </div>
-                        <dxi-column dataField="ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column dataField="Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
                         </div>
@@ -137,7 +138,7 @@
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-summary>
-                            <dxi-group-item column="Id"
+                            <dxi-group-item [column]="partnerFields.Id"
                                             summaryType="count"
                                             [displayFormat]="'{0} ' + l('Partners').toLocaleLowerCase()">
                             </dxi-group-item>

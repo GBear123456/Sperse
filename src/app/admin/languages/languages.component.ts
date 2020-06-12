@@ -28,7 +28,19 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    dataSource: DataSource;
+    dataSource: DataSource = new DataSource({
+        key: 'id',
+        load: () => {
+            return this.languageService.getLanguages().toPromise().then(response => {
+                this.defaultLanguageName = response.defaultLanguageName;
+                return {
+                    data: response.items,
+                    totalCount: response.items.length,
+                    defaultLanguageName: response.defaultLanguageName
+                };
+            });
+        }
+    });;
     public actionMenuItems: ActionMenuItem[];
     public actionRecord: any;
     public headlineButtons: HeadlineButton[] = [
@@ -53,23 +65,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
-        this.dataSource = new DataSource({
-            key: 'id',
-            load: () => {
-                return this.languageService.getLanguages().toPromise().then(response => {
-                    this.defaultLanguageName = response.defaultLanguageName;
-                    return {
-                        data: response.items,
-                        totalCount: response.items.length,
-                        defaultLanguageName: response.defaultLanguageName
-                    };
-                });
-            }
-        });
-
         this.initToolbarConfig();
-
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),

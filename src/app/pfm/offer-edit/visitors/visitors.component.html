@@ -12,7 +12,7 @@
                     [hoverStateEnabled]="true"
                     [pager]="defaultGridPagerConfig"
                     (onCellClick)="onCellClick($event)"
-                    (onInitialized)="onDataGridInit($event)"
+                    (onInitialized)="onDataGridInit()"
                     (onContentReady)="onContentReady()"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-selection selectAllMode="page"
@@ -21,11 +21,11 @@
             </dxo-selection>
 
             <dxi-column [caption]="l('Name')" cellTemplate="nameCell"></dxi-column>
-            <dxi-column dataField="StateCode" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="Date" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
-            <dxi-column dataField="DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.StateCode" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="visitorFields.Date" [caption]="l('Created')" cellTemplate="dateCell"></dxi-column>
+            <dxi-column [dataField]="visitorFields.DoB" [caption]="l('Birthday')" dataType="date" format="dd/MM/yyyy" cssClass="clipboard-holder"></dxi-column>
 
             <div *dxTemplate="let cellData of 'nameCell'" class="clipboard-holder">
                 {{ cellData.data.FirstName }} {{ cellData.data.LastName }}

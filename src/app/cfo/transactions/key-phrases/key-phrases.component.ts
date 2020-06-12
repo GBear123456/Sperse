@@ -1,7 +1,16 @@
+/** Core imports */
 import { Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
+/** Third party imports */
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import DataSource from 'devextreme/data/data_source';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { KeyPhrasesDto } from '@app/cfo/transactions/key-phrases/key-phrases-dto.interface';
+import { KeyPhrasesFields } from '@app/cfo/transactions/key-phrases/key-phrases-fields.enum';
 
 @Component({
     selector: 'key-phrases',
@@ -21,22 +30,23 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
     private _keyPhrasesFilterQuery: any[];
 
     @Output() close: EventEmitter<any> = new EventEmitter();
-    keyPhrasesDataSource: any;
-    keyPhrasesData = [];
+    keyPhrasesDataSource: DataSource;
+    keyPhrasesData: KeyPhrasesDto[] = [];
+    readonly keyPhrasesFields: KeysEnum<KeyPhrasesDto> = KeyPhrasesFields;
 
     constructor(
         injector: Injector
     ) {
         super(injector);
         this.keyPhrasesDataSource = new DataSource({
-            store: {
-                type: 'odata',
+            select: Object.keys(this.keyPhrasesFields),
+            store: new ODataStore({
                 url: this.getODataUrl('TransactionGroup'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            }
+            })
         });
         this.startLoading();
     }
@@ -48,7 +58,7 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
     refreshkeyPhrasesCountDataSource() {
         if (this.keyPhrasesDataSource) {
             this.keyPhrasesDataSource.store()['_url'] = this.getODataUrl('TransactionGroup', this._keyPhrasesFilterQuery);
-            this.keyPhrasesDataSource.load().done((result) => {
+            this.keyPhrasesDataSource.load().done((result: KeyPhrasesDto[]) => {
                 event.preventDefault();
                 this.keyPhrasesData = result;
             });

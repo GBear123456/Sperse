@@ -7,8 +7,8 @@
                         width="320px"
                         [dataSource]="types"
                         [dropDownButtonTemplate]="''"
-                        [displayExpr]="'name'"
-                        [valueExpr]="'id'"
+                        displayExpr="name"
+                        valueExpr="id"
                         [(value)]="type">
                     </dx-select-box>
                     <mat-dialog-actions>
@@ -29,8 +29,8 @@
                     <dx-select-box
                         width="355px"
                         [dataSource]="contacts"
-                        [displayExpr]="'fullName'"
-                        [valueExpr]="'id'"
+                        displayExpr="fullName"
+                        valueExpr="id"
                         (onValueChanged)="onContactChanged($event)"
                         [(value)]="contactId">
                     </dx-select-box>
@@ -42,7 +42,7 @@
                         [showClearButton]="true"
                         [dataSource]="ordersDataSource"
                         [displayExpr]="orderDisplayValue"
-                        [valueExpr]="'OrderId'"
+                        [valueExpr]="invoicesFields.OrderId"
                         [(value)]="orderId">
                     </dx-select-box>
                 </div>
@@ -58,10 +58,10 @@
                 <div class="field phone">
                     <label>{{l('Phone') | uppercase }}</label>
                     <dx-select-box
-                        [width]="'320px'"
+                        width="320px"
                         [dataSource]="phones"
-                        [displayExpr]="'phoneNumber'"
-                        [valueExpr]="'id'"
+                        displayExpr="phoneNumber"
+                        valueExpr="id"
                         [(value)]="phone">
                     </dx-select-box>
                     <div class="add-phone" (click)="showAddPhoneDialog($event)">+</div>
@@ -83,8 +83,8 @@
                             width="355px"
                             [placeholder]="l('EditValuePlaceholder')"
                             [dataSource]="users"
-                            [displayExpr]="'name'"
-                            [valueExpr]="'id'"
+                            displayExpr="name"
+                            valueExpr="id"
                             [(value)]="addedBy">
                         </dx-select-box>
                     </div>

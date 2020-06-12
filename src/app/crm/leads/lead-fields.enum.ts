@@ -1,0 +1,35 @@
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { LeadDto } from '@app/crm/leads/lead-dto.interface';
+
+export const LeadFields: KeysEnum<LeadDto> = {
+    Id: 'Id',
+    UserId: 'UserId',
+    Name: 'Name',
+    CompanyName: 'CompanyName',
+    SourceOrganizationUnitId: 'SourceOrganizationUnitId',
+    Email: 'Email',
+    PhotoPublicId: 'PhotoPublicId',
+    Phone: 'Phone',
+    City: 'City',
+    State: 'State',
+    Stage: 'Stage',
+    LeadDate: 'LeadDate',
+    OrganizationId: 'OrganizationId',
+    SourceAffiliateCode: 'SourceAffiliateCode',
+    SourceCampaignCode: 'SourceCampaignCode',
+    SourceChannelCode: 'SourceChannelCode',
+    EntryUrl: 'EntryUrl',
+    LastModificationTime: 'LastModificationTime',
+    SourceCode: 'SourceCode',
+    StreetAddress: 'StreetAddress',
+    CustomerId: 'CustomerId',
+    ZipCode: 'ZipCode',
+    Website: 'Website',
+    PhoneExtension: 'PhoneExtension',
+    Title: 'Title',
+    ContactXref: 'ContactXref',
+    ContactAffiliateCode: 'ContactAffiliateCode',
+    SourceContactName: 'SourceContactName',
+    AssignedUserName: 'AssignedUserName',
+    BankCode: 'BankCode'
+}

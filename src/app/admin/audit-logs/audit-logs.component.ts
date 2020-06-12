@@ -132,7 +132,36 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
             items: { ['Min Execution Duration']: new FilterItemModel(), ['Max Execution Duration']: new FilterItemModel() }
         })
     ];
-    operationLogsDataSource: DataSource;
+    operationLogsDataSource: DataSource = new DataSource({
+        key: 'id',
+        load: (loadOptions) => {
+            return this.auditLogService.getAuditLogs(
+                this.searchValue,
+                this.filtersValues.date.startDate,
+                this.filtersValues.date.endDate,
+                this.filtersValues.userId,
+                this.filtersValues.userName,
+                this.filtersValues.serviceName,
+                this.filtersValues.methodName,
+                this.filtersValues.browserInfo,
+                !!this.filtersValues.hasException[0] || undefined,
+                this.filtersValues.minExecutionDuration,
+                this.filtersValues.maxExecutionDuration,
+                (loadOptions.sort || []).map((item) => {
+                    return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                }).join(','),
+                loadOptions.take,
+                loadOptions.skip
+            ).toPromise().then(
+                (response: AuditLogListDtoPagedResultDto) => {
+                    return {
+                        data: response.items,
+                        totalCount: response.totalCount
+                    };
+                }
+            );
+        }
+    });
     isDataLoaded = false;
     toolbarConfig: ToolbarGroupModel[];
 
@@ -168,36 +197,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 this.invalidate();
             });
         this.dateFilterModel.updateCaptions();
-        this.operationLogsDataSource = new DataSource({
-            key: 'id',
-            load: (loadOptions) => {
-                return this.auditLogService.getAuditLogs(
-                    this.searchValue,
-                    this.filtersValues.date.startDate,
-                    this.filtersValues.date.endDate,
-                    this.filtersValues.userId,
-                    this.filtersValues.userName,
-                    this.filtersValues.serviceName,
-                    this.filtersValues.methodName,
-                    this.filtersValues.browserInfo,
-                    !!this.filtersValues.hasException[0] || undefined,
-                    this.filtersValues.minExecutionDuration,
-                    this.filtersValues.maxExecutionDuration,
-                    (loadOptions.sort || []).map((item) => {
-                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                    }).join(','),
-                    loadOptions.take,
-                    loadOptions.skip
-                ).toPromise().then(
-                    (response: AuditLogListDtoPagedResultDto) => {
-                        return {
-                            data: response.items,
-                            totalCount: response.totalCount
-                        };
-                    }
-                );
-            }
-        });
     }
 
     initToolbarConfig() {

@@ -1,0 +1,32 @@
+export interface LeadDto {
+    Id: number;
+    Name: string;
+    CompanyName: string;
+    SourceOrganizationUnitId: number;
+    Email: string;
+    PhotoPublicId: string;
+    Phone: string;
+    City: string;
+    State: string;
+    Stage: string;
+    LeadDate: string;
+    OrganizationId: number;
+    UserId: number;
+    SourceAffiliateCode: string;
+    SourceCampaignCode: string;
+    SourceChannelCode: string;
+    EntryUrl: string;
+    LastModificationTime: string;
+    SourceCode: string;
+    StreetAddress: string;
+    CustomerId: number;
+    ZipCode: string;
+    Website: string;
+    PhoneExtension: string;
+    Title: string;
+    ContactXref: string;
+    ContactAffiliateCode: string;
+    SourceContactName: string;
+    AssignedUserName: string;
+    BankCode: string;
+}

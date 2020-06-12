@@ -6,6 +6,8 @@ import { CurrencyPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { forkJoin, Observable } from 'rxjs';
 import { filter, finalize, pluck, skip, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
@@ -47,12 +49,17 @@ import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
-import { AppSessionService } from '../../../shared/common/session/app-session.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
-import { PivotGridComponent } from '../../shared/common/slice/pivot-grid/pivot-grid.component';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { OrderDto } from '@app/crm/orders/order-dto';
+import { SubscriptionDto } from '@app/crm/orders/subcription-dto.interface';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { OrderFields } from '@app/crm/orders/order-fields.enum';
+import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -317,36 +324,36 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     ];
     selectedOrderType = OrderType.Order;
+    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
+    readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     ordersDataSource = {
         uri: this.ordersDataSourceURI,
         requireTotalCount: true,
+        select: Object.keys(this.orderFields),
         store: {
-            key: 'Id',
+            key: this.orderFields.Id,
             type: 'odata',
             url: this.getODataUrl(this.ordersDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: function (request) {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-            },
-            paginate: true
+            }
         }
     };
-    subscriptionsDataSource = {
-        uri: this.subscriptionsDataSourceURI,
+    subscriptionsDataSource = new DataSource({
         requireTotalCount: true,
-        store: {
-            key: 'Id',
-            type: 'odata',
+        select: Object.keys(this.subscriptionFields),
+        store: new ODataStore({
+            key: this.subscriptionFields.Id,
             url: this.getODataUrl(this.subscriptionsDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: function (request) {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-            },
-            paginate: true
-        }
-    };
+            }
+        })
+    });
     sliceStorageKey = 'CRM_Subscriptions_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     subscriptionGroupDataSourceURI = 'SubscriptionSlice';
@@ -1059,7 +1066,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    onCardClick({entity, entityStageDataSource, loadMethod, section = 'invoices'}) {
+    onCardClick({entity, entityStageDataSource, loadMethod, section = 'invoices'}: {
+        entity: OrderDto | SubscriptionDto,
+        entityStageDataSource: any,
+        loadMethod: () => any,
+        section: string
+    }) {
         if (entity && entity.ContactId) {
             let isOrder = this.selectedOrderType === OrderType.Order;
             this.searchClear = false;
@@ -1098,12 +1110,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.contactsService.showInvoiceSettingsDialog();
     }
 
-    onOrderStageChanged(order) {
+    onOrderStageChanged(order: OrderDto) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.getVisibleRows().some((row) => {
-                if (order.Id == row.data.Id) {
-                    row.data.Stage = order.Stage;
-                    row.data.StageId = order.StageId;
+                const orderData: OrderDto = row.data;
+                if (order.Id == orderData.Id) {
+                    orderData.Stage = order.Stage;
+                    orderData.StageId = order.StageId;
                     return true;
                 }
             });

@@ -14,17 +14,16 @@
 
                     <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
                     <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-
-                    <dxi-column dataField="Date"
+                    <dxi-column [dataField]="activityLogsFields.Date"
                                 [caption]="l('Date')"
                                 cssClass="tabular"
                                 dataType="datetime" sortOrder="desc">
                     </dxi-column>
-                    <dxi-column dataField="CampaignId"
+                    <dxi-column [dataField]="activityLogsFields.CampaignId"
                                 [caption]="l('CampaignId')"
                                 cssClass="tabular">
                     </dxi-column>
-                    <dxi-column dataField="CampaignName"
+                    <dxi-column [dataField]="activityLogsFields.CampaignName"
                                 dataType="string"
                                 cssClass="campaign-name"
                                 [caption]="l('CampaignName')">
@@ -32,13 +31,13 @@
                     <!--<dxi-column dataField="RedirectUrl"-->
                     <!--caption="{{l('CampaignUrl')}}"-->
                     <!--cssClass="truncate"></dxi-column>-->
-                    <dxi-column dataField="CampaignType"
+                    <dxi-column [dataField]="activityLogsFields.CampaignType"
                                 [allowFiltering]="false"
                                 [allowSearch]="false"
                                 cssClass="campaign-type"
                                 [caption]="l('CampaignType')">
                     </dxi-column>
-                    <dxi-column dataField="RedirectUrl"
+                    <dxi-column [dataField]="activityLogsFields.RedirectUrl"
                                 [caption]="l('RedirectUrl')">
                     </dxi-column>
 

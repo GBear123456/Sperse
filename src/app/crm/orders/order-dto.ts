@@ -1,0 +1,20 @@
+export interface OrderDto {
+    Id: number;
+    PhotoPublicId: string;
+    Name: string;
+    Email: string;
+    State: string;
+    Phone: string;
+    Number: string;
+    Stage: string;
+    StageId: number;
+    ContactId: number;
+    LeadId: number;
+    Amount: number;
+    OrderType: string;
+    OrderDate: string;
+    PersonalAffiliateCode: string;
+    SourceAffiliateCode: string;
+    EntryUrl: string;
+    DateProcessed: string;
+}

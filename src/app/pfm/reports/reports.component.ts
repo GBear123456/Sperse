@@ -19,7 +19,8 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OfferStatsComponent } from './offer-stats/offer-stats.component';
 import { VisitorsStatsComponent } from './visitors-stats/visitors-stats.component';
-import { LeftMenuItem } from '../../shared/common/left-menu/left-menu-item.interface';
+import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
+import { OfferStatsDto } from '@app/pfm/reports/offer-stats/offer-stats-dto.type';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -223,8 +224,8 @@ export class ReportsComponent extends AppComponentBase implements OnInit, OnDest
         }
     }
 
-    offerClicksClick(field) {
-        this.visitorsStatsComponent.campaignId = field.data.CampaignId;
+    offerClicksClick(offer: OfferStatsDto) {
+        this.visitorsStatsComponent.campaignId = offer.CampaignId;
         this.visitorsStatsComponent.quickSearch = null;
         this.setSection('visitors', false);
         this.leftMenuComponent.setSelectedIndex(2);

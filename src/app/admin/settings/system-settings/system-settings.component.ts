@@ -31,8 +31,8 @@ import { UploadSSLCertificateModalComponent } from '../modals/upload-ssl-cert-mo
 export class SystemSettingsComponent implements OnInit {
     @ViewChild('customDomainsGrid', { static: false }) customDomainsGrid: DxDataGridComponent;
     @ViewChild('sslGrid', { static: false }) sslGrid: DxDataGridComponent;
-    public sslGridDataSource: any;
-    public sslBindingsDataSource: any;
+    public sslGridDataSource: TenantSslCertificateInfo[];
+    public sslBindingsDataSource: TenantSslBindingInfo[];
 
     hostTypes = Object.keys(TenantHostType).map(item => {
         return {id: item, name: this.ls.l('HostType_' + item)};

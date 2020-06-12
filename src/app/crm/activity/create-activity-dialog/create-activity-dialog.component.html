@@ -16,7 +16,7 @@
         <app-toolbar [config]="toolbarConfig"></app-toolbar>
         <app-static-list #stagesList
                          [width]="'210px'"
-                         [selectedKeys]="[data.appointment.StageId]"
+                         [selectedKeys]="[appointment.StageId]"
                          [showConfirmation]="false"
                          [selectedItems]=""
                          [hideButtons]="true"
@@ -30,9 +30,9 @@
         <user-assignment-list [multiSelection]="true"
                                   [targetSelector]="'[accesskey=\'UserAssign\']'"
                                   [proxyService]="activityProxy"
-                                  [(selectedItemKey)]="data.appointment.AssignedUserIds"
+                                  [(selectedItemKey)]="appointment.AssignedUserIds"
                                   [hideButtons]="true"
-                                  [selectedKeys]="[data.appointment.Id]"
+                                  [selectedKeys]="[appointment.Id]"
                                   [permissionKey]="permissions.CRMManageEventsAssignments"
                                   (onSelectionChanged)="onUserAssignmentChanged($event)"
                                   [assignedUsersSelector]="assignedUsersSelector">
@@ -45,7 +45,7 @@
                          [title]="ls.l('Leads')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
-                         [selectedKeys]="[data.appointment.LeadId]"
+                         [selectedKeys]="[appointment.LeadId]"
                          [searchEnabled]="true"
                          [customSearchEnabled]="true"
                          (onItemSelected)="onLeadSelected($event)"
@@ -59,7 +59,7 @@
                          [title]="ls.l('Clients')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
-                         [selectedKeys]="[data.appointment.ContactId]"
+                         [selectedKeys]="[appointment.ContactId]"
                          [searchEnabled]="true"
                          [customSearchEnabled]="true"
                          (onItemSelected)="onClientSelected($event)"
@@ -67,8 +67,9 @@
                          [list]="clients">
         </app-static-list>
 
-        <app-static-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
-                        (onSelectionChanged)="onStarsChanged($event)" [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"></app-static-list>
+        <app-static-list [hideButtons]="true"
+                         [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates">
+        </app-static-list>
 
         <div class="tab-content">
             <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
@@ -138,7 +139,7 @@
                         <dx-text-area name="description"
                                       [width]="'100%'"
                                       [height]="'100px'"
-                                      [(value)]="data.appointment.Description">
+                                      [(value)]="appointment.Description">
                         </dx-text-area>
                     </div>
                 </div>

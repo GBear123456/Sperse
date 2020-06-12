@@ -5,6 +5,7 @@ import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit
 import { MatDialog } from '@angular/material/dialog';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import { CacheService } from 'ng2-cache-service';
 import { filter, finalize, switchMap } from 'rxjs/operators';
@@ -153,14 +154,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     private initTransactionsTotalCount() {
         this.transactionsCountDataSource = new DataSource({
-            store: {
-                type: 'odata',
+            store: new ODataStore({
                 url: this.getODataUrl('TransactionCount'),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            },
+            }),
             onChanged: this.setTransactionsCount.bind(this)
         });
     }
