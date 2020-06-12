@@ -447,7 +447,7 @@ export class ContactsService {
         abp.ui.setBusy();
         this.showMergeContactDialog(
             {
-                id: isLead ? source.CustomerId : target.Id,
+                id: isLead ? source.CustomerId : source.Id,
                 leadId: isLead ? source.Id : ''
             },
             {
