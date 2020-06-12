@@ -43,14 +43,14 @@ export class StaticListComponent {
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
     @Input() pageLoadMode = 'nextButton';
-    @Input() searchExprType = 'name';
+    @Input() searchExprType = 'displayName';
     @Input() bulkUpdatePermissionKey: AppPermissions = null;
     @Input() convertNameStartCase = true;
     @Input('list')
     set list(value: any[]) {
         this._list = (this.convertNameStartCase && value ? value.map((item) => {
             return _.extend(item, {
-                name: startCase(item.name.toLowerCase())
+                displayName: startCase(item.name.toLowerCase())
             });
         }) : (value || [])).filter((item) => !!item.name);
     }
