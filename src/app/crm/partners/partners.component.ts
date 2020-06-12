@@ -977,8 +977,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                             client.Name,
                                             ContactGroup.Client,
                                             client.Id,
-                                            () => this.invalidate(),
-                                            () => this.dataGrid.instance.deselectAll()
+                                            () => {
+                                                this.invalidate();
+                                                this.dataGrid.instance.clearSelection();
+                                            }
                                         );
                                     }
                                 },
@@ -986,7 +988,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     text: this.l('Merge'),
                                     disabled: this.selectedPartners.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => this.invalidate(), () => this.dataGrid.instance.deselectAll());
+                                        this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => { this.invalidate(); this.dataGrid.instance.deselectAll(); });
                                     }
                                 }
                             ]

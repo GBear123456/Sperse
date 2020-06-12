@@ -732,12 +732,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Map)
         ).pipe(
             tap(() => this.mapDataIsLoading = true),
-            switchMap(([mapArea, [odataRequestValues, contactGroupId,]]: [MapArea, [ODataRequestValues, ContactGroup, null]]) => {
+            switchMap(([mapArea, [odataRequestValues, contactGroupId ]]: [MapArea, [ODataRequestValues, ContactGroup, null]]) => {
                 let params = { contactGroupId: contactGroupId.toString() };
                 if (odataRequestValues.params && odataRequestValues.params.length) {
                     odataRequestValues.params.forEach((param: Param) => {
                         params[param.name] = param.value;
-                    })
+                    });
                 }
                 return this.mapService.loadSliceMapData(
                     this.getODataUrl(this.groupDataSourceURI),
@@ -1181,7 +1181,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     text: this.l('Merge'),
                                     disabled: this.selectedLeads.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), null, true);
+                                        this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), true);
                                     }
                                 }
                             ]
@@ -1457,7 +1457,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             filterQuery$.subscribe((filterQuery: string) => {
                                 this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
                                 this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
-                            })
+                            });
                         }
                     }
                 }
