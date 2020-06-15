@@ -34,12 +34,18 @@ export class AppAuthService implements OnDestroy {
         return location.origin.split('.').slice(-2).join('.');
     }
 
+    checkCurrentTopDomainByUri(uri = AppConsts.appMemberPortalUrl) {
+        return uri.includes(this.getTopLevelDomain());
+    }
+
     setTokenBeforeRedirect() {
-        document.cookie = this.REDIRECT_AUTH_DATA + '=' + JSON.stringify({
-            accessToken: abp.auth.getToken(),
-            expireInSeconds: 3600,
-            rememberClient: true
-        }) + '; path=/; domain=' + this.getTopLevelDomain();
+        let token = abp.auth.getToken();
+        if (token)
+            document.cookie = this.REDIRECT_AUTH_DATA + '=' + JSON.stringify({
+                accessToken: token,
+                expireInSeconds: 3600,
+                rememberClient: true
+            }) + '; path=/; domain=' + this.getTopLevelDomain();
     }
 
     setCheckDomainToken() { //!!VP this necessary to provide login from top domain level

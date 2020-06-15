@@ -9,6 +9,7 @@ import {
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -22,6 +23,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 export class RouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
+        private authService: AppAuthService,
         private feature: FeatureCheckerService,
         private permissionChecker: AppPermissionService,
         private router: Router,
@@ -88,9 +90,10 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (tenant && tenant.customLayoutType == LayoutType.BankCode) {
-            if (AppConsts.appMemberPortalUrl && !user)
+            if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
+                this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.appMemberPortalUrl;
-            else
+            } else
                 return '/code-breaker';
         }
 

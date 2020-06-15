@@ -9,6 +9,7 @@ import isEqual from 'lodash/isEqual';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppConsts } from '@shared/AppConsts';
 import {
@@ -31,7 +32,7 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
 })
 export class HeaderComponent implements OnInit {
 
-    origin = AppConsts.appMemberPortalUrl || location.origin;
+    origin = location.origin;
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
@@ -46,6 +47,7 @@ export class HeaderComponent implements OnInit {
     constructor(
         injector: Injector,
         private dialog: MatDialog,
+        private authService: AppAuthService,
         private abpSessionService: AbpSessionService,
         private profileServiceProxy: ProfileServiceProxy,
         private commonUserInfoService: CommonUserInfoServiceProxy,
@@ -99,4 +101,11 @@ export class HeaderComponent implements OnInit {
         return !this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature);
     }
 
+    logoClick() {
+        if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
+            this.authService.setTokenBeforeRedirect();
+            location.href = AppConsts.appMemberPortalUrl;
+        } else
+            location.href = origin;
+    }
 }
