@@ -490,7 +490,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 [field.mappedField + (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateId')]: parsed.state,
                 [field.mappedField + '_city']: parsed.city,
                 [field.mappedField + '_zip']: parsed.plus4 ? parsed.zip + '-' + parsed.plus4 : parsed.zip,
-                [field.mappedField + '_street']: [parsed.number, parsed.prefix, parsed.street, parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' ')
+                [field.mappedField + '_street']: [parsed.number, parsed.prefix, parsed.street, parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
+                [field.mappedField + '_addressLine2']: [parsed.sec_unit_type, parsed.sec_unit_num].filter(Boolean).join(' ')
             }, dataSource);
         return true;
     }
