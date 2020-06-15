@@ -182,15 +182,27 @@ export class ODataService {
         return this.advancedODataFilter(
             grid,
             uri,
-            (filters || []).map((filter: FilterModel) => {
-                return getCheckCustom && getCheckCustom(filter) ||
-                    filter.getODataFilterObject();
-            }),
+            this.processFilters(filters, getCheckCustom),
             searchColumns,
             searchValue,
             instanceData,
             params
         );
+    }
+
+    private processFilters(filters: FilterModel[], getCheckCustom): any[] {
+        let processedFilters = [];
+        (filters || []).forEach((filter: FilterModel) => {
+            const processedFilter = getCheckCustom && getCheckCustom(filter);
+            if (processedFilter) {
+                if (processedFilter !== 'cancelled') {
+                    processedFilters.push(processedFilter)
+                }
+            } else {
+                processedFilters.push(filter.getODataFilterObject())
+            }
+        })
+        return processedFilters;
     }
 
     getSearchFilter(searchColumns: any[], searchValue: string) {
@@ -223,8 +235,7 @@ export class ODataService {
     }
 
     getODataFilter(filters: FilterModel[], getCheckCustom): Observable<ODataRequestValues> {
-        filters = (filters || []).map((filter) => getCheckCustom && getCheckCustom(filter) || filter.getODataFilterObject());
-        return this.getODataFilterString(filters);
+        return this.getODataFilterString(this.processFilters(filters, getCheckCustom));
     }
 
     private getFilterExpression(colName: string, strategy: string, value: string): object {

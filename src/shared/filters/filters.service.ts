@@ -231,30 +231,38 @@ export class FiltersService {
 
     constructor(private serverCacheService: ServerCacheService) {}
 
-    filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: Observable<string>} {
-        let data: string[] | {[uuidName: string]: Observable<string>} = [];
+    filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: Observable<string>} | 'cancelled' {
+        let data: string[] | {[uuidName: string]: Observable<string>} | 'cancelled' = [];
         let element = filter.items.element as FilterMultilineInputModel;
         if (element) {
             let valuesArray: string[] = element.valuesArray;
             if (valuesArray && valuesArray.length) {
-                /** Convert long values array into server cache id */
-                if (valuesArray.length > 20) {
+                let inExpressions = [];
+                const isLongFilter = valuesArray.length > 20;
+                let normalizedValues = [];
+                valuesArray.every((value: string, index: number) => {
+                    let normalizedValue = value;
+                    if (element.normalize) {
+                        normalizedValue = element.normalize(value);
+                    }
+                    if (normalizedValue) {
+                        if (!isLongFilter) {
+                            inExpressions.push(`'${normalizedValue.replace(/'/g, "''")}'`);
+                        }
+                        normalizedValues.push(normalizedValue);
+                    }
+                    return true;
+                });
+                if (isLongFilter) {
                     data = {
                         [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: this.serverCacheService.getServerCacheId(
-                            valuesArray
+                            normalizedValues
                         )
                     };
                 } else {
-                    let inExpression = '';
-                    for (var i = 0; i < valuesArray.length; i++) {
-                        let value = valuesArray[i];
-                        if (element.normalize)
-                            value = element.normalize(value);
-                        inExpression += `'${value.replace(/'/g, "''")}'`;
-                        if (i != valuesArray.length - 1)
-                            inExpression += ',';
-                    }
-                    data = [`${filter.field} in (${encodeURIComponent(inExpression)})`];
+                    data = inExpressions.length
+                        ? [`${filter.field} in (${encodeURIComponent(inExpressions.join(','))})`]
+                        : 'cancelled';
                 }
             }
         }
