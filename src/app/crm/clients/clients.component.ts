@@ -930,8 +930,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 operator: {from: 'ge', to: 'le'},
                 caption: 'creation',
                 field: this.dateField,
-                items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                options: {method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true}
+                items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
             }),
             this.filterModelStatus,
             new FilterModel({
