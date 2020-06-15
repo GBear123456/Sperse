@@ -60,7 +60,6 @@ import { ImportListComponent } from './import-leads/import-list/import-list.comp
 import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
 import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
-import { CreateInvoiceDialogComponent } from './shared/create-invoice-dialog/create-invoice-dialog.component';
 import { InvoiceAddressDialog } from './shared/create-invoice-dialog/invoice-address-dialog/invoice-address-dialog.component';
 import { BankSettingsDialogComponent } from './shared/bank-settings-dialog/bank-settings-dialog.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
@@ -84,8 +83,8 @@ import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { TypesDropdownComponent } from '@app/crm/shared/types-dropdown/types-dropdown.component';
 import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.service';
 import { StaticListModule } from '../shared/common/static-list/static-list.module';
-import { CountryPhoneNumberModule } from '../../shared/common/phone-numbers/country-phone-number.module';
-import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
+import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { ListsModule } from '../shared/common/lists/lists.module';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 
@@ -161,7 +160,6 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
         ImportListComponent,
         ImportLeadsComponent,
         InvoiceAddressDialog,
-        CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         BankSettingsDialogComponent,
         CrmIntroComponent,
@@ -179,7 +177,6 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
     entryComponents: [
         BankSettingsDialogComponent,
         InvoiceAddressDialog,
-        CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         CrmIntroComponent
     ]

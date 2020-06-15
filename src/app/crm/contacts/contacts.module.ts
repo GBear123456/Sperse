@@ -134,10 +134,11 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { StaticListModule } from '@app/shared/common/static-list/static-list.module';
 import { CreateEntityModule } from '@shared/common/create-entity-dialog/create-entity.module';
-import { CountryPhoneNumberModule } from '../../../shared/common/phone-numbers/country-phone-number.module';
-import { ModalDialogModule } from '../../../shared/common/dialogs/modal/modal-dialog.module';
-import { RatingBarModule } from '../../shared/common/rating-bar/rating-bar.module';
-import { ListsModule } from '../../shared/common/lists/lists.module';
+import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
+import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
+import { ListsModule } from '@app/shared/common/lists/lists.module';
+import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 
 @NgModule({
     declarations: [
@@ -196,7 +197,8 @@ import { ListsModule } from '../../shared/common/lists/lists.module';
         AddSubscriptionDialogComponent,
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
-        MarkAsPaidDialogComponent
+        MarkAsPaidDialogComponent,
+        CreateInvoiceDialogComponent
     ],
     imports: [
         FormsModule,
@@ -255,6 +257,7 @@ import { ListsModule } from '../../shared/common/lists/lists.module';
         ListsModule
     ],
     entryComponents: [
+        CreateInvoiceDialogComponent,
         EditContactDialog,
         EditAddressDialog,
         ResetPasswordDialog,
