@@ -328,6 +328,8 @@ export class ContactsService {
         return dialogComponent.onSave.pipe(
             switchMap(res => {
                 dialogComponent.startLoading();
+                if (res.attachments)
+                    res.attachments = res.attachments.map(item => item.id);
                 return this.sendEmail(res).pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );
