@@ -25,4 +25,4 @@ export const SubscriptionFields: KeysEnum<SubscriptionDto> = {
     OrderAmount: 'OrderAmount',
     SourceAffiliateCode: 'SourceAffiliateCode',
     EntryUrl: 'EntryUrl'
-}
+};

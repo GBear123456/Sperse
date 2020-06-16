@@ -146,7 +146,7 @@ export class ExportService {
     }
 
     private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),
                 initialBeforeSend = dataStore._beforeSend,

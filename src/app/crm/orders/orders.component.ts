@@ -79,7 +79,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     stages = [];
     selectedOrderKeys = [];
     rowsViewHeight: number;
-
+    private exportCallback: Function;
     private _selectedOrders: any;
     get selectedOrders() {
         return this._selectedOrders || [];
@@ -326,13 +326,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     selectedOrderType = OrderType.Order;
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
-    ordersDataSource = {
+    ordersDataSource: any = {
         uri: this.ordersDataSourceURI,
         requireTotalCount: true,
         select: Object.keys(this.orderFields),
         store: {
-            key: this.orderFields.Id,
             type: 'odata',
+            key: this.orderFields.Id,
             url: this.getODataUrl(this.ordersDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
@@ -666,23 +666,24 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                     icon: 'pdf',
                                 },
                                 {
-                                    action: this.exportToXLS.bind(this),
+                                    action: this.exportData.bind(this, this.exportToXLS.bind(this)),
                                     text: this.l('Export to Excel'),
                                     icon: 'xls',
                                 },
                                 {
-                                    action: this.exportToCSV.bind(this),
+                                    action: this.exportData.bind(this, this.exportToCSV.bind(this)),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet'
                                 },
                                 {
-                                    action: this.exportToGoogleSheet.bind(this),
+                                    action: this.exportData.bind(this, this.exportToGoogleSheet.bind(this)),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet'
                                 },
                                 {
                                     type: 'downloadOptions',
-                                    visible: this.ordersDataLayoutType === DataLayoutType.DataGrid
+                                    visible: this.showOrdersPipeline ||
+                                        (this.ordersDataLayoutType === DataLayoutType.DataGrid)
                                 }
                             ]
                         }
@@ -822,7 +823,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 },
                                 {
                                     action: (options) => {
-
                                         if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
                                             this.pivotGridComponent.dataGrid.instance.option(
                                                 'export.fileName',
@@ -865,6 +865,49 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             }
         ];
+    }
+
+    exportPipelineSelectedItemsFilter(dataSource) {
+        let selectedCards = this.pipelineComponent.getSelectedEntities();
+        if (selectedCards.length) {
+            dataSource.filter(selectedCards.map(card => {
+                return ['Id', '=', card.Id];
+            }).reduce((r, a) => r.concat([a, 'or']), []));
+        }
+        return selectedCards.length;
+    }
+
+    exportData(callback, options) {
+        this.startLoading(true);
+        if (this.showOrdersPipeline) {
+            let importOption = 'all',
+                instance = this.dataGrid.instance,
+                dataSource: any = instance && instance.getDataSource(),
+                checkExportOption = (dataSource, ignoreFilter = false) => {
+                    if (options == importOption)
+                        ignoreFilter || this.processFilterInternal();
+                    else if (!this.exportPipelineSelectedItemsFilter(dataSource))
+                        importOption = options;
+                };
+
+            if (dataSource) {
+                checkExportOption(dataSource, true);
+                callback(importOption).then(
+                    () => dataSource.filter(null));
+            } else {
+                instance.option('dataSource',
+                    dataSource = new DataSource(this.dataSource)
+                );
+                checkExportOption(dataSource);
+                this.exportCallback = () => {
+                    this.exportCallback = null;
+                    callback(importOption).then(
+                        () => dataSource.filter(null));
+                };
+            }
+        } else {
+            callback(options);
+        }
     }
 
     toggleColumnChooser() {
@@ -923,14 +966,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContentReady(event) {
-        this.setGridDataLoaded();
-        this.totalCount = this.totalRowCount;
-        if (!this.rowsViewHeight)
-            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
+        if (this.exportCallback)
+            this.exportCallback();
+        else {
+            this.setGridDataLoaded();
+            this.totalCount = this.totalRowCount;
+            if (!this.rowsViewHeight)
+                this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+            event.component.columnOption('command:edit', {
+                visibleIndex: -1,
+                width: 40
+            });
+        }
     }
 
     invalidate() {
