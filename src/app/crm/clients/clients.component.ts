@@ -118,7 +118,7 @@ import { SourceFilterModel } from '../shared/filters/source-filter/source-filter
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
-import { ContactDto } from "@app/crm/clients/contact.dto";
+import { ContactDto } from '@app/crm/clients/contact.dto';
 import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
@@ -587,10 +587,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 },
                 onLoaded: (records) => {
                     let userIds = this.getUserIds(records);
-                    if (this.appService.isCfoLinkOrVerifyEnabled && userIds.length)
-                        this.usersInstancesLoadingSubscription = this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                    this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
+                        this.crmService.getUsersWithInstances(userIds).subscribe(() => {
                             this.changeDetectorRef.markForCheck();
-                        });
+                        }) : of().subscribe();
                 }
             })
         });
@@ -735,7 +735,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 if (odataRequestValues.params && odataRequestValues.params.length) {
                     odataRequestValues.params.forEach((param: Param) => {
                         params[param.name] = param.value;
-                    })
+                    });
                 }
                 return this.mapService.loadSliceMapData(
                     this.getODataUrl(this.groupDataSourceURI),
@@ -743,7 +743,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     mapArea,
                     this.dateField,
                     params
-                )
+                );
             }),
             publishReplay(),
             refCount(),

@@ -19,4 +19,4 @@ export const ClientFields: KeysEnum<ContactDto> = {
     AssignedUserName: 'AssignedUserName',
     BankCode: 'BankCode',
     UserId: 'UserId'
-}
+};
