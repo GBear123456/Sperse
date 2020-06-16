@@ -14,7 +14,7 @@ export interface ToolbarGroupModelItem {
 }
 
 export class ToolbarGroupModel {
-    areItemsDependent? = false;
+    areItemsDependent ? = false;
     location: 'before' | 'center' | 'after';
     locateInMenu?: string;
     itemTemplate?: string;

@@ -29,11 +29,13 @@ export class ToolbarService {
      * @param e
      */
     onItemRendered(e) {
-        const itemGroupItems = e.component.option('items').filter(item => item.location === e.itemData.location);
-        const itemIndexInGroup = itemGroupItems.findIndex(item => item === e.itemData);
         const button = e.itemElement.querySelector('.dx-button');
-        button.setAttribute('group-item-count', itemGroupItems.length);
-        button.setAttribute('group-item-index', itemGroupItems.length - itemIndexInGroup);
-        button.setAttribute('group-item-position', ToolbarService.getGroupItemPosition(itemIndexInGroup, itemGroupItems.length));
+        if (button) {
+            const itemGroupItems = e.component.option('items').filter(item => item.location === e.itemData.location);
+            const itemIndexInGroup = itemGroupItems.findIndex(item => item === e.itemData);
+            button.setAttribute('group-item-count', itemGroupItems.length);
+            button.setAttribute('group-item-index', itemGroupItems.length - itemIndexInGroup);
+            button.setAttribute('group-item-position', ToolbarService.getGroupItemPosition(itemIndexInGroup, itemGroupItems.length));
+        }
     }
 }
