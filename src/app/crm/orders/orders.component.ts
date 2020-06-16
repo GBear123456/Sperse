@@ -60,6 +60,7 @@ import { SubscriptionDto } from '@app/crm/orders/subcription-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { OrderFields } from '@app/crm/orders/order-fields.enum';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
+import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -1200,20 +1201,19 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     deleteOrders() {
-        this.message.confirm(
-            this.l('OrdersDeleteWarningMessage'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.deleteOrdersInternal();
+        ContactsHelper.showConfirmMessage(this.l('OrdersDeleteWarningMessage'), this.l('ForceDelete'), (isConfirmed, forceDelete) => {
+            if (isConfirmed) {
+                this.deleteOrdersInternal(forceDelete);
             }
-        );
+        },
+        this.permission.isGranted(AppPermissions.CRMForceDeleteEntites));
     }
 
-    private deleteOrdersInternal() {
+    private deleteOrdersInternal(forceDelete: boolean) {
         this.startLoading();
-        forkJoin(this.selectedOrderKeys.map(
-            this.orderProxy.delete.bind(this.orderProxy)
-        )).pipe(
+        forkJoin(
+            this.selectedOrderKeys.map((v) => this.orderProxy.delete(v, forceDelete))
+        ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.invalidate();
