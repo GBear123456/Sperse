@@ -613,9 +613,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         instanceData: InstanceModel = null,
         params: Param[] = null
     ): Observable<string> {
-        filters = filters.map((filter: FilterModel) => {
-            return getCheckCustom && getCheckCustom(filter) || filter.getODataFilterObject();
-        });
+        filters = this.odataService.processFilters(filters, getCheckCustom);
         const requestValuesWithSearch$ = this.odataService.getODataRequestValues(filters).pipe(
             map((requestValues: ODataRequestValues) => ({
                 filter: requestValues.filter.concat(this.getSearchFilter()),

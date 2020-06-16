@@ -190,7 +190,7 @@ export class ODataService {
         );
     }
 
-    private processFilters(filters: FilterModel[], getCheckCustom): any[] {
+    processFilters(filters: FilterModel[], getCheckCustom): any[] {
         let processedFilters = [];
         (filters || []).forEach((filter: FilterModel) => {
             const processedFilter = getCheckCustom && getCheckCustom(filter);
