@@ -439,8 +439,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     private afterSave(): void {
+        let contact = this.data.contactInfo;
         this.data.refreshParent && this.data.refreshParent();
-        if (this.status != InvoiceStatus.Draft && this.data.contactInfo.statusId == ContactStatus.Prospective)
+        if (this.status != InvoiceStatus.Draft && (!contact || contact.statusId == ContactStatus.Prospective))
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
 
         if (this.selectedOption.email)
