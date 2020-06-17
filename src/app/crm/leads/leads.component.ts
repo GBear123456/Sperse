@@ -1549,7 +1549,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 } else {
                     this._refresh.next(null);
                 }
-                this.notify.success(this.l('StageSuccessfullyUpdated'));
+                if (!declinedList.length) {
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                }
             });
         }
     }
