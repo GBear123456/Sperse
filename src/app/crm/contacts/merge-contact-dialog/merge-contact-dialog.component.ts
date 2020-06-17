@@ -270,11 +270,13 @@ export class MergeContactDialogComponent {
         if (value.selected) {
             setTimeout(() => {
                 value.selected = false;
+                if (isMultiField && value.hasOwnProperty('id'))
+                    value.isPrimary = false;
                 this.changeDetectorRef.detectChanges();
             });
             if (isMultiField)
                 field.result.values.splice(findIndex(field.result.values,
-                    (item: any) => item.hasOwnProperty('id') && item.id == value.id || item.text == value.text), 1);
+                    (item: any) => item.hasOwnProperty('id') && item.id == value.id || item == value), 1);
             else {
                 let values = field.target.values;
                 if (values[0] == value)
@@ -283,9 +285,18 @@ export class MergeContactDialogComponent {
                 field.result.values = [values[0]];
             }
         } else {
-            if (isMultiField)
+            if (isMultiField) {
+                let index = findIndex(field.result.values, 
+                    (item: any) => item.text == value.text);
+                if (index >= 0)
+                    field.result.values.splice(index, 1).some(item => {
+                        item.selected = false;
+                        if (item.hasOwnProperty('id'))
+                            item.isPrimary = false;
+                    });
+
                 field.result.values.push(value);
-            else {
+            } else {
                 field.result.values.pop().selected = false;
                 field.result.values.push(value);
             }
@@ -296,7 +307,7 @@ export class MergeContactDialogComponent {
     updateResultPrimaryFields(field) {
         if (this.isMultiField(field))
             field.result.values.forEach((item, index) => {
-                item.isPrimary = item.id && !index;
+                item.isPrimary = item.hasOwnProperty('id') && !index;
             });
     }
 
