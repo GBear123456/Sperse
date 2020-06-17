@@ -1188,6 +1188,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     else
                         gridInstance.clearSelection();
                 }
+                if (!declinedList.length) {
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                }
             });
         }
     }
