@@ -12,16 +12,16 @@
                     </div>
                     <div class="result">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
-                         <span>{{getResultFullName()}}</span>
+                         <span [title]="getResultFullName()">{{getResultFullName()}}</span>
                     </div>
                     <div class="target">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
-                        <span>{{mergeInfo?.targetContactInfo?.fullName}}</span>
+                        <span [title]="mergeInfo?.targetContactInfo?.fullName">{{mergeInfo?.targetContactInfo?.fullName}}</span>
                         <p>{{ls.l('MainRecordUpdate')}}</p>
                     </div>
                     <div class="source">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
-                        <span>{{mergeInfo?.contactInfo?.fullName}}</span>
+                        <span [title]="mergeInfo?.contactInfo?.fullName">{{mergeInfo?.contactInfo?.fullName}}</span>
                         <p>{{ls.l('DuplicateRecordDelete')}}</p>
                     </div>
                 </div>

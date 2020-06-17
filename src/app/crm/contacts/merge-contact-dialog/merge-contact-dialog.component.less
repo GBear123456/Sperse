@@ -54,15 +54,15 @@
                 min-width: 64px;
                 width: 64px;
                 height: 64px;
-                margin-left: 25px;
+                margin-left: 20px;
                 margin-right: 10px;
                 background-color: #F4F4F4;
                 border-radius: 50%;
                 background-size: cover;
 
                 &:before {
-                    top: 22px;
-                    right: 42px;
+                    top: 21px;
+                    right: 37px;
                     display: block;
                     width: 29px;
                     content: url(../../../../assets/common/icons/arrows-left.png);
@@ -83,7 +83,12 @@
             }
             .source, .target, .result {
                 display: flex;
-                align-items: center;           
+                align-items: center;
+                padding-right: 12px;
+                span {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }           
             }
             .target, .source {
                 position: relative;
