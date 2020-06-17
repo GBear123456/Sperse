@@ -56,7 +56,6 @@ export class SourceContactListComponent {
                     return {
                         id: item.id,
                         name: person || item.companyName,
-                        displayName: person || item.companyName,
                         suffix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
                         addition: person ?
                             [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :

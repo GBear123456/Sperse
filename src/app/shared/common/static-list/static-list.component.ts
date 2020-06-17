@@ -48,9 +48,9 @@ export class StaticListComponent {
     @Input() convertNameStartCase = true;
     @Input('list')
     set list(value: any[]) {
-        this._list = (this.convertNameStartCase && value ? value.map((item) => {
+        this._list = (value ? value.map((item) => {
             return _.extend(item, {
-                displayName: startCase(item.name.toLowerCase())
+                displayName: this.convertNameStartCase ? startCase(item.name.toLowerCase()) : item.name
             });
         }) : (value || [])).filter((item) => !!item.name);
     }
