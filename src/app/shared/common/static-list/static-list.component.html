@@ -45,7 +45,7 @@
                      (onOptionChanged)="onOptionChanged.emit($event)"
                      (onItemClick)="onItemClick($event)">
                 <div *dxTemplate="let data of 'item'">
-                    <div class="item-row {{data.displayName.replace(whiteSpaceRegExp, '-') | lowercase}}"
+                    <div class="item-row {{data.displayName && data.displayName.replace(whiteSpaceRegExp, '-') | lowercase}}"
                          data-id="{{data.id}}"
                          [attr.index]="data.index > 5 ? 'positive' : data.index < -5 ? 'negative' : data.index">
                         <div [title]="data.displayName + (data.suffix ? ' ' + data.suffix : '') + (data.addition ? ' ' + data.addition : '')" class="item-text">
