@@ -42,6 +42,8 @@ export class MergeContactDialogComponent {
     public readonly CONTACT_EMAILS_FIELD    = 'contactEmails';
     public readonly CONTACT_ADDRESSES_FIELD = 'contactAddresses';
     public readonly CONTACT_STAGE_FIELD     = 'stage';
+
+    isSameContact = this.data.mergeInfo.contactInfo.id == this.data.mergeInfo.targetContactInfo.id;
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
     keepTarget: boolean = this.data.keepTarget !== undefined ? this.data.keepTarget : true;
     fieldsConfig = {
@@ -49,37 +51,45 @@ export class MergeContactDialogComponent {
             hidden: true
         },
         [this.CONTACT_FULL_NAME_FIELD]: {
-            caption: this.ls.l('Contact.FullName')
+            caption: this.ls.l('Contact.FullName'),
+            hidden: this.isSameContact
         },
         companyName: {
             caption: this.ls.l('Company'),
             alt: this.ls.l('Alternative', this.ls.l('Companies')),
+            hidden: this.isSameContact,
             disabled: true
         },
         [this.CONTACT_PHONES_FIELD]: {
             caption: this.ls.l('PhoneNumber'),
             alt: this.ls.l('Alternative', this.ls.l('Phones')),
-            getText: this.getPhoneFieldValue.bind(this)
+            getText: this.getPhoneFieldValue.bind(this),
+            hidden: this.isSameContact
         },
         [this.CONTACT_EMAILS_FIELD]: {
             caption: this.ls.l('EmailAddress'),
             alt: this.ls.l('Alternative', this.ls.l('Emails')),
-            fieldText: 'emailAddress'
+            fieldText: 'emailAddress',
+            hidden: this.isSameContact
         },
         [this.CONTACT_ADDRESSES_FIELD]: {
             caption: this.ls.l('Address'),
             alt: this.ls.l('Alternative', this.ls.l('Address')),
-            getText: this.getAddressFieldValue
+            getText: this.getAddressFieldValue,
+            hidden: this.isSameContact
         },
         [this.CONTACT_DATE_FIELD]: {
-            caption: this.ls.l('Contact.Date')
+            caption: this.ls.l('Contact.Date'),
+            hidden: this.isSameContact
         },
         sourceContactName: {
             caption: this.ls.l('SalesAgent'),
+            hidden: this.isSameContact,
             disabled: true
         },
         orderCount: {
             caption: this.ls.l('Orders'),
+            hidden: this.isSameContact,
             disabled: true
         },
         [this.MERGE_OPTIONS_FIELD]: {
@@ -371,7 +381,7 @@ export class MergeContactDialogComponent {
         return new MergeContactInput({
             contactId: this.mergeInfo.contactInfo.id,
             contactLeadId: this.mergeInfo.contactLeadInfo.id,
-            contactMergeOptions: new ContactMergeOptions({
+            contactMergeOptions: new ContactMergeOptions(this.isSameContact ? undefined : {
                 emailIdsToIgnore: this.getEmailIdsToIgnore(),
                 phoneIdsToIgnore: this.getPhoneIdsToIgnore(),
                 addressIdsToIgnore: this.getAddressIdsToIgnore(),
@@ -384,7 +394,7 @@ export class MergeContactDialogComponent {
                 phoneIdsToRemove: this.getPhoneIdsToRemove(),
                 addressIdsToRemove: this.getAddressIdsToRemove()
             }),
-            primaryContactInfo: new PrimaryContactInfo({
+            primaryContactInfo: new PrimaryContactInfo(this.isSameContact ? undefined : {
                 primaryEmailId: this.getPrimaryEmailId(),
                 primaryPhoneId: this.getPrimaryPhoneId(),
                 primaryAddressId: this.getPrimaryAddressId()
