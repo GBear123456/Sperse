@@ -53,17 +53,17 @@ export class MergeContactDialogComponent {
         },
         companyName: {
             caption: this.ls.l('Company'),
-            alt: this.ls.l('Alternative', this.ls.l('Company')),
+            alt: this.ls.l('Alternative', this.ls.l('Companies')),
             disabled: true
         },
         [this.CONTACT_PHONES_FIELD]: {
             caption: this.ls.l('PhoneNumber'),
-            alt: this.ls.l('Alternative', this.ls.l('Phone')),
+            alt: this.ls.l('Alternative', this.ls.l('Phones')),
             getText: this.getPhoneFieldValue.bind(this)
         },
         [this.CONTACT_EMAILS_FIELD]: {
             caption: this.ls.l('EmailAddress'),
-            alt: this.ls.l('Alternative', this.ls.l('Email')),
+            alt: this.ls.l('Alternative', this.ls.l('Emails')),
             fieldText: 'emailAddress'
         },
         [this.CONTACT_ADDRESSES_FIELD]: {
