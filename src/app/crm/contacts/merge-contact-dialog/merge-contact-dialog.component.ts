@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ElementR
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import findIndex from 'lodash/findIndex';
 import * as moment from 'moment';
 
@@ -23,21 +23,25 @@ import {
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: 'merge-contact-dialog.component.html',
     styleUrls: [ 'merge-contact-dialog.component.less' ],
+    providers: [ PhoneFormatPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MergeContactDialogComponent {
-    private readonly MERGE_OPTIONS_FIELD     = 'mergeOptions';
-    private readonly CONTACT_FULL_NAME_FIELD = 'fullName';
-    private readonly CONTACT_DATE_FIELD      = 'contactDate';
-    private readonly CONTACT_PHONES_FIELD    = 'contactPhones';
-    private readonly CONTACT_EMAILS_FIELD    = 'contactEmails';
-    private readonly CONTACT_ADDRESSES_FIELD = 'contactAddresses';
+    public readonly MERGE_OPTIONS_FIELD     = 'mergeOptions';
+    public readonly CONTACT_FULL_NAME_FIELD = 'fullName';
+    public readonly CONTACT_DATE_FIELD      = 'contactDate';
+    public readonly CONTACT_PHONES_FIELD    = 'contactPhones';
+    public readonly CONTACT_EMAILS_FIELD    = 'contactEmails';
+    public readonly CONTACT_ADDRESSES_FIELD = 'contactAddresses';
+    public readonly CONTACT_STAGE_FIELD     = 'stage';
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
     keepTarget: boolean = this.data.keepTarget !== undefined ? this.data.keepTarget : true;
     fieldsConfig = {
@@ -49,22 +53,22 @@ export class MergeContactDialogComponent {
         },
         companyName: {
             caption: this.ls.l('Company'),
-            alt: this.ls.l('Alt company'),
+            alt: this.ls.l('Alternative Company'),
             disabled: true
         },
         [this.CONTACT_PHONES_FIELD]: {
             caption: this.ls.l('PhoneNumber'),
-            alt: this.ls.l('Alt phone'),
-            fieldText: 'phoneNumber'
+            alt: this.ls.l('Alternative Phone'),
+            getText: this.getPhoneFieldValue.bind(this)
         },
         [this.CONTACT_EMAILS_FIELD]: {
             caption: this.ls.l('EmailAddress'),
-            alt: this.ls.l('Alt email'),
+            alt: this.ls.l('Alternative Email'),
             fieldText: 'emailAddress'
         },
         [this.CONTACT_ADDRESSES_FIELD]: {
             caption: this.ls.l('Address'),
-            alt: this.ls.l('Alt address'),
+            alt: this.ls.l('Alternative Address'),
             getText: this.getAddressFieldValue
         },
         [this.CONTACT_DATE_FIELD]: {
@@ -105,10 +109,10 @@ export class MergeContactDialogComponent {
             disabled: true
         },
         sourceOrganizationUnitName: {
-            caption: this.ls.l('Abp.Organizations.OrganizationUnit'),
+            caption: this.ls.l('Owner'),
             disabled: true
         },
-        stage:  {
+        [this.CONTACT_STAGE_FIELD]:  {
             caption: this.ls.l('Stage'),
             disabled: true
         }
@@ -121,6 +125,7 @@ export class MergeContactDialogComponent {
             targetValues = this.getFieldValues(target, field);
         return sourceValues.length || targetValues.length ?
             Object.assign(this.fieldsConfig[field], {
+                name: field,
                 source: { values: sourceValues },
                 target: { values: targetValues },
                 result: { values: this.getResultFieldValues(field, sourceValues, targetValues) }
@@ -143,6 +148,8 @@ export class MergeContactDialogComponent {
 
     constructor(
         private elementRef: ElementRef,
+        private phonePipe: PhoneFormatPipe,
+        private pipelineService: PipelineService,
         private loadingService: LoadingService,
         private contactProxy: ContactServiceProxy,
         private notifyService: NotifyService,
@@ -152,7 +159,12 @@ export class MergeContactDialogComponent {
         public profileService: ProfileService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {}
+    ) {
+        pipelineService.getPipelineDefinitionObservable(
+            AppConsts.PipelinePurposeIds.lead,
+            data.mergeInfo.contactInfo.groupId
+        ).pipe(first()).subscribe();
+    }
 
     getAddressFieldValue(address) {
         return [
@@ -162,6 +174,10 @@ export class MergeContactDialogComponent {
             address.zip,
             address.countryId
         ].filter(Boolean).join(', ');
+    }
+
+    getPhoneFieldValue(data) {
+        return this.phonePipe.transform(data.phoneNumber);
     }
 
     getFieldValues(contactInfo, field: string) {
@@ -369,6 +385,11 @@ export class MergeContactDialogComponent {
             }),
             mergeLeadMode: this.getMergeLeadMode()
         });
+    }
+
+    getStageColorByName(stageName: string) {
+        let stage = this.pipelineService.getStageByName(AppConsts.PipelinePurposeIds.lead, stageName);
+        return this.pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder);
     }
 
     save() {

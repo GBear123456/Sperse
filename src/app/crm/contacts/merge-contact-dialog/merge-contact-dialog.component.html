@@ -8,7 +8,7 @@
             <div class="table-view">
                 <div class="header">
                     <div class="fields">
-                        <span>{{ls.l('Fields')}}</span>
+                        <span></span>
                     </div>
                     <div class="result">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
@@ -27,17 +27,20 @@
                     <div class="contact-field" *ngIf="!field.hidden">
                         <div class="fields">
                             <p>{{field.caption}}</p>
-                            <p>{{field.alt}}</p>
+                            <p [class]="field.name">{{field.alt}}</p>
                         </div>
                         <ng-container *ngFor="let column of ['result', 'target', 'source']">
                             <div class="{{column}}">
                                 <ng-container *ngFor="let value of field[column].values">
-                                    <p *ngIf="field.disabled">{{value.text}}</p>
+                                    <p *ngIf="field.disabled" [title]="value.text">
+                                        <i *ngIf="field.name == CONTACT_STAGE_FIELD" [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
+                                    </p>
                                     <dx-check-box
+                                        [hint]="value.text"
                                         [text]="value.text"
                                         [(value)]="value.selected"
                                         [visible]="!field.disabled"
-                                        [ngClass]="{ primary: value.isPrimary }"
+                                        [ngClass]="{ primary: value.isPrimary, address: field.name == CONTACT_ADDRESSES_FIELD}"
                                         (click)="onSelectChange(field, value)">
                                     </dx-check-box>
                                 </ng-container>
