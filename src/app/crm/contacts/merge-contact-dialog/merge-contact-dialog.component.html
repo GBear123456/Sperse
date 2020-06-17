@@ -17,10 +17,12 @@
                     <div class="target">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
                         <span>{{mergeInfo?.targetContactInfo?.fullName}}</span>
+                        <p>{{ls.l('MainRecordUpdate')}}</p>
                     </div>
                     <div class="source">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
                         <span>{{mergeInfo?.contactInfo?.fullName}}</span>
+                        <p>{{ls.l('DuplicateRecordDelete')}}</p>
                     </div>
                 </div>
                 <ng-container *ngFor="let field of fields">
@@ -38,9 +40,11 @@
                                     <dx-check-box
                                         [hint]="value.text"
                                         [text]="value.text"
+                                        [class]="field.name"
                                         [(value)]="value.selected"
-                                        [visible]="!field.disabled"
-                                        [ngClass]="{ primary: value.isPrimary, address: field.name == CONTACT_ADDRESSES_FIELD}"
+                                        [disabled]="value.disabled"
+                                        [visible]="!field.disabled && (!value.isHidden || !value.isHidden())"
+                                        [ngClass]="{ primary: value.isPrimary }"
                                         (click)="onSelectChange(field, value)">
                                     </dx-check-box>
                                 </ng-container>

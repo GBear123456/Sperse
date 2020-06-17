@@ -49,33 +49,33 @@ export class MergeContactDialogComponent {
             hidden: true
         },
         [this.CONTACT_FULL_NAME_FIELD]: {
-            caption: this.ls.l('FullNamePlaceholder')
+            caption: this.ls.l('Contact.FullName')
         },
         companyName: {
             caption: this.ls.l('Company'),
-            alt: this.ls.l('Alternative Company'),
+            alt: this.ls.l('Alternative', this.ls.l('Company')),
             disabled: true
         },
         [this.CONTACT_PHONES_FIELD]: {
             caption: this.ls.l('PhoneNumber'),
-            alt: this.ls.l('Alternative Phone'),
+            alt: this.ls.l('Alternative', this.ls.l('Phone')),
             getText: this.getPhoneFieldValue.bind(this)
         },
         [this.CONTACT_EMAILS_FIELD]: {
             caption: this.ls.l('EmailAddress'),
-            alt: this.ls.l('Alternative Email'),
+            alt: this.ls.l('Alternative', this.ls.l('Email')),
             fieldText: 'emailAddress'
         },
         [this.CONTACT_ADDRESSES_FIELD]: {
             caption: this.ls.l('Address'),
-            alt: this.ls.l('Alternative Address'),
+            alt: this.ls.l('Alternative', this.ls.l('Address')),
             getText: this.getAddressFieldValue
         },
         [this.CONTACT_DATE_FIELD]: {
             caption: this.ls.l('Contact.Date')
         },
         sourceContactName: {
-            caption: this.ls.l('Sales agent'),
+            caption: this.ls.l('SalesAgent'),
             disabled: true
         },
         orderCount: {
@@ -84,28 +84,40 @@ export class MergeContactDialogComponent {
         },
         [this.MERGE_OPTIONS_FIELD]: {
             name: this.MERGE_OPTIONS_FIELD,
-            caption: this.ls.l('Leads Merge Options'),
+            caption: this.ls.l('LeadSourceInformation'),
             source: {
                 values: [{
-                    text: this.ls.l('Keep Source'),
+                    text: this.ls.l('TakeLeadInformation'),
                     selected: this.keepSource
                 }]
             },
             target: {
                 values: [{
-                    text: this.ls.l('Keep Target'),
+                    text: this.ls.l('KeepLeadInformation'),
                     selected: this.keepTarget
                 }]
             },
             result: {
                 values: [{
-                    text: this.ls.l('Keep Both'),
-                    selected: this.keepSource && this.keepTarget
+                    text: this.ls.l('KeepBothLeads'),
+                    isHidden: () => !this.keepSource || !this.keepTarget,
+                    selected: true,
+                    disabled: true
+                }, {
+                    text: this.ls.l('KeepMainLead'),
+                    isHidden: () => !this.keepTarget || this.keepSource,
+                    selected: true,
+                    disabled: true
+                }, {
+                    text: this.ls.l('TakeDuplicateLead'),
+                    isHidden: () => !this.keepSource || this.keepTarget,
+                    selected: true,
+                    disabled: true
                 }]
             }
         },
         leadDate: {
-            caption: this.ls.l('Date'),
+            caption: this.ls.l('LeadRequestDate'),
             disabled: true
         },
         sourceOrganizationUnitName: {
@@ -232,16 +244,10 @@ export class MergeContactDialogComponent {
 
     onMergeOptionChange(field: any, value: any) {
         setTimeout(() => {
-            if (field.result.values[0] == value) {
-                field.target.values[0].selected = true;
-                field.source.values[0].selected = value.selected;
-            } else {
-                field.result.values[0].selected =
-                    field.source.values[0].selected &&
-                    field.target.values[0].selected;
-                if (!field.source.values[0].selected)
-                    field.target.values[0].selected = true;
-            }
+            this.keepSource = field.source.values[0].selected;
+            this.keepTarget = field.target.values[0].selected;
+            if (!this.keepSource)
+                this.keepTarget = field.target.values[0].selected = true;
             this.changeDetectorRef.detectChanges();
         });
     }

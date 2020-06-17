@@ -74,19 +74,25 @@
                 .photo-area:before {
                     display: none;
                 }
-                &:after {                    
-                    content: url(../../../../assets/common/icons/check-green-filled.svg);
-                }
             }                  
-            .target:after {
+            .target:after {                    
+                content: url(../../../../assets/common/icons/check-green-filled.svg);
+            }
+            .source:after {
                 content: url(../../../../assets/common/icons/remove-red-filled.svg);
             }
             .source, .target, .result {
                 display: flex;
                 align-items: center;           
             }
-            .target, .result {
+            .target, .source {
                 position: relative;
+                p {
+                    position: absolute;
+                    font-size: 10px;
+                    bottom: -10px;
+                    left: 12px;
+                }
                 &:after {
                     position: absolute;
                     top: 5px;
@@ -143,6 +149,32 @@
         }
         ::ng-deep dx-check-box {
             margin: 10px 15px;
+            &.dx-state-disabled {
+                .dx-checkbox-icon, 
+                .dx-checkbox-text {
+                    opacity: 1;
+                }
+            }
+            &.primary {
+                .dx-checkbox-text {
+                    font-weight: 500;
+                }
+            }
+            &.contactAddresses, &.mergeOptions {
+                .dx-checkbox-text {
+                    display: block;
+                    float: right;
+                    white-space: break-spaces;
+                }
+            }
+            &.contactAddresses {                
+                min-height: 60px;                
+            }
+            &.dx-checkbox-checked {
+                .dx-checkbox-text {
+                    color: #59626b;
+                }
+            }
             .dx-checkbox-container {
                 width: 100%;
             }
@@ -151,24 +183,6 @@
             }
             .dx-checkbox-text {
                 color: #8795a2;
-            }
-            &.primary {
-                .dx-checkbox-text {
-                    font-weight: 500;
-                }
-            }
-            &.address {                
-                min-height: 60px;
-                .dx-checkbox-text {
-                    display: block;
-                    float: right;
-                    white-space: break-spaces;
-                }
-            }
-            &.dx-checkbox-checked {
-                .dx-checkbox-text {
-                    color: #59626b;
-                }
             }
         }
     }
