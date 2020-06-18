@@ -33,7 +33,7 @@
                         </div>
                         <ng-container *ngFor="let column of ['result', 'target', 'source']">
                             <div class="{{column}}">
-                                <ng-container *ngFor="let value of field[column].values">
+                                <div *ngFor="let value of field[column].values" class="field-wrapper">
                                     <p *ngIf="field.disabled" [title]="value.text">
                                         <i *ngIf="field.name == CONTACT_STAGE_FIELD" [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
                                     </p>
@@ -47,7 +47,8 @@
                                         [ngClass]="{ primary: value.isPrimary }"
                                         (click)="onSelectChange(field, value)">
                                     </dx-check-box>
-                                </ng-container>
+                                    <span *ngIf="column == 'result' && value.id && !value.isPrimary" [title]="ls.l('SetAsPrimary')" class="set-primary" (click)="setAsPrimary(field, value)"></span>        
+                                </div>
                             </div>
                         </ng-container>
                     </div>

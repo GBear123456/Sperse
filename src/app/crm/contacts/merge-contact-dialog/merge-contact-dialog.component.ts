@@ -286,7 +286,7 @@ export class MergeContactDialogComponent {
             }
         } else {
             if (isMultiField) {
-                let index = findIndex(field.result.values, 
+                let index = findIndex(field.result.values,
                     (item: any) => item.text == value.text);
                 if (index >= 0)
                     field.result.values.splice(index, 1).some(item => {
@@ -295,7 +295,10 @@ export class MergeContactDialogComponent {
                             item.isPrimary = false;
                     });
 
-                field.result.values.push(value);
+                if (field.target.values[0] == value || field.source.values[0] == value)
+                    field.result.values.unshift(value);
+                else
+                    field.result.values.push(value);
             } else {
                 field.result.values.pop().selected = false;
                 field.result.values.push(value);
@@ -417,6 +420,14 @@ export class MergeContactDialogComponent {
     getStageColorByName(stageName: string) {
         let stage = this.pipelineService.getStageByName(AppConsts.PipelinePurposeIds.lead, stageName);
         return this.pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder);
+    }
+
+    setAsPrimary(field, value) {
+        field.result.values[0].isPrimary = false;
+        field.result.values.splice(findIndex(
+            field.result.values, (item: any) => item == value), 1);
+        field.result.values.unshift(value);
+        value.isPrimary = true;
     }
 
     save() {

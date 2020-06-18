@@ -131,6 +131,24 @@
         .result {
             width: 29%;
             border-right: 1px solid #e5e9ec;
+            .field-wrapper {
+                position: relative;
+                .set-primary {
+                    width: 16px;
+                    height: 16px;
+                    right: 8px;
+                    top: 0px;
+                    display: none;
+                    cursor: pointer;
+                    position: absolute;
+                    background: url(../../../../assets/common/icons/check-green.svg) no-repeat center;
+                }
+                &:hover {
+                    .set-primary {
+                        display: inline-block;
+                    }
+                }
+            }
         }
         .target {
             width: 29%;
@@ -140,7 +158,7 @@
             width: 29%; 
         }
         .source, .target, .result {
-            & > p {
+            .field-wrapper > p {
                 margin-top: 10px;
                 padding-left: 20px;
                 i {
