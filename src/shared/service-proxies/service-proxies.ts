@@ -44385,7 +44385,12 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     contactDate!: moment.Moment | undefined;
     groupId!: string | undefined;
     typeId!: string | undefined;
+    affiliateCode!: string | undefined;
+    xref!: string | undefined;
     userId!: number | undefined;
+    doB!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    gender!: Gender | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
     contactAddresses!: AddressInfo[] | undefined;
@@ -44412,7 +44417,12 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.groupId = data["groupId"];
             this.typeId = data["typeId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.xref = data["xref"];
             this.userId = data["userId"];
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.gender = data["gender"];
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
                 this.contactEmails = [];
                 for (let item of data["contactEmails"])
@@ -44451,7 +44461,12 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["groupId"] = this.groupId;
         data["typeId"] = this.typeId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["xref"] = this.xref;
         data["userId"] = this.userId;
+        data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["gender"] = this.gender;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
             data["contactEmails"] = [];
             for (let item of this.contactEmails)
@@ -44483,7 +44498,12 @@ export interface IContactInfoForMerge {
     contactDate: moment.Moment | undefined;
     groupId: string | undefined;
     typeId: string | undefined;
+    affiliateCode: string | undefined;
+    xref: string | undefined;
     userId: number | undefined;
+    doB: moment.Moment | undefined;
+    ssn: string | undefined;
+    gender: Gender | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;
     contactAddresses: AddressInfo[] | undefined;
@@ -44497,6 +44517,7 @@ export interface IContactInfoForMerge {
 
 export class LeadInfoForMerge implements ILeadInfoForMerge {
     id!: number | undefined;
+    typeId!: number | undefined;
     contactGroupId!: string | undefined;
     contactId!: number | undefined;
     stage!: string | undefined;
@@ -44506,6 +44527,7 @@ export class LeadInfoForMerge implements ILeadInfoForMerge {
     sourceOrganizationUnitName!: string | undefined;
     leadDate!: moment.Moment | undefined;
     dateCompleted!: moment.Moment | undefined;
+    leadCancellationReasonId!: string | undefined;
 
     constructor(data?: ILeadInfoForMerge) {
         if (data) {
@@ -44519,6 +44541,7 @@ export class LeadInfoForMerge implements ILeadInfoForMerge {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.typeId = data["typeId"];
             this.contactGroupId = data["contactGroupId"];
             this.contactId = data["contactId"];
             this.stage = data["stage"];
@@ -44528,6 +44551,7 @@ export class LeadInfoForMerge implements ILeadInfoForMerge {
             this.sourceOrganizationUnitName = data["sourceOrganizationUnitName"];
             this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
             this.dateCompleted = data["dateCompleted"] ? moment(data["dateCompleted"].toString()) : <any>undefined;
+            this.leadCancellationReasonId = data["leadCancellationReasonId"];
         }
     }
 
@@ -44541,6 +44565,7 @@ export class LeadInfoForMerge implements ILeadInfoForMerge {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["typeId"] = this.typeId;
         data["contactGroupId"] = this.contactGroupId;
         data["contactId"] = this.contactId;
         data["stage"] = this.stage;
@@ -44550,12 +44575,14 @@ export class LeadInfoForMerge implements ILeadInfoForMerge {
         data["sourceOrganizationUnitName"] = this.sourceOrganizationUnitName;
         data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
         data["dateCompleted"] = this.dateCompleted ? this.dateCompleted.toISOString() : <any>undefined;
+        data["leadCancellationReasonId"] = this.leadCancellationReasonId;
         return data; 
     }
 }
 
 export interface ILeadInfoForMerge {
     id: number | undefined;
+    typeId: number | undefined;
     contactGroupId: string | undefined;
     contactId: number | undefined;
     stage: string | undefined;
@@ -44565,6 +44592,7 @@ export interface ILeadInfoForMerge {
     sourceOrganizationUnitName: string | undefined;
     leadDate: moment.Moment | undefined;
     dateCompleted: moment.Moment | undefined;
+    leadCancellationReasonId: string | undefined;
 }
 
 export class GetContactInfoForMergeOutput implements IGetContactInfoForMergeOutput {
