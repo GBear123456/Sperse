@@ -42,7 +42,7 @@
                     <div *ngIf="!field.hidden" [class]="'contact-field ' + field.name">
                         <div class="fields">
                             <p>{{field.caption}}</p>
-                            <p *ngIf="field.target.values.length > 1 || field.source.values.length > 1" [class]="field.name">{{field.alt}}</p>
+                            <p *ngIf="field.result.values.length > 1" [class]="field.name">{{field.alt}}</p>
                         </div>
                         <ng-container *ngFor="let column of [COLUMN_RESULT_FIELD, COLUMN_TARGET_FIELD, COLUMN_SOURCE_FIELD]">
                             <div class="{{column}}">
