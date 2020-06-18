@@ -12,17 +12,29 @@
                     </div>
                     <div class="result">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
-                        <span [title]="getResultFullName()">{{getResultFullName()}}</span>
+                        <div class="name-wrapper">
+                            <span [title]="getResultFullName()" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{getResultFullName()}}</span>
+                            <i [title]="mergeInfo?.targetContactInfo?.companyName">{{mergeInfo?.targetContactInfo?.companyName}}</i>
+                            <i [title]="mergeInfo?.targetContactInfo?.jobTitle">{{mergeInfo?.targetContactInfo?.jobTitle}}</i>
+                        </div>
                         <p>{{ls.l('FinalRecordView')}}</p>
                     </div>
                     <div class="target">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
-                        <span [title]="mergeInfo?.targetContactInfo?.fullName">{{mergeInfo?.targetContactInfo?.fullName}}</span>
+                        <div class="name-wrapper">
+                            <span [title]="mergeInfo?.targetContactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{mergeInfo?.targetContactInfo?.fullName}}</span>
+                            <i [title]="mergeInfo?.targetContactInfo?.companyName">{{mergeInfo?.targetContactInfo?.companyName}}</i>
+                            <i [title]="mergeInfo?.targetContactInfo?.jobTitle">{{mergeInfo?.targetContactInfo?.jobTitle}}</i>
+                        </div>
                         <p>{{ls.l('MainRecordUpdate')}}</p>
                     </div>
                     <div class="source">
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
-                        <span [title]="mergeInfo?.contactInfo?.fullName">{{mergeInfo?.contactInfo?.fullName}}</span>
+                        <div class="name-wrapper">
+                            <span [title]="mergeInfo?.contactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.contactInfo?.companyName}">{{mergeInfo?.contactInfo?.fullName}}</span>
+                            <i [title]="mergeInfo?.contactInfo?.companyName">{{mergeInfo?.contactInfo?.companyName}}</i>
+                            <i [title]="mergeInfo?.contactInfo?.jobTitle">{{mergeInfo?.contactInfo?.jobTitle}}</i>
+                        </div>
                         <p>{{ls.l('DuplicateRecordDelete')}}</p>
                     </div>
                 </div>

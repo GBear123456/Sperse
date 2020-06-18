@@ -87,15 +87,29 @@
                 align-items: center;
                 padding-right: 12px;
                 padding-top: 12px;
+                .name-wrapper {
+                    width: 140px;
+                }
                 span {
+                    display: block;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    &.nowrap {
+                        white-space: nowrap;
+                    }
                 }
                 p {
                     position: absolute;
                     font-size: 10px;
                     top: 3px;
                     left: 20px;
+                }
+                i {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    display: block;
+                    text-overflow: ellipsis;
+                    font-size: 10px;
                 }
             }
             .target, .source {
@@ -116,6 +130,11 @@
             &.mergeOptions {
                 border-top: 1px solid #e5e9ec;
             }
+            &.sourceContactName {
+                .fields > p {
+                    width: 105px;
+                }
+            }
         }
         .fields {
             width: 13%;            
@@ -132,6 +151,11 @@
                 margin-left: 10px;
                 display: inline-block;
             }           
+        }
+        .contact-field.stage {
+            .field-wrapper p {
+                padding-left: 25px;
+            }
         }
         .result {
             width: 29%;
@@ -165,7 +189,7 @@
         .source, .target, .result {
             .field-wrapper > p {
                 margin-top: 10px;
-                padding-left: 20px;
+                padding-left: 40px;
                 i {
                     width: 10px;
                     height: 10px;

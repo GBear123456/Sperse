@@ -55,9 +55,6 @@ export class MergeContactDialogComponent {
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
     keepTarget: boolean = this.data.keepTarget !== undefined ? this.data.keepTarget : true;
     fieldsConfig = {
-        id: {
-            hidden: true
-        },
         [this.CONTACT_FULL_NAME_FIELD]: {
             caption: this.ls.l('Contact.FullName'),
             hidden: this.isSameContact
@@ -65,7 +62,7 @@ export class MergeContactDialogComponent {
         companyName: {
             caption: this.ls.l('Company'),
             alt: this.ls.l('Alternative', this.ls.l('Companies')),
-            hidden: this.isSameContact,
+            hidden: true,
             disabled: true
         },
         [this.CONTACT_PHONES_FIELD]: {
@@ -231,7 +228,7 @@ export class MergeContactDialogComponent {
                 });
             else {
                 let value = '';
-                if (typeof(data) == 'string')
+                if (['string', 'number'].indexOf(typeof(data)) >= 0)
                     value = data;
                 else if (data instanceof moment)
                     value = data.format(AppConsts.formatting.fieldDateTime);
