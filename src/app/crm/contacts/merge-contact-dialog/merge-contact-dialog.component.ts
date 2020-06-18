@@ -35,6 +35,10 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MergeContactDialogComponent {
+    public readonly COLUMN_SOURCE_FIELD     = 'source';
+    public readonly COLUMN_TARGET_FIELD     = 'target';
+    public readonly COLUMN_RESULT_FIELD     = 'result';
+
     public readonly MERGE_OPTIONS_FIELD     = 'mergeOptions';
     public readonly CONTACT_FULL_NAME_FIELD = 'fullName';
     public readonly CONTACT_DATE_FIELD      = 'contactDate';
@@ -42,6 +46,8 @@ export class MergeContactDialogComponent {
     public readonly CONTACT_EMAILS_FIELD    = 'contactEmails';
     public readonly CONTACT_ADDRESSES_FIELD = 'contactAddresses';
     public readonly CONTACT_STAGE_FIELD     = 'stage';
+    public readonly CONTACT_OWNER_FIELD     = 'sourceOrganizationUnitName';
+    public readonly CONTACT_LEAD_DATE_FIELD = 'leadDate';
 
     isSameContact = this.data.mergeInfo.contactInfo.id == this.data.mergeInfo.targetContactInfo.id;
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
@@ -111,26 +117,23 @@ export class MergeContactDialogComponent {
                 values: [{
                     text: this.ls.l('KeepBothLeads'),
                     isHidden: () => !this.keepSource || !this.keepTarget,
-                    selected: true,
-                    disabled: true
+                    selected: true
                 }, {
                     text: this.ls.l('KeepMainLead'),
                     isHidden: () => !this.keepTarget || this.keepSource,
-                    selected: true,
-                    disabled: true
+                    selected: true
                 }, {
                     text: this.ls.l('TakeDuplicateLead'),
                     isHidden: () => !this.keepSource || this.keepTarget,
-                    selected: true,
-                    disabled: true
+                    selected: true
                 }]
             }
         },
-        leadDate: {
+        [this.CONTACT_LEAD_DATE_FIELD]: {
             caption: this.ls.l('LeadRequestDate'),
             disabled: true
         },
-        sourceOrganizationUnitName: {
+        [this.CONTACT_OWNER_FIELD]: {
             caption: this.ls.l('Owner'),
             disabled: true
         },
@@ -252,12 +255,40 @@ export class MergeContactDialogComponent {
         });
     }
 
+    setActiveLeadInfo(column) {
+        this.fieldsConfig[this.CONTACT_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.CONTACT_STAGE_FIELD][column].values;
+        this.fieldsConfig[this.CONTACT_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.CONTACT_OWNER_FIELD][column].values;
+        this.fieldsConfig[this.CONTACT_LEAD_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.CONTACT_LEAD_DATE_FIELD][column].values;
+    }
+
     onMergeOptionChange(field: any, value: any) {
         setTimeout(() => {
-            this.keepSource = field.source.values[0].selected;
-            this.keepTarget = field.target.values[0].selected;
-            if (!this.keepSource)
-                this.keepTarget = field.target.values[0].selected = true;
+            if (field.result.values.some((item, index) => {
+                item.selected = true;
+                if (item == value) {
+                    this.keepTarget = !index || index == 2;
+                    this.keepSource = index == 1;
+                    return true;
+                }
+            })) {
+                field.source.values[0].selected = this.keepSource;
+                field.target.values[0].selected = this.keepTarget;
+            } else {
+                this.keepSource = field.source.values[0].selected;
+                this.keepTarget = field.target.values[0].selected;
+                if (this.keepSource) {
+                    if (this.keepTarget)
+                        this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
+                    else
+                        this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
+                } else {
+                    this.keepTarget = field.target.values[0].selected = true;
+                    this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
+                }
+            }
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -342,27 +373,27 @@ export class MergeContactDialogComponent {
     }
 
     getEmailIdsToIgnore() {
-        return this.getFieldIdsToIgnore(this.CONTACT_EMAILS_FIELD, 'source');
+        return this.getFieldIdsToIgnore(this.CONTACT_EMAILS_FIELD, this.COLUMN_SOURCE_FIELD);
     }
 
     getPhoneIdsToIgnore() {
-        return this.getFieldIdsToIgnore(this.CONTACT_PHONES_FIELD, 'source');
+        return this.getFieldIdsToIgnore(this.CONTACT_PHONES_FIELD, this.COLUMN_SOURCE_FIELD);
     }
 
     getAddressIdsToIgnore() {
-        return this.getFieldIdsToIgnore(this.CONTACT_ADDRESSES_FIELD, 'source');
+        return this.getFieldIdsToIgnore(this.CONTACT_ADDRESSES_FIELD, this.COLUMN_SOURCE_FIELD);
     }
 
     getEmailIdsToRemove() {
-        return this.getFieldIdsToIgnore(this.CONTACT_EMAILS_FIELD, 'target');
+        return this.getFieldIdsToIgnore(this.CONTACT_EMAILS_FIELD, this.COLUMN_TARGET_FIELD);
     }
 
     getPhoneIdsToRemove() {
-        return this.getFieldIdsToIgnore(this.CONTACT_PHONES_FIELD, 'target');
+        return this.getFieldIdsToIgnore(this.CONTACT_PHONES_FIELD, this.COLUMN_TARGET_FIELD);
     }
 
     getAddressIdsToRemove() {
-        return this.getFieldIdsToIgnore(this.CONTACT_ADDRESSES_FIELD, 'target');
+        return this.getFieldIdsToIgnore(this.CONTACT_ADDRESSES_FIELD, this.COLUMN_TARGET_FIELD);
     }
 
     getPrimaryFieldId(field) {
@@ -387,8 +418,8 @@ export class MergeContactDialogComponent {
     }
 
     getPreferredProperties() {
-        return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, 'source') ? PreferredProperties._1 : 0)
-            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, 'source') ? PreferredProperties._2 : 0);
+        return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._1 : 0)
+            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._2 : 0);
     }
 
     getMergeContactInput() {
