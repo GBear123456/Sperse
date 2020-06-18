@@ -266,16 +266,21 @@ export class MergeContactDialogComponent {
     }
 
     setActiveLeadInfo(column) {
-        this.fieldsConfig[this.LEAD_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.LEAD_STAGE_FIELD][column].values;
-        this.fieldsConfig[this.LEAD_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.LEAD_OWNER_FIELD][column].values;
-        this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column].values;
-        this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column].values;
-        this.fieldsConfig[this.LEAD_SOURCE_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.LEAD_SOURCE_FIELD][column].values;
+        if (this.fieldsConfig[this.LEAD_STAGE_FIELD][column])
+            this.fieldsConfig[this.LEAD_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
+                this.fieldsConfig[this.LEAD_STAGE_FIELD][column].values;
+        if (this.fieldsConfig[this.LEAD_OWNER_FIELD][column])
+            this.fieldsConfig[this.LEAD_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
+                this.fieldsConfig[this.LEAD_OWNER_FIELD][column].values;
+        if (this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column])
+            this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
+                this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column].values;
+        if (this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column])
+            this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
+                this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column].values;
+        if (this.fieldsConfig[this.LEAD_SOURCE_FIELD][column])
+            this.fieldsConfig[this.LEAD_SOURCE_FIELD][this.COLUMN_RESULT_FIELD].values =
+                this.fieldsConfig[this.LEAD_SOURCE_FIELD][column].values;
     }
 
     onMergeOptionChange(field: any, value: any) {
