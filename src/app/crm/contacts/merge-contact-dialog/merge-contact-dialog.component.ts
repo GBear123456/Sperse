@@ -131,12 +131,12 @@ export class MergeContactDialogComponent {
                 }]
             }
         },
-        [this.LEAD_REQUEST_DATE_FIELD]: {
-            caption: this.ls.l('LeadRequestDate'),
+        [this.LEAD_STAGE_FIELD]:  {
+            caption: this.ls.l('Stage'),
             disabled: true
         },
         [this.LEAD_COMPLETED_DATE_FIELD]: {
-            caption: this.ls.l('Lead Completed Date'),
+            caption: this.ls.l('LeadCompletedDate'),
             disabled: true
         },
         [this.LEAD_OWNER_FIELD]: {
@@ -147,8 +147,8 @@ export class MergeContactDialogComponent {
             caption: this.ls.l('SourceContactName'),
             disabled: true
         },
-        [this.LEAD_STAGE_FIELD]:  {
-            caption: this.ls.l('Stage'),
+        [this.LEAD_REQUEST_DATE_FIELD]: {
+            caption: this.ls.l('Lead') + ' ' + this.ls.l('Date'),
             disabled: true
         }
     };

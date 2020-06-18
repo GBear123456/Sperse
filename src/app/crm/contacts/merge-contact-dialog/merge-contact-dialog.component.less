@@ -36,9 +36,9 @@
 
     .table-view {
         width: 100%;
-        padding: 20px;
+        padding: 10px 20px;
         .header {
-            height: 110px;
+            height: 90px;
             font-size: 16px;
             font-weight: 500;
             font-stretch: normal;
@@ -83,24 +83,25 @@
             }
             .source, .target, .result {
                 display: flex;
+                position: relative;
                 align-items: center;
                 padding-right: 12px;
+                padding-top: 12px;
                 span {
                     overflow: hidden;
                     text-overflow: ellipsis;
-                }           
-            }
-            .target, .source {
-                position: relative;
+                }
                 p {
                     position: absolute;
                     font-size: 10px;
-                    bottom: -10px;
-                    left: 33px;
+                    top: 3px;
+                    left: 20px;
                 }
+            }
+            .target, .source {
                 &:after {
                     position: absolute;
-                    top: 5px;
+                    top: 0px;
                     right: 5px;
                     display: block;
                     width: 20px;
@@ -110,14 +111,18 @@
         }
         .contact-field {
             display: flex;
-            min-height: 60px;
+            min-height: 40px;
             justify-content: space-between;
+            &.mergeOptions {
+                border-top: 1px solid #e5e9ec;
+            }
         }
         .fields {
             width: 13%;            
             border-right: 1px solid #e5e9ec;
             p {
                 margin-top: 10px;
+                margin-bottom: 0px;
                 &.contactAddresses {
                     margin-top: 50px;    
                 }
