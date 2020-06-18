@@ -80,7 +80,7 @@ export class MergeContactDialogComponent {
         },
         [this.CONTACT_ADDRESSES_FIELD]: {
             caption: this.ls.l('Address'),
-            alt: this.ls.l('Alternative', this.ls.l('Address')),
+            alt: this.ls.l('Alternative', this.ls.l('Addresses')),
             getText: this.getAddressFieldValue,
             hidden: this.isSameContact
         },
