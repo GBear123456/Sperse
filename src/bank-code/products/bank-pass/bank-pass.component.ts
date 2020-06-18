@@ -344,18 +344,22 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     deleteContact(contact: ContactDto) {
-        ContactsHelper.showConfirmMessage(this.ls.l('BankCodeLeadDeleteWarningMessage'), this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
-            if (isConfirmed) {
-                this.contactServiceProxy.deleteContact(contact.Id, forceDelete).subscribe(() => {
-                    this.refresh();
-                    if (this.dataGrid && this.dataGrid.instance) {
-                        this.dataGrid.instance.deselectAll();
-                    }
-                    this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
-                });
-            }
-        },
-        this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites));
+        ContactsHelper.showConfirmMessage(
+            this.ls.l('BankCodeLeadDeleteWarningMessage'),
+            this.ls.l('ForceDelete'),
+            (isConfirmed: boolean, forceDelete: boolean) => {
+                if (isConfirmed) {
+                    this.contactServiceProxy.deleteContact(contact.Id, forceDelete).subscribe(() => {
+                        this.refresh();
+                        if (this.dataGrid && this.dataGrid.instance) {
+                            this.dataGrid.instance.deselectAll();
+                        }
+                        this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                    });
+                }
+            },
+            this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites)
+        );
     }
 
     getContactPhotoUrl(contact: ContactDto) {
