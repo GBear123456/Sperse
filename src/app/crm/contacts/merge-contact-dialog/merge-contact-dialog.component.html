@@ -35,7 +35,7 @@
                             <div class="{{column}}">
                                 <div *ngFor="let value of field[column].values" class="field-wrapper">
                                     <p *ngIf="field.disabled" [title]="value.text">
-                                        <i *ngIf="field.name == CONTACT_STAGE_FIELD" [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
+                                        <i *ngIf="field.name == LEAD_STAGE_FIELD" [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
                                     </p>
                                     <dx-check-box
                                         [hint]="value.text"

@@ -35,19 +35,21 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MergeContactDialogComponent {
-    public readonly COLUMN_SOURCE_FIELD     = 'source';
-    public readonly COLUMN_TARGET_FIELD     = 'target';
-    public readonly COLUMN_RESULT_FIELD     = 'result';
+    public readonly COLUMN_SOURCE_FIELD       = 'source';
+    public readonly COLUMN_TARGET_FIELD       = 'target';
+    public readonly COLUMN_RESULT_FIELD       = 'result';
 
-    public readonly MERGE_OPTIONS_FIELD     = 'mergeOptions';
-    public readonly CONTACT_FULL_NAME_FIELD = 'fullName';
-    public readonly CONTACT_DATE_FIELD      = 'contactDate';
-    public readonly CONTACT_PHONES_FIELD    = 'contactPhones';
-    public readonly CONTACT_EMAILS_FIELD    = 'contactEmails';
-    public readonly CONTACT_ADDRESSES_FIELD = 'contactAddresses';
-    public readonly CONTACT_STAGE_FIELD     = 'stage';
-    public readonly CONTACT_OWNER_FIELD     = 'sourceOrganizationUnitName';
-    public readonly CONTACT_LEAD_DATE_FIELD = 'leadDate';
+    public readonly MERGE_OPTIONS_FIELD       = 'mergeOptions';
+    public readonly CONTACT_FULL_NAME_FIELD   = 'fullName';
+    public readonly CONTACT_DATE_FIELD        = 'contactDate';
+    public readonly CONTACT_PHONES_FIELD      = 'contactPhones';
+    public readonly CONTACT_EMAILS_FIELD      = 'contactEmails';
+    public readonly CONTACT_ADDRESSES_FIELD   = 'contactAddresses';
+    public readonly LEAD_STAGE_FIELD          = 'stage';
+    public readonly LEAD_OWNER_FIELD          = 'sourceOrganizationUnitName';
+    public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
+    public readonly LEAD_COMPLETED_DATE_FIELD = 'dateCompleted';
+    public readonly LEAD_SOURCE_FIELD         = 'sourceContactName';
 
     isSameContact = this.data.mergeInfo.contactInfo.id == this.data.mergeInfo.targetContactInfo.id;
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
@@ -88,8 +90,8 @@ export class MergeContactDialogComponent {
             caption: this.ls.l('Contact.Date'),
             hidden: this.isSameContact
         },
-        sourceContactName: {
-            caption: this.ls.l('SalesAgent'),
+        assignedToUserName: {
+            caption: this.ls.l('Contact.AssignedUserName'),
             hidden: this.isSameContact,
             disabled: true
         },
@@ -129,15 +131,23 @@ export class MergeContactDialogComponent {
                 }]
             }
         },
-        [this.CONTACT_LEAD_DATE_FIELD]: {
+        [this.LEAD_REQUEST_DATE_FIELD]: {
             caption: this.ls.l('LeadRequestDate'),
             disabled: true
         },
-        [this.CONTACT_OWNER_FIELD]: {
+        [this.LEAD_COMPLETED_DATE_FIELD]: {
+            caption: this.ls.l('Lead Completed Date'),
+            disabled: true
+        },
+        [this.LEAD_OWNER_FIELD]: {
             caption: this.ls.l('Owner'),
             disabled: true
         },
-        [this.CONTACT_STAGE_FIELD]:  {
+        [this.LEAD_SOURCE_FIELD]: {
+            caption: this.ls.l('SourceContactName'),
+            disabled: true
+        },
+        [this.LEAD_STAGE_FIELD]:  {
             caption: this.ls.l('Stage'),
             disabled: true
         }
@@ -256,12 +266,16 @@ export class MergeContactDialogComponent {
     }
 
     setActiveLeadInfo(column) {
-        this.fieldsConfig[this.CONTACT_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.CONTACT_STAGE_FIELD][column].values;
-        this.fieldsConfig[this.CONTACT_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.CONTACT_OWNER_FIELD][column].values;
-        this.fieldsConfig[this.CONTACT_LEAD_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
-            this.fieldsConfig[this.CONTACT_LEAD_DATE_FIELD][column].values;
+        this.fieldsConfig[this.LEAD_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.LEAD_STAGE_FIELD][column].values;
+        this.fieldsConfig[this.LEAD_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.LEAD_OWNER_FIELD][column].values;
+        this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column].values;
+        this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column].values;
+        this.fieldsConfig[this.LEAD_SOURCE_FIELD][this.COLUMN_RESULT_FIELD].values =
+            this.fieldsConfig[this.LEAD_SOURCE_FIELD][column].values;
     }
 
     onMergeOptionChange(field: any, value: any) {
@@ -274,8 +288,10 @@ export class MergeContactDialogComponent {
                     return true;
                 }
             })) {
-                field.source.values[0].selected = this.keepSource;
-                field.target.values[0].selected = this.keepTarget;
+                if (field.source.values[0].selected = this.keepSource)
+                    this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
+                if (field.target.values[0].selected = this.keepTarget)
+                    this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
             } else {
                 this.keepSource = field.source.values[0].selected;
                 this.keepTarget = field.target.values[0].selected;
