@@ -380,10 +380,9 @@ export class MergeContactDialogComponent {
     }
 
     getMergeLeadMode() {
-        let mergeOption = this.fieldsConfig[this.MERGE_OPTIONS_FIELD];
-        if (mergeOption.result.values[0].selected)
+        if (this.keepTarget && this.keepSource)
             return MergeLeadMode.KeepBoth;
-        else if (mergeOption.source.values[0].selected)
+        else if (this.keepSource)
             return MergeLeadMode.KeepSource;
         else
             return MergeLeadMode.KeepTarget;
