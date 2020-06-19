@@ -416,10 +416,10 @@ export class ContactsService {
         }));
     }
 
-    deleteContact(statusId, customerName, contactGroup, contactId, callback?) {
+    deleteContact(statusId, customerName, contactGroup, contactId, callback?, isLead = false ) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
-        if (statusId == ContactStatus.Prospective) {
+        if (isLead) {
             ContactsHelper.showConfirmMessage(text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
                 if (isConfirmed) {
                     this.leadService.deleteLead(contactId, forceDelete).subscribe(() => {
