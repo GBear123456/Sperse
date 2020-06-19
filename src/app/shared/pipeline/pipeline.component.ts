@@ -562,7 +562,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.allStagesEntitiesTotal = 0;
                         const columnWidthsCache = this.cacheService.get(this.getColumnWidthsCacheKey());
                         stages && this.stages.forEach((stage) => {
-                            stage.total = stages[stage.id] || 0;
+                            stage.total = stages[stage.id] ? stages[stage.id].count || stages[stage.id] : 0;
                             stage.isFull = stage.total <= stage.entities.length;
                             stage.width = columnWidthsCache && columnWidthsCache[stage.id]
                                 ? columnWidthsCache[stage.id]
