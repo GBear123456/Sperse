@@ -473,7 +473,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.getODataUrl(
                     this._dataSource.uri,
                     this.queryWithSearch.filter(item => {
-                        return typeof(item) == 'string' && item.includes(stage.id.toString());
+                        return !item.hasOwnProperty('or') || item.or.every(filter =>
+                             typeof(filter) != 'string' || !filter.includes(stage.id.toString())
+                        );
                     }).concat({and: [extend(filter, this._dataSource.customFilter)]}),
                     null,
                     this.params
