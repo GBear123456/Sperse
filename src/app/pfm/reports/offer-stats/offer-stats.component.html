@@ -4,6 +4,7 @@
               [pager]="defaultGridPagerConfig"
               [loadPanel]="{ enabled: false }"
               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+              (onOptionChanged)="onGridOptionChanged($event)"
               (onContentReady)="contentReady()">
     <dxi-column [dataField]="offerStatsFields.LogoUrl"
                 alignment="center"

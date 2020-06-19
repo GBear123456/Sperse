@@ -13,6 +13,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { OfferStatsDto } from '@app/pfm/reports/offer-stats/offer-stats-dto.type';
 import { OfferStatsFields } from '@app/pfm/reports/offer-stats/offer-stats-fields.enum';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     selector: 'pfm-offer-stats',
@@ -32,9 +33,9 @@ export class OfferStatsComponent extends AppComponentBase {
             beforeSend: (request) => {
                 this.isDataLoaded = false;
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$select = DataGridService.getSelectFields(this.dataGrid);
             }
         }),
-        select: Object.keys(this.offerStatsFields),
         sort: [
             { selector: 'Created', desc: true }
         ]

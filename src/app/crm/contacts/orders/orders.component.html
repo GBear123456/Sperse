@@ -10,6 +10,7 @@
                           [hoverStateEnabled]="true"
                           [pager]="defaultGridPagerConfig"
                           (onContentReady)="onContentReady($event)"
+                          (onOptionChanged)="onGridOptionChanged($event)"
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
 

@@ -13,4 +13,4 @@ export const OfferFields: KeysEnum<OfferDto> = {
     OverallRating: 'OverallRating',
     IsPublished: 'IsPublished',
     Created: 'Created'
-}
+};

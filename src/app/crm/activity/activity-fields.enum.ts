@@ -13,4 +13,4 @@ export const ActivityFields: KeysEnum<ActivityDto> = {
     LeadId: 'LeadId',
     StageId: 'StageId',
     ContactId: 'ContactId'
-}
+};

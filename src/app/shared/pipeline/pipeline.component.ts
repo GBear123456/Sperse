@@ -17,6 +17,7 @@ import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
+import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
 import { CacheService } from 'ng2-cache-service';
 
@@ -584,13 +585,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (context)
                 request.headers['context'] = context;
             request.params.contactGroupId = this.contactGroupId;
+            request.params.dupa = 'true';
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         };
     }
 
     private getDataSourceForStage(stage) {
-        let config = clone(this._dataSource);
+        let config = cloneDeep(this._dataSource);
         config.store.beforeSend = this.getBeforeSendEvent(stage.id);
 
         return new DataSource(extend(config, {

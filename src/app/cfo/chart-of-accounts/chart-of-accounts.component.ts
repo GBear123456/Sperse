@@ -57,7 +57,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         //    type: 'odata',
         //    url: this.getODataUrl(this.dataSourceURI),
         //    version: AppConsts.ODataVersion,
-        //    beforeSend: function (request) {
+        //    beforeSend: (request) => {
         //      request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
         //    }
         //  }
