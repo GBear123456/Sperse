@@ -132,10 +132,6 @@ export class MergeContactDialogComponent {
             caption: this.ls.l('Stage'),
             disabled: true
         },
-        [this.LEAD_COMPLETED_DATE_FIELD]: {
-            caption: this.ls.l('LeadCompletedDate'),
-            disabled: true
-        },
         [this.LEAD_OWNER_FIELD]: {
             caption: this.ls.l('Owner'),
             disabled: true
@@ -146,6 +142,10 @@ export class MergeContactDialogComponent {
         },
         [this.LEAD_REQUEST_DATE_FIELD]: {
             caption: this.ls.l('Lead') + ' ' + this.ls.l('Date'),
+            disabled: true
+        },
+        [this.LEAD_COMPLETED_DATE_FIELD]: {
+            caption: this.ls.l('Completed Date'),
             disabled: true
         }
     };
@@ -266,15 +266,18 @@ export class MergeContactDialogComponent {
         if (this.fieldsConfig[this.LEAD_STAGE_FIELD][column])
             this.fieldsConfig[this.LEAD_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
                 this.fieldsConfig[this.LEAD_STAGE_FIELD][column].values;
-        if (this.fieldsConfig[this.LEAD_OWNER_FIELD][column])
-            this.fieldsConfig[this.LEAD_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
-                this.fieldsConfig[this.LEAD_OWNER_FIELD][column].values;
         if (this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column])
             this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
                 this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column].values;
         if (this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column])
             this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
                 this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column].values;
+    }
+
+    setImportantLeadInfo(column) {
+        if (this.fieldsConfig[this.LEAD_OWNER_FIELD][column])
+            this.fieldsConfig[this.LEAD_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
+                this.fieldsConfig[this.LEAD_OWNER_FIELD][column].values;
         if (this.fieldsConfig[this.LEAD_SOURCE_FIELD][column])
             this.fieldsConfig[this.LEAD_SOURCE_FIELD][this.COLUMN_RESULT_FIELD].values =
                 this.fieldsConfig[this.LEAD_SOURCE_FIELD][column].values;
@@ -291,9 +294,12 @@ export class MergeContactDialogComponent {
                 }
             })) {
                 if (field.source.values[0].selected = this.keepSource)
-                    this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
-                if (field.target.values[0].selected = this.keepTarget)
+                    this.setImportantLeadInfo(this.COLUMN_SOURCE_FIELD);
+                if (field.target.values[0].selected = this.keepTarget) {
+                    this.setImportantLeadInfo(this.COLUMN_TARGET_FIELD);
                     this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
+                } else
+                    this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
             } else {
                 this.keepSource = field.source.values[0].selected;
                 this.keepTarget = field.target.values[0].selected;

@@ -14,8 +14,12 @@
                         <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
                         <div class="name-wrapper">
                             <span [title]="getResultFullName()" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{getResultFullName()}}</span>
-                            <i [title]="mergeInfo?.targetContactInfo?.companyName">{{mergeInfo?.targetContactInfo?.companyName}}</i>
-                            <i [title]="mergeInfo?.targetContactInfo?.jobTitle">{{mergeInfo?.targetContactInfo?.jobTitle}}</i>
+                            <i [title]="mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName">
+                                {{mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName}}
+                            </i>
+                            <i [title]="mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle">
+                                {{mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle}}
+                            </i>
                         </div>
                         <p>{{ls.l('FinalRecordView')}}</p>
                     </div>
@@ -46,14 +50,14 @@
                         </div>
                         <ng-container *ngFor="let column of [COLUMN_RESULT_FIELD, COLUMN_TARGET_FIELD, COLUMN_SOURCE_FIELD]">
                             <div class="{{column}}">
-                                <div *ngFor="let value of field[column].values" class="field-wrapper">
+                                <div *ngFor="let value of field[column].values; let i = index" class="field-wrapper">
                                     <p *ngIf="field.disabled" [title]="value.text">
                                         <i *ngIf="field.name == LEAD_STAGE_FIELD" [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
                                     </p>
                                     <dx-check-box
                                         [hint]="value.text"
                                         [text]="value.text"
-                                        [class]="field.name"
+                                        [class]="field.name + (i ? ' wrap' : '')"
                                         [(value)]="value.selected"
                                         [disabled]="value.disabled"
                                         [visible]="!field.disabled && (!value.isHidden || !value.isHidden())"
