@@ -192,6 +192,7 @@ export class MergeContactDialogComponent {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        this.updateLeadResultFields();
         pipelineService.getPipelineDefinitionObservable(
             AppConsts.PipelinePurposeIds.lead,
             data.mergeInfo.contactInfo.groupId
@@ -252,7 +253,7 @@ export class MergeContactDialogComponent {
             if (isMultiField) {
                 if (targetValues.some(source => source.text == item.text))
                     return null;
-            } else if (targetValues.length)
+            } else if (targetValues.length || !this.keepSource)
                 return null;
             return item;
         }).filter(Boolean)).map((item, index) => {
@@ -262,25 +263,28 @@ export class MergeContactDialogComponent {
         });
     }
 
-    setActiveLeadInfo(column) {
-        if (this.fieldsConfig[this.LEAD_STAGE_FIELD][column])
-            this.fieldsConfig[this.LEAD_STAGE_FIELD][this.COLUMN_RESULT_FIELD].values =
-                this.fieldsConfig[this.LEAD_STAGE_FIELD][column].values;
-        if (this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column])
-            this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
-                this.fieldsConfig[this.LEAD_REQUEST_DATE_FIELD][column].values;
-        if (this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column])
-            this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][this.COLUMN_RESULT_FIELD].values =
-                this.fieldsConfig[this.LEAD_COMPLETED_DATE_FIELD][column].values;
+    setLeadInfoFields(column, fields, forced = false) {
+        fields.forEach(field => {
+            let data = this.fieldsConfig[field][column];
+            if (forced || data && data.values && data.values.length)
+                this.fieldsConfig[field][this.COLUMN_RESULT_FIELD].values =
+                    this.fieldsConfig[field][column].values;
+        });
     }
 
-    setImportantLeadInfo(column) {
-        if (this.fieldsConfig[this.LEAD_OWNER_FIELD][column])
-            this.fieldsConfig[this.LEAD_OWNER_FIELD][this.COLUMN_RESULT_FIELD].values =
-                this.fieldsConfig[this.LEAD_OWNER_FIELD][column].values;
-        if (this.fieldsConfig[this.LEAD_SOURCE_FIELD][column])
-            this.fieldsConfig[this.LEAD_SOURCE_FIELD][this.COLUMN_RESULT_FIELD].values =
-                this.fieldsConfig[this.LEAD_SOURCE_FIELD][column].values;
+    setActiveLeadInfo(column, forced = true) {
+        this.setLeadInfoFields(column, [
+            this.LEAD_STAGE_FIELD,
+            this.LEAD_REQUEST_DATE_FIELD,
+            this.LEAD_COMPLETED_DATE_FIELD
+        ], forced);
+    }
+
+    setImportantLeadInfo(column, forced = false) {
+        this.setLeadInfoFields(column, [
+            this.LEAD_OWNER_FIELD,
+            this.LEAD_SOURCE_FIELD
+        ], forced);
     }
 
     onMergeOptionChange(field: any, value: any) {
@@ -293,28 +297,33 @@ export class MergeContactDialogComponent {
                     return true;
                 }
             })) {
-                if (field.source.values[0].selected = this.keepSource)
-                    this.setImportantLeadInfo(this.COLUMN_SOURCE_FIELD);
-                if (field.target.values[0].selected = this.keepTarget) {
-                    this.setImportantLeadInfo(this.COLUMN_TARGET_FIELD);
-                    this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
-                } else
-                    this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
+                field.source.values[0].selected = this.keepSource;
+                field.target.values[0].selected = this.keepTarget;
             } else {
                 this.keepSource = field.source.values[0].selected;
                 this.keepTarget = field.target.values[0].selected;
-                if (this.keepSource) {
-                    if (this.keepTarget)
-                        this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
-                    else
-                        this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
-                } else {
-                    this.keepTarget = field.target.values[0].selected = true;
-                    this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
-                }
             }
+            this.updateLeadResultFields();
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    updateLeadResultFields() {
+        if (this.keepSource) {
+            this.setImportantLeadInfo(this.COLUMN_SOURCE_FIELD);
+            if (this.keepTarget) {
+                this.setImportantLeadInfo(this.COLUMN_TARGET_FIELD);
+                this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD, false);
+                this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD, false);
+            } else
+                this.setActiveLeadInfo(this.COLUMN_SOURCE_FIELD);
+        } else {
+            this.fieldsConfig[this.MERGE_OPTIONS_FIELD].target
+                .values[0].selected = this.keepTarget = true;
+            this.setImportantLeadInfo(this.COLUMN_SOURCE_FIELD);
+            this.setImportantLeadInfo(this.COLUMN_TARGET_FIELD);
+            this.setActiveLeadInfo(this.COLUMN_TARGET_FIELD);
+        }
     }
 
     onSelectChange(field: any, value: any) {
