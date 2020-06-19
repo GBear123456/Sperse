@@ -26,7 +26,7 @@ export class ODataService {
     constructor() {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
-            let key = (options.url.match(/odata\/(\w+)[\?|$]/) || []).pop() + (options.headers.context || '');
+            let key = (options.url.match(/odata\/(\w+)[\?|$]?/) || []).pop() + (options.headers.context || '');
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
     }
@@ -34,17 +34,20 @@ export class ODataService {
     loadDataSource(dataSource, uri: string, url?: string): Promise<any> {
         let promise = Promise.resolve([]);
         if (dataSource) {
-            if (dataSource.isLoading() && dataSource['operationId'])
-                dataSource.cancel(dataSource['operationId']);
-            if (this.dxRequestPool[uri])
-                this.dxRequestPool[uri].abort();
-
+            this.cancelDataSource(dataSource, uri);
             if (url && dataSource['_store'])
                 dataSource['_store']['_url'] = url;
             promise = dataSource.reload();
             dataSource['operationId'] = promise['operationId'];
         }
         return promise;
+    }
+
+    cancelDataSource(dataSource, requestKey) {
+        if (dataSource.isLoading() && !isNaN(dataSource['operationId']))
+            dataSource.cancel(dataSource['operationId']);
+        if (this.dxRequestPool[requestKey])
+            this.dxRequestPool[requestKey].abort();
     }
 
     getODataUrl(uri: string, filter?: any, instanceData: InstanceModel = null, params: Param[] = []): string {
@@ -88,7 +91,7 @@ export class ODataService {
                     params: requestValues.params
                 };
             })
-        )
+        );
     }
 
     getODataRequestValues(filter): Observable<ODataRequestValues> {
@@ -101,7 +104,7 @@ export class ODataService {
             } else {
                 simpleFilters.push(filterData);
             }
-        })
+        });
         return (serverCachedFilters && serverCachedFilters.length
             ? forkJoin(
                 ...serverCachedFilters.map((filter) => {
@@ -111,7 +114,7 @@ export class ODataService {
                             params.push({
                                 name: Object.keys(filter)[0],
                                 value: uuid
-                            })
+                            });
                         })
                     );
                 }))
@@ -138,7 +141,7 @@ export class ODataService {
                 filter: requestValues.filter.concat(this.getSearchFilter(searchColumns, searchValue)),
                 params: requestValues.params
             }))
-        )
+        );
         requestValuesWithSearch$.subscribe((requestValues: ODataRequestValues) => {
             let url = this.getODataUrl(uri, requestValues.filter, instanceData, [ ...(params || []), ...requestValues.params]);
             if (grid) {
@@ -165,8 +168,8 @@ export class ODataService {
                 }
                 this.loadDataSource(grid.getDataSource(), uri, url);
             }
-        })
-        return requestValuesWithSearch$.pipe(pluck('filter'))
+        });
+        return requestValuesWithSearch$.pipe(pluck('filter'));
     }
 
     processODataFilter(
@@ -196,12 +199,12 @@ export class ODataService {
             const processedFilter = getCheckCustom && getCheckCustom(filter);
             if (processedFilter) {
                 if (processedFilter !== 'cancelled') {
-                    processedFilters.push(processedFilter)
+                    processedFilters.push(processedFilter);
                 }
             } else {
-                processedFilters.push(filter.getODataFilterObject())
+                processedFilters.push(filter.getODataFilterObject());
             }
-        })
+        });
         return processedFilters;
     }
 

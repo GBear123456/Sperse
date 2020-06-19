@@ -32,16 +32,19 @@ export class FilterHelpers {
     static ParsePipelineIds(data: string[]) {
         let filterData = [];
         if (data) {
-            data.forEach((id) => {
-                let parts = id.split(':');
-                filterData.push(parts.length == 2 ?
-                    {
-                        PipelineId: +parts[0],
-                        StageId: +parts[1]
-                    } : { PipelineId: +id });
+            let pipelines = {};
+            data.sort().forEach(item => {
+                let parts = item.split(':'),
+                    id = parts[0];
+                if (!pipelines[id])
+                    pipelines[id] = [];
+                if (parts.length > 1)
+                    pipelines[id].push(parts[1]);
+            });
+            _.mapObject(pipelines, (val, key) => {
+                filterData.push('PipelineId eq ' + key + ' and StageId in (' + val.join(',') + ')');
             });
         }
-
         return filterData;
     }
 
@@ -113,7 +116,7 @@ export class FilterHelpers {
     }
 
     static normalizePhone(phone: string) {
-        return phone.replace(/[^\d+]/g, "");
+        return phone.replace(/[^\d+]/g, '');
     }
 
     static filterByGroupId() {

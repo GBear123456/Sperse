@@ -450,12 +450,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!stage)
             return response;
 
-        if (this.checkFilterExcludeCondition(stage.id))
+        let dataSource = this._dataSources[stage.name],
+            contextKey = this._dataSource.uri + stage.id;
+        if (this.checkFilterExcludeCondition(stage.id)) {
+            this.odataService.cancelDataSource(dataSource, contextKey);
             stage.entities = [];
-        else {
+        } else {
             stage.isLoading = true;
-            let filter = { StageId: stage.id },
-                dataSource = this._dataSources[stage.name];
+            let filter = { StageId: stage.id };
 
             if (!dataSource)
                 dataSource = this._dataSources[stage.name] =
@@ -467,11 +469,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 && stage.entities.length || 0, this.stagePageCount));
             dataSource.sort({ getter: 'SortOrder', desc: true });
             response = from(this.odataService.loadDataSource(
-                dataSource,
-                this._dataSource.uri + stage.id,
+                dataSource, contextKey,
                 this.getODataUrl(
                     this._dataSource.uri,
-                    this.queryWithSearch.concat({and: [ extend(filter, this._dataSource.customFilter)] }),
+                    this.queryWithSearch.filter(item => {
+                        return typeof(item) == 'string' && item.includes(stage.id.toString());
+                    }).concat({and: [extend(filter, this._dataSource.customFilter)]}),
                     null,
                     this.params
                 )
@@ -618,7 +621,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 filter: requestValues.filter.concat(this.getSearchFilter()),
                 params: requestValues.params
             }))
-        )
+        );
         requestValuesWithSearch$.subscribe((requestValues: ODataRequestValues) => {
             this.queryWithSearch = requestValues.filter;
             this.params = [ ...(params || []), ...requestValues.params ];
