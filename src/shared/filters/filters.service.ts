@@ -17,6 +17,8 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { ContactGroup, ContactStatus } from '../AppEnums';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import { ServerCacheService } from '@shared/common/server-cache-service/server-cache.service';
+import { MessageService } from '@abp/message/message.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
 export class FiltersService {
@@ -229,7 +231,11 @@ export class FiltersService {
         ];
     }
 
-    constructor(private serverCacheService: ServerCacheService) {}
+    constructor(
+        private serverCacheService: ServerCacheService,
+        private messageService: MessageService,
+        private ls: AppLocalizationService
+    ) {}
 
     filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: Observable<string>} | 'cancelled' {
         let data: string[] | {[uuidName: string]: Observable<string>} | 'cancelled' = [];
@@ -240,7 +246,7 @@ export class FiltersService {
                 let inExpressions = [];
                 const isLongFilter = valuesArray.length > 20;
                 let normalizedValues = [];
-                valuesArray.every((value: string, index: number) => {
+                valuesArray.forEach((value: string) => {
                     let normalizedValue = value;
                     if (element.normalize) {
                         normalizedValue = element.normalize(value);
@@ -251,14 +257,18 @@ export class FiltersService {
                         }
                         normalizedValues.push(normalizedValue);
                     }
-                    return true;
                 });
                 if (isLongFilter) {
-                    data = {
-                        [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: this.serverCacheService.getServerCacheId(
-                            normalizedValues
-                        )
-                    };
+                    if (valuesArray.length > 1000) {
+                        this.messageService.error(this.ls.l('FilterItemsShouldNotExceed', 1000));
+                        data = 'cancelled';
+                    } else {
+                        data = {
+                            [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: this.serverCacheService.getServerCacheId(
+                                normalizedValues
+                            )
+                        };
+                    }
                 } else {
                     data = inExpressions.length
                         ? [`${filter.field} in (${encodeURIComponent(inExpressions.join(','))})`]

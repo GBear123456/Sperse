@@ -15,6 +15,8 @@ import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { MessageService } from '@abp/message/message.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +25,10 @@ export class ODataService {
     private dxRequestPool = {};
     private pivotGridInitialBeforeSend;
 
-    constructor() {
+    constructor(
+        private messageService: MessageService,
+        private ls: AppLocalizationService
+    ) {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
             let key = (options.url.match(/odata\/(\w+)[\?|$]?/) || []).pop() + (options.headers.context || '');
@@ -137,13 +142,19 @@ export class ODataService {
         params: Param[] = []
     ): Observable<string> {
         const requestValuesWithSearch$ = this.getODataRequestValues(query).pipe(
-            map((requestValues: ODataRequestValues) => ({
-                filter: requestValues.filter.concat(this.getSearchFilter(searchColumns, searchValue)),
-                params: requestValues.params
-            }))
+            map((requestValues: ODataRequestValues) => {
+                let url = this.getODataUrl(uri, requestValues.filter, instanceData, [ ...(params || []), ...requestValues.params]);
+                if (url.length > 16000) {
+                    this.messageService.error(this.ls.l('QueryStringIsTooLong'));
+                    return 'canceled';
+                }
+                return {
+                    filter: requestValues.filter.concat(this.getSearchFilter(searchColumns, searchValue)),
+                    url: url
+                };
+            })
         );
-        requestValuesWithSearch$.subscribe((requestValues: ODataRequestValues) => {
-            let url = this.getODataUrl(uri, requestValues.filter, instanceData, [ ...(params || []), ...requestValues.params]);
+        requestValuesWithSearch$.subscribe((requestValues: any) => {
             if (grid) {
                 /** Add filter to the params for pivot grid data source */
                 if (grid.NAME === 'dxPivotGrid') {
@@ -166,10 +177,12 @@ export class ODataService {
                         }
                     }
                 }
-                this.loadDataSource(grid.getDataSource(), uri, url);
+                this.loadDataSource(grid.getDataSource(), uri, requestValues.url);
             }
         });
-        return requestValuesWithSearch$.pipe(pluck('filter'));
+        return requestValuesWithSearch$.pipe(
+            map((requestValues: any) => requestValues.filters || requestValues)
+         );
     }
 
     processODataFilter(

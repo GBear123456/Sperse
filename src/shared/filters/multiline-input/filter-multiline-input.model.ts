@@ -40,10 +40,6 @@ export class FilterMultilineInputModel extends FilterItemModel {
             values = value;
         }
 
-        if (values.length > 1000) {
-            values.splice(1000);
-        }
-
         value = values.join('\n');
         this._valuesArray = values;
         this._value = value;
