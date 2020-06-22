@@ -288,8 +288,11 @@ export class MergeContactDialogComponent {
     }
 
     onMergeOptionChange(field: any, value: any) {
+        let sourceInput = field.source.values[0],
+            targetInput = field.target.values[0];
+
         setTimeout(() => {
-            if (field.result.values.some((item, index) => {
+            if (!field.result.values.some((item, index) => {
                 item.selected = true;
                 if (item == value) {
                     this.keepTarget = !index || index == 2;
@@ -297,12 +300,16 @@ export class MergeContactDialogComponent {
                     return true;
                 }
             })) {
-                field.source.values[0].selected = this.keepSource;
-                field.target.values[0].selected = this.keepTarget;
-            } else {
-                this.keepSource = field.source.values[0].selected;
-                this.keepTarget = field.target.values[0].selected;
+                let sourceAction = sourceInput == value,
+                    sourceSelect = (sourceAction ? sourceInput : targetInput).selected;
+                sourceSelect = sourceAction ? sourceSelect : !sourceSelect;
+                this.keepSource = this.isSameContact ? sourceSelect : sourceInput.selected;
+                this.keepTarget = this.isSameContact ? !sourceSelect : targetInput.selected;
             }
+
+            sourceInput.selected = this.keepSource;
+            targetInput.selected = this.keepTarget;
+
             this.updateLeadResultFields();
             this.changeDetectorRef.detectChanges();
         });
