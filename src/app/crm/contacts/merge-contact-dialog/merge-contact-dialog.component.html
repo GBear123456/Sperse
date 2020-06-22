@@ -4,44 +4,44 @@
     [buttons]="buttons"
     [editTitle]="false">
     <div class="form-content">
-        <dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 80px)'">
-            <div class="table-view">
-                <div class="header">
-                    <div class="fields">
-                        <span></span>
-                    </div>
-                    <div class="result">
-                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
-                        <div class="name-wrapper">
-                            <span [title]="getResultFullName()" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{getResultFullName()}}</span>
-                            <i [title]="mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName">
-                                {{mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName}}
-                            </i>
-                            <i [title]="mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle">
-                                {{mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle}}
-                            </i>
-                        </div>
-                        <p>{{ls.l('FinalRecordView')}}</p>
-                    </div>
-                    <div class="target">
-                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
-                        <div class="name-wrapper">
-                            <span [title]="mergeInfo?.targetContactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{mergeInfo?.targetContactInfo?.fullName}}</span>
-                            <i [title]="mergeInfo?.targetContactInfo?.companyName">{{mergeInfo?.targetContactInfo?.companyName}}</i>
-                            <i [title]="mergeInfo?.targetContactInfo?.jobTitle">{{mergeInfo?.targetContactInfo?.jobTitle}}</i>
-                        </div>
-                        <p>{{ls.l('MainRecordUpdate')}}</p>
-                    </div>
-                    <div class="source">
-                        <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
-                        <div class="name-wrapper">
-                            <span [title]="mergeInfo?.contactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.contactInfo?.companyName}">{{mergeInfo?.contactInfo?.fullName}}</span>
-                            <i [title]="mergeInfo?.contactInfo?.companyName">{{mergeInfo?.contactInfo?.companyName}}</i>
-                            <i [title]="mergeInfo?.contactInfo?.jobTitle">{{mergeInfo?.contactInfo?.jobTitle}}</i>
-                        </div>
-                        <p>{{ls.l('DuplicateRecordDelete')}}</p>
-                    </div>
+        <div class="header">
+            <div class="fields">
+                <span></span>
+            </div>
+            <div class="result">
+                <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
+                <div class="name-wrapper">
+                    <span [title]="getResultFullName()" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{getResultFullName()}}</span>
+                    <i [title]="mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName">
+                        {{mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName}}
+                    </i>
+                    <i [title]="mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle">
+                        {{mergeInfo?.targetContactInfo?.companyName ? mergeInfo?.targetContactInfo?.jobTitle : mergeInfo?.contactInfo?.jobTitle}}
+                    </i>
                 </div>
+                <p>{{ls.l('FinalRecordView')}}</p>
+            </div>
+            <div class="target">
+                <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.targetContactInfo?.photoPublicId) + ')' }"></div>
+                <div class="name-wrapper">
+                    <span [title]="mergeInfo?.targetContactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{mergeInfo?.targetContactInfo?.fullName}}</span>
+                    <i [title]="mergeInfo?.targetContactInfo?.companyName">{{mergeInfo?.targetContactInfo?.companyName}}</i>
+                    <i [title]="mergeInfo?.targetContactInfo?.jobTitle">{{mergeInfo?.targetContactInfo?.jobTitle}}</i>
+                </div>
+                <p>{{ls.l('MainRecordUpdate')}}</p>
+            </div>
+            <div class="source">
+                <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(mergeInfo?.contactInfo?.photoPublicId) + ')' }"></div>
+                <div class="name-wrapper">
+                    <span [title]="mergeInfo?.contactInfo?.fullName" [ngClass]="{nowrap: !!mergeInfo?.contactInfo?.companyName}">{{mergeInfo?.contactInfo?.fullName}}</span>
+                    <i [title]="mergeInfo?.contactInfo?.companyName">{{mergeInfo?.contactInfo?.companyName}}</i>
+                    <i [title]="mergeInfo?.contactInfo?.jobTitle">{{mergeInfo?.contactInfo?.jobTitle}}</i>
+                </div>
+                <p>{{ls.l('DuplicateRecordDelete')}}</p>
+            </div>
+        </div>
+        <dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 180px)'">
+            <div class="table-view">
                 <ng-container *ngFor="let field of fields">
                     <div *ngIf="!field.hidden" [class]="'contact-field ' + field.name">
                         <div class="fields">
