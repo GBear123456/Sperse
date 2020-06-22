@@ -54189,6 +54189,7 @@ export class ImportItemInput implements IImportItemInput {
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
+    leadStageName!: string | undefined;
     leadSource!: string | undefined;
     affiliateCode!: string | undefined;
     campaignId!: string | undefined;
@@ -54235,6 +54236,7 @@ export class ImportItemInput implements IImportItemInput {
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
+            this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
             this.affiliateCode = data["affiliateCode"];
             this.campaignId = data["campaignId"];
@@ -54281,6 +54283,7 @@ export class ImportItemInput implements IImportItemInput {
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
+        data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
         data["affiliateCode"] = this.affiliateCode;
         data["campaignId"] = this.campaignId;
@@ -54320,6 +54323,7 @@ export interface IImportItemInput {
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
+    leadStageName: string | undefined;
     leadSource: string | undefined;
     affiliateCode: string | undefined;
     campaignId: string | undefined;

@@ -27,8 +27,9 @@
                                 </li>
                             </ng-container>
                         </div>
-                        <li *ngIf="filter.displayElements && filter.displayElements.length > 2" class="sub-filter-item">
+                        <li *ngIf="filter.displayElements && filter.displayElements.length > 2" class="sub-filter-item filter-actions">
                             <a class="toggle-more" (click)="itemClick($event, filter)">+{{filter.displayElements.length - 2}} more</a>
+                            <a class="clear-group" (click)="clearFilterGroup(filter)">{{ls.ls('Platform', 'ClearAll')}}</a>
                         </li>
                     </ul>
                 </li>

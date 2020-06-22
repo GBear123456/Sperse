@@ -28,7 +28,7 @@
                          [selectedKeys]="selectedPartnerKeys"
                          [hideButtons]="true"
                          [filterModel]="filterModelStatus"
-                         [targetSelector]="'[aria-label=Status]'"
+                         targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
                          [list]="statuses"
                          (onItemSelected)="updatePartnerStatuses($event)">
         </app-static-list>
@@ -58,7 +58,13 @@
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
                     <dx-data-grid class="main-component-view"
                                   accesskey="narrowHeaderPanel"
-                                  [rowDragging]="{ allowDropInsideItem: isMergeAllowed, onDragEnd: onDragEnd }"
+                                  [rowDragging]="{
+                                      cursorOffset: {x: 30},
+                                      allowDropInsideItem: isMergeAllowed, 
+                                      showDragIcons: false, 
+                                      onDragStart: onDragStart, 
+                                      onDragEnd: onDragEnd 
+                                  }"
                                   [renderAsync]="true"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"

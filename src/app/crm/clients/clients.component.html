@@ -32,7 +32,7 @@
                 [selectedKeys]="selectedClientKeys"
                 [hideButtons]="true"
                 [filterModel]="filterModelStatus"
-                [targetSelector]="'[aria-label=Status]'"
+                targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
                 [list]="statuses$ | async"
                 (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
@@ -58,7 +58,13 @@
                     <dx-data-grid class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   [renderAsync]="true"
-                                  [rowDragging]="{ allowDropInsideItem: isMergeAllowed, onDragEnd: onDragEnd }"
+                                  [rowDragging]="{
+                                      cursorOffset: {x: 30},
+                                      allowDropInsideItem: isMergeAllowed, 
+                                      showDragIcons: false, 
+                                      onDragStart: onDragStart, 
+                                      onDragEnd: onDragEnd 
+                                  }"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"

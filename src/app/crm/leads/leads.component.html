@@ -31,7 +31,7 @@
                 [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
                 [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
                 [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
-                [targetSelector]="'[aria-label=Stage]'"
+                targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
                 [funnelStyling]="true"
                 [list]="stages"
                 (onItemSelected)="updateLeadsStage($event)">
@@ -64,7 +64,13 @@
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [cacheEnabled]="false"
-                                [rowDragging]="{ allowDropInsideItem: isMergeAllowed, onDragEnd: onDragEnd }"
+                                [rowDragging]="{
+                                    cursorOffset: {x: 30},
+                                    allowDropInsideItem: isMergeAllowed, 
+                                    showDragIcons: false, 
+                                    onDragStart: onDragStart, 
+                                    onDragEnd: onDragEnd 
+                                }"
                                 [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"

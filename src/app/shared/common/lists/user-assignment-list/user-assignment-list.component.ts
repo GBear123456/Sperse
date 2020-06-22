@@ -35,7 +35,7 @@ export class UserAssignmentComponent implements OnDestroy {
         this.relatedUsers = undefined;
         this.affectedKeys = value;
     }
-    @Input() targetSelector = '[aria-label="Assign"]';
+    @Input() targetSelector = '[aria-label="' + this.ls.l('Toolbar_Assign') + '"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() permissionKey: AppPermissions = null;
