@@ -144,6 +144,11 @@ export class SideBarComponent implements OnDestroy {
         }
     }
 
+    clearFilterGroup(filter: FilterModel) {
+        filter.clearFilterItems();
+        this.filtersService.change([filter]);
+    }
+
     ngOnDestroy() {
         this.destroy$.next();
         this.filtersService.unsubscribe();
