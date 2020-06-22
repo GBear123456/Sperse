@@ -1,5 +1,6 @@
 /** Core imports */
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
@@ -8,8 +9,16 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { forkJoin, Observable } from 'rxjs';
-import { filter, finalize, pluck, skip, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, Subject } from 'rxjs';
+import {
+    filter,
+    finalize,
+    pluck,
+    map,
+    skip,
+    takeUntil,
+    switchMap
+} from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -61,6 +70,10 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { OrderFields } from '@app/crm/orders/order-fields.enum';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { OrderStageSummary } from '@app/crm/orders/order-stage-summary.interface';
+import { concat } from '@node_modules/rxjs';
+import { first } from '@node_modules/rxjs/operators';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -359,6 +372,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     subscriptionGroupDataSourceURI = 'SubscriptionSlice';
     pivotGridDataIsLoading: boolean;
+    private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    refresh$: Observable<null> = this.refresh.asObservable();
+    filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
+        filter(() => this.componentIsActivated)
+    );
+    odataRequestValues$: Observable<ODataRequestValues> = concat(
+        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
+        this.filterChanged$.pipe(
+            switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+        )
+    );
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -459,6 +483,50 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         ]
     };
+    ordersSum: number;
+    ordersSum$: Observable<number> = combineLatest(
+        this.odataRequestValues$,
+        this.refresh$
+    ).pipe(
+        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => this.crmService.updateParams(oDataRequestValues)),
+        switchMap((params: HttpParams) => this.http.get(this.getODataUrl('OrderCount'), {
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            }),
+            params: params
+        })),
+        map((summaryData: { [stageId: string]: OrderStageSummary }) => {
+            return Object.values(summaryData).map((orderStageSummary: OrderStageSummary) => orderStageSummary.sum)
+                                             .reduce((total: number, current: number) => total += current, 0)
+        })
+    );
+    subscriptionsCount: number;
+    subscriptionsTotalFee: number;
+    subscriptionsTotalOrderAmount: number;
+
+    subscriptionsSummary$: Observable<any> = combineLatest(
+        this.odataRequestValues$,
+        this.refresh$
+    ).pipe(
+        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
+            return this.crmService.updateParams(
+                oDataRequestValues,
+                {
+                    totalSummary: JSON.stringify([
+                        { "summaryType": "count" },
+                        { "selector": "OrderAmount", "summaryType":"sum"},
+                        { "selector": "Fee", "summaryType":"sum" }
+                    ])
+                }
+            );
+        }),
+        switchMap((params) => this.http.get(this.getODataUrl('SubscriptionSlice'), {
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            }),
+            params: params
+        })),
+    )
 
     constructor(injector: Injector,
         private orderProxy: OrderServiceProxy,
@@ -472,6 +540,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private sessionService: AppSessionService,
         private crmService: CrmService,
         private currencyPipe: CurrencyPipe,
+        private http: HttpClient,
         public appService: AppService,
         public dialog: MatDialog,
     ) {
@@ -489,7 +558,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ngOnInit() {
         this.activate();
         this.handleFiltersPining();
+        this.ordersSum$.subscribe((ordersSum: number) => {
+            this.ordersSum = ordersSum;
+        });
+        this.subscriptionsSummary$.subscribe((data) => {
+            this.subscriptionsCount = data.summary[0];
+            this.subscriptionsTotalOrderAmount = data.summary[1];
+            this.subscriptionsTotalFee = data.summary[2];
+        });
     }
+
+    customizeTotal = () => this.l('Count') + ': ' + this.totalCount;
+    customizeSubscriptionsTotal = () => this.l('Count') + ': ' + this.subscriptionsCount;
+    customizeOrdersSum = () => this.customizeAmountSummary({ value: this.ordersSum });
+    customizeSubscriptionsTotalFee = () => this.customizeAmountSummary({ value: this.subscriptionsTotalFee });
+    customizeSubscriptionsTotalAmount = () => this.customizeAmountSummary({ value: this.subscriptionsTotalOrderAmount });
 
     activate() {
         super.activate();
@@ -984,6 +1067,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     invalidate() {
         this.selectedOrders = [];
         this.processFilterInternal();
+        this.refresh.next(null);
         this.filterChanged = true;
     }
 

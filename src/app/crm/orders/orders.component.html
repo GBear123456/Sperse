@@ -50,7 +50,7 @@
                                           [columnChooser]="{
                                             height: rowsViewHeight
                                           }"
-                                          [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: false }"
+                                          [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
                                           [pager]="defaultGridPagerConfig"
@@ -125,9 +125,9 @@
                                     </dxi-group-item>
                                     <dxi-total-item [column]="orderFields.Name"
                                                     summaryType="count"
-                                                    [displayFormat]="l('Count') + ': {0}'">
+                                                    [customizeText]="customizeTotal">
                                     </dxi-total-item>
-                                    <dxi-total-item [customizeText]="customizeAmountSummary"
+                                    <dxi-total-item [customizeText]="customizeOrdersSum"
                                                     [column]="orderFields.Amount"
                                                     summaryType="sum">
                                     </dxi-total-item>
@@ -185,7 +185,7 @@
                                   groupPaging: true,
                                   paging: true,
                                   sorting: true,
-                                  summary: false
+                                  summary: true
                               }"
                               [allowColumnResizing]="true"
                               (onCellClick)="onCellClick($event, 'subscriptions')"
@@ -249,13 +249,13 @@
                         </dxi-group-item>
                         <dxi-total-item [column]="subscriptionFields.FirstName"
                                         summaryType="count"
-                                        [displayFormat]="l('Count') + ': {0}'">
+                                        [customizeText]="customizeSubscriptionsTotal">
                         </dxi-total-item>
-                        <dxi-total-item [customizeText]="customizeAmountSummary"
+                        <dxi-total-item [customizeText]="customizeSubscriptionsTotalFee"
                                         [column]="subscriptionFields.Fee"
                                         summaryType="sum">
                         </dxi-total-item>
-                        <dxi-total-item [customizeText]="customizeAmountSummary"
+                        <dxi-total-item [customizeText]="customizeSubscriptionsTotalAmount"
                                         [column]="subscriptionFields.OrderAmount"
                                         summaryType="sum">
                         </dxi-total-item>

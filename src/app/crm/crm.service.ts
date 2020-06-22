@@ -54,7 +54,7 @@ export class CrmService {
         return height;
     }));
     mapHeight$: Observable<number> = this.contentHeight$.pipe(
-        map((contentHeight) => contentHeight - 88)
+        map((contentHeight: number) => contentHeight - 88)
     );
     private usersIdsWithInstance: { [id: string]: boolean } = {};
     private usersPermissions: { [id: string]: Observable<string[]> } = {};
@@ -109,16 +109,7 @@ export class CrmService {
             params['skip'] = loadOptions.skip;
         }
         this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom).pipe(
-            tap((oDataRequestValues: ODataRequestValues) => {
-                if (oDataRequestValues.filter) {
-                    params['$filter'] = oDataRequestValues.filter;
-                }
-                if (oDataRequestValues.params && oDataRequestValues.params.length) {
-                    oDataRequestValues.params.forEach((param: Param) => {
-                        params[param.name] = param.value;
-                    })
-                }
-            }),
+            map((oDataRequestValues: ODataRequestValues) => this.updateParams(oDataRequestValues, params)),
             switchMap(() => this.http.get(sourceUri, {
                 params: params,
                 headers: new HttpHeaders({
@@ -168,16 +159,7 @@ export class CrmService {
             ...additionalParams
         };
         return this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom).pipe(
-            tap((oDataRequestValues: ODataRequestValues) => {
-                if (oDataRequestValues.filter) {
-                    params['$filter'] = oDataRequestValues.filter;
-                }
-                if (oDataRequestValues.params && oDataRequestValues.params.length) {
-                    oDataRequestValues.params.forEach((param: Param) => {
-                        params[param.name] = param.value;
-                    })
-                }
-            }),
+            map((oDataRequestValues: ODataRequestValues) => this.updateParams(oDataRequestValues, params)),
             switchMap(() => this.http.get(sourceUri, {
                 headers: new HttpHeaders({
                     'Authorization': 'Bearer ' + abp.auth.getToken()
@@ -219,6 +201,18 @@ export class CrmService {
                 infoItems: chartInfoItems
             };
         });
+    }
+
+    updateParams(oDataRequestValues: ODataRequestValues, params = {}) {
+        if (oDataRequestValues && oDataRequestValues.filter) {
+            params['$filter'] = oDataRequestValues.filter;
+        }
+        if (oDataRequestValues && oDataRequestValues.params && oDataRequestValues.params.length) {
+            oDataRequestValues.params.forEach((param: Param) => {
+                params[param.name] = param.value;
+            })
+        }
+        return params;
     }
 
     sortByDate = (a: any, b: any) => {
