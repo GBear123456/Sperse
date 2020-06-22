@@ -74,8 +74,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('reply')
             },
             archive: {
-                text: this.ls.l('Archive'),
-                hint: this.ls.l('Archive'),
+                text: this.ls.l('Toolbar_Archive'),
+                hint: this.ls.l('Toolbar_Archive'),
                 icon: this.getImgURI('folder')
             },
             search: {
@@ -123,19 +123,19 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('assign-icon')
             },
             status: {
-                text: this.ls.l('Status'),
-                hint: this.ls.l('Status'),
+                text: this.ls.l('Toolbar_Status'),
+                hint: this.ls.l('Toolbar_Status'),
                 icon: this.getImgURI('status-icon')
             },
             stage: {
-                text: this.ls.l('Stage'),
-                hint: this.ls.l('Stage'),
+                text: this.ls.l('Toolbar_Stage'),
+                hint: this.ls.l('Toolbar_Stage'),
                 icon: this.getImgURI('status-icon')
             },
             partnerType: {
                 accessKey: 'PartnerType',
-                text: this.ls.l('Type'),
-                hint: this.ls.l('Type'),
+                text: this.ls.l('Toolbar_Type'),
+                hint: this.ls.l('Toolbar_Type'),
                 icon: this.getImgURI('status-icon')
             },
             delete: {
@@ -172,17 +172,17 @@ export class ToolBarComponent implements OnDestroy, OnInit {
             },
             pipeline: {
                 accessKey: 'pipeline',
-                hint: this.ls.l('Pipeline'),
+                hint: this.ls.l('Toolbar_Pipeline'),
                 icon: this.getImgURI('funnel-icon')
             },
             dataGrid: {
                 accessKey: 'dataGrid',
-                hint: this.ls.l('Data Grid'),
+                hint: this.ls.l('Toolbar_DataGrid'),
                 icon: this.getImgURI('table-icon')
             },
             pivotGrid: {
                 accessKey: 'pivotGrid',
-                hint: this.ls.l('Pivot Grid'),
+                hint: this.ls.l('Toolbar_PivotGrid'),
                 icon: this.getImgURI('pivot-grid')
             },
             map: {
@@ -231,13 +231,13 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('expand-all-icon')
             },
             expandRows: {
-                text: this.ls.l('Expand rows'),
-                hint: this.ls.l('Expand rows'),
+                text: this.ls.l('Toolbar_ExpandRows'),
+                hint: this.ls.l('Toolbar_ExpandRows'),
                 icon: this.getImgURI('expand-rows-icon')
             },
             expandCols: {
-                text: this.ls.l('Expand cols'),
-                hint: this.ls.l('Expand cols'),
+                text: this.ls.l('Toolbar_ExpandCols'),
+                hint: this.ls.l('Toolbar_ExpandCols'),
                 icon: this.getImgURI('expand-cols-icon')
             },
             flag: {
@@ -249,7 +249,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('print-icon')
             },
             comments: {
-                hint: this.ls.l('Show/Hide Comments'),
+                hint: this.ls.l('Toolbar_ToggleComments'),
                 icon: this.getImgURI('comments-icon')
             },
             fullscreen: {
@@ -286,12 +286,12 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('pen')
             },
             lists: {
-                text: this.ls.l('Lists'),
-                hint: this.ls.l('Lists'),
+                text: this.ls.l('Toolbar_Lists'),
+                hint: this.ls.l('Toolbar_Lists'),
                 icon: this.getImgURI('folder')
             },
             listsSmall: {
-                hint: this.ls.l('Lists'),
+                hint: this.ls.l('Toolbar_Lists'),
                 icon: this.getImgURI('folder')
             },
             rating: {
@@ -308,11 +308,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('close')
             },
             rotateRight: {
-                hint: this.ls.l('Rotate right'),
+                hint: this.ls.l('RotateRight'),
                 icon: this.getImgURI('rotate-right-icon')
             },
             rotateLeft: {
-                hint: this.ls.l('Rotate left'),
+                hint: this.ls.l('RotateLeft'),
                 icon: this.getImgURI('rotate-left-icon')
             },
             category: {

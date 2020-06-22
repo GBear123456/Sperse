@@ -26,7 +26,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any = [];
     @Input() managePermission = AppPermissions.CRMCustomersManage;
-    @Input() targetSelector = '[aria-label=\'Lists\']';
+    @Input() targetSelector = '[aria-label="' + this.l('Toolbar_Lists') + '"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() showSelection = false;

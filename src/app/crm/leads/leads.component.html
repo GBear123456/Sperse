@@ -31,7 +31,7 @@
                 [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
                 [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
                 [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
-                [targetSelector]="'[aria-label=Stage]'"
+                targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
                 [funnelStyling]="true"
                 [list]="stages"
                 (onItemSelected)="updateLeadsStage($event)">

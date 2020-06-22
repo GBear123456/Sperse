@@ -28,7 +28,7 @@
                          [selectedKeys]="selectedPartnerKeys"
                          [hideButtons]="true"
                          [filterModel]="filterModelStatus"
-                         [targetSelector]="'[aria-label=Status]'"
+                         targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
                          [list]="statuses"
                          (onItemSelected)="updatePartnerStatuses($event)">
         </app-static-list>

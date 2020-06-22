@@ -28,14 +28,14 @@
                          [list]="data.stages">
         </app-static-list>
         <user-assignment-list [multiSelection]="true"
-                                  [targetSelector]="'[accesskey=\'UserAssign\']'"
-                                  [proxyService]="activityProxy"
-                                  [(selectedItemKey)]="appointment.AssignedUserIds"
-                                  [hideButtons]="true"
-                                  [selectedKeys]="[appointment.Id]"
-                                  [permissionKey]="permissions.CRMManageEventsAssignments"
-                                  (onSelectionChanged)="onUserAssignmentChanged($event)"
-                                  [assignedUsersSelector]="assignedUsersSelector">
+                              [targetSelector]="'[accesskey=\'UserAssign\']'"
+                              [proxyService]="activityProxy"
+                              [(selectedItemKey)]="appointment.AssignedUserIds"
+                              [hideButtons]="true"
+                              [selectedKeys]="[appointment.Id]"
+                              [permissionKey]="permissions.CRMManageEventsAssignments"
+                              (onSelectionChanged)="onUserAssignmentChanged($event)"
+                              [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
 
         <app-static-list #leadsList
