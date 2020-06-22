@@ -53779,7 +53779,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
-    gender!: Gender | undefined;
+    gender!: string | undefined;
     fullAddress!: ImportAddressInput | undefined;
     fullAddress2!: ImportAddressInput | undefined;
     fullAddress3!: ImportAddressInput | undefined;
@@ -53939,7 +53939,7 @@ export interface IImportPersonalInput {
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
-    gender: Gender | undefined;
+    gender: string | undefined;
     fullAddress: ImportAddressInput | undefined;
     fullAddress2: ImportAddressInput | undefined;
     fullAddress3: ImportAddressInput | undefined;
