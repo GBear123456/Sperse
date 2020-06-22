@@ -143,13 +143,14 @@ export class ODataService {
     ): Observable<string> {
         const requestValuesWithSearch$ = this.getODataRequestValues(query).pipe(
             map((requestValues: ODataRequestValues) => {
-                let url = this.getODataUrl(uri, requestValues.filter, instanceData, [ ...(params || []), ...requestValues.params]);
+                const filter = requestValues.filter.concat(this.getSearchFilter(searchColumns, searchValue));
+                let url = this.getODataUrl(uri, filter, instanceData, [ ...(params || []), ...requestValues.params]);
                 if (url.length > 16000) {
                     this.messageService.error(this.ls.l('QueryStringIsTooLong'));
                     return 'canceled';
                 }
                 return {
-                    filter: requestValues.filter.concat(this.getSearchFilter(searchColumns, searchValue)),
+                    filter: filter,
                     url: url
                 };
             })
@@ -181,7 +182,7 @@ export class ODataService {
             }
         });
         return requestValuesWithSearch$.pipe(
-            map((requestValues: any) => requestValues.filters || requestValues)
+            map((requestValues: any) => requestValues.filter || requestValues)
          );
     }
 
