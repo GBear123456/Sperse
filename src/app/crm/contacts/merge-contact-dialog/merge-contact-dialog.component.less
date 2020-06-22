@@ -34,95 +34,109 @@
         }
     }
 
-    .table-view {
-        width: 100%;
-        padding: 10px 20px;
-        .header {
-            height: 90px;
-            font-size: 16px;
-            font-weight: 500;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 1.5;
-            letter-spacing: 0.32px;
-            text-align: left;
-            color: #424c56;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #e5e9ec;
-            .photo-area {
-                min-width: 64px;
-                width: 64px;
-                height: 64px;
-                margin-left: 20px;
-                margin-right: 10px;
-                background-color: #F4F4F4;
-                border-radius: 50%;
-                background-size: cover;
+    .header {
+        width: 860px;
+        margin: auto;
+        height: 90px;
+        font-size: 16px;
+        font-weight: 500;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: 1.5;
+        letter-spacing: 0.32px;
+        text-align: left;
+        color: #424c56;
+        display: flex;
+        margin-top: 10px;
+        justify-content: space-between;
+        border-bottom: 1px solid #e5e9ec;
+        .photo-area {
+            min-width: 64px;
+            width: 64px;
+            height: 64px;
+            margin-left: 20px;
+            margin-right: 10px;
+            background-color: #F4F4F4;
+            border-radius: 50%;
+            background-size: cover;
 
-                &:before {
-                    top: 21px;
-                    right: 37px;
-                    display: block;
-                    width: 29px;
-                    content: url(../../../../assets/common/icons/arrows-left.png);
-                    height: 21px;
-                    position: relative;
-                }
-            }
-            .result {
-                .photo-area:before {
-                    display: none;
-                }
-            }                  
-            .target:after {                    
-                content: url(../../../../assets/common/icons/check-green-filled.svg);
-            }
-            .source:after {
-                content: url(../../../../assets/common/icons/remove-red-filled.svg);
-            }
-            .source, .target, .result {
-                display: flex;
+            &:before {
+                top: 21px;
+                right: 37px;
+                display: block;
+                width: 29px;
+                content: url(../../../../assets/common/icons/arrows-left.png);
+                height: 21px;
                 position: relative;
-                align-items: center;
-                padding-right: 12px;
-                padding-top: 12px;
-                .name-wrapper {
-                    width: 140px;
-                }
-                span {
-                    display: block;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    &.nowrap {
-                        white-space: nowrap;
-                    }
-                }
-                p {
-                    position: absolute;
-                    font-size: 10px;
-                    top: 3px;
-                    left: 20px;
-                }
-                i {
-                    overflow: hidden;
-                    white-space: nowrap;
-                    display: block;
-                    text-overflow: ellipsis;
-                    font-size: 10px;
-                }
-            }
-            .target, .source {
-                &:after {
-                    position: absolute;
-                    top: 0px;
-                    right: 5px;
-                    display: block;
-                    width: 20px;
-                    height: 20px;
-                }
             }
         }
+        .fields {
+            width: 13%;
+            border-right: 1px solid #e5e9ec;            
+        }
+        .result {
+            width: 29%;
+            border-right: 1px solid #e5e9ec;
+            .photo-area:before {
+                display: none;
+            }
+        }                  
+        .target {
+            border-right: 1px solid #e5e9ec;
+            &:after {
+                content: url(../../../../assets/common/icons/check-green-filled.svg);
+            }
+        }
+        .source:after {
+            content: url(../../../../assets/common/icons/remove-red-filled.svg);
+        }
+        .source, .target, .result {
+            display: flex;
+            position: relative;
+            align-items: center;
+            padding-right: 12px;
+            padding-top: 12px;
+            .name-wrapper {
+                width: 140px;
+            }
+            span {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                &.nowrap {
+                    white-space: nowrap;
+                }
+            }
+            p {
+                position: absolute;
+                font-size: 10px;
+                top: 3px;
+                left: 20px;
+            }
+            i {
+                overflow: hidden;
+                white-space: nowrap;
+                display: block;
+                text-overflow: ellipsis;
+                font-size: 10px;
+            }
+        }
+        .target, .source {
+            width: 29%;
+            &:after {
+                position: absolute;
+                top: 0px;
+                right: 5px;
+                display: block;
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+
+    .table-view {
+        width: 100%;
+        padding: 0 20px 10px 20px;
         .contact-field {
             display: flex;
             min-height: 40px;
