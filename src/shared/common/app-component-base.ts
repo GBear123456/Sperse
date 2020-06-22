@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { Subject, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import capitalize from 'underscore.string/capitalize';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
@@ -226,7 +226,13 @@ export abstract class AppComponentBase implements OnDestroy {
         this.isDataLoaded = false;
         const searchParam = this.getQuickSearchParam();
         params = searchParam ? params && params.concat([searchParam]) || [searchParam] : params;
-        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData, params);
+        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData, params).pipe(
+            tap((result: string) => {
+                if (result === 'canceled') {
+                    this.isDataLoaded = true;
+                }
+            })
+        );
     }
 
     getSearchFilter(searchColumns: string[] = null, searchValue: string = null) {

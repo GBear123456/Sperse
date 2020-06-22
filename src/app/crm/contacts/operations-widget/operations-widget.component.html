@@ -11,7 +11,7 @@
             [highlightSelected]="true"
             [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
             (onSelectionChanged)="updateStage($event)"
-            [targetSelector]="'[aria-label=Stage]'"
+            targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
             [funnelStyling]="true"
             [showTitle]="false"
             [list]="stages">
@@ -24,7 +24,7 @@
             [hideButtons]="true"
             [highlightSelected]="true"
             [selectedKeys]="[contactInfo?.statusId]"
-            [targetSelector]="'[aria-label=Status]'"
+            targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
             [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
             (onItemSelected)="updateStatus($event)">
         </app-static-list>

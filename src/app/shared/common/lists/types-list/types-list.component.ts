@@ -28,7 +28,7 @@ import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permissio
 export class TypesListComponent implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() targetSelector = '[aria-label="Type"]';
+    @Input() targetSelector = '[aria-label="' + this.ls.l('Toolbar_Type') + '"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() set selectedItems(value) {

@@ -29,7 +29,7 @@ import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permissio
 export class TagsListComponent implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: number[] = [];
-    @Input() targetSelector = '[aria-label="Tags"]';
+    @Input() targetSelector = '[aria-label="' + this.ls.l('Toolbar_Tags') + '"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() managePermission = AppPermissions.CRMCustomersManage;

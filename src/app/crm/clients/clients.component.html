@@ -32,7 +32,7 @@
                 [selectedKeys]="selectedClientKeys"
                 [hideButtons]="true"
                 [filterModel]="filterModelStatus"
-                [targetSelector]="'[aria-label=Status]'"
+                targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
                 [list]="statuses$ | async"
                 (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
