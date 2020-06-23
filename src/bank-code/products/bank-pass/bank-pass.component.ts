@@ -62,6 +62,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type';
 import { BankPassFields } from '@root/bank-code/products/bank-pass/bank-pass-fields.enum';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 
 @Component({
     selector: 'bank-pass',
@@ -82,9 +84,14 @@ export class BankPassComponent implements OnInit, OnDestroy {
     private readonly dataSourceURI = 'Contact';
     private readonly totalDataSourceURI = 'Contact/$count';
     readonly bankPassFields: KeysEnum<ContactDto> = BankPassFields;
+    private fieldsDependencies: FieldDependencies = {
+        location: [
+            this.bankPassFields.CountryId,
+            this.bankPassFields.State
+        ]
+    }
     dataSource = new DataSource({
         requireTotalCount: true,
-        select: Object.keys(this.bankPassFields),
         sort: [{ selector: this.bankPassFields.Id, desc: true }],
         store: new ODataStore({
             key: this.bankPassFields.Id,
@@ -102,6 +109,11 @@ export class BankPassComponent implements OnInit, OnDestroy {
                     this.dataIsLoading = true;
                     this.changeDetectorRef.detectChanges();
                 }
+                request.params.$select = DataGridService.getSelectFields(
+                    this.dataGrid,
+                    [ this.bankPassFields.Id ],
+                    this.fieldsDependencies
+                );
                 this.transformRequest(request);
             },
             deserializeDates: false
@@ -364,6 +376,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
 
     getContactPhotoUrl(contact: ContactDto) {
         return this.profileService.getContactPhotoUrl(contact.PhotoPublicId);
+    }
+
+    onGridOptionChanged(event) {
+        DataGridService.refreshIfColumnsVisibilityStatusChange(event);
     }
 
     ngOnDestroy() {

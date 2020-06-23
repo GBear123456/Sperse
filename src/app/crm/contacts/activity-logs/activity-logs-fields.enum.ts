@@ -7,4 +7,4 @@ export const ActivityLogsFields: KeysEnum<ActivityLogsDto> = {
     CampaignName: 'CampaignName',
     CampaignType: 'CampaignType',
     RedirectUrl: 'RedirectUrl'
-}
+};

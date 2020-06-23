@@ -142,6 +142,7 @@
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                                      (onOptionChanged)="onGridOptionChanged($event)"
                                       (onContentReady)="onContentReady()">
                             <dxo-paging [pageSize]="10"></dxo-paging>
                             <dxo-pager
@@ -168,7 +169,7 @@
                             <dxi-column [dataField]="bankPassFields.Email" [caption]="ls.l('Email')"></dxi-column>
                             <dxi-column [dataField]="bankPassFields.Phone" [caption]="ls.l('Phone')"
                                         cellTemplate="phoneCell" cssClass="tabular" [width]="160"></dxi-column>
-                            <dxi-column [dataField]="bankPassFields.CountryId" [caption]="ls.l('State')"
+                            <dxi-column [dataField]="bankPassFields.CountryId" name="location" [caption]="ls.l('State')"
                                         cellTemplate="location" [width]="150"></dxi-column>
                             <dxi-column [dataField]="bankPassFields.ContactDate" [caption]="ls.l('Created')" [width]="95" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <dxi-column [width]="47" cssClass="delete-button-container" cellTemplate="deleteCellTemplate"></dxi-column>

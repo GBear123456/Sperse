@@ -43,7 +43,7 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
             store: new ODataStore({
                 url: this.getODataUrl('TransactionGroup'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             })

@@ -26,7 +26,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { OrderDto } from '@app/crm/contacts/orders/order-dto.type';
 import { OrderFields } from '@app/crm/contacts/orders/order-fields.enum';
-import Order = jasmine.Order;
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -78,15 +78,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
 
     private getDataSource(contactId) {
         return new DataSource({
-            select: Object.keys(this.orderFields),
             requireTotalCount: true,
             filter: [ 'ContactId', '=', contactId],
             store: new ODataStore({
                 key: this.orderFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.orderFields.Id ]
+                    );
                 },
                 onLoaded: () => {
                     this.dataGrid.instance.cancelEditData();

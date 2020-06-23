@@ -50,7 +50,7 @@
                                           [columnChooser]="{
                                             height: rowsViewHeight
                                           }"
-                                          [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                          [remoteOperations]="{ filtering: false, grouping: false, groupPaging: false, paging: false, sorting: false, summary: true }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
                                           [pager]="defaultGridPagerConfig"
@@ -189,6 +189,7 @@
                               }"
                               [allowColumnResizing]="true"
                               (onCellClick)="onCellClick($event, 'subscriptions')"
+                              (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)">
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxo-group-panel [visible]="true"></dxo-group-panel>

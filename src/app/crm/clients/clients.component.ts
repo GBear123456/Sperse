@@ -569,7 +569,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             });
         }
         this.dataSource = new DataSource({
-            select: Object.keys(this.clientFields).filter((field: string) => field !== 'BankCode' || this.tenantHasBankCodeFeature),
             store: new ODataStore({
                 key: this.clientFields.Id,
                 url: this.getODataUrl(
@@ -582,6 +581,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.clientFields.Id, this.clientFields.OrganizationId, this.clientFields.UserId ]);
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },

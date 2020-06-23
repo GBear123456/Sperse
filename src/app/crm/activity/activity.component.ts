@@ -455,7 +455,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 key: this.activityFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 deserializeDates: false

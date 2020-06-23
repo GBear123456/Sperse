@@ -4,4 +4,4 @@ import { KeyPhrasesDto } from '@app/cfo/transactions/key-phrases/key-phrases-dto
 export const KeyPhrasesFields: KeysEnum<KeyPhrasesDto> = {
     KeyPhrases: 'KeyPhrases',
     Count: 'Count'
-}
+};

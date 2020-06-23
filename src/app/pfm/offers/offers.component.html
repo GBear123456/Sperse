@@ -85,6 +85,7 @@
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
                       [pager]="defaultGridPagerConfig"
+                      (onOptionChanged)="onGridOptionChanged($event)"
                       (onSelectionChanged)="onSelectionChanged($event)"
                       (onRowClick)="openOfferEdit($event)"
                       (onContentReady)="contentReady()">

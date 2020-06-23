@@ -16,4 +16,4 @@ export const BusinessEntityFields: KeysEnum<BusinessEntityDto> = {
     Industry: 'Industry',
     Status: 'Status',
     IsDefault: 'IsDefault'
-}
+};

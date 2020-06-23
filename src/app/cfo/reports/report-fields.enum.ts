@@ -9,4 +9,4 @@ export const ReportFields: KeysEnum<ReportDto> = {
     CreationTime: 'CreationTime',
     From: 'From',
     To: 'To',
-}
+};

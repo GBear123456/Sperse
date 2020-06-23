@@ -53,12 +53,12 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     ) {
         super(injector);
         this.dataSource = new DataSource({
-            select: Object.keys(this.importListFields),
             store: new ODataStore({
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(this.dataGrid, [this.importListFields.Id]);
                 },
                 key: this.importListFields.Id
             })

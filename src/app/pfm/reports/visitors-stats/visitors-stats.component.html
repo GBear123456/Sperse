@@ -7,9 +7,11 @@
               [loadPanel]="{ enabled: false }"
               [pager]="defaultGridPagerConfig"
               (onCellClick)="onVisitorCellClick($event)"
+              (onOptionChanged)="onGridOptionChanged($event)"
               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
               (onContentReady)="contentReady()">
     <dxi-column [caption]="l('Name')"
+                name="name"
                 [calculateDisplayValue]="getVisitorFullName"
                 cssClass="clipboard-holder">
     </dxi-column>

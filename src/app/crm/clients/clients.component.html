@@ -79,6 +79,7 @@
                                   [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
@@ -97,7 +98,13 @@
                                     [showInColumnChooser]="false"
                                     [allowExporting]="false">
                         </dxi-column>
-                        <dxi-column [dataField]="clientFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column [dataField]="clientFields.Id"
+                                    [caption]="l('Id')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false"
+                                    sortOrder="desc"
+                                    [sortIndex]="0">
+                        </dxi-column>
                         <dxi-column [dataField]="clientFields.PhotoPublicId"
                                     caption=""
                                     cellTemplate="photoTemplate"

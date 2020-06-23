@@ -157,7 +157,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             store: new ODataStore({
                 url: this.getODataUrl('TransactionCount'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             }),

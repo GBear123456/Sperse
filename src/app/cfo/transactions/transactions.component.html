@@ -157,6 +157,7 @@
                         <dxi-column [caption]="l('Transactions_CashflowCategoryName')"
                                     [dataField]="transactionFields.CashflowCategoryName"
                                     [minWidth]="200"
+                                    name="cashflowCategoryName"
                                     dataType="string"
                                     [renderAsync]="true"
                                     cellTemplate="CashflowCategoryNameTemplate"
@@ -210,6 +211,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.CashflowSubCategoryName"
                                     dataType="string"
+                                    name="cashflowSubCategoryName"
                                     [caption]="l('Transactions_CashflowSubCategoryName')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">

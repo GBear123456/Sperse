@@ -32,4 +32,4 @@ export const TransactionFields: KeysEnum<TransactionDto> = {
     ProviderCashFlowSubCategoryName: 'ProviderCashFlowSubCategoryName',
     Department: 'Department',
     BankCode: 'BankCode'
-}
+};

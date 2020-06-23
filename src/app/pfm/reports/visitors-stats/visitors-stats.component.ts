@@ -13,6 +13,8 @@ import { AppConsts } from '@root/shared/AppConsts';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { VisitorStatsDto } from '@app/pfm/reports/visitors-stats/visitor-stats-dto.inteface';
 import { VisitorStatsFields } from '@app/pfm/reports/visitors-stats/visitor-stats-fields.enum';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 
 @Component({
     selector: 'pfm-visitors-stats',
@@ -23,8 +25,13 @@ import { VisitorStatsFields } from '@app/pfm/reports/visitors-stats/visitor-stat
 export class VisitorsStatsComponent extends AppComponentBase {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     readonly visitorStatsFields: KeysEnum<VisitorStatsDto> = VisitorStatsFields;
+    private fieldsDependencies: FieldDependencies = {
+        name: [
+            this.visitorStatsFields.FirstName,
+            this.visitorStatsFields.LastName
+        ]
+    }
     dataSource: DataSource = new DataSource({
-        select: Object.keys(this.visitorStatsFields),
         store: new ODataStore({
             key: this.visitorStatsFields.Id,
             url: this.getODataUrl('PfmOfferRequest'),
@@ -33,6 +40,11 @@ export class VisitorsStatsComponent extends AppComponentBase {
             beforeSend: (request) => {
                 this.isDataLoaded = false;
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$select = DataGridService.getSelectFields(
+                    this.dataGrid,
+                    [ this.visitorStatsFields.Id, this.visitorStatsFields.ApplicantUserId ],
+                    this.fieldsDependencies
+                );
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             }
         })
