@@ -23,7 +23,7 @@
                     <dx-date-box *ngSwitchCase="'date'"
                         width="260px"
                         [placeholder]="ls.l('Select') + '...'"
-                        [value]="person[field.name]"                        
+                        [value]="person[field.name]"
                         (onKeyDown)="allowDigitsOnly($event, ['/'])"
                         (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-date-box>
