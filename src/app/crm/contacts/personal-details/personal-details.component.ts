@@ -226,6 +226,7 @@ export class PersonalDetailsComponent implements OnDestroy {
     }
 
     updateValue(value: string, field: string) {
+        if (value == '') value = null;
         let initialValue = this.person[field];
         if (initialValue != value) {
             this.person[field] = value;
