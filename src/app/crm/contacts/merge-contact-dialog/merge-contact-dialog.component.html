@@ -15,7 +15,7 @@
             <div class="result">
                 <div class="photo-area" [ngStyle]="{ 'background-image': 'url(' + profileService.getContactPhotoUrl(getResultPhotoId()) + ')' }"></div>
                 <div class="name-wrapper">
-                    <span [title]="getResultFullName()" [ngClass]="{nowrap: !!mergeInfo?.targetContactInfo?.companyName}">{{getResultFullName()}}</span>
+                    <span [title]="getResultFullName()" [ngClass]="{nowrap: !!(mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName)}">{{getResultFullName()}}</span>
                     <i [title]="mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName">
                         {{mergeInfo?.targetContactInfo?.companyName || mergeInfo?.contactInfo?.companyName}}
                     </i>
