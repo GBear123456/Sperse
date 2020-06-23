@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'required-documents',
@@ -32,7 +33,9 @@ export class RequiredDocumentsComponent implements OnInit {
     };
     documents_colupsed = false;
 
-    constructor() { }
+    constructor(
+        public ls: AppLocalizationService
+    ) { }
 
     ngOnInit() {
 //    this.documents = this.FinancialService.getDocuments();

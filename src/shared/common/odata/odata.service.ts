@@ -31,7 +31,7 @@ export class ODataService {
     ) {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
-            let key = (options.url.match(/odata\/(\w+)[\?|$]?/) || []).pop() + (options.headers.context || '');
+            let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + (options.headers.context || '');
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
     }
@@ -49,10 +49,11 @@ export class ODataService {
     }
 
     cancelDataSource(dataSource, requestKey) {
-        if (dataSource.isLoading() && !isNaN(dataSource['operationId']))
+        if (dataSource.isLoading() && !isNaN(dataSource['operationId'])) {
             dataSource.cancel(dataSource['operationId']);
-        if (this.dxRequestPool[requestKey])
-            this.dxRequestPool[requestKey].abort();
+            if (this.dxRequestPool[requestKey])
+                this.dxRequestPool[requestKey].abort();
+        }
     }
 
     getODataUrl(uri: string, filter?: any, instanceData: InstanceModel = null, params: Param[] = []): string {
