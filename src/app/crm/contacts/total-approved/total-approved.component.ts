@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 //import { FinancialService } from '../../services/financial/financial.service';
 
 @Component({
@@ -17,7 +17,9 @@ export class TotalApprovedComponent implements OnInit {
         amount_due: '0'
     };
 
-    constructor(//private FinancialService: FinancialService
+    constructor(
+        //private FinancialService: FinancialService
+        public ls: AppLocalizationService
     ) { }
 
     ngOnInit() {
