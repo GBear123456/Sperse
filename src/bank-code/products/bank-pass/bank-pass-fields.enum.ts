@@ -12,4 +12,4 @@ export const BankPassFields: KeysEnum<ContactDto> = {
     CountryId: 'CountryId',
     ContactDate: 'ContactDate',
     State: 'State'
-}
+};

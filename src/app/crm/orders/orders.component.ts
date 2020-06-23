@@ -343,28 +343,34 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersDataSource: any = {
         uri: this.ordersDataSourceURI,
         requireTotalCount: true,
-        select: Object.keys(this.orderFields),
         store: {
             type: 'odata',
             key: this.orderFields.Id,
             url: this.getODataUrl(this.ordersDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
-            beforeSend: function (request) {
+            beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$select = DataGridService.getSelectFields(
+                    this.ordersGrid,
+                    [ this.orderFields.Id, this.orderFields.ContactId, this.orderFields.LeadId ]
+                );
             }
         }
     };
     subscriptionsDataSource = new DataSource({
         requireTotalCount: true,
-        select: Object.keys(this.subscriptionFields),
         store: new ODataStore({
             key: this.subscriptionFields.Id,
             url: this.getODataUrl(this.subscriptionsDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
-            beforeSend: function (request) {
+            beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.params.$select = DataGridService.getSelectFields(
+                    this.subscriptionsGrid,
+                    [ this.subscriptionFields.Id, this.subscriptionFields.ContactId, this.subscriptionFields.LeadId ]
+                );
             }
         })
     });

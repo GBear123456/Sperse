@@ -137,13 +137,13 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     ) {
         super(injector);
         this.dataSource = new DataSource({
-            select: Object.keys(this.reportsFields),
             store: new ODataStore({
                 key: this.reportsFields.Id,
                 url: this.getODataUrl(this.dataSourceURI, this.getFilters()),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(this.dataGrid, [ this.reportsFields.Id ]);
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     if (request.params.$filter && request.url.indexOf('$filter')) {
                         let parts = request.url.split('?');

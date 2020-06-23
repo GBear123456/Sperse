@@ -179,9 +179,12 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 beforeSend: (request) => {
                     this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.offerFields.Id, this.offerFields.CampaignId, this.offerFields.Rank ]
+                    );
                 }
             }),
-            select: Object.keys(this.offerFields),
             sort: [
                 { selector: this.offerFields.Created, desc: true }
             ]
@@ -199,139 +202,139 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     initToolbarConfig() {
         this.toolbarConfig = [
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'filters',
-                            action: () => {
-                                setTimeout(() => {
-                                    this.dataGrid.instance.repaint();
-                                }, 1000);
-                                this.filtersService.fixed = !this.filtersService.fixed;
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'filters',
+                        action: () => {
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            this.filtersService.fixed = !this.filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
                             },
-                            options: {
-                                checkPressed: () => {
-                                    return this.filtersService.fixed;
-                                },
-                                mouseover: () => {
-                                    this.filtersService.enable();
-                                },
-                                mouseout: () => {
-                                    if (!this.filtersService.fixed)
-                                        this.filtersService.disable();
-                                }
+                            mouseover: () => {
+                                this.filtersService.enable();
                             },
-                            attr: {
-                                'filter-selected': this.filtersService.hasFilterSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'search',
-                            widget: 'dxTextBox',
-                            options: {
-                                value: this.searchValue,
-                                width: '279',
-                                mode: 'search',
-                                placeholder: this.l('Search') + ' '
-                                    + this.l('Offers').toLowerCase(),
-                                onValueChanged: (e) => {
-                                    this.searchValueChange(e);
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'category',
-                            action: this.toggleCategories.bind(this),
-                            attr: {
-                                'filter-selected': this.filterModelCategories && this.filterModelCategories.isSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'flag',
-                            action: this.toggleFlags.bind(this),
-                            attr: {
-                                'filter-selected': this.filterModelFlags && this.filterModelFlags.isSelected
+                            mouseout: () => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             }
                         },
-                        {
-                            name: 'pen',
-                            action: this.toggleAttributes.bind(this),
-                            attr: {
-                                'filter-selected': this.filterModelAttributes && this.filterModelAttributes.isSelected
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' '
+                                + this.l('Offers').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
                             }
                         }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'status',
-                            action: this.toggleStatuses.bind(this),
-                            attr: {
-                                'filter-selected': this.filterModelStatuses && this.filterModelStatuses.isSelected
-                            }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'category',
+                        action: this.toggleCategories.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelCategories && this.filterModelCategories.isSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'flag',
+                        action: this.toggleFlags.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelFlags && this.filterModelFlags.isSelected
+                        }
+                    },
+                    {
+                        name: 'pen',
+                        action: this.toggleAttributes.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelAttributes && this.filterModelAttributes.isSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'status',
+                        action: this.toggleStatuses.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStatuses && this.filterModelStatuses.isSelected
+                        }
+                    },
+                    {
+                        name: 'rating',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('Rank')
                         },
-                        {
-                            name: 'rating',
-                            widget: 'dxButton',
-                            options: {
-                                text: this.l('Rank')
-                            },
-                            action: this.toggleRating.bind(this)
+                        action: this.toggleRating.bind(this)
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    { name: 'showCompactRowsHeight', action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid) },
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: this.l('SaveAs', 'PDF'),
+                                    icon: 'pdf',
+                                }, {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                }, {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                },
+                                { type: 'downloadOptions' }
+                            ]
                         }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        { name: 'showCompactRowsHeight', action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid) },
-                        {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [
-                                    {
-                                        action: Function(),
-                                        text: this.l('SaveAs', 'PDF'),
-                                        icon: 'pdf',
-                                    }, {
-                                        action: this.exportToXLS.bind(this),
-                                        text: this.l('Export to Excel'),
-                                        icon: 'xls',
-                                    }, {
-                                        action: this.exportToGoogleSheet.bind(this),
-                                        text: this.l('Export to Google Sheets'),
-                                        icon: 'sheet'
-                                    },
-                                    { type: 'downloadOptions' }
-                                ]
-                            }
-                        }
-                    ]
-                }
-            ];
+                    }
+                ]
+            }
+        ];
     }
 
     toggleColumnChooser() {

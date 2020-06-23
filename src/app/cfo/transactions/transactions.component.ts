@@ -78,9 +78,9 @@ import { BankAccountDto } from '@shared/service-proxies/service-proxies';
 import { BusinessEntitiesChooserComponent } from '@shared/cfo/bank-accounts/business-entities-chooser/business-entities-chooser.component';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { TransactionDto } from '@app/cfo/transactions/transaction-dto.interface';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { TransactionFields } from '@app/cfo/transactions/transaction-fields.enum';
+import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -336,6 +336,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         ) || '';
     }
     readonly transactionFields: KeysEnum<TransactionDto> = TransactionFields;
+    private fieldsDependencies: FieldDependencies = {
+        cashflowCategoryName: [ this.transactionFields.CashflowCategoryId ],
+        cashflowSubCategoryName: [ this.transactionFields.CashflowSubCategoryId ]
+    }
 
     constructor(injector: Injector,
         private transactionsServiceProxy: TransactionsServiceProxy,
@@ -348,7 +352,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
         private calendarService: CalendarService,
-        private userManagementService: UserManagementService,
         public appService: AppService,
         public cfoPreferencesService: CfoPreferencesService,
         public filtersService: FiltersService,
@@ -359,7 +362,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (filtersService.fixed || this.isAdvicePeriod)
             this._categoriesShowed = false;
 
-        this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
+        this.searchColumns = [
+            this.transactionFields.Description,
+            this.fieldsDependencies.CashflowSubCategoryName,
+            this.fieldsDependencies.CashflowCategoryName,
+            this.fieldsDependencies.Descriptor
+        ];
         this.searchValue = '';
     }
 
@@ -383,14 +391,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
 
         this.dataSource = new DataSource({
-            select: Object.keys(this.transactionFields).filter((field: string) => field !== 'BankCode' || this.userManagementService.checkBankCodeFeature()),
             store: new ODataStore({
+                key: this.transactionFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     const orderBy = request.params.$orderby;
                     request.params.$orderby = orderBy ? orderBy + (orderBy === 'Id desc' ? '' : ',Id desc') : 'Id desc';
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.transactionFields.Id ],
+                        this.fieldsDependencies
+                    );
                     if (request.params.$filter && request.url.indexOf('$filter')) {
                         let parts = request.url.split('?');
                         request.url = parts.shift() + '?' + parts.pop().split('&').reduce((acc, item) => {
@@ -441,7 +454,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             store: new ODataStore({
                 url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             }),
@@ -1260,7 +1273,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
         } else if ($event.rowType === 'data') {
             const transaction: TransactionDto = $event.data;
-            if ($event.column.dataField == 'CashflowCategoryName' && !transaction.CashflowCategoryName) {
+            if ($event.column.dataField == this.transactionFields.CashflowCategoryName && !transaction.CashflowCategoryName) {
                 let parentRow = <HTMLTableRowElement>$event.cellElement.parentElement;
                 if (parentRow) {
                     let rowIndex = parentRow.rowIndex;
@@ -1270,7 +1283,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         rows[i].classList.add(`uncategorized`);
                     }
                 }
-            } else if ($event.column.dataField == 'CashflowSubCategoryName' && transaction.CashflowSubCategoryName) {
+            } else if ($event.column.dataField == this.transactionFields.CashflowSubCategoryName && transaction.CashflowSubCategoryName) {
                 $event.cellElement.classList.add('clickable-item');
             }
         }

@@ -28,7 +28,7 @@ import {
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
-    InvoiceSettings
+    InvoiceSettings, PipelineDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
@@ -39,6 +39,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from '@app/crm/contacts/invoices/invoice-dto.interface';
 import { InvoiceFields } from '@app/crm/contacts/invoices/invoice-fields.enum';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -71,12 +73,18 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private readonly ident = 'Invoices';
 
     contactId: number;
-    stages$ = this.pipelineService.getPipelineDefinitionObservable(
-        AppConsts.PipelinePurposeIds.order).pipe(map(pipeline => {
-            return pipeline.stages;
-        })
+    stages$ = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).pipe(
+        map((pipeline: PipelineDto) => pipeline.stages)
     );
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
+    private fieldsDependencies: FieldDependencies = {
+        stage: [
+            this.invoiceFields.OrderId,
+            this.invoiceFields.OrderStage,
+            this.invoiceFields.ContactId,
+            this.invoiceFields.Date
+        ]
+    }
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -116,15 +124,23 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     private getDataSource(): DataSource {
         return new DataSource({
-            select: Object.keys(this.invoiceFields),
             requireTotalCount: true,
             filter: [ this.invoiceFields.ContactId, '=', this.contactId],
             store: new ODataStore({
                 key: this.invoiceFields.Key,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [
+                            this.invoiceFields.Key,
+                            this.invoiceFields.InvoiceId,
+                            this.invoiceFields.InvoiceStatus
+                        ],
+                        this.fieldsDependencies
+                    );
                 },
                 onLoaded: () => {
                     if (this.dataGrid && this.dataGrid.instance) {

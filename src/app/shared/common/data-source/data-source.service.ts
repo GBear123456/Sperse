@@ -24,7 +24,7 @@ export class DataSourceService {
                 key: 'Id',
                 url: this.oDataService.getODataUrl('Lead'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 deserializeDates: false
@@ -35,7 +35,7 @@ export class DataSourceService {
                 key: 'Id',
                 url: this.oDataService.getODataUrl('Customer'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             })
@@ -65,7 +65,7 @@ export class DataSourceService {
                 key: 'Id',
                 url: this.oDataService.getODataUrl('Partner'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             })
@@ -74,7 +74,7 @@ export class DataSourceService {
             store: new ODataStore({
                 url: this.oDataService.getODataUrl('Offer'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             }),

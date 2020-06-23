@@ -8,4 +8,4 @@ export const InvoiceFields: KeysEnum<InvoiceDto> = {
     OrderStage: 'OrderStage',
     OrderType: 'OrderType',
     Date: 'Date'
-}
+};

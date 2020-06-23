@@ -12,4 +12,4 @@ export const VisitorStatsFields: KeysEnum<VisitorStatsDto> = {
     ApplicantUserId: 'ApplicantUserId',
     FirstName: 'FirstName',
     LastName: 'LastName'
-}
+};

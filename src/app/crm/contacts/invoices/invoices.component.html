@@ -44,6 +44,7 @@
                                       [hoverStateEnabled]="true"
                                       [pager]="defaultGridPagerConfig"
                                       (onCellClick)="onCellClick($event)"
+                                      (onOptionChanged)="onGridOptionChanged($event)"
                                       (onContentReady)="onContentReady()"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
@@ -54,7 +55,7 @@
                             <dxi-column [dataField]="invoiceFields.Amount" dataType="string" [caption]="l('Amount')" cellTemplate="amountCell"></dxi-column>
                             <dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                             <dxi-column [dataField]="invoiceFields.InvoiceStatus" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" cellTemplate="stageCell" width="160px"></dxi-column>
+                            <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" name="stage" cellTemplate="stageCell" width="160px"></dxi-column>
                             <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="datetimeCell"></dxi-column>
                             <dxi-column [dataField]="invoiceFields.InvoiceDueDate" [caption]="l('Due Date')" cellTemplate="dueDateCell"></dxi-column>
                             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>

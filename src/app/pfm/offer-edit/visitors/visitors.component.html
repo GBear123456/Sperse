@@ -14,13 +14,14 @@
                     (onCellClick)="onCellClick($event)"
                     (onInitialized)="onDataGridInit()"
                     (onContentReady)="onContentReady()"
+                    (onOptionChanged)="onGridOptionChanged($event)"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
                            mode="multiple">
             </dxo-selection>
 
-            <dxi-column [caption]="l('Name')" cellTemplate="nameCell"></dxi-column>
+            <dxi-column [caption]="l('Name')" name="name" cellTemplate="nameCell"></dxi-column>
             <dxi-column [dataField]="visitorFields.StateCode" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [dataField]="visitorFields.Email" [caption]="l('Email')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [dataField]="visitorFields.PhoneNumber" [caption]="l('PhoneNumber')" cssClass="clipboard-holder"></dxi-column>

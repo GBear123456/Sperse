@@ -7,4 +7,4 @@ export const OfferStatsFields: KeysEnum<OfferStatsDto> = {
     Name: 'Name',
     Categories: 'Categories',
     RequestCount: 'RequestCount'
-}
+};

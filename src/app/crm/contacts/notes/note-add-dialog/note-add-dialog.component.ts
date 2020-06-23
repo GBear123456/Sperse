@@ -135,7 +135,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 key: this.invoicesFields.Key,
                 url: this.getODataUrl('OrderInvoices'),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 deserializeDates: false

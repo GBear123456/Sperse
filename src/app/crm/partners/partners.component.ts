@@ -371,7 +371,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     ) {
         super(injector);
         this.dataSource = new DataSource({
-            select: Object.keys(this.partnerFields).filter((field: string) => field !== 'BankCode' || this.tenantHasBankCodeFeature),
             store: new ODataStore({
                 key: this.partnerFields.Id,
                 deserializeDates: false,
@@ -379,6 +378,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.partnerFields.Id, this.partnerFields.OrganizationId ]
+                    );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
             })

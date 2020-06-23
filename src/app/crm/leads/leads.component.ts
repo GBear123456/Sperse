@@ -470,7 +470,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
-            select: Object.keys(this.leadFields).filter((field: string) => field !== 'BankCode' || this.tenantHasBankCodeFeature),
             store: {
                 key: this.leadFields.Id,
                 type: 'odata',
@@ -479,6 +478,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 beforeSend: (request) => {
                     request.params.contactGroupId = this.contactGroupId.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.leadFields.Id, this.leadFields.CustomerId, this.leadFields.OrganizationId, this.leadFields.UserId ]
+                    );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 deserializeDates: false

@@ -8,4 +8,4 @@ export const ImportListFields: KeysEnum<ImportListDto> = {
     StatusName: 'StatusName',
     TotalCount: 'TotalCount',
     TypeName: 'TypeName'
-}
+};

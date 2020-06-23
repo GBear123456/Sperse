@@ -25,6 +25,7 @@ import { LeftMenuService } from '../shared/common/left-menu/left-menu.service';
 import { BusinessEntityDto } from '@app/cfo/business-entities/business-entity-dto.interface';
 import { BusinessEntityFields } from '@app/cfo/business-entities/business-entity-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 
 @Component({
     selector: 'business-entities',
@@ -51,6 +52,13 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         map((collapsed: boolean) => window.innerWidth - (collapsed || AppConsts.isMobile ? 0 : 324 ))
     );
     readonly businessEntityFields: KeysEnum<BusinessEntityDto> = BusinessEntityFields;
+    private fieldsDependencies: FieldDependencies = {
+        location: [
+            this.businessEntityFields.StateId,
+            this.businessEntityFields.State,
+            this.businessEntityFields.CountryId
+        ]
+    };
 
     constructor(
         injector: Injector,
@@ -67,7 +75,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         this.rootComponent.overflowHidden(true);
         this.dataSource = new DataSource({
             key: this.businessEntityFields.Id,
-            select: Object.keys(this.businessEntityFields),
             store: new ODataStore({
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
@@ -75,6 +82,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 beforeSend: (request) => {
                     this.isDataLoaded = false;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [
+                            this.businessEntityFields.Id,
+                            this.businessEntityFields.Status,
+                            this.businessEntityFields.BankAccountIds
+                        ],
+                        this.fieldsDependencies
+                    );
                 }
             })
         });

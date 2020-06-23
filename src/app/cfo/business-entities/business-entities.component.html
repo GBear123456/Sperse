@@ -29,6 +29,7 @@
                             (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                             (onCellClick)="onCellClick($event)"
                             (onContentReady)="onContentReady()"
+                            (onOptionChanged)="onGridOptionChanged($event)"
                             (onCellPrepared)="onCellPrepared($event)">
                     <dxo-selection selectAllMode="page"
                                 showCheckBoxesMode="always"
@@ -53,6 +54,7 @@
                     </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_Location')"
                                 cssClass="clipboard-holder"
+                                name="location"
                                 [calculateCellValue]="locationColumn_calculateCellValue">
                     </dxi-column>
                     <dxi-column [caption]="l('BusinessEntities_DateOpened')"

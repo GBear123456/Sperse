@@ -26,6 +26,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { VisitorDto } from '@app/pfm/offer-edit/visitors/visitor-dto.interface';
 import { VisitorFields } from '@app/pfm/offer-edit/visitors/visitor-fields.enum';
+import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
 
 @Component({
     selector: 'pfm-offer-visitors',
@@ -44,6 +45,12 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     formatting = AppConsts.formatting;
     queryParamsSubscription: any;
     readonly visitorFields: KeysEnum<VisitorDto> = VisitorFields;
+    private fieldsDependencies: FieldDependencies = {
+        name: [
+            this.visitorFields.FirstName,
+            this.visitorFields.LastName
+        ]
+    }
 
     constructor(injector: Injector,
         private dialog: MatDialog
@@ -69,7 +76,6 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
 
     ngOnInit() {
         this.dataSource = new DataSource({
-            select: Object.keys(this.visitorFields),
             store: new ODataStore({
                 key: this.visitorFields.Id,
                 url: this.getODataUrl(this.dataSourceURI, this.getInputFilter()),
@@ -77,6 +83,11 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                 deserializeDates: false,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.dataGrid,
+                        [ this.visitorFields.Id, this.visitorFields.ApplicantUserId ],
+                        this.fieldsDependencies
+                    );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
             })
