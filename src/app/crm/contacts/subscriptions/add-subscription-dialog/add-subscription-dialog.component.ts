@@ -8,7 +8,6 @@ import {
     ViewChild
 } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -27,13 +26,14 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
+import { DxDropDownBoxComponent, DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppSessionService } from "@shared/common/session/app-session.service";
+import { ServiceType } from '@app/crm/contacts/subscriptions/add-subscription-dialog/service-type.interface';
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -47,20 +47,43 @@ import { AppSessionService } from "@shared/common/session/app-session.service";
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
+    @ViewChild(DxDropDownBoxComponent, { static: false }) servicesDropDown: DxDropDownBoxComponent;
     private slider: any;
-    private readonly performancePartnersServiceTypes = [
-        'EDAG',
-        'Call Rollover',
-        'Appointment Setting',
-        'List Generation',
-        'Insurance Billing',
-        'Misc Services',
-        'Collections'
-    ];
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
-    serviceTypes = this.isBankCodeLayout
-        ? values(BankCodeServiceType)
-        : (this.appSession.tenancyName === 'performancepartners' ? this.performancePartnersServiceTypes : null);
+    hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
+    isPerformancePartnersTenant: boolean = this.appSession.tenancyName === 'performancepartners';
+    servicesTypesGroupsNumber: number = (+this.isPerformancePartnersTenant) + (+this.hasBankCodeFeature);
+    private readonly performancePartnersServiceTypes: ServiceType[] = [
+        { id: '1', name: this.ls.l('Performance Partners Services'), expanded: true },
+        { id: '1_1', name: 'EDAG', groupId: '1' },
+        { id: '1_2', name: 'Call Rollover', groupId: '1' },
+        { id: '1_4', name: 'Appointment Setting', groupId: '1' },
+        { id: '1_5', name: 'List Generation', groupId: '1' },
+        { id: '1_6', name: 'Insurance Billing', groupId: '1' },
+        { id: '1_7', name: 'Misc Services', groupId: '1' },
+        { id: '1_8', name: 'Collections', groupId: '1' }
+    ]
+    private readonly bankCodeServiceTypes: ServiceType[] = [
+            {
+                id: '2',
+                name: this.ls.l('Codebreaker Subscriptions'),
+                expanded: this.servicesTypesGroupsNumber === 1
+            }
+        ].concat(
+            values(BankCodeServiceType).map((serviceType: string, index: number) => {
+                return {
+                    name: serviceType,
+                    groupId: '2',
+                    id: '2_' + index,
+                    expanded: false
+                };
+            })
+        );
+    serviceTypes: ServiceType[] = (
+        this.isPerformancePartnersTenant ? this.performancePartnersServiceTypes : []
+    ).concat(
+        this.hasBankCodeFeature ? this.bankCodeServiceTypes : []
+    );
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
         leadId: this.data.leadId,
@@ -151,9 +174,23 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
-    onServiceTypeChanged(event, sub) {
+    onServiceTypeChanged(event, subscription: SubscriptionInput) {
         if (event.value)
-            sub['name'] = event.value;
+            subscription.name = event.value;
+    }
+
+    onItemClick(event, subscription: SubscriptionInput) {
+        /** Allow choosing only children of groups */
+        if (event.itemData.groupId) {
+            subscription.name = subscription.code = event.itemData.name;
+            /** Change system type for codebreaker services */
+            if (event.itemData.groupId === '2') {
+                this.subscription.systemType = 'BANKCODE';
+            }
+            if (this.servicesDropDown && this.servicesDropDown.instance) {
+                this.servicesDropDown.instance.close();
+            }
+        }
     }
 
     removeSubscriptionFields(index) {

@@ -590,7 +590,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (context)
                 request.headers['context'] = context;
             request.params.contactGroupId = this.contactGroupId;
-            request.params.dupa = 'true';
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         };
