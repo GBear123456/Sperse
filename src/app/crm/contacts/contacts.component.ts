@@ -284,35 +284,35 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private initNavLinks(contact) {
         this.navLinks = [
-            { name: 'contact-information', label: 'Contact Information', route: 'contact-information' },
-            { name: 'personal-details', label: 'Personal Details', route: 'personal-details'},
+            { name: 'contact-information', label: this.l('ContactInfo'), route: 'contact-information' },
+            { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
             {
                 name: 'user-information',
-                label: contact.userId ? 'User Information' : 'Invite User',
+                label: contact.userId ? this.l('UserInformation') : this.l('InviteUser'),
                 hidden: !this.permission.isGranted(contact.userId ?
                     AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
                 route: 'user-information'
             },
-            { name: 'documents', label: 'Documents', route: 'documents' },
-            { name: 'notes', label: 'Notes', route: 'notes'},
+            { name: 'documents', label: this.l('Documents'), route: 'documents' },
+            { name: 'notes', label: this.l('Notes'), route: 'notes'},
             {
                 name: 'invoices',
-                label: 'Orders & Invoices',
+                label: this.l('OrdersAndInvoices'),
                 route: 'invoices',
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
             },
             { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !contact.userId && !this.isClientDetailPage() },
-            { name: 'payment-information', label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage() },
-            { name: 'lead-information', label: 'Lead Information', route: 'lead-information' },
+            { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !this.isClientDetailPage() },
+            { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information' },
             {
                 name: 'activity-logs',
-                label: 'Activity Logs',
+                label: this.l('ActivityLogs'),
                 route: 'activity-logs',
                 disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
             },
-            { name: 'referral-history', label: 'Referral History', route: 'referral-history', disabled: true },
-            { name: 'application-status', label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true },
-            { name: 'questionnaire', label: 'Questionnaire', route: 'questionnaire', disabled: true }
+            { name: 'referral-history', label: this.l('ReferralHistory'), route: 'referral-history', disabled: true },
+            { name: 'application-status', label: this.l('ApplicationStatus'), route: 'application-status', hidden: !!this.leadId, disabled: true },
+            { name: 'questionnaire', label: this.l('Questionnaire'), route: 'questionnaire', disabled: true }
         ];
     }
 

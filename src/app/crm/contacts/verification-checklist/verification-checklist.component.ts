@@ -1,6 +1,5 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist.model';
 
 @Component({
@@ -12,7 +11,9 @@ export class VerificationChecklistComponent extends AppComponentBase implements 
     @Input() data: VerificationChecklistItem[];
     collapsed = false;
 
-    constructor(injector: Injector) {
+    constructor(
+        injector: Injector
+    ) {
         super(injector);
     }
 

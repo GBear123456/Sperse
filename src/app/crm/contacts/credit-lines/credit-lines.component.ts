@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'credit-lines',
@@ -41,7 +42,9 @@ export class CreditLinesComponent implements OnInit {
     };
     credit_lines_colupsed = false;
 
-    constructor() { }
+    constructor(
+        public ls: AppLocalizationService
+    ) { }
 
     ngOnInit() {
 //    this.banks = this.FinancialService.getBanksCreditLines();
