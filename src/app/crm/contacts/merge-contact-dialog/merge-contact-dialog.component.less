@@ -126,6 +126,8 @@
             span {
                 display: block;
                 overflow: hidden;
+                max-height: 50px;
+                line-height: 18px;
                 text-overflow: ellipsis;
                 &.nowrap {
                     white-space: nowrap;
@@ -187,16 +189,81 @@
                 display: inline-block;
             }           
         }
-        .contact-field.stage {
-            .field-wrapper p {
-                padding-left: 25px;
+        .contact-field {
+            .stage {
+                .field-wrapper p {
+                    padding-left: 25px;
+                }
+            }
+
+            &.contactAddresses, 
+            &.contactEmails,
+            &.contactPhones {
+                i {
+                    position: absolute;
+                    left: 40px;
+                    width: 18px;
+                    height: 18px;
+                    top: 0px;
+
+                    &.dt {
+                        background: url(../../../../assets/common/icons/contact-icon.svg) no-repeat center;
+                    }
+                }
+            }
+
+            &.contactEmails {
+                i {
+                    background: url("../../../../assets/common/icons/email.svg") no-repeat center;
+                    background-size: 17px auto;
+                }
+            }
+
+            &.contactPhones {
+                i {
+                    background-size: auto 18px!important;
+                } 
+                i.H, i.P {
+                    background: url("../../../../assets/common/icons/phone.svg") no-repeat center;
+                }
+
+                i.W {
+                    background: url("../../../../assets/common/icons/phone-work.svg") no-repeat center;
+                }
+
+                i.M {
+                    background: url("../../../../assets/common/icons/phone-mobile.svg") no-repeat center;
+                }
+            }
+
+            &.contactAddresses {
+                i {
+                    background-size: auto 18px!important;
+                } 
+                i.C {
+                    background: url("../../../../assets/common/icons/address-company.svg") no-repeat center;
+                }    
+                i.O {
+                    background: url("../../../../assets/common/icons/address-other.svg") no-repeat center;
+                }
+                i.H {
+                    background: url("../../../../assets/common/icons/address-home.svg") no-repeat center;
+                }
+                i.P, i.W {
+                    background: url("../../../../assets/common/icons/address-work.svg") no-repeat center;
+                }
+                i.S {
+                    background: url("../../../../assets/common/icons/address-shipping.svg") no-repeat center;
+                }
+                i.B {
+                    background: url("../../../../assets/common/icons/address-billing.svg") no-repeat center;        
+                }
             }
         }
         .result {
             width: 29%;
             border-right: 1px solid #e5e9ec;
             .field-wrapper {
-                position: relative;
                 .set-primary {
                     width: 16px;
                     height: 16px;
@@ -222,15 +289,18 @@
             width: 29%; 
         }
         .source, .target, .result {
-            .field-wrapper > p {
-                margin-top: 10px;
-                padding-left: 40px;
-                i {
-                    width: 10px;
-                    height: 10px;
-                    display: inline-block;
-                    border-radius: 5px;
-                    margin-right: 5px;
+            .field-wrapper {
+                position: relative;
+                & > p {
+                    margin-top: 10px;
+                    padding-left: 40px;
+                    i {
+                        width: 10px;
+                        height: 10px;
+                        display: inline-block;
+                        border-radius: 5px;
+                        margin-right: 5px;
+                    }
                 }
             }
         }
@@ -240,6 +310,13 @@
                 .dx-checkbox-icon, 
                 .dx-checkbox-text {
                     opacity: 1;
+                }
+            }
+            &.contactAddresses, 
+            &.contactEmails,
+            &.contactPhones {
+                .dx-checkbox-text {
+                    padding-left: 50px;
                 }
             }
             &.primary {
