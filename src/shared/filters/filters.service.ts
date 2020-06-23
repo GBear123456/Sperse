@@ -19,6 +19,7 @@ import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filte
 import { ServerCacheService } from '@shared/common/server-cache-service/server-cache.service';
 import { MessageService } from '@abp/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 
 @Injectable()
 export class FiltersService {
@@ -237,8 +238,8 @@ export class FiltersService {
         private ls: AppLocalizationService
     ) {}
 
-    filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: Observable<string>} | 'cancelled' {
-        let data: string[] | {[uuidName: string]: Observable<string>} | 'cancelled' = [];
+    filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: AsyncFilter} | 'cancelled' {
+        let data: string[] | {[uuidName: string]: AsyncFilter} | 'cancelled' = [];
         let element = filter.items.element as FilterMultilineInputModel;
         if (element) {
             let valuesArray: string[] = element.valuesArray;
@@ -259,15 +260,11 @@ export class FiltersService {
                     }
                 });
                 if (isLongFilter) {
-                    if (valuesArray.length > 1000) {
-                        this.messageService.error(this.ls.l('FilterItemsShouldNotExceed', 1000));
-                        data = 'cancelled';
-                    } else {
-                        data = {
-                            [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: this.serverCacheService.getServerCacheId(
-                                normalizedValues
-                            )
-                        };
+                    data = {
+                        [ServerCacheService.filterNamesToCacheIdNames[filter.caption]]: new AsyncFilter(
+                            this.serverCacheService.getServerCacheId(normalizedValues),
+                            valuesArray.length
+                        )
                     }
                 } else {
                     data = inExpressions.length

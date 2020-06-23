@@ -335,7 +335,17 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
         )
+    ).pipe(
+        filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
     );
+    totalCountUrl$: Observable<string> = this.odataRequestValues$.pipe(
+        map((odataRequestValues: ODataRequestValues) => this.getODataUrl(
+            this.totalDataSourceURI,
+            odataRequestValues.filter,
+            null,
+            odataRequestValues.params
+        ))
+    )
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
@@ -477,18 +487,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.odataRequestValues$,
+            this.totalCountUrl$,
             this.refresh$
         ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
-            this.totalDataSource['_store']['_url'] = this.getODataUrl(
-                this.totalDataSourceURI,
-                odataRequestValues.filter,
-                null,
-                odataRequestValues.params
-            );
-            this.totalDataSource.load();
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe(([totalCountUrl, ]: [string, null]) => {
+            if (totalCountUrl && this.oDataService.requestLengthIsValid(totalCountUrl)) {
+                this.totalDataSource['_store']['_url'] = totalCountUrl;
+                this.totalDataSource.load();
+            }
         });
     }
 
