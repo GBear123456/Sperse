@@ -2,12 +2,21 @@
 import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ElementRef } from '@angular/core';
 
 /** Third party imports */
+import { select, Store } from '@ngrx/store';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, map } from 'rxjs/operators';
 import findIndex from 'lodash/findIndex';
 import * as moment from 'moment';
 
 /** Application imports */
+import { RootStore,
+    AddressUsageTypesStoreActions,
+    AddressUsageTypesStoreSelectors,
+    EmailUsageTypesStoreActions,
+    EmailUsageTypesStoreSelectors,
+    PhoneUsageTypesStoreActions,
+    PhoneUsageTypesStoreSelectors
+} from '@root/store';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import {
@@ -178,6 +187,12 @@ export class MergeContactDialogComponent {
         }
     ];
 
+    usageTypes = {
+        contactAddresses: {},
+        contactPhones: {},
+        contactEmails: {}
+    };
+
     constructor(
         private elementRef: ElementRef,
         private phonePipe: PhoneFormatPipe,
@@ -188,6 +203,7 @@ export class MergeContactDialogComponent {
         private messageService: MessageService,
         private dialogRef: MatDialogRef<MergeContactDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
+        private store$: Store<RootStore.State>,
         public profileService: ProfileService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -197,6 +213,28 @@ export class MergeContactDialogComponent {
             AppConsts.PipelinePurposeIds.lead,
             data.mergeInfo.contactInfo.groupId
         ).pipe(first()).subscribe();
+
+        this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(AddressUsageTypesStoreSelectors.getAddressUsageTypes))
+            .pipe(map(this.getUsageTypeDictionary.bind(this)))
+            .subscribe(types => this.usageTypes.contactAddresses = types);
+
+        this.store$.dispatch(new EmailUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(EmailUsageTypesStoreSelectors.getEmailUsageTypes))
+            .pipe(map(this.getUsageTypeDictionary.bind(this)))
+            .subscribe(types => this.usageTypes.contactEmails = types);
+
+        this.store$.dispatch(new PhoneUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes))
+            .pipe(map(this.getUsageTypeDictionary.bind(this)))
+            .subscribe(types => this.usageTypes.contactPhones = types);
+    }
+
+    getUsageTypeDictionary(types) {
+        return types.reduce((acc, val) => {
+            acc[val.id] = val.name;
+            return acc;
+        }, {dt: this.ls.l('General')});
     }
 
     getAddressFieldValue(address) {
@@ -223,6 +261,7 @@ export class MergeContactDialogComponent {
                         id: item.id,
                         selected: false,
                         isPrimary: item.isPrimary,
+                        usageTypeId: item.usageTypeId,
                         text: method ? method(item) :
                             item[this.fieldsConfig[field].fieldText]
                     };
