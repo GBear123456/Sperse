@@ -49,7 +49,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Input() checkSimilarFields: Array<any>;
     @Input() phoneRelatedCountryFields = {};
     @Input() columnsConfig: any = {};
-    @Input() lookupFields: any;
+    @Input() lookupFields: any[];
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
     @Input() showLeftMenuToggleButton = false;
@@ -123,6 +123,11 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     ];
     formatting = AppConsts.formatting;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
+    defaultMappings = {
+        active: 'personalInfo_isActive',
+        isactive: 'personalInfo_isActive',
+        state: 'personalInfo_fullAddress_stateName'
+    }
 
     constructor(
         injector: Injector,
@@ -501,29 +506,48 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 let createDataSourceInternal = (mappingSuggestions = []) => {
                     let noNameCount = 0, usedMapFields = {}, usedSourceFields = {},
                         data = this.fileData.data[0].map((field, index) => {
-                            let fieldId, suggestionField = _.findWhere(mappingSuggestions, {inputFieldName: field});
+                            let foundItem;
                             if (field) {
                                 if (isNaN(usedSourceFields[field]))
-                                   usedSourceFields[field] = 1;
+                                    usedSourceFields[field] = 1;
                                 else
-                                   usedSourceFields[field]++;
+                                    usedSourceFields[field]++;
+
+                                let suggestionField = _.findWhere(mappingSuggestions, { inputFieldName: field });
+                                if (!suggestionField) {
+                                    let defaultMapping = this.defaultMappings[field.toLowerCase()];
+                                    if (defaultMapping && !usedMapFields[defaultMapping])
+                                        suggestionField = { outputFieldName: defaultMapping };
+                                }
+                                if (suggestionField) {
+                                    foundItem = this.lookupFields.find(item => suggestionField.outputFieldName == item.id);
+                                }
+                                else {
+                                    let searchField = field.toLowerCase();
+                                    if ([' ', '.', '-', '_'].some(x => searchField.includes(x))) {
+                                        let parts = searchField.split(/\s|_|-|\./);
+                                        searchField = parts.join(ImportWizardComponent.FieldSeparator);
+                                        foundItem = this.lookupFields.find((item) => (item.id.toLowerCase().indexOf(searchField) >= 0) && !usedMapFields[item.id]);
+                                    }
+
+                                    if (!foundItem) {
+                                        searchField = searchField.replace(/\s|_|-|\./g, '');
+
+                                        foundItem = this.lookupFields.find((item) =>
+                                            (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase().indexOf(searchField) >= 0) && !usedMapFields[item.id]);
+                                    }
+                                }
+                                if (foundItem)
+                                    usedMapFields[foundItem.id] = true;
                             }
+
                             return {
                                 id: index,
                                 sourceField: usedSourceFields[field] > 1 ?
                                     field + ' ' + usedSourceFields[field] :
                                     field || this.l('NoName', [++noNameCount]),
                                 sampleValue: this.lookForValueExample(index),
-                                mappedField: field ? (this.lookupFields.every((item) => {
-                                    let isSameField = (suggestionField ? suggestionField.outputFieldName == item.id :
-                                        (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase()
-                                            .indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0)) && !usedMapFields[item.id];
-                                    if (isSameField) {
-                                        fieldId = item.id;
-                                        usedMapFields[fieldId] = true;
-                                    }
-                                    return !isSameField;
-                                }) ? '' : fieldId) : undefined
+                                mappedField: foundItem ? foundItem.id : undefined
                             };
                         });
 
