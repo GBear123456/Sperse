@@ -388,11 +388,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private importTypeChanged(event) {
         this.importTypeIndex = event.itemIndex;
-        this.importType = event.itemData.value;
         this.selectedStageId = null;
-        let contactGroupId = event.itemData.contactGroupId;
-        this.userAssignmentComponent.assignedUsersSelector = this.getAssignedUsersSelector(contactGroupId);
-        if (contactGroupId != this.contactGroupId) {
+        let contactGroupId = event.itemData.contactGroupId,
+            importType = event.itemData.value;
+        this.userAssignmentComponent.assignedUsersSelector =
+            this.getAssignedUsersSelector(contactGroupId);
+        if (contactGroupId != this.contactGroupId || this.importType != importType) {
+            this.importType = importType;
             if (this.contactGroupId = contactGroupId) {
                 this.getStages();
                 this.updateMappingFields();
@@ -690,25 +692,27 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         keys.forEach(key => {
             let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${key}` : key,
                 name = this.l(ImportWizardComponent.getFieldLocalizationName(combinedName));
-            if (this.mappingObjectNames[key]) {
-                this.mappingFields.push({
-                    id: combinedName,
-                    name: name,
-                    longName: (parent ? this.resolveFieldLocalization(parent) : '') + name,
-                    parent: parent,
-                    expanded: true
-                });
-                this.setMappingFields(this.mappingObjectNames[key], combinedName);
-            } else {
-                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
-                    return;
-                let parentField = parent || 'Other';
-                this.mappingFields.push({
-                    id: combinedName,
-                    name: name,
-                    longName: (parentField ? this.resolveFieldLocalization(parentField) : '') + name,
-                    parent: parentField
-                });
+            if (this.importType != ImportTypeInput.Client || key != 'leadStageName') {
+                if (this.mappingObjectNames[key]) {
+                    this.mappingFields.push({
+                        id: combinedName,
+                        name: name,
+                        longName: (parent ? this.resolveFieldLocalization(parent) : '') + name,
+                        parent: parent,
+                        expanded: true
+                    });
+                    this.setMappingFields(this.mappingObjectNames[key], combinedName);
+                } else {
+                    if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
+                        return;
+                    let parentField = parent || 'Other';
+                    this.mappingFields.push({
+                        id: combinedName,
+                        name: name,
+                        longName: (parentField ? this.resolveFieldLocalization(parentField) : '') + name,
+                        parent: parentField
+                    });
+                }
             }
         });
 
