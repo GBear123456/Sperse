@@ -272,8 +272,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         setTimeout(() => {
             let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0 : 1),
                 mappedFieldsSorted = mappedFields.slice().sort((prev, next) => prev.mappedField.localeCompare(next.mappedField)),
-                onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100),
-                columnsIndex = {}, columnCount = 0;
+                onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100), columnCount = 0;
             let processPartially = () => {
                 let index = onePercentCount * progress;
                 for (index; index < Math.min(onePercentCount * (progress + 1), totalCount); index++) {
@@ -282,7 +281,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                         if (row.length == columnCount) {
                             let data = {}, dataSorted = {};
                             mappedFieldsSorted.forEach(field => {
-                                let value = (row[columnsIndex[field.sourceField]] || '').trim();
+                                let value = (row[field.id] || '').trim();
                                 if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
                             });
@@ -292,12 +291,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                                 dataSource.push(data);
                             }
                         }
-                    } else {
+                    } else
                         columnCount = row.length;
-                        row.forEach((item, index) => {
-                            columnsIndex[item] = index;
-                        });
-                    }
                 }
 
                 if (index < totalCount) {
@@ -504,12 +499,20 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             if (this.fileData && this.fileData.data && this.fileData.data.length) {
                 this.checkFileHeaderAvailability();
                 let createDataSourceInternal = (mappingSuggestions = []) => {
-                    let noNameCount = 0, usedMapFields = {},
+                    let noNameCount = 0, usedMapFields = {}, usedSourceFields = {},
                         data = this.fileData.data[0].map((field, index) => {
                             let fieldId, suggestionField = _.findWhere(mappingSuggestions, {inputFieldName: field});
+                            if (field) {
+                                if (isNaN(usedSourceFields[field]))
+                                   usedSourceFields[field] = 1;
+                                else
+                                   usedSourceFields[field]++;
+                            }
                             return {
                                 id: index,
-                                sourceField: field || this.l('NoName', [++noNameCount]),
+                                sourceField: usedSourceFields[field] > 1 ?
+                                    field + ' ' + usedSourceFields[field] :
+                                    field || this.l('NoName', [++noNameCount]),
                                 sampleValue: this.lookForValueExample(index),
                                 mappedField: field ? (this.lookupFields.every((item) => {
                                     let isSameField = (suggestionField ? suggestionField.outputFieldName == item.id :
