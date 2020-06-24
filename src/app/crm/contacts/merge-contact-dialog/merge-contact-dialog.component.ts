@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, AfterViewInit, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
@@ -43,7 +43,7 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ PhoneFormatPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MergeContactDialogComponent {
+export class MergeContactDialogComponent implements AfterViewInit {
     public readonly COLUMN_SOURCE_FIELD       = 'source';
     public readonly COLUMN_TARGET_FIELD       = 'target';
     public readonly COLUMN_RESULT_FIELD       = 'result';
@@ -228,6 +228,10 @@ export class MergeContactDialogComponent {
         this.store$.pipe(select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes))
             .pipe(map(this.getUsageTypeDictionary.bind(this)))
             .subscribe(types => this.usageTypes.contactPhones = types);
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => this.changeDetectorRef.markForCheck(), 100);
     }
 
     getUsageTypeDictionary(types) {
@@ -536,6 +540,12 @@ export class MergeContactDialogComponent {
             field.result.values, (item: any) => item == value), 1);
         field.result.values.unshift(value);
         value.isPrimary = true;
+    }
+
+    getAltCaptionTop(element) {
+        const defaultTop = 10;
+        let field = element && element.querySelector('.contact-field.contactAddresses > .result > div:first-child');
+        return (field ? Math.max(defaultTop, field.offsetHeight - defaultTop) : defaultTop) + 'px';
     }
 
     save() {
