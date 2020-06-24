@@ -146,7 +146,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
             disabled: true
         },
         [this.LEAD_SOURCE_FIELD]: {
-            caption: this.ls.l('SourceContact'),
+            caption: this.ls.l('SourceContactName'),
             disabled: true
         },
         [this.LEAD_REQUEST_DATE_FIELD]: {
