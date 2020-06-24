@@ -428,9 +428,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getResultPhotoId() {
-        return this.getResultFullName() != this.mergeInfo.contactInfo.fullName ?
-            this.mergeInfo.targetContactInfo.photoPublicId :
-            this.mergeInfo.contactInfo.photoPublicId;
+        return this.mergeInfo.contactInfo.photoPublicId ||
+            this.mergeInfo.targetContactInfo.photoPublicId;
     }
 
     getResultFullName() {
