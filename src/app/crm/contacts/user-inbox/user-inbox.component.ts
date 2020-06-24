@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 /** Third party imports */
 import { Observable, of, forkJoin, Subscription } from 'rxjs';
 import { DxListComponent } from 'devextreme-angular/ui/list';
+import { DxButtonGroupComponent } from 'devextreme-angular/ui/button-group';
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -39,6 +40,7 @@ class EmailAttachment extends AttachmentDto {
 })
 export class UserInboxComponent implements OnDestroy {
     @ViewChild(DxListComponent, { static: false }) listComponent: DxListComponent;
+    @ViewChild(DxButtonGroupComponent, { static: false }) buttonGroupComponent: DxButtonGroupComponent;
     @ViewChild('contentView', { static: false }) contentView: ElementRef;
 
     contactId: number;
@@ -62,7 +64,10 @@ export class UserInboxComponent implements OnDestroy {
     deliveryTypes = Object.keys(CommunicationMessageDeliveryType).map(item => {
         return {
             id: CommunicationMessageDeliveryType[item],
-            name: this.ls.l(item)
+            name: this.ls.l(item),
+            hint: this.ls.l(item),
+            text: this.ls.l(item),
+            icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o'
         };
     });
     userTimezone = '0000';
@@ -102,20 +107,26 @@ export class UserInboxComponent implements OnDestroy {
             this.contactsService.toolbarUpdate({ customToolbar: [{
                 location: 'before',
                 items: [{
-                    widget: 'dxSelectBox',
+                    widget: 'dxButtonGroup',
                     options: {
-                        valueExpr: 'id',
-                        displayExpr: 'name',
-                        showClearButton: true,
-                        value: this.deliveryType,
-                        placeholder: this.ls.l('Type'),
-                        dataSource: this.deliveryTypes,
-                        onValueChanged: event => {
-                            this.activeMessage = undefined;
-                            this.deliveryType = event.value || undefined;
-                            this.dataSource.reload();
+                        keyExpr: 'id',
+                        elementAttr: {
+                            class: 'inbox'
                         },
-                        inputAttr: {view: 'headline'}
+                        items: this.deliveryTypes,
+                        selectionMode: 'multiple',
+                        stylingMode: 'text',
+                        focusStateEnabled: false,
+                        width: '240px',
+                        selectedItemKeys: this.deliveryType ? this.deliveryType : [CommunicationMessageDeliveryType.Email, CommunicationMessageDeliveryType.SMS],
+                        onSelectionChanged: event => {
+                            if (event.addedItems.length || event.removedItems.lenght)
+                                this.activeMessage = undefined;
+                                this.dataSource.reload();
+                        },
+                        onOptionChanged: event => {
+                            this.deliveryType = event.value.length > 1 ? undefined : event.value;
+                        }
                     }
                 }, {
                     widget: 'dxSelectBox',

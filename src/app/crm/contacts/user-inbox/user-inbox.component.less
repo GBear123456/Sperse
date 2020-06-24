@@ -198,7 +198,7 @@
                     .attachment {
                         display: inline-block;
                         padding: 5px;
-                    }                    
+                    }
                 }
                 .body-attachments {
                     text-align: right;
@@ -206,7 +206,7 @@
                         font-size: 12px;
                         display: inline-block;
                         padding: 5px;
-                    }                    
+                    }
                 }
                 .input-form {
                     width: 100%;
@@ -227,7 +227,7 @@
                             font-stretch: normal;
                             font-style: normal;
                             letter-spacing: 0.28px;
-                        }        
+                        }
                         .dx-placeholder {
                             padding-left: 80px;
                             font-size: 14px;
@@ -241,7 +241,7 @@
                             top: -15px;
                             font-size: 10px;
                         }
-                    }    
+                    }
                     img {
                         z-index: 1;
                         cursor: pointer;
@@ -289,7 +289,7 @@
                     }
                 }
             }
-          
+
             .header {
                 display: flex;
                 margin: 20px;
@@ -383,7 +383,7 @@
                 &.separator {
                     padding: 0px 20px;
                     font-size: 20px;
-                    text-align: right;                      
+                    text-align: right;
                 }
                 &.date {
                     margin-bottom: 25px;
@@ -399,6 +399,47 @@
                         color: #677380;
                     }
                 }
+            }
+        }
+    }
+}
+
+::ng-deep .dx-buttongroup.dx-widget.inbox {
+    margin-right: 10px;
+
+    .dx-buttongroup-wrapper {
+        height: 60px;
+        margin-top: -11px;
+        margin-bottom: -11px;
+
+        .dx-button-content {
+            height: 60px;
+            padding: 14px 15px;
+
+            .dx-button-text {
+                font-size: 16px;
+            }
+
+            .dx-icon {
+                font-size: 18px;
+                line-height: 16px;
+            }
+        }
+    }
+
+    .dx-buttongroup-item {
+        border-radius: 0;
+
+        &.dx-item-selected {
+            background-color: transparent !important;
+            border-bottom: 2px solid #00aeef;
+
+            .dx-button-text {
+                color: #000;
+            }
+
+            .dx-icon {
+                color: #00aeef;
             }
         }
     }
