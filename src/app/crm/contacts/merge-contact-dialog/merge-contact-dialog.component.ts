@@ -305,9 +305,8 @@ export class MergeContactDialogComponent {
     setLeadInfoFields(column, fields, forced = false) {
         fields.forEach(field => {
             let data = this.fieldsConfig[field][column];
-            if (forced || data && data.values && data.values.length)
-                this.fieldsConfig[field][this.COLUMN_RESULT_FIELD].values =
-                    this.fieldsConfig[field][column].values;
+            if (data && (forced || data.values && data.values.length))
+                this.fieldsConfig[field][this.COLUMN_RESULT_FIELD].values = data.values;
         });
     }
 
