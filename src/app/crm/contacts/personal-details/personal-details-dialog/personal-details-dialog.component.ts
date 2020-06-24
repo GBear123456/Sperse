@@ -190,11 +190,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     updateAffiliateCode(value) {
         value = value.trim();
-        if (!value)
-            return;
         this.contactProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({
             contactId: this.contactInfo.personContactInfo.id,
-            affiliateCode: value
+            affiliateCode: value || null
         })).subscribe(() => {
             this.contactInfo.affiliateCode = value;
             this.affiliateCode.next(value);
