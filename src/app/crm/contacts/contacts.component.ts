@@ -293,6 +293,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
                 route: 'user-information'
             },
+            { name: 'user-inbox', label: this.l('CommunicationHistory'), route: 'user-inbox' },
             { name: 'documents', label: this.l('Documents'), route: 'documents' },
             { name: 'notes', label: this.l('Notes'), route: 'notes'},
             {
@@ -780,10 +781,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         });
         event.stopPropagation();
-    }
-
-    showSMSDialog() {
-        this.contactsService.showSMSDialog({ contact: this.contactInfo });
     }
 
     reloadCurrentSection(params = this.params) {

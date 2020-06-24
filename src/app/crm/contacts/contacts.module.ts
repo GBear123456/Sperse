@@ -20,6 +20,7 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxButtonGroupModule } from 'devextreme-angular/ui/button-group';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -219,6 +220,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
         DxSelectBoxModule,
         DxCheckBoxModule,
         DxButtonModule,
+        DxButtonGroupModule,
         DxTextBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,

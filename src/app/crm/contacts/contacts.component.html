@@ -14,9 +14,15 @@
     </ng-container>
     <ng-container underHeader>
         <div class="general-links">
-            <a routerLink="user-inbox" routerLinkActive="general-active-link" [queryParams]="queryParams" [class.disabled]="!isCommunicationHistoryAllowed"><i class="inbox-icon" aria-hidden="true"></i></a>
+            <a (click)="contactsService.showEmailDialog({ contact: contactInfo })"
+               [class.disabled]="!isCommunicationHistoryAllowed">
+                <i class="inbox-icon" aria-hidden="true"></i>
+            </a>
             <i class="phone-icon" aria-hidden="true" [class.disabled]="true"></i>
-            <a (click)="showSMSDialog()" [class.disabled]="!isSendSmsAndEmailAllowed"><i class="sms-icon"></i></a>
+            <a (click)="contactsService.showSMSDialog({ contact: contactInfo })"
+               [class.disabled]="!isSendSmsAndEmailAllowed">
+                <i class="sms-icon"></i>
+            </a>
         </div>
         <operations-widget
             [enabled]="contactInfo && showToolbar"
