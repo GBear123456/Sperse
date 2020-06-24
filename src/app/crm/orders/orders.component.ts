@@ -387,7 +387,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
-        )
+        ),
+    ).pipe(
+        filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
     );
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
@@ -494,13 +496,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.odataRequestValues$,
         this.refresh$
     ).pipe(
-        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => this.crmService.updateParams(oDataRequestValues)),
-        switchMap((params: HttpParams) => this.http.get(this.getODataUrl('OrderCount'), {
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            }),
-            params: params
-        })),
+        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
+            return this.getODataUrl('OrderCount', oDataRequestValues.filter, null, oDataRequestValues.params);
+        }),
+        filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
+        switchMap((totalUrl: string) => {
+            return this.http.get(
+                totalUrl,
+                {
+                    headers: new HttpHeaders({
+                        'Authorization': 'Bearer ' + abp.auth.getToken()
+                    })
+                }
+            )
+        }),
         map((summaryData: { [stageId: string]: OrderStageSummary }) => {
             return Object.values(summaryData).map((orderStageSummary: OrderStageSummary) => orderStageSummary.sum)
                                              .reduce((total: number, current: number) => total += current, 0)
@@ -509,29 +518,37 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsCount: number;
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
-
     subscriptionsSummary$: Observable<any> = combineLatest(
         this.odataRequestValues$,
         this.refresh$
     ).pipe(
         map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
-            return this.crmService.updateParams(
-                oDataRequestValues,
-                {
-                    totalSummary: JSON.stringify([
-                        { "summaryType": "count" },
-                        { "selector": "OrderAmount", "summaryType":"sum"},
-                        { "selector": "Fee", "summaryType":"sum" }
-                    ])
-                }
+            return this.getODataUrl(
+                'SubscriptionSlice',
+                oDataRequestValues.filter,
+                null,
+                [
+                    ...oDataRequestValues.params,
+                    {
+                        name: 'totalSummary',
+                        value: JSON.stringify([
+                            { "summaryType": "count" },
+                            { "selector": "OrderAmount", "summaryType":"sum"},
+                            { "selector": "Fee", "summaryType":"sum" }
+                        ])
+                    }
+                ]
             );
         }),
-        switchMap((params) => this.http.get(this.getODataUrl('SubscriptionSlice'), {
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            }),
-            params: params
-        })),
+        filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
+        switchMap((subscriptionSummaryUrl: string) => this.http.get(
+            subscriptionSummaryUrl,
+            {
+                headers: new HttpHeaders({
+                    'Authorization': 'Bearer ' + abp.auth.getToken()
+                })
+            }
+        )),
     )
 
     constructor(injector: Injector,

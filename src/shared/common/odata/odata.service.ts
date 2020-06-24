@@ -17,6 +17,7 @@ import { Param } from '@shared/common/odata/param.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { MessageService } from '@abp/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 
 @Injectable({
     providedIn: 'root'
@@ -91,11 +92,13 @@ export class ODataService {
     getODataFilterString(filter): Observable<ODataRequestValues> {
         return this.getODataRequestValues(filter).pipe(
             map((requestValues: ODataRequestValues) => {
-                filter = requestValues.filter;
-                return {
-                    filter: (filter ? buildQuery({ filter }) : '').slice('?$filter='.length),
-                    params: requestValues.params
-                };
+                filter = requestValues && requestValues.filter;
+                return filter ?
+                    {
+                        filter: (filter ? buildQuery({ filter }) : '').slice('?$filter='.length),
+                        params: requestValues.params
+                    }
+                    : null;
             })
         );
     }
@@ -103,18 +106,26 @@ export class ODataService {
     getODataRequestValues(filter): Observable<ODataRequestValues> {
         let simpleFilters = [], serverCachedFilters: Observable<any>[] = [];
         let params = [];
-        filter.forEach((filterData) => {
+        const filtersAreValid = filter.every((filterData) => {
             const filterValue = Object.values(filterData)[0];
-            if (filterValue instanceof Observable) {
+            if (filterValue instanceof AsyncFilter) {
+                if (!this.filterItemsCountIsValid(filterValue.itemsCount)) {
+                    this.messageService.error(this.ls.l('FilterItemsShouldNotExceed', 1000));
+                    return false;
+                }
                 serverCachedFilters.push(filterData);
             } else {
                 simpleFilters.push(filterData);
             }
+            return true;
         });
+        if (!filtersAreValid) {
+            return of(null);
+        }
         return (serverCachedFilters && serverCachedFilters.length
             ? forkJoin(
                 ...serverCachedFilters.map((filter) => {
-                    const filterValue: any = Object.values(filter)[0];
+                    const filterValue: any = Object.values(filter)[0].cacheId$;
                     return filterValue.pipe(
                         tap((uuid: string) => {
                             params.push({
@@ -144,9 +155,12 @@ export class ODataService {
     ): Observable<string> {
         const requestValuesWithSearch$ = this.getODataRequestValues(query).pipe(
             map((requestValues: ODataRequestValues) => {
+                if (!requestValues) {
+                    return 'canceled';
+                }
                 const filter = requestValues.filter.concat(this.getSearchFilter(searchColumns, searchValue));
                 let url = this.getODataUrl(uri, filter, instanceData, [ ...(params || []), ...requestValues.params]);
-                if (url.length > 16000) {
+                if (!this.requestLengthIsValid(url)) {
                     this.messageService.error(this.ls.l('QueryStringIsTooLong'));
                     return 'canceled';
                 }
@@ -157,7 +171,7 @@ export class ODataService {
             })
         );
         requestValuesWithSearch$.subscribe((requestValues: any) => {
-            if (grid) {
+            if (grid && requestValues !== 'canceled') {
                 /** Add filter to the params for pivot grid data source */
                 if (grid.NAME === 'dxPivotGrid') {
                     const filter = requestValues.filter ? buildQuery({ filter: requestValues.filter }) : '';
@@ -221,6 +235,14 @@ export class ODataService {
             }
         });
         return processedFilters;
+    }
+
+    requestLengthIsValid(odataUrl: string): boolean {
+        return odataUrl.length <= 16000;
+    }
+
+    filterItemsCountIsValid(filterItemsCount: number): boolean {
+        return filterItemsCount <= 1000;
     }
 
     getSearchFilter(searchColumns: any[], searchValue: string) {

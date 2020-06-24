@@ -392,6 +392,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     odataRequestValues$: Observable<ODataRequestValues>;
+    totalCountUrl$: Observable<string>;
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -466,7 +467,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.filterChanged$.pipe(
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
             )
+        ).pipe(
+            filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
         );
+        this.totalCountUrl$ = this.odataRequestValues$.pipe(
+            map((odataRequestValues: ODataRequestValues) => this.getODataUrl(
+                this.totalDataSourceURI,
+                odataRequestValues.filter,
+                null,
+                odataRequestValues.params
+            ))
+        )
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
@@ -569,19 +580,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.odataRequestValues$,
+            this.totalCountUrl$,
             this.refresh$,
             this.contactGroupId$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([odataRequestValues, ]) => {
-            this.totalDataSource['_store']['_url'] = this.getODataUrl(
-                this.totalDataSourceURI,
-                odataRequestValues.filter,
-                null,
-                odataRequestValues.params
-            );
-            this.totalDataSource.load();
+        ).subscribe(([totalCountUrl, ]) => {
+            if (totalCountUrl && this.oDataService.requestLengthIsValid(totalCountUrl)) {
+                this.totalDataSource['_store']['_url'] = totalCountUrl;
+                this.totalDataSource.load();
+            }
         });
     }
 
@@ -1464,8 +1472,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         );
                         if (this.showDataGrid) {
                             filterQuery$.subscribe((filterQuery: string) => {
-                                this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
-                                this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
+                                if (filterQuery && filterQuery !== 'canceled') {
+                                    this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
+                                    this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
+                                }
                             });
                         }
                     }

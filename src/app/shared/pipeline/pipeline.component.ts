@@ -437,8 +437,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
         const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false);
-        if (this.totalsURI && !oneStageOnly)
-            this.processTotalsRequest(this.queryWithSearch);
+        entities$.subscribe((result) => {
+            if (result && this.totalsURI && !oneStageOnly)
+                this.processTotalsRequest(this.queryWithSearch);
+        })
         return entities$;
     }
 
@@ -461,62 +463,72 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             let filter = { StageId: stage.id };
 
             if (!dataSource)
-                dataSource = this._dataSources[stage.name] =
-                    this.getDataSourceForStage(stage);
+                dataSource = this._dataSources[stage.name] = this.getDataSourceForStage(stage);
 
             if (!isNaN(stage.lastStageIndex) && page)
-                filter['SortOrder'] = {lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
+                filter['SortOrder'] = { lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
             dataSource.sort({ getter: 'SortOrder', desc: true });
-            response = from(this.odataService.loadDataSource(
-                dataSource, contextKey,
-                this.getODataUrl(
-                    this._dataSource.uri,
-                    this.queryWithSearch.filter(item => {
-                        return !item.hasOwnProperty('or') || item.or.every(filter =>
-                             typeof(filter) != 'string' || !filter.includes(stage.id.toString())
-                        );
-                    }).concat({and: [extend(filter, this._dataSource.customFilter)]}),
-                    null,
-                    this.params
-                )
-            )).pipe(
-                finalize(() => {
-                    this.detectChanges();
-                    if (!skipTotalRequest && oneStageOnly && stage.isFull)
-                        this.processTotalsRequest(this.queryWithSearch);
-                }),
-                map((entities: any) => {
-                    if (entities.length) {
-                        stage.entities = (
-                            page && oneStageOnly
-                            ? uniqBy((stage.entities || []).concat(entities), (entity) => entity['Id'])
-                            : entities
-                        ).map((entity) => {
-                            entity.StageId = stage.id;
-                            entity.Stage = stage.name;
-                            stage.lastStageIndex = Math.min((page ? stage.lastStageIndex : undefined) || Infinity, entity.SortOrder);
-                            return entity;
-                        });
-                        if (!this.totalsURI)
-                            stage.total = dataSource.totalCount();
-                        stage.isFull = stage.entities.length >= (stage.total || 0);
-                    } else  {
-                        if (!page || !stage.entities)
-                            stage.entities = [];
-                        stage.total = stage.entities.length;
-                        stage.isFull = true;
-                    }
-                    stage.stageIndex = index;
-                    stage.isLoading = false;
-                    dataSource['entities'] = stage.entities;
-                    dataSource['total'] = stage.total;
-                    return entities;
-                })
+            const odataUrl = this.getODataUrl(
+                this._dataSource.uri,
+                this.queryWithSearch.filter(item => {
+                    return !item.hasOwnProperty('or') || item.or.every(filter =>
+                        typeof(filter) != 'string' || !filter.includes(stage.id.toString())
+                    );
+                }).concat({and: [extend(filter, this._dataSource.customFilter)]}),
+                null,
+                this.params
             );
+            if (!this.odataService.requestLengthIsValid(odataUrl)) {
+                this.message.error(this.l('QueryStringIsTooLong'));
+                stage.isLoading = false;
+                this.detectChanges();
+            } else {
+                response = from(this.odataService.loadDataSource(
+                    dataSource,
+                    contextKey,
+                    odataUrl
+                )).pipe(
+                    finalize(() => {
+                        this.detectChanges();
+                        if (!skipTotalRequest && oneStageOnly && stage.isFull)
+                            this.processTotalsRequest(this.queryWithSearch);
+                    }),
+                    map((entities: any) => {
+                        if (entities.length) {
+                            stage.entities = (
+                                page && oneStageOnly
+                                    ? uniqBy((stage.entities || []).concat(entities), (entity) => entity['Id'])
+                                    : entities
+                            ).map((entity) => {
+                                entity.StageId = stage.id;
+                                entity.Stage = stage.name;
+                                stage.lastStageIndex = Math.min((page ? stage.lastStageIndex : undefined) || Infinity, entity.SortOrder);
+                                return entity;
+                            });
+                            if (!this.totalsURI)
+                                stage.total = dataSource.totalCount();
+                            stage.isFull = stage.entities.length >= (stage.total || 0);
+                        } else  {
+                            if (!page || !stage.entities)
+                                stage.entities = [];
+                            stage.total = stage.entities.length;
+                            stage.isFull = true;
+                        }
+                        stage.stageIndex = index;
+                        stage.isLoading = false;
+                        dataSource['entities'] = stage.entities;
+                        dataSource['total'] = stage.total;
+                        return entities;
+                    })
+                );
+            }
             response.subscribe(
-                () => this.detectChanges(),
+                () => {
+                    stage.isLoading = false;
+                    this.detectChanges();
+                },
                 (error) => {
                     stage.isLoading = false;
                     if (error != 'canceled')
@@ -620,17 +632,25 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     ): Observable<string> {
         filters = this.odataService.processFilters(filters, getCheckCustom);
         const requestValuesWithSearch$ = this.odataService.getODataRequestValues(filters).pipe(
-            map((requestValues: ODataRequestValues) => ({
-                filter: requestValues.filter.concat(this.getSearchFilter()),
-                params: requestValues.params
-            }))
+            map((requestValues: ODataRequestValues) => {
+                return requestValues
+                    ? ({
+                        filter: requestValues.filter.concat(this.getSearchFilter()),
+                        params: requestValues.params
+                    })
+                    : null
+            })
         );
         requestValuesWithSearch$.subscribe((requestValues: ODataRequestValues) => {
-            this.queryWithSearch = requestValues.filter;
-            this.params = [ ...(params || []), ...requestValues.params ];
-            this.loadData(0, null, false);
+            if (requestValues) {
+                this.queryWithSearch = requestValues.filter;
+                this.params = [ ...(params || []), ...requestValues.params ];
+                this.loadData(0, null, false);
+            }
         });
-        return requestValuesWithSearch$.pipe(pluck('filter'));
+        return requestValuesWithSearch$.pipe(
+            map((requestValues) => requestValues ? requestValues.filter : null)
+        );
     }
 
     loadMore(stageIndex): Observable<any> {
