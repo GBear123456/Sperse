@@ -440,12 +440,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         entities$.subscribe((result) => {
             if (result && this.totalsURI && !oneStageOnly)
                 this.processTotalsRequest(this.queryWithSearch);
-        })
+        });
         return entities$;
     }
 
     private loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false): Observable<any> {
-        let response = of(null),
+        let response = of([]),
             index = stageIndex || 0,
             stages: Stage[] = this.stages || [],
             stage: Stage = stages[index];
@@ -638,7 +638,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         filter: requestValues.filter.concat(this.getSearchFilter()),
                         params: requestValues.params
                     })
-                    : null
+                    : null;
             })
         );
         requestValuesWithSearch$.subscribe((requestValues: ODataRequestValues) => {
