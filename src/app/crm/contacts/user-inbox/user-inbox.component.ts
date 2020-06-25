@@ -376,7 +376,7 @@ export class UserInboxComponent implements OnDestroy {
         this.showNewEmailDialog('ReplyToAll', this.activeMessage);
     }
 
-    showNewEmailDialog(title = 'NewEmail', data = {}) {
+    showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
             switchTemplate: true,
             contactId: this.contactId
