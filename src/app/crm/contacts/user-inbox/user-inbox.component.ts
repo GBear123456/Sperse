@@ -377,10 +377,15 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     showNewEmailDialog(title = 'NewEmail', data = {}) {
-        data['contactId'] = this.contactId;
-        data['switchTemplate'] = true;
-        this.contactsService.showEmailDialog(data, title)
-            .subscribe(res => isNaN(res) || setTimeout(() => this.invalidate(), 1000));
+        data = Object.assign({
+            switchTemplate: true,
+            contactId: this.contactId
+        }, data);
+        this.contactsService.showEmailDialog(Object.assign(data, {
+            to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
+        }), title).subscribe(res => isNaN(res) ||
+            setTimeout(() => this.invalidate(), 1000)
+        );
     }
 
     showNewSMSDialog() {
