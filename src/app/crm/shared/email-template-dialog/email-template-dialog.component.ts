@@ -1,5 +1,6 @@
   /** Core imports */
-import { Component, ChangeDetectionStrategy, ViewChild, OnInit, Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, OnInit, ElementRef,
+    Inject, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -9,6 +10,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
+import * as ClassicEditor from 'ckeditor5-custom';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -32,24 +34,15 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
+    @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
 
+    Editor = ClassicEditor;
     ckEditor: any;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
     startCase = startCase;
     tagsTooltipVisible = false;
-    ckConfig: any = {
-        toolbarGroups: [
-            { name: 'document', groups: [ 'mode' ] },
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-            { name: 'links', groups: [ 'Link', 'Unlink' ] },
-            { name: 'paragraph', groups: [ 'list', 'align' ] },
-            { name: 'styles', groups: [ 'styles' ] },
-            { name: 'other', groups: [ 'simplebutton' ] }
-        ],
-        removeButtons: 'Anchor,Subscript,Superscript'
-    };
 
     @Input() tagsList = [];
     @Input() templateEditMode = false;
@@ -280,16 +273,24 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onCKReady(event) {
-        this.ckEditor = event.editor;
+        this.ckEditor = event.ui.editor;
         setTimeout(() => {
-            this.ckEditor.container.find('.cke_bottom').$[0].prepend(
-                this.ckEditor.container.find('.cke_toolbox>span:first-child').$[0]);
+            if (this.data.body)
+                this.ckEditor.setData(this.data.body);
+            if (this.tagsButton) {
+                let root = this.ckEditor.sourceElement.parentNode,
+                    headingElement = root.querySelector('.ck-heading-dropdown');
+                root.querySelector('.ck-toolbar__items').insertBefore(
+                    this.tagsButton.nativeElement, headingElement);
+                headingElement.style.width = '100px';
+            }
             this.updateDataLength();
-        }, 500);
+        }, 1000);
     }
 
     updateDataLength() {
-        this.charCount = Math.max(this.ckEditor.getData().replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
+        this.data.body = this.ckEditor.getData();
+        this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
         this.changeDetectorRef.markForCheck();
     }
 
@@ -306,11 +307,15 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     addTextTag(tag: string) {
-        this.ckEditor.insertText('#' + tag + '#');
+        this.ckEditor.model.change(writer => {
+            writer.insertText('#' + tag + '#', this.ckEditor.model.document.selection.getFirstPosition());
+        });
     }
 
     addLinkTag(tag: string, link: string) {
-        this.ckEditor.insertHtml('<a href="#' + tag + '#">' + link + '</a>');
+        this.ckEditor.model.change(writer => {
+            writer.insertText(link, { linkHref: '#' + tag + '#' },  this.ckEditor.model.document.selection.getFirstPosition());
+        });
     }
 
     addAttachments(files: NgxFileDropEntry[], scrollView) {

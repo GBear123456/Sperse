@@ -909,6 +909,26 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@bugsnag/safe-json-stringify/-/safe-json-stringify-4.0.0.tgz#da4d9321524c6a1c33472f7151af7c7a0604cd3d"
 
+"@ckeditor/ckeditor5-angular@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-angular/-/ckeditor5-angular-1.2.3.tgz#11974244864337c740fc60766b3ed00ac574bafe"
+  integrity sha512-A1dZ7TVhlHTCvBjh9xAQvTX2alMkwE3pbTeOXfPt6AyamhVDnBVKbCa5eDaSd6xeeQHvsqtmMgNHQJn4AhH5mg==
+  dependencies:
+    "@ckeditor/ckeditor5-watchdog" "^17.0.0"
+    tslib "^1.9.0"
+
+"@ckeditor/ckeditor5-build-classic@^20.0.0":
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-20.0.0.tgz#cbfb380baa632fd32ef007d92880e6656652f985"
+  integrity sha512-RlKMQUMzaoKQA09q/9ty4LQ+kdXZhzI6rsOzbAudBJzFX+FcY+48z9qr6EwYn9CdnCv9v0SjFi0K20s/Nb+Nkg==
+
+"@ckeditor/ckeditor5-watchdog@^17.0.0":
+  version "17.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-watchdog/-/ckeditor5-watchdog-17.0.0.tgz#8b3517a27dbd70f9686d79aa4c763ccd6d98e6ca"
+  integrity sha512-qwRYWjv6qYuHD3tj4qB7XtuRGQteVtaoVl2Mzg8pNRP85WbTssZxQgDno951pPqR67Mqxe9YwxtrNMiZfQesrw==
+  dependencies:
+    lodash-es "^4.17.10"
+
 "@fancyapps/fancybox@^3.1.25":
   version "3.5.7"
   resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.5.7.tgz#12f8734663ec6eae7f9236b92ca236e6e07fdfd5"
@@ -6264,6 +6284,11 @@ locate-path@^5.0.0:
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-5.0.0.tgz#1afba396afd676a6d42504d0a67a3a7eb9f62aa0"
   dependencies:
     p-locate "^4.1.0"
+
+lodash-es@^4.17.10:
+  version "4.17.15"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
+  integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
 
 lodash._arraycopy@^3.0.0:
   version "3.0.0"

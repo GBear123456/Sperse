@@ -83,10 +83,13 @@
     }
 
     .tags-button {
-        font-size: 12px;
-        position: absolute;
-        right: 10px;
-        padding: 10px;
+        font-size: 13px;
+        padding: 10px 10px 6px 5px;
+        border-radius: 2px;
+        line-height: 10px;
+        &:hover {
+            background: #e6e6e6;
+        }
         &:after {
             content: "";
             position: relative;
@@ -109,29 +112,11 @@
     }
 
     ::ng-deep ckeditor {
-        .cke_chrome {
-            border: none!important;
-            .cke_top {
-                border-bottom: none!important;
-                background: #f3f7fa!important;
-            }
-            .cke_bottom {
-                height: 30px;
-                border-top: none!important;
-                background: #f3f7fa!important;
-                border-bottom: 1px solid #dfdfdf;
-            }
-            .cke_contents {
-                min-height: 380px;
-                max-height: calc(100vh - 500px);
-            }
-            .cke_path {
-                margin: 4px 0 2px!important;
-            }
-            .cke_resizer_ltr {
-                margin: 8px 0!important;
-            }
-        }    
+        .ck-editor__editable_inline {
+            min-height: 380px;
+            padding-bottom: 40px;
+            max-height: calc(100vh - 500px);
+        }
     }
 
     .form-content {

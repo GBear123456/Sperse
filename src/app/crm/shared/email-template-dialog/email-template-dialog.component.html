@@ -130,7 +130,7 @@
                     <dx-tooltip [width]="225"
                          position="bottom"
                          [(visible)]="tagsTooltipVisible"
-                         target="#tagsButton">
+                         target=".tags-button">
                         <div *dxTemplate="let data of 'content'" class="tags-container">
                             <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
                             <dx-list
@@ -145,8 +145,8 @@
                             </dx-list>
                         </div>
                     </dx-tooltip>
-                    <a id="tagsButton" class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
-                    <ckeditor [(data)]="data.body" [config]="ckConfig" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                    <a #tagsButton class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
+                    <ckeditor [editor]="Editor" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
                     <p class="char-count">{{charCount}}</p>
                     <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
