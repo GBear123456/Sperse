@@ -62,6 +62,7 @@ export enum AppPermissions {
     CRMCustomersViewCommunicationHistory = 'Pages.CRM.Customers.ViewCommunicationHistory',
     CRMCustomersViewCommunicationHistorySendSMSAndEmail = 'Pages.CRM.Customers.ViewCommunicationHistory.SendSMSAndEmail',
     CRMBulkImport = 'Pages.CRM.BulkImport',
+    CRMBulkImportAccessAll = 'Pages.CRM.BulkImport.AccessAll',
     CRMOrders = 'Pages.CRM.Orders',
     CRMOrdersManage = 'Pages.CRM.Orders.Manage',
     CRMOrdersInvoices = 'Pages.CRM.Orders.Invoices',
