@@ -531,14 +531,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ).pipe(
         filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
     );
-    totalCountUrl$: Observable<string> = this.odataRequestValues$.pipe(
-        map((odataRequestValues: ODataRequestValues) => this.getODataUrl(
-            this.totalDataSourceURI,
-            odataRequestValues.filter,
-            null,
-            odataRequestValues.params
-        ))
-    )
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
@@ -688,13 +680,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.totalCountUrl$,
+            this.odataRequestValues$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([totalCountUrl, ]: [string, null]) => {
-            if (totalCountUrl && this.oDataService.requestLengthIsValid(totalCountUrl)) {
-                this.totalDataSource['_store']['_url'] = totalCountUrl;
+        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+            let url = this.getODataUrl(this.totalDataSourceURI,
+                odataRequestValues.filter, null, odataRequestValues.params);
+            if (url && this.oDataService.requestLengthIsValid(url)) {
+                this.totalDataSource['_store']['_url'] = url;
                 this.totalDataSource.load();
             }
         });

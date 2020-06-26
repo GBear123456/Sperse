@@ -338,14 +338,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     ).pipe(
         filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
     );
-    totalCountUrl$: Observable<string> = this.odataRequestValues$.pipe(
-        map((odataRequestValues: ODataRequestValues) => this.getODataUrl(
-            this.totalDataSourceURI,
-            odataRequestValues.filter,
-            null,
-            odataRequestValues.params
-        ))
-    )
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
@@ -487,13 +479,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.totalCountUrl$,
+            this.odataRequestValues$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([totalCountUrl, ]: [string, null]) => {
-            if (totalCountUrl && this.oDataService.requestLengthIsValid(totalCountUrl)) {
-                this.totalDataSource['_store']['_url'] = totalCountUrl;
+        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+            let url = this.getODataUrl(this.totalDataSourceURI,
+                odataRequestValues.filter, null, odataRequestValues.params);
+            if (url && this.oDataService.requestLengthIsValid(url)) {
+                this.totalDataSource['_store']['_url'] = url;
                 this.totalDataSource.load();
             }
         });
@@ -539,7 +533,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 if (odataRequestValues.params && odataRequestValues.params.length) {
                     odataRequestValues.params.forEach((param: Param) => {
                         params[param.name] = param.value;
-                    })
+                    });
                 }
                 return this.mapService.loadSliceMapData(
                     this.getODataUrl(this.groupDataSourceURI),
@@ -547,7 +541,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     mapArea,
                     this.dateField,
                     params
-                )
+                );
             }),
             publishReplay(),
             refCount(),

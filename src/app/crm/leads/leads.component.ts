@@ -392,7 +392,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     odataRequestValues$: Observable<ODataRequestValues>;
-    totalCountUrl$: Observable<string>;
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -470,14 +469,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ).pipe(
             filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
         );
-        this.totalCountUrl$ = this.odataRequestValues$.pipe(
-            map((odataRequestValues: ODataRequestValues) => this.getODataUrl(
-                this.totalDataSourceURI,
-                odataRequestValues.filter,
-                null,
-                odataRequestValues.params
-            ))
-        )
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
@@ -580,14 +571,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private handleTotalCountUpdate() {
         combineLatest(
-            this.totalCountUrl$,
+            this.odataRequestValues$,
             this.refresh$,
             this.contactGroupId$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(([totalCountUrl, ]) => {
-            if (totalCountUrl && this.oDataService.requestLengthIsValid(totalCountUrl)) {
-                this.totalDataSource['_store']['_url'] = totalCountUrl;
+        ).subscribe(([odataRequestValues, ]) => {
+            let url = this.getODataUrl(this.totalDataSourceURI,
+                odataRequestValues.filter, null, odataRequestValues.params);
+            if (url && this.oDataService.requestLengthIsValid(url)) {
+                this.totalDataSource['_store']['_url'] = url;
                 this.totalDataSource.load();
             }
         });
