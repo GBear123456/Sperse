@@ -188,7 +188,7 @@ export class CompanyDialogComponent implements OnInit {
                         this.dialog.closeAll();
                         this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
                         let contactInfo = this.data.contactInfo;
-                        this.contactService.updateLocation(contactInfo.Id, contactInfo['leadId'],
+                        this.contactService.updateLocation(contactInfo.id, contactInfo['leadId'],
                             undefined, contactInfo.personContactInfo.userId);
                         this.data.invalidate.emit({
                             contactId: contactInfo.id,
