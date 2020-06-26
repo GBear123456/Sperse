@@ -40,6 +40,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.LocalizationServiceProxy,
         ApiServiceProxies.PersonContactServiceProxy,
         ApiServiceProxies.MemberSubscriptionServiceProxy,
+        ApiServiceProxies.MemberSettingsServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })
