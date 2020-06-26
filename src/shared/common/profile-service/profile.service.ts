@@ -9,11 +9,14 @@ import * as moment from 'moment-timezone';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
+    UpdateUserAffiliateCodeDto,
     GetMemberInfoOutput,
     SubscriptionShortInfoOutput,
     LayoutType,
-    MemberSubscriptionServiceProxy
+    MemberSubscriptionServiceProxy,
+    MemberSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { environment } from '@root/environments/environment';
@@ -67,7 +70,9 @@ export class ProfileService {
 
     constructor(
         private appSession: AppSessionService,
-        private subscriptionProxy: MemberSubscriptionServiceProxy
+        private subscriptionProxy: MemberSubscriptionServiceProxy,
+        private memberSettingsService: MemberSettingsServiceProxy,
+        private ls: AppLocalizationService
     ) {
         const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
         const messageEvent = window[eventMethod] === 'attachEvent' ? 'onmessage' : 'message';
@@ -130,5 +135,13 @@ export class ProfileService {
 
     updateAccessCode(newAccessCode: string) {
         this.accessCode.next(newAccessCode);
+        this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: newAccessCode })).subscribe(
+            () => {
+                abp.notify.info(this.ls.l('AccessCodeUpdated'));
+                this.appSession.user.affiliateCode = newAccessCode;
+            },
+            /** Update back if error comes */
+            () => this.accessCode.next(this.appSession.user.affiliateCode)
+        );
     }
 }
