@@ -2681,7 +2681,7 @@ export class BANKCodeServiceProxy {
     /**
      * @return Success
      */
-    getSystemTotals(): Observable<{ [key: string] : number; }> {
+    getSystemTotals(): Observable<GetSystemTotalsOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetSystemTotals";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2701,14 +2701,14 @@ export class BANKCodeServiceProxy {
                 try {
                     return this.processGetSystemTotals(<any>response_);
                 } catch (e) {
-                    return <Observable<{ [key: string] : number; }>><any>_observableThrow(e);
+                    return <Observable<GetSystemTotalsOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<{ [key: string] : number; }>><any>_observableThrow(response_);
+                return <Observable<GetSystemTotalsOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSystemTotals(response: HttpResponseBase): Observable<{ [key: string] : number; }> {
+    protected processGetSystemTotals(response: HttpResponseBase): Observable<GetSystemTotalsOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -2719,13 +2719,7 @@ export class BANKCodeServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200) {
-                result200 = {};
-                for (let key in resultData200) {
-                    if (resultData200.hasOwnProperty(key))
-                        result200[key] = resultData200[key];
-                }
-            }
+            result200 = resultData200 ? GetSystemTotalsOutput.fromJS(resultData200) : new GetSystemTotalsOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2733,7 +2727,111 @@ export class BANKCodeServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<{ [key: string] : number; }>(<any>null);
+        return _observableOf<GetSystemTotalsOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCodeBrackers(): Observable<GetCodeBreakersOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetCodeBrackers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCodeBrackers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCodeBrackers(<any>response_);
+                } catch (e) {
+                    return <Observable<GetCodeBreakersOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetCodeBreakersOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCodeBrackers(response: HttpResponseBase): Observable<GetCodeBreakersOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetCodeBreakersOutput.fromJS(resultData200) : new GetCodeBreakersOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetCodeBreakersOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getUserRank(): Observable<GetUserRankOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetUserRank";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserRank(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserRank(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUserRankOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUserRankOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserRank(response: HttpResponseBase): Observable<GetUserRankOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetUserRankOutput.fromJS(resultData200) : new GetUserRankOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserRankOutput>(<any>null);
     }
 }
 
@@ -37852,6 +37950,194 @@ export interface ICreateLeadOutput {
     leadId: number | undefined;
 }
 
+export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
+    systemTotals!: { [key: string] : number; } | undefined;
+    generationTime!: moment.Moment | undefined;
+
+    constructor(data?: IGetSystemTotalsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["systemTotals"]) {
+                this.systemTotals = {};
+                for (let key in data["systemTotals"]) {
+                    if (data["systemTotals"].hasOwnProperty(key))
+                        this.systemTotals[key] = data["systemTotals"][key];
+                }
+            }
+            this.generationTime = data["generationTime"] ? moment(data["generationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetSystemTotalsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetSystemTotalsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.systemTotals) {
+            data["systemTotals"] = {};
+            for (let key in this.systemTotals) {
+                if (this.systemTotals.hasOwnProperty(key))
+                    data["systemTotals"][key] = this.systemTotals[key];
+            }
+        }
+        data["generationTime"] = this.generationTime ? this.generationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetSystemTotalsOutput {
+    systemTotals: { [key: string] : number; } | undefined;
+    generationTime: moment.Moment | undefined;
+}
+
+export class CodeBreakerInfo implements ICodeBreakerInfo {
+    id!: number | undefined;
+    fullName!: string | undefined;
+    publicPhotoId!: string | undefined;
+    codesCracked!: number | undefined;
+
+    constructor(data?: ICodeBreakerInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.publicPhotoId = data["publicPhotoId"];
+            this.codesCracked = data["codesCracked"];
+        }
+    }
+
+    static fromJS(data: any): CodeBreakerInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CodeBreakerInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["publicPhotoId"] = this.publicPhotoId;
+        data["codesCracked"] = this.codesCracked;
+        return data; 
+    }
+}
+
+export interface ICodeBreakerInfo {
+    id: number | undefined;
+    fullName: string | undefined;
+    publicPhotoId: string | undefined;
+    codesCracked: number | undefined;
+}
+
+export class GetCodeBreakersOutput implements IGetCodeBreakersOutput {
+    codeBreackers!: CodeBreakerInfo[] | undefined;
+    generationTime!: moment.Moment | undefined;
+
+    constructor(data?: IGetCodeBreakersOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["codeBreackers"] && data["codeBreackers"].constructor === Array) {
+                this.codeBreackers = [];
+                for (let item of data["codeBreackers"])
+                    this.codeBreackers.push(CodeBreakerInfo.fromJS(item));
+            }
+            this.generationTime = data["generationTime"] ? moment(data["generationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetCodeBreakersOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCodeBreakersOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.codeBreackers && this.codeBreackers.constructor === Array) {
+            data["codeBreackers"] = [];
+            for (let item of this.codeBreackers)
+                data["codeBreackers"].push(item.toJSON());
+        }
+        data["generationTime"] = this.generationTime ? this.generationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetCodeBreakersOutput {
+    codeBreackers: CodeBreakerInfo[] | undefined;
+    generationTime: moment.Moment | undefined;
+}
+
+export class GetUserRankOutput implements IGetUserRankOutput {
+    rank!: number | undefined;
+    generationDate!: moment.Moment | undefined;
+
+    constructor(data?: IGetUserRankOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.rank = data["rank"];
+            this.generationDate = data["generationDate"] ? moment(data["generationDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetUserRankOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetUserRankOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["rank"] = this.rank;
+        data["generationDate"] = this.generationDate ? this.generationDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetUserRankOutput {
+    rank: number | undefined;
+    generationDate: moment.Moment | undefined;
+}
+
 export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -46190,7 +46476,7 @@ export interface IAssignUserForEachInput {
 
 export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateCodeInput {
     contactId!: number;
-    affiliateCode!: string;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IUpdateContactAffiliateCodeInput) {
         if (data) {
@@ -46225,7 +46511,7 @@ export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateC
 
 export interface IUpdateContactAffiliateCodeInput {
     contactId: number;
-    affiliateCode: string;
+    affiliateCode: string | undefined;
 }
 
 export class UpdateContactXrefInput implements IUpdateContactXrefInput {
@@ -58959,7 +59245,7 @@ export interface IRegisterMemberRequest {
 }
 
 export class UpdateUserAffiliateCodeDto implements IUpdateUserAffiliateCodeDto {
-    affiliateCode!: string;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IUpdateUserAffiliateCodeDto) {
         if (data) {
@@ -58991,7 +59277,7 @@ export class UpdateUserAffiliateCodeDto implements IUpdateUserAffiliateCodeDto {
 }
 
 export interface IUpdateUserAffiliateCodeDto {
-    affiliateCode: string;
+    affiliateCode: string | undefined;
 }
 
 export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
