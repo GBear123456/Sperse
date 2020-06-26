@@ -37,7 +37,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
                         canActivate: [ RedirectGuard ],
                         component: RedirectGuard,
                         data: {
-                            externalUrl: 'https://www.eventbrite.com/o/cheri-tree-14479776861'
+                            externalUrl: 'https://codebreakertech.com/events.html'
                         }
                     },
                     {
