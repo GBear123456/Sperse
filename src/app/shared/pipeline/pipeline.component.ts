@@ -270,7 +270,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                 stage.isLoading = false;
                                 this.detectChanges();
                             } else {
-                                this.reloadStagesInternal([newStage.stageIndex]).pipe(
+                                this.reloadStagesInternal([stage.stageIndex, newStage.stageIndex]).pipe(
                                     finalize(() => stage.isLoading = false)
                                 ).subscribe(() => this.detectChanges());
                                 this.onEntityStageChanged && this.onEntityStageChanged

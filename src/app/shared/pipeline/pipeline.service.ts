@@ -206,6 +206,8 @@ export class PipelineService {
             complete && complete();
         })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
+        }, () => {
+            this.moveEntityTo(entity, toStage, fromStage);
         });
     }
 
@@ -221,6 +223,8 @@ export class PipelineService {
             complete && complete();
         })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
+        }, () => {
+            this.moveEntityTo(entity, toStage, fromStage);
         });
     }
 
@@ -313,6 +317,8 @@ export class PipelineService {
             complete && complete();
         })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
+        }, () => {
+            this.moveEntityTo(entity, toStage, fromStage);
         });
     }
 
@@ -327,6 +333,8 @@ export class PipelineService {
             complete && complete();
         })).subscribe(() => {
             this.completeEntityUpdate(entity, fromStage, toStage);
+        }, () => {
+            this.moveEntityTo(entity, toStage, fromStage);
         });
     }
 
