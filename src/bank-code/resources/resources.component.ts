@@ -315,11 +315,6 @@ export class ResourcesComponent {
                                 title: 'L4: Communication Mastery PNG',
                                 fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L4/COMMUNICATION+MASTERY_TK.png',
                                 img: './assets/common/images/bank-code/thumbnails/trainer-kits/L4_Communication_Mastery_PNG.png'
-                            },
-                            {
-                                title: 'Trainer Business Card Images',
-                                fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+Business+Cards/Trainer.zip',
-                                img: './assets/common/images/bank-code/thumbnails/BANK-Trainer-Sample.jpg'
                             }
                         ]
                     }
