@@ -17,7 +17,7 @@ import { ProductsService } from '@root/bank-code/products/products.service';
 })
 export class BankTrainerComponent {
     dataIsLoading = true;
-    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('become-a-trainer-landing');
+    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('become-a-trainer');
 
     constructor(
         private productsService: ProductsService,

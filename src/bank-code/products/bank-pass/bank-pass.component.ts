@@ -151,7 +151,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
             this.changeDetectorRef.detectChanges();
         }))
     );
-    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('b-a-n-k-pass');
+    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('product-bankpass');
     userTimezone = DateHelper.getUserTimezone();
     accessCode$: Observable<string> = this.profileService.accessCode$;
     accessCodeValidationRules = [

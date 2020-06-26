@@ -24,7 +24,7 @@ export class CodeBreakerAiComponent {
             this.changeDetectorRef.detectChanges();
         }))
     );
-    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('codebreaker-ai-landing');
+    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('codebreaker-ai');
 
     constructor(
         private profileService: ProfileService,
