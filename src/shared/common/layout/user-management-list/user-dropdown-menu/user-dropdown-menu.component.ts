@@ -156,14 +156,6 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
 
     accessCodeChanged(accessCode: string) {
         this.profileService.updateAccessCode(accessCode);
-        this.memberSettingsService.updateAffiliateCode(new UpdateUserAffiliateCodeDto({ affiliateCode: accessCode })).subscribe(
-            () => {
-                abp.notify.info(this.ls.l('AccessCodeUpdated'));
-                this.appSession.user.affiliateCode = accessCode;
-            },
-            /** Update back if error comes */
-            () => this.profileService.updateAccessCode(this.appSession.user.affiliateCode)
-        );
     }
 
     onClick(e) {
