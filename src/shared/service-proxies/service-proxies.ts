@@ -2733,8 +2733,8 @@ export class BANKCodeServiceProxy {
     /**
      * @return Success
      */
-    getCodeBrackers(): Observable<GetCodeBreakersOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetCodeBrackers";
+    getTopCodeBreakers(): Observable<GetTopCodeBreakers> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetTopCodeBreakers";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2747,20 +2747,20 @@ export class BANKCodeServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCodeBrackers(response_);
+            return this.processGetTopCodeBreakers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCodeBrackers(<any>response_);
+                    return this.processGetTopCodeBreakers(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCodeBreakersOutput>><any>_observableThrow(e);
+                    return <Observable<GetTopCodeBreakers>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCodeBreakersOutput>><any>_observableThrow(response_);
+                return <Observable<GetTopCodeBreakers>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCodeBrackers(response: HttpResponseBase): Observable<GetCodeBreakersOutput> {
+    protected processGetTopCodeBreakers(response: HttpResponseBase): Observable<GetTopCodeBreakers> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -2771,7 +2771,7 @@ export class BANKCodeServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetCodeBreakersOutput.fromJS(resultData200) : new GetCodeBreakersOutput();
+            result200 = resultData200 ? GetTopCodeBreakers.fromJS(resultData200) : new GetTopCodeBreakers();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2779,7 +2779,7 @@ export class BANKCodeServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCodeBreakersOutput>(<any>null);
+        return _observableOf<GetTopCodeBreakers>(<any>null);
     }
 
     /**
@@ -38003,7 +38003,7 @@ export interface IGetSystemTotalsOutput {
 }
 
 export class CodeBreakerInfo implements ICodeBreakerInfo {
-    id!: number | undefined;
+    rank!: number | undefined;
     fullName!: string | undefined;
     publicPhotoId!: string | undefined;
     codesCracked!: number | undefined;
@@ -38019,7 +38019,7 @@ export class CodeBreakerInfo implements ICodeBreakerInfo {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.rank = data["rank"];
             this.fullName = data["fullName"];
             this.publicPhotoId = data["publicPhotoId"];
             this.codesCracked = data["codesCracked"];
@@ -38035,7 +38035,7 @@ export class CodeBreakerInfo implements ICodeBreakerInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["rank"] = this.rank;
         data["fullName"] = this.fullName;
         data["publicPhotoId"] = this.publicPhotoId;
         data["codesCracked"] = this.codesCracked;
@@ -38044,17 +38044,17 @@ export class CodeBreakerInfo implements ICodeBreakerInfo {
 }
 
 export interface ICodeBreakerInfo {
-    id: number | undefined;
+    rank: number | undefined;
     fullName: string | undefined;
     publicPhotoId: string | undefined;
     codesCracked: number | undefined;
 }
 
-export class GetCodeBreakersOutput implements IGetCodeBreakersOutput {
+export class GetTopCodeBreakers implements IGetTopCodeBreakers {
     codeBreackers!: CodeBreakerInfo[] | undefined;
     generationTime!: moment.Moment | undefined;
 
-    constructor(data?: IGetCodeBreakersOutput) {
+    constructor(data?: IGetTopCodeBreakers) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -38074,9 +38074,9 @@ export class GetCodeBreakersOutput implements IGetCodeBreakersOutput {
         }
     }
 
-    static fromJS(data: any): GetCodeBreakersOutput {
+    static fromJS(data: any): GetTopCodeBreakers {
         data = typeof data === 'object' ? data : {};
-        let result = new GetCodeBreakersOutput();
+        let result = new GetTopCodeBreakers();
         result.init(data);
         return result;
     }
@@ -38093,7 +38093,7 @@ export class GetCodeBreakersOutput implements IGetCodeBreakersOutput {
     }
 }
 
-export interface IGetCodeBreakersOutput {
+export interface IGetTopCodeBreakers {
     codeBreackers: CodeBreakerInfo[] | undefined;
     generationTime: moment.Moment | undefined;
 }
