@@ -47006,6 +47006,7 @@ export class MessageDto implements IMessageDto {
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
+    from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
     cc!: string | undefined;
@@ -47038,6 +47039,7 @@ export class MessageDto implements IMessageDto {
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
             this.cc = data["cc"];
@@ -47070,6 +47072,7 @@ export class MessageDto implements IMessageDto {
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
         data["cc"] = this.cc;
@@ -47091,6 +47094,7 @@ export interface IMessageDto {
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
+    from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
     cc: string | undefined;
@@ -47108,6 +47112,7 @@ export class MessageListDto implements IMessageListDto {
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
+    from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
     cc!: string | undefined;
@@ -47134,6 +47139,7 @@ export class MessageListDto implements IMessageListDto {
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
             this.cc = data["cc"];
@@ -47160,6 +47166,7 @@ export class MessageListDto implements IMessageListDto {
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
         data["cc"] = this.cc;
@@ -47179,6 +47186,7 @@ export interface IMessageListDto {
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
+    from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
     cc: string | undefined;
@@ -47242,6 +47250,7 @@ export interface IMessageListDtoPagedResultDto {
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
+    from!: string | undefined;
     to!: string[];
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -47266,6 +47275,7 @@ export class SendEmailInput implements ISendEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.parentId = data["parentId"];
+            this.from = data["from"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -47307,6 +47317,7 @@ export class SendEmailInput implements ISendEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["parentId"] = this.parentId;
+        data["from"] = this.from;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -47341,6 +47352,7 @@ export class SendEmailInput implements ISendEmailInput {
 export interface ISendEmailInput {
     contactId: number;
     parentId: number | undefined;
+    from: string | undefined;
     to: string[];
     replyTo: string[] | undefined;
     cc: string[] | undefined;
