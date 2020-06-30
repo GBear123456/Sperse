@@ -151,6 +151,27 @@
                 </div>
             </div>
         </div>
+        <div [hidden]="hidePipeline$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div class="funnel-wrapper main-component-view">
+                    <app-pipeline
+                            totalsURI="PartnerCount"
+                            dragulaName="partnerStages"
+                            [dataSource]="pipelineDataSource"
+                            [selectFields]="pipelineSelectFields"
+                            [pipelinePurposeId]="pipelinePurposeId"
+                            [filterModelStages]="filterModelStages"
+                            [(selectedEntities)]="selectedPartners"
+                            [dateField]="dateField"
+                            [contactGroupId]="partnerContactGroup"
+                            [moveDisabled]="manageDisabled"
+                            (onEntityStageChanged)="onStageChanged($event)"
+                            (onCardClick)="onCardClick($event)">
+                        Loading...
+                    </app-pipeline>
+                </div>
+            </div>
+        </div>
         <div [hidden]="hidePivotGrid$ | async">
             <slice-pivot-grid [storageKey]="sliceStorageKey"
                               [isLoading]="pivotGridDataIsLoading"

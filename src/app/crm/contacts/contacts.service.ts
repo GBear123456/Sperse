@@ -28,7 +28,8 @@ import {
     InvoiceServiceProxy,
     PersonContactInfoDto,
     GetContactInfoForMergeOutput,
-    LeadServiceProxy
+    LeadServiceProxy,
+    EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -337,7 +338,7 @@ export class ContactsService {
         };
 
         if (!emailData.templateType)
-            emailData.templateType = 'Contact';
+            emailData.templateType = EmailTemplateType.Contact;
         if (emailData.contact)
             this.initSuggestionEmails(emailData);
         else if (emailData.contactId && !emailData.suggestionEmails)
@@ -353,7 +354,7 @@ export class ContactsService {
             data: emailData
         }).componentInstance;
 
-        if (emailData.templateType == 'Contact')
+        if (emailData.templateType == EmailTemplateType.Contact)
             dialogComponent.onTemplateCreate.subscribe(() => {
                 this.showEmailTemplateDialog().subscribe(data => {
                     dialogComponent.data.templateId = data.templateId;
