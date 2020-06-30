@@ -245,6 +245,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.data.subject = res.subject;
                     this.showCC = Boolean(res.cc && res.cc.length);
                     this.showBCC = Boolean(res.bcc && res.bcc.length);
+                    this.ckEditor.setData(this.data.body);
                     this.changeDetectorRef.markForCheck();
                     this.onTemplateChange.emit(event.value);
                 });
