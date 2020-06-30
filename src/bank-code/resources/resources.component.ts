@@ -18,52 +18,6 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class ResourcesComponent {
     isClicked = 0;
-    legalDocuments = {
-        categoryName: 'LEGAL DOCUMENTS',
-        anchor: 'legal',
-        list: [
-            {
-                title: '2020 AR Compensation Plan',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CompensationPlan.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/Compensation_Plan.png'
-            },
-            {
-                title: 'AR E-Sign Consent',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessE-Sign&Consent.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/E_Sign_Consent.png'
-            },
-            {
-                title: 'AR Application and Agreement',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessARApplicationandAgreement.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/IMA_Application_and_Agreement.png'
-            },
-            {
-                title: 'AR Income Disclaimer',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessIncomeDisclaimer.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/Income_Disclaimer.png'
-            },
-            {
-                title: 'AR Policies and Procedures',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessPoliciesandProcedures.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/Policies_and_Procedures.png'
-            },
-            {
-                title: 'Codebreaker Tech Privacy Policies',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerPrivacyPolicy.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/Privacy_Policy.png'
-            },
-            {
-                title: 'Codebreaker Tech Terms of Use',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerTermsofUse.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/Terms_of_Use.png'
-            },
-            {
-                title: 'Codebreaker Tech Advertising Guidelines',
-                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerAdvertisingGuidelines.pdf',
-                img: './assets/common/images/bank-code/thumbnails/legal-documents/Guideline.png'
-            }
-        ]
-    };
     data$: Observable<any> = zip(
         this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
         this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer)
@@ -188,7 +142,52 @@ export class ResourcesComponent {
                         }
                     ]
                 },
-                this.legalDocuments,
+                {
+                    categoryName: 'LEGAL DOCUMENTS',
+                    anchor: 'legal',
+                    list: [
+                        {
+                            title: '2020 AR Compensation Plan',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CompensationPlan.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Compensation_Plan.png'
+                        },
+                        {
+                            title: 'AR E-Sign Consent',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessE-Sign&Consent.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/E_Sign_Consent.png'
+                        },
+                        {
+                            title: 'AR Application and Agreement',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessARApplicationandAgreement.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/IMA_Application_and_Agreement.png'
+                        },
+                        {
+                            title: 'AR Income Disclaimer',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessIncomeDisclaimer.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Income_Disclaimer.png'
+                        },
+                        {
+                            title: 'AR Policies and Procedures',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessPoliciesandProcedures.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Policies_and_Procedures.png'
+                        },
+                        {
+                            title: 'Codebreaker Tech Privacy Policies',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerPrivacyPolicy.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Privacy_Policy.png'
+                        },
+                        {
+                            title: 'Codebreaker Tech Terms of Use',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerTermsofUse.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Terms_of_Use.png'
+                        },
+                        {
+                            title: 'Codebreaker Tech Advertising Guidelines',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerAdvertisingGuidelines.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Guideline.png'
+                        }
+                    ]
+                },
                 {
                     categoryName: 'ORDER FORMS',
                     anchor: 'forms',
@@ -266,7 +265,22 @@ export class ResourcesComponent {
                             img: './assets/common/images/bank-code/thumbnails/videos/Video_BANKCODE_One_World.png'
                         }
                     ]
-                }] : [this.legalDocuments]
+                }] : [{
+                    categoryName: 'LEGAL DOCUMENTS',
+                    anchor: 'legal',
+                    list: [
+                        {
+                            title: 'Codebreaker Tech Privacy Policies',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerPrivacyPolicy.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Privacy_Policy.png'
+                        },
+                        {
+                            title: 'Codebreaker Tech Terms of Use',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerTermsofUse.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Terms_of_Use.png'
+                        }
+                    ]
+                }]
             ).concat(
                 hasTrainerSubscription ? [
                     {
