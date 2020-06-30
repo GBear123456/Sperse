@@ -23,6 +23,21 @@
             width: 100%;
             justify-content: space-between;
         }
+        i.createTemplate {
+            font: 14px/1 DXIcons;
+            position: relative;
+            &:before {
+                content: '+';
+                color: #00aeef;
+                font-size: 28px;
+                font-weight: 600;
+                position: absolute;
+                right: 40px;
+                bottom: -13px;
+                cursor: pointer;
+                font-style: normal;
+            }
+        }
         label.template {
             font-size: 12px;
             border-bottom: 1px solid #dfdfdf;
@@ -107,15 +122,30 @@
 
     .char-count {
         position: absolute;
-        bottom: 0;
+        bottom: 14px;
         right: 24px;
+    }
+    
+    i.insert-html {
+        position: absolute;
+        cursor: pointer;
+        color: #00AEEF;
+        bottom: 20px;
+        left: 10px;
+    }
+
+    i.cancel-html {
+        position: absolute;
+        cursor: pointer;
+        color: #00AEEF;
+        bottom: 20px;
+        left: 60px;
     }
 
     ::ng-deep ckeditor {
         .ck-editor__editable_inline {
-            min-height: 380px;
+            min-height: calc(100vh - 370px);
             padding-bottom: 40px;
-            max-height: calc(100vh - 500px);
         }
     }
 
@@ -200,7 +230,7 @@
 
                 ::ng-deep ngx-file-drop {
                     position: absolute;
-                    bottom: 7px;
+                    bottom: 20px;
                     right: 60px;
                     .ngx-file-drop__drop-zone {
                         height: 30px;

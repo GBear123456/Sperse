@@ -46,6 +46,7 @@ import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interf
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { EmailTags } from './contacts.const';
 
 @Injectable()
 export class ContactsService {
@@ -293,6 +294,41 @@ export class ContactsService {
             : this.contactProxy.getContactInfo(contactId);
     }
 
+    initSuggestionEmails(emailData) {
+        if (emailData.contact) {
+            emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
+                .filter(item => item.isActive).map(item => item.emailAddress);
+            if (emailData.suggestionEmails.length)
+                emailData.to = [emailData.suggestionEmails[0]];
+        }
+    }
+
+    initEmailDialogTagsList(dialogComponent) {
+        if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
+            dialogComponent.tagsList = [
+                EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.SenderFullName,
+                EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
+                EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite
+            ];
+        }
+    }
+
+    showEmailTemplateDialog() {
+        let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                title: this.ls.l('Edit Template'),
+                templateType: 'Contact',
+                saveTitle: this.ls.l('Save')
+            }
+        }).componentInstance;
+        this.initEmailDialogTagsList(dialogComponent);
+        dialogComponent.templateEditMode = true;
+        return dialogComponent.onSave;
+    }
+
     showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>) {
         let emailData: any = {
             saveTitle: this.ls.l('Send'),
@@ -300,12 +336,14 @@ export class ContactsService {
             ...data
         };
 
-        if (emailData.contactId && !emailData.to)
-            this.getContactInfo(data.contactId).subscribe(res => {
-                  emailData.suggestionEmails = res.personContactInfo.details.emails
-                      .filter(item => item.isActive).map(item => item.emailAddress);
-                  if (emailData.suggestionEmails.length)
-                      emailData.to = [emailData.suggestionEmails[0]];
+        if (!emailData.templateType)
+            emailData.templateType = 'Contact';
+        if (emailData.contact)
+            this.initSuggestionEmails(emailData);
+        else if (emailData.contactId && !emailData.suggestionEmails)
+            this.getContactInfo(emailData.contactId).subscribe(res => {
+                emailData.contact = res;
+                this.initSuggestionEmails(emailData);
             });
 
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
@@ -315,16 +353,24 @@ export class ContactsService {
             data: emailData
         }).componentInstance;
 
-        if (onTemplateChange)
-            dialogComponent.onTemplateChange.pipe(
-                switchMap(tmpId => {
-                    dialogComponent.startLoading();
-                    return onTemplateChange(tmpId, emailData).pipe(
-                        finalize(() => dialogComponent.finishLoading())
-                    );
-                })
-            ).subscribe(() => dialogComponent.changeDetectorRef.markForCheck());
+        if (emailData.templateType == 'Contact')
+            dialogComponent.onTemplateCreate.subscribe(() => {
+                this.showEmailTemplateDialog().subscribe(data => {
+                    dialogComponent.data.templateId = data.templateId;
+                    dialogComponent.initTemplateList();
+                });
+            });
 
+        dialogComponent.onTemplateChange.pipe(
+            switchMap(tmpId => {
+                dialogComponent.startLoading();
+                return (onTemplateChange ? onTemplateChange(tmpId, emailData): of()).pipe(
+                    finalize(() => dialogComponent.finishLoading())
+                );
+            })
+        ).subscribe(() => dialogComponent.changeDetectorRef.markForCheck());
+
+        this.initEmailDialogTagsList(dialogComponent);
         return dialogComponent.onSave.pipe(
             switchMap(res => {
                 dialogComponent.startLoading();

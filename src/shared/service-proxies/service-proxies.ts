@@ -52196,6 +52196,7 @@ export interface ICreateOrUpdateEditionDto {
 
 export enum EmailTemplateType {
     Invoice = "Invoice", 
+    Contact = "Contact", 
 }
 
 export class GetTemplatesResponse implements IGetTemplatesResponse {

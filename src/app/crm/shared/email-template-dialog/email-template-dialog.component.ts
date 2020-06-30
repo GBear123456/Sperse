@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 import * as ClassicEditor from 'ckeditor5-custom';
@@ -18,11 +19,14 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest, ContactCommunicationServiceProxy,
-    UpdateEmailTemplateRequest, GetTemplateReponse } from '@shared/service-proxies/service-proxies';
+import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
+    ContactCommunicationServiceProxy, UpdateEmailTemplateRequest, GetTemplateReponse,
+    ContactServiceProxy, ContactInfoDto, OrganizationContactServiceProxy, OrganizationContactInfoDto
+} from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-  import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
-  import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
+import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
+import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
+import { EmailTags } from '@app/crm/contacts/contacts.const';
 
 @Component({
     selector: 'email-template-dialog',
@@ -34,6 +38,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
+    @ViewChild(DxTextAreaComponent, { static: false }) htmlComponent: DxTextAreaComponent;
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
 
     Editor = ClassicEditor;
@@ -43,10 +48,15 @@ export class EmailTemplateDialogComponent implements OnInit {
     tagLastValue: string;
     startCase = startCase;
     tagsTooltipVisible = false;
+    insertAsHTML = false;
+
+    userContact = new ContactInfoDto();
+    userCompanyContact = new OrganizationContactInfoDto();
 
     @Input() tagsList = [];
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onTemplateCreate: EventEmitter<any> = new EventEmitter<number>();
     @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<number>();
     @Output() onTagItemClick: EventEmitter<any> = new EventEmitter<number>();
 
@@ -70,6 +80,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     constructor(
         private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
+        private contactProxy: ContactServiceProxy,
+        private orgContactProxy: OrganizationContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
@@ -83,6 +95,18 @@ export class EmailTemplateDialogComponent implements OnInit {
         data.from = [sessionService.user.emailAddress];
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
+
+        this.contactProxy.getContactInfo(
+            sessionService.user.contactId
+        ).subscribe(contact => {
+            this.userContact = contact;
+            if (contact.primaryOrganizationContactId)
+                this.orgContactProxy.getOrganizationContactInfo(
+                    contact.primaryOrganizationContactId
+                ).subscribe(companyContact => {
+                    this.userCompanyContact = companyContact;
+                });
+        });
     }
 
     ngOnInit() {
@@ -258,7 +282,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onTemplateFocusOut(event) {
-        event.component.option('isValid', Boolean(this.getTemplateName()));
+        event.component.option('isValid', !this.templateEditMode || Boolean(this.getTemplateName()));
     }
 
     onTemplateOptionChanged(event) {
@@ -266,6 +290,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.data.cc = this.data.bcc = [];
             this.data.subject = this.data.body = '';
             setTimeout(() => {
+                this.onTemplateCreate.emit();
                 event.component.option('isValid', true);
                 event.component.focus();
             });
@@ -297,8 +322,38 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTagClick(event) {
         if (this.onTagItemClick.observers.length)
             this.onTagItemClick.emit(event.itemData);
-        else
+        else if (this.templateEditMode)
             this.addTextTag(event.itemData);
+        else if (this.data['contact']) {
+            let person = this.data['contact'].personContactInfo.person,
+                userPerson = this.userContact.personContactInfo,
+                userOrganization = this.userCompanyContact.organization,
+                user = this.sessionService.user;
+            if (event.itemData == EmailTags.ClientFirstName)
+                this.insertText(person.firstName);
+            else if (event.itemData == EmailTags.ClientLastName)
+                this.insertText(person.lastName);
+            else if (event.itemData == EmailTags.LegalName)
+                this.insertText(person.lastName);
+            else if (event.itemData == EmailTags.SenderFullName)
+                this.insertText(userPerson.fullName);
+            else if (event.itemData == EmailTags.SenderEmail)
+                this.insertText(user.emailAddress);
+            else if (event.itemData == EmailTags.SenderCompanyTitle)
+                this.insertText(userPerson.jobTitle);
+            else if (event.itemData == EmailTags.SenderPhone
+                && userPerson.primaryPhoneId
+            ) this.insertText(userPerson.details.phones.filter(
+                    item => item.id == userPerson.primaryPhoneId
+                )[0].phoneNumber);
+            else if (event.itemData == EmailTags.SenderWebSite
+                && userPerson.details.links.length
+            ) this.insertText(userPerson.details.links[0].url);
+            else if (event.itemData == EmailTags.SenderCompany && userOrganization)
+                this.insertText(userOrganization.companyName);
+            else if (event.itemData == EmailTags.SenderCompanyLogo && userOrganization)
+                this.insertImageElement(this.userCompanyContact.primaryPhoto);
+        }
         this.tagsTooltipVisible = false;
     }
 
@@ -306,10 +361,20 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.tagLastValue = event.event.target.value;
     }
 
-    addTextTag(tag: string) {
+    insertImageElement(src) {
         this.ckEditor.model.change(writer => {
-            writer.insertText('#' + tag + '#', this.ckEditor.model.document.selection.getFirstPosition());
+            writer.insertElement('image', {src: src}, this.ckEditor.model.document.selection.getFirstPosition());
         });
+    }
+
+    insertText(text: string) {
+        this.ckEditor.model.change(writer => {
+            writer.insertText(text, this.ckEditor.model.document.selection.getFirstPosition());
+        });
+    }
+
+    addTextTag(tag: string) {
+        this.insertText('#' + tag + '#');
     }
 
     addLinkTag(tag: string, link: string) {
@@ -373,6 +438,16 @@ export class EmailTemplateDialogComponent implements OnInit {
             attachment.loader = undefined;
         });
         this.attachments.push(attachment);
+    }
+
+    showInsertAsHTML() {
+        if (this.insertAsHTML = !this.insertAsHTML) {
+            this.htmlComponent.instance.option('value', '');
+            setTimeout(() => this.htmlComponent.instance.focus(), 300);
+        } else {
+            this.ckEditor.setData(this.htmlComponent.instance.option('value'));
+            this.updateDataLength();
+        }
     }
 
     sendAttachment(file) {
