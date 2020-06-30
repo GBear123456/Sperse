@@ -1,26 +1,16 @@
 /** Core imports */
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
-
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, Subject } from 'rxjs';
-import {
-    filter,
-    finalize,
-    pluck,
-    map,
-    skip,
-    takeUntil,
-    switchMap
-} from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, concat, of } from 'rxjs';
+import { filter, finalize, map, pluck, skip, switchMap, takeUntil, first, mapTo } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-
 /** Application imports */
 import {
     CrmStore,
@@ -72,8 +62,6 @@ import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { OrderStageSummary } from '@app/crm/orders/order-stage-summary.interface';
-import { concat } from '@node_modules/rxjs';
-import { first } from '@node_modules/rxjs/operators';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -337,7 +325,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             value: OrderType.Subscription
         }
     ];
-    selectedOrderType = OrderType.Order;
+    private selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(OrderType.Order);
+    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     ordersDataSource: any = {
@@ -496,6 +485,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.odataRequestValues$,
         this.refresh$
     ).pipe(
+        takeUntil(this.destroy$),
+        switchMap(this.waitUntil(OrderType.Order)),
         map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
             return this.getODataUrl('OrderCount', oDataRequestValues.filter, null, oDataRequestValues.params);
         }),
@@ -522,6 +513,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.odataRequestValues$,
         this.refresh$
     ).pipe(
+        takeUntil(this.destroy$),
+        switchMap(this.waitUntil(OrderType.Subscription)),
         map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
             return this.getODataUrl(
                 'SubscriptionSlice',
@@ -611,16 +604,24 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     get dataGrid() {
-        return this.selectedOrderType === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
+        return this.selectedOrderType.value === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
 
     get dataSource() {
-        return this.selectedOrderType === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
+        return this.selectedOrderType.value === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
 
     get showToggleColumnSelectorButton() {
-        return (this.selectedOrderType === OrderType.Order && this.ordersDataLayoutType === DataLayoutType.DataGrid)
-        || this.selectedOrderType === OrderType.Subscription;
+        return (this.selectedOrderType.value === OrderType.Order && this.ordersDataLayoutType === DataLayoutType.DataGrid)
+        || this.selectedOrderType.value === OrderType.Subscription;
+    }
+
+    private waitUntil(orderType: OrderType) {
+        return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
+            filter((dataOrderType: OrderType) => dataOrderType === orderType),
+            first(),
+            mapTo(data)
+        );
     }
 
     private handleFiltersPining() {
@@ -1018,7 +1019,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleColumnChooser() {
-        if (this.selectedOrderType === OrderType.Subscription
+        if (this.selectedOrderType.value === OrderType.Subscription
             && this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
             this.pivotGridComponent.toggleFieldPanel();
         } else {
@@ -1045,13 +1046,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     initDataSource() {
-        if (this.selectedOrderType === OrderType.Order) {
+        if (this.selectedOrderType.value === OrderType.Order) {
             if (this.showOrdersPipeline) {
                 if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
             } else
                 this.setDataGridInstance(this.dataGrid);
-        } else if (this.selectedOrderType === OrderType.Subscription) {
+        } else if (this.selectedOrderType.value === OrderType.Subscription) {
             if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
                 this.setDataGridInstance(this.dataGrid);
             } else if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
@@ -1129,7 +1130,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filtersService.setup(this.filters);
             this.filtersService.checkIfAnySelected();
         } else {
-            this.filtersService.setup(this.filters = this.selectedOrderType === OrderType.Order
+            this.filtersService.setup(this.filters = this.selectedOrderType.value === OrderType.Order
                 ? this.ordersFilters
                 : this.subscriptionsFilters
             );
@@ -1156,10 +1157,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     processFilterInternal() {
         let context: any = this;
-        let grid = this.selectedOrderType === OrderType.Order
+        let grid = this.selectedOrderType.value === OrderType.Order
             ? this.ordersGrid
             : (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid ? this.subscriptionsGrid : this.pivotGridComponent.dataGrid);
-        if (this.selectedOrderType === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
+        if (this.selectedOrderType.value === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
             context = this.pipelineComponent;
             context.searchColumns = this.searchColumns;
             context.searchValue = this.searchValue;
@@ -1169,7 +1170,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         context.processODataFilter.call(
             context,
             grid.instance,
-            this.selectedOrderType === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
+            this.selectedOrderType.value === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
             this.filters,
             this.filtersService.getCheckCustom,
             null,
@@ -1228,7 +1229,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         section: string
     }) {
         if (entity && entity.ContactId) {
-            let isOrder = this.selectedOrderType === OrderType.Order;
+            let isOrder = this.selectedOrderType.value === OrderType.Order;
             this.searchClear = false;
             this._router.navigate(
                 [
@@ -1335,6 +1336,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     onOrderTypeChanged(event) {
         if (event.previousValue != event.value) {
+            this.selectedOrderType.next(event.value);
             this.totalCount = undefined;
             this.searchValue = '';
             this.filterChanged = true;
