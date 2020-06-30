@@ -11,7 +11,6 @@ export class TypesDropdownComponent {
     @Input() value;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();
     @Output() onValueChanged: EventEmitter<any> = new EventEmitter<any>();
-    constructor() {}
 
     valueChanged(e) {
         this.valueChange.emit(e.value);

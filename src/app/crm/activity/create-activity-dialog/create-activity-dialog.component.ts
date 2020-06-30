@@ -109,7 +109,7 @@ export class CreateActivityDialogComponent implements OnInit {
     assignedUsersSelector = select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     hasManagePermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments);
     appointment: InternalActivityDto = this.data.appointment;
-    
+
     constructor(
         private cacheService: CacheService,
         private dialogService: DialogService,
