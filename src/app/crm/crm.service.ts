@@ -129,6 +129,45 @@ export class CrmService {
         return d.promise();
     }
 
+    getChartDataUrl(
+        sourceUri: string,
+        oDataRequestValues: ODataRequestValues,
+        summaryBy: SummaryBy,
+        dateField: 'LeadDate' | 'ContactDate',
+        additionalParams?: { [name: string]: any}
+    ): string {
+        let group = [
+            {
+                selector: dateField,
+                groupInterval: summaryBy,
+                isExpanded: false,
+                desc: false
+            }
+        ];
+        /** Add grouping by year also to avoid grouping by month or quarters of different years */
+        if (summaryBy !== SummaryBy.Year) {
+            group.unshift({
+                selector: dateField,
+                groupInterval: SummaryBy.Year,
+                isExpanded: false,
+                desc: false
+            });
+        }
+        const params = {
+            group: JSON.stringify(group),
+            groupSummary: `[{"selector":"${dateField}","summaryType":"min"}]`,
+            ...additionalParams
+        };
+        this.updateParams(oDataRequestValues, params);
+        return sourceUri + '?' + Object.keys(params)
+            .map((param: string) => encodeURIComponent(param) + '=' + encodeURIComponent(params[param]))
+            .join('&');
+    }
+
+    loadSliceChartByUrl(url: string): Promise<SliceChartData> {
+        return this.http.get(url).toPromise().then((result: any) => this.parseChartData(result))
+    }
+
     loadSliceChartData(
         sourceUri: string,
         filters,
@@ -166,41 +205,45 @@ export class CrmService {
                 }),
                 params: params
             }))
-        ).toPromise().then((result: any) => {
-            const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
-            let minGroupValue, maxGroupValue;
-            const data = result.data[0] && result.data[0].items ? flatten(result.data.map(a => a.items)) : result.data;
-            const items = data && data.map(contact => {
-                minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
-                maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
-                return {
-                    creationDate: contact.summary[0],
-                    count: contact.count
-                };
-            });
-            const chartInfoItems: InfoItem[] = [
-                {
-                    label: this.ls.l('Totals'),
-                    value: result.totalCount
-                },
-                {
-                    label: this.ls.l('Average'),
-                    value: avgGroupValue
-                },
-                {
-                    label: this.ls.l('Lowest'),
-                    value: minGroupValue || 0
-                },
-                {
-                    label: this.ls.l('Highest'),
-                    value: maxGroupValue || 0
-                }
-            ];
+        ).toPromise().then(
+            (result: any) => this.parseChartData(result)
+        );
+    }
+
+    parseChartData(result: any): SliceChartData {
+        const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
+        let minGroupValue, maxGroupValue;
+        const data = result.data[0] && result.data[0].items ? flatten(result.data.map(a => a.items)) : result.data;
+        const items = data && data.map(contact => {
+            minGroupValue = !minGroupValue || contact.count < minGroupValue ? contact.count : minGroupValue;
+            maxGroupValue = !maxGroupValue || contact.count > maxGroupValue ? contact.count : maxGroupValue;
             return {
-                items: items.sort(this.sortByDate),
-                infoItems: chartInfoItems
+                creationDate: contact.summary[0],
+                count: contact.count
             };
         });
+        const chartInfoItems: InfoItem[] = [
+            {
+                label: this.ls.l('Totals'),
+                value: result.totalCount
+            },
+            {
+                label: this.ls.l('Average'),
+                value: avgGroupValue
+            },
+            {
+                label: this.ls.l('Lowest'),
+                value: minGroupValue || 0
+            },
+            {
+                label: this.ls.l('Highest'),
+                value: maxGroupValue || 0
+            }
+        ];
+        return {
+            items: items.sort(this.sortByDate),
+            infoItems: chartInfoItems
+        };
     }
 
     updateParams(oDataRequestValues: ODataRequestValues, params = {}) {

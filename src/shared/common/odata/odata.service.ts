@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import buildQuery from 'odata-query';
 import * as dxAjax from 'devextreme/core/utils/ajax';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, tap, pluck } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -25,6 +25,8 @@ import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 export class ODataService {
     private dxRequestPool = {};
     private pivotGridInitialBeforeSend;
+    private readonly maxRequestLength = 16000;
+    private readonly maxFilterItemsCount = 1000;
 
     constructor(
         private messageService: MessageService,
@@ -110,7 +112,7 @@ export class ODataService {
             const filterValue = Object.values(filterData)[0];
             if (filterValue instanceof AsyncFilter) {
                 if (!this.filterItemsCountIsValid(filterValue.itemsCount)) {
-                    this.messageService.error(this.ls.l('FilterItemsShouldNotExceed', 1000));
+                    this.messageService.error(this.ls.l('FilterItemsShouldNotExceed', this.maxFilterItemsCount));
                     return false;
                 }
                 serverCachedFilters.push(filterData);
@@ -238,11 +240,11 @@ export class ODataService {
     }
 
     requestLengthIsValid(odataUrl: string): boolean {
-        return odataUrl.length <= 16000;
+        return odataUrl.length <= this.maxRequestLength;
     }
 
     filterItemsCountIsValid(filterItemsCount: number): boolean {
-        return filterItemsCount <= 1000;
+        return filterItemsCount <= this.maxFilterItemsCount;
     }
 
     getSearchFilter(searchColumns: any[], searchValue: string) {

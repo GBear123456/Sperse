@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Params } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -104,9 +105,9 @@ import { NameParserService } from '@shared/common/name-parser/name-parser.servic
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
 import { PartnerDto } from '@app/crm/partners/partner-dto.interface';
-import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
+import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -305,17 +306,33 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     chartInfoItems: InfoItem[];
+    chartDataUrl: string;
     chartDataSource = new DataSource({
         key: 'id',
         load: () => {
-            return this.crmService.loadSliceChartData(
-                this.getODataUrl(this.groupDataSourceURI),
-                this.filters,
-                this.chartComponent.summaryBy.value,
-                this.dateField
-            ).then((result: SliceChartData) => {
-                this.chartInfoItems = result.infoItems;
-                return result.items;
+            return this.odataRequestValues$.pipe(
+                first(),
+                switchMap((odataRequestValues: ODataRequestValues) => {
+                    const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
+                        this.getODataUrl(this.groupDataSourceURI),
+                        odataRequestValues,
+                        this.chartComponent.summaryBy.value,
+                        this.dateField
+                    )
+                    return this.oDataService.requestLengthIsValid(chartDataUrl)
+                        ? this.httpClient.get(chartDataUrl)
+                        : of(null)
+                })
+            ).toPromise().then((result: any) => {
+                this.chartDataUrl = null;
+                if (result) {
+                    result = this.crmService.parseChartData(result);
+                    this.chartInfoItems = result.infoItems;
+                    return result.items;
+                } else {
+                    this.chartInfoItems = [];
+                    return [];
+                }
             });
         }
     });
@@ -330,13 +347,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
+    odataRequestValues: ODataRequestValues;
     odataRequestValues$: Observable<ODataRequestValues> = concat(
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
         )
     ).pipe(
-        filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
+        filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues),
+        tap((odataRequestValues: ODataRequestValues) => this.odataRequestValues = odataRequestValues)
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
@@ -367,6 +386,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private filterStatesService: FilterStatesService,
         private nameParserService: NameParserService,
         private userManagementService: UserManagementService,
+        private httpClient: HttpClient,
         public appService: AppService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy
@@ -484,8 +504,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
         ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
-            let url = this.getODataUrl(this.totalDataSourceURI,
-                odataRequestValues.filter, null, odataRequestValues.params);
+            let url = this.getODataUrl(
+                this.totalDataSourceURI,
+                odataRequestValues.filter,
+                null,
+                odataRequestValues.params
+            );
             if (url && this.oDataService.requestLengthIsValid(url)) {
                 this.totalDataSource['_store']['_url'] = url;
                 this.totalDataSource.load();
@@ -517,8 +541,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(() => {
-            this.chartDataSource.load();
+        ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+            const chartDataUrl = this.crmService.getChartDataUrl(
+                this.getODataUrl(this.groupDataSourceURI),
+                odataRequestValues,
+                summaryBy,
+                this.dateField
+            );
+            if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
+                this.message.error(this.l('QueryStringIsTooLong'));
+            } else {
+                this.chartDataUrl = chartDataUrl;
+                this.chartDataSource.load();
+            }
         });
     }
 
