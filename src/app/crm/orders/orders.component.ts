@@ -2,6 +2,7 @@
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
+
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
@@ -11,6 +12,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, forkJoin, Observable, concat, of } from 'rxjs';
 import { filter, finalize, map, pluck, skip, switchMap, takeUntil, first, mapTo } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
+
 /** Application imports */
 import {
     CrmStore,
@@ -380,6 +382,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ).pipe(
         filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
     );
+    private search: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    search$: Observable<string> = this.search.asObservable();
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -483,6 +487,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersSum: number;
     ordersSum$: Observable<number> = combineLatest(
         this.odataRequestValues$,
+        this.search$,
         this.refresh$
     ).pipe(
         takeUntil(this.destroy$),
@@ -511,6 +516,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
         this.odataRequestValues$,
+        this.search$,
         this.refresh$
     ).pipe(
         takeUntil(this.destroy$),
@@ -581,11 +587,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.subscriptionsCount = data.summary[0];
             this.subscriptionsTotalOrderAmount = data.summary[1];
             this.subscriptionsTotalFee = data.summary[2];
+            if (this.subscriptionsGrid) {
+                this.subscriptionsGrid.instance.repaint();
+            }
         });
     }
 
-    customizeTotal = () => this.l('Count') + ': ' + this.totalCount;
-    customizeSubscriptionsTotal = () => this.l('Count') + ': ' + this.subscriptionsCount;
+    customizeTotal = () => this.totalCount !== undefined ? this.l('Count') + ': ' + this.totalCount : '';
+    customizeSubscriptionsTotal = () => {
+        return this.subscriptionsCount !== undefined ? this.l('Count') + ': ' + this.subscriptionsCount : '';
+    }
     customizeOrdersSum = () => this.customizeAmountSummary({ value: this.ordersSum });
     customizeSubscriptionsTotalFee = () => this.customizeAmountSummary({ value: this.subscriptionsTotalFee });
     customizeSubscriptionsTotalAmount = () => this.customizeAmountSummary({ value: this.subscriptionsTotalOrderAmount });
@@ -1032,7 +1043,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     customizeAmountSummary = (cellInfo) => {
-        return this.l('Sum') + ': ' + this.customizeAmountCell(cellInfo);
+        return cellInfo.value !== undefined ? this.l('Sum') + ': ' + this.customizeAmountCell(cellInfo) : '';
     }
 
     toggleToolbar() {
@@ -1078,7 +1089,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.exportCallback();
         else {
             this.setGridDataLoaded();
-            this.totalCount = this.totalRowCount;
+            if (this.totalCount !== this.totalRowCount && this.totalRowCount !== -1) {
+                this.totalCount = this.totalRowCount;
+                this.dataGrid.instance.repaint();
+            }
             if (!this.rowsViewHeight)
                 this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
             event.component.columnOption('command:edit', {
@@ -1189,6 +1203,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
+            this.search.next(e['value']);
             this.processFilterInternal();
         }
     }
@@ -1339,6 +1354,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.selectedOrderType.next(event.value);
             this.totalCount = undefined;
             this.searchValue = '';
+            this.search.next('');
             this.filterChanged = true;
             this.initFilterConfig(true);
             setTimeout(() => {
