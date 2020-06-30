@@ -1,5 +1,13 @@
 /** Core imports */
-import { AfterViewInit, ChangeDetectionStrategy, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Injector,
+    OnDestroy,
+    ViewChild
+} from '@angular/core';
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
@@ -117,6 +125,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         private store$: Store<AppStore.State>,
         private permissionCheckerService: PermissionCheckerService,
         public appService: AppService,
+        private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -398,6 +407,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 ]
             }
         ];
+        this.changeDetectorRef.detectChanges();
     }
 
     toggleCompactView() {
@@ -449,18 +459,21 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     setPipelineDataSource(refresh: boolean = true) {
-        let dataSource = new DataSource({
+        let dataSource = {
+            uri: this.dataSourceURI,
             requireTotalCount: true,
-            store: new ODataStore({
+            store: {
+                type: 'odata',
                 key: this.activityFields.Id,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                deserializeDates: false
-            })
-        });
+                deserializeDates: false,
+                paginate: true
+            }
+        };
         if (this.pipelineView)
             dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
 
