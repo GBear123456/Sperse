@@ -6,6 +6,7 @@ import {
     Inject,
     OnDestroy,
     OnInit,
+    Optional,
     Renderer2,
     ViewChild
 } from '@angular/core';
@@ -22,7 +23,7 @@ import DataSource from 'devextreme/data/data_source';
 import { DxoPagerComponent } from 'devextreme-angular/ui/nested';
 import 'devextreme/data/odata/store';
 import ODataStore from 'devextreme/data/odata/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { filter, takeUntil, tap, map } from 'rxjs/operators';
 
 /** Application imports */
@@ -41,8 +42,7 @@ import {
     BANKCodeServiceProxy,
     ContactServiceProxy,
     CreateLeadInput,
-    MemberSettingsServiceProxy,
-    UpdateUserAffiliateCodeDto
+    MemberSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
@@ -145,7 +145,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
         })
     });
     formatting = AppConsts.formatting;
-    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
+    hasSubscription$: Observable<boolean> = (this.shared
+        ? of(this.permissionService.isGranted(AppPermissions.CRMCustomers))
+        : this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass)
+    ).pipe(
         tap((hasSubscription) => setTimeout(() => {
             if (hasSubscription) this.dataIsLoading = false;
             this.changeDetectorRef.detectChanges();
@@ -211,7 +214,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor,
         public profileService: ProfileService,
-        @Inject(DOCUMENT) private document: any
+        @Inject(DOCUMENT) private document: any,
+        @Inject('shared') @Optional() private shared: boolean
     ) {}
 
     ngOnInit() {

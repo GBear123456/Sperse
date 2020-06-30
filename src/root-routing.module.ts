@@ -3,6 +3,7 @@ import { RouterModule, Route, Router, Routes, NavigationEnd, PreloadingStrategy 
 import { Observable, of } from 'rxjs';
 import { RouteGuard } from '@shared/common/auth/route-guard';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class AppPreloadingStrategy implements PreloadingStrategy {
@@ -35,7 +36,10 @@ const routes: Routes = [
             {
                 path: 'code-breaker',
                 loadChildren: () => import('bank-code/bank-code.module').then(m => m.BankCodeModule), //Lazy load bank code module
-                data: { localizationSource: 'Platform' }
+                data: {
+                    localizationSource: 'Platform',
+                    layoutType: LayoutType.BankCode
+                }
             },
             {
                 path: 'app',
