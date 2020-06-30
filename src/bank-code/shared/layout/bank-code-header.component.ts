@@ -120,8 +120,7 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             },
             {
                 name: this.ls.l('BankCode_Resources'),
-                routerUrl: 'resources',
-                hidden: !showResourcesLink
+                routerUrl: 'resources'
             },
             {
                 name: this.ls.l('BankCode_Events'),

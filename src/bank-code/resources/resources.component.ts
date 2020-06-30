@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'resources',
@@ -17,6 +18,52 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 })
 export class ResourcesComponent {
     isClicked = 0;
+    legalDocuments = {
+        categoryName: 'LEGAL DOCUMENTS',
+        anchor: 'legal',
+        list: [
+            {
+                title: '2020 AR Compensation Plan',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CompensationPlan.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/Compensation_Plan.png'
+            },
+            {
+                title: 'AR E-Sign Consent',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessE-Sign&Consent.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/E_Sign_Consent.png'
+            },
+            {
+                title: 'AR Application and Agreement',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessARApplicationandAgreement.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/IMA_Application_and_Agreement.png'
+            },
+            {
+                title: 'AR Income Disclaimer',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessIncomeDisclaimer.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/Income_Disclaimer.png'
+            },
+            {
+                title: 'AR Policies and Procedures',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerSmallBusinessPoliciesandProcedures.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/Policies_and_Procedures.png'
+            },
+            {
+                title: 'Codebreaker Tech Privacy Policies',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerPrivacyPolicy.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/Privacy_Policy.png'
+            },
+            {
+                title: 'Codebreaker Tech Terms of Use',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerTermsofUse.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/Terms_of_Use.png'
+            },
+            {
+                title: 'Codebreaker Tech Advertising Guidelines',
+                fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/CodebreakerAdvertisingGuidelines.pdf',
+                img: './assets/common/images/bank-code/thumbnails/legal-documents/Guideline.png'
+            }
+        ]
+    };
     data$: Observable<any> = zip(
         this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
         this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer)
@@ -141,52 +188,7 @@ export class ResourcesComponent {
                         }
                     ]
                 },
-                {
-                    categoryName: 'LEGAL DOCUMENTS',
-                    anchor: 'legal',
-                    list: [
-                        {
-                            title: '2019 BANKCODE Compensation Plan',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Compensation+Plan/Compensation+Plan+-+September+2019.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Compensation_Plan.png'
-                        },
-                        {
-                            title: 'BANKCODE E-Sign Consent',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+E-Sign+_+Consent.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/E_Sign_Consent.png'
-                        },
-                        {
-                            title: 'BANKCODE IMA Application and Agreement',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+IMA+Application+and+Agreement.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/IMA_Application_and_Agreement.png'
-                        },
-                        {
-                            title: 'BANKCODE Income Disclaimer',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+Income+Disclaimer.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Income_Disclaimer.png'
-                        },
-                        {
-                            title: 'BANKCODE Policies and Procedures',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+Policies+and+Procedures.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Policies_and_Procedures.png'
-                        },
-                        {
-                            title: 'BANKCODE Privacy Policy - Updated 2019',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+Privacy+Policy+-+Updated+2019.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Privacy_Policy.png'
-                        },
-                        {
-                            title: 'BANKCODE Terms of Use - Updated 2019',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODE+Terms+of+Use+-+Updated+2019.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Terms_of_Use.png'
-                        },
-                        {
-                            title: 'BANKCODE Advertising Guidelines',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Legal+Docs/BANKCODEAdvertisingGuidelines.pdf',
-                            img: './assets/common/images/bank-code/thumbnails/legal-documents/Guideline.png'
-                        }
-                    ]
-                },
+                this.legalDocuments,
                 {
                     categoryName: 'ORDER FORMS',
                     anchor: 'forms',
@@ -264,7 +266,7 @@ export class ResourcesComponent {
                             img: './assets/common/images/bank-code/thumbnails/videos/Video_BANKCODE_One_World.png'
                         }
                     ]
-                }] : []
+                }] : [this.legalDocuments]
             ).concat(
                 hasTrainerSubscription ? [
                     {
