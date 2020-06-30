@@ -31,21 +31,15 @@
             <div class="row">
                 <div class="field-area from">
                     <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
-                    <dx-tag-box
+                    <dx-text-box
                         name="from"
                         width="calc(50% - 52px)"
                         height="40px"
                         noDataText=""
                         placeholder=""
-                        [multiline]="true"
-                        [acceptCustomValue]="true"
                         [(value)]="data.from"
-                        [disabled]="templateEditMode"
-                        (onKeyUp)="onKeyUp($event)"
-                        (onOpened)="emailInputFocusIn($event)"
-                        (onFocusOut)="emailInputFocusOut($event)"
-                        (onCustomItemCreating)="onCustomItemCreating($event)">
-                    </dx-tag-box>
+                        [disabled]="templateEditMode">
+                    </dx-text-box>
                     <label class="caption">{{ls.l('replyTo')}}:</label>
                     <dx-tag-box
                         name="replyTo"
