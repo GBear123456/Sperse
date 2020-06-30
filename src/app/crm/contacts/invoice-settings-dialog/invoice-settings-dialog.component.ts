@@ -13,6 +13,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, Currency } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { EmailTags } from '../contacts.const';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -31,14 +32,14 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     });
 
     tagsList = [
-        'InvoiceNumber',
-        'InvoiceGrandTotal',
-        'InvoiceDueDate',
-        'InvoiceLink',
-        'InvoiceAnchor',
-        'LegalName',
-        'ClientFirstName',
-        'ClientLastName'
+        EmailTags.InvoiceNumber,
+        EmailTags.InvoiceGrandTotal,
+        EmailTags.InvoiceDueDate,
+        EmailTags.InvoiceLink,
+        EmailTags.InvoiceAnchor,
+        EmailTags.LegalName,
+        EmailTags.ClientFirstName,
+        EmailTags.ClientLastName
     ];
 
     constructor(
