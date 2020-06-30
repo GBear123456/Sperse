@@ -586,22 +586,23 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.listenForUpdate(DataLayoutType.Map),
             this.selectedMapArea$
         ).pipe(
-            tap(() => this.mapDataIsLoading = true),
-            switchMap(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
-                let params = {};
-                if (odataRequestValues.params && odataRequestValues.params.length) {
-                    odataRequestValues.params.forEach((param: Param) => {
-                        params[param.name] = param.value;
-                    });
-                }
-                return this.mapService.loadSliceMapData(
+            map(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+                return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
-                    odataRequestValues.filter,
+                    odataRequestValues,
                     mapArea,
-                    this.dateField,
-                    params
+                    this.dateField
                 );
             }),
+            filter((mapUrl: string) => {
+                if (!this.oDataService.requestLengthIsValid(mapUrl)) {
+                    this.message.error(this.l('QueryStringIsTooLong'));
+                    return false;
+                }
+                return true;
+            }),
+            tap(() => this.mapDataIsLoading = true),
+            switchMap((mapUrl: string) => this.httpClient.get(mapUrl)),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)
@@ -614,7 +615,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.queryParams$.pipe(
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
-        ).subscribe((dataLayoutType) => {
+        ).subscribe((dataLayoutType: DataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
     }

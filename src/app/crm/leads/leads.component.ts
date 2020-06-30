@@ -760,25 +760,27 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private getContactsData(): Observable<any> {
         return combineLatest(
-            this.selectedMapArea$,
-            this.listenForUpdate(DataLayoutType.Map)
+            this.listenForUpdate(DataLayoutType.Map),
+            this.selectedMapArea$
         ).pipe(
-            tap(() => this.mapDataIsLoading = true),
-            switchMap(([mapArea, [odataRequestValues, contactGroupId ]]: [MapArea, [ODataRequestValues, ContactGroup, null]]) => {
-                let params = { contactGroupId: contactGroupId.toString() };
-                if (odataRequestValues.params && odataRequestValues.params.length) {
-                    odataRequestValues.params.forEach((param: Param) => {
-                        params[param.name] = param.value;
-                    });
-                }
-                return this.mapService.loadSliceMapData(
+            map(([[oDataRequestValues, contactGroupId, ], mapArea]: [[ODataRequestValues, ContactGroup, null], MapArea]) => {
+                return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
-                    odataRequestValues.filter,
+                    oDataRequestValues,
                     mapArea,
                     this.dateField,
-                    params
+                    { contactGroupId: contactGroupId.toString() }
                 );
             }),
+            filter((mapUrl: string) => {
+                if (!this.oDataService.requestLengthIsValid(mapUrl)) {
+                    this.message.error(this.l('QueryStringIsTooLong'));
+                    return false;
+                }
+                return true;
+            }),
+            tap(() => this.mapDataIsLoading = true),
+            switchMap((mapUrl: string) => this.httpClient.get(mapUrl)),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)

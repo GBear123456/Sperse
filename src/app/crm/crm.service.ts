@@ -30,6 +30,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
 import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Injectable()
 export class CrmService {
@@ -159,9 +160,7 @@ export class CrmService {
             ...additionalParams
         };
         this.updateParams(oDataRequestValues, params);
-        return sourceUri + '?' + Object.keys(params)
-            .map((param: string) => encodeURIComponent(param) + '=' + encodeURIComponent(params[param]))
-            .join('&');
+        return UrlHelper.getUrl(sourceUri, params);
     }
 
     parseChartData(result: any): SliceChartData {
