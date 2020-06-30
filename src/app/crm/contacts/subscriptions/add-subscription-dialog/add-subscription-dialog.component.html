@@ -31,33 +31,12 @@
             <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
-                <ng-container *ngIf="serviceTypes && serviceTypes.length else textBox">
-                    <dx-select-box *ngIf="servicesTypesGroupsNumber === 1"
-                                   [inputAttr]="{ id: 'code' }"
-                                   [items]="serviceTypes"
-                                   displayExpr="name"
-                                   valueExpr="name"
-                                   [(value)]="subscription.code"
-                                   (onValueChanged)="onServiceTypeChanged($event, subscription)">
-                    </dx-select-box>
-                    <dx-drop-down-box *ngIf="servicesTypesGroupsNumber === 2"
-                                      [(value)]="subscription.code"
-                                      valueExpr="name"
-                                      displayExpr="name"
-                                      [dataSource]="serviceTypes">
-                        <div *dxTemplate="let data of 'content'">
-                            <dx-tree-view
-                                    [dataSource]="serviceTypes"
-                                    dataStructure="plain"
-                                    parentIdExpr="groupId"
-                                    keyExpr="id"
-                                    selectionMode="single"
-                                    displayExpr="name"
-                                    (onItemClick)="onItemClick($event, subscription)">
-                            </dx-tree-view>
-                        </div>
-                    </dx-drop-down-box>
-                </ng-container>
+                <dx-select-box *ngIf="serviceTypes; else textBox"
+                               [inputAttr]="{ id: 'code' }"
+                               [items]="serviceTypes"
+                               [(value)]="subscription.code"
+                               (onValueChanged)="onServiceTypeChanged($event, subscription)">
+                </dx-select-box>
                 <ng-template #textBox>
                     <dx-text-box name="code"
                                  [inputAttr]="{ id: 'code' }"
