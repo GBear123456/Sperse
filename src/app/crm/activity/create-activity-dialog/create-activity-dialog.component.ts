@@ -15,6 +15,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
     CustomerServiceProxy,
+    LeadServiceProxy,
     ActivityType,
     CreateActivityDto,
     UpdateActivityDto,
@@ -122,6 +123,8 @@ export class CreateActivityDialogComponent implements OnInit {
         public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        private clientsProxy: CustomerServiceProxy,
+        private leadsProxy: LeadServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.saveContextMenuItems = [
@@ -194,8 +197,8 @@ export class CreateActivityDialogComponent implements OnInit {
         if (this.permissionChecker.isGranted(AppPermissions.CRMCustomers)) {
             this.modalDialog.startLoading();
             Promise.all([
-                this.lookup('Leads').then(res => this.leads = res),
-                this.lookup('Clients').then(res => this.clients = res)
+                this.lookup('leads').then(res => this.leads = res),
+                this.lookup('clients').then(res => this.clients = res)
             ]).then(
                 () => this.modalDialog.finishLoading(),
                 () => this.modalDialog.finishLoading()
