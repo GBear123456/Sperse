@@ -164,52 +164,6 @@ export class CrmService {
             .join('&');
     }
 
-    loadSliceChartByUrl(url: string): Promise<SliceChartData> {
-        return this.http.get(url).toPromise().then((result: any) => this.parseChartData(result))
-    }
-
-    loadSliceChartData(
-        sourceUri: string,
-        filters,
-        summaryBy: SummaryBy,
-        dateField: 'LeadDate' | 'ContactDate',
-        additionalParams?: { [name: string]: any}
-    ): Promise<SliceChartData> {
-        let group = [
-            {
-                selector: dateField,
-                groupInterval: summaryBy,
-                isExpanded: false,
-                desc: false
-            }
-        ];
-        /** Add grouping by year also to avoid grouping by month or quarters of different years */
-        if (summaryBy !== SummaryBy.Year) {
-            group.unshift({
-                selector: dateField,
-                groupInterval: SummaryBy.Year,
-                isExpanded: false,
-                desc: false
-            });
-        }
-        const params = {
-            group: JSON.stringify(group),
-            groupSummary: `[{"selector":"${dateField}","summaryType":"min"}]`,
-            ...additionalParams
-        };
-        return this.oDataService.getODataFilter(filters, this.filtersService.getCheckCustom).pipe(
-            map((oDataRequestValues: ODataRequestValues) => this.updateParams(oDataRequestValues, params)),
-            switchMap(() => this.http.get(sourceUri, {
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
-                }),
-                params: params
-            }))
-        ).toPromise().then(
-            (result: any) => this.parseChartData(result)
-        );
-    }
-
     parseChartData(result: any): SliceChartData {
         const avgGroupValue = result.totalCount ? (result.totalCount / result.data.length).toFixed(0) : 0;
         let minGroupValue, maxGroupValue;
