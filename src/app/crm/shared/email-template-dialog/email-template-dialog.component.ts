@@ -98,8 +98,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
-        this.contactProxy.getContactInfo(
-            sessionService.user.contactId
+        this.contactProxy.getContactInfoForUser(
+            sessionService.user.id
         ).subscribe(contact => {
             this.userContact = contact;
             if (contact.primaryOrganizationContactId)
