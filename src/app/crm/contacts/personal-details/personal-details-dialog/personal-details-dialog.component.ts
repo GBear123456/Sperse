@@ -188,6 +188,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.configMode = !this.configMode;
     }
 
+    deleteItem(item) {
+        switch (item) {
+            case this.ls.l('Affiliate'):
+                this.updateAffiliateCode('');
+                break;
+            case this.ls.l('Xref'):
+                this.updateXref('');
+                break;
+        }
+    }
+
     updateAffiliateCode(value) {
         value = value.trim();
         this.contactProxy.updateAffiliateCode(new UpdateContactAffiliateCodeInput({

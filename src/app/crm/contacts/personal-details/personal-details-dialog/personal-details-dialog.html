@@ -12,9 +12,13 @@
                                       [editPlaceholder]="ls.l('Affiliate')"
                                       [value]="affiliateCode$ | async"
                                       [showInlineEditButton]="true"
+                                      [isDeleteEnabled]="true"
+                                      [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
+                                      [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
                                       [validationRules]="affiliateValidationRules"
                                       [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
-                                      (valueChanged)="updateAffiliateCode($event)">
+                                      (valueChanged)="updateAffiliateCode($event)"
+                                      (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                         </inplace-edit>
                     </div>
                     <div>
@@ -25,9 +29,13 @@
                                       [value]="contactXref$ | async"
                                       [isOptional]="true"
                                       [showInlineEditButton]="true"
+                                      [isDeleteEnabled]="true"
+                                      [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
+                                      [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
                                       [validationRules]="xrefValidationRules"
                                       [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
-                                      (valueChanged)="updateXref($event)">
+                                      (valueChanged)="updateXref($event)"
+                                      (itemDeleted)="deleteItem(ls.l('Xref'))">
                         </inplace-edit>
                     </div>
                     <div>
