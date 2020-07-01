@@ -297,6 +297,7 @@ export class ContactsService {
 
     initSuggestionEmails(emailData) {
         if (emailData.contact) {
+            emailData.contactId = emailData.contact.id;
             emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
                 .filter(item => item.isActive).map(item => item.emailAddress);
             if (emailData.suggestionEmails.length)
@@ -367,7 +368,7 @@ export class ContactsService {
         dialogComponent.onTemplateChange.pipe(
             switchMap(tmpId => {
                 dialogComponent.startLoading();
-                return (onTemplateChange ? onTemplateChange(tmpId, emailData): of()).pipe(
+                return (onTemplateChange ? onTemplateChange(tmpId, emailData) : of()).pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );
             })

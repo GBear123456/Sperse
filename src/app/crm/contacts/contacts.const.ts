@@ -15,10 +15,10 @@ export enum EmailTags {
     InvoiceLink       = 'InvoiceLink',
     InvoiceAnchor     = 'InvoiceAnchor',
     SenderFullName    = 'SenderFullName',
-    SenderCompany     = 'SenderCompany', 
+    SenderCompany     = 'SenderCompany',
     SenderCompanyTitle= 'SenderCompanyTitle',
     SenderCompanyLogo = 'SenderCompanyLogo',
-    SenderPhone       = 'SenderPhone', 
+    SenderPhone       = 'SenderPhone',
     SenderEmail       = 'SenderEmail',
     SenderWebSite     = 'SenderWebSite',
 }
