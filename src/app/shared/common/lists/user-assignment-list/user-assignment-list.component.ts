@@ -107,6 +107,7 @@ export class UserAssignmentComponent implements OnDestroy {
             this.selectedItemKeys = this.list.map((item) => {
                 return this.listComponent.isItemSelected(item) && item.id;
             }).filter(Boolean);
+            this.sortAssignableList();
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
@@ -159,12 +160,20 @@ export class UserAssignmentComponent implements OnDestroy {
         this.listComponent = $event.component;
     }
 
+    sortAssignableList() {
+        this.list.sort((prev, next) => {
+            return this.selectedItemKeys.indexOf(prev.id) >= 0 ? -1 :
+                Number(this.selectedItemKeys.indexOf(next.id) >= 0);
+        });
+    }
+
     refreshList(assignedUsersSelector) {
         this.subscription = this.store$.pipe(assignedUsersSelector)
             .pipe(filter(Boolean))
             .subscribe(assignableUsers => {
                 if (assignableUsers && assignableUsers instanceof Array) {
                     this.list = assignableUsers.slice(0);
+                    this.sortAssignableList();
                     if (!this.relatedUsers && this.selectedKeys && this.selectedKeys[0] && this.proxyService)
                         this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe(relatedUsers => {
                             this.relatedUsers = relatedUsers;
