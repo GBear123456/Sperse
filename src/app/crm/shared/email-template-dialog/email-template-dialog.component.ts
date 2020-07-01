@@ -364,6 +364,17 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.insertText(userOrganization.companyName);
             else if (event.itemData == EmailTags.SenderCompanyLogo && userOrganization)
                 this.insertImageElement(this.userCompanyContact.primaryPhoto);
+            else if (event.itemData == EmailTags.SenderCompanyPhone
+                && this.userCompanyContact.primaryPhoneId
+            ) this.insertText(this.userCompanyContact.details.phones.filter(
+                    item => item.id == this.userCompanyContact.primaryPhoneId
+                )[0].phoneNumber);
+            else if (event.itemData == EmailTags.SenderCompanyEmail
+                && this.userCompanyContact.details.emails.length
+            ) this.insertText(this.userCompanyContact.details.emails[0].emailAddress);
+            else if (event.itemData == EmailTags.SenderCompanyWebSite
+                && this.userCompanyContact.details.links.length
+            ) this.insertText(this.userCompanyContact.details.links[0].url);
         }
         this.tagsTooltipVisible = false;
     }

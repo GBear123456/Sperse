@@ -309,8 +309,9 @@ export class ContactsService {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
             dialogComponent.tagsList = [
                 EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.SenderFullName,
+                EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite,
                 EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
-                EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite
+                EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite
             ];
         }
     }
@@ -369,7 +370,7 @@ export class ContactsService {
         dialogComponent.onTemplateChange.pipe(
             switchMap(tmpId => {
                 dialogComponent.startLoading();
-                return (onTemplateChange ? onTemplateChange(tmpId, emailData) : 
+                return (onTemplateChange ? onTemplateChange(tmpId, emailData) :
                     this.communicationProxy.getEmailData(tmpId, emailData.contactId).pipe(map(data => {
                         Object.assign(emailData, data);
                     }))
