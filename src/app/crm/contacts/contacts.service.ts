@@ -361,6 +361,7 @@ export class ContactsService {
             dialogComponent.onTemplateCreate.subscribe(() => {
                 this.showEmailTemplateDialog().subscribe(data => {
                     dialogComponent.data.templateId = data.templateId;
+                    dialogComponent.onTemplateChanged({value: data.templateId});
                     dialogComponent.initTemplateList();
                 });
             });
@@ -368,7 +369,11 @@ export class ContactsService {
         dialogComponent.onTemplateChange.pipe(
             switchMap(tmpId => {
                 dialogComponent.startLoading();
-                return (onTemplateChange ? onTemplateChange(tmpId, emailData) : of()).pipe(
+                return (onTemplateChange ? onTemplateChange(tmpId, emailData) : 
+                    this.communicationProxy.getEmailData(tmpId, emailData.contactId).pipe(map(data => {
+                        Object.assign(emailData, data);
+                    }))
+                ).pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );
             })

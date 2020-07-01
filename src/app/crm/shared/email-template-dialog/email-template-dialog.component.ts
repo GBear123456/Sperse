@@ -16,6 +16,7 @@ import * as ClassicEditor from 'ckeditor5-custom';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -80,6 +81,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     constructor(
         private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
+        private profileService: ProfileService,
         private contactProxy: ContactServiceProxy,
         private orgContactProxy: OrganizationContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
@@ -328,9 +330,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTagClick(event) {
         if (this.onTagItemClick.observers.length)
             this.onTagItemClick.emit(event.itemData);
-        else if (this.templateEditMode)
-            this.addTextTag(event.itemData);
-        else if (this.data['contact']) {
+        else if (this.templateEditMode) {
+            if (event.itemData == EmailTags.SenderCompanyLogo)
+                this.insertImageElement('#' + event.itemData + '#');
+            else
+                this.addTextTag(event.itemData);
+        } else if (this.data['contact']) {
             let person = this.data['contact'].personContactInfo.person,
                 userPerson = this.userContact.personContactInfo,
                 userOrganization = this.userCompanyContact.organization,
@@ -358,7 +363,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             else if (event.itemData == EmailTags.SenderCompany && userOrganization)
                 this.insertText(userOrganization.companyName);
             else if (event.itemData == EmailTags.SenderCompanyLogo && userOrganization)
-                this.insertImageElement('data:image/jpeg;base64,' + this.userCompanyContact.primaryPhoto);
+                this.insertImageElement(this.userCompanyContact.primaryPhoto);
         }
         this.tagsTooltipVisible = false;
     }
@@ -369,7 +374,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     insertImageElement(src) {
         this.ckEditor.model.change(writer => {
-            writer.insertElement('image', {src: src}, 
+            writer.insertElement('image', {src: this.profileService.getPhoto(src)},
                 this.ckEditor.model.document.selection.getFirstPosition());
         });
     }
