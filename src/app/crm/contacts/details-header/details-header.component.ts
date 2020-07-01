@@ -518,7 +518,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addCompanyLogo(event) {
         if (this.manageAllowed) {
-            this.contactsService.showUploadCompanyPhotoDialog(
+            this.contactsService.showUploadPhotoDialog(
                 this.data['organizationContactInfo'],
                 event
             ).subscribe((logo: string) => {
