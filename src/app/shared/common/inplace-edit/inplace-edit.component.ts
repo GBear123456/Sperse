@@ -69,6 +69,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() validationRules: object[];
     @Input() isReadOnlyField = false;
     @Input() isEditDialogEnabled = false;
+    @Input() showInlineEditButton = false;
     @Input() isDeleteEnabled = false;
     @Input() isCopyEnabled = true;
     @Input() lEntityName: string;

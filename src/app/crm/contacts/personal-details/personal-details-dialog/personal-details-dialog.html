@@ -8,24 +8,26 @@
                         <h3>{{ ls.l('AffiliateInfo') }}</h3>
                         <h4>{{ ls.l('AffiliateCode') }}</h4>
                         <inplace-edit [id]="contactInfo.id"
-                                    lEntityName="Name"
-                                    [editPlaceholder]="ls.l('Affiliate')"
-                                    [value]="affiliateCode$ | async"
-                                    [validationRules]="affiliateValidationRules"
-                                    [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
-                                    (valueChanged)="updateAffiliateCode($event)">
+                                      lEntityName="Name"
+                                      [editPlaceholder]="ls.l('Affiliate')"
+                                      [value]="affiliateCode$ | async"
+                                      [showInlineEditButton]="true"
+                                      [validationRules]="affiliateValidationRules"
+                                      [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                      (valueChanged)="updateAffiliateCode($event)">
                         </inplace-edit>
                     </div>
                     <div>
                         <h4>{{ ls.l('Xref') }}</h4>
                         <inplace-edit [id]="contactInfo.id"
-                                    lEntityName="Name"
-                                    [editPlaceholder]="ls.l('Xref')"
-                                    [value]="contactXref$ | async"
-                                    [isOptional]="true"
-                                    [validationRules]="xrefValidationRules"
-                                    [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
-                                    (valueChanged)="updateXref($event)">
+                                      lEntityName="Name"
+                                      [editPlaceholder]="ls.l('Xref')"
+                                      [value]="contactXref$ | async"
+                                      [isOptional]="true"
+                                      [showInlineEditButton]="true"
+                                      [validationRules]="xrefValidationRules"
+                                      [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                      (valueChanged)="updateXref($event)">
                         </inplace-edit>
                     </div>
                     <div>
