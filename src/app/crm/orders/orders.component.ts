@@ -327,7 +327,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             value: OrderType.Subscription
         }
     ];
-    private selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(OrderType.Order);
+    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(OrderType.Order);
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;

@@ -165,7 +165,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private readonly dataSourceURI = 'Partner';
     private readonly totalDataSourceURI: string = 'Partner/$count';
     private readonly groupDataSourceURI = 'PartnerSlice';
-    private readonly dateField = 'ContactDate';
+    public readonly dateField = 'ContactDate';
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
