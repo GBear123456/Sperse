@@ -358,7 +358,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             else if (event.itemData == EmailTags.SenderCompany && userOrganization)
                 this.insertText(userOrganization.companyName);
             else if (event.itemData == EmailTags.SenderCompanyLogo && userOrganization)
-                this.insertImageElement(this.userCompanyContact.primaryPhoto);
+                this.insertImageElement('data:image/jpeg;base64,' + this.userCompanyContact.primaryPhoto);
         }
         this.tagsTooltipVisible = false;
     }
@@ -369,7 +369,8 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     insertImageElement(src) {
         this.ckEditor.model.change(writer => {
-            writer.insertElement('image', {src: src}, this.ckEditor.model.document.selection.getFirstPosition());
+            writer.insertElement('image', {src: src}, 
+                this.ckEditor.model.document.selection.getFirstPosition());
         });
     }
 
@@ -448,7 +449,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     showInsertAsHTML() {
         if (this.insertAsHTML = !this.insertAsHTML) {
-            this.htmlComponent.instance.option('value', '');
+            this.htmlComponent.instance.option('value', this.ckEditor.getData());
             setTimeout(() => this.htmlComponent.instance.focus(), 300);
         } else {
             this.ckEditor.setData(this.htmlComponent.instance.option('value'));

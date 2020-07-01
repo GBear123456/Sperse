@@ -143,7 +143,7 @@
                     <a #tagsButton class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
                     <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
                     <ckeditor [hidden]="insertAsHTML" [editor]="Editor" (ready)="onCKReady($event)" (config)="{allowedContent: true}" (change)="updateDataLength()"></ckeditor>
-                    <p class="char-count">{{charCount}}</p>
+                    <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
                     <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
                     <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
                     <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
