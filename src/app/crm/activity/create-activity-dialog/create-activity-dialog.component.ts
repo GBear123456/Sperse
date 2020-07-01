@@ -209,7 +209,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     lookup(uri, search = '') {
         return new Promise((resolve, reject) => {
-            this[uri + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe(
+            this[uri.toLowerCase() + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe(
                 (res) => resolve(res),
                 (err) => reject(err)
             );
@@ -458,15 +458,14 @@ export class CreateActivityDialogComponent implements OnInit {
     onListFiltered(event) {
         clearTimeout(this.listFilterTimeout);
         this.listFilterTimeout = setTimeout(() => {
-            let uri = event.listTitle,
+            let uri = event.listTitle.toLowerCase(),
                 value = this.getInputElementValue(event);
-
             this.lookup(uri, value).then(res => {
                 switch (uri) {
-                    case 'Leads':
+                    case 'leads':
                         this.leads = res;
                         break;
-                    case 'Clients':
+                    case 'clients':
                         this.clients = res;
                         break;
                 }
