@@ -225,7 +225,7 @@ export class CompanyDialogComponent implements OnInit {
 
     showUploadPhotoDialog(e) {
         if (this.manageAllowed)
-            this.contactService.showUploadCompanyPhotoDialog(this.company, e).subscribe((photo: string) => {
+            this.contactService.showUploadPhotoDialog(this.company, e).subscribe((photo: string) => {
                 this.company.primaryPhoto = photo;
                 this.changeDetectorRef.detectChanges();
             });
