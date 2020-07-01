@@ -157,7 +157,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             text: this.l('Edit'),
             class: 'edit',
             visible: true,
-            action: () => this.showLeadDetails(this.actionEvent)
+            action: () => this.showLeadDetails({data: this.actionEvent})
         },
         {
             text: this.l('LoginAsThisUser'),
@@ -386,8 +386,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.chartComponent.summaryBy.value,
                         this.dateField,
                         { contactGroupId: this.contactGroupId.value.toString() }
-                    )
-                    return this.httpClient.get(chartDataUrl)
+                    );
+                    return this.httpClient.get(chartDataUrl);
                 })
             ).toPromise().then((result: any) => {
                 result = this.crmService.parseChartData(result);
@@ -1596,6 +1596,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.searchClear = false;
         let orgId = lead.OrganizationId;
         event.component && event.component.cancelEditData();
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
+            || this.dataGrid.instance.getDataSource(), event.loadMethod);
         setTimeout(() => {
             this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
                 {queryParams: {referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType.value}});
@@ -1693,9 +1695,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._activate.next(false);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        if (!this.showPipeline) {
-            this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, this.dataGrid.instance.getDataSource());
-        }
         this.hideHostElement();
     }
 
@@ -1705,8 +1704,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onCardClick({entity, entityStageDataSource, loadMethod}) {
-        this.showLeadDetails({data: entity});
-        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
+        this.showLeadDetails({
+            data: entity,
+            dataSource: entityStageDataSource,
+            loadMethod: loadMethod
+        });
     }
 
     onLeadStageChanged(lead) {
