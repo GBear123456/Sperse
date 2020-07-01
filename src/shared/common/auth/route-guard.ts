@@ -52,12 +52,14 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return false;
         }
 
-        if ((!route.data || (!route.data['permission'] && !route.data['feature'])) && !isStateRoot) {
+        if ((!route.data || (!route.data['permission'] && !route.data['feature'] && !route.data['layoutType'])) && !isStateRoot) {
             return true;
         }
 
         if ((!route.data['permission'] || this.permissionChecker.isGranted(route.data['permission']))
-            && (!route.data['feature'] || this.feature.isEnabled(route.data['feature'])) && !isStateRoot
+            && (!route.data['feature'] || this.feature.isEnabled(route.data['feature']))
+            && (!route.data['layoutType'] || !this.sessionService.tenant || this.sessionService.tenant.customLayoutType === route.data['layoutType'])
+            && !isStateRoot
         ) {
             return true;
         }

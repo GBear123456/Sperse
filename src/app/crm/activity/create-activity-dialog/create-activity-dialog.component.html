@@ -38,33 +38,19 @@
                               [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
 
-        <app-static-list #leadsList
+        <app-static-list #contactsList
                          [width]="'330px'"
                          [height]="440"
-                         [targetSelector]="'[accesskey=\'LeadsList\']'"
-                         [title]="ls.l('Leads')"
-                         [showConfirmation]="false"
-                         [highlightSelected]="true"
-                         [selectedKeys]="[appointment.LeadId]"
-                         [searchEnabled]="true"
-                         [customSearchEnabled]="true"
-                         (onItemSelected)="onLeadSelected($event)"
-                         (onListFiltered)="onListFiltered($event)"
-                         [list]="leads">
-        </app-static-list>
-        <app-static-list #clientsList
-                         [width]="'330px'"
-                         [height]="440"
-                         [targetSelector]="'[accesskey=\'ClientsList\']'"
-                         [title]="ls.l('Clients')"
+                         [targetSelector]="'[accesskey=\'ContactsList\']'"
+                         [title]="ls.l('Contacts')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
                          [selectedKeys]="[appointment.ContactId]"
                          [searchEnabled]="true"
                          [customSearchEnabled]="true"
-                         (onItemSelected)="onClientSelected($event)"
+                         (onItemSelected)="onContactSelected($event)"
                          (onListFiltered)="onListFiltered($event)"
-                         [list]="clients">
+                         [list]="contacts">
         </app-static-list>
 
         <app-static-list [hideButtons]="true"

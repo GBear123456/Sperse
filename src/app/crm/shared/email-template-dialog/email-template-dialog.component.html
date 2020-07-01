@@ -23,28 +23,23 @@
                 <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Template'))"></dxi-validation-rule>
             </dx-validator>
         </dx-select-box>
+        <i class="createTemplate" *ngIf="onTemplateCreate.observers.length" (click)="onTemplateCreate.emit()"></i>
     </ng-container>
 
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
             <div class="row">
                 <div class="field-area from">
-                    <label class="caption disabled">{{ls.l('From')}}:</label>
-                    <dx-tag-box
+                    <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
+                    <dx-text-box
                         name="from"
                         width="calc(50% - 52px)"
                         height="40px"
                         noDataText=""
                         placeholder=""
-                        [multiline]="false"
-                        [acceptCustomValue]="true"
                         [(value)]="data.from"
-                        [disabled]="true"
-                        (onKeyUp)="onKeyUp($event)"
-                        (onOpened)="emailInputFocusIn($event)"
-                        (onFocusOut)="emailInputFocusOut($event)"
-                        (onCustomItemCreating)="onCustomItemCreating($event)">
-                    </dx-tag-box>
+                        [disabled]="templateEditMode">
+                    </dx-text-box>
                     <label class="caption">{{ls.l('replyTo')}}:</label>
                     <dx-tag-box
                         name="replyTo"
@@ -146,8 +141,11 @@
                         </div>
                     </dx-tooltip>
                     <a #tagsButton class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
-                    <ckeditor [editor]="Editor" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
-                    <p class="char-count">{{charCount}}</p>
+                    <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
+                    <ckeditor [hidden]="insertAsHTML" [editor]="Editor" (ready)="onCKReady($event)" (config)="{allowedContent: true}" (change)="updateDataLength()"></ckeditor>
+                    <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
+                    <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
+                    <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
                     <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                             <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>

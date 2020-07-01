@@ -12,12 +12,12 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="orderTypes"
                         [totalCount]="totalCount"
-                        [(value)]="selectedOrderType"
+                        [value]="selectedOrderType$ | async"
                         (onValueChanged)="onOrderTypeChanged($event)">
         </types-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <div [hidden]="selectedOrderType !== orderTypesEnum.Order">
+    <div [hidden]="selectedOrderType.value !== orderTypesEnum.Order">
         <app-toolbar [config]="ordersToolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
         <div class="main-wrapper">
             <app-static-list
@@ -161,7 +161,7 @@
             </div>
         </div>
     </div>
-    <div [hidden]="selectedOrderType !== orderTypesEnum.Subscription">
+    <div [hidden]="selectedOrderType.value !== orderTypesEnum.Subscription">
         <app-toolbar [config]="subscriptionsToolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
         <div class="main-wrapper">
             <div [hidden]="subscriptionsDataLayoutType !== layoutTypes.DataGrid">

@@ -30,6 +30,12 @@ export class UrlHelper {
         return (this.initialUrl.split('?').shift().match(/^http[s]?:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*(:[0-9]+)?(\/.+)+$/) || []).pop();
     }
 
+    static getUrl(uri, params: { [param: string]: string }): string {
+        return uri + '?' + Object.keys(params)
+            .map((param: string) => encodeURIComponent(param) + '=' + encodeURIComponent(params[param]))
+            .join('&');
+    }
+
     static getReturnUrl(): string {
         const queryStringObj = UrlHelper.getQueryParametersUsingParameters(UrlHelper.getInitialUrlParameters());
         if (queryStringObj.returnUrl) {

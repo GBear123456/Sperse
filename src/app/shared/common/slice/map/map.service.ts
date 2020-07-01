@@ -16,6 +16,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { InfoItem } from '@app/shared/common/slice/info/info-item.model';
 import { map, withLatestFrom } from '@node_modules/rxjs/operators';
 import { MapData } from '@app/shared/common/slice/map/map-data.model';
+import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { Param } from '@shared/common/odata/param.model';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Injectable()
 export class MapService {
@@ -57,33 +60,33 @@ export class MapService {
         @Inject('selectedMapArea') @Optional() private selectedMapArea: MapArea
     ) {}
 
-    loadSliceMapData(
+    getSliceMapUrl(
         sourceUri: string,
-        filter,
+        oDataRequestValues: ODataRequestValues,
         mapArea: MapArea,
         dateField: 'LeadDate' | 'ContactDate',
         params?: { [name: string]: any }
-    ): Observable<any> {
+    ) {
         params = {
             group: `[{"selector":"${mapArea === MapArea.World ? 'CountryId' : 'StateId'}","isExpanded":false}]`,
             groupSummary: `[{"selector":"${dateField}","summaryType":"min"}]`,
             ...params
         };
+        if (oDataRequestValues.params && oDataRequestValues.params.length) {
+            oDataRequestValues.params.forEach((param: Param) => {
+                params[param.name] = param.value;
+            });
+        }
         if (mapArea === MapArea.Canada) {
             params['filter'] = '[["CountryId","=","CA"]]';
         }
         if (mapArea === MapArea.USA) {
             params['filter'] = '[["CountryId","=","US"]]';
         }
-        if (filter) {
-            params['$filter'] = filter;
+        if (oDataRequestValues.filter) {
+            params['$filter'] = oDataRequestValues.filter;
         }
-        return this.http.get(sourceUri, {
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            }),
-            params: params
-        });
+        return UrlHelper.getUrl(sourceUri, params);
     }
 
     getAdjustedMapData(mapData$: Observable<any>): Observable<MapData> {

@@ -9,7 +9,7 @@ export const ActivityFields: KeysEnum<ActivityDto> = {
     EndDate: 'EndDate',
     Description: 'Description',
     Type: 'Type',
-    AssignedUserIds:'AssignedUserIds',
+    AssignedUserIds: 'AssignedUserIds',
     LeadId: 'LeadId',
     StageId: 'StageId',
     ContactId: 'ContactId'

@@ -14,7 +14,8 @@ import * as moment from 'moment';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
-    CustomerServiceProxy,
+    ContactServiceProxy,
+    LeadServiceProxy,
     ActivityType,
     CreateActivityDto,
     UpdateActivityDto,
@@ -43,7 +44,7 @@ import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-d
     providers: [
         ActivityServiceProxy,
         CacheHelper,
-        CustomerServiceProxy,
+        ContactServiceProxy,
         DialogService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -51,8 +52,7 @@ import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-d
 export class CreateActivityDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild('leadsList', { static: false }) leadsList: StaticListComponent;
-    @ViewChild('clientsList', { static: false }) clientsList: StaticListComponent;
+    @ViewChild('contactsList', { static: false }) contactsList: StaticListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
     @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
@@ -72,8 +72,7 @@ export class CreateActivityDialogComponent implements OnInit {
     dateValidator: any;
     stages: any[] = [];
 
-    leads: any = [];
-    clients: any = [];
+    contacts: any = [];
 
     saveButtonId = 'saveActivityOptions';
     saveContextMenuItems = [
@@ -91,8 +90,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     isUserSelected = false;
     isStatusSelected = true;
-    isLeadsSelected = false;
-    isClientSelected = false;
+    isContactSelected = false;
     isStarSelected = false;
     title: string;
     isTitleValid: boolean;
@@ -108,7 +106,7 @@ export class CreateActivityDialogComponent implements OnInit {
     assignedUsersSelector = select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     hasManagePermission: boolean = this.permissionChecker.isGranted(AppPermissions.CRMManageEventsAssignments);
     appointment: InternalActivityDto = this.data.appointment;
-    
+
     constructor(
         private cacheService: CacheService,
         private dialogService: DialogService,
@@ -122,6 +120,7 @@ export class CreateActivityDialogComponent implements OnInit {
         public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
+        private contactsProxy: ContactServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.saveContextMenuItems = [
@@ -194,8 +193,7 @@ export class CreateActivityDialogComponent implements OnInit {
         if (this.permissionChecker.isGranted(AppPermissions.CRMCustomers)) {
             this.modalDialog.startLoading();
             Promise.all([
-                this.lookup('Leads').then(res => this.leads = res),
-                this.lookup('Clients').then(res => this.clients = res)
+                this.lookup('contacts').then(res => this.contacts = res)
             ]).then(
                 () => this.modalDialog.finishLoading(),
                 () => this.modalDialog.finishLoading()
@@ -206,7 +204,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     lookup(uri, search = '') {
         return new Promise((resolve, reject) => {
-            this[uri + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe(
+            this[uri.toLowerCase() + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe(
                 (res) => resolve(res),
                 (err) => reject(err)
             );
@@ -261,27 +259,15 @@ export class CreateActivityDialogComponent implements OnInit {
                         }
                     },
                     {
-                        name: 'lead',
-                        action: this.toggleLeadList.bind(this),
+                        name: 'contact',
+                        action: this.toggleContactLists.bind(this),
                         disabled: !this.permissionChecker.isGranted(AppPermissions.CRMCustomers),
                         options: {
-                            text: this.ls.l('Lead'),
-                            accessKey: 'LeadsList'
+                            text: this.ls.l('Contact'),
+                            accessKey: 'ContactsList'
                         },
                         attr: {
-                            'filter-selected': this.isLeadsSelected
-                        }
-                    },
-                    {
-                        name: 'client',
-                        action: this.toggleClientLists.bind(this),
-                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMCustomers),
-                        options: {
-                            text: this.ls.l('Client'),
-                            accessKey: 'ClientsList'
-                        },
-                        attr: {
-                            'filter-selected': this.isClientSelected
+                            'filter-selected': this.isContactSelected
                         }
                     },
                     {
@@ -431,13 +417,8 @@ export class CreateActivityDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    toggleLeadList() {
-        this.leadsList.toggle();
-        this.changeDetectorRef.detectChanges();
-    }
-
-    toggleClientLists() {
-        this.clientsList.toggle();
+    toggleContactLists() {
+        this.contactsList.toggle();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -448,32 +429,27 @@ export class CreateActivityDialogComponent implements OnInit {
 
     onLeadSelected(e) {
         this.appointment.LeadId = e.id;
-        this.isLeadsSelected = !!e.id;
         this.initToolbarConfig();
     }
 
     onListFiltered(event) {
         clearTimeout(this.listFilterTimeout);
         this.listFilterTimeout = setTimeout(() => {
-            let uri = event.listTitle,
+            let uri = event.listTitle.toLowerCase(),
                 value = this.getInputElementValue(event);
-
             this.lookup(uri, value).then(res => {
                 switch (uri) {
-                    case 'Leads':
-                        this.leads = res;
-                        break;
-                    case 'Clients':
-                        this.clients = res;
+                    case 'contacts':
+                        this.contacts = res;
                         break;
                 }
             });
         }, 1000);
     }
 
-    onClientSelected(e) {
+    onContactSelected(e) {
         this.appointment.ContactId = e.id;
-        this.isClientSelected = !!e.id;
+        this.isContactSelected = !!e.id;
         this.initToolbarConfig();
     }
 
@@ -503,8 +479,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
             this.isAllDay = false;
             this.isUserSelected = false;
-            this.isLeadsSelected = false;
-            this.isClientSelected = false;
+            this.isContactSelected = false;
             this.isStarSelected = false;
             this.initAppointmentDate();
             this.initToolbarConfig();

@@ -356,7 +356,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         if (!this.person.firstName && !this.person.lastName && !this.hideCompanyField && !this.company) {
             this.isTitleValid = false;
-            return this.notifyService.error(this.ls.l('NameFieldsValidationError'));
+            return this.notifyService.error(this.ls.l('FullNameIsRequired'));
         }
 
         if (!ValidationHelper.ValidateName(this.title)) {

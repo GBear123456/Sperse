@@ -6,7 +6,7 @@ export interface EmailTemplateData {
     saveTitle: string;
     suggestionEmails: string[];
     attachments: Partial<EmailAttachment>[];
-    from: string[];
+    from: string;
     to: string[];
     body: string;
     subject: string;

@@ -108,9 +108,9 @@ import { NameParserService } from '@shared/common/name-parser/name-parser.servic
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
 import { LeadDto } from '@app/crm/leads/lead-dto.interface';
-import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
+import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -373,16 +373,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]
     };
     chartInfoItems: InfoItem[];
+    chartDataUrl: string;
     chartDataSource = new DataSource({
         key: 'id',
         load: () => {
-            return this.crmService.loadSliceChartData(
-                this.getODataUrl(this.groupDataSourceURI),
-                this.filters,
-                this.chartComponent.summaryBy.value,
-                this.dateField,
-                { contactGroupId: this.contactGroupId.value.toString() }
-            ).then((result: SliceChartData) => {
+            return this.odataRequestValues$.pipe(
+                first(),
+                switchMap((odataRequestValues: ODataRequestValues) => {
+                    const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
+                        this.getODataUrl(this.groupDataSourceURI),
+                        odataRequestValues,
+                        this.chartComponent.summaryBy.value,
+                        this.dateField,
+                        { contactGroupId: this.contactGroupId.value.toString() }
+                    )
+                    return this.httpClient.get(chartDataUrl)
+                })
+            ).toPromise().then((result: any) => {
+                result = this.crmService.parseChartData(result);
+                this.chartDataUrl = null;
                 this.chartInfoItems = result.infoItems;
                 return result.items;
             });
@@ -449,6 +458,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private impersonationService: ImpersonationService,
         private filterStatesService: FilterStatesService,
         private nameParserService: NameParserService,
+        private httpClient: HttpClient,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
         public userManagementService: UserManagementService,
@@ -615,8 +625,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(() => {
-            this.chartDataSource.load();
+        ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+            const chartDataUrl = this.crmService.getChartDataUrl(
+                this.getODataUrl(this.groupDataSourceURI),
+                odataRequestValues,
+                summaryBy,
+                this.dateField,
+                { contactGroupId: this.contactGroupId.value.toString() }
+            );
+            if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
+                this.message.error(this.l('QueryStringIsTooLong'));
+            } else {
+                this.chartDataUrl = chartDataUrl;
+                this.chartDataSource.load();
+            }
         });
     }
 
@@ -738,25 +760,27 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private getContactsData(): Observable<any> {
         return combineLatest(
-            this.selectedMapArea$,
-            this.listenForUpdate(DataLayoutType.Map)
+            this.listenForUpdate(DataLayoutType.Map),
+            this.selectedMapArea$
         ).pipe(
-            tap(() => this.mapDataIsLoading = true),
-            switchMap(([mapArea, [odataRequestValues, contactGroupId ]]: [MapArea, [ODataRequestValues, ContactGroup, null]]) => {
-                let params = { contactGroupId: contactGroupId.toString() };
-                if (odataRequestValues.params && odataRequestValues.params.length) {
-                    odataRequestValues.params.forEach((param: Param) => {
-                        params[param.name] = param.value;
-                    });
-                }
-                return this.mapService.loadSliceMapData(
+            map(([[oDataRequestValues, contactGroupId, ], mapArea]: [[ODataRequestValues, ContactGroup, null], MapArea]) => {
+                return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
-                    odataRequestValues.filter,
+                    oDataRequestValues,
                     mapArea,
                     this.dateField,
-                    params
+                    { contactGroupId: contactGroupId.toString() }
                 );
             }),
+            filter((mapUrl: string) => {
+                if (!this.oDataService.requestLengthIsValid(mapUrl)) {
+                    this.message.error(this.l('QueryStringIsTooLong'));
+                    return false;
+                }
+                return true;
+            }),
+            tap(() => this.mapDataIsLoading = true),
+            switchMap((mapUrl: string) => this.httpClient.get(mapUrl)),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)

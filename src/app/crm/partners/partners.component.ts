@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Params } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -24,8 +25,10 @@ import {
 import * as _ from 'underscore';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
+import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { AppService } from '@app/app.service';
 import {
     AppStore,
@@ -104,9 +107,9 @@ import { NameParserService } from '@shared/common/name-parser/name-parser.servic
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { Param } from '@shared/common/odata/param.model';
 import { PartnerDto } from '@app/crm/partners/partner-dto.interface';
-import { SliceChartData } from '@app/crm/shared/common/slice-chart-data.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
+import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -122,6 +125,7 @@ import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
     ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(PipelineComponent, {static: false}) pipelineComponent: PipelineComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
@@ -140,9 +144,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
+    public readonly partnerContactGroup = ContactGroup.Partner;
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.DataGrid;
+    }));
+    hidePipeline$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
+        return dataLayoutType !== DataLayoutType.Pipeline;
     }));
     hidePivotGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.PivotGrid;
@@ -157,7 +165,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private readonly dataSourceURI = 'Partner';
     private readonly totalDataSourceURI: string = 'Partner/$count';
     private readonly groupDataSourceURI = 'PartnerSlice';
-    private readonly dateField = 'ContactDate';
+    public readonly dateField = 'ContactDate';
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
@@ -197,10 +205,23 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelStar: FilterModel;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     selectedPartnerKeys: any = [];
-    selectedPartners: any = [];
+    _selectedPartners: any = [];
+    get selectedPartners(): any[] {
+        return this._selectedPartners || [];
+    }
+    set selectedPartners(items: any[]) {
+        this._selectedPartners = items;
+        this.selectedPartnerKeys = [];
+        items.forEach((item: any) => {
+            if (item && item.Id)
+                this.selectedPartnerKeys.push(item.Id);
+        });
+        this.initToolbarConfig();
+    }
+
     public headlineButtons: HeadlineButton[] = [
         {
-            enabled: this.permission.checkCGPermission(ContactGroup.Partner),
+            enabled: this.permission.checkCGPermission(this.partnerContactGroup),
             action: this.createPartner.bind(this),
             label: this.l('CreateNewPartner')
         }
@@ -305,17 +326,33 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     chartInfoItems: InfoItem[];
+    chartDataUrl: string;
     chartDataSource = new DataSource({
         key: 'id',
         load: () => {
-            return this.crmService.loadSliceChartData(
-                this.getODataUrl(this.groupDataSourceURI),
-                this.filters,
-                this.chartComponent.summaryBy.value,
-                this.dateField
-            ).then((result: SliceChartData) => {
-                this.chartInfoItems = result.infoItems;
-                return result.items;
+            return this.odataRequestValues$.pipe(
+                first(),
+                switchMap((odataRequestValues: ODataRequestValues) => {
+                    const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
+                        this.getODataUrl(this.groupDataSourceURI),
+                        odataRequestValues,
+                        this.chartComponent.summaryBy.value,
+                        this.dateField
+                    );
+                    return this.oDataService.requestLengthIsValid(chartDataUrl)
+                        ? this.httpClient.get(chartDataUrl)
+                        : of(null);
+                })
+            ).toPromise().then((result: any) => {
+                this.chartDataUrl = null;
+                if (result) {
+                    result = this.crmService.parseChartData(result);
+                    this.chartInfoItems = result.infoItems;
+                    return result.items;
+                } else {
+                    this.chartInfoItems = [];
+                    return [];
+                }
             });
         }
     });
@@ -326,17 +363,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         filter(() => this.componentIsActivated)
     );
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
-    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
+    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.partnerContactGroup });
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
+    odataRequestValues: ODataRequestValues;
     odataRequestValues$: Observable<ODataRequestValues> = concat(
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
         )
     ).pipe(
-        filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
+        filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues),
+        tap((odataRequestValues: ODataRequestValues) => this.odataRequestValues = odataRequestValues)
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
@@ -348,6 +387,25 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     readonly partnerFields: KeysEnum<PartnerDto> = PartnerFields;
+    manageDisabled = !this.permission.checkCGPermission(this.partnerContactGroup);
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+    pipelineSelectFields: string[];
+    pipelineDataSource: any;
+    dataStore = {
+        key: this.partnerFields.Id,
+        deserializeDates: false,
+        url: this.getODataUrl(this.dataSourceURI),
+        version: AppConsts.ODataVersion,
+        beforeSend: (request) => {
+            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            request.params.$select =
+            this.pipelineSelectFields = DataGridService.getSelectFields(
+                this.dataGrid,
+                [ this.partnerFields.Id, this.partnerFields.OrganizationId ]
+            );
+            request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        }
+    };
 
     constructor(
         injector: Injector,
@@ -367,30 +425,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private filterStatesService: FilterStatesService,
         private nameParserService: NameParserService,
         private userManagementService: UserManagementService,
+        private httpClient: HttpClient,
         public appService: AppService,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy
     ) {
         super(injector);
-        this.dataSource = new DataSource({
-            store: new ODataStore({
-                key: this.partnerFields.Id,
-                deserializeDates: false,
-                url: this.getODataUrl(this.dataSourceURI),
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.params.$select = DataGridService.getSelectFields(
-                        this.dataGrid,
-                        [ this.partnerFields.Id, this.partnerFields.OrganizationId ]
-                    );
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                }
-            })
-        });
         this.searchValue = '';
+        this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
         this.pipelineService.stageChange$.subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(this.pipelinePurposeId)).name);
         });
         if (this.userManagementService.checkBankCodeFeature()) {
             this.pivotGridDataSource.fields.unshift({
@@ -484,8 +528,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
         ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
-            let url = this.getODataUrl(this.totalDataSourceURI,
-                odataRequestValues.filter, null, odataRequestValues.params);
+            let url = this.getODataUrl(
+                this.totalDataSourceURI,
+                odataRequestValues.filter,
+                null,
+                odataRequestValues.params
+            );
             if (url && this.oDataService.requestLengthIsValid(url)) {
                 this.totalDataSource['_store']['_url'] = url;
                 this.totalDataSource.load();
@@ -517,8 +565,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe(() => {
-            this.chartDataSource.load();
+        ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+            const chartDataUrl = this.crmService.getChartDataUrl(
+                this.getODataUrl(this.groupDataSourceURI),
+                odataRequestValues,
+                summaryBy,
+                this.dateField
+            );
+            if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
+                this.message.error(this.l('QueryStringIsTooLong'));
+            } else {
+                this.chartDataUrl = chartDataUrl;
+                this.chartDataSource.load();
+            }
         });
     }
 
@@ -527,22 +586,23 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.listenForUpdate(DataLayoutType.Map),
             this.selectedMapArea$
         ).pipe(
-            tap(() => this.mapDataIsLoading = true),
-            switchMap(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
-                let params = {};
-                if (odataRequestValues.params && odataRequestValues.params.length) {
-                    odataRequestValues.params.forEach((param: Param) => {
-                        params[param.name] = param.value;
-                    });
-                }
-                return this.mapService.loadSliceMapData(
+            map(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+                return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
-                    odataRequestValues.filter,
+                    odataRequestValues,
                     mapArea,
-                    this.dateField,
-                    params
+                    this.dateField
                 );
             }),
+            filter((mapUrl: string) => {
+                if (!this.oDataService.requestLengthIsValid(mapUrl)) {
+                    this.message.error(this.l('QueryStringIsTooLong'));
+                    return false;
+                }
+                return true;
+            }),
+            tap(() => this.mapDataIsLoading = true),
+            switchMap((mapUrl: string) => this.httpClient.get(mapUrl)),
             publishReplay(),
             refCount(),
             tap(() => this.mapDataIsLoading = false)
@@ -555,7 +615,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.queryParams$.pipe(
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
-        ).subscribe((dataLayoutType) => {
+        ).subscribe((dataLayoutType: DataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
     }
@@ -608,7 +668,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             closeOnNavigation: false,
             data: {
                 refreshParent: () => this.invalidate(),
-                customerType: ContactGroup.Partner
+                customerType: this.partnerContactGroup
             }
         }).afterClosed().subscribe(() => this.invalidate());
     }
@@ -630,12 +690,22 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
+    onCardClick({entity, entityStageDataSource, loadMethod}) {
+        this.showPartnerDetails({data: entity});
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, entityStageDataSource, loadMethod);
+    }
+
     toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this.selectedPartnerKeys = [];
         this.dataLayoutType.next(dataLayoutType);
+        this.pipelineService.toggleDataLayoutType(dataLayoutType);
         this.initDataSource();
         this.initToolbarConfig();
-        if (this.showDataGrid) {
-            this.repaintDataGrid();
+        if (dataLayoutType != DataLayoutType.Pipeline) {
+            if (this.pipelineComponent)
+                this.pipelineComponent.deselectAllCards();
+            if (this.showDataGrid)
+                setTimeout(() => this.repaintDataGrid());
         }
     }
 
@@ -912,7 +982,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -927,7 +997,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -935,7 +1005,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -943,7 +1013,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -951,7 +1021,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -959,7 +1029,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, ''),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -1012,7 +1082,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Partner, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
@@ -1132,6 +1202,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     },
                     {
+                        name: 'pipeline',
+                        action: () => {
+                            //!! should be uncommented when API will be changed accordingly 
+                            //this.toggleDataLayout.bind(this, DataLayoutType.Pipeline);
+                            this._router.navigate(['app/crm/leads'], { queryParams: { 
+                                contactGroup: 'Partner' 
+                            } });
+                        },
+                        options: {
+                            checkPressed: () => this.showPipeline
+                        }
+                    },
+                    {
                         name: 'pivotGrid',
                         visible: this.crmService.showSliceButtons,
                         action: this.toggleDataLayout.bind(this, DataLayoutType.PivotGrid),
@@ -1208,6 +1291,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         return this.dataLayoutType.value === DataLayoutType.DataGrid;
     }
 
+    get showPipeline(): boolean {
+        return this.dataLayoutType.value === DataLayoutType.Pipeline;
+    }
+
     get showPivotGrid(): boolean {
         return this.dataLayoutType.value === DataLayoutType.PivotGrid;
     }
@@ -1245,7 +1332,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     initDataSource() {
-        if (this.showDataGrid) {
+        if (this.showPipeline) {
+            if (!this.pipelineDataSource)
+                setTimeout(() => {
+                    this.pipelineDataSource = {
+                        uri: this.dataSourceURI,
+                        requireTotalCount: true,
+                        store: new ODataStore(this.dataStore)
+                    };
+                });
+        } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {
             this.setPivotGridInstance();
@@ -1276,7 +1372,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         this.clientService.updateContactStatuses(
             selectedIds,
-            ContactGroup.Partner,
+            this.partnerContactGroup,
             status.id,
             () => {
                 this.invalidate();
@@ -1341,7 +1437,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (this.dependencyChanged)
             this.invalidate();
 
-        this.showHostElement();
+        this.showHostElement(() => {
+            this.pipelineComponent.detectChanges();
+        });
     }
 
     repaintToolbar() {
@@ -1383,6 +1481,17 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
+    }
+
+    onStageChanged(lead) {
+        if (this.dataGrid && this.dataGrid.instance)
+            this.dataGrid.instance.getVisibleRows().some((row) => {
+                if (lead.Id == row.data.Id) {
+                    row.data.Stage = lead.Stage;
+                    row.data.StageId = lead.StageId;
+                    return true;
+                }
+            });
     }
 
     onDragEnd = e => {

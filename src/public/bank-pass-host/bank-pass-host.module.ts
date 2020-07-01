@@ -79,7 +79,8 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
         ClipboardService,
         LoadingService,
         ExportService,
-        ExportGoogleSheetService
+        ExportGoogleSheetService,
+        { provide: 'shared', useValue: true }
     ]
 })
 export class BankPassHostModule {}

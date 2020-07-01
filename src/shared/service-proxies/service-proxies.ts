@@ -9012,6 +9012,65 @@ export class ContactCommunicationServiceProxy {
     }
 
     /**
+     * @templateId (optional) 
+     * @return Success
+     */
+    getEmailData(templateId: number | null | undefined, itemId: number): Observable<GetEmailDataOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetEmailData?";
+        if (templateId !== undefined)
+            url_ += "TemplateId=" + encodeURIComponent("" + templateId) + "&"; 
+        if (itemId === undefined || itemId === null)
+            throw new Error("The parameter 'itemId' must be defined and cannot be null.");
+        else
+            url_ += "ItemId=" + encodeURIComponent("" + itemId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEmailData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEmailData(<any>response_);
+                } catch (e) {
+                    return <Observable<GetEmailDataOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetEmailDataOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEmailData(response: HttpResponseBase): Observable<GetEmailDataOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetEmailDataOutput.fromJS(resultData200) : new GetEmailDataOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetEmailDataOutput>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -17154,14 +17213,14 @@ export class InvoiceServiceProxy {
      * @templateId (optional) 
      * @return Success
      */
-    getEmailData(templateId: number | null | undefined, invoiceId: number): Observable<GetEmailDataOutput> {
+    getEmailData(templateId: number | null | undefined, itemId: number): Observable<GetEmailDataOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetEmailData?";
         if (templateId !== undefined)
             url_ += "TemplateId=" + encodeURIComponent("" + templateId) + "&"; 
-        if (invoiceId === undefined || invoiceId === null)
-            throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
+        if (itemId === undefined || itemId === null)
+            throw new Error("The parameter 'itemId' must be defined and cannot be null.");
         else
-            url_ += "InvoiceId=" + encodeURIComponent("" + invoiceId) + "&"; 
+            url_ += "ItemId=" + encodeURIComponent("" + itemId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47006,6 +47065,7 @@ export class MessageDto implements IMessageDto {
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
+    from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
     cc!: string | undefined;
@@ -47038,6 +47098,7 @@ export class MessageDto implements IMessageDto {
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
             this.cc = data["cc"];
@@ -47070,6 +47131,7 @@ export class MessageDto implements IMessageDto {
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
         data["cc"] = this.cc;
@@ -47091,6 +47153,7 @@ export interface IMessageDto {
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
+    from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
     cc: string | undefined;
@@ -47108,6 +47171,7 @@ export class MessageListDto implements IMessageListDto {
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
     fromUserThumbnailId!: string | undefined;
+    from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
     cc!: string | undefined;
@@ -47134,6 +47198,7 @@ export class MessageListDto implements IMessageListDto {
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
             this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
             this.cc = data["cc"];
@@ -47160,6 +47225,7 @@ export class MessageListDto implements IMessageListDto {
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
         data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
         data["cc"] = this.cc;
@@ -47179,6 +47245,7 @@ export interface IMessageListDto {
     fromUserId: number | undefined;
     fromUserName: string | undefined;
     fromUserThumbnailId: string | undefined;
+    from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
     cc: string | undefined;
@@ -47239,9 +47306,134 @@ export interface IMessageListDtoPagedResultDto {
     items: MessageListDto[] | undefined;
 }
 
+export class Attachment implements IAttachment {
+    id!: string | undefined;
+    size!: number | undefined;
+    name!: string | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IAttachment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.size = data["size"];
+            this.name = data["name"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): Attachment {
+        data = typeof data === 'object' ? data : {};
+        let result = new Attachment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["size"] = this.size;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IAttachment {
+    id: string | undefined;
+    size: number | undefined;
+    name: string | undefined;
+    url: string | undefined;
+}
+
+export class GetEmailDataOutput implements IGetEmailDataOutput {
+    subject!: string | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
+    body!: string | undefined;
+    attachments!: Attachment[] | undefined;
+
+    constructor(data?: IGetEmailDataOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.subject = data["subject"];
+            if (data["cc"] && data["cc"].constructor === Array) {
+                this.cc = [];
+                for (let item of data["cc"])
+                    this.cc.push(item);
+            }
+            if (data["bcc"] && data["bcc"].constructor === Array) {
+                this.bcc = [];
+                for (let item of data["bcc"])
+                    this.bcc.push(item);
+            }
+            this.body = data["body"];
+            if (data["attachments"] && data["attachments"].constructor === Array) {
+                this.attachments = [];
+                for (let item of data["attachments"])
+                    this.attachments.push(Attachment.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetEmailDataOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetEmailDataOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["subject"] = this.subject;
+        if (this.cc && this.cc.constructor === Array) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (this.bcc && this.bcc.constructor === Array) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
+        data["body"] = this.body;
+        if (this.attachments && this.attachments.constructor === Array) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetEmailDataOutput {
+    subject: string | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
+    body: string | undefined;
+    attachments: Attachment[] | undefined;
+}
+
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
+    from!: string | undefined;
     to!: string[];
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -47266,6 +47458,7 @@ export class SendEmailInput implements ISendEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.parentId = data["parentId"];
+            this.from = data["from"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -47307,6 +47500,7 @@ export class SendEmailInput implements ISendEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["parentId"] = this.parentId;
+        data["from"] = this.from;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -47341,6 +47535,7 @@ export class SendEmailInput implements ISendEmailInput {
 export interface ISendEmailInput {
     contactId: number;
     parentId: number | undefined;
+    from: string | undefined;
     to: string[];
     replyTo: string[] | undefined;
     cc: string[] | undefined;
@@ -52184,6 +52379,7 @@ export interface ICreateOrUpdateEditionDto {
 
 export enum EmailTemplateType {
     Invoice = "Invoice", 
+    Contact = "Contact", 
 }
 
 export class GetTemplatesResponse implements IGetTemplatesResponse {
@@ -56344,130 +56540,6 @@ export interface IInvoiceSettings {
     defaultNote: string | undefined;
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
-}
-
-export class Attachment implements IAttachment {
-    id!: string | undefined;
-    size!: number | undefined;
-    name!: string | undefined;
-    url!: string | undefined;
-
-    constructor(data?: IAttachment) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.size = data["size"];
-            this.name = data["name"];
-            this.url = data["url"];
-        }
-    }
-
-    static fromJS(data: any): Attachment {
-        data = typeof data === 'object' ? data : {};
-        let result = new Attachment();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["size"] = this.size;
-        data["name"] = this.name;
-        data["url"] = this.url;
-        return data; 
-    }
-}
-
-export interface IAttachment {
-    id: string | undefined;
-    size: number | undefined;
-    name: string | undefined;
-    url: string | undefined;
-}
-
-export class GetEmailDataOutput implements IGetEmailDataOutput {
-    subject!: string | undefined;
-    cc!: string[] | undefined;
-    bcc!: string[] | undefined;
-    body!: string | undefined;
-    attachments!: Attachment[] | undefined;
-
-    constructor(data?: IGetEmailDataOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.subject = data["subject"];
-            if (data["cc"] && data["cc"].constructor === Array) {
-                this.cc = [];
-                for (let item of data["cc"])
-                    this.cc.push(item);
-            }
-            if (data["bcc"] && data["bcc"].constructor === Array) {
-                this.bcc = [];
-                for (let item of data["bcc"])
-                    this.bcc.push(item);
-            }
-            this.body = data["body"];
-            if (data["attachments"] && data["attachments"].constructor === Array) {
-                this.attachments = [];
-                for (let item of data["attachments"])
-                    this.attachments.push(Attachment.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): GetEmailDataOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetEmailDataOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["subject"] = this.subject;
-        if (this.cc && this.cc.constructor === Array) {
-            data["cc"] = [];
-            for (let item of this.cc)
-                data["cc"].push(item);
-        }
-        if (this.bcc && this.bcc.constructor === Array) {
-            data["bcc"] = [];
-            for (let item of this.bcc)
-                data["bcc"].push(item);
-        }
-        data["body"] = this.body;
-        if (this.attachments && this.attachments.constructor === Array) {
-            data["attachments"] = [];
-            for (let item of this.attachments)
-                data["attachments"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IGetEmailDataOutput {
-    subject: string | undefined;
-    cc: string[] | undefined;
-    bcc: string[] | undefined;
-    body: string | undefined;
-    attachments: Attachment[] | undefined;
 }
 
 export class BankCardInput implements IBankCardInput {
