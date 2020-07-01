@@ -327,7 +327,9 @@ export class ContactsService {
         }).componentInstance;
         this.initEmailDialogTagsList(dialogComponent);
         dialogComponent.templateEditMode = true;
-        return dialogComponent.onSave;
+        return dialogComponent.onSave.pipe(tap(() => {
+            dialogComponent.close();
+        }));
     }
 
     showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>) {
@@ -369,7 +371,7 @@ export class ContactsService {
                     finalize(() => dialogComponent.finishLoading())
                 );
             })
-        ).subscribe(() => dialogComponent.changeDetectorRef.markForCheck());
+        ).subscribe(() => dialogComponent.invalidate());
 
         this.initEmailDialogTagsList(dialogComponent);
         return dialogComponent.onSave.pipe(
@@ -403,6 +405,7 @@ export class ContactsService {
     }
 
     showInvoiceEmailDialog(invoiceId: number, data: any = {}) {
+        data.templateType = EmailTemplateType.Invoice;
         return this.showEmailDialog(data, 'Email', (tmpId, emailData) => {
             return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
                 map((email: GetEmailDataOutput) => {

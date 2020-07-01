@@ -92,7 +92,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
         this.initTemplateList();
-        data.from = [sessionService.user.emailAddress];
+        data.from = sessionService.user.emailAddress;
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
@@ -245,13 +245,18 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.data.subject = res.subject;
                     this.showCC = Boolean(res.cc && res.cc.length);
                     this.showBCC = Boolean(res.bcc && res.bcc.length);
-                    this.ckEditor.setData(this.data.body);
-                    this.changeDetectorRef.markForCheck();
                     this.onTemplateChange.emit(event.value);
+                    this.invalidate();
                 });
             } else
                 this.onTemplateChange.emit(event.value);
         }
+    }
+
+    invalidate() {
+        this.ckEditor.setData(this.data.body);
+        this.updateDataLength();
+        this.changeDetectorRef.markForCheck();
     }
 
     onCustomItemCreating(event, callback?) {
