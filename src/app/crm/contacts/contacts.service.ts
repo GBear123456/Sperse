@@ -23,8 +23,8 @@ import {
     ISendSMSInput,
     SendSMSInput,
     CreatePersonOrgRelationOutput,
-    CreateContactPhotoInput,
-    ContactPhotoServiceProxy,
+    CreateOrganizationPhotoInput,
+    OrganizationContactServiceProxy,
     InvoiceServiceProxy,
     PersonContactInfoDto,
     GetContactInfoForMergeOutput,
@@ -89,7 +89,7 @@ export class ContactsService {
         private location: Location,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
-        private contactPhotoServiceProxy: ContactPhotoServiceProxy,
+        private organizationContactServiceProxy: OrganizationContactServiceProxy,
         public dialog: MatDialog
     ) {}
 
@@ -235,7 +235,7 @@ export class ContactsService {
         );
     }
 
-    showUploadPhotoDialog(company: any, event): Observable<any> {
+    showUploadCompanyPhotoDialog(company: any, event): Observable<any> {
         event.stopPropagation();
         return this.dialog.open(UploadPhotoDialogComponent, {
             data: { ...company, ...this.getCompanyPhoto(company) },
@@ -245,14 +245,14 @@ export class ContactsService {
             switchMap((result: UploadPhoto) => {
                 let action$: Observable<any>;
                 if (result.clearPhoto) {
-                    action$ = this.contactPhotoServiceProxy.clearContactPhoto(company.id).pipe(
+                    action$ = this.organizationContactServiceProxy.clearPhoto(company.id).pipe(
                         mapTo(null)
                     );
                 } else {
                     let base64OrigImage = StringHelper.getBase64(result.origImage);
                     let base64ThumbImage = StringHelper.getBase64(result.thumImage);
-                    action$ = this.contactPhotoServiceProxy.createContactPhoto(
-                        CreateContactPhotoInput.fromJS({
+                    action$ = this.organizationContactServiceProxy.createPhoto(
+                        CreateOrganizationPhotoInput.fromJS({
                             contactId: company.id,
                             original: base64OrigImage,
                             thumbnail: base64ThumbImage,
