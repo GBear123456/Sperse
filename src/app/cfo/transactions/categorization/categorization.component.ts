@@ -781,15 +781,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         _.mapObject(data.categories, (item, key) => {
             if (item.parentId === parentId) {
                 let accType = data.accountingTypes[item.accountingTypeId];
-                let parentCategory = data.categories[item.parentId];
                 let cashflowType = data.types[accType.typeId];
-                let hasParent = !!parentCategory;
                 categories.push({
                     CashflowType: cashflowType ? cashflowType.name : null,
                     AccountingType: accType.name,
-                    Category: item.name,
                     CategoryId: key,
-                    ParentCategory: hasParent ? parentCategory.name : '',
+                    Category: item.name,
                     ParentCategoryId: item.parentId || null,
                     TransactionCount: transactionCount[parseInt(key)] || null,
                     COAID: item.coAID
