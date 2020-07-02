@@ -596,7 +596,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 beforeSend: (request) => {
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
-                        [ this.clientFields.Id, this.clientFields.OrganizationId, this.clientFields.UserId ]);
+                        [
+                            this.clientFields.Id,
+                            this.clientFields.OrganizationId,
+                            this.clientFields.UserId,
+                            this.clientFields.StatusId,
+                            this.clientFields.Email,
+                            this.clientFields.Phone
+                        ]);
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },

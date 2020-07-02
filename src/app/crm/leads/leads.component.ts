@@ -492,7 +492,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
-                        [ this.leadFields.Id, this.leadFields.CustomerId, this.leadFields.OrganizationId, this.leadFields.UserId ]
+                        [
+                            this.leadFields.Id,
+                            this.leadFields.CustomerId,
+                            this.leadFields.OrganizationId,
+                            this.leadFields.UserId,
+                            this.leadFields.Email,
+                            this.leadFields.Phone
+                        ]
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
