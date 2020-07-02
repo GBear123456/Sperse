@@ -1100,6 +1100,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     text: this.l('Email'),
                                     action: () => {
                                         this.contactService.showEmailDialog({
+                                            contactId: this.selectedPartnerKeys[0],
                                             to: this.selectedPartners.map(lead => lead.Email)
                                         });
                                     }

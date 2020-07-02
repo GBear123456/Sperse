@@ -335,18 +335,22 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.insertImageElement('#' + event.itemData + '#');
             else
                 this.addTextTag(event.itemData);
-        } else if (this.data['contact']) {
-            let person = this.data['contact'].personContactInfo.person,
-                userPerson = this.userContact.personContactInfo,
+        } else {
+            let userPerson = this.userContact.personContactInfo,
                 userOrganization = this.userCompanyContact.organization,
                 user = this.sessionService.user;
-            if (event.itemData == EmailTags.ClientFirstName)
-                this.insertText(person.firstName);
-            else if (event.itemData == EmailTags.ClientLastName)
-                this.insertText(person.lastName);
-            else if (event.itemData == EmailTags.LegalName)
-                this.insertText(person.lastName);
-            else if (event.itemData == EmailTags.SenderFullName)
+
+            if (this.data.contact) {
+                let person = this.data.contact.personContactInfo.person;
+                if (event.itemData == EmailTags.ClientFirstName)
+                    return this.insertText(person.firstName);
+                else if (event.itemData == EmailTags.ClientLastName)
+                    return this.insertText(person.lastName);
+                else if (event.itemData == EmailTags.LegalName)
+                    return this.insertText(person.lastName);
+            }
+
+            if (event.itemData == EmailTags.SenderFullName)
                 this.insertText(userPerson.fullName);
             else if (event.itemData == EmailTags.SenderEmail)
                 this.insertText(user.emailAddress);
