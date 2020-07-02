@@ -57,7 +57,9 @@
                                       [isEditDialogEnabled]="true"
                                       (valueChanged)="updateCompanyField($event)">
                         </inplace-edit>
-                        <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
+                        <i *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)"
+                           class="fa fa-angle-down"
+                           (click)="showCompanyList($event)"></i>
                         <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
                             <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
                             <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
@@ -67,8 +69,8 @@
                     <h3>
                         <inplace-edit #jobTitle
                                       lEntityName="JobTitle"
-                                      [id]="personOrganizationId$ | async"
-                                      [value]="personJobTitle$ | async"
+                                      [id]="selectedOrganizationId$ | async"
+                                      [value]="personJobTitleInSelectedOrganization$ | async"
                                       [isReadOnlyField]="!manageAllowed"
                                       [editPlaceholder]="ls.l('JobTitle')"
                                       [validationRules]="companyValidationRules"

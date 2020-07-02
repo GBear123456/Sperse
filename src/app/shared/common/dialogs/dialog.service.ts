@@ -15,7 +15,7 @@ export class DialogService {
         }
 
         return {
-            top: (top < 0 ? 0 : top) + 'px',
+            top: (top < 0 ? shiftY : top) + 'px',
             left: (left < 0 ? 0 : left) + 'px'
         };
     }

@@ -143,11 +143,13 @@ export class AddressesComponent implements OnInit {
         return shift;
     }
 
-    showDialog(address, event, index) {
+    showDialog(address, event, index?) {
         if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
             this.showAddressDialog(address, event, index);
         else
-            this.contactsService.addCompanyDialog(event, this.contactInfo,
+            this.contactsService.addCompanyDialog(
+                event,
+                this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
                 if (result) {

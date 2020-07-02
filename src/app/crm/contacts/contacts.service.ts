@@ -345,7 +345,7 @@ export class ContactsService {
             emailData.templateType = EmailTemplateType.Contact;
         if (emailData.contact)
             this.initSuggestionEmails(emailData);
-        else if (emailData.contactId && !emailData.suggestionEmails)
+        else if (emailData.contactId)
             this.getContactInfo(emailData.contactId).subscribe(res => {
                 emailData.contact = res;
                 this.initSuggestionEmails(emailData);

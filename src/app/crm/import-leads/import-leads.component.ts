@@ -70,6 +70,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_nameSuffix';
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
     private readonly PERSONAL_DOB = 'personalInfo_doB';
+    private readonly PERSONAL_GENDER = 'personalInfo_gender';
     private readonly PERSONAL_PHONE1 = 'personalInfo_phone1';
     private readonly PERSONAL_PHONE2 = 'personalInfo_phone2';
     private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
@@ -520,6 +521,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         return true;
     }
 
+    private normalizeGenderValue(field, value, dataSource) {
+        value = value.trim().toLowerCase();
+        if (['f', 'female', '0'].indexOf(value) >= 0)
+            dataSource[field.mappedField] = 'Female';
+        else if (['m', 'male', '1'].indexOf(value) >= 0)
+            dataSource[field.mappedField] = 'Male';
+        else
+            return false;
+        return true;
+    }
+
     private parseCurrency(field, value, dataSource) {
         let amount = isNaN(value) ? parseFloat(value.replace(/[^0-9.]/g, '')) : value;
         if (amount)
@@ -823,6 +835,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     DateHelper.removeTimezoneOffset(new Date(sourceValue));
         } else if (this.FIELDS_BOOLEAN.indexOf(field.mappedField) >= 0) {
             return this.normalizeBooleanValue(field, sourceValue, reviewDataSource);
+        } else if (this.PERSONAL_GENDER == field.mappedField) {
+            return this.normalizeGenderValue(field, sourceValue, reviewDataSource);
         }
         return false;
     }

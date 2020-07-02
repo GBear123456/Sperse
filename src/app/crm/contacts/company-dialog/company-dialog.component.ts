@@ -14,7 +14,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MaskPipe } from 'ngx-mask';
-import { DxSelectBoxComponent, DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
+import { DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
