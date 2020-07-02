@@ -416,16 +416,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(this.contactGroupId.value, 'ViewCommunicationHistory.SendSMSAndEmail');
+    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     pipelineSelectFields: string[] = [
-        'Id',
-        'CustomerId',
-        'Name',
-        'CompanyName',
-        this.dateField,
-        'PhotoPublicId',
-        'Email'
+        this.leadFields.Id,
+        this.leadFields.CustomerId,
+        this.leadFields.Name,
+        this.leadFields.CompanyName,
+        this.leadFields[this.dateField],
+        this.leadFields.PhotoPublicId,
+        this.leadFields.Email
     ].concat(
-        this.isSmsAndEmailSendingAllowed ? ['Phone'] : []
+        this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
@@ -438,7 +439,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private activate$: Observable<boolean> = this._activate.asObservable();
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
-    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
 
     constructor(
         injector: Injector,
@@ -1237,7 +1237,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.isSmsAndEmailSendingAllowed,
+                        disabled: this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
