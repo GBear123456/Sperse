@@ -1,6 +1,6 @@
 <contact-list-dialog>
     <ng-template #contactLayoutTemplate let-contact="contact" let-info="info">
-        <div [ngClass]="{primary: info.primaryOrganizationContactId == contact.id}">
+        <div [ngClass]="{ primary: info.primaryOrganizationContactId == contact.id }">
             <div class="full-name">
                 <h1>{{ contact?.name }}</h1>
             </div>
@@ -8,7 +8,11 @@
                 <h6>{{ contact?.relation?.relationType?.name }}{{ contact?.relation?.jobTitle ? ', ' + contact?.relation?.jobTitle: ''}}</h6>
             </div>
             <div *ngIf="manageAllowed">
-                <a *ngIf="info.primaryOrganizationContactId != contact.id; else primary" (click)="setPrimary($event, contact)" class="set-primary">{{ls.l('Set Primary')}}</a>
+                <a *ngIf="info.primaryOrganizationContactId != contact.id; else primary"
+                   class="set-primary"
+                   (click)="setPrimary($event, contact)">
+                    {{ls.l('Set Primary')}}
+                </a>
                 <ng-template #primary><i>{{ls.l('Primary Company')}}</i></ng-template>
             </div>
         </div>
