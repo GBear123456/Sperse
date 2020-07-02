@@ -1244,6 +1244,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     text: this.l('Email'),
                                     action: () => {
                                         this.contactService.showEmailDialog({
+                                            contactId: this.selectedClientKeys[0],
                                             to: this.selectedLeads.map(lead => lead.Email)
                                         });
                                     }
