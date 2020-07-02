@@ -1212,7 +1212,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.deleteLeads.bind(this)
                                 },
                                 {
-                                    text: this.l('Merge'),
+                                    text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedLeads.length != 2 || !this.isMergeAllowed,
                                     action: () => {
                                         this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), true);

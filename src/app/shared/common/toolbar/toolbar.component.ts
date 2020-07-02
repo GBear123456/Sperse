@@ -295,8 +295,8 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('folder')
             },
             rating: {
-                text: this.ls.l('Rating'),
-                hint: this.ls.l('Rating'),
+                text: this.ls.l('Toolbar_Rating'),
+                hint: this.ls.l('Toolbar_Rating'),
                 icon: this.getImgURI('flag-icon')
             },
             star: {

@@ -1064,7 +1064,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     }
                                 },
                                 {
-                                    text: this.l('Merge'),
+                                    text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedPartners.length != 2 || !this.isMergeAllowed,
                                     action: () => {
                                         this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => { this.invalidate(); this.dataGrid.instance.deselectAll(); });
