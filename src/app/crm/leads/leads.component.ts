@@ -157,7 +157,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             text: this.l('Edit'),
             class: 'edit',
             visible: true,
-            action: () => this.showLeadDetails(this.actionEvent)
+            action: () => this.showLeadDetails({data: this.actionEvent})
         },
         {
             text: this.l('LoginAsThisUser'),
@@ -386,8 +386,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.chartComponent.summaryBy.value,
                         this.dateField,
                         { contactGroupId: this.contactGroupId.value.toString() }
-                    )
-                    return this.httpClient.get(chartDataUrl)
+                    );
+                    return this.httpClient.get(chartDataUrl);
                 })
             ).toPromise().then((result: any) => {
                 result = this.crmService.parseChartData(result);
@@ -416,16 +416,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(this.contactGroupId.value, 'ViewCommunicationHistory.SendSMSAndEmail');
+    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     pipelineSelectFields: string[] = [
-        'Id',
-        'CustomerId',
-        'Name',
-        'CompanyName',
-        this.dateField,
-        'PhotoPublicId',
-        'Email'
+        this.leadFields.Id,
+        this.leadFields.CustomerId,
+        this.leadFields.Name,
+        this.leadFields.CompanyName,
+        this.leadFields[this.dateField],
+        this.leadFields.PhotoPublicId,
+        this.leadFields.Email
     ].concat(
-        this.isSmsAndEmailSendingAllowed ? ['Phone'] : []
+        this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
@@ -438,7 +439,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private activate$: Observable<boolean> = this._activate.asObservable();
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
-    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
 
     constructor(
         injector: Injector,
@@ -492,7 +492,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
-                        [ this.leadFields.Id, this.leadFields.CustomerId, this.leadFields.OrganizationId, this.leadFields.UserId ]
+                        [
+                            this.leadFields.Id,
+                            this.leadFields.CustomerId,
+                            this.leadFields.OrganizationId,
+                            this.leadFields.UserId,
+                            this.leadFields.Email,
+                            this.leadFields.Phone
+                        ]
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -1212,7 +1219,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.deleteLeads.bind(this)
                                 },
                                 {
-                                    text: this.l('Merge'),
+                                    text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedLeads.length != 2 || !this.isMergeAllowed,
                                     action: () => {
                                         this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), true);
@@ -1230,7 +1237,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.isSmsAndEmailSendingAllowed,
+                        disabled: this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
@@ -1596,6 +1603,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.searchClear = false;
         let orgId = lead.OrganizationId;
         event.component && event.component.cancelEditData();
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
+            || this.dataGrid.instance.getDataSource(), event.loadMethod);
         setTimeout(() => {
             this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
                 {queryParams: {referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType.value}});
@@ -1693,9 +1702,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._activate.next(false);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        if (!this.showPipeline) {
-            this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, this.dataGrid.instance.getDataSource());
-        }
         this.hideHostElement();
     }
 
@@ -1705,8 +1711,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onCardClick({entity, entityStageDataSource, loadMethod}) {
-        this.showLeadDetails({data: entity});
-        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
+        this.showLeadDetails({
+            data: entity,
+            dataSource: entityStageDataSource,
+            loadMethod: loadMethod
+        });
     }
 
     onLeadStageChanged(lead) {

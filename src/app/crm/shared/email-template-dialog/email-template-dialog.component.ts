@@ -98,8 +98,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
-        this.contactProxy.getContactInfo(
-            sessionService.user.contactId
+        this.contactProxy.getContactInfoForUser(
+            sessionService.user.id
         ).subscribe(contact => {
             this.userContact = contact;
             if (contact.primaryOrganizationContactId)
@@ -335,18 +335,22 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.insertImageElement('#' + event.itemData + '#');
             else
                 this.addTextTag(event.itemData);
-        } else if (this.data['contact']) {
-            let person = this.data['contact'].personContactInfo.person,
-                userPerson = this.userContact.personContactInfo,
+        } else {
+            let userPerson = this.userContact.personContactInfo,
                 userOrganization = this.userCompanyContact.organization,
                 user = this.sessionService.user;
-            if (event.itemData == EmailTags.ClientFirstName)
-                this.insertText(person.firstName);
-            else if (event.itemData == EmailTags.ClientLastName)
-                this.insertText(person.lastName);
-            else if (event.itemData == EmailTags.LegalName)
-                this.insertText(person.lastName);
-            else if (event.itemData == EmailTags.SenderFullName)
+
+            if (this.data['contact']) {
+                let person = this.data['contact'].personContactInfo.person;
+                if (event.itemData == EmailTags.ClientFirstName)
+                    return this.insertText(person.firstName);
+                else if (event.itemData == EmailTags.ClientLastName)
+                    return this.insertText(person.lastName);
+                else if (event.itemData == EmailTags.LegalName)
+                    return this.insertText(person.lastName);
+            }
+
+            if (event.itemData == EmailTags.SenderFullName)
                 this.insertText(userPerson.fullName);
             else if (event.itemData == EmailTags.SenderEmail)
                 this.insertText(user.emailAddress);
@@ -364,6 +368,17 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.insertText(userOrganization.companyName);
             else if (event.itemData == EmailTags.SenderCompanyLogo && userOrganization)
                 this.insertImageElement(this.userCompanyContact.primaryPhoto);
+            else if (event.itemData == EmailTags.SenderCompanyPhone
+                && this.userCompanyContact.primaryPhoneId
+            ) this.insertText(this.userCompanyContact.details.phones.filter(
+                    item => item.id == this.userCompanyContact.primaryPhoneId
+                )[0].phoneNumber);
+            else if (event.itemData == EmailTags.SenderCompanyEmail
+                && this.userCompanyContact.details.emails.length
+            ) this.insertText(this.userCompanyContact.details.emails[0].emailAddress);
+            else if (event.itemData == EmailTags.SenderCompanyWebSite
+                && this.userCompanyContact.details.links.length
+            ) this.insertText(this.userCompanyContact.details.links[0].url);
         }
         this.tagsTooltipVisible = false;
     }

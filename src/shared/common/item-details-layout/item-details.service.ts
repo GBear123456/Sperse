@@ -22,6 +22,10 @@ class ItemsDataSource {
 export class ItemDetailsService {
     private itemsListSource: ItemsDataSource = new ItemsDataSource();
 
+    clearItemsSource() {
+        this.itemsListSource = new ItemsDataSource();
+    }
+
     setItemsSource(itemType: ItemTypeEnum, dataSource: any, loadMethod?: () => Observable<any>) {
         this.itemsListSource[itemType] = {
             dataSource: dataSource,

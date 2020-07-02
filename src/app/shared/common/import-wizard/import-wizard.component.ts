@@ -49,16 +49,13 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Input() checkSimilarFields: Array<any>;
     @Input() phoneRelatedCountryFields = {};
     @Input() columnsConfig: any = {};
-    @Input() lookupFields: any[];
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
     @Input() showLeftMenuToggleButton = false;
-    @Input() set fields(list: string[]) {
+    @Input() set fields(list: any[]) {
         this.lookupFields = list.map((field) => {
-            return {
-                id: field,
-                name: this.capitalize(field)
-            };
+            field.normalizedId = this.normalizeFieldName(field.id);
+            return field;
         });
     }
     @Input()
@@ -71,6 +68,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Output() onMappingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
+
+    lookupFields: any[];
     uploadFile: FormGroup;
     dataMapping: FormGroup;
 
@@ -123,11 +122,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     ];
     formatting = AppConsts.formatting;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
-    defaultMappings = {
-        active: 'personalInfo_isActive',
-        isactive: 'personalInfo_isActive',
-        state: 'personalInfo_fullAddress_stateName'
-    }
 
     constructor(
         injector: Injector,
@@ -507,48 +501,81 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     let noNameCount = 0, usedMapFields = {}, usedSourceFields = {},
                         data = this.fileData.data[0].map((field, index) => {
                             let foundItem;
+                            let normalizedFieldName;
                             if (field) {
                                 if (isNaN(usedSourceFields[field]))
                                     usedSourceFields[field] = 1;
-                                else
+                                else {
                                     usedSourceFields[field]++;
-
-                                let suggestionField = _.findWhere(mappingSuggestions, { inputFieldName: field });
-                                if (!suggestionField) {
-                                    let defaultMapping = this.defaultMappings[field.toLowerCase()];
-                                    if (defaultMapping && !usedMapFields[defaultMapping])
-                                        suggestionField = { outputFieldName: defaultMapping };
+                                    field = field + ' ' + usedSourceFields[field];
                                 }
+
+                                normalizedFieldName = this.normalizeFieldName(field);
+                                let suggestionField = _.findWhere(mappingSuggestions, { inputFieldName: field }) ||
+                                    mappingSuggestions.find(v => this.normalizeFieldName(v.inputFieldName) == normalizedFieldName);
                                 if (suggestionField) {
                                     foundItem = this.lookupFields.find(item => suggestionField.outputFieldName == item.id);
                                 }
-                                else {
-                                    let searchField = field.toLowerCase();
-                                    if ([' ', '.', '-', '_'].some(x => searchField.includes(x))) {
-                                        let parts = searchField.split(/\s|_|-|\./);
-                                        searchField = parts.join(ImportWizardComponent.FieldSeparator);
-                                        foundItem = this.lookupFields.find((item) => (item.id.toLowerCase().indexOf(searchField) >= 0) && !usedMapFields[item.id]);
-                                    }
 
-                                    if (!foundItem) {
-                                        searchField = searchField.replace(/\s|_|-|\./g, '');
-
-                                        foundItem = this.lookupFields.find((item) =>
-                                            (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase().indexOf(searchField) >= 0) && !usedMapFields[item.id]);
-                                    }
+                                if (!foundItem) {
+                                    foundItem = this.findFieldInLookupFields(normalizedFieldName, usedMapFields);
                                 }
+
                                 if (foundItem)
                                     usedMapFields[foundItem.id] = true;
                             }
 
                             return {
                                 id: index,
-                                sourceField: usedSourceFields[field] > 1 ?
-                                    field + ' ' + usedSourceFields[field] :
-                                    field || this.l('NoName', [++noNameCount]),
+                                sourceField: field || this.l('NoName', [++noNameCount]),
                                 sampleValue: this.lookForValueExample(index),
-                                mappedField: foundItem ? foundItem.id : undefined
+                                mappedField: foundItem ? foundItem.id : undefined,
+                                normalizedName: normalizedFieldName
                             };
+                        }).map(fieldData => {
+                            if (!fieldData.mappedField && fieldData.normalizedName) {
+                                let foundItem = this.findFieldInLookupFields('personalinfo' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('contact' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('lead' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('lead' + fieldData.normalizedName + 'name', usedMapFields) ||
+                                    this.findFieldInLookupFields('user' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfo' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfois' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfo' + fieldData.normalizedName + '1', usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfo' + fieldData.normalizedName + 'url', usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofullname' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofullname' + fieldData.normalizedName + 'name', usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofullnamename' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofulladdress' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofulladdress' + fieldData.normalizedName + 'name', usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofulladdressaddress' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('personalinfofulladdress' + fieldData.normalizedName, usedMapFields, s => s + 'address') ||
+                                    this.findFieldInLookupFields('personalinfocustomfields' + fieldData.normalizedName.replace('contactcustom', 'custom').replace('contact', 'custom'), usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName + 'name', usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName + 'url', usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName + '1', usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('companyaddress', 'companyfulladdress'), usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('company', 'companyfulladdress'), usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('company', 'companyfulladdress') + 'name', usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('company', 'companyfulladdress'), usedMapFields, s => s + 'address') ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('workaddress', 'workfulladdress'), usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('work', 'workfulladdress'), usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('work', 'workfulladdress') + 'name', usedMapFields) ||
+                                    this.findFieldInLookupFields('businessinfo' + fieldData.normalizedName.replace('work', 'workfulladdress'), usedMapFields, s => s + 'address') ||
+                                    this.findFieldInLookupFields('trackinginfo' + fieldData.normalizedName, usedMapFields) ||
+                                    this.findFieldInLookupFields('trackinginfo' + fieldData.normalizedName + 'url', usedMapFields) ||
+                                    this.findFieldInLookupFields('trackinginfo' + fieldData.normalizedName + 'id', usedMapFields) ||
+                                    this.findFieldInLookupFields('trackinginfo' + fieldData.normalizedName + 'created', usedMapFields) ||
+                                    this.findFieldInLookupFields('requestcustominfo' + fieldData.normalizedName.replace('requestcustom', 'custom').replace('request', 'custom')
+                                                                                                .replace('leadcustom', 'custom').replace('lead', 'custom'), usedMapFields)
+
+                                if (foundItem) {
+                                    usedMapFields[foundItem.id] = true;
+                                    fieldData.mappedField = foundItem.id;
+                                }
+                            }
+                            return fieldData;
                         });
 
                     this.mapDataSource = {
@@ -577,6 +604,22 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             } else
                 resolve();
         });
+    }
+
+    normalizeFieldName(name: string): string {
+        if (name)
+            return name.replace(/\s|_|-|\./g, '').toLowerCase();
+
+        return null;
+    }
+
+    findFieldInLookupFields(field: string, usedMapFields, lookupFieldModifyFunc = (string) => string) {
+        if (lookupFieldModifyFunc) {
+            return this.lookupFields.find(item => !usedMapFields[item.id] && lookupFieldModifyFunc(item.normalizedId) == field)
+        }
+        else {
+            return this.lookupFields.find(item => !usedMapFields[item.id] && item.normalizedId == field)
+        }
     }
 
     checkIfFileHasHeaders() {

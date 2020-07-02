@@ -65,12 +65,19 @@ export class DataGridService {
 
     static getSelectFields(dataGrid, requiredFields?: string[], fieldsDependencies?: FieldDependencies) {
         let selectFields = requiredFields || [];
-        dataGrid.instance.getVisibleColumns().forEach((column: dxDataGridColumn) => {
+        const visibleColumns = dataGrid.instance.getVisibleColumns();
+        visibleColumns.forEach((column: dxDataGridColumn) => {
             if (column.dataField && (!requiredFields || requiredFields.indexOf(column.dataField) < 0)) {
                 selectFields.push(column.dataField);
             }
+        });
+        visibleColumns.forEach((column: dxDataGridColumn) => {
             if (fieldsDependencies && column.name && fieldsDependencies[column.name]) {
-                selectFields.push(...fieldsDependencies[column.name]);
+                fieldsDependencies[column.name].forEach((columnName: string) => {
+                    if (selectFields.indexOf(columnName) < 0) {
+                        selectFields.push(columnName);
+                    }
+                })
             }
         });
         return selectFields;

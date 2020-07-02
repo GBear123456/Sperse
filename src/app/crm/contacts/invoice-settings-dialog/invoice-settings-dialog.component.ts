@@ -31,16 +31,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         };
     });
 
-    tagsList = [
-        EmailTags.InvoiceNumber,
-        EmailTags.InvoiceGrandTotal,
-        EmailTags.InvoiceDueDate,
-        EmailTags.InvoiceLink,
-        EmailTags.InvoiceAnchor,
-        EmailTags.LegalName,
-        EmailTags.ClientFirstName,
-        EmailTags.ClientLastName
-    ];
+    tagsList = Object.keys(EmailTags);
 
     constructor(
         public dialog: MatDialog,

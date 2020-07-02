@@ -1,9 +1,16 @@
+/** Core imports */
 import { Component, Inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+
+/** Third party imports */
+import { BehaviorSubject } from 'rxjs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+/** Application imports */
 import { SimilarContactOutput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @Component({
     selector: 'similar-entities-dialog',
@@ -15,17 +22,22 @@ export class SimilarEntitiesDialogComponent {
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         private router: Router,
+        private activatedRoute: ActivatedRoute,
+        private itemDetailsService: ItemDetailsService,
         public dialogRef: MatDialogRef<SimilarEntitiesDialogComponent>,
         public ls: AppLocalizationService,
         public profileService: ProfileService
     ) {}
 
     selectSimilarEntity(similarEntity: SimilarContactOutput): void {
+        let queryParams = (this.activatedRoute.queryParams as BehaviorSubject<Params>).getValue();
+        this.itemDetailsService.clearItemsSource();
         this.data.componentRef.close();
         this.dialogRef.close();
         this.router.navigate(
-            ['app/crm/contact/' + similarEntity.id + '/contact-information'],
-            { queryParams: { referrer: this.router.url } }
+            ['app/crm/contact/' + similarEntity.id + '/contact-information'], { queryParams:
+                queryParams.referrer ? queryParams : { ...queryParams, referrer: this.router.url.split('?').shift() }
+            }
         );
     }
 
