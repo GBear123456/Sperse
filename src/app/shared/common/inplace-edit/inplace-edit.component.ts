@@ -113,7 +113,6 @@ export class InplaceEditComponent extends AppComponentBase {
                 }
             }).afterClosed().subscribe(result => {
                 if (result) {
-                    this.dialog.closeAll();
                     if (this.itemDeleted)
                         this.itemDeleted.emit(this.id);
                 }
