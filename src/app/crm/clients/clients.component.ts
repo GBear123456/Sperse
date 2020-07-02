@@ -1191,6 +1191,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Email'),
                                     action: () => {
                                         this.contactService.showEmailDialog({
+                                            contactId: this.selectedClientKeys[0],
                                             to: this.selectedClients.map(lead => lead.Email)
                                         });
                                     }
