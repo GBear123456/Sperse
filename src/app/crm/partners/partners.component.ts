@@ -401,7 +401,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             request.params.$select =
             this.pipelineSelectFields = DataGridService.getSelectFields(
                 this.dataGrid,
-                [ this.partnerFields.Id, this.partnerFields.OrganizationId ]
+                [
+                    this.partnerFields.Id,
+                    this.partnerFields.OrganizationId,
+                    this.partnerFields.Email,
+                    this.partnerFields.Phone
+                ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         }
