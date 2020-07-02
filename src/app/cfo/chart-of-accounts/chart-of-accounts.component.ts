@@ -19,10 +19,9 @@ import { environment } from '@root/environments/environment';
 class UploadCategoryModel {
     'Cashflow Type': string;
     'Accounting Type': string;
+    'Category Id': string;
     'Category': string;
-    'Category Id': number;
-    'Parent Category': string;
-    'Parent Category Id': number;
+    'Parent Category Id': string;
     'Transaction Count': number;
     'COAID': string;
 }
@@ -92,12 +91,12 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             let accTypes: AccountingCategoryDto[] = [];
             data.forEach((val, i) => {
                 accTypes.push(new AccountingCategoryDto({
-                    id: null,
-                    accountingType: val['Accounting Type'],
-                    cashType: val['Cashflow Type'],
-                    category: val['Category'],
-                    parentCategory: val['Parent Category'],
+                    id: val['Category Id'],
+                    name: val['Category'],
+                    parentId: val['Parent Category Id'],
                     coAID: val['COAID'],
+                    cashType: val['Cashflow Type'],
+                    accountingType: val['Accounting Type'],
                     sortId: null,
                     reportingCategoryCode: null,
                     reportingCategoryName: null,
