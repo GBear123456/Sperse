@@ -59,7 +59,7 @@
                     <div class="header">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(activeMessage?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar"></div>
                         <div class="details">
-                            <span class="from">{{activeMessage?.fromUserName}}&nbsp;<small>&lt;{{activeMessage?.from}}&gt;</small></span>
+                            <span class="from">{{activeMessage?.fromUserName}}&nbsp;<small *ngIf="activeMessage?.from">&lt;{{activeMessage?.from}}&gt;</small></span>
                             <span class="subject">{{activeMessage?.subject}}</span>
                             <span class="to">{{ls.l('to')}} {{activeMessage?.to}}</span>
                         </div>

@@ -41202,12 +41202,12 @@ export interface ISyncDto {
 
 export class AccountingCategoryDto implements IAccountingCategoryDto {
     id!: string | undefined;
+    name!: string;
+    parentId!: string | undefined;
     coAID!: string | undefined;
     isActive!: boolean | undefined;
     cashType!: string | undefined;
     accountingType!: string;
-    category!: string;
-    parentCategory!: string | undefined;
     sortId!: number | undefined;
     reportingCategoryCode!: string | undefined;
     reportingCategoryName!: string | undefined;
@@ -41224,12 +41224,12 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.name = data["name"];
+            this.parentId = data["parentId"];
             this.coAID = data["coAID"];
             this.isActive = data["isActive"];
             this.cashType = data["cashType"];
             this.accountingType = data["accountingType"];
-            this.category = data["category"];
-            this.parentCategory = data["parentCategory"];
             this.sortId = data["sortId"];
             this.reportingCategoryCode = data["reportingCategoryCode"];
             this.reportingCategoryName = data["reportingCategoryName"];
@@ -41246,12 +41246,12 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["name"] = this.name;
+        data["parentId"] = this.parentId;
         data["coAID"] = this.coAID;
         data["isActive"] = this.isActive;
         data["cashType"] = this.cashType;
         data["accountingType"] = this.accountingType;
-        data["category"] = this.category;
-        data["parentCategory"] = this.parentCategory;
         data["sortId"] = this.sortId;
         data["reportingCategoryCode"] = this.reportingCategoryCode;
         data["reportingCategoryName"] = this.reportingCategoryName;
@@ -41261,12 +41261,12 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 
 export interface IAccountingCategoryDto {
     id: string | undefined;
+    name: string;
+    parentId: string | undefined;
     coAID: string | undefined;
     isActive: boolean | undefined;
     cashType: string | undefined;
     accountingType: string;
-    category: string;
-    parentCategory: string | undefined;
     sortId: number | undefined;
     reportingCategoryCode: string | undefined;
     reportingCategoryName: string | undefined;

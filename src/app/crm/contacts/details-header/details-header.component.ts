@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, finalize, takeUntil, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, ReplaySubject, combineLatest, zip } from 'rxjs';
+import { filter, first, finalize, takeUntil, map, skip, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -31,7 +31,8 @@ import {
     PersonOrgRelationShortInfo,
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
-    UpdatePersonNameInput
+    UpdatePersonNameInput,
+    OrganizationContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -89,13 +90,19 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private _personContactInfo: BehaviorSubject<PersonContactInfoDto> = new BehaviorSubject<PersonContactInfoDto>(new PersonContactInfoDto());
     personContactInfo$: Observable<PersonContactInfoDto> = this._personContactInfo.asObservable();
-    personOrganizationInfo$: Observable<PersonOrgRelationShortInfo> = this.personContactInfo$.pipe(
-        map((personContactInfo: PersonContactInfoDto) => personContactInfo['personOrgRelationInfo'])
+    selectedOrganizationId: ReplaySubject<number> = new ReplaySubject<number>(1);
+    selectedOrganizationId$: Observable<number> = this.selectedOrganizationId.asObservable();
+    selectedOrganizationInfo$: Observable<PersonOrgRelationShortInfo> = combineLatest(
+        this.personContactInfo$,
+        this.selectedOrganizationId$
+    ).pipe(
+        map(([personContactInfo, selectedOrganizationId]: [PersonContactInfoDto, number]) => {
+            return personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+                return orgRelation.id === selectedOrganizationId;
+            });
+        })
     );
-    personOrganizationId$: Observable<number> = this.personOrganizationInfo$.pipe(
-        map((personOrganizationInfo: PersonOrgRelationShortInfo) => personOrganizationInfo && personOrganizationInfo.id)
-    );
-    personJobTitle$: Observable<string> = this.personOrganizationInfo$.pipe(
+    personJobTitleInSelectedOrganization$: Observable<string> = this.selectedOrganizationInfo$.pipe(
         map((personOrganizationInfo: PersonOrgRelationShortInfo) => personOrganizationInfo && personOrganizationInfo.jobTitle)
     );
     contactId: number;
@@ -162,6 +169,18 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.addOptionsInit();
             }
         );
+        /** Set initial selected organization id */
+        zip(
+            this.contactInfo$.pipe(skip(1)),
+            this.personContactInfo$.pipe(skip(1))
+        ).pipe(
+            first()
+        ).subscribe(([contactInfo, personContactInfo]: [ContactInfoDto, PersonContactInfoDto]) => {
+            const selectedOrganizationId = personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+                return orgRelation.organization.id === contactInfo['organizationContactInfo'].id;
+            }).id;
+            this.selectedOrganizationId.next(selectedOrganizationId);
+        });
     }
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
@@ -513,7 +532,12 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addCompanyDialog(event) {
         if (this.manageAllowed)
-            this.contactsService.addCompanyDialog(event, this.data).subscribe();
+            this.contactsService.addCompanyDialog(event, this.data).pipe(
+                switchMap(() => this.personContactInfo$),
+                first()
+            ).subscribe((personContactInfo: PersonContactInfoDto) => {
+                this.selectedOrganizationId.next(personContactInfo.orgRelationId);
+            });
     }
 
     addCompanyLogo(event) {
@@ -542,13 +566,14 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
-    displaySelectedCompany(orgId, orgRelationId) {
+    displaySelectedCompany(orgId: number, orgRelationId: number) {
         this.loadingService.startLoading();
         this.personContactInfo.orgRelationId = orgRelationId;
+        this.selectedOrganizationId.next(orgRelationId);
         this.initializePersonOrgRelationInfo();
         this.orgContactService.getOrganizationContactInfo(orgId)
             .pipe(finalize(() => this.loadingService.finishLoading()))
-            .subscribe((result) => {
+            .subscribe((result: OrganizationContactInfoDto) => {
                 this.data['organizationContactInfo'] = result;
                 this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });

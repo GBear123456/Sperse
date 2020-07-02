@@ -86,7 +86,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'countryName',
         'countryId',
         'stateId',
-        'rating'
+        'rating',
+        'gender'
     ];
     private excludeCCValidation = ['UK'];
     private similarFieldsIndex: any = {};
@@ -566,7 +567,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     this.mapField(data, s => 'trackinginfo' + s + 'url', usedMapFields);
                     this.mapField(data, s => 'trackinginfo' + s + 'id', usedMapFields);
                     this.mapField(data, s => 'trackinginfo' + s + 'created', usedMapFields);
-                    this.mapField(data, s =>'requestcustominfo' + s.replace('requestcustom', 'custom').replace('request', 'custom')
+                    this.mapField(data, s => 'requestcustominfo' + s.replace('requestcustom', 'custom').replace('request', 'custom')
                          .replace('leadcustom', 'custom').replace('lead', 'custom'), usedMapFields);
 
                     this.mapDataSource = {
@@ -606,10 +607,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
 
     findFieldInLookupFields(field: string, usedMapFields, lookupFieldModifyFunc: (s: string) => string = null) {
         if (lookupFieldModifyFunc) {
-            return this.lookupFields.find(item => !usedMapFields[item.id] && lookupFieldModifyFunc(item.normalizedId) == field)
-        }
-        else {
-            return this.lookupFields.find(item => !usedMapFields[item.id] && item.normalizedId == field)
+            return this.lookupFields.find(item => !usedMapFields[item.id] && lookupFieldModifyFunc(item.normalizedId) == field);
+        } else {
+            return this.lookupFields.find(item => !usedMapFields[item.id] && item.normalizedId == field);
         }
     }
 
@@ -835,6 +835,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return value.length >= 2 && value.length <= 3;
         } else if (key == 'rating')
             return !isNaN(value) && value >= 1 && value <= 10;
+        else if (key == 'gender')
+            return ['f', 'm', 'female', 'male', '0', '1'].indexOf(value.toLowerCase()) >= 0;
         else
             return AppConsts.regexPatterns[key].test(value);
     }
