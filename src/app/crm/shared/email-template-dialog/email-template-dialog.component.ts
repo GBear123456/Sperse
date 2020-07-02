@@ -340,8 +340,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                 userOrganization = this.userCompanyContact.organization,
                 user = this.sessionService.user;
 
-            if (this.data['contact']) {
-                let person = this.data['contact'].personContactInfo.person;
+            if (this.data.contact) {
+                let person = this.data.contact.personContactInfo.person;
                 if (event.itemData == EmailTags.ClientFirstName)
                     return this.insertText(person.firstName);
                 else if (event.itemData == EmailTags.ClientLastName)
