@@ -401,7 +401,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             request.params.$select =
             this.pipelineSelectFields = DataGridService.getSelectFields(
                 this.dataGrid,
-                [ this.partnerFields.Id, this.partnerFields.OrganizationId ]
+                [
+                    this.partnerFields.Id,
+                    this.partnerFields.OrganizationId,
+                    this.partnerFields.Email,
+                    this.partnerFields.Phone
+                ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         }
@@ -1064,10 +1069,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     }
                                 },
                                 {
-                                    text: this.l('Merge'),
+                                    text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedPartners.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedPartners[0], this.selectedPartners[1], true, true, () => { this.invalidate(); this.dataGrid.instance.deselectAll(); });
+                                        this.contactService.mergeContact(
+                                            this.selectedPartners[0],
+                                            this.selectedPartners[1],
+                                            true,
+                                            true,
+                                            () => { this.invalidate(); this.dataGrid.instance.deselectAll(); }
+                                        );
                                     }
                                 }
                             ]
@@ -1082,7 +1093,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: this.selectedPartnerKeys.length > 1 || !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {

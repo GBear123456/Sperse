@@ -118,7 +118,6 @@ import { FilterSourceComponent } from '../shared/filters/source-filter/source-fi
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
-import { Param } from '@shared/common/odata/param.model';
 import { ContactDto } from '@app/crm/clients/contact.dto';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
@@ -596,7 +595,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 beforeSend: (request) => {
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
-                        [ this.clientFields.Id, this.clientFields.OrganizationId, this.clientFields.UserId ]);
+                        [
+                            this.clientFields.Id,
+                            this.clientFields.OrganizationId,
+                            this.clientFields.UserId,
+                            this.clientFields.StatusId,
+                            this.clientFields.Email,
+                            this.clientFields.Phone
+                        ]);
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -1159,7 +1165,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     }
                                 },
                                 {
-                                    text: this.l('Merge'),
+                                    text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedClients.length != 2 || !this.isMergeAllowed,
                                     action: () => {
                                         this.contactService.mergeContact(this.selectedClients[0], this.selectedClients[1], true, true, () => { this.refresh(); this.dataGrid.instance.deselectAll(); });
@@ -1178,7 +1184,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: this.selectedClientKeys.length > 1 || !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
