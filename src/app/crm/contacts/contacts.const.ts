@@ -14,6 +14,8 @@ export enum EmailTags {
     InvoiceDueDate       = 'InvoiceDueDate',
     InvoiceLink          = 'InvoiceLink',
     InvoiceAnchor        = 'InvoiceAnchor',
+    FirstName            = 'FirstName',
+    LastName             = 'LastName',
     SenderFullName       = 'SenderFullName',
     SenderPhone          = 'SenderPhone',
     SenderEmail          = 'SenderEmail',

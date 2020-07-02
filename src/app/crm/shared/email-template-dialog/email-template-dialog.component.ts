@@ -342,11 +342,9 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             if (this.data.contact) {
                 let person = this.data.contact.personContactInfo.person;
-                if (event.itemData == EmailTags.ClientFirstName)
+                if (event.itemData == EmailTags.FirstName)
                     return this.insertText(person.firstName);
-                else if (event.itemData == EmailTags.ClientLastName)
-                    return this.insertText(person.lastName);
-                else if (event.itemData == EmailTags.LegalName)
+                else if (event.itemData == EmailTags.LastName)
                     return this.insertText(person.lastName);
             }
 
