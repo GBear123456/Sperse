@@ -308,7 +308,7 @@ export class ContactsService {
     initEmailDialogTagsList(dialogComponent) {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
             dialogComponent.tagsList = [
-                EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.SenderFullName,
+                EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName,
                 EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite,
                 EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
                 EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite

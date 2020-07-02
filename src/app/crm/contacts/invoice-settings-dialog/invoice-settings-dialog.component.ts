@@ -31,7 +31,26 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         };
     });
 
-    tagsList = Object.keys(EmailTags);
+    tagsList = [
+        EmailTags.ClientFirstName,
+        EmailTags.ClientLastName,
+        EmailTags.LegalName,
+        EmailTags.InvoiceNumber,
+        EmailTags.InvoiceGrandTotal,
+        EmailTags.InvoiceDueDate,
+        EmailTags.InvoiceLink,
+        EmailTags.InvoiceAnchor,
+        EmailTags.SenderFullName,
+        EmailTags.SenderPhone,
+        EmailTags.SenderEmail,
+        EmailTags.SenderWebSite,
+        EmailTags.SenderCompany,
+        EmailTags.SenderCompanyTitle,
+        EmailTags.SenderCompanyLogo,
+        EmailTags.SenderCompanyPhone,
+        EmailTags.SenderCompanyEmail,
+        EmailTags.SenderCompanyWebSite
+    ];
 
     constructor(
         public dialog: MatDialog,
