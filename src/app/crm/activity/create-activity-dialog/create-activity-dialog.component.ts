@@ -189,15 +189,13 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     loadResourcesData() {
-        if (this.permissionChecker.isGranted(AppPermissions.CRMCustomers)) {
-            this.modalDialog.startLoading();
-            Promise.all([
-                this.lookup('contacts').then(res => this.contacts = res)
-            ]).then(
-                () => this.modalDialog.finishLoading(),
-                () => this.modalDialog.finishLoading()
-            );
-        }
+        this.modalDialog.startLoading();
+        Promise.all([
+            this.lookup('contacts').then(res => this.contacts = res)
+        ]).then(
+            () => this.modalDialog.finishLoading(),
+            () => this.modalDialog.finishLoading()
+        );
         this.initToolbarConfig();
     }
 
