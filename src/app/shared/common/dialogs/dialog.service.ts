@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class DialogService {
 
-    calculateDialogPosition(event, parent, shiftX = 0, shiftY = 0) {
+    calculateDialogPosition(event, parent, shiftX = 0, shiftY = 0, dialogHeight?) {
         let top, left;
         if (parent) {
             let rect = parent.getBoundingClientRect();
@@ -15,7 +15,7 @@ export class DialogService {
         }
 
         return {
-            top: (top < 0 ? shiftY : top) + 'px',
+            top: (top < 0 ? dialogHeight ? window.innerHeight - dialogHeight - 20 : 0 : top) + 'px',
             left: (left < 0 ? 0 : left) + 'px'
         };
     }
