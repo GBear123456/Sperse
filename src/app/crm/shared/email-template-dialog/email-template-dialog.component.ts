@@ -337,7 +337,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.addTextTag(event.itemData);
         } else {
             let userPerson = this.userContact.personContactInfo,
-                userOrganization = this.userCompanyContact.organization,
+                userOrganization = this.userCompanyContact &&
+                    this.userCompanyContact.organization,
                 user = this.sessionService.user;
 
             if (this.data.contact) {
@@ -372,10 +373,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                     item => item.id == this.userCompanyContact.primaryPhoneId
                 )[0].phoneNumber);
             else if (event.itemData == EmailTags.SenderCompanyEmail
-                && this.userCompanyContact.details.emails.length
+                && this.userCompanyContact.details && this.userCompanyContact.details.emails.length
             ) this.insertText(this.userCompanyContact.details.emails[0].emailAddress);
             else if (event.itemData == EmailTags.SenderCompanyWebSite
-                && this.userCompanyContact.details.links.length
+                && this.userCompanyContact.details && this.userCompanyContact.details.links.length
             ) this.insertText(this.userCompanyContact.details.links[0].url);
         }
         this.tagsTooltipVisible = false;

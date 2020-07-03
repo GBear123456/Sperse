@@ -176,10 +176,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         ).pipe(
             first()
         ).subscribe(([contactInfo, personContactInfo]: [ContactInfoDto, PersonContactInfoDto]) => {
-            const selectedOrganizationId = personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+            const selectedOrganization = personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
                 return orgRelation.organization.id === contactInfo['organizationContactInfo'].id;
-            }).id;
-            this.selectedOrganizationId.next(selectedOrganizationId);
+            });
+            if (selectedOrganization && selectedOrganization.id)
+                this.selectedOrganizationId.next(selectedOrganization.id);
         });
     }
 
