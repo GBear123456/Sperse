@@ -15,7 +15,6 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
     ContactServiceProxy,
-    LeadServiceProxy,
     ActivityType,
     CreateActivityDto,
     UpdateActivityDto,
@@ -261,7 +260,6 @@ export class CreateActivityDialogComponent implements OnInit {
                     {
                         name: 'contact',
                         action: this.toggleContactLists.bind(this),
-                        disabled: !this.permissionChecker.isGranted(AppPermissions.CRMCustomers),
                         options: {
                             text: this.ls.l('Contact'),
                             accessKey: 'ContactsList'
@@ -425,11 +423,6 @@ export class CreateActivityDialogComponent implements OnInit {
     toggleStarsList() {
         this.starsListComponent.toggle();
         this.changeDetectorRef.detectChanges();
-    }
-
-    onLeadSelected(e) {
-        this.appointment.LeadId = e.id;
-        this.initToolbarConfig();
     }
 
     onListFiltered(event) {
