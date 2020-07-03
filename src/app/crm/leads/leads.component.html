@@ -70,7 +70,14 @@
                                     showDragIcons: false, 
                                     onDragEnd: onDragEnd
                                 }"
-                                [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                [remoteOperations]="{
+                                    filtering: false,
+                                    grouping: false,
+                                    groupPaging: true,
+                                    paging: true,
+                                    sorting: true,
+                                    summary: true
+                                }"
                                 [allowColumnResizing]="true"
                                 [loadPanel]="{ enabled: false }"
                                 [hoverStateEnabled]="true"

@@ -39,7 +39,7 @@
                         <div>
                             <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                             <dx-data-grid #ordersGrid
-                                          class="main-component-view"
+                                          class="main-component-view limitedPagerTotal"
                                           accesskey="narrowHeaderPanel"
                                           [renderAsync]="true"
                                           [allowColumnReordering]="true"
@@ -50,7 +50,14 @@
                                           [columnChooser]="{
                                             height: rowsViewHeight
                                           }"
-                                          [remoteOperations]="{ filtering: false, grouping: false, groupPaging: false, paging: false, sorting: false, summary: true }"
+                                          [remoteOperations]="{
+                                            filtering: false,
+                                            grouping: false,
+                                            groupPaging: true,
+                                            paging: true,
+                                            sorting: true,
+                                            summary: true
+                                          }"
                                           (onEditingStart)="onCellClick($event)"
                                           (onCellClick)="onCellClick($event)"
                                           [pager]="defaultGridPagerConfig"
@@ -168,7 +175,7 @@
                 <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                 <dx-data-grid #subscriptionsGrid
                               id="gridContainer"
-                              class="main-component-view"
+                              class="main-component-view limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               keyExpr="id"
                               [loadPanel]="{ enabled: false }"
@@ -250,7 +257,7 @@
                         </dxi-group-item>
                         <dxi-total-item [column]="subscriptionFields.FirstName"
                                         summaryType="count"
-                                        [customizeText]="customizeSubscriptionsTotal">
+                                        [customizeText]="customizeTotal">
                         </dxi-total-item>
                         <dxi-total-item [customizeText]="customizeSubscriptionsTotalFee"
                                         [column]="subscriptionFields.Fee"

@@ -76,7 +76,14 @@
                                   }"
                                   [pager]="defaultGridPagerConfig"
                                   [twoWayBindingEnabled]="false"
-                                  [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
+                                  [remoteOperations]="{
+                                      filtering: false,
+                                      grouping: false,
+                                      groupPaging: true,
+                                      paging: true,
+                                      sorting: true,
+                                      summary: true
+                                  }"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
                                   (onOptionChanged)="onGridOptionChanged($event)"
