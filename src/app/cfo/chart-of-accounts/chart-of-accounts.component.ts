@@ -64,7 +64,9 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     }
 
     downloadExcel() {
-        this.exportToXLS('all', this.dataGrid);
+        this.categorizationComponent.ensureTransactionsCountLoaded().then(() => {
+            setTimeout(() => this.exportToXLS('all', this.dataGrid), 100);
+        });
     }
 
     uploadExcel(evt) {

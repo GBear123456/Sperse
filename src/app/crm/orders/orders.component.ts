@@ -485,7 +485,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ]
     };
     ordersSum: number;
-    ordersSum$: Observable<number> = combineLatest(
+    ordersSummary$: Observable<OrderStageSummary> = combineLatest(
         this.odataRequestValues$,
         this.search$,
         this.refresh$
@@ -507,11 +507,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             )
         }),
         map((summaryData: { [stageId: string]: OrderStageSummary }) => {
-            return Object.values(summaryData).map((orderStageSummary: OrderStageSummary) => orderStageSummary.sum)
-                                             .reduce((total: number, current: number) => total += current, 0)
+            return Object.values(summaryData).reduce((summary: OrderStageSummary, stageSummary: OrderStageSummary) => {
+                summary.count += stageSummary.count;
+                summary.sum += stageSummary.sum;
+                return summary;
+            }, { count: 0, sum: 0 })
         })
     );
-    subscriptionsCount: number;
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
@@ -580,11 +582,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ngOnInit() {
         this.activate();
         this.handleFiltersPining();
-        this.ordersSum$.subscribe((ordersSum: number) => {
-            this.ordersSum = ordersSum;
+        this.ordersSummary$.subscribe((ordersSummary: OrderStageSummary) => {
+            this.ordersSum = ordersSummary.sum;
+            this.totalCount = ordersSummary.count;
         });
         this.subscriptionsSummary$.subscribe((data) => {
-            this.subscriptionsCount = data.summary[0];
+            this.totalCount = data.summary[0];
             this.subscriptionsTotalOrderAmount = data.summary[1];
             this.subscriptionsTotalFee = data.summary[2];
             if (this.subscriptionsGrid) {
@@ -594,9 +597,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     customizeTotal = () => this.totalCount !== undefined ? this.l('Count') + ': ' + this.totalCount : '';
-    customizeSubscriptionsTotal = () => {
-        return this.subscriptionsCount !== undefined ? this.l('Count') + ': ' + this.subscriptionsCount : '';
-    }
     customizeOrdersSum = () => this.customizeAmountSummary({ value: this.ordersSum });
     customizeSubscriptionsTotalFee = () => this.customizeAmountSummary({ value: this.subscriptionsTotalFee });
     customizeSubscriptionsTotalAmount = () => this.customizeAmountSummary({ value: this.subscriptionsTotalOrderAmount });
@@ -1089,10 +1089,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.exportCallback();
         else {
             this.setGridDataLoaded();
-            if (this.totalCount !== this.totalRowCount && this.totalRowCount !== -1) {
-                this.totalCount = this.totalRowCount;
-                this.dataGrid.instance.repaint();
-            }
             if (!this.rowsViewHeight)
                 this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
             event.component.columnOption('command:edit', {

@@ -131,7 +131,7 @@ export class AddressesComponent implements OnInit {
         let shiftY = this.calculateShiftY(event);
         let dialogHeight = 550;
         let parent = event.target && event.target.closest('.address-wrapper') || document.body;
-        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY, dialogHeight);
+        return this.dialogService.calculateDialogPosition(event, parent, 150, shiftY, dialogHeight);
     }
 
     calculateShiftY(event) {
