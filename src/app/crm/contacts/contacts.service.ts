@@ -310,7 +310,7 @@ export class ContactsService {
             dialogComponent.tagsList = [
                 EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName,
                 EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite,
-                EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, /* EmailTags.SenderCompanyLogo */,
+                EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, /* EmailTags.SenderCompanyLogo , */
                 EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite
             ];
         }
