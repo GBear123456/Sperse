@@ -24,8 +24,8 @@ export class BankVaultComponent {
             this.changeDetectorRef.detectChanges();
         }))
     );
-    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('vault');
-    accessLink$: Observable<SafeUrl> = this.productsService.getResourceLink('vault');
+    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('the-vault-landing');
+    accessLink$: Observable<SafeUrl> = this.productsService.getResourceLink('the-vault-access');
 
     constructor(
         private profileService: ProfileService,

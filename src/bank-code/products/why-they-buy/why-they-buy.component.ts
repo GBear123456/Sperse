@@ -27,7 +27,7 @@ export class WhyTheyBuyComponent {
         }))
     );
     bookSrc = AppConsts.appBaseHref + 'assets/documents/Why+They+Buy+eBook+-+Black.pdf';
-    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('why-they-buy-digital');
+    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('why-they-buy-digital-landing');
 
     constructor(
         private profileService: ProfileService,
