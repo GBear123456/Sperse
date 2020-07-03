@@ -239,7 +239,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         widget: 'dxDropDownMenu',
                         visible: this.showAddEntity && this.settings.showAT,
                         options: {
-//                            text: this.l('AddAccountingType'),
+                            //                            text: this.l('AddAccountingType'),
                             hint: this.l('AddAccountingType'),
                             items: addEntityItems
                         }
@@ -411,7 +411,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 for (let prt in settings) {
                     this.settings[prt] = settings[prt];
                 }
-            } catch (e) {}
+            } catch (e) { }
         this.applyPadding();
     }
 
@@ -730,7 +730,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     setTransactionsCount() {
         let items = this.transactionsCountDataSource && this.transactionsCountDataSource.items();
         if (!items || !items.length)
-            return ;
+            return;
 
         let accountingTypes: any[] = [];
         let parentCategories: any[] = [];
@@ -768,6 +768,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         this.setExcelData(items[0]);
     }
 
+    ensureTransactionsCountLoaded(): Promise<any> {
+        let items = this.transactionsCountDataSource && this.transactionsCountDataSource.items();
+        if (!items || !items.length) {
+            return this.reloadTransactionsCountDataSource();
+        }
+
+        return Promise.resolve();
+    }
+
     setExcelData(items) {
         let data = this.categorization;
         if (data.categories) {
@@ -802,11 +811,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     loadTransactionsCountDataSource() {
         const loadTransactionsTotal = this.settings.showTC || !this.settings.showEmpty;
         if (loadTransactionsTotal) {
-            if (!this.transactionsCountDataSource)
-                this.initTransactionsTotalCount();
-            this.transactionsCountDataSource.store()['_url'] = this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
-            this.transactionsCountDataSource.load();
+            this.reloadTransactionsCountDataSource();
         }
+    }
+
+    reloadTransactionsCountDataSource(): Promise<any> & JQueryPromise<any> {
+        if (!this.transactionsCountDataSource)
+            this.initTransactionsTotalCount();
+        this.transactionsCountDataSource.store()['_url'] = this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
+        return this.transactionsCountDataSource.load();
     }
 
     addActionButton(name, container: HTMLElement, callback) {
@@ -858,7 +871,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this.categoryTreeServiceProxy.updateCategory(
                 InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
                 UpdateCategoryInput.fromJS({
-                    id: $event.key ,
+                    id: $event.key,
                     coAID: $event.data.hasOwnProperty('coAID') ? $event.data.coAID || undefined : category.coAID,
                     name: $event.data.hasOwnProperty('name') ? $event.data.name || undefined : category.name,
                     accountingTypeId: category.accountingTypeId,
