@@ -345,6 +345,10 @@
 ::ng-deep .tags-container {
     .tags-list-item {
         text-align: left;
+        &.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
     }
     .tags-note {
         white-space:pre-wrap
