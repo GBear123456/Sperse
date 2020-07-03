@@ -12,7 +12,7 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="contactGroups"
                         [totalCount]="totalCount"
-                        [(value)]="selectedContactGroup"
+                        [value]="selectedContactGroup"
                         (onValueChanged)="onContactGroupChanged($event)">
         </types-dropdown>
         <import-progress-bar></import-progress-bar>

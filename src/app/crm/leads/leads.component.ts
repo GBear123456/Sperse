@@ -1750,7 +1750,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
-            this.contactGroupId.next(ContactGroup[event.value]);
+            this._router.navigate([], {
+                queryParamsHandling: 'merge',
+                relativeTo: this._activatedRoute,
+                queryParams: {contactGroup: event.value}
+            });
+
             this.headlineButtons[0].label = this.getHeadlineButtonName();
             this.cacheService.set(this.cacheKey, event.value);
             this.createButtonEnabledSet();
