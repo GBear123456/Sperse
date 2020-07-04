@@ -20,7 +20,7 @@
                               (valueChanged)="accessCodeChanged($event)">
                 </inplace-edit>
             </div>
-            <div class="buttons" *ngIf="currentTabIndex == 1 || gridInitialized">
+            <div class="buttons" *ngIf="currentTabIndex == 1">
                 <button class="download" (click)="exportToExcel()">
                     <img src="./assets/common/icons/xls.svg"/>
                 </button>
