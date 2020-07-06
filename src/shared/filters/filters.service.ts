@@ -216,8 +216,12 @@ export class FiltersService {
         return CfoFilterHelpers.filterByExcludeElement(filter);
     }
 
-    static filterByGroupId() {
-        return CrmFilterHelpers.filterByGroupId();
+    static filterByClientGroupId() {
+        return CrmFilterHelpers.filterByClientGroupId();
+    }
+
+    static filterByPartnerGroupId() {
+        return CrmFilterHelpers.filterByPartnerGroupId();
     }
 
     static getCustomerFilters(): any[] {

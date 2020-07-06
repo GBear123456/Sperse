@@ -110,6 +110,7 @@ import { PartnerDto } from '@app/crm/partners/partner-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
+import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -162,9 +163,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         return dataLayoutType !== DataLayoutType.Map;
     }));
 
-    private readonly dataSourceURI = 'Partner';
-    private readonly totalDataSourceURI: string = 'Partner/$count';
-    private readonly groupDataSourceURI = 'PartnerSlice';
+    private readonly dataSourceURI = 'Contact';
+    private readonly totalDataSourceURI: string = 'Contact/$count';
+    private readonly groupDataSourceURI = 'ContactSlice';
     public readonly dateField = 'ContactDate';
     private rootComponent: any;
     private subRouteParams: any;
@@ -200,7 +201,21 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }
     });
     filterModelAssignment: FilterModel;
-    filterModelStatus: FilterModel;
+    filterModelStatus: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'status',
+        filterMethod: FilterHelpers.filterByCustomerStatus,
+        field: 'StatusId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getStatuses)),
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    selectedKeys$: of(['A'])
+                })
+        }
+    });
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
@@ -394,7 +409,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     dataStore = {
         key: this.partnerFields.Id,
         deserializeDates: false,
-        url: this.getODataUrl(this.dataSourceURI),
+        url: this.getODataUrl(
+            this.dataSourceURI,
+            [
+                this.filterModelStatus.filterMethod(this.filterModelStatus),
+                FiltersService.filterByPartnerGroupId()
+            ]
+        ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -450,7 +471,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI, FiltersService.filterByStatus(this.filterModelStatus)),
+                url: this.getODataUrl(this.totalDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;
@@ -783,19 +804,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
             }),
-            this.filterModelStatus = new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'status',
-                field: 'StatusId',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getStatuses)),
-                            nameField: 'name',
-                            keyExpr: 'id'
-                        })
-                }
-            }),
+            this.filterModelStatus,
             this.filterModelTypes = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'type',
@@ -931,6 +940,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             }
                         })
                 }
+            }),
+            new FilterModel({
+                caption: 'partnerGroupId',
+                hidden: true
             })
         ];
     }

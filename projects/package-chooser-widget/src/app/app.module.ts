@@ -9,7 +9,7 @@ import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /** Application imports */
-import { PackageChooserComponent } from '../../../../src/app/shared/common/payment-wizard/package-chooser/package-chooser.component';
+import { PackageChooserComponent } from '@app/shared/common/payment-wizard/package-chooser/package-chooser.component';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { AbpModule } from '@abp/abp.module';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
