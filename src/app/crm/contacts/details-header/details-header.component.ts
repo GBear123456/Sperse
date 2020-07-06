@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party import */
 import { MatDialog } from '@angular/material/dialog';
@@ -96,10 +97,10 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.personContactInfo$,
         this.selectedOrganizationId$
     ).pipe(
-        map(([personContactInfo, selectedOrganizationId]: [PersonContactInfoDto, number]) => {
-            return personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
-                return orgRelation.id === selectedOrganizationId;
-            });
+        map(([personContactInfo, selectedRelationId]: [PersonContactInfoDto, number]) => {
+           return personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+                   return orgRelation.id === selectedRelationId;
+               });
         })
     );
     personJobTitleInSelectedOrganization$: Observable<string> = this.selectedOrganizationInfo$.pipe(
@@ -129,6 +130,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     constructor(
         injector: Injector,
+        private activatedRoute: ActivatedRoute,
         private contactsService: ContactsService,
         private contactServiceProxy: ContactServiceProxy,
         private personOrgRelationService: PersonOrgRelationServiceProxy,
@@ -171,16 +173,21 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         );
         /** Set initial selected organization id */
         zip(
-            this.contactInfo$.pipe(skip(1)),
-            this.personContactInfo$.pipe(skip(1))
+            this.contactInfo$.pipe(filter(contact => Boolean(contact.primaryOrganizationContactId))),
+            this.personContactInfo$.pipe(filter(contact => Boolean(contact && contact.orgRelations))),
+            this.activatedRoute.params
         ).pipe(
             first()
-        ).subscribe(([contactInfo, personContactInfo]: [ContactInfoDto, PersonContactInfoDto]) => {
-            const selectedOrganization = personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
-                return orgRelation.organization.id === contactInfo['organizationContactInfo'].id;
+        ).subscribe(([contactInfo, personContactInfo, params]: [ContactInfoDto, PersonContactInfoDto, Params]) => {
+            let companyId = isNaN(params['companyId']) ? contactInfo.primaryOrganizationContactId : parseInt(params['companyId']);
+            const selectedRelation = personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+                return orgRelation.organization.id === companyId;
             });
-            if (selectedOrganization && selectedOrganization.id)
-                this.selectedOrganizationId.next(selectedOrganization.id);
+            if (selectedRelation && selectedRelation.id) {
+                personContactInfo.orgRelationId = selectedRelation.id;
+                this.initializePersonOrgRelationInfo(personContactInfo);
+                this.selectedOrganizationId.next(selectedRelation.id);
+            }
         });
     }
 
@@ -245,9 +252,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         if (personContactInfo && personContactInfo.orgRelations) {
             let orgRelation = personContactInfo['personOrgRelationInfo'];
             if (!orgRelation || orgRelation.id != personContactInfo.orgRelationId)
-                personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS(
-                    personContactInfo.orgRelations.find(orgRelation => orgRelation.id === personContactInfo.orgRelationId)
-                );
+                personContactInfo['personOrgRelationInfo'] =
+                    personContactInfo.orgRelations.find(orgRelation => orgRelation.id === personContactInfo.orgRelationId);
         }
         return personContactInfo;
     }
@@ -261,12 +267,16 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     updateJobTitle(value) {
         let orgRelationInfo = this.personContactInfo['personOrgRelationInfo'];
         orgRelationInfo.jobTitle = value;
+        this.loadingService.startLoading();
         this.personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
             id: orgRelationInfo.id,
             relationshipType: orgRelationInfo.relationType.id,
             jobTitle: orgRelationInfo.jobTitle
-        })).subscribe(() => {
+        })).pipe(finalize(() => this.loadingService.finishLoading())).subscribe(() => {
+            this.personContactInfo.jobTitle = value;
             this._personContactInfo.next(this.personContactInfo);
+        }, () => {
+            orgRelationInfo.jobTitle = this.personContactInfo.jobTitle;
         });
     }
 
@@ -568,14 +578,14 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     displaySelectedCompany(orgId: number, orgRelationId: number) {
-        this.loadingService.startLoading();
         this.personContactInfo.orgRelationId = orgRelationId;
-        this.selectedOrganizationId.next(orgRelationId);
         this.initializePersonOrgRelationInfo();
+        this.loadingService.startLoading();
         this.orgContactService.getOrganizationContactInfo(orgId)
             .pipe(finalize(() => this.loadingService.finishLoading()))
             .subscribe((result: OrganizationContactInfoDto) => {
                 this.data['organizationContactInfo'] = result;
+                this.selectedOrganizationId.next(orgRelationId);
                 this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });
     }
