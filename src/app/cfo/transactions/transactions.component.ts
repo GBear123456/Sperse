@@ -364,9 +364,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.searchColumns = [
             this.transactionFields.Description,
-            this.fieldsDependencies.CashflowSubCategoryName,
-            this.fieldsDependencies.CashflowCategoryName,
-            this.fieldsDependencies.Descriptor
+            this.transactionFields.CashflowSubCategoryName,
+            this.transactionFields.CashflowCategoryName,
+            this.transactionFields.Descriptor
         ];
         this.searchValue = '';
     }
