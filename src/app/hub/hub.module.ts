@@ -11,6 +11,7 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { HubRoutingModule } from './hub-routing.module';
 import { MarketplaceComponent } from './marketplace/marketplace.component';
+import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
 @NgModule({
     imports: [
@@ -23,6 +24,9 @@ import { MarketplaceComponent } from './marketplace/marketplace.component';
     ],
     declarations: [
         MarketplaceComponent
+    ],
+    providers: [
+        LeftMenuService
     ]
 })
 export class HubModule {
