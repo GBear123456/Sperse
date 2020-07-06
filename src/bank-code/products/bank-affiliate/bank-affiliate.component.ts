@@ -25,7 +25,7 @@ export class BankAffiliateComponent {
             this.changeDetectorRef.detectChanges();
         }))
     );
-    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('affiliate');
+    environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('affiliate-landing');
 
     constructor(
         private profileService: ProfileService,

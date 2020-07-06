@@ -54,6 +54,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     userContact = new ContactInfoDto();
     userCompanyContact = new OrganizationContactInfoDto();
 
+    private readonly WEBSITE_LINK_TYPE_ID = 'J';
+
     @Input() tagsList = [];
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
@@ -107,6 +109,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     contact.primaryOrganizationContactId
                 ).subscribe(companyContact => {
                     this.userCompanyContact = companyContact;
+                    this.changeDetectorRef.detectChanges();
                 });
         });
     }
@@ -336,50 +339,67 @@ export class EmailTemplateDialogComponent implements OnInit {
             else
                 this.addTextTag(event.itemData);
         } else {
-            let userPerson = this.userContact.personContactInfo,
-                userOrganization = this.userCompanyContact &&
-                    this.userCompanyContact.organization,
-                user = this.sessionService.user;
-
-            if (this.data.contact) {
-                let person = this.data.contact.personContactInfo.person;
-                if (event.itemData == EmailTags.FirstName)
-                    return this.insertText(person.firstName);
-                else if (event.itemData == EmailTags.LastName)
-                    return this.insertText(person.lastName);
+            let value = this.getTagValue(event.itemData);
+            if (value) {
+                if (event.itemData == EmailTags.SenderCompanyLogo)
+                    this.insertImageElement(value);
+                else
+                    this.insertText(value);
             }
-
-            if (event.itemData == EmailTags.SenderFullName)
-                this.insertText(userPerson.fullName);
-            else if (event.itemData == EmailTags.SenderEmail)
-                this.insertText(user.emailAddress);
-            else if (event.itemData == EmailTags.SenderCompanyTitle)
-                this.insertText(userPerson.jobTitle);
-            else if (event.itemData == EmailTags.SenderPhone
-                && userPerson.primaryPhoneId
-            ) this.insertText(userPerson.details.phones.filter(
-                    item => item.id == userPerson.primaryPhoneId
-                )[0].phoneNumber);
-            else if (event.itemData == EmailTags.SenderWebSite
-                && userPerson.details.links.length
-            ) this.insertText(userPerson.details.links[0].url);
-            else if (event.itemData == EmailTags.SenderCompany && userOrganization)
-                this.insertText(userOrganization.companyName);
-            else if (event.itemData == EmailTags.SenderCompanyLogo && userOrganization)
-                this.insertImageElement(this.userCompanyContact.primaryPhoto);
-            else if (event.itemData == EmailTags.SenderCompanyPhone
-                && this.userCompanyContact.primaryPhoneId
-            ) this.insertText(this.userCompanyContact.details.phones.filter(
-                    item => item.id == this.userCompanyContact.primaryPhoneId
-                )[0].phoneNumber);
-            else if (event.itemData == EmailTags.SenderCompanyEmail
-                && this.userCompanyContact.details && this.userCompanyContact.details.emails.length
-            ) this.insertText(this.userCompanyContact.details.emails[0].emailAddress);
-            else if (event.itemData == EmailTags.SenderCompanyWebSite
-                && this.userCompanyContact.details && this.userCompanyContact.details.links.length
-            ) this.insertText(this.userCompanyContact.details.links[0].url);
         }
         this.tagsTooltipVisible = false;
+    }
+
+    getTagValue(name) {
+        let userPerson = this.userContact.personContactInfo,
+            userOrganization = this.userCompanyContact &&
+                this.userCompanyContact.organization,
+            user = this.sessionService.user;
+
+        if (this.data.contact) {
+            let person = this.data.contact.personContactInfo.person;
+            if (name == EmailTags.FirstName)
+                return person.firstName;
+            else if (name == EmailTags.LastName)
+                return person.lastName;
+        }
+
+        if (name == EmailTags.SenderFullName)
+            return userPerson && userPerson.fullName;
+        else if (name == EmailTags.SenderEmail)
+            return user.emailAddress;
+        else if (name == EmailTags.SenderCompanyTitle)
+            return userPerson && userPerson.jobTitle;
+        else if (name == EmailTags.SenderPhone
+            && userPerson && userPerson.primaryPhoneId
+        ) return userPerson.details.phones.filter(item =>
+            item.id == userPerson.primaryPhoneId)[0].phoneNumber;
+        else if (name == EmailTags.SenderWebSite
+            && userPerson && userPerson.details.links.length
+        ) {
+            let links = this.getWebsiteLinks(userPerson.details.links);
+            return links.length && links[0].url;
+        } else if (name == EmailTags.SenderCompany && userOrganization)
+            return userOrganization.companyName;
+        else if (name == EmailTags.SenderCompanyLogo && userOrganization)
+            return this.userCompanyContact.primaryPhoto;
+        else if (name == EmailTags.SenderCompanyPhone
+            && this.userCompanyContact && this.userCompanyContact.primaryPhoneId
+        ) return this.userCompanyContact.details.phones.filter(
+            item => item.id == this.userCompanyContact.primaryPhoneId)[0].phoneNumber;
+        else if (name == EmailTags.SenderCompanyEmail && this.userCompanyContact
+            && this.userCompanyContact.details && this.userCompanyContact.details.emails.length
+        ) return this.userCompanyContact.details.emails[0].emailAddress;
+        else if (name == EmailTags.SenderCompanyWebSite && this.userCompanyContact
+            && this.userCompanyContact.details && this.userCompanyContact.details.links.length
+        ) {
+            let links = this.getWebsiteLinks(this.userCompanyContact.details.links);
+            return links.length && links[0].url;
+        }
+    }
+
+    getWebsiteLinks(list) {
+        return list.filter(item => item.linkTypeId == this.WEBSITE_LINK_TYPE_ID);
     }
 
     onKeyUp(event) {

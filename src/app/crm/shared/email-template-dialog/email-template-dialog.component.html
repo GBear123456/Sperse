@@ -135,7 +135,7 @@
                                 [dataSource]="tagsList"
                                 [itemTemplate]="'startCase'"
                                 (onItemClick)="onTagClick($event)">
-                                <div *dxTemplate="let data of 'startCase'" class="tags-list-item">
+                                <div *dxTemplate="let data of 'startCase'" class="tags-list-item" [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
                                     {{ startCase(data) }}
                                 </div>                
                             </dx-list>
