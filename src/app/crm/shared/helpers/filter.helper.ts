@@ -5,6 +5,7 @@ import * as _ from 'underscore';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { PipelineDto } from '@shared/service-proxies/service-proxies';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { ContactGroup } from '@shared/AppEnums';
 
 export class FilterHelpers {
     static ConvertPipelinesToTreeSource(data: PipelineDto[]): any[] {
@@ -119,7 +120,11 @@ export class FilterHelpers {
         return phone.replace(/[^\d+]/g, '');
     }
 
-    static filterByGroupId() {
-        return { 'GroupId': {'eq': 'C'} };
+    static filterByClientGroupId() {
+        return { 'GroupId': {'eq': ContactGroup.Client} };
+    }
+
+    static filterByPartnerGroupId() {
+        return { 'GroupId': {'eq': ContactGroup.Partner} };
     }
 }

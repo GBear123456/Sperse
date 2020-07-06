@@ -587,7 +587,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.dataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        FiltersService.filterByGroupId()
+                        FiltersService.filterByClientGroupId()
                     ]
                 ),
                 version: AppConsts.ODataVersion,
@@ -602,7 +602,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.StatusId,
                             this.clientFields.Email,
                             this.clientFields.Phone
-                        ]);
+                        ]
+                    );
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -1035,7 +1036,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterModelRating,
             this.filterModelStar,
             new FilterModel({
-                caption: 'groupId',
+                caption: 'clientGroupId',
                 hidden: true
             })
         ];

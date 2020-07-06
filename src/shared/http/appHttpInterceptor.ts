@@ -17,7 +17,6 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'CRM_Country_GetCountryStates',
         'odata_LeadSlice',
         'odata_ContactSlice',
-        'odata_PartnerSlice',
         'odata_SubscriptionSlice',
         'Localization_GetLocalizationSource'
     ];
