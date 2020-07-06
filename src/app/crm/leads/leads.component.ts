@@ -1526,6 +1526,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
+            this.processFilterInternal();
             this.isDataLoaded = false;
         }
     }
