@@ -2833,6 +2833,62 @@ export class BANKCodeServiceProxy {
         }
         return _observableOf<GetUserRankOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getRecentlyAddedContacts(): Observable<RecentlyAddedContact[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetRecentlyAddedContacts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRecentlyAddedContacts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecentlyAddedContacts(<any>response_);
+                } catch (e) {
+                    return <Observable<RecentlyAddedContact[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RecentlyAddedContact[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRecentlyAddedContacts(response: HttpResponseBase): Observable<RecentlyAddedContact[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(RecentlyAddedContact.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RecentlyAddedContact[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -9012,13 +9068,12 @@ export class ContactCommunicationServiceProxy {
     }
 
     /**
+     * @templateId (optional) 
      * @return Success
      */
-    getEmailData(templateId: number, contactId: number): Observable<GetEmailDataOutput> {
+    getEmailData(templateId: number | null | undefined, contactId: number): Observable<GetEmailDataOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetEmailData?";
-        if (templateId === undefined || templateId === null)
-            throw new Error("The parameter 'templateId' must be defined and cannot be null.");
-        else
+        if (templateId !== undefined)
             url_ += "TemplateId=" + encodeURIComponent("" + templateId) + "&"; 
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
@@ -38250,6 +38305,58 @@ export interface IGetUserRankOutput {
     generationDate: moment.Moment | undefined;
 }
 
+export class RecentlyAddedContact implements IRecentlyAddedContact {
+    sourceContactFullName!: string | undefined;
+    bankCode!: string | undefined;
+    bankCodeDate!: moment.Moment | undefined;
+    countryId!: string | undefined;
+    countryName!: string | undefined;
+
+    constructor(data?: IRecentlyAddedContact) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sourceContactFullName = data["sourceContactFullName"];
+            this.bankCode = data["bankCode"];
+            this.bankCodeDate = data["bankCodeDate"] ? moment(data["bankCodeDate"].toString()) : <any>undefined;
+            this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
+        }
+    }
+
+    static fromJS(data: any): RecentlyAddedContact {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecentlyAddedContact();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceContactFullName"] = this.sourceContactFullName;
+        data["bankCode"] = this.bankCode;
+        data["bankCodeDate"] = this.bankCodeDate ? this.bankCodeDate.toISOString() : <any>undefined;
+        data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
+        return data; 
+    }
+}
+
+export interface IRecentlyAddedContact {
+    sourceContactFullName: string | undefined;
+    bankCode: string | undefined;
+    bankCodeDate: moment.Moment | undefined;
+    countryId: string | undefined;
+    countryName: string | undefined;
+}
+
 export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -47421,6 +47528,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
     bcc!: string[] | undefined;
     body!: string | undefined;
     attachments!: Attachment[] | undefined;
+    tags!: { [key: string] : string; } | undefined;
 
     constructor(data?: IGetEmailDataOutput) {
         if (data) {
@@ -47449,6 +47557,13 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
                 this.attachments = [];
                 for (let item of data["attachments"])
                     this.attachments.push(Attachment.fromJS(item));
+            }
+            if (data["tags"]) {
+                this.tags = {};
+                for (let key in data["tags"]) {
+                    if (data["tags"].hasOwnProperty(key))
+                        this.tags[key] = data["tags"][key];
+                }
             }
         }
     }
@@ -47479,6 +47594,13 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
             for (let item of this.attachments)
                 data["attachments"].push(item.toJSON());
         }
+        if (this.tags) {
+            data["tags"] = {};
+            for (let key in this.tags) {
+                if (this.tags.hasOwnProperty(key))
+                    data["tags"][key] = this.tags[key];
+            }
+        }
         return data; 
     }
 }
@@ -47489,6 +47611,7 @@ export interface IGetEmailDataOutput {
     bcc: string[] | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
+    tags: { [key: string] : string; } | undefined;
 }
 
 export class SendEmailInput implements ISendEmailInput {
