@@ -72,6 +72,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 import { PipelinesStoreActions } from '@app/crm/store';
 import { AppStore } from '@app/store';
+import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
@@ -131,7 +132,7 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
         MatSelectModule,
         MatStepperModule,
         AngularGooglePlaceModule,
-
+        SourceContactListModule,
         CRMDashboardWidgetsModule,
         ContactsModule,
         FileUploadModule,

@@ -23,7 +23,14 @@
                      [visible]="actionEvent"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
-        <app-static-list
+        <source-contact-list #sourceList
+            targetSelector=".dx-button[aria-label=Source]"
+            [filterModel]="filterModelSource"
+            [selectedKeys]="selectedClientKeys"
+            [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
+            (onApply)="onSourceApply($event)">
+        </source-contact-list>
+        <app-static-list #stageList
                 width="210px"
                 [title]="l('Stages')"
                 [selectedKeys]="selectedClientKeys"

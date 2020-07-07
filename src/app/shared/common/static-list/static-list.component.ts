@@ -27,6 +27,7 @@ export class StaticListComponent {
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onBottomInputApplyValue: EventEmitter<any> = new EventEmitter();
+    @Output() onFilterApply: EventEmitter<any> = new EventEmitter();
     @Input() width: string;
     @Input() height: number;
     @Input() listHeight: string;
@@ -39,6 +40,7 @@ export class StaticListComponent {
     @Input() showConfirmation = true;
     @Input() updateConfirmationTitle: string;
     @Input() updateConfirmationMessage: string;
+    @Input() showSelectionControls = false;
     @Input() hideButtons = true;
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
@@ -135,15 +137,24 @@ export class StaticListComponent {
     }
 
     applyFilter(event, data) {
-        event.stopPropagation();
+        let filterElement = this.filterModel.items.element;
         this.clearFiltersHighlight();
-        if (this.filterModel.items.element.value == data.id)
-            this.filterModel.items.element.value = [];
+        if (this.onFilterApply.observers.length)
+            this.onFilterApply.emit(data);
         else {
-            this.filterModel.items.element.value = [data.id];
-            event.target.parentNode.parentNode.parentNode.classList.add('filtered');
+            if (filterElement.value == data.id)
+                filterElement.value = [];
+            else
+                filterElement.value = [data.id];
         }
         this.filtersService.change([this.filterModel]);
+        event.stopPropagation();
+    }
+
+    isFilteredItem(data) {
+        let value = this.filterModel && this.filterModel.items.element.value;
+        if (value)
+            return value.some ? value.some(item => item.value == data.id) : data.id == value;
     }
 
     onContentReady() {

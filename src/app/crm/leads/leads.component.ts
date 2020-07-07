@@ -1,3 +1,4 @@
+
 /** Core imports */
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Params, RouteReuseStrategy } from '@angular/router';
@@ -57,11 +58,12 @@ import { FilterStatesComponent } from '@shared/filters/states/filter-states.comp
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
-    ContactServiceProxy,
     LayoutType,
+    PipelineDto,
     LeadServiceProxy,
     OrganizationUnitDto,
-    PipelineDto
+    ContactServiceProxy,
+    UpdateLeadSourceContactsInput
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
@@ -102,6 +104,7 @@ import { SourceFilterModel } from '../shared/filters/source-filter/source-filter
 import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
@@ -126,11 +129,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(UserAssignmentComponent, {static: false}) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent, {static: false}) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent, {static: false}) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent, {static: false}) stagesComponent: StaticListComponent;
+    @ViewChild('stageList', {static: false}) stagesComponent: StaticListComponent;
     @ViewChild(PivotGridComponent, {static: false}) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, {static: true}) chartComponent: ChartComponent;
     @ViewChild(MapComponent, {static: false}) mapComponent: MapComponent;
     @ViewChild(ToolBarComponent, {static: false}) toolbar: ToolBarComponent;
+    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
 
     private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI = 'Lead';
@@ -193,6 +197,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
+    filterModelSource: FilterModel;
     filterModelAssignment: FilterModel;
     filterDate = new FilterModel({
         component: FilterCalendarComponent,
@@ -1032,7 +1037,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             })
                     }
                 }),
-                new FilterModel({
+                this.filterModelSource = new FilterModel({
                     component: FilterSourceComponent,
                     caption: 'Source',
                     hidden: this.appSession.userIsMember,
@@ -1169,6 +1174,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
                         }
                     },
+                    {
+                        name: 'archive',
+                        disabled: this.manageDisabled,
+                        options: {
+                            text: this.l('Source'),
+                            hint: this.l('Source')
+                        },
+                        action: this.toggleSource.bind(this),
+                        attr: {
+                            'filter-selected': !!this.filterModelSource.items.element['contact']
+                        }
+                    },
+
+
                     {
                         name: 'lists',
                         disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
@@ -1479,7 +1498,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
-
         if (this.showPipeline || this.showDataGrid || this.showPivotGrid) {
             contexts = contexts && contexts.length ? contexts : [ this.showPipeline ? this.pipelineComponent : this ];
             contexts.forEach(context => {
@@ -1628,6 +1646,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.stagesComponent.toggle();
     }
 
+    toggleSource() {
+        this.sourceComponent.toggle();
+    }
+
     toggleLists() {
         this.listsComponent.toggle();
     }
@@ -1761,6 +1783,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.cacheService.set(this.cacheKey, event.value);
             this.createButtonEnabledSet();
             this.initToolbarConfig();
+        }
+    }
+
+    onSourceApply(contact) {
+        if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
+            this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
+                leadIds: this.selectedLeads.map(lead => lead.Id),
+                sourceContactId: contact.id
+            })).subscribe(res => {
+                this.selectedLeads = [];
+                this.processFilterInternal();
+                this.notify.success(this.l('AppliedSuccessfully'));
+            });
         }
     }
 
