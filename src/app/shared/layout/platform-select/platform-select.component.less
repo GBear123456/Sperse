@@ -35,7 +35,8 @@
     }
 
     &.hub input {
-        background-image: linear-gradient(41deg, #f6221d, #f6b3b2);
+        background-image: linear-gradient(41deg, #34aee0, #2beccf),
+            linear-gradient(to bottom, rgba(0, 255, 255, 0), rgba(0, 255, 255, 0));
     }
 
     &.slice input {
@@ -355,8 +356,8 @@
             &.hub {
                 [class$="title"] {
                     &::before {
-                        background-image: linear-gradient(to bottom, rgba(0, 255, 255, 0),
-                                          rgba(0, 255, 255, 0)), linear-gradient(222deg, #2beccf, #34aee0);
+                        background-image: linear-gradient(41deg, #34aee0, #2beccf),
+                            linear-gradient(to bottom, rgba(0, 255, 255, 0), rgba(0, 255, 255, 0));
                     }
                 }
             }
@@ -389,9 +390,6 @@
             display: block;
             transition: .2s;
             text-decoration: none;
-
-            &:hover {
-            }
 
             &.disabled {
                 pointer-events: none;
