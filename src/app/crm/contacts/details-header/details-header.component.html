@@ -55,6 +55,7 @@
                                       lEntityName="Name"
                                       [editPlaceholder]="ls.l('ClientNamePlaceholder')"
                                       [isEditDialogEnabled]="true"
+                                      [validationRules]="companyValidationRules"
                                       (valueChanged)="updateCompanyField($event)">
                         </inplace-edit>
                         <i *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)"
@@ -73,7 +74,6 @@
                                       [value]="personJobTitleInSelectedOrganization$ | async"
                                       [isReadOnlyField]="!manageAllowed"
                                       [editPlaceholder]="ls.l('JobTitle')"
-                                      [validationRules]="companyValidationRules"
                                       (valueChanged)="updateJobTitle($event)">
                         </inplace-edit>
                     </h3>
