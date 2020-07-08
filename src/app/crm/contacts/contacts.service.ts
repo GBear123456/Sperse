@@ -334,7 +334,7 @@ export class ContactsService {
         }));
     }
 
-    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>) {
+    showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>): Observable<number> {
         let emailData: any = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),

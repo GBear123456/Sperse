@@ -288,7 +288,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     action: () => {
                         this.contactService.showEmailDialog({
                             contactId: (this.actionEvent.data || this.actionEvent).Id
-                        });
+                        }).subscribe();
                     }
                 },
             ]
@@ -1193,8 +1193,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     action: () => {
                                         this.contactService.showEmailDialog({
                                             contactId: this.selectedClientKeys[0],
-                                            to: this.selectedClients.map(lead => lead.Email)
-                                        });
+                                            to: this.selectedClients.map(lead => lead.Email).filter(Boolean)
+                                        }).subscribe();
                                     }
                                 },
                                 {
