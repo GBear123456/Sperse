@@ -30,7 +30,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() key = '';
-    @Input() bankCode: string;
+    @Input() bankCode: string | '????';
     @Input() personId: number;
     @Input() showDescriptionsOnHover = false;
     @Input() showDescriptionsOnClick = false;

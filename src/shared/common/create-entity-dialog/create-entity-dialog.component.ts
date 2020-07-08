@@ -70,6 +70,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
@@ -189,7 +190,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     hideLinksField: boolean = this.data.hideLinksField;
     hideNotesField: boolean = this.data.hideNotesField;
     disallowMultipleItems: boolean = this.data.disallowMultipleItems;
-    showBankCodeField: boolean = this.data.showBankCodeField;
+    showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
 
@@ -216,6 +217,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
         private permissionService: AppPermissionService,
+        private userManagementService: UserManagementService,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: any

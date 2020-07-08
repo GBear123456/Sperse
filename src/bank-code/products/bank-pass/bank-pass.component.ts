@@ -337,7 +337,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 hidePhotoArea: true,
                 hideSaveAndExtend: true,
                 disallowMultipleItems: true,
-                showBankCodeField: true,
                 dontCheckSimilarEntities: true
             }
         });
