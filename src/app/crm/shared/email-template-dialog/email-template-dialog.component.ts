@@ -351,7 +351,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     insertImageElement(src) {
         this.ckEditor.model.change(writer => {
-            writer.insertElement('image', {src: this.profileService.getPhoto(src)},
+            writer.insertElement('image', {src: src},
                 this.ckEditor.model.document.selection.getFirstPosition());
         });
     }
