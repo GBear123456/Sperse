@@ -21,8 +21,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    ContactCommunicationServiceProxy, UpdateEmailTemplateRequest, GetTemplateReponse,
-    ContactServiceProxy, ContactInfoDto, OrganizationContactServiceProxy, OrganizationContactInfoDto
+    ContactCommunicationServiceProxy, UpdateEmailTemplateRequest, GetTemplateReponse, ContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
@@ -50,9 +49,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     startCase = startCase;
     tagsTooltipVisible = false;
     insertAsHTML = false;
-
-    userContact = new ContactInfoDto();
-    userCompanyContact = new OrganizationContactInfoDto();
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
@@ -85,7 +81,6 @@ export class EmailTemplateDialogComponent implements OnInit {
         private notifyService: NotifyService,
         private profileService: ProfileService,
         private contactProxy: ContactServiceProxy,
-        private orgContactProxy: OrganizationContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
@@ -100,18 +95,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
-        this.contactProxy.getContactInfoForUser(
-            sessionService.user.id
-        ).subscribe(contact => {
-            this.userContact = contact;
-            if (contact.primaryOrganizationContactId)
-                this.orgContactProxy.getOrganizationContactInfo(
-                    contact.primaryOrganizationContactId
-                ).subscribe(companyContact => {
-                    this.userCompanyContact = companyContact;
-                    this.changeDetectorRef.detectChanges();
-                });
-        });
+        if (!this.data.tags && this.data.contact)
+            this.communicationProxy.getEmailData(undefined, this.data.contact.id).subscribe(res => {
+                this.data.tags = res.tags;
+            });
     }
 
     ngOnInit() {
@@ -351,51 +338,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     getTagValue(name) {
-        let userPerson = this.userContact.personContactInfo,
-            userOrganization = this.userCompanyContact &&
-                this.userCompanyContact.organization,
-            user = this.sessionService.user;
-
-        if (this.data.contact) {
-            let person = this.data.contact.personContactInfo.person;
-            if (name == EmailTags.FirstName)
-                return person.firstName;
-            else if (name == EmailTags.LastName)
-                return person.lastName;
-        }
-
-        if (name == EmailTags.SenderFullName)
-            return userPerson && userPerson.fullName;
-        else if (name == EmailTags.SenderEmail)
-            return user.emailAddress;
-        else if (name == EmailTags.SenderCompanyTitle)
-            return userPerson && userPerson.jobTitle;
-        else if (name == EmailTags.SenderPhone
-            && userPerson && userPerson.primaryPhoneId
-        ) return userPerson.details.phones.filter(item =>
-            item.id == userPerson.primaryPhoneId)[0].phoneNumber;
-        else if (name == EmailTags.SenderWebSite
-            && userPerson && userPerson.details.links.length
-        ) {
-            let links = this.getWebsiteLinks(userPerson.details.links);
-            return links.length && links[0].url;
-        } else if (name == EmailTags.SenderCompany && userOrganization)
-            return userOrganization.companyName;
-        else if (name == EmailTags.SenderCompanyLogo && userOrganization)
-            return this.userCompanyContact.primaryPhoto;
-        else if (name == EmailTags.SenderCompanyPhone
-            && this.userCompanyContact && this.userCompanyContact.primaryPhoneId
-        ) return this.userCompanyContact.details.phones.filter(
-            item => item.id == this.userCompanyContact.primaryPhoneId)[0].phoneNumber;
-        else if (name == EmailTags.SenderCompanyEmail && this.userCompanyContact
-            && this.userCompanyContact.details && this.userCompanyContact.details.emails.length
-        ) return this.userCompanyContact.details.emails[0].emailAddress;
-        else if (name == EmailTags.SenderCompanyWebSite && this.userCompanyContact
-            && this.userCompanyContact.details && this.userCompanyContact.details.links.length
-        ) {
-            let links = this.getWebsiteLinks(this.userCompanyContact.details.links);
-            return links.length && links[0].url;
-        }
+        return this.data.tags && this.data.tags[name];
     }
 
     getWebsiteLinks(list) {

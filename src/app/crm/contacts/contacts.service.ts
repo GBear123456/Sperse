@@ -310,7 +310,7 @@ export class ContactsService {
             dialogComponent.tagsList = [
                 EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName,
                 EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite,
-                EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, /* EmailTags.SenderCompanyLogo , */
+                EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
                 EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite
             ];
         }
@@ -416,10 +416,7 @@ export class ContactsService {
         return this.showEmailDialog(data, 'Email', (tmpId, emailData) => {
             return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
                 map((email: GetEmailDataOutput) => {
-                    emailData.cc = email.cc;
-                    emailData.bcc = email.bcc;
-                    emailData.body = email.body;
-                    emailData.subject = email.subject;
+                    Object.assign(emailData, email);
                 })
             );
         });

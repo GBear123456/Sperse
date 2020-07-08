@@ -46,7 +46,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderWebSite,
         EmailTags.SenderCompany,
         EmailTags.SenderCompanyTitle,
-        //EmailTags.SenderCompanyLogo,
+        EmailTags.SenderCompanyLogo,
         EmailTags.SenderCompanyPhone,
         EmailTags.SenderCompanyEmail,
         EmailTags.SenderCompanyWebSite
