@@ -62923,6 +62923,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     groupId!: string | undefined;
     organization!: OrganizationInfoDto | undefined;
     contactPersons!: PersonShortInfoDto[] | undefined;
+    isUpdateable!: boolean | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
     userId!: number | undefined;
@@ -62950,6 +62951,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
                 for (let item of data["contactPersons"])
                     this.contactPersons.push(PersonShortInfoDto.fromJS(item));
             }
+            this.isUpdateable = data["isUpdateable"];
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.userId = data["userId"];
@@ -62977,6 +62979,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             for (let item of this.contactPersons)
                 data["contactPersons"].push(item.toJSON());
         }
+        data["isUpdateable"] = this.isUpdateable;
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
@@ -62993,6 +62996,7 @@ export interface IOrganizationContactInfoDto {
     groupId: string | undefined;
     organization: OrganizationInfoDto | undefined;
     contactPersons: PersonShortInfoDto[] | undefined;
+    isUpdateable: boolean | undefined;
     id: number | undefined;
     fullName: string | undefined;
     userId: number | undefined;
