@@ -114,6 +114,7 @@ import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
+import { MessageService } from '@abp/message/message.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -463,6 +464,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private impersonationService: ImpersonationService,
         private filterStatesService: FilterStatesService,
         private nameParserService: NameParserService,
+        private messageService: MessageService,
         private httpClient: HttpClient,
         public dialog: MatDialog,
         public contactProxy: ContactServiceProxy,
@@ -1786,16 +1788,25 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    onSourceApply(contact) {
+    onSourceApply(contacts) {
         if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
-            this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
-                leadIds: this.selectedLeads.map(lead => lead.Id),
-                sourceContactId: contact.id
-            })).subscribe(res => {
-                this.selectedLeads = [];
-                this.processFilterInternal();
-                this.notify.success(this.l('AppliedSuccessfully'));
-            });
+            this.messageService.confirm(
+                this.l('BulkUpdateConfirmation', this.selectedLeads.length),
+                this.l('AreYouSure'),
+                confirmed => {
+                    if (confirmed)
+                        this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
+                            leadIds: this.selectedLeads.map(lead => lead.Id),
+                            sourceContactId: contacts[0].id
+                        })).subscribe(res => {
+                            this.selectedLeads = [];
+                            if (this.dataGrid && this.dataGrid.instance)
+                                this.dataGrid.instance.deselectAll();
+                            this.processFilterInternal();
+                            this.notify.success(this.l('AppliedSuccessfully'));
+                        });
+                }
+            );
         }
     }
 
