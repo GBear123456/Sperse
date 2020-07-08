@@ -54,7 +54,8 @@ export class AddressesComponent implements OnInit {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId) 
+                && (!this.isCompany || val['organizationContactInfo'].isUpdatable);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;

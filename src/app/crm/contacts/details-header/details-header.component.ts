@@ -86,6 +86,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
+    get isOrgUpdatable(): Boolean {
+        return this.manageAllowed && this.data && this.data['organizationContactInfo'] 
+            && this.data['organizationContactInfo'].isUpdatable;
+    }
+
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
 
@@ -552,7 +557,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     addCompanyLogo(event) {
-        if (this.manageAllowed) {
+        if (this.isOrgUpdatable) {
             this.contactsService.showUploadPhotoDialog(
                 this.data['organizationContactInfo'],
                 event

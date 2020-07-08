@@ -51,7 +51,7 @@
                         <inplace-edit #companyName
                                       [id]="organizationContactInfo.id"
                                       [value]="trim(organizationContactInfo.fullName)"
-                                      [isReadOnlyField]="!manageAllowed"
+                                      [isReadOnlyField]="!isOrgUpdatable"
                                       lEntityName="Name"
                                       [editPlaceholder]="ls.l('ClientNamePlaceholder')"
                                       [isEditDialogEnabled]="true"
@@ -59,9 +59,9 @@
                                       (valueChanged)="updateCompanyField($event)">
                         </inplace-edit>
                         <i *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)"
-                           class="fa fa-angle-down"
-                           (click)="showCompanyList($event)"></i>
-                        <div class="actions" [hidden]="!manageAllowed || companyName.isEditModeEnabled">
+                            class="fa fa-angle-down" (click)="showCompanyList($event)">
+                        </i>
+                        <div class="actions" [hidden]="!isOrgUpdatable || companyName.isEditModeEnabled">
                             <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
                             <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
                             <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
@@ -72,7 +72,7 @@
                                       lEntityName="JobTitle"
                                       [id]="selectedOrganizationId$ | async"
                                       [value]="personJobTitleInSelectedOrganization$ | async"
-                                      [isReadOnlyField]="!manageAllowed"
+                                      [isReadOnlyField]="!isOrgUpdatable"
                                       [editPlaceholder]="ls.l('JobTitle')"
                                       (valueChanged)="updateJobTitle($event)">
                         </inplace-edit>
@@ -83,7 +83,7 @@
                 <img (click)="addCompanyLogo($event)" [src]="'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto" alt="Organization Logo">
             </div>
             <ng-template #addCompanyPhoto>
-                <div class="add-company-logo">
+                <div *ngIf="isOrgUpdatable" class="add-company-logo">
                     <a (click)="addCompanyLogo($event)">+ {{ ls.l('AddCompanyLogo') }}</a>
                 </div>
             </ng-template>

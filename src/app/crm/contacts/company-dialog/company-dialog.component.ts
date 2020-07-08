@@ -88,22 +88,7 @@ export class CompanyDialogComponent implements OnInit {
     maxAffiliateCodeLength = AppConsts.maxAffiliateCodeLength;
     currentDate = new Date();
     title: string;
-    buttons: IDialogButton[] = [
-        {
-            id: 'saveCompany',
-            title: this.ls.l('Save'),
-            class: 'primary saveButton',
-            action: this.save.bind(this),
-            disabled: !this.manageAllowed
-        },
-        {
-            id: 'deleteCompany',
-            title: this.ls.l('Delete'),
-            class: 'button-layout button-default delete-button',
-            action: () => this.delete(),
-            disabled: !this.manageAllowed
-        }
-    ];
+    buttons: IDialogButton[] = [];
 
     constructor(
         private organizationContactServiceProxy: OrganizationContactServiceProxy,
@@ -123,6 +108,7 @@ export class CompanyDialogComponent implements OnInit {
     ngOnInit() {
         this.modalDialog.buttons = this.buttons;
         const company: OrganizationContactInfoDto = this.data.company;
+        this.manageAllowed = this.manageAllowed && company.isUpdatable;
         this.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
         this.company.id = company.id;
@@ -134,7 +120,27 @@ export class CompanyDialogComponent implements OnInit {
         this.data.placeholder = this.ls.l('Customer.CompanyName');
         this.loadOrganizationTypes();
         this.loadCountries();
+        this.initButtons();
         this.loadStates();
+    }
+
+    initButtons() {
+        this.buttons = [
+            {
+                id: 'saveCompany',
+                title: this.ls.l('Save'),
+                class: 'primary saveButton',
+                action: this.save.bind(this),
+                disabled: !this.manageAllowed
+            },
+            {
+                id: 'deleteCompany',
+                title: this.ls.l('Delete'),
+                class: 'button-layout button-default delete-button',
+                action: () => this.delete(),
+                disabled: !this.manageAllowed
+            }
+        ];
     }
 
     save() {
