@@ -50,13 +50,44 @@ export class ResourcesComponent {
                         },
                         {
                             title: 'Media Kit',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Media+Kit/Media+Kit.pdf',
+                            fileLink: 'https://www.codebreakertech.com/mediakit/MediaKit.pdf',
                             img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/Media_Kit.png'
                         },
                         {
                             title: 'AR Tools',
                             fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Corporate+Docs/Affiliate+Supplies/Affiliate+Supplies.pdf',
                             img: './assets/common/images/bank-code/no_image.png'
+                        }
+                    ]
+                },
+                {
+                    categoryName: 'SBA Info',
+                    anchor: 'sba',
+                    list: [
+                        {
+                            title: 'Codebreaker Account Agreement',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/sba/CodebreakerSmallBusinessAccountAgreement-May2020.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/sba/1.png'
+                        },
+                        {
+                            title: 'Codebreaker Account Coach Agreement',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/sba/CodebreakerSmallBusinessAccountCoachAgreement-May2020.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/sba/2.png'
+                        },
+                        {
+                            title: 'Codebreaker Account Enrollment Process',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/sba/CodebreakerSmallBusinessAccountEnrollmentProcess-May2020.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/sba/3.png'
+                        },
+                        {
+                            title: 'Account pricing',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/sba/SMALLBUSINESSACCOUNTPRICING-MAY2020.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/sba/4.png'
+                        },
+                        {
+                            title: 'Account pricing (Print)',
+                            fileLink: AppConsts.remoteServiceBaseUrl + '/docs/cb/sba/SMALLBUSINESSACCOUNTPRICING_Print-MAY2020.pdf',
+                            img: './assets/common/images/bank-code/thumbnails/sba/5.png'
                         }
                     ]
                 },
