@@ -1798,7 +1798,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
                             leadIds: this.selectedLeads.map(lead => lead.Id),
                             sourceContactId: contacts[0].id,
-                            applyCurrentAffiliateCode: forced
+                            applyCurrentAffiliateCode: applyCode
                         })).subscribe(res => {
                             this.selectedLeads = [];
                             if (this.dataGrid && this.dataGrid.instance)
