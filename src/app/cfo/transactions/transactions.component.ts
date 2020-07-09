@@ -1323,10 +1323,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     categorizeTransactions($event) {
-        let transactions: TransactionDto[] = this.dataGrid.instance.getSelectedRowKeys();
+        let transactions: any[] = this.dataGrid.instance.getSelectedRowKeys();
         if (!transactions.length && this.draggedTransactionRow)
             transactions = [this.draggedTransactionRow];
-        let transactionIds = transactions.map(t => t.Id);
+        let transactionIds = transactions.map(t => t.Id || t);
         let isSingleDraggedTransaction = !!this.draggedTransactionRow;
 
         if ($event.categoryId) {
