@@ -41,6 +41,10 @@ import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-t
                         path: 'bank-trainer',
                         component: BankTrainerComponent
                     },
+                    /*{
+                        path: 'bank-coach',
+                        component:
+                    },*/
                     {
                         path: 'bank-affiliate',
                         component: BankAffiliateComponent

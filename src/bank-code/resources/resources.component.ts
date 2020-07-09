@@ -20,10 +20,11 @@ export class ResourcesComponent {
     isClicked = 0;
     data$: Observable<any> = zip(
         this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer)
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach)
     ).pipe(
-        map(([hasAffiliateSubscription, hasTrainerSubscription]: [boolean, boolean]) => {
-            return (hasAffiliateSubscription || hasTrainerSubscription ? [
+        map(([hasAffiliateSubscription, hasTrainerSubscription, hasCoachSubscription]: [boolean, boolean, boolean]) => {
+            return (hasAffiliateSubscription || hasTrainerSubscription || hasCoachSubscription ? [
                 {
                     categoryName: 'AR TOOLS',
                     anchor: 'marketing',
@@ -313,7 +314,7 @@ export class ResourcesComponent {
                     ]
                 }]
             ).concat(
-                hasTrainerSubscription ? [
+                hasTrainerSubscription || hasCoachSubscription ? [
                     {
                         categoryName: 'TRAINER KITS',
                         anchor: 'trainer',

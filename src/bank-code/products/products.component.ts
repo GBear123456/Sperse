@@ -28,13 +28,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.document.body.classList.add('overflow-hidden');
         zip(
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate)
-        ).subscribe(([showBankTrainer, showBankAffiliate]: [boolean, boolean]) => {
-            this.sidebarLinks = this.getSidebarLinks(showBankTrainer, showBankAffiliate);
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach)
+        ).subscribe(([showBankTrainer, showBankAffiliate, showBankCoach]: [boolean, boolean, boolean]) => {
+            this.sidebarLinks = this.getSidebarLinks(showBankTrainer, showBankAffiliate, showBankCoach);
         });
     }
 
-    private getSidebarLinks(showBankTrainer?: boolean, showBankAffiliate?: boolean) {
+    private getSidebarLinks(showBankTrainer?: boolean, showBankAffiliate?: boolean, showBankCoach?: boolean) {
         return [
             {
                 name: this.ls.l('BankCode_CodebreakerAI'),
@@ -55,6 +56,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
                 routerUrl: 'bank-trainer',
                 hidden: !showBankTrainer
             },
+            /*{
+                name: this.ls.l('BankCode_CertifiedCoach'),
+                routerUrl: 'bank-coach',
+                hidden: !showBankCoach
+            },*/
             {
                 name: this.ls.l('BankCode_Affiliate'),
                 routerUrl: 'bank-affiliate',

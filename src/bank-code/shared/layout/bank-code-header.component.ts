@@ -63,14 +63,14 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             zip(
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-                this.showResourcesLink()
-            ).subscribe(([showTrainerLink, showAffiliateLink, showResourcesLink]: [boolean, boolean, boolean]) => {
-                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showResourcesLink, this.getBCRMLink());
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach)
+            ).subscribe(([showTrainerLink, showAffiliateLink, showCoachLink]: [boolean, boolean, boolean]) => {
+                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showCoachLink, this.getBCRMLink());
             });
         }
     }
 
-    private getMemberAreaLinks(showTrainerLink?: boolean, showAffiliateLink?: boolean, showResourcesLink?: boolean, bcrmLink?: string) {
+    private getMemberAreaLinks(showTrainerLink?: boolean, showAffiliateLink?: boolean, showCoachLink?: boolean, bcrmLink?: string) {
         return [
             {
                 name: this.ls.l('Home'),
@@ -99,6 +99,11 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                         routerUrl: 'products/bank-trainer',
                         hidden: !showTrainerLink
                     },
+                    /*{
+                        name: this.ls.l('BankCode_CertifiedCoach'),
+                        routerUrl: 'products/bank-coach',
+                        hidden: !showCoachLink
+                    },*/
                     {
                         name: this.ls.l('BankCode_Affiliate'),
                         routerUrl: 'products/bank-affiliate',
@@ -136,18 +141,6 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
 
     private getBCRMLink(): string {
         return this.permission.isGranted(AppPermissions.CRM) ? '../app/crm' : './products/bankpass';
-    }
-
-    /**
-     * Show resources link if one of two subscription is available
-     */
-    private showResourcesLink(): Observable<boolean> {
-        return zip(
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer)
-        ).pipe(
-            map((subscriptions: boolean[]) => subscriptions.some(Boolean))
-        );
     }
 
     logoClick() {
