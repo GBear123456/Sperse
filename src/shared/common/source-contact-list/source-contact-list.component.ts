@@ -48,7 +48,7 @@ export class SourceContactListComponent {
     ) {}
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
-        if (!this.contacts.length) {
+        if (!this.contacts.length || elm) {
             let dxList  = this.sourceComponent.dxList;
             if (dxList && !elm)
                 elm = dxList.instance.element();
