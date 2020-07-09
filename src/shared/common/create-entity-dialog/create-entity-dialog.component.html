@@ -78,6 +78,16 @@
             </dx-button>
         </div>
 
+        <dxi-item location="before" template="partnerSource"></dxi-item>
+        <div *dxTemplate="let data of 'partnerSource'">
+            <dx-button [icon]="'./assets/common/icons/folder.svg'"
+                       [text]="ls.l('Source')"
+                       id="PartnersSource"
+                       [ngClass]="{ 'filter-selected': isSourceSelected }"
+                       (onClick)="togglePartnerSource()">
+            </dx-button>
+        </div>
+
         <dxi-item *ngIf="data.isInLeadMode; else notLead" template="stages" location="before"></dxi-item>
         <div *dxTemplate="let data of 'stages'">
             <dx-button
@@ -111,16 +121,6 @@
                 </div>
             </ng-template>
         </ng-template>
-
-       <dxi-item location="before" template="partnerSource"></dxi-item>
-       <div *dxTemplate="let data of 'partnerSource'">
-           <dx-button [icon]="'./assets/common/icons/folder.svg'"
-                      [text]="ls.l('Source')"
-                      id="PartnersSource"
-                      [ngClass]="{ 'filter-selected': isSourceSelected }"
-                      (onClick)="togglePartnerSource()">
-           </dx-button>
-       </div>
 
         <dxi-item location="before" template="lists" [disabled]="isListAndTagsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'lists'">

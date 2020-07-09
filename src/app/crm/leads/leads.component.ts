@@ -1169,14 +1169,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }
                     },
                     {
-                        name: 'stage',
-                        disabled: this.manageDisabled,
-                        action: this.toggleStages.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
-                        }
-                    },
-                    {
                         name: 'archive',
                         disabled: this.manageDisabled,
                         options: {
@@ -1186,6 +1178,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleSource.bind(this),
                         attr: {
                             'filter-selected': !!this.filterModelSource.items.element['contact']
+                        }
+                    },
+                    {
+                        name: 'stage',
+                        disabled: this.manageDisabled,
+                        action: this.toggleStages.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
                         }
                     },
 
