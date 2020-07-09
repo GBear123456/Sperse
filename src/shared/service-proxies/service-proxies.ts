@@ -58725,6 +58725,7 @@ export interface IUpdateLeadSourceContactOutput {
 export class UpdateLeadSourceContactsInput implements IUpdateLeadSourceContactsInput {
     leadIds!: number[];
     sourceContactId!: number | undefined;
+    applyCurrentAffiliateCode!: boolean | undefined;
 
     constructor(data?: IUpdateLeadSourceContactsInput) {
         if (data) {
@@ -58746,6 +58747,7 @@ export class UpdateLeadSourceContactsInput implements IUpdateLeadSourceContactsI
                     this.leadIds.push(item);
             }
             this.sourceContactId = data["sourceContactId"];
+            this.applyCurrentAffiliateCode = data["applyCurrentAffiliateCode"];
         }
     }
 
@@ -58764,6 +58766,7 @@ export class UpdateLeadSourceContactsInput implements IUpdateLeadSourceContactsI
                 data["leadIds"].push(item);
         }
         data["sourceContactId"] = this.sourceContactId;
+        data["applyCurrentAffiliateCode"] = this.applyCurrentAffiliateCode;
         return data; 
     }
 }
@@ -58771,6 +58774,7 @@ export class UpdateLeadSourceContactsInput implements IUpdateLeadSourceContactsI
 export interface IUpdateLeadSourceContactsInput {
     leadIds: number[];
     sourceContactId: number | undefined;
+    applyCurrentAffiliateCode: boolean | undefined;
 }
 
 export class UpdateLeadSourceOrganizationUnitInput implements IUpdateLeadSourceOrganizationUnitInput {
