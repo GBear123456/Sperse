@@ -87,7 +87,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     activityTypeIndex = 0;
 
-    isUserSelected = false;
+    isUserSelected = true;
     isStatusSelected = true;
     isContactSelected = false;
     isStarSelected = false;
@@ -141,10 +141,11 @@ export class CreateActivityDialogComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             });
         } else
-            this.initAppointmentDate();
+            this.initAppointmentData();
     }
 
-    initAppointmentDate() {
+    initAppointmentData() {
+        this.appointment.AssignedUserIds = [abp.session.userId];
         let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
         if (this.appointment.AllDay)
             this.isAllDay = true;
@@ -472,7 +473,7 @@ export class CreateActivityDialogComponent implements OnInit {
             this.isUserSelected = false;
             this.isContactSelected = false;
             this.isStarSelected = false;
-            this.initAppointmentDate();
+            this.initAppointmentData();
             this.initToolbarConfig();
 
             setTimeout(() => {

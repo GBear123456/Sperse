@@ -18,6 +18,7 @@ import { MessageService } from '@abp/message/message.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
@@ -64,6 +65,7 @@ export class UserAssignmentComponent implements OnDestroy {
     subscription: Subscription;
 
     constructor(
+        private appSessionService: AppSessionService,
         private appStoreService: AppStoreService,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
@@ -161,10 +163,11 @@ export class UserAssignmentComponent implements OnDestroy {
     }
 
     sortAssignableList() {
-        this.list.sort((prev, next) => {
-            return this.selectedItemKeys.indexOf(prev.id) >= 0 ? -1 :
-                Number(this.selectedItemKeys.indexOf(next.id) >= 0);
-        });
+        if (this.selectedItemKeys && this.selectedItemKeys.length)
+            this.list.sort((prev, next) => {
+                return this.selectedItemKeys.indexOf(prev.id) >= 0 ? -1 :
+                    Number(this.selectedItemKeys.indexOf(next.id) >= 0);
+            });
     }
 
     refreshList(assignedUsersSelector) {
@@ -187,16 +190,24 @@ export class UserAssignmentComponent implements OnDestroy {
     }
 
     initRelatedUsers() {
-        if (this.relatedUsers && this.relatedUsers.length) {
-            this.relatedUsers.forEach(user => {
-                this.isRelatedUser = this.isRelatedUser ||
-                    (user.id == abp.session.userId);
-                if (!_.findWhere(this.list, { id: user.id }))
-                    this.list.unshift(user);
-            });
-            if (!this.checkPermissions() && this.isRelatedUser)
-                this.list = this.relatedUsers;
-        }
+        let user = this.appSessionService.user;
+        if (!this.relatedUsers || !this.relatedUsers.length)
+            this.relatedUsers = [{
+                id: user.id, 
+                name: user.name, 
+                isActive: true, 
+                photoPublicId: user.profileThumbnailId
+            }];            
+
+        this.relatedUsers.forEach(user => {
+            this.isRelatedUser = this.isRelatedUser ||
+                (user.id == abp.session.userId);
+            if (!_.findWhere(this.list, { id: user.id }))
+                this.list.unshift(user);
+        });
+
+        if (!this.checkPermissions())
+            this.list = this.relatedUsers;
     }
 
     reset() {
