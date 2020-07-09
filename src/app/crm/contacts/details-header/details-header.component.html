@@ -30,7 +30,7 @@
                                    [personId]="data.id"
                                    key="detailsHeader"
                                    [showDescriptionsOnHover]="true"
-                                   [showReportLink]="true"
+                                   [showReportLink]="data?.personContactInfo?.person?.bankCode"
                                    reportIconName="blue"
                                    (onBankCodeStarIdChange)="bankCodeStarIdChange($event)">
                 </bank-code-letters>
