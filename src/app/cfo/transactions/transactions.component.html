@@ -178,7 +178,7 @@
                                     [caption]="l('Transactions_Description')">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Amount"
-                                    dataType="number"
+                                    dataType="currency"
                                     cssClass="tabular"
                                     name="Amount"
                                     [caption]="l('Transactions_Amount')"
@@ -217,7 +217,7 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.EndingBalance"
-                                    dataType="number"
+                                    dataType="currency"
                                     cssClass="tabular"
                                     [caption]="l('Transactions_EndingBalance')"
                                     cellTemplate="endBalanceTemplate"
@@ -278,7 +278,7 @@
                                     [visible]="false">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Debit"
-                                    dataType="number"
+                                    dataType="currency"
                                     cssClass="tabular"
                                     name="Debit"
                                     [renderAsync]="true"
@@ -289,7 +289,7 @@
                                     [visible]="false">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Credit"
-                                    dataType="number"
+                                    dataType="currency"
                                     cssClass="tabular"
                                     name="Credit"
                                     [renderAsync]="true"
@@ -310,7 +310,7 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Fees"
-                                    dataType="number"
+                                    dataType="currency"
                                     cssClass="tabular clipboard-holder"
                                     [caption]="l('Transactions_Fees')"
                                     [visible]="false">
