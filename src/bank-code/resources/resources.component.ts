@@ -50,7 +50,7 @@ export class ResourcesComponent {
                         },
                         {
                             title: 'Media Kit',
-                            fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Media+Kit/Media+Kit.pdf',
+                            fileLink: 'https://www.codebreakertech.com/mediakit/MediaKit.pdf',
                             img: './assets/common/images/bank-code/thumbnails/affiliate-marketing-tools/Media_Kit.png'
                         },
                         {
