@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
-import { filter } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -33,8 +33,7 @@ export class SocialsComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId)
-                && (!this.isCompany || val['organizationContactInfo'].isUpdatable);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -58,6 +57,11 @@ export class SocialsComponent {
         public ls: AppLocalizationService
     ) {
         this.linkTypesLoad();
+        contactsService.organizationContactInfo$.pipe(filter(orgInfo => {
+            return this.isCompany && orgInfo.id && !orgInfo.isUpdatable;
+        }), first()).subscribe(orgInfo => {
+            this.isEditAllowed = false;
+        });
     }
 
     linkTypesLoad() {

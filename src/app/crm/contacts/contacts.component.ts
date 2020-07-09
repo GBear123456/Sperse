@@ -419,9 +419,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         ).pipe(
             map(([contactInfo, organizationContactInfo]: [ContactInfoDto, OrganizationContactInfoDto]) => {
                 contactInfo['organizationContactInfo'] = organizationContactInfo;
-                if (!companyId && contactInfo['primaryOrganizationContactId'])
+                if (!companyId && contactInfo.primaryOrganizationContactId)
                     this.orgContactService.getOrganizationContactInfo(
-                        contactInfo['primaryOrganizationContactId']
+                        contactInfo.primaryOrganizationContactId
                     ).subscribe((result: OrganizationContactInfoDto) => {
                         contactInfo['organizationContactInfo'] = result;
                         this.contactsService.organizationInfoUpdate(result);

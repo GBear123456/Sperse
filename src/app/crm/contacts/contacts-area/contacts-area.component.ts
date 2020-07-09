@@ -6,7 +6,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 import capitalize from 'underscore.string/capitalize';
-import { filter } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
@@ -35,8 +35,7 @@ export class ContactsAreaComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(val.groupId) && (
-                !this.isCompany || val['organizationContactInfo'].isUpdatable);
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groupId);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -65,7 +64,13 @@ export class ContactsAreaComponent {
         private permissionService: AppPermissionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        contactsService.organizationContactInfo$.pipe(filter(orgInfo => {
+            return this.isCompany && orgInfo.id && !orgInfo.isUpdatable;
+        }), first()).subscribe(orgInfo => {
+            this.isEditAllowed = false;
+        });
+    }
 
     getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);

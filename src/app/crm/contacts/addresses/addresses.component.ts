@@ -54,8 +54,7 @@ export class AddressesComponent implements OnInit {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId) 
-                && (!this.isCompany || val['organizationContactInfo'].isUpdatable);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -93,7 +92,13 @@ export class AddressesComponent implements OnInit {
         private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
-    ) {}
+    ) {
+        contactsService.organizationContactInfo$.pipe(filter(orgInfo => {
+            return this.isCompany && orgInfo.id && !orgInfo.isUpdatable;
+        }), first()).subscribe(orgInfo => {
+            this.isEditAllowed = false;
+        });
+    }
 
     ngOnInit() {
         this.loadAddressTypes();
