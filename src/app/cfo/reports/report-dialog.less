@@ -27,16 +27,18 @@
         color: #424c56;
         padding: 0;
     }
+
     .text-right {
         ::ng-deep dx-text-box {
             height: 35px;
         }
     }
+
     .send-btn {
         height: 50px;
         border-radius: 20.5px;
         background-color: #00aeef;
-        margin: 0;
+        margin: 20px 0 0;
         font-size: 17px;
         font-weight: 600;
         letter-spacing: 0.34px;
@@ -44,11 +46,13 @@
         padding: 0 50px;
         width: 332px;
         position: relative;
+
         &:after {
             content: url(../../../assets/common/icons/generate-right-arrow.svg);
             position: absolute;
             right: 19px;
         }
+
         &.progress {
             &:after {
                 top: 12px;
@@ -57,8 +61,7 @@
                 width: 22px;
                 height: 22px;
                 display: block;
-                background: url(assets/common/icons/spinner-48px.gif);
-                background-repeat: no-repeat;
+                background: url(assets/common/icons/spinner-48px.gif) no-repeat;
                 background-size: contain;
             }
         }
