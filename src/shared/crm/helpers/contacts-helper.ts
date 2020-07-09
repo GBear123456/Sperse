@@ -2,9 +2,11 @@ import swal from 'sweetalert';
 import extend from 'lodash/extend';
 
 export class ContactsHelper {
-    static showConfirmMessage(text: string, labelText: string, callback: (confirmed: boolean, forceDelete: boolean) => void, canForceDelete: boolean) {
+    static showConfirmMessage(text: string, actionText: string, 
+        callback: (confirmed: boolean, force: boolean) => void, 
+        canForceAction: boolean, title?: string) {
         let content, input;
-        if (canForceDelete) {
+        if (canForceAction) {
             content = document.createElement("div");
             content.className = "checkbox-container";
 
@@ -15,7 +17,7 @@ export class ContactsHelper {
 
             let label = document.createElement("label");
             label.htmlFor = 'modal-checkbox';
-            const labelTextElement = document.createTextNode(labelText);
+            const labelTextElement = document.createTextNode(actionText);
             label.appendChild(labelTextElement);
             content.appendChild(label);
         }
@@ -23,8 +25,8 @@ export class ContactsHelper {
         let opts = extend({}, abp['libs'].sweetAlert.config.confirm, {
             text: text,
             content: content
-        })
+        }, title ? {title: title} : {});
 
-        swal(opts).then((isConfirmed) => { callback && callback(isConfirmed, canForceDelete ? input.checked : false); });
+        swal(opts).then(confirmed => { callback && callback(confirmed, canForceAction ? input.checked : false); });
     }
 }
