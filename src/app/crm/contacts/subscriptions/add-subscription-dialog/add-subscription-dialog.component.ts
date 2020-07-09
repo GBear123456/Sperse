@@ -32,7 +32,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { AppSessionService } from "@shared/common/session/app-session.service";
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'add-subscription-dialog',

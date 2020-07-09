@@ -3,5 +3,6 @@ export enum BankCodeServiceType {
     BANKPass = 'BANKPASS',
     BANKVault = 'BANKVAULT',
     BANKTrainer = 'Certified Trainer',
+    BANKCoach = 'Certified Coach',
     WTBeBook = 'WTB eBook'
 }
