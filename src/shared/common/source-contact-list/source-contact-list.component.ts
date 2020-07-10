@@ -11,6 +11,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ContactServiceProxy, SourceContactInfo } from '@shared/service-proxies/service-proxies';
 import { SourceContact } from './source-contact.interface';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
   selector: 'source-contact-list',
@@ -40,11 +42,13 @@ export class SourceContactListComponent {
     private lookupTimeout: any;
     private _leadId: number;
     private lookupSubscription: any;
+    hasBulkUpdatePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMBulkUpdates);
 
     constructor(
         public ls: AppLocalizationService,
         private changeDetectorRef: ChangeDetectorRef,
-        private contactProxy: ContactServiceProxy
+        private contactProxy: ContactServiceProxy,
+        private permissionCheckerService: PermissionCheckerService
     ) {}
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {

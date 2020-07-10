@@ -4,7 +4,7 @@
     accessKey="sourceContactList"
     [targetSelector]="targetSelector"
     [title]="ls.l('SourceContact')"
-    [showSelectionControls]="selectedKeys && selectedKeys.length"
+    [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && selectedKeys.length"
     [hideButtons]="(!selectedKeys || !selectedKeys.length) || selectedKey"
     [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
     [showConfirmation]="false"
