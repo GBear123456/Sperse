@@ -1,4 +1,3 @@
-
 /** Core imports */
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Params, RouteReuseStrategy } from '@angular/router';
@@ -109,7 +108,6 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
-import { Param } from '@shared/common/odata/param.model';
 import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
@@ -445,6 +443,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private activate$: Observable<boolean> = this._activate.asObservable();
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
+    hasBulkPermission: boolean = this.permission.isGranted(AppPermissions.CRMBulkUpdates);
 
     constructor(
         injector: Injector,
@@ -1592,7 +1591,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
+        if (this.hasBulkPermission) {
             this.stagesComponent.tooltipVisible = false;
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,

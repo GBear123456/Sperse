@@ -6,7 +6,7 @@
     [title]="ls.l('SourceContact')"
     [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && !!selectedKeys.length"
     [hideButtons]="!hasBulkUpdatePermission || (!selectedKeys || !selectedKeys.length) || !!selectedKey"
-    [selectedKeys]="hasBulkUpdatePermission ? (selectedKeys ? selectedKeys : [selectedKey]) : []"
+    [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
     [showConfirmation]="false"
     [highlightSelected]="true"
     [searchEnabled]="true"
