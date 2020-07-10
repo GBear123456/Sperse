@@ -194,7 +194,7 @@ export class UserAssignmentComponent implements OnDestroy {
         if (!this.relatedUsers || !this.relatedUsers.length)
             this.relatedUsers = [{
                 id: user.id, 
-                name: user.name, 
+                name: user.name + (user.surname ? ' ' + user.surname : ''),
                 isActive: true, 
                 photoPublicId: user.profileThumbnailId
             }];            
