@@ -1685,6 +1685,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.refresh();
                     if (this.dataGrid && this.dataGrid.instance) {
                         this.dataGrid.instance.deselectAll();
+                        this.selectedClientKeys = [];
                     }
                     this.notify.success(this.l('SuccessfullyDeleted'));
                 });
