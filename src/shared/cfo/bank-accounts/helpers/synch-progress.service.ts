@@ -34,9 +34,6 @@ export class SynchProgressService {
         filter(Boolean)
     );
 
-    private needRefreshSync = new Subject<string>();
-    needRefreshSync$ = this.needRefreshSync.asObservable();
-
     readonly maxTryCount = 3;
     readonly initialSynchProgressDelay = 5 * 1000;
 
@@ -65,10 +62,6 @@ export class SynchProgressService {
         private appHttpConfiguration: AppHttpConfiguration
     ) {
         this.subscribeToProgress();
-    }
-
-    refreshSyncComponent() {
-        this.needRefreshSync.next();
     }
 
     public startSynchronization(forcedSync: boolean = false, syncType?: SyncTypeIds, syncAccountIds = []) {
@@ -161,7 +154,7 @@ export class SynchProgressService {
                             /** Run sync All after 10 sec and then syncProgress 3 times*/
                             this.timeoutsIds.push(setTimeout(
                                 () => {
-                                    this.runSync(true).subscribe(
+                                    this.runSync(false, SyncTypeIds.Plaid).subscribe(
                                         () => {
                                             this.runSynchProgress().pipe(
                                                 filter(() => this.tryCount === this.maxTryCount - 1)

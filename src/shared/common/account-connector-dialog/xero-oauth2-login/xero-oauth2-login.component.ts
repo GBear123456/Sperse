@@ -54,10 +54,10 @@ export class XeroOauth2LoginComponent implements OnInit {
                     if (setupAccountWindow.closed) {
                         if (!this.cfoService.hasTransactions) {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
-                                this.syncProgressService.startSynchronization(true);
+                                this.syncProgressService.runSynchProgress().subscribe();
                             });
                         } else if (this.reconnect) {
-                            this.syncProgressService.startSynchronization(true);
+                            this.syncProgressService.runSynchProgress().subscribe();
                         } // need found the way to detect closing the dialog without login
 
                         clearInterval(interval);
