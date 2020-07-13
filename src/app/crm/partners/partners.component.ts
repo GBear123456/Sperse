@@ -1070,7 +1070,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     action: () => {
                                         const client =  this.selectedPartners[0];
                                         this.contactService.deleteContact(
-                                            null,
                                             client.Name,
                                             ContactGroup.Client,
                                             client.Id,

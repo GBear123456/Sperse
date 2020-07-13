@@ -361,7 +361,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private fillLeadDetails(result) {
         this.contactService['data'].leadInfo = this.leadInfo = result;
         this.leadId = this.contactInfo['leadId'] = result.id;
-        this.contactsService.leadInfoUpdate(result);
+        this.contactsService.leadInfoUpdate({
+            ...this.params,
+            ...result
+        });
 
         this.loadLeadsStages(() => {
             if (this.leadInfo.stage) {
@@ -526,7 +529,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.notify.error(error.message);
             });
         } else
-            this.contactsService.leadInfoUpdate(leadInfo);
+            this.contactsService.leadInfoUpdate({
+                ...this.params,
+                ...leadInfo
+            });
     }
 
     private loadLeadsStages(callback?: () => any) {
@@ -683,7 +689,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     deleteContact() {
         let id = this.contactInfo.statusId == ContactStatus.Prospective || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id,
             isLead = this._router.url.split('?').shift().includes('lead');
-        this.contactsService.deleteContact(this.contactInfo.statusId, this.getCustomerName(), this.contactGroupId.value, id, () => this.close(), isLead);
+        this.contactsService.deleteContact(this.getCustomerName(), this.contactGroupId.value, id, () => this.close(), isLead);
     }
 
     updateStatus(statusId: string) {

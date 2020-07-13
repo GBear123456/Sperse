@@ -470,13 +470,13 @@ export class ContactsService {
         }));
     }
 
-    deleteContact(statusId, customerName, contactGroup, contactId, callback?, isLead = false ) {
+    deleteContact(customerName, contactGroup, entityId, callback?, isLead = false ) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (isLead) {
             ContactsHelper.showConfirmMessage(text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
                 if (isConfirmed) {
-                    this.leadService.deleteLead(contactId, forceDelete).subscribe(() => {
+                    this.leadService.deleteLead(entityId, forceDelete).subscribe(() => {
                         abp.notify.success(this.ls.l('SuccessfullyDeleted'));
                         this.contactProxy['data']['deleted'] = true;
                         callback && callback();
@@ -489,7 +489,7 @@ export class ContactsService {
             ContactsHelper.showConfirmMessage(
                 text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
                     if (isConfirmed) {
-                        this.contactProxy.deleteContact(contactId, forceDelete).subscribe(() => {
+                        this.contactProxy.deleteContact(entityId, forceDelete).subscribe(() => {
                             abp.notify.success(this.ls.l('SuccessfullyDeleted'));
                             callback && callback();
                         });
