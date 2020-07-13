@@ -46,6 +46,9 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
 import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
 import { RapidLayoutComponent } from "@root/account/layouts/rapid/rapid-layout.component";
 import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-login.component";
+import { RapidResetPasswordComponent } from "@root/account/password/layouts/rapid/rapid-reset-password.component";
+import { RapidForgotPasswordComponent } from "@root/account/password/layouts/rapid/rapid-forgot-password.component";
+import { RapidAutoLoginComponent } from "@root/account/auto-login/layouts/rapid/rapid-auto-login.component";
 
 
 @NgModule({
@@ -104,7 +107,10 @@ import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-log
         BankCodeForgotPasswordComponent,
 
         RapidLayoutComponent,
-        RapidLoginComponent
+        RapidLoginComponent,
+        RapidResetPasswordComponent,
+        RapidForgotPasswordComponent,
+        RapidAutoLoginComponent
     ],
     entryComponents: [
         HostLayoutComponent,
@@ -129,7 +135,10 @@ import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-log
         BankCodeForgotPasswordComponent,
 
         RapidLayoutComponent,
-        RapidLoginComponent
+        RapidLoginComponent,
+        RapidResetPasswordComponent,
+        RapidForgotPasswordComponent,
+        RapidAutoLoginComponent
     ],
     providers: [
         LoginService,
