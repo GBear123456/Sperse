@@ -314,7 +314,7 @@ export class ResourcesComponent {
                     ]
                 }]
             ).concat(
-                hasTrainerSubscription || hasCoachSubscription ? [
+                hasTrainerSubscription ? [
                     {
                         categoryName: 'TRAINER KITS',
                         anchor: 'trainer',
@@ -363,6 +363,45 @@ export class ResourcesComponent {
                                 title: 'L4: Communication Mastery PNG',
                                 fileLink: 'https://new-resources-2019.s3-us-west-1.amazonaws.com/Trainer+L4/COMMUNICATION+MASTERY_TK.png',
                                 img: './assets/common/images/bank-code/thumbnails/trainer-kits/L4_Communication_Mastery_PNG.png'
+                            }
+                        ]
+                    }
+                ] : []
+            ).concat(
+                hasCoachSubscription ? [
+                    {
+                        categoryName: 'СOACH ASSETS',
+                        anchor: 'coach',
+                        list: [
+                            {
+                                title: '90-Day Quotes',
+                                fileLink: 'https://www.dropbox.com/sh/64b8bjx0ajivti7/AAC_nGWO82QCAjp30Il1sAl_a/90-Day%20Quotes?dl=0',
+                                img: './assets/common/images/bank-code/thumbnails/coach/1.png'
+                            },
+                            {
+                                title: 'Assessments',
+                                fileLink: 'https://www.dropbox.com/sh/64b8bjx0ajivti7/AAB9kV_rdbU7itFt-jHklepza/Assessments?dl=0',
+                                img: './assets/common/images/bank-code/thumbnails/coach/2.png'
+                            },
+                            {
+                                title: 'BANK IOS Modules',
+                                fileLink: 'https://www.dropbox.com/sh/64b8bjx0ajivti7/AABU7BxZKo5Poiy50g0yK90Da/BANK%20IOS%20Modules?dl=0',
+                                img: './assets/common/images/bank-code/thumbnails/coach/3.png'
+                            },
+                            {
+                                title: 'Coach Guide',
+                                fileLink: 'https://www.dropbox.com/sh/64b8bjx0ajivti7/AACXwzrDM_lzoK14NMtXyrVDa/Coach%20Guide?dl=0',
+                                img: './assets/common/images/bank-code/thumbnails/coach/4.png'
+                            },
+                            {
+                                title: 'Order Forms',
+                                fileLink: 'https://www.dropbox.com/sh/64b8bjx0ajivti7/AACP8EMeZnkg2a0Ma_gIHin6a/Order%20Forms?dl=0',
+                                img: './assets/common/images/bank-code/thumbnails/coach/5.png'
+                            },
+                            {
+                                title: 'Zoom Video Backgrounds',
+                                fileLink: 'https://www.dropbox.com/sh/64b8bjx0ajivti7/AADQbDAn3P-Z9EE_f0uVYPzJa/Zoom%20Video%20Backgrounds?dl=0',
+                                img: './assets/common/images/bank-code/thumbnails/coach/6.png'
                             }
                         ]
                     }

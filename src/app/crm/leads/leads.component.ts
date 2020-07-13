@@ -1792,8 +1792,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
        if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
             ContactsHelper.showConfirmMessage(
                 this.l('UpdateForSelected', this.l('SourceContactName'), this.l('ContactGroup_' + this.selectedContactGroup)),
-                this.l('ApplyCurrentFrom', this.l('AffiliateCode'), this.l('SourceContactName')),
-                (confirmed, applyCode) => {
+                this.l('ApplyCurrentFrom', this.l('SourceContactName'), this.l('AffiliateCode')),
+                (confirmed: boolean, applyCode: boolean) => {
                     if (confirmed)
                         this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
                             leadIds: this.selectedLeads.map(lead => lead.Id),
@@ -1806,7 +1806,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.processFilterInternal();
                             this.notify.success(this.l('AppliedSuccessfully'));
                         });
-                }, true, this.l('SourceUpdateConfirmation')
+                }, true, this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
             );
         }
     }
