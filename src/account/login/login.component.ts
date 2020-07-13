@@ -17,7 +17,8 @@ import { LendSpaceLoginComponent } from './layouts/lend-space/lend-space-login.c
 import { AdvicePeriodLoginComponent } from './layouts/advice-period/advice-period-login.component';
 import { BankCodeLoginComponent } from './layouts/bank-code/bank-code-login.component';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
-import { TitleService } from '../../shared/common/title/title.service';
+import { TitleService } from '@shared/common/title/title.service';
+import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-login.component";
 
 @Directive({
     selector: '[ad-login-host]'
@@ -53,6 +54,8 @@ export class LoginComponent implements OnInit {
                 return AdvicePeriodLoginComponent;
             case LayoutType.BankCode:
                 return BankCodeLoginComponent;
+            case LayoutType.Rapid:
+                return RapidLoginComponent;
             default:
                 return HostLoginComponent;
         }
