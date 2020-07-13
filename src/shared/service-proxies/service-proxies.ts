@@ -24019,7 +24019,7 @@ export class ProfileServiceProxy {
     /**
      * @return Success
      */
-    getCurrentUserProfileForEdit(): Observable<CurrentUserProfileEditDto> {
+    getCurrentUserProfileForEdit(): Observable<GetCurrentUserProfileEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetCurrentUserProfileForEdit";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -24039,14 +24039,14 @@ export class ProfileServiceProxy {
                 try {
                     return this.processGetCurrentUserProfileForEdit(<any>response_);
                 } catch (e) {
-                    return <Observable<CurrentUserProfileEditDto>><any>_observableThrow(e);
+                    return <Observable<GetCurrentUserProfileEditDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CurrentUserProfileEditDto>><any>_observableThrow(response_);
+                return <Observable<GetCurrentUserProfileEditDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCurrentUserProfileForEdit(response: HttpResponseBase): Observable<CurrentUserProfileEditDto> {
+    protected processGetCurrentUserProfileForEdit(response: HttpResponseBase): Observable<GetCurrentUserProfileEditDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -24057,7 +24057,7 @@ export class ProfileServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CurrentUserProfileEditDto.fromJS(resultData200) : new CurrentUserProfileEditDto();
+            result200 = resultData200 ? GetCurrentUserProfileEditDto.fromJS(resultData200) : new GetCurrentUserProfileEditDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -24065,7 +24065,7 @@ export class ProfileServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CurrentUserProfileEditDto>(<any>null);
+        return _observableOf<GetCurrentUserProfileEditDto>(<any>null);
     }
 
     /**
@@ -65433,7 +65433,9 @@ export interface IPipelineDto {
     stages: StageDto[] | undefined;
 }
 
-export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
+export class GetCurrentUserProfileEditDto implements IGetCurrentUserProfileEditDto {
+    qrCodeSetupImageUrl!: string | undefined;
+    isGoogleAuthenticatorEnabled!: boolean | undefined;
     name!: string;
     surname!: string;
     emailAddress!: string;
@@ -65442,10 +65444,8 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
     timezone!: string | undefined;
     companyName!: string | undefined;
     countryId!: string | undefined;
-    qrCodeSetupImageUrl!: string | undefined;
-    isGoogleAuthenticatorEnabled!: boolean | undefined;
 
-    constructor(data?: ICurrentUserProfileEditDto) {
+    constructor(data?: IGetCurrentUserProfileEditDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -65456,6 +65456,8 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
 
     init(data?: any) {
         if (data) {
+            this.qrCodeSetupImageUrl = data["qrCodeSetupImageUrl"];
+            this.isGoogleAuthenticatorEnabled = data["isGoogleAuthenticatorEnabled"];
             this.name = data["name"];
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
@@ -65464,20 +65466,20 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
             this.timezone = data["timezone"];
             this.companyName = data["companyName"];
             this.countryId = data["countryId"];
-            this.qrCodeSetupImageUrl = data["qrCodeSetupImageUrl"];
-            this.isGoogleAuthenticatorEnabled = data["isGoogleAuthenticatorEnabled"];
         }
     }
 
-    static fromJS(data: any): CurrentUserProfileEditDto {
+    static fromJS(data: any): GetCurrentUserProfileEditDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CurrentUserProfileEditDto();
+        let result = new GetCurrentUserProfileEditDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["qrCodeSetupImageUrl"] = this.qrCodeSetupImageUrl;
+        data["isGoogleAuthenticatorEnabled"] = this.isGoogleAuthenticatorEnabled;
         data["name"] = this.name;
         data["surname"] = this.surname;
         data["emailAddress"] = this.emailAddress;
@@ -65486,13 +65488,13 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         data["timezone"] = this.timezone;
         data["companyName"] = this.companyName;
         data["countryId"] = this.countryId;
-        data["qrCodeSetupImageUrl"] = this.qrCodeSetupImageUrl;
-        data["isGoogleAuthenticatorEnabled"] = this.isGoogleAuthenticatorEnabled;
         return data; 
     }
 }
 
-export interface ICurrentUserProfileEditDto {
+export interface IGetCurrentUserProfileEditDto {
+    qrCodeSetupImageUrl: string | undefined;
+    isGoogleAuthenticatorEnabled: boolean | undefined;
     name: string;
     surname: string;
     emailAddress: string;
@@ -65501,8 +65503,6 @@ export interface ICurrentUserProfileEditDto {
     timezone: string | undefined;
     companyName: string | undefined;
     countryId: string | undefined;
-    qrCodeSetupImageUrl: string | undefined;
-    isGoogleAuthenticatorEnabled: boolean | undefined;
 }
 
 export class UpdateGoogleAuthenticatorKeyOutput implements IUpdateGoogleAuthenticatorKeyOutput {
@@ -65575,6 +65575,70 @@ export class VerifySmsCodeInputDto implements IVerifySmsCodeInputDto {
 
 export interface IVerifySmsCodeInputDto {
     code: string | undefined;
+}
+
+export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
+    name!: string;
+    surname!: string;
+    emailAddress!: string;
+    phoneNumber!: string | undefined;
+    isPhoneNumberConfirmed!: boolean | undefined;
+    timezone!: string | undefined;
+    companyName!: string | undefined;
+    countryId!: string | undefined;
+
+    constructor(data?: ICurrentUserProfileEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.surname = data["surname"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.isPhoneNumberConfirmed = data["isPhoneNumberConfirmed"];
+            this.timezone = data["timezone"];
+            this.companyName = data["companyName"];
+            this.countryId = data["countryId"];
+        }
+    }
+
+    static fromJS(data: any): CurrentUserProfileEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CurrentUserProfileEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["isPhoneNumberConfirmed"] = this.isPhoneNumberConfirmed;
+        data["timezone"] = this.timezone;
+        data["companyName"] = this.companyName;
+        data["countryId"] = this.countryId;
+        return data; 
+    }
+}
+
+export interface ICurrentUserProfileEditDto {
+    name: string;
+    surname: string;
+    emailAddress: string;
+    phoneNumber: string | undefined;
+    isPhoneNumberConfirmed: boolean | undefined;
+    timezone: string | undefined;
+    companyName: string | undefined;
+    countryId: string | undefined;
 }
 
 export class ChangePasswordInput implements IChangePasswordInput {
