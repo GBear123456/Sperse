@@ -490,6 +490,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.search$,
         this.refresh$
     ).pipe(
+        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid),
         takeUntil(this.destroy$),
         switchMap(this.waitUntil(OrderType.Order)),
         map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
