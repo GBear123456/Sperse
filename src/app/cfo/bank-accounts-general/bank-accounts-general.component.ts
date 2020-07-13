@@ -42,9 +42,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this.synchProgress.needRefreshSync$.subscribe(() => {
-            this.synchProgress.startSynchronization();
-        });
         this.syncAccountServiceProxy.createIsAllowed(this._cfoService.instanceType as InstanceType, this.instanceId)
             .subscribe((result: boolean) => {
                 this.createAccountAvailable = result;

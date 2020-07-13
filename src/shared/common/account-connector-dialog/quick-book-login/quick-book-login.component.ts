@@ -50,11 +50,11 @@ export class QuickBookLoginComponent implements OnInit {
             if (setupAccountWindow) {
                 let interval = setInterval(() => {
                     if (setupAccountWindow.closed) {
-                        if (!this.cfoService.hasTransactions) {
+                        if (!this.cfoService.hasTransactions)
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
-                                this.syncProgressService.startSynchronization(true);
+                                this.syncProgressService.runSynchProgress().subscribe();
                             });
-                        }
+
                         clearInterval(interval);
                         this.onComplete.emit();
                     }
