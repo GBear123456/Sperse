@@ -43,9 +43,12 @@ input:-webkit-autofill:active  {
         .title {
             font-size: 44px;
             font-weight: bold;
-            line-height: 0.55;
             letter-spacing: normal;
             color: @dark;
+
+            @media all and (max-width: 1500px) {
+                font-size: 33px;
+            }
         }
 
         .subtitle {

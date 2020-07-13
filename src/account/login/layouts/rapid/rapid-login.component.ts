@@ -13,4 +13,8 @@ import { HostLoginComponent } from "@root/account/login/layouts/host/host-login.
     animations: [accountModuleAnimation()]
 })
 export class RapidLoginComponent extends HostLoginComponent {
+
+    showHidePass() {
+        this.showPassword = !this.showPassword;
+    }
 }
