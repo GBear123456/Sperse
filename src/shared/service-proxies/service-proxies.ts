@@ -32270,6 +32270,76 @@ export class UserServiceProxy {
     }
 
     /**
+     * @filter (optional) 
+     * @permissions (optional) 
+     * @role (optional) 
+     * @onlyLockedUsers (optional) 
+     * @group (optional) 
+     * @isActive (optional) 
+     * @return Success
+     */
+    getUserCount(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: UserGroup | null | undefined, isActive: boolean | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetUserCount?";
+        if (filter !== undefined)
+            url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
+        if (permissions !== undefined)
+            permissions && permissions.forEach(item => { url_ += "Permissions=" + encodeURIComponent("" + item) + "&"; });
+        if (role !== undefined)
+            url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
+        if (onlyLockedUsers !== undefined)
+            url_ += "OnlyLockedUsers=" + encodeURIComponent("" + onlyLockedUsers) + "&"; 
+        if (group !== undefined)
+            url_ += "Group=" + encodeURIComponent("" + group) + "&"; 
+        if (isActive !== undefined)
+            url_ += "IsActive=" + encodeURIComponent("" + isActive) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserCount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserCount(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserCount(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @return Success
      */
@@ -44804,8 +44874,12 @@ export interface IContactPhoneInfo {
     isPrimary: boolean | undefined;
 }
 
-export class AddressInfo implements IAddressInfo {
+export class ContactAddressInfo implements IContactAddressInfo {
     id!: number | undefined;
+    usageTypeId!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    ownershipTypeId!: string | undefined;
+    isPrimary!: boolean | undefined;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -44813,12 +44887,8 @@ export class AddressInfo implements IAddressInfo {
     zip!: string | undefined;
     countryId!: string | undefined;
     countryName!: string | undefined;
-    usageTypeId!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    ownershipTypeId!: string | undefined;
-    isPrimary!: boolean | undefined;
 
-    constructor(data?: IAddressInfo) {
+    constructor(data?: IContactAddressInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -44830,6 +44900,10 @@ export class AddressInfo implements IAddressInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.usageTypeId = data["usageTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.ownershipTypeId = data["ownershipTypeId"];
+            this.isPrimary = data["isPrimary"];
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.stateId = data["stateId"];
@@ -44837,16 +44911,12 @@ export class AddressInfo implements IAddressInfo {
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.countryName = data["countryName"];
-            this.usageTypeId = data["usageTypeId"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.ownershipTypeId = data["ownershipTypeId"];
-            this.isPrimary = data["isPrimary"];
         }
     }
 
-    static fromJS(data: any): AddressInfo {
+    static fromJS(data: any): ContactAddressInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new AddressInfo();
+        let result = new ContactAddressInfo();
         result.init(data);
         return result;
     }
@@ -44854,6 +44924,10 @@ export class AddressInfo implements IAddressInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["usageTypeId"] = this.usageTypeId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        data["isPrimary"] = this.isPrimary;
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
@@ -44861,16 +44935,16 @@ export class AddressInfo implements IAddressInfo {
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["countryName"] = this.countryName;
-        data["usageTypeId"] = this.usageTypeId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["ownershipTypeId"] = this.ownershipTypeId;
-        data["isPrimary"] = this.isPrimary;
         return data; 
     }
 }
 
-export interface IAddressInfo {
+export interface IContactAddressInfo {
     id: number | undefined;
+    usageTypeId: string | undefined;
+    startDate: moment.Moment | undefined;
+    ownershipTypeId: string | undefined;
+    isPrimary: boolean | undefined;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -44878,10 +44952,6 @@ export interface IAddressInfo {
     zip: string | undefined;
     countryId: string | undefined;
     countryName: string | undefined;
-    usageTypeId: string | undefined;
-    startDate: moment.Moment | undefined;
-    ownershipTypeId: string | undefined;
-    isPrimary: boolean | undefined;
 }
 
 export class ContactInfoForMerge implements IContactInfoForMerge {
@@ -44898,7 +44968,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     gender!: Gender | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
-    contactAddresses!: AddressInfo[] | undefined;
+    contactAddresses!: ContactAddressInfo[] | undefined;
     photoPublicId!: string | undefined;
     companyName!: string | undefined;
     jobTitle!: string | undefined;
@@ -44941,7 +45011,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
                 this.contactAddresses = [];
                 for (let item of data["contactAddresses"])
-                    this.contactAddresses.push(AddressInfo.fromJS(item));
+                    this.contactAddresses.push(ContactAddressInfo.fromJS(item));
             }
             this.photoPublicId = data["photoPublicId"];
             this.companyName = data["companyName"];
@@ -45011,7 +45081,7 @@ export interface IContactInfoForMerge {
     gender: Gender | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;
-    contactAddresses: AddressInfo[] | undefined;
+    contactAddresses: ContactAddressInfo[] | undefined;
     photoPublicId: string | undefined;
     companyName: string | undefined;
     jobTitle: string | undefined;
@@ -46315,14 +46385,14 @@ export interface ISourceContactInfo {
     jobTitle: string | undefined;
 }
 
-export class ContactAddressInfo implements IContactAddressInfo {
+export class EntityAddressInfo implements IEntityAddressInfo {
     streetAddress!: string | undefined;
     city!: string | undefined;
     state!: string | undefined;
     countryCode!: string | undefined;
     zip!: string | undefined;
 
-    constructor(data?: IContactAddressInfo) {
+    constructor(data?: IEntityAddressInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46341,9 +46411,9 @@ export class ContactAddressInfo implements IContactAddressInfo {
         }
     }
 
-    static fromJS(data: any): ContactAddressInfo {
+    static fromJS(data: any): EntityAddressInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ContactAddressInfo();
+        let result = new EntityAddressInfo();
         result.init(data);
         return result;
     }
@@ -46359,7 +46429,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
     }
 }
 
-export interface IContactAddressInfo {
+export interface IEntityAddressInfo {
     streetAddress: string | undefined;
     city: string | undefined;
     state: string | undefined;
@@ -46372,7 +46442,7 @@ export class EntityContactInfo implements IEntityContactInfo {
     name!: string | undefined;
     email!: string | undefined;
     userId!: number | undefined;
-    address!: ContactAddressInfo | undefined;
+    address!: EntityAddressInfo | undefined;
     isActive!: boolean | undefined;
     statusId!: string | undefined;
     groupId!: string | undefined;
@@ -46392,7 +46462,7 @@ export class EntityContactInfo implements IEntityContactInfo {
             this.name = data["name"];
             this.email = data["email"];
             this.userId = data["userId"];
-            this.address = data["address"] ? ContactAddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.address = data["address"] ? EntityAddressInfo.fromJS(data["address"]) : <any>undefined;
             this.isActive = data["isActive"];
             this.statusId = data["statusId"];
             this.groupId = data["groupId"];
@@ -46425,7 +46495,7 @@ export interface IEntityContactInfo {
     name: string | undefined;
     email: string | undefined;
     userId: number | undefined;
-    address: ContactAddressInfo | undefined;
+    address: EntityAddressInfo | undefined;
     isActive: boolean | undefined;
     statusId: string | undefined;
     groupId: string | undefined;
@@ -65370,6 +65440,8 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
     phoneNumber!: string | undefined;
     isPhoneNumberConfirmed!: boolean | undefined;
     timezone!: string | undefined;
+    companyName!: string | undefined;
+    countryId!: string | undefined;
     qrCodeSetupImageUrl!: string | undefined;
     isGoogleAuthenticatorEnabled!: boolean | undefined;
 
@@ -65390,6 +65462,8 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
             this.phoneNumber = data["phoneNumber"];
             this.isPhoneNumberConfirmed = data["isPhoneNumberConfirmed"];
             this.timezone = data["timezone"];
+            this.companyName = data["companyName"];
+            this.countryId = data["countryId"];
             this.qrCodeSetupImageUrl = data["qrCodeSetupImageUrl"];
             this.isGoogleAuthenticatorEnabled = data["isGoogleAuthenticatorEnabled"];
         }
@@ -65410,6 +65484,8 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         data["phoneNumber"] = this.phoneNumber;
         data["isPhoneNumberConfirmed"] = this.isPhoneNumberConfirmed;
         data["timezone"] = this.timezone;
+        data["companyName"] = this.companyName;
+        data["countryId"] = this.countryId;
         data["qrCodeSetupImageUrl"] = this.qrCodeSetupImageUrl;
         data["isGoogleAuthenticatorEnabled"] = this.isGoogleAuthenticatorEnabled;
         return data; 
@@ -65423,6 +65499,8 @@ export interface ICurrentUserProfileEditDto {
     phoneNumber: string | undefined;
     isPhoneNumberConfirmed: boolean | undefined;
     timezone: string | undefined;
+    companyName: string | undefined;
+    countryId: string | undefined;
     qrCodeSetupImageUrl: string | undefined;
     isGoogleAuthenticatorEnabled: boolean | undefined;
 }
