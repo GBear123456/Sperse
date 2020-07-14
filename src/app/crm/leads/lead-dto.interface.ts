@@ -29,4 +29,5 @@ export interface LeadDto {
     SourceContactName: string;
     AssignedUserName: string;
     BankCode: string;
+    RefererUrl: string;
 }

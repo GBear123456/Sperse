@@ -262,7 +262,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                                 this.leadFields.ContactAffiliateCode,
                                 this.leadFields.SourceContactName,
                                 this.leadFields.SourceCampaignCode,
-                                this.leadFields.SourceChannelCode
+                                this.leadFields.SourceChannelCode,
+                                this.leadFields.RefererUrl
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;

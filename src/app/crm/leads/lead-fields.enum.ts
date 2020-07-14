@@ -31,5 +31,6 @@ export const LeadFields: KeysEnum<LeadDto> = {
     ContactAffiliateCode: 'ContactAffiliateCode',
     SourceContactName: 'SourceContactName',
     AssignedUserName: 'AssignedUserName',
-    BankCode: 'BankCode'
+    BankCode: 'BankCode',
+    RefererUrl: 'RefererUrl'
 };
