@@ -25927,6 +25927,177 @@ export class SecurityManagementServiceProxy {
 }
 
 @Injectable()
+export class ServiceProductServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<ServiceProductDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<ServiceProductDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ServiceProductDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<ServiceProductDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ServiceProductDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ServiceProductDto[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createOrUpdate(body: ServiceProductDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/CreateOrUpdate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class SessionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -44963,6 +45134,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     affiliateCode!: string | undefined;
     xref!: string | undefined;
     userId!: number | undefined;
+    userEmail!: string | undefined;
     doB!: moment.Moment | undefined;
     ssn!: string | undefined;
     gender!: Gender | undefined;
@@ -44995,6 +45167,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.affiliateCode = data["affiliateCode"];
             this.xref = data["xref"];
             this.userId = data["userId"];
+            this.userEmail = data["userEmail"];
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
             this.gender = data["gender"];
@@ -45039,6 +45212,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["affiliateCode"] = this.affiliateCode;
         data["xref"] = this.xref;
         data["userId"] = this.userId;
+        data["userEmail"] = this.userEmail;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["gender"] = this.gender;
@@ -45076,6 +45250,7 @@ export interface IContactInfoForMerge {
     affiliateCode: string | undefined;
     xref: string | undefined;
     userId: number | undefined;
+    userEmail: string | undefined;
     doB: moment.Moment | undefined;
     ssn: string | undefined;
     gender: Gender | undefined;
@@ -66880,6 +67055,126 @@ export class BankAccountUsers implements IBankAccountUsers {
 export interface IBankAccountUsers {
     bankAccountId: number | undefined;
     userIds: number[] | undefined;
+}
+
+export class ServiceProductLevelDto implements IServiceProductLevelDto {
+    id!: number | undefined;
+    serviceId!: string;
+    serviceName!: string;
+    amount!: number | undefined;
+
+    constructor(data?: IServiceProductLevelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.serviceId = data["serviceId"];
+            this.serviceName = data["serviceName"];
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ServiceProductLevelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServiceProductLevelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["serviceId"] = this.serviceId;
+        data["serviceName"] = this.serviceName;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IServiceProductLevelDto {
+    id: number | undefined;
+    serviceId: string;
+    serviceName: string;
+    amount: number | undefined;
+}
+
+export class ServiceProductDto implements IServiceProductDto {
+    id!: number | undefined;
+    systemType!: string;
+    serviceTypeId!: string;
+    serviceTypeName!: string;
+    amount!: number | undefined;
+    activationTime!: moment.Moment | undefined;
+    deactivationTime!: moment.Moment | undefined;
+    serviceProductLevels!: ServiceProductLevelDto[] | undefined;
+
+    constructor(data?: IServiceProductDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.systemType = data["systemType"];
+            this.serviceTypeId = data["serviceTypeId"];
+            this.serviceTypeName = data["serviceTypeName"];
+            this.amount = data["amount"];
+            this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
+            this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
+            if (data["serviceProductLevels"] && data["serviceProductLevels"].constructor === Array) {
+                this.serviceProductLevels = [];
+                for (let item of data["serviceProductLevels"])
+                    this.serviceProductLevels.push(ServiceProductLevelDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ServiceProductDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServiceProductDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["systemType"] = this.systemType;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["serviceTypeName"] = this.serviceTypeName;
+        data["amount"] = this.amount;
+        data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
+        data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
+        if (this.serviceProductLevels && this.serviceProductLevels.constructor === Array) {
+            data["serviceProductLevels"] = [];
+            for (let item of this.serviceProductLevels)
+                data["serviceProductLevels"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IServiceProductDto {
+    id: number | undefined;
+    systemType: string;
+    serviceTypeId: string;
+    serviceTypeName: string;
+    amount: number | undefined;
+    activationTime: moment.Moment | undefined;
+    deactivationTime: moment.Moment | undefined;
+    serviceProductLevels: ServiceProductLevelDto[] | undefined;
 }
 
 export class UserLoginInfoDto implements IUserLoginInfoDto {
