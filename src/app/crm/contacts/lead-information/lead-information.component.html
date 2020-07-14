@@ -6,65 +6,7 @@
     (onItemSelected)="onSourceContactChanged($event)">
 </source-contact-list>
 <div #loaderWrapper>
-    <action-menu width="150px"
-        [items]="actionMenuItems"
-        target=""
-        (onItemClick)="onMenuItemClick($event)">
-    </action-menu>
-    <dx-data-grid
-        class="main-component-view"
-        accessKey="narrowHeaderPanel"
-        noDataText=""
-        [visible]="!selectedLeadId"
-        [renderAsync]="true"
-        [dataSource]="dataSource"
-        [allowColumnReordering]="true"
-        [columnAutoWidth]="true"
-        [cacheEnabled]="false"
-        [remoteOperations]="{
-            filtering: false,
-            grouping: false,
-            groupPaging: true,
-            paging: true,
-            sorting: true,
-            summary: true
-        }"
-        [allowColumnResizing]="true"
-        [hoverStateEnabled]="true"
-        [pager]="defaultGridPagerConfig"
-        (onCellClick)="onCellClick($event)"
-        (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-        <dxo-selection mode="none"></dxo-selection>
-        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-
-        <dxi-column
-            alignment="center"
-            width="90px"
-            cellTemplate="actionsCellTemplate"
-            headerCellTemplate="actionsCellTemplate">
-        </dxi-column>
-
-        <dxi-column [dataField]="leadFields.Id" [visible]="false" sortOrder="desc"></dxi-column>
-        <dxi-column [dataField]="leadFields.CustomerId" [visible]="false"></dxi-column>
-        <dxi-column [dataField]="leadFields.LeadDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-        <dxi-column [dataField]="leadFields.Stage" [caption]="ls.l('Stage')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="leadFields.ContactAffiliateCode" [caption]="ls.l('ContactAffiliateCode')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="leadFields.SourceContactName" [caption]="ls.l('SourceContactName')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="leadFields.SourceCampaignCode" [caption]="ls.l('CampaignCode')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="leadFields.SourceChannelCode" [caption]="ls.l('ChannelCode')" cssClass="clipboard-holder"></dxi-column>
-        <dxi-column [dataField]="leadFields.RefererUrl" [caption]="ls.l('RefererUrl')" cssClass="clipboard-holder"></dxi-column>
-
-        <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
-
-        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{cellData.value | date: formatting.dateTime : userTimezone}}
-        </div>
-        <dxo-group-panel [visible]="true"></dxo-group-panel>
-        <dxo-sorting mode="multiple"></dxo-sorting>
-    </dx-data-grid>
-
-    <i *ngIf="selectedLeadId" class="show-leads-grid" (click)="showLeadsGrid()">{{ls.l('Show Leads')}}</i>
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="selectedLeadId">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="General">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="lead-info row">

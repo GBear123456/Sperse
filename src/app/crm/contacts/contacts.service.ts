@@ -271,14 +271,14 @@ export class ContactsService {
         return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + company.primaryPhoto } : {};
     }
 
-    updateLocation(contactId?, leadId?, companyId?, userId?, queryParams?) {
+    updateLocation(contactId?, leadId?, companyId?, userId?, queryParams?, section?) {
         this.router.navigate(
             ['app/' + (userId ? 'admin' : 'crm')].concat(
                 contactId ? ['contact', contactId] : [],
                 leadId ? ['lead', leadId] : [],
                 companyId ? ['company', companyId] : [],
                 userId ? ['user', userId] : [],
-                location.pathname.split('/').pop()
+                section || location.pathname.split('/').pop()
             ), {
             queryParams: queryParams || location.search.slice(1).split('&').reduce((acc, item) => {
                 let parts = item.split('=');

@@ -18,7 +18,7 @@ import { NotesComponent } from './notes/notes.component';
 import { OrdersComponent } from './orders/orders.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
-
+import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts.const';
 
 
@@ -39,6 +39,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'user-information', component: UserInformationComponent },
                     { path: 'login-attemps', component: LoginAttempsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'application-status', component: ApplicationStatusComponent },
@@ -62,6 +63,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'user-information', component: UserInformationComponent },
                     { path: 'login-attemps', component: LoginAttempsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'application-status', component: ApplicationStatusComponent },
@@ -85,6 +87,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'user-information', component: UserInformationComponent },
                     { path: 'login-attemps', component: LoginAttempsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
@@ -107,6 +110,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'user-information', component: UserInformationComponent },
                     { path: 'login-attemps', component: LoginAttempsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'application-status', component: ApplicationStatusComponent },
@@ -130,6 +134,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'user-information', component: UserInformationComponent },
                     { path: 'login-attemps', component: LoginAttempsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },

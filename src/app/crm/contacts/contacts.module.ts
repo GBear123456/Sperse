@@ -140,6 +140,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 
 @NgModule({
     declarations: [
@@ -199,7 +200,8 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
-        CreateInvoiceDialogComponent
+        CreateInvoiceDialogComponent,
+        LeadRelatedContactsComponent
     ],
     imports: [
         FormsModule,

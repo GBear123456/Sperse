@@ -1,12 +1,10 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { finalize, filter, switchMap, takeUntil, first, skip } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
@@ -25,8 +23,6 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
-import { ODataService } from '@shared/common/odata/odata.service';
-import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
@@ -40,7 +36,6 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 
 @Component({
     selector: 'lead-information',
@@ -52,7 +47,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
     @ViewChild('loaderWrapper', { static: false }) loaderWrapper: ElementRef;
-    @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
 
     data = {
         contactInfo: new ContactInfoDto(),
@@ -67,33 +61,13 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     get selectedTabIndex(): number {
         return this._selectedTabIndex;
     }
-    userTimezone = DateHelper.getUserTimezone();
-    private readonly dataSourceURI = 'Lead';
+
     private formatting = AppConsts.formatting;
     private _selectedTabIndex = 0;
     private readonly APP_TAB_INDEX = 1;
     private organizationUnits: any;
     private invoiceSettings: InvoiceSettings = new InvoiceSettings();
     private readonly ident = 'LeadInformation';
-
-    actionMenuItems: ActionMenuItem[] = [
-        {
-            text: this.ls.l('View'),
-            class: 'edit',
-            action: this.viewLead.bind(this)
-        },
-        {
-            text: this.ls.l('Delete'),
-            class: 'delete',
-            action: this.deleteLead.bind(this)
-        }
-    ];
-
-    dataSource;
-    selectedLeadId;
-    actionRecordData: any;
-    readonly leadFields = LeadFields;
-    defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     isCGManageAllowed = false;
     isEditAllowed = false;
@@ -179,9 +153,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     capitalize = capitalize;
 
     constructor(
-        private router: Router,
         private dialog: MatDialog,
-        private route: ActivatedRoute,
         private invoicesService: InvoicesService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
@@ -195,7 +167,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         private permissionCheckerService: PermissionCheckerService,
         private currencyPipe: CurrencyPipe,
         private permissionService: AppPermissionService,
-        private oDataService: ODataService,
         public ls: AppLocalizationService
     ) {
         this.contactsService.loadLeadInfo();
@@ -216,14 +187,11 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.data.leadInfo = leadInfo;
-            this.selectedLeadId = leadInfo.leadId;
             this.updateSourceContactName();
-            this.initDataSource();
         }, this.ident);
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
             this.initToolbarInfo();
-            this.initDataSource();
             if (this.contactsService.settingsDialogOpened.value)
                 this.toggleOrgUnitsDialog(false);
             this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
@@ -235,42 +203,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;
         });
-    }
-
-    initDataSource() {
-        if (!this.selectedLeadId && this.data.contactInfo.id)
-            this.dataSource = {
-                uri: this.dataSourceURI,
-                requireTotalCount: true,
-                store: {
-                    key: this.leadFields.Id,
-                    type: 'odata',
-                    url: this.oDataService.getODataUrl(this.dataSourceURI, {
-                        [this.leadFields.CustomerId]: this.data.contactInfo.id
-                    }),
-                    version: AppConsts.ODataVersion,
-                    beforeSend: (request) => {
-                        request.params.contactGroupId = this.data.contactInfo.groupId;
-                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = DataGridService.getSelectFields(
-                            this.dataGrid,
-                            [
-                                this.leadFields.Id,
-                                this.leadFields.CustomerId,
-                                this.leadFields.LeadDate,
-                                this.leadFields.Stage,
-                                this.leadFields.ContactAffiliateCode,
-                                this.leadFields.SourceContactName,
-                                this.leadFields.SourceCampaignCode,
-                                this.leadFields.SourceChannelCode,
-                                this.leadFields.RefererUrl
-                            ]
-                        );
-                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                    },
-                    deserializeDates: false
-                }
-            };
     }
 
     initToolbarInfo() {
@@ -436,45 +368,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
-    }
-
-    onCellClick(event) {
-        let target = event.event.target;
-        if (event.rowType === 'data') {
-            if (target.closest('.dx-link.dx-link-edit'))
-                this.toggleActionsMenu(event.data, target);
-            else
-                this.contactsService.updateLocation(event.data.CustomerId, event.data.Id);
-        }
-    }
-
-    toggleActionsMenu(data, target) {
-        this.actionRecordData = data;
-        this.actionMenu.toggle(target);
-    }
-
-    onMenuItemClick(event) {
-        event.itemData.action.call(this);
-        this.actionRecordData = null;
-        this.actionMenu.hide();
-    }
-
-    showLeadsGrid() {
-        this.contactsService.updateLocation(this.data.contactInfo.id);
-    }
-
-    viewLead() {
-        this.contactsService.updateLocation(
-            this.actionRecordData.CustomerId, this.actionRecordData.Id);
-    }
-
-    deleteLead() {
-        this.contactsService.deleteContact(
-            this.data.contactInfo.personContactInfo.fullName,
-            this.data.contactInfo.groupId,
-            this.actionRecordData.Id,
-            () => {}, true
-        );
     }
 
     ngOnDestroy() {
