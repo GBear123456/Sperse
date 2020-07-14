@@ -66,12 +66,12 @@ export class HostResetPasswordComponent implements OnInit {
                 result.tenantId, false
             );
 
-            if (!result.isValid) {
+            /*if (!result.isValid) {
                 abp.message.error(this.ls.l('InvalidPasswordResetCode_Detail'), this.ls.l('InvalidPasswordResetCode')).done(() => {
                     this.router.navigate(['account/login']);
                 });
                 return;
-            }
+            }*/
 
             this.profileService.getPasswordComplexitySetting().subscribe(result => {
                 this.passwordComplexitySetting = result.setting;
@@ -82,7 +82,7 @@ export class HostResetPasswordComponent implements OnInit {
     save(): void {
         if (this.form.valid) {
             this.saving = true;
-            this.accountService.resetPassword(this.model)
+            /*this.accountService.resetPassword(this.model)
                 .subscribe(
                     (result: ResetPasswordOutput) => {
                         if (!result.canLogin) {
@@ -99,7 +99,7 @@ export class HostResetPasswordComponent implements OnInit {
                         }, undefined, !this.model.resetCode);
                     },
                     () => { this.saving = false; }
-                );
+                );*/
         }
     }
 

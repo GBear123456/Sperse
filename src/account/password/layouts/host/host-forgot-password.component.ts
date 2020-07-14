@@ -3,7 +3,7 @@ import { SendPasswordResetCodeInput } from '@shared/service-proxies/service-prox
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppLocalizationService } from '../../../../app/shared/common/localization/app-localization.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './host-forgot-password.component.html',

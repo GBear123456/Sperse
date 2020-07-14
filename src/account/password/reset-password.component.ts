@@ -23,6 +23,7 @@ import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space
 import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advice-period-reset-password.component';
 import { BankCodeResetPasswordComponent } from './layouts/bank-code/bank-code-reset-password.component';
 import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
+import { RapidResetPasswordComponent } from "@root/account/password/layouts/rapid/rapid-reset-password.component";
 
 @Directive({
     selector: '[ad-reset-password-host]'
@@ -66,6 +67,8 @@ export class ResetPasswordComponent implements OnInit {
                 return AdvicePeriodResetPasswordComponent;
             case LayoutType.BankCode:
                 return BankCodeResetPasswordComponent;
+            case LayoutType.Rapid:
+                return RapidResetPasswordComponent;
             default:
                 return HostResetPasswordComponent;
         }

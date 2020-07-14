@@ -44,6 +44,12 @@ import { AdvicePeriodResetPasswordComponent } from './password/layouts/advice-pe
 import { BankCodeResetPasswordComponent } from './password/layouts/bank-code/bank-code-reset-password.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
 import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-layout.module';
+import { RapidLayoutComponent } from "@root/account/layouts/rapid/rapid-layout.component";
+import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-login.component";
+import { RapidResetPasswordComponent } from "@root/account/password/layouts/rapid/rapid-reset-password.component";
+import { RapidForgotPasswordComponent } from "@root/account/password/layouts/rapid/rapid-forgot-password.component";
+import { RapidAutoLoginComponent } from "@root/account/auto-login/layouts/rapid/rapid-auto-login.component";
+
 
 @NgModule({
     imports: [
@@ -57,7 +63,7 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         PaymentInfoModule,
         AccountRoutingModule,
         PersonalFinanceLayoutModule,
-        BankCodeLayoutModule,
+        BankCodeLayoutModule
     ],
     declarations: [
         AccountComponent,
@@ -98,7 +104,13 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         AdvicePeriodResetPasswordComponent,
         AdvicePeriodForgotPasswordComponent,
         BankCodeResetPasswordComponent,
-        BankCodeForgotPasswordComponent
+        BankCodeForgotPasswordComponent,
+
+        RapidLayoutComponent,
+        RapidLoginComponent,
+        RapidResetPasswordComponent,
+        RapidForgotPasswordComponent,
+        RapidAutoLoginComponent
     ],
     entryComponents: [
         HostLayoutComponent,
@@ -120,7 +132,13 @@ import { BankCodeLayoutModule } from '@root/bank-code/shared/layout/bank-code-la
         AdvicePeriodResetPasswordComponent,
         AdvicePeriodForgotPasswordComponent,
         BankCodeResetPasswordComponent,
-        BankCodeForgotPasswordComponent
+        BankCodeForgotPasswordComponent,
+
+        RapidLayoutComponent,
+        RapidLoginComponent,
+        RapidResetPasswordComponent,
+        RapidForgotPasswordComponent,
+        RapidAutoLoginComponent
     ],
     providers: [
         LoginService,

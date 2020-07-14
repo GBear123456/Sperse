@@ -9,6 +9,7 @@ import { LendSpaceAutoLoginComponent } from './layouts/lend-space/lend-space-aut
 import { AdvicePeriodAutoLoginComponent } from './layouts/advice-period/advice-period-auto-login.component';
 import { BankCodeAutoLoginComponent } from './layouts/bank-code/bank-code-auto-login.component';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { RapidAutoLoginComponent } from './layouts/rapid/rapid-auto-login.component';
 
 @Directive({
     selector: '[ad-login-host]'
@@ -43,6 +44,8 @@ export class AutoLoginComponent implements OnInit {
                 return AdvicePeriodAutoLoginComponent;
             case LayoutType.BankCode:
                 return BankCodeAutoLoginComponent;
+            case LayoutType.Rapid:
+                return RapidAutoLoginComponent;
             default:
                 return HostAutoLoginComponent;
         }

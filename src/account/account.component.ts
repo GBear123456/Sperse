@@ -6,6 +6,7 @@ import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout
 import { AdvicePeriodLayoutComponent } from './layouts/advice-period/advice-period-layout.component';
 import { BankCodeLayoutComponent } from './layouts/bank-code/bank-code-layout.component';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { RapidLayoutComponent } from "@root/account/layouts/rapid/rapid-layout.component";
 
 @Directive({
     selector: '[ad-account-host]'
@@ -42,6 +43,8 @@ export class AccountComponent implements OnInit {
                 return AdvicePeriodLayoutComponent;
             case LayoutType.BankCode:
                 return BankCodeLayoutComponent;
+            case LayoutType.Rapid:
+                return RapidLayoutComponent;
             default:
                 return HostLayoutComponent;
         }

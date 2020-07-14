@@ -18,6 +18,7 @@ import { LendSpaceForgotPasswordComponent } from './layouts/lend-space/lend-spac
 import { AdvicePeriodForgotPasswordComponent } from './layouts/advice-period/advice-period-forgot-password.component';
 import { BankCodeForgotPasswordComponent } from './layouts/bank-code/bank-code-forgot-password.component';
 import { HostForgotPasswordComponent } from '@root/account/password/layouts/host/host-forgot-password.component';
+import { RapidForgotPasswordComponent } from "@root/account/password/layouts/rapid/rapid-forgot-password.component";
 
 @Directive({
     selector: '[ad-forgot-password-host]'
@@ -54,6 +55,8 @@ export class ForgotPasswordComponent implements OnInit {
                 return AdvicePeriodForgotPasswordComponent;
             case LayoutType.BankCode:
                 return BankCodeForgotPasswordComponent;
+            case LayoutType.Rapid:
+                return RapidForgotPasswordComponent;
             default:
                 return HostForgotPasswordComponent;
         }
