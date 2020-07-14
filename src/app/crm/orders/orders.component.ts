@@ -315,7 +315,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     currency: string;
     totalCount: number;
     ordersToolbarConfig: ToolbarGroupModel[];
-    subscriptionsToolbarConfig: ToolbarGroupModel[] = this.getSubscriptionsToolbarConfig();
+    subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
     orderTypes = [
         {
@@ -1355,6 +1355,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.search.next('');
             this.filterChanged = true;
             this.initFilterConfig(true);
+            if (event.value == OrderType.Order)
+                this.initOrdersToolbarConfig();
+            else
+                this.initSubscriptionsToolbarConfig();
             setTimeout(() => {
                 this.initDataSource();
                 this.processFilterInternal();
