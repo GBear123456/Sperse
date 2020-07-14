@@ -494,7 +494,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         takeUntil(this.destroy$),
         switchMap(this.waitUntil(OrderType.Order)),
         map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
-            return this.getODataUrl('OrderCount', oDataRequestValues.filter, null, oDataRequestValues.params);
+            return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
+                [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((totalUrl: string) => {

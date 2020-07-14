@@ -485,8 +485,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         this.chartComponent.summaryBy.value,
                         this.dateField,
                         this.subscriptionStatusFilter.items.element['getObjectValue']()
-                    )
-                    return this.httpClient.get(chartDataUrl)
+                    );
+                    return this.httpClient.get(chartDataUrl);
                 })
             ).toPromise().then((result: any) => {
                 result = this.crmService.parseChartData(result);
@@ -705,8 +705,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             let url = this.getODataUrl(
                 this.totalDataSourceURI,
                 odataRequestValues.filter,
-                null,
-                odataRequestValues.params
+                null, [...this.subscriptionStatusFilter.items.element.value, ...odataRequestValues.params]
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
                 this.totalDataSource['_store']['_url'] = url;
