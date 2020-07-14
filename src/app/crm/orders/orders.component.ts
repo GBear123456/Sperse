@@ -505,14 +505,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
                 }
-            )
+            );
         }),
         map((summaryData: { [stageId: string]: OrderStageSummary }) => {
             return Object.values(summaryData).reduce((summary: OrderStageSummary, stageSummary: OrderStageSummary) => {
                 summary.count += stageSummary.count;
                 summary.sum += stageSummary.sum;
                 return summary;
-            }, { count: 0, sum: 0 })
+            }, { count: 0, sum: 0 });
         })
     );
     subscriptionsTotalFee: number;
@@ -534,9 +534,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     {
                         name: 'totalSummary',
                         value: JSON.stringify([
-                            { "summaryType": "count" },
-                            { "selector": "OrderAmount", "summaryType":"sum"},
-                            { "selector": "Fee", "summaryType":"sum" }
+                            { 'summaryType': 'count' },
+                            { 'selector': 'OrderAmount', 'summaryType': 'sum'},
+                            { 'selector': 'Fee', 'summaryType': 'sum' }
                         ])
                     }
                 ]
@@ -551,7 +551,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 })
             }
         )),
-    )
+    );
 
     constructor(injector: Injector,
         private orderProxy: OrderServiceProxy,
@@ -1077,7 +1077,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         let instance = dataGrid && dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
-        }
+        } else
+            this.setGridDataLoaded();
     }
 
     private setPivotGridInstance() {
@@ -1127,9 +1128,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.subscriptionsDataLayoutType = dataLayouType;
         this.initDataSource();
         this.initSubscriptionsToolbarConfig();
-        if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
+        if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid)
             this.dataGrid.instance.deselectAll();
-        }
+
         if (this.filterChanged) {
             this.filterChanged = false;
             setTimeout(() => this.processFilterInternal());
