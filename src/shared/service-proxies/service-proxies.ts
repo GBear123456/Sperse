@@ -24755,6 +24755,58 @@ export class ProfileServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateMonthlyGoal(body: UpdateMonthlyGoalInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateMonthlyGoal";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateMonthlyGoal(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateMonthlyGoal(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateMonthlyGoal(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -59927,6 +59979,7 @@ export interface ISubscriptionShortInfoOutput {
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
     subscriptions!: SubscriptionShortInfoOutput[] | undefined;
     userKey!: string | undefined;
+    monthlyGoal!: number | undefined;
 
     constructor(data?: IGetMemberInfoOutput) {
         if (data) {
@@ -59945,6 +59998,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                     this.subscriptions.push(SubscriptionShortInfoOutput.fromJS(item));
             }
             this.userKey = data["userKey"];
+            this.monthlyGoal = data["monthlyGoal"];
         }
     }
 
@@ -59963,6 +60017,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
                 data["subscriptions"].push(item.toJSON());
         }
         data["userKey"] = this.userKey;
+        data["monthlyGoal"] = this.monthlyGoal;
         return data; 
     }
 }
@@ -59970,6 +60025,7 @@ export class GetMemberInfoOutput implements IGetMemberInfoOutput {
 export interface IGetMemberInfoOutput {
     subscriptions: SubscriptionShortInfoOutput[] | undefined;
     userKey: string | undefined;
+    monthlyGoal: number | undefined;
 }
 
 export enum NoteType {
@@ -66042,6 +66098,46 @@ export class ChangeUserLanguageDto implements IChangeUserLanguageDto {
 
 export interface IChangeUserLanguageDto {
     languageName: string;
+}
+
+export class UpdateMonthlyGoalInput implements IUpdateMonthlyGoalInput {
+    userId!: number;
+    monthlyGoal!: number | undefined;
+
+    constructor(data?: IUpdateMonthlyGoalInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.monthlyGoal = data["monthlyGoal"];
+        }
+    }
+
+    static fromJS(data: any): UpdateMonthlyGoalInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateMonthlyGoalInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["monthlyGoal"] = this.monthlyGoal;
+        return data; 
+    }
+}
+
+export interface IUpdateMonthlyGoalInput {
+    userId: number;
+    monthlyGoal: number | undefined;
 }
 
 export class OptionDto implements IOptionDto {
