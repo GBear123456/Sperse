@@ -66109,7 +66109,6 @@ export interface IChangeUserLanguageDto {
 }
 
 export class UpdateMonthlyGoalInput implements IUpdateMonthlyGoalInput {
-    userId!: number;
     monthlyGoal!: number | undefined;
 
     constructor(data?: IUpdateMonthlyGoalInput) {
@@ -66123,7 +66122,6 @@ export class UpdateMonthlyGoalInput implements IUpdateMonthlyGoalInput {
 
     init(data?: any) {
         if (data) {
-            this.userId = data["userId"];
             this.monthlyGoal = data["monthlyGoal"];
         }
     }
@@ -66137,14 +66135,12 @@ export class UpdateMonthlyGoalInput implements IUpdateMonthlyGoalInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
         data["monthlyGoal"] = this.monthlyGoal;
         return data; 
     }
 }
 
 export interface IUpdateMonthlyGoalInput {
-    userId: number;
     monthlyGoal: number | undefined;
 }
 
