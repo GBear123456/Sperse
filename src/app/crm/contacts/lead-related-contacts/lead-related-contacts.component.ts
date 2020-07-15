@@ -170,7 +170,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                                 this.leadFields.CustomerId,
                                 this.leadFields.LeadDate,
                                 this.leadFields.Stage,
-                                this.leadFields.ContactAffiliateCode,
+                                this.leadFields.SourceAffiliateCode,
                                 this.leadFields.SourceContactName,
                                 this.leadFields.SourceCampaignCode,
                                 this.leadFields.SourceChannelCode,
