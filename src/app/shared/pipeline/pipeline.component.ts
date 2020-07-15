@@ -48,6 +48,7 @@ import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'app-pipeline',
@@ -116,6 +117,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     pipeline: PipelineDto;
     stages: Stage[];
     allStagesEntitiesTotal: number;
+    isConfigureAllowed = this.isGranted(AppPermissions.CRMPipelinesConfigure);
 
     private queryWithSearch: any = [];
     private params: any = [];
@@ -904,7 +906,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     disallowMove(stage, reverse?) {
         let targetStage;
-        return !stage.sortOrder || stage.isFinal ||
+        return !this.isConfigureAllowed || !stage.sortOrder || stage.isFinal ||
             this.getStages(reverse).some((lookupStage, index) => {
                 if (lookupStage.id == stage.id && (targetStage && targetStage.isFinal || !index))
                     return true;
