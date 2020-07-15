@@ -11,7 +11,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
 import {
-    LeadServiceProxy, LeadInfoDto, 
+    LeadServiceProxy, LeadInfoDto,
     ContactInfoDto, ContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -132,7 +132,8 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                             this.clientFields.Status,
                             this.clientFields.ContactDate,
                             this.clientFields.BankCode,
-                            this.clientFields.SourceContactId
+                            this.clientFields.SourceContactId,
+                            this.clientFields.GroupId
                         ]
                     );
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -186,9 +187,12 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         if (event.rowType === 'data') {
             if (target.closest('.dx-link.dx-link-edit'))
                 this.toggleActionsMenu(event.data, target);
-            else
-                this.contactsService.updateLocation(event.data.CustomerId, event.data.Id, 
+            else if (event.data.CustomerId)
+                this.contactsService.updateLocation(event.data.CustomerId, event.data.Id,
                     undefined, undefined, undefined, 'lead-information');
+            else
+                this.contactsService.updateLocation(event.data.Id, undefined,
+                    undefined, undefined, undefined, 'contact-information');
         }
     }
 
@@ -204,18 +208,29 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     }
 
     viewLead() {
-        this.contactsService.updateLocation(
-            this.actionRecordData.CustomerId, this.actionRecordData.Id, 
-            undefined, undefined, undefined, 'lead-information');
+        if (this.actionRecordData.CustomerId)
+            this.contactsService.updateLocation(
+                this.actionRecordData.CustomerId, this.actionRecordData.Id,
+                undefined, undefined, undefined, 'lead-information');
+        else
+            this.contactsService.updateLocation(this.actionRecordData.Id, undefined,
+                undefined, undefined, undefined, 'contact-information');
     }
 
     deleteLead() {
-        this.contactsService.deleteContact(
-            this.data.contactInfo.personContactInfo.fullName,
-            this.data.contactInfo.groupId,
-            this.actionRecordData.Id,
-            () => {}, true
-        );
+        if (this.actionRecordData.CustomerId)
+            this.contactsService.deleteContact(
+                this.data.contactInfo.personContactInfo.fullName,
+                this.data.contactInfo.groupId,
+                this.actionRecordData.Id,
+                () => {}, true
+            );
+        else
+            this.contactsService.deleteContact(
+                this.actionRecordData.Name,
+                this.actionRecordData.GroupId,
+                this.actionRecordData.Id
+            );
     }
 
     ngOnDestroy() {

@@ -17,4 +17,5 @@ export interface ContactDto {
     BankCode: string;
     UserId: number;
     SourceContactId: number;
+    GroupId: string;
 }
