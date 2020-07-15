@@ -29,17 +29,20 @@ export class ProductsComponent implements OnInit, OnDestroy {
         zip(
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach)
-        ).subscribe(([showBankTrainer, showBankAffiliate, showBankCoach]: [boolean, boolean, boolean]) => {
-            this.sidebarLinks = this.getSidebarLinks(showBankTrainer, showBankAffiliate, showBankCoach);
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.Connect)
+        ).subscribe(([showBankTrainer, showBankAffiliate, showBankCoach, hasBankPass, hasConnect]: [boolean, boolean, boolean, boolean, boolean]) => {
+            this.sidebarLinks = this.getSidebarLinks(showBankTrainer, showBankAffiliate, showBankCoach, hasBankPass, hasConnect);
         });
     }
 
-    private getSidebarLinks(showBankTrainer?: boolean, showBankAffiliate?: boolean, showBankCoach?: boolean) {
+    private getSidebarLinks(showBankTrainer?: boolean, showBankAffiliate?: boolean, showBankCoach?: boolean, hasBankPass?: boolean, hasConnect?: boolean) {
         return [
             {
                 name: this.ls.l('BankCode_CodebreakerAI'),
-                routerUrl: 'codebreaker-ai'
+                routerUrl: 'codebreaker-ai',
+                hidden: !hasBankPass && hasConnect
             },
             {
                 namePrefix: this.ls.l('BankCode_Bank'),

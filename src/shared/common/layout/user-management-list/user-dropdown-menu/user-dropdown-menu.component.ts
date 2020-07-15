@@ -83,7 +83,8 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
         ? zip(
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
             this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault)
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.Connect)
         ).pipe(
             map((res: boolean[]) => res.some(Boolean))
         )

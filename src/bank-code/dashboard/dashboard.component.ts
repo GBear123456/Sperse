@@ -2,7 +2,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -24,7 +25,13 @@ export class DashboardComponent {
     allBankCodesGroupsCountsWithPercents$ = this.bankCodeService.allBankCodesGroupsCountsWithPercents$;
     contactBankCodeTotalCount$: Observable<string> = this.bankCodeService.contactBankCodeTotalCount$;
     allBankCodeTotalCount$: Observable<string> = this.bankCodeService.allBankCodeTotalCount$;
-    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass);
+    hasSubscription$: Observable<boolean> =
+        zip(
+            this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+            this.profileService.checkServiceSubscription(BankCodeServiceType.Connect)
+        ).pipe(
+            map((res: boolean[]) => res.some(Boolean))
+        )
 
     constructor(
         private profileService: ProfileService,
