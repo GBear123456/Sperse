@@ -19,6 +19,7 @@ import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ODataService } from '@shared/common/odata/odata.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
@@ -77,6 +78,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         private contactsService: ContactsService,
         private lifeCycleService: LifecycleSubjectsService,
         private loadingService: LoadingService,
+        private itemDetailsService: ItemDetailsService,
         private permissionCheckerService: PermissionCheckerService,
         private permissionService: AppPermissionService,
         private oDataService: ODataService,
@@ -192,12 +194,15 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         if (event.rowType === 'data') {
             if (target.closest('.dx-link.dx-link-edit'))
                 this.toggleActionsMenu(event.data, target);
-            else if (event.data.CustomerId)
-                this.contactsService.updateLocation(event.data.CustomerId, event.data.Id,
-                    undefined, undefined, undefined, 'lead-information');
-            else
-                this.contactsService.updateLocation(event.data.Id, undefined,
-                    undefined, undefined, undefined, 'contact-information');
+            else {
+                this.itemDetailsService.clearItemsSource();
+                if (event.data.CustomerId)
+                    this.contactsService.updateLocation(event.data.CustomerId, event.data.Id,
+                        undefined, undefined, undefined, 'lead-information');
+                else
+                    this.contactsService.updateLocation(event.data.Id, undefined,
+                        undefined, undefined, undefined, 'contact-information');
+            }
         }
     }
 
@@ -213,6 +218,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     }
 
     viewLead() {
+        this.itemDetailsService.clearItemsSource();
         if (this.actionRecordData.CustomerId)
             this.contactsService.updateLocation(
                 this.actionRecordData.CustomerId, this.actionRecordData.Id,
