@@ -100,7 +100,7 @@
                 <ng-container *ngIf="tenantHasBankCodeFeature">
                     <dxi-column [dataField]="clientFields.BankCode"
                                 cellTemplate="bankCodeCell"
-                                [caption]="l('BankCode')"
+                                [caption]="ls.l('BankCode')"
                                 [renderAsync]="true"
                                 [visible]="tenantHasBankCodeFeature"
                                 [showInColumnChooser]="tenantHasBankCodeFeature">
