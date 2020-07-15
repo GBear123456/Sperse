@@ -55,19 +55,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     private readonly contactDataSourceURI = 'Contact';
     private readonly ident = 'LeadRelatedContacts';
 
-    actionMenuItems: ActionMenuItem[] = [
-        {
-            text: this.ls.l('View'),
-            class: 'edit',
-            action: this.viewLead.bind(this)
-        },
-        {
-            text: this.ls.l('Delete'),
-            class: 'delete',
-            action: this.deleteLead.bind(this)
-        }
-    ];
-
+    actionMenuItems: ActionMenuItem[];
     readonly clientFields = ClientFields;
     readonly leadFields = LeadFields;
 
@@ -109,7 +97,24 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
             this.initToolbarInfo();
             this.initLeadDataSource();
             this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+            this.initActionMenuItems();
         }, this.ident);
+    }
+
+    initActionMenuItems() {
+        this.actionMenuItems = [
+            {
+                text: this.ls.l('View'),
+                class: 'edit',
+                action: this.viewLead.bind(this)
+            },
+            {
+                text: this.ls.l('Delete'),
+                class: 'delete',
+                action: this.deleteLead.bind(this),
+                disabled: !this.isCGManageAllowed
+            }
+        ];
     }
 
     initContactDataSource() {
