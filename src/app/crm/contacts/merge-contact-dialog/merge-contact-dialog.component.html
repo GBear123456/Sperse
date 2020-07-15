@@ -50,13 +50,25 @@
                     <div *ngIf="!field.hidden" [class]="'contact-field ' + field.name">
                         <div class="fields">
                             <p>{{field.caption}}</p>
-                            <p *ngIf="field.result.values.length > 1" [class]="field.name" [ngStyle]="{'margin-top': field.name == CONTACT_ADDRESSES_FIELD ? getAltCaptionTop(table) : '10px'}">{{field.alt}}</p>
+                            <p *ngIf="field?.result?.values?.length > 1" [class]="field.name" [ngStyle]="{'margin-top': field.name == CONTACT_ADDRESSES_FIELD ? getAltCaptionTop(table) : '10px'}">{{field.alt}}</p>
                         </div>
                         <ng-container *ngFor="let column of [COLUMN_RESULT_FIELD, COLUMN_TARGET_FIELD, COLUMN_SOURCE_FIELD]">
                             <div class="{{column}}">
-                                <div *ngFor="let value of field[column].values; let i = index" class="field-wrapper">
+                                <div *ngFor="let value of field[column]?.values; let i = index" class="field-wrapper">
                                     <p *ngIf="field.disabled" [title]="value.text">
-                                        <i *ngIf="field.name == LEAD_STAGE_FIELD" [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
+                                        <ng-container [ngSwitch]="field.name">
+                                             <ng-container *ngSwitchCase="ASSIGNED_USER_EMAIL">
+                                                 <i [ngStyle]="{'background-color': checkUserActive(column) ? 'green' : 'red'}" 
+                                                    [title]="checkUserActive(column) ? ls.l('Active') : ls.l('Inactive')"></i>{{getActiveUserEmail(value, column)}}
+                                                 <div class="user-last-login" [title]="ls.l('LastLoginTime')" *ngIf="getUserLastLoginTime(column) as userLastLoginTime">({{userLastLoginTime | timeAgo}})</div>
+                                             </ng-container>
+                                             <ng-container *ngSwitchCase="LEAD_STAGE_FIELD">
+                                                 <i [ngStyle]="{'background-color': getStageColorByName(value.text)}"></i>{{value.text}}
+                                             </ng-container>
+                                             <ng-container *ngSwitchDefault>
+                                                {{value.text}}
+                                             </ng-container>
+                                        </ng-container>
                                     </p>
                                     <dx-check-box
                                         [hint]="value.text"

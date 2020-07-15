@@ -59,6 +59,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
     public readonly LEAD_COMPLETED_DATE_FIELD = 'dateCompleted';
     public readonly LEAD_SOURCE_FIELD         = 'sourceContactName';
+    public readonly ASSIGNED_USER_EMAIL       = 'userEmailAddress';
 
     isSameContact = this.data.mergeInfo.contactInfo.id == this.data.mergeInfo.targetContactInfo.id;
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
@@ -99,6 +100,10 @@ export class MergeContactDialogComponent implements AfterViewInit {
         assignedToUserName: {
             caption: this.ls.l('Contact.AssignedUserName'),
             hidden: this.isSameContact,
+            disabled: true
+        },
+        [this.ASSIGNED_USER_EMAIL]: {
+            caption: this.ls.l('UserInformations'),
             disabled: true
         },
         orderCount: {
@@ -296,7 +301,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
             if (isMultiField) {
                 if (targetValues.some(source => source.text == item.text))
                     return null;
-            } else if (targetValues.length || !this.keepSource)
+            } else if (this.checkSingleField(field, targetValues))
                 return null;
             return item;
         }).filter(Boolean)).map((item, index) => {
@@ -304,6 +309,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
             item.selected = true;
             return item;
         });
+    }
+
+    checkSingleField(field, targetValues) {
+        if (field == this.ASSIGNED_USER_EMAIL) {
+            let data = this.data.mergeInfo;
+            return targetValues.length && (data.targetContactInfo.userIsActive || !data.ContactInfo.userIsActive);
+        } else
+            return (targetValues.length || !this.keepSource);
     }
 
     setLeadInfoFields(column, fields, forced = false) {
@@ -545,6 +558,43 @@ export class MergeContactDialogComponent implements AfterViewInit {
         const defaultTop = 10;
         let field = element && element.querySelector('.contact-field.contactAddresses > .result > div:first-child');
         return (field ? Math.max(defaultTop, field.offsetHeight - defaultTop) : defaultTop) + 'px';
+    }
+
+    getActiveUserEmail(value, column) {
+        if (column == this.COLUMN_RESULT_FIELD) {
+            let sourceContact = this.data.mergeInfo.contactInfo,
+                targetContact = this.data.mergeInfo.targetContactInfo;
+            if (targetContact.isUserActive && targetContact.userEmailAddress)
+                value.text = targetContact.userEmailAddress;
+            else if (sourceContact.isUserActive && sourceContact.userEmailAddress)
+                value.text = sourceContact.userEmailAddress;
+            else
+                value.text = targetContact.userEmailAddress || sourceContact.userEmailAddress;
+        }
+        return value.text;
+    }
+
+    checkUserActive(column) {
+        let sourceContact = this.data.mergeInfo.contactInfo,
+            targetContact = this.data.mergeInfo.targetContactInfo;
+        if (column == this.COLUMN_SOURCE_FIELD)
+            return sourceContact.userIsActive;
+        else if (column == this.COLUMN_TARGET_FIELD)
+            return targetContact.userIsActive;
+        else
+            return targetContact.userIsActive || sourceContact.userIsActive;
+    }
+
+    getUserLastLoginTime(column) {
+        let sourceContact = this.data.mergeInfo.contactInfo,
+            targetContact = this.data.mergeInfo.targetContactInfo;
+        if (column == this.COLUMN_SOURCE_FIELD)
+            return sourceContact.userLastLoginTime;
+        else if (column == this.COLUMN_TARGET_FIELD)
+            return targetContact.userLastLoginTime;
+        else
+            return targetContact.userLastLoginTime
+                || sourceContact.userLastLoginTime;
     }
 
     save() {
