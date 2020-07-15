@@ -5,7 +5,7 @@
         (onItemClick)="onMenuItemClick($event)">
     </action-menu>
     <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-        <mat-tab [label]="ls.l('Lead History')">
+        <mat-tab [label]="ls.l('LeadHistory')">
             <dx-data-grid #leadDataGrid
                 height="calc(100vh - 270px)"
                 class="main-component-view"
@@ -58,7 +58,7 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
             </dx-data-grid>
         </mat-tab>
-        <mat-tab [label]="ls.l('Referral Contacts')">
+        <mat-tab [label]="ls.l('ReferralContacts')">
             <dx-data-grid #contactDataGrid
                 height="calc(100vh - 270px)"
                 class="main-component-view"
