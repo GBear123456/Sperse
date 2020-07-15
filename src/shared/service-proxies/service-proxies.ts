@@ -45186,7 +45186,9 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     affiliateCode!: string | undefined;
     xref!: string | undefined;
     userId!: number | undefined;
-    userEmail!: string | undefined;
+    userEmailAddress!: string | undefined;
+    userIsActive!: boolean | undefined;
+    userLastLoginTime!: moment.Moment | undefined;
     doB!: moment.Moment | undefined;
     ssn!: string | undefined;
     gender!: Gender | undefined;
@@ -45219,7 +45221,9 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.affiliateCode = data["affiliateCode"];
             this.xref = data["xref"];
             this.userId = data["userId"];
-            this.userEmail = data["userEmail"];
+            this.userEmailAddress = data["userEmailAddress"];
+            this.userIsActive = data["userIsActive"];
+            this.userLastLoginTime = data["userLastLoginTime"] ? moment(data["userLastLoginTime"].toString()) : <any>undefined;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
             this.gender = data["gender"];
@@ -45264,7 +45268,9 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["affiliateCode"] = this.affiliateCode;
         data["xref"] = this.xref;
         data["userId"] = this.userId;
-        data["userEmail"] = this.userEmail;
+        data["userEmailAddress"] = this.userEmailAddress;
+        data["userIsActive"] = this.userIsActive;
+        data["userLastLoginTime"] = this.userLastLoginTime ? this.userLastLoginTime.toISOString() : <any>undefined;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["gender"] = this.gender;
@@ -45302,7 +45308,9 @@ export interface IContactInfoForMerge {
     affiliateCode: string | undefined;
     xref: string | undefined;
     userId: number | undefined;
-    userEmail: string | undefined;
+    userEmailAddress: string | undefined;
+    userIsActive: boolean | undefined;
+    userLastLoginTime: moment.Moment | undefined;
     doB: moment.Moment | undefined;
     ssn: string | undefined;
     gender: Gender | undefined;
@@ -62873,6 +62881,7 @@ export class SubscriptionInput implements ISubscriptionInput {
     code!: string;
     name!: string;
     level!: string | undefined;
+    startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -62890,6 +62899,7 @@ export class SubscriptionInput implements ISubscriptionInput {
             this.code = data["code"];
             this.name = data["name"];
             this.level = data["level"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -62907,6 +62917,7 @@ export class SubscriptionInput implements ISubscriptionInput {
         data["code"] = this.code;
         data["name"] = this.name;
         data["level"] = this.level;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -62917,6 +62928,7 @@ export interface ISubscriptionInput {
     code: string;
     name: string;
     level: string | undefined;
+    startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }
@@ -62925,7 +62937,6 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     contactId!: number;
     leadId!: number | undefined;
     orderNumber!: string | undefined;
-    systemType!: string;
     subscriptions!: SubscriptionInput[];
     updateThirdParty!: boolean | undefined;
 
@@ -62946,7 +62957,6 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.contactId = data["contactId"];
             this.leadId = data["leadId"];
             this.orderNumber = data["orderNumber"];
-            this.systemType = data["systemType"];
             if (data["subscriptions"] && data["subscriptions"].constructor === Array) {
                 this.subscriptions = [];
                 for (let item of data["subscriptions"])
@@ -62968,7 +62978,6 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["contactId"] = this.contactId;
         data["leadId"] = this.leadId;
         data["orderNumber"] = this.orderNumber;
-        data["systemType"] = this.systemType;
         if (this.subscriptions && this.subscriptions.constructor === Array) {
             data["subscriptions"] = [];
             for (let item of this.subscriptions)
@@ -62983,7 +62992,6 @@ export interface IUpdateOrderSubscriptionInput {
     contactId: number;
     leadId: number | undefined;
     orderNumber: string | undefined;
-    systemType: string;
     subscriptions: SubscriptionInput[];
     updateThirdParty: boolean | undefined;
 }
