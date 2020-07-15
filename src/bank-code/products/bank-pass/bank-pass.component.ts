@@ -23,7 +23,7 @@ import DataSource from 'devextreme/data/data_source';
 import { DxoPagerComponent } from 'devextreme-angular/ui/nested';
 import 'devextreme/data/odata/store';
 import ODataStore from 'devextreme/data/odata/store';
-import { Observable, of } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { filter, takeUntil, tap, map } from 'rxjs/operators';
 
 /** Application imports */
@@ -147,7 +147,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
     formatting = AppConsts.formatting;
     hasSubscription$: Observable<boolean> = (this.shared
         ? of(this.permissionService.isGranted(AppPermissions.CRMCustomers))
-        : this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass)
+        : zip(this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass), this.profileService.checkServiceSubscription(BankCodeServiceType.Connect))
+            .pipe(map((res: boolean[]) => res.some(Boolean)))
     ).pipe(
         tap((hasSubscription) => setTimeout(() => {
             if (hasSubscription) this.dataIsLoading = false;

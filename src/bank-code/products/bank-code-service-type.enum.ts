@@ -4,5 +4,6 @@ export enum BankCodeServiceType {
     BANKVault = 'BANKVAULT',
     BANKTrainer = 'Certified Trainer',
     BANKCoach = 'Certified Coach',
-    WTBeBook = 'WTB eBook'
+    WTBeBook = 'WTB eBook',
+    Connect = 'Connect'
 }
