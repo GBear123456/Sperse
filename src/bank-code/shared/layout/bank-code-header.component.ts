@@ -63,14 +63,16 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
             zip(
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKTrainer),
                 this.profileService.checkServiceSubscription(BankCodeServiceType.BANKAffiliate),
-                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach)
-            ).subscribe(([showTrainerLink, showAffiliateLink, showCoachLink]: [boolean, boolean, boolean]) => {
-                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showCoachLink, this.getBCRMLink());
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKCoach),
+                this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+                this.profileService.checkServiceSubscription(BankCodeServiceType.Connect)
+            ).subscribe(([showTrainerLink, showAffiliateLink, showCoachLink, hasBankPass, hasConnect]: [boolean, boolean, boolean, boolean, boolean]) => {
+                this.memberAreaLinks = this.getMemberAreaLinks(showTrainerLink, showAffiliateLink, showCoachLink, hasBankPass, hasConnect, this.getBCRMLink());
             });
         }
     }
 
-    private getMemberAreaLinks(showTrainerLink?: boolean, showAffiliateLink?: boolean, showCoachLink?: boolean, bcrmLink?: string) {
+    private getMemberAreaLinks(showTrainerLink?: boolean, showAffiliateLink?: boolean, showCoachLink?: boolean, hasBankPass?: boolean, hasConnect?: boolean, bcrmLink?: string) {
         return [
             {
                 name: this.ls.l('Home'),
@@ -82,7 +84,8 @@ export class BankCodeHeaderComponent implements OnInit, OnDestroy {
                 sublinks: [
                     {
                         name: this.ls.l('BankCode_CodebreakerAI'),
-                        routerUrl: 'products/codebreaker-ai'
+                        routerUrl: 'products/codebreaker-ai',
+                        hidden: !hasBankPass && hasConnect
                     },
                     {
                         namePrefix: this.ls.l('BankCode_Bank'),
