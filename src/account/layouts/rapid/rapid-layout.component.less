@@ -30,6 +30,10 @@ input:-webkit-autofill:active  {
 :host {
     height: 100%;
 
+    ::ng-deep .has-danger .form-control-feedback {
+        color: @primary;
+    }
+
     .wrapper {
         position: relative;
         padding: 30px 20px;
@@ -125,8 +129,7 @@ input:-webkit-autofill:active  {
             .input-icon {
                 position: absolute;
                 left: 18px;
-                top: 50%;
-                transform: translateY(-50%);
+                top: 20px;
             }
 
             &.password {
