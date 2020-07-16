@@ -16,7 +16,7 @@
                             [contactId]="data.contactId">
             </order-dropdown>
         </div>
-        <div class="field system-type">
+        <!--div class="field system-type">
             <label for="systemType">{{ls.l('SystemType')}}</label>
             <dx-text-box name="systemType"
                          [inputAttr]="{ id: 'systemType' }"
@@ -26,7 +26,7 @@
                     <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
-        </div>
+        </div-->
         <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">
             <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
             <div class="field">
