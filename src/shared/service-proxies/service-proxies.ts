@@ -25990,10 +25990,13 @@ export class ServiceProductServiceProxy {
     }
 
     /**
+     * @showDeactivated (optional) 
      * @return Success
      */
-    getAll(): Observable<ServiceProductDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll";
+    getAll(showDeactivated: boolean | null | undefined): Observable<ServiceProductDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll?";
+        if (showDeactivated !== undefined)
+            url_ += "showDeactivated=" + encodeURIComponent("" + showDeactivated) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -44718,6 +44721,8 @@ export class ContactInfoDto implements IContactInfoDto {
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactId!: number | undefined;
     affiliateCode!: string | undefined;
+    parentId!: number | undefined;
+    parentName!: string | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -44750,6 +44755,8 @@ export class ContactInfoDto implements IContactInfoDto {
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
             this.affiliateCode = data["affiliateCode"];
+            this.parentId = data["parentId"];
+            this.parentName = data["parentName"];
         }
     }
 
@@ -44782,6 +44789,8 @@ export class ContactInfoDto implements IContactInfoDto {
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
         data["affiliateCode"] = this.affiliateCode;
+        data["parentId"] = this.parentId;
+        data["parentName"] = this.parentName;
         return data; 
     }
 }
@@ -44799,6 +44808,8 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
+    parentId: number | undefined;
+    parentName: string | undefined;
 }
 
 export class ContactDetailsDto implements IContactDetailsDto {
@@ -45927,6 +45938,7 @@ export interface ITrackingInfo {
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     matchExisting!: boolean | undefined;
+    parentContactId!: number | undefined;
     questionnaireAnswers!: SubmitQuestionsAndAnswersDtoWithoutCheck | undefined;
     contactId!: number | undefined;
     contactXRef!: string | undefined;
@@ -45983,6 +45995,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     init(data?: any) {
         if (data) {
             this.matchExisting = data["matchExisting"];
+            this.parentContactId = data["parentContactId"];
             this.questionnaireAnswers = data["questionnaireAnswers"] ? SubmitQuestionsAndAnswersDtoWithoutCheck.fromJS(data["questionnaireAnswers"]) : <any>undefined;
             this.contactId = data["contactId"];
             this.contactXRef = data["contactXRef"];
@@ -46067,6 +46080,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["matchExisting"] = this.matchExisting;
+        data["parentContactId"] = this.parentContactId;
         data["questionnaireAnswers"] = this.questionnaireAnswers ? this.questionnaireAnswers.toJSON() : <any>undefined;
         data["contactId"] = this.contactId;
         data["contactXRef"] = this.contactXRef;
@@ -46144,6 +46158,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
 
 export interface ICreateOrUpdateContactInput {
     matchExisting: boolean | undefined;
+    parentContactId: number | undefined;
     questionnaireAnswers: SubmitQuestionsAndAnswersDtoWithoutCheck | undefined;
     contactId: number | undefined;
     contactXRef: string | undefined;
@@ -67158,10 +67173,11 @@ export interface IBankAccountUsers {
 }
 
 export class ServiceProductLevelDto implements IServiceProductLevelDto {
-    id!: number | undefined;
-    serviceId!: string;
-    serviceName!: string;
-    amount!: number | undefined;
+    code!: string;
+    name!: string;
+    monthlyFee!: number | undefined;
+    activationTime!: moment.Moment | undefined;
+    deactivationTime!: moment.Moment | undefined;
 
     constructor(data?: IServiceProductLevelDto) {
         if (data) {
@@ -67174,10 +67190,11 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
-            this.serviceId = data["serviceId"];
-            this.serviceName = data["serviceName"];
-            this.amount = data["amount"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.monthlyFee = data["monthlyFee"];
+            this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
+            this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
         }
     }
 
@@ -67190,27 +67207,29 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["serviceId"] = this.serviceId;
-        data["serviceName"] = this.serviceName;
-        data["amount"] = this.amount;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["monthlyFee"] = this.monthlyFee;
+        data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
+        data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface IServiceProductLevelDto {
-    id: number | undefined;
-    serviceId: string;
-    serviceName: string;
-    amount: number | undefined;
+    code: string;
+    name: string;
+    monthlyFee: number | undefined;
+    activationTime: moment.Moment | undefined;
+    deactivationTime: moment.Moment | undefined;
 }
 
 export class ServiceProductDto implements IServiceProductDto {
     id!: number | undefined;
     systemType!: string;
-    serviceTypeId!: string;
-    serviceTypeName!: string;
-    amount!: number | undefined;
+    code!: string;
+    name!: string;
+    monthlyFee!: number | undefined;
     activationTime!: moment.Moment | undefined;
     deactivationTime!: moment.Moment | undefined;
     serviceProductLevels!: ServiceProductLevelDto[] | undefined;
@@ -67228,9 +67247,9 @@ export class ServiceProductDto implements IServiceProductDto {
         if (data) {
             this.id = data["id"];
             this.systemType = data["systemType"];
-            this.serviceTypeId = data["serviceTypeId"];
-            this.serviceTypeName = data["serviceTypeName"];
-            this.amount = data["amount"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.monthlyFee = data["monthlyFee"];
             this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
             this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
             if (data["serviceProductLevels"] && data["serviceProductLevels"].constructor === Array) {
@@ -67252,9 +67271,9 @@ export class ServiceProductDto implements IServiceProductDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["systemType"] = this.systemType;
-        data["serviceTypeId"] = this.serviceTypeId;
-        data["serviceTypeName"] = this.serviceTypeName;
-        data["amount"] = this.amount;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["monthlyFee"] = this.monthlyFee;
         data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
         data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
         if (this.serviceProductLevels && this.serviceProductLevels.constructor === Array) {
@@ -67269,9 +67288,9 @@ export class ServiceProductDto implements IServiceProductDto {
 export interface IServiceProductDto {
     id: number | undefined;
     systemType: string;
-    serviceTypeId: string;
-    serviceTypeName: string;
-    amount: number | undefined;
+    code: string;
+    name: string;
+    monthlyFee: number | undefined;
     activationTime: moment.Moment | undefined;
     deactivationTime: moment.Moment | undefined;
     serviceProductLevels: ServiceProductLevelDto[] | undefined;
