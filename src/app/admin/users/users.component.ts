@@ -110,6 +110,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     formatting = AppConsts.formatting;
     dataSource: DataSource;
     toolbarConfig: ToolbarGroupModel[];
+    headerLabels: string[] = [this.l('Users')];
 
     constructor(
         injector: Injector,
@@ -129,6 +130,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
+                this.processUserCountRequest();
                 return this.userServiceProxy.getUsers(
                     this.searchValue || undefined,
                     this.selectedPermissions || undefined,
@@ -149,6 +151,19 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
 
         this.activate();
+    }
+
+    processUserCountRequest() {
+        this.userServiceProxy.getUserCount(
+            this.searchValue || undefined,
+            this.selectedPermissions || undefined,
+            this.role || undefined,
+            false,
+            this.group,
+            this.isActive
+        ).subscribe(res => {
+            this.headerLabels = [this.l('Users') + ' (' + res + ')'];
+        });
     }
 
     repaintDataGrid(delay = 0) {
