@@ -44,13 +44,17 @@
             right: 0;
         }
 
-        .dx-list-item.filtered {
-            background-color: #effafe !important;
-        }
-
-        .dx-list-item.dx-state-focused {
-            background-color: #FFF;
-            color: #333;
+        .dx-list-item {
+            &.filtered {
+                background-color: #effafe !important;
+            }
+            &.dx-state-focused {
+                background-color: #FFF;
+                color: #333;
+            }
+            &.dx-list-item-selected {
+                background-color: #effafe;
+            }
         }
 
         .dx-state-disabled.dx-list-item, .dx-state-disabled .dx-list-item {
