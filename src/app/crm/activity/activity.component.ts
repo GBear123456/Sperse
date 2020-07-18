@@ -454,8 +454,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 //this is done to prevent double data retrieving after settings scheduleView and scheduleDate
                 setTimeout(() => this.schedulerComponent.instance.option('dataSource', this.dataSource));
             }
-
-            this.initToolbarConfig();
         }
     }
 
