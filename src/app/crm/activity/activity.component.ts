@@ -194,6 +194,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     res.forEach((record) => {
                         record.fieldTimeZone = 'Etc/UTC';
                     });
+                    this.changeDetectorRef.detectChanges();
                 }
             })
         });
