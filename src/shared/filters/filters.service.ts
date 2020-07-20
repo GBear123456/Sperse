@@ -237,9 +237,7 @@ export class FiltersService {
     }
 
     constructor(
-        private serverCacheService: ServerCacheService,
-        private messageService: MessageService,
-        private ls: AppLocalizationService
+        private serverCacheService: ServerCacheService
     ) {}
 
     filterByMultiline(filter: FilterModel): string[] | {[uuidName: string]: AsyncFilter} | 'cancelled' {

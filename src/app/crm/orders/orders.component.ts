@@ -9,8 +9,8 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, concat, of } from 'rxjs';
-import { filter, finalize, map, pluck, skip, switchMap, takeUntil, first, mapTo } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -374,14 +374,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    odataRequestValues$: Observable<ODataRequestValues> = concat(
-        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
-        this.filterChanged$.pipe(
-            switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
-        ),
-    ).pipe(
-        filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
-    );
+    ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
+    subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>('');
     search$: Observable<string> = this.search.asObservable();
     private subscriptionsPivotGridDataSource = {
@@ -486,7 +480,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     };
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
-        this.odataRequestValues$,
+        this.ordersODataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
@@ -519,7 +513,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
-        this.odataRequestValues$,
+        this.subscriptionsODataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
@@ -627,6 +621,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     get showToggleColumnSelectorButton() {
         return (this.selectedOrderType.value === OrderType.Order && this.ordersDataLayoutType === DataLayoutType.DataGrid)
         || this.selectedOrderType.value === OrderType.Subscription;
+    }
+
+    getODataRequestValues(orderType: OrderType) {
+        return concat(
+            this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
+            this.filterChanged$.pipe(
+                filter(() => this.selectedOrderType.value === orderType),
+                switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+            ),
+        ).pipe(
+            filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
+        )
     }
 
     private waitUntil(orderType: OrderType) {

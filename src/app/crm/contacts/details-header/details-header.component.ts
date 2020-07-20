@@ -116,7 +116,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     private readonly CACHE_KEY_PREFIX = 'DetailsHeader';
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
     private contactGroup: ContactGroup;
-    private showRemovingOrgRelationProgress = false;
+    showRemovingOrgRelationProgress = false;
 
     private readonly allContactGroups = _.values(ContactGroup);
     private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);

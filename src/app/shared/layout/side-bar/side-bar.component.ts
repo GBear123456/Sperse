@@ -52,7 +52,11 @@ export class SideBarComponent implements OnDestroy {
 
         router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
             if (event instanceof NavigationStart) {
-                this.filters = [];
+                const prevUrl = this.router.url.split('?')[0];
+                const newUrl = event.url.split('?')[0];
+                if (newUrl !== prevUrl) {
+                    this.filters = [];
+                }
             }
         });
 

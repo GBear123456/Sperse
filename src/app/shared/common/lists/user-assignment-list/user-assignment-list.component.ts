@@ -55,7 +55,7 @@ export class UserAssignmentComponent implements OnDestroy {
     }
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
-    private selectedItemKeys = [];
+    selectedItemKeys = [];
     private affectedKeys = [];
     list: any = [];
     relatedUsers;
