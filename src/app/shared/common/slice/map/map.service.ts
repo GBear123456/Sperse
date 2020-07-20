@@ -1,6 +1,6 @@
 /** Core imports */
 import { Injectable, Inject, Optional } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 /** Third party imports */
 import * as canadaMap from 'devextreme/dist/js/vectormap-data/canada.js';

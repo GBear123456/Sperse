@@ -8,14 +8,15 @@ import {
     OnDestroy,
     ViewChild
 } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment-timezone';
 import buildQuery from 'odata-query';
-import { Observable, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, combineLatest, forkJoin } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
@@ -124,8 +125,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
         private permissionCheckerService: PermissionCheckerService,
-        public appService: AppService,
         private changeDetectorRef: ChangeDetectorRef,
+        private httpClient: HttpClient,
+        public appService: AppService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -327,6 +329,26 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'actions',
+                        widget: 'dxDropDownMenu',
+                        disabled: this.dataLayoutType !== DataLayoutType.Pipeline || !this.permissionCheckerService.isGranted(AppPermissions.CRMManageEventsAssignments),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Delete'),
+                                    disabled: (!this.selectedEntities || !this.selectedEntities.length) && !this.isGranted(AppPermissions.CRMBulkUpdates),
+                                    action: this.deleteTasks.bind(this)
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
                 areItemsDependent: true,
                 items: [
                     {
@@ -409,6 +431,31 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         ];
         this.changeDetectorRef.detectChanges();
+    }
+
+    deleteTasks() {
+        this.message.confirm(
+            this.l('TasksDeleteWarningMessage'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    forkJoin(this.selectedEntities.map((entity) => this.getRemoveAction(entity.Id))).pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe(() => {
+                        this.refresh();
+                        this.notify.success(this.l('SuccessfullyDeleted'));
+                    });
+                }
+            }
+        );
+    }
+
+    private getRemoveAction(entityId: number): Observable<Object> {
+        return this.httpClient.delete(AppConsts.remoteServiceBaseUrl + '/api/services/CRM/Activity/Delete?Id=' + entityId, {
+            headers: new HttpHeaders({
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            })
+        });
     }
 
     toggleCompactView() {
@@ -504,6 +551,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 this.pipelineComponent.refresh(stageId);
         } else
             this.schedulerComponent.instance.getDataSource().reload();
+        this.initToolbarConfig();
     }
 
     repaint() {
