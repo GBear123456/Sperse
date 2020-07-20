@@ -70,13 +70,14 @@
             <div class="content {{activeMessage.deliveryType | lowercase}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="body from date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | date: formatting.inboxDate : userTimezone"></div>
-                    <div class="body from separator" *ngIf="activeMessage.deliveryType == 'Email' && activeMessage?.items?.length && !activeMessage?.loaded"><a href="javascript:;" (click)="loadOneMoreChild()">...</a></div>
-                    <div *ngFor="let child of activeMessage?.items; let i = index" >
-                        <div class="body" [ngClass]="{from: activeMessage?.from == child.from, to: activeMessage?.from == child.to, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].from != child.from}" [attr.date]="child.creationTime | date: formatting.inboxDate : userTimezone">
-                            <div [innerHtml]="child.body || child.subject"></div>
-                            <div class="body-attachments">
-                                <div *ngFor="let attachment of child?.attachments" class="attachment">
-                                    <a [download]="attachment.name" href="javascript:void(0)" class="name" (click)="openAttachment(attachment)">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
+                    <div *ngIf="!isActiveEmilType">
+                        <div *ngFor="let child of activeMessage?.items; let i = index" class="">
+                            <div class="body" [ngClass]="{from: activeMessage?.from == child.from, to: activeMessage?.from == child.to, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].from != child.from}" [attr.date]="child.creationTime | date: formatting.inboxDate : userTimezone">
+                                <div [innerHtml]="child.body || child.subject"></div>
+                                <div class="body-attachments">
+                                    <div *ngFor="let attachment of child?.attachments" class="attachment">
+                                        <a [download]="attachment.name" href="javascript:void(0)" class="name" (click)="openAttachment(attachment)">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +88,7 @@
                         <a [download]="attachment.name" href="javascript:void(0)" class="name" (click)="openAttachment(attachment)">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
                     </div>
                 </div>
-                <div class="input-form">
+                <div class="input-form" *ngIf="!isActiveEmilType">
                     <div>
                         <img src="assets/common/icons/page.svg" class="page" (click)="extendMessage()">
                         <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)">

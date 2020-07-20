@@ -59,6 +59,9 @@ export class UserInboxComponent implements OnDestroy {
             name: this.ls.l(item)
         };
     });
+    get isActiveEmilType(): boolean {
+        return this.activeMessage && this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
+    }
     isSendSmsAndEmailAllowed = false;
     deliveryType = CommunicationMessageDeliveryType.Email;
     deliveryTypes = Object.keys(CommunicationMessageDeliveryType).map(item => {
@@ -179,7 +182,6 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     initContentToolbar() {
-        let isEmail = this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
         this.contentToolbar = [{
             location: 'before',
             locateInMenu: 'auto',
@@ -190,7 +192,7 @@ export class UserInboxComponent implements OnDestroy {
                 },
                 {
                     name: 'status',
-                    visible: isEmail,
+                    visible: this.isActiveEmilType,
                     action: Function()
                 },
                 {
@@ -219,17 +221,17 @@ export class UserInboxComponent implements OnDestroy {
             items: [
                 {
                     name: 'reply',
-                    visible: isEmail,
+                    visible: this.isActiveEmilType,
                     action: this.reply.bind(this)
                 },
                 {
                     name: 'replyToAll',
-                    visible: isEmail,
+                    visible: this.isActiveEmilType,
                     action: this.replyToAll.bind(this)
                 },
                 {
                     name: 'forward',
-                    visible: isEmail,
+                    visible: this.isActiveEmilType,
                     action: this.forward.bind(this)
                 }
             ]
@@ -403,7 +405,7 @@ export class UserInboxComponent implements OnDestroy {
 
     extendMessage() {
         let parentId = this.activeMessage.parentId || this.activeMessage.id;
-        if (this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email)
+        if (this.isActiveEmilType)
             this.showNewEmailDialog(undefined, {
                 parentId: parentId,
                 subject: 'Re: ' + this.activeMessage.subject,
@@ -424,10 +426,9 @@ export class UserInboxComponent implements OnDestroy {
         if (!this.instantMessageText)
             return;
 
-        let parentId = this.activeMessage.parentId || this.activeMessage.id,
-            isEmail = this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
+        let parentId = this.activeMessage.parentId || this.activeMessage.id;
 
-        (isEmail ? this.contactsService.sendEmail({
+        (this.isActiveEmilType ? this.contactsService.sendEmail({
                 contactId: this.contactId,
                 parentId: parentId,
                 from: this.activeMessage.from,
@@ -448,7 +449,7 @@ export class UserInboxComponent implements OnDestroy {
             if (!isNaN(res)) {
                 this.invalidate();
                 this.notifyService.success(this.ls.l(
-                    isEmail ? 'MailSent' : 'MessageSuccessfullySent'
+                    this.isActiveEmilType ? 'MailSent' : 'MessageSuccessfullySent'
                 ));
             }
         });

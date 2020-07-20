@@ -176,8 +176,29 @@
                 display: flex;
                 flex-flow: column;
                 height: calc(100vh - 420px);
+                &.email {
+                    .body {
+                        width: 100%;
+                        background: #FFF;
+                        margin-left: 20px;
+                    }    
+                }
                 &.sms {
                     height: calc(100vh - 390px);
+                    .date {
+                        margin-bottom: 25px;
+                        &:after {
+                            content: attr(date);
+                            position: absolute;
+                            display: block;
+                            bottom: -25px;
+                            font-weight: normal;
+                            font-size: 11px;
+                            line-height: 2.18;
+                            letter-spacing: 0.22px;
+                            color: #677380;
+                        }
+                    }
                 }
                 .attachments {
                     margin: 15px;
@@ -352,7 +373,7 @@
                     white-space: nowrap;
                     align-self: center;
                 }
-            }
+            }            
             .body {
                 display: block;
                 position: relative;
@@ -379,25 +400,6 @@
                     background: rgba(0, 174, 239, 0.1);
                     margin-right: 50px;
                     margin-left: auto;
-                }
-                &.separator {
-                    padding: 0px 20px;
-                    font-size: 20px;
-                    text-align: right;
-                }
-                &.date {
-                    margin-bottom: 25px;
-                    &:after {
-                        content: attr(date);
-                        position: absolute;
-                        display: block;
-                        bottom: -25px;
-                        font-weight: normal;
-                        font-size: 11px;
-                        line-height: 2.18;
-                        letter-spacing: 0.22px;
-                        color: #677380;
-                    }
                 }
             }
         }
