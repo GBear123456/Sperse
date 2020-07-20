@@ -413,7 +413,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSourceURI,
             [
                 this.filterModelStatus.filterMethod(this.filterModelStatus),
-                FiltersService.filterByPartnerGroupId()
+                FiltersService.filterByPartnerGroupId(),
+                FiltersService.filterByExcludeSubContacts()
             ]
         ),
         version: AppConsts.ODataVersion,
@@ -943,6 +944,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             }),
             new FilterModel({
                 caption: 'partnerGroupId',
+                hidden: true
+            }),
+            new FilterModel({
+                caption: 'excludeSubContacts',
                 hidden: true
             })
         ];

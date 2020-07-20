@@ -34,7 +34,7 @@ export class AddInstanceUserDialogComponent {
     }
 
     contactLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10, true, this.data.exceptUserIds).subscribe(res => {
+        this.contactProxy.getAllByPhrase(phrase, 10, true, this.data.exceptUserIds, false).subscribe(res => {
             if (!phrase || phrase == this.latestSearchPhrase) {
                 this.contacts = res;
                 callback && callback(res);

@@ -565,7 +565,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     customerLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10, undefined, undefined).subscribe(res => {
+        this.contactProxy.getAllByPhrase(phrase, 10, undefined, undefined, true).subscribe(res => {
             if (!phrase || phrase == this.customer) {
                 this.customers = res;
                 callback && callback(res);

@@ -127,4 +127,8 @@ export class FilterHelpers {
     static filterByPartnerGroupId() {
         return { 'GroupId': {'eq': ContactGroup.Partner} };
     }
+
+    static filterByExcludeSubContacts() {
+        return { 'ExcludeSubContacts': {'eq': true} };
+    }
 }

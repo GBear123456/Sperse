@@ -8024,9 +8024,10 @@ export class ContactServiceProxy {
      * @topCount (optional) 
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
+     * @excludeSubContacts (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -8036,6 +8037,8 @@ export class ContactServiceProxy {
             url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
         if (exceptUserIds !== undefined)
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
+        if (excludeSubContacts !== undefined)
+            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -11737,9 +11740,10 @@ export class CustomerServiceProxy {
      * @topCount (optional) 
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
+     * @excludeSubContacts (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customer/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -11749,6 +11753,8 @@ export class CustomerServiceProxy {
             url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
         if (exceptUserIds !== undefined)
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
+        if (excludeSubContacts !== undefined)
+            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -18900,9 +18906,10 @@ export class LeadServiceProxy {
      * @topCount (optional) 
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
+     * @excludeSubContacts (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -18912,6 +18919,8 @@ export class LeadServiceProxy {
             url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
         if (exceptUserIds !== undefined)
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
+        if (excludeSubContacts !== undefined)
+            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21543,9 +21552,10 @@ export class OrderServiceProxy {
      * @topCount (optional) 
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
+     * @excludeSubContacts (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -21555,6 +21565,8 @@ export class OrderServiceProxy {
             url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
         if (exceptUserIds !== undefined)
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
+        if (excludeSubContacts !== undefined)
+            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23046,9 +23058,10 @@ export class PartnerServiceProxy {
      * @topCount (optional) 
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
+     * @excludeSubContacts (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -23058,6 +23071,8 @@ export class PartnerServiceProxy {
             url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
         if (exceptUserIds !== undefined)
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
+        if (excludeSubContacts !== undefined)
+            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

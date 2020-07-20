@@ -586,7 +586,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.dataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        FiltersService.filterByClientGroupId()
+                        FiltersService.filterByClientGroupId(),
+                        FiltersService.filterByExcludeSubContacts()
                     ]
                 ),
                 version: AppConsts.ODataVersion,
@@ -1035,6 +1036,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterModelStar,
             new FilterModel({
                 caption: 'clientGroupId',
+                hidden: true
+            }),
+            new FilterModel({
+                caption: 'excludeSubContacts',
                 hidden: true
             })
         ];

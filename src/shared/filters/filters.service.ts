@@ -224,6 +224,10 @@ export class FiltersService {
         return CrmFilterHelpers.filterByPartnerGroupId();
     }
 
+    static filterByExcludeSubContacts() {
+        return CrmFilterHelpers.filterByExcludeSubContacts();
+    }
+
     static getCustomerFilters(): any[] {
         return [
             { 'GroupId': { 'eq': ContactGroup.Client }},
@@ -232,7 +236,8 @@ export class FiltersService {
                     { 'StatusId': { 'eq': ContactStatus.Active }},
                     { 'StatusId': { 'eq': ContactStatus.Prospective }}
                 ]
-            }
+            },
+            { 'ExcludeSubContacts': { 'eq': true }},
         ];
     }
 
