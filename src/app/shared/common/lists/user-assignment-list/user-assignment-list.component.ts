@@ -191,13 +191,17 @@ export class UserAssignmentComponent implements OnDestroy {
 
     initRelatedUsers() {
         let user = this.appSessionService.user;
-        if (!this.relatedUsers || !this.relatedUsers.length)
-            this.relatedUsers = [{
-                id: user.id, 
+        if (!this.relatedUsers || !this.relatedUsers.length ||
+            this.relatedUsers.every(item => item.id != user.id)
+        ) {
+            this.relatedUsers = this.relatedUsers || [];
+            this.relatedUsers.push({
+                id: user.id,
                 name: user.name + (user.surname ? ' ' + user.surname : ''),
-                isActive: true, 
+                isActive: true,
                 photoPublicId: user.profileThumbnailId
-            }];            
+            });
+        }
 
         this.relatedUsers.forEach(user => {
             this.isRelatedUser = this.isRelatedUser ||
