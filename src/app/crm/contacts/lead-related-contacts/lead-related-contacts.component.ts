@@ -163,7 +163,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                     }),
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
-                        request.params.contactGroupId = this.data.contactInfo.groupId;
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         request.params.$select = DataGridService.getSelectFields(
                             this.leadDataGrid,
