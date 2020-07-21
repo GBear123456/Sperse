@@ -126,7 +126,7 @@
                     <dx-tooltip [width]="250"
                          position="bottom"
                          [(visible)]="tagsTooltipVisible"
-                         target=".tags-button">
+                         [target]="'.tags-button.id' + uniqId">
                         <div *dxTemplate="let data of 'content'" class="tags-container">
                             <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
                             <dx-list
@@ -141,9 +141,10 @@
                             </dx-list>
                         </div>
                     </dx-tooltip>
-                    <a #tagsButton class="tags-button" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
+                    <a #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
                     <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
-                    <ckeditor [hidden]="insertAsHTML" [editor]="Editor" (ready)="onCKReady($event)" (config)="{allowedContent: true}" (change)="updateDataLength()"></ckeditor>
+                    <ckeditor [hidden]="insertAsHTML || isComplexTemplate" [editor]="Editor" (ready)="onCKReady($event)" (config)="{allowedContent: true}" (change)="updateDataLength()"></ckeditor>
+                    <iframe #preview [hidden]="insertAsHTML || !isComplexTemplate" frameborder="0" width="100%"></iframe>
                     <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
                     <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
                     <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
