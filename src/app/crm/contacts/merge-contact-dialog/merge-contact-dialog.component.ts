@@ -507,7 +507,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     isFieldSelected(field, source, index = 0) {
-        return this.fieldsConfig[field][source].values[index].selected;
+        let data = this.fieldsConfig[field][source];
+        return data && data.values[index].selected;
     }
 
     getPreferredProperties() {

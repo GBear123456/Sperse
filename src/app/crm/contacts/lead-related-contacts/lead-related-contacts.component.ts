@@ -1,12 +1,14 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, RouteReuseStrategy, Params } from '@angular/router';
 
 /** Third party imports */
+import { BehaviorSubject } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
@@ -20,6 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
@@ -73,6 +76,8 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
 
     constructor(
         private router: Router,
+        private route: ActivatedRoute,
+        private reuseService: RouteReuseStrategy,
         private invoicesService: InvoicesService,
         private contactProxy: ContactServiceProxy,
         private contactsService: ContactsService,
@@ -228,18 +233,37 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     }
 
     deleteLead() {
+        let id = this.actionRecordData.Id;
         if (this.actionRecordData.CustomerId)
             this.contactsService.deleteContact(
                 this.data.contactInfo.personContactInfo.fullName,
-                this.data.contactInfo.groupId,
-                this.actionRecordData.Id,
-                () => {}, true
+                this.data.contactInfo.groupId, id,
+                () => {
+                    this.itemDetailsService.clearItemsSource();
+                    (this.reuseService as CustomReuseStrategy).invalidate('leads');
+                    if (this.data.leadInfo.id == id) {
+                        if (this.leadDataGrid.instance.getDataSource().totalCount() == 1) {
+                            let params = (this.route.queryParams as BehaviorSubject<Params>).getValue();
+                            this.router.navigate([params.referrer || 'app/crm/leads'], {
+                                queryParams: _.mapObject(params,
+                                    (val, key) => key == 'referrer' ? undefined : val
+                                )
+                            });
+                        } else
+                            this.contactsService.updateLocation(this.data.contactInfo.id, undefined,
+                                undefined, undefined, undefined, 'lead-related-contacts');
+                    } else
+                        this.leadDataGrid.instance.refresh();
+                }, true
             );
         else
             this.contactsService.deleteContact(
                 this.actionRecordData.Name,
                 this.actionRecordData.GroupId,
-                this.actionRecordData.Id
+                id, () => {
+                    (this.reuseService as CustomReuseStrategy).invalidate('clients');
+                    this.contactDataGrid.instance.refresh();
+                }
             );
     }
 
