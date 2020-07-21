@@ -17,5 +17,5 @@ export interface EmailTemplateData {
     replyTo: string;
     templateType: EmailTemplateType;
     switchTemplate: EmailTemplateType;
-    tags: { [key: string] : string; } | undefined;
+    tags: { [key: string]: string; } | undefined;
 }

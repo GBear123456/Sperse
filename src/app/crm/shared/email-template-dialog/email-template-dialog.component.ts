@@ -40,6 +40,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxTextAreaComponent, { static: false }) htmlComponent: DxTextAreaComponent;
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
+    @ViewChild('preview', { static: false }) preview: ElementRef;
 
     Editor = ClassicEditor;
     ckEditor: any;
@@ -49,6 +50,10 @@ export class EmailTemplateDialogComponent implements OnInit {
     startCase = startCase;
     tagsTooltipVisible = false;
     insertAsHTML = false;
+
+    get isComplexTemplate(): Boolean {
+        return this.data && this.data.body && this.data.body.indexOf('<html') >= 0;
+    }
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
@@ -74,6 +79,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     ];
     templates$: Observable<GetTemplatesResponse[]>;
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
+    uniqId = Math.random().toString().slice(-7);
     charCount: number;
 
     constructor(
@@ -246,8 +252,13 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     invalidate() {
-        this.ckEditor.setData(this.data.body);
-        this.updateDataLength();
+        this.insertAsHTML = false;
+        if (this.isComplexTemplate)
+            this.initTemplatePreview();
+        else {
+            this.ckEditor.setData(this.data.body);
+            this.updateDataLength();
+        }
         this.changeDetectorRef.markForCheck();
     }
 
@@ -431,12 +442,24 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     showInsertAsHTML() {
         if (this.insertAsHTML = !this.insertAsHTML) {
-            this.htmlComponent.instance.option('value', this.ckEditor.getData());
+            this.htmlComponent.instance.option('value', this.data.body);
             setTimeout(() => this.htmlComponent.instance.focus(), 300);
         } else {
-            this.ckEditor.setData(this.htmlComponent.instance.option('value'));
-            this.updateDataLength();
+            this.data.body = this.htmlComponent.instance.option('value');
+            if (this.isComplexTemplate)
+                this.initTemplatePreview();
+            else {
+                this.ckEditor.setData(this.data.body);
+                this.updateDataLength();
+            }
         }
+    }
+
+    initTemplatePreview() {
+        let win = this.preview.nativeElement.contentWindow;
+        win.document.open();
+        win.document.write(this.data.body);
+        win.document.close();
     }
 
     sendAttachment(file) {
