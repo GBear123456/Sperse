@@ -71,7 +71,17 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
 
     public activityTypes = ActivityType;
-    public selectedEntities: any = [];
+    private selectedEntities: any[] = [];
+    set selectedActivities(value: any[]) {
+        if (this.selectedEntities.length != value.length) {
+            this.selectedEntities = value;
+            this.initToolbarConfig();
+        } else
+            this.selectedEntities = value;
+    }
+    get selectedActivities(): any[] {
+        return this.selectedEntities;
+    }
 
     public currentDate = new Date();
     public scheduleDate = new Date(this.currentDate);
@@ -121,6 +131,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     constructor(
         injector: Injector,
+        private activityProxy: ActivityServiceProxy,
         private pipelineService: PipelineService,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
@@ -335,12 +346,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: this.dataLayoutType !== DataLayoutType.Pipeline || !this.permissionCheckerService.isGranted(AppPermissions.CRMManageEventsAssignments),
+                        disabled: !this.permissionCheckerService.isGranted(AppPermissions.CRMManageEventsAssignments) ||
+                            this.dataLayoutType !== DataLayoutType.Pipeline || !this.selectedEntities.length,
                         options: {
                             items: [
                                 {
                                     text: this.l('Delete'),
-                                    disabled: (!this.selectedEntities || !this.selectedEntities.length) && !this.isGranted(AppPermissions.CRMBulkUpdates),
+                                    disabled: this.selectedEntities.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
                                     action: this.deleteTasks.bind(this)
                                 }
                             ]
@@ -440,7 +452,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading();
-                    forkJoin(this.selectedEntities.map((entity) => this.getRemoveAction(entity.Id))).pipe(
+                    forkJoin(this.selectedEntities.map((entity) => this.activityProxy.delete(entity.Id))).pipe(
                         finalize(() => this.finishLoading())
                     ).subscribe(() => {
                         this.refresh();
@@ -449,14 +461,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 }
             }
         );
-    }
-
-    private getRemoveAction(entityId: number): Observable<Object> {
-        return this.httpClient.delete(AppConsts.remoteServiceBaseUrl + '/api/services/CRM/Activity/Delete?Id=' + entityId, {
-            headers: new HttpHeaders({
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            })
-        });
     }
 
     toggleCompactView() {
@@ -552,6 +556,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 this.pipelineComponent.refresh(stageId);
         } else
             this.schedulerComponent.instance.getDataSource().reload();
+        this.selectedEntities = [];
         this.initToolbarConfig();
     }
 
