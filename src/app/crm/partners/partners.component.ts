@@ -414,7 +414,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             [
                 this.filterModelStatus.filterMethod(this.filterModelStatus),
                 FiltersService.filterByPartnerGroupId(),
-                FiltersService.filterByExcludeSubContacts()
+                FiltersService.filterByParentId()
             ]
         ),
         version: AppConsts.ODataVersion,
@@ -947,7 +947,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 hidden: true
             }),
             new FilterModel({
-                caption: 'excludeSubContacts',
+                caption: 'parentId',
                 hidden: true
             })
         ];

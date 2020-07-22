@@ -224,8 +224,8 @@ export class FiltersService {
         return CrmFilterHelpers.filterByPartnerGroupId();
     }
 
-    static filterByExcludeSubContacts() {
-        return CrmFilterHelpers.filterByExcludeSubContacts();
+    static filterByParentId() {
+        return CrmFilterHelpers.filterByParentId();
     }
 
     static getCustomerFilters(): any[] {
@@ -237,7 +237,7 @@ export class FiltersService {
                     { 'StatusId': { 'eq': ContactStatus.Prospective }}
                 ]
             },
-            { 'ExcludeSubContacts': { 'eq': true }},
+            { 'ParentId': { 'eq': null }},
         ];
     }
 
