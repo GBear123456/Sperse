@@ -150,6 +150,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     initDataSource() {
         this.dataSource = new DataSource({
+            paginate: false,
             requireTotalCount: false,
             select: Object.keys(this.activityFields),
             onLoadError: (error) => {
