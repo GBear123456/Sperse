@@ -1,27 +1,33 @@
 :host {
     padding: 20px 30px 20px 30px;
     display: block;
+
     header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
+
         .mat-dialog-title {
             margin-bottom: 0;
             font: 600 18px Montserrat;
         }
+
         ::ng-deep .mat-dialog-actions {
             padding: 0;
             margin-bottom: 0;
             margin-left: auto;
+
             .button {
                 margin: 0;
             }
         }
+
         .close {
             width: 40px;
             height: 40px;
             cursor: pointer;
             position: relative;
+
             &:after, &:before {
                 position: absolute;
                 top: 10px;
@@ -31,28 +37,33 @@
                 width: 2px;
                 background-color: #202b35;
             }
+
             &:before {
                 transform: rotate(45deg);
             }
+
             &:after {
                 transform: rotate(-45deg);
             }
         }
     }
+
     .field {
         align-items: center;
+
         label {
             width: 40%;
             padding-left: 0;
             cursor: pointer;
         }
+
         .dx-textbox, .dx-datebox {
             width: 60% !important;
         }
+
         &.system-type {
             margin-bottom: 15px;
         }
-
     }
 
     .remove-button {
@@ -72,6 +83,7 @@
         border-radius: 5px;
         margin-bottom: 15px;
         position: relative;
+
         .fa-close {
             position: absolute;
             font-size: 22px;
@@ -80,6 +92,28 @@
             color: red;
             cursor: pointer;
             z-index: 1;
+        }
+    }
+
+    ::ng-deep .dx-show-clear-button .dx-icon-clear {
+        font-size: 18px;
+        margin: -17px 0 0 0;
+        font-size: 18px;
+        line-height: 18px;
+    }
+
+    .order-field {
+        label {
+            position: relative;
+
+            small {
+                position: absolute;
+                font-size: 8px;
+                color: #BABABA;
+                bottom: 0;
+                left: 0;
+                line-height: 0;
+            }
         }
     }
 }

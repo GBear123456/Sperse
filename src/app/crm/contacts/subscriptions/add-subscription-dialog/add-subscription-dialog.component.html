@@ -8,44 +8,17 @@
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
     <dx-validation-group>
-        <div class="field">
-            <label for="orderNumber">{{ls.l('OrderNumber')}}</label>
-            <order-dropdown [(orderNumber)]="subscription.orderNumber"
-                            placeholder=""
-                            width="100%"
-                            [contactId]="data.contactId">
-            </order-dropdown>
-        </div>
-        <!--div class="field system-type">
-            <label for="systemType">{{ls.l('SystemType')}}</label>
-            <dx-text-box name="systemType"
-                         [inputAttr]="{ id: 'systemType' }"
-                         [disabled]="isBankCodeLayout"
-                         [(value)]="subscription.systemType">
-                <dx-validator>
-                    <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
-                </dx-validator>
-            </dx-text-box>
-        </div-->
         <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">
             <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
-                <dx-select-box *ngIf="serviceTypes; else textBox"
-                               [inputAttr]="{ id: 'code' }"
-                               [items]="serviceTypes"
+                <dx-select-box [inputAttr]="{ id: 'code' }"
+                               [dataSource]="serviceTypes"
+                               displayExpr="code"
+                               valueExpr="code"
                                [(value)]="subscription.code"
-                               (onValueChanged)="onServiceTypeChanged($event, subscription)">
+                               (onSelectionChanged)="onServiceTypeChanged($event, subscription)">
                 </dx-select-box>
-                <ng-template #textBox>
-                    <dx-text-box name="code"
-                                 [inputAttr]="{ id: 'code' }"
-                                 [(value)]="subscription.code">
-                        <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-text-box>
-                </ng-template>
             </div>
             <div class="field">
                 <label for="name">{{ls.l('Name')}}</label>
@@ -57,22 +30,33 @@
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <div class="field">
+            <div class="field" *ngIf="subscription.levels?.length">
                 <label for="name">{{ls.l('Level')}}</label>
-                <dx-text-box name="level"
-                                [inputAttr]="{ id: 'level' }"
-                                [(value)]="subscription.level">
-                    <dx-validator>
-                        <dxi-validation-rule type="stringLength" [max]="50"></dxi-validation-rule>
-                    </dx-validator>
-                </dx-text-box>
+                <dx-select-box [inputAttr]="{ id: 'level' }"
+                               [dataSource]="subscription.levels"
+                               displayExpr="code"
+                               valueExpr="code"
+                               [(value)]="subscription.level"
+                               showClearButton="true"
+                               (onValueChanged)="onServiceLevelChanged($event, subscription)">
+                </dx-select-box>
+            </div>
+            <div class="field">
+                <label for="endDate">{{ls.l('StartDate') }}</label>
+                <dx-date-box #startDateDateBox
+                             type="date"
+                             [min]="subscription.startDate || today"
+                             [max]="subscription.maxStartDate"
+                             [(value)]="subscription.startDate"
+                             (onValueChanged)="onStartDateChanged(subscription)">
+                </dx-date-box>
             </div>
             <div class="field">
                 <label for="endDate">{{ls.l('EndDate') }}</label>
-                <dx-date-box
-                    #endDateDateBox
-                    type="date"
-                    [(value)]="subscription.endDate">
+                <dx-date-box #endDateDateBox
+                             [min]="subscription.startDate"
+                             type="date"
+                             [(value)]="subscription.endDate">
                 </dx-date-box>
             </div>
             <div class="field">
@@ -83,6 +67,17 @@
                                [(value)]="subscription.amount">
                 </dx-number-box>
             </div>
+        </div>
+        <div class="field order-field">
+            <label for="orderNumber">
+                {{ls.l('OrderNumber')}}
+                <small class="small-gray">*optional</small>
+            </label>
+            <order-dropdown [(orderNumber)]="subscription.orderNumber"
+                            placeholder=""
+                            width="100%"
+                            [contactId]="data.contactId">
+            </order-dropdown>
         </div>
         <div class="field">
             <div class="add-new-button" (click)="addNewSubscriptionFields()"><span>+ Add</span></div>

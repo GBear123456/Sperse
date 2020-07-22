@@ -11,7 +11,6 @@ import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import values from 'lodash/values';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -21,7 +20,9 @@ import {
     LayoutType,
     OrderSubscriptionServiceProxy,
     SubscriptionInput,
-    UpdateOrderSubscriptionInput
+    UpdateOrderSubscriptionInput,
+    ServiceProductServiceProxy,
+    ServiceProductDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -41,25 +42,16 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
         '../../../../../shared/common/styles/close-button.less',
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
-    ]
+    ],
+    providers: [ServiceProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
+    today = new Date();
     private slider: any;
-    private readonly performancePartnersServiceTypes = [
-        'EDAG',
-        'Call Rollover',
-        'Appointment Setting',
-        'List Generation',
-        'Insurance Billing',
-        'Misc Services',
-        'Collections'
-    ];
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
-    serviceTypes = this.isBankCodeLayout
-        ? values(BankCodeServiceType)
-        : (this.appSession.tenancyName === 'performancepartners' ? this.performancePartnersServiceTypes : null);
+    serviceTypes: ServiceProductDto[] = null;
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
         leadId: this.data.leadId,
@@ -69,7 +61,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 name: this.data.name,
                 code: this.data.code,
                 level: this.data.level,
-                startDate: null,
+                startDate: this.data.startDate,
                 endDate: this.data.endDate,
                 amount: this.data.amount
             })
@@ -83,6 +75,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
+        private serviceProductProxy: ServiceProductServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
@@ -109,6 +102,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             right: '-100vw'
         });
         this.orderDropdownComponent.initOrderDataSource();
+        this.serviceProductProxy.getAll(false).subscribe(result => {
+            this.serviceTypes = result;
+        });
     }
 
     ngAfterViewInit() {
@@ -126,6 +122,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             subscriptionInput.updateThirdParty = false;
             subscriptionInput.subscriptions = subscriptionInput.subscriptions.map((subscription: SubscriptionInput) => {
                 let sub = new SubscriptionInput(subscription);
+                if (sub.startDate)
+                    sub.startDate = DateHelper.removeTimezoneOffset(new Date(sub.startDate), true, 'from');
                 if (sub.endDate)
                     sub.endDate = DateHelper.removeTimezoneOffset(new Date(sub.endDate), true, 'to');
                 if (this.isBankCodeLayout && sub.code === BankCodeServiceType.BANKVault)
@@ -150,9 +148,39 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
-    onServiceTypeChanged(event, sub) {
-        if (event.value)
-            sub['name'] = event.value;
+    onServiceTypeChanged(event, sub: SubscriptionInput) {
+        this.setServiceProduct(event.selectedItem, sub);
+    }
+
+    onServiceLevelChanged(event, sub: SubscriptionInput) {
+        let selectedItem = event.component.option('selectedItem');
+        if (selectedItem) {
+            sub.level = selectedItem.code;
+            sub.amount = selectedItem.monthlyFee ? selectedItem.monthlyFee :
+                         sub['serviceProduct'].monthlyFee ? sub['serviceProduct'].monthlyFee : null;
+
+            sub.startDate = selectedItem.activationTime ? (selectedItem.activationTime < this.today ? this.today : selectedItem.activationTime) : sub['serviceProduct'].activationTime;
+            sub['maxStartDate'] = selectedItem.deactivationTime ? selectedItem.deactivationTime : sub['serviceProduct'].deactivationTime;
+        }
+        else {
+            this.setServiceProduct(sub['serviceProduct'], sub);
+        }
+    }
+
+    setServiceProduct(item: ServiceProductDto, sub: SubscriptionInput) {
+        sub['serviceProduct'] = item;
+        sub.name = item.name;
+        sub.amount = item.monthlyFee ? item.monthlyFee : null;
+        sub.startDate = item.activationTime < this.today ? this.today : item.activationTime;
+        sub.endDate = null;
+        sub['maxStartDate'] = item.deactivationTime;
+
+        sub.level = null;
+        sub['levels'] = item.serviceProductLevels.length ? item.serviceProductLevels : null;
+    }
+
+    onStartDateChanged(subscription) {
+        subscription.endDate = null;
     }
 
     removeSubscriptionFields(index) {
