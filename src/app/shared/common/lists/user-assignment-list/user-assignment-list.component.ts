@@ -199,7 +199,7 @@ export class UserAssignmentComponent implements OnDestroy {
                 id: user.id,
                 name: user.name + (user.surname ? ' ' + user.surname : ''),
                 isActive: true,
-                photoPublicId: user.profileThumbnailId
+                photoThumbnailId: user.profileThumbnailId
             });
         }
 
