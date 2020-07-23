@@ -364,7 +364,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
             return this.crmService.loadSlicePivotGridData(
-                this.getODataUrl(this.groupDataSourceURI),
+                this.getODataUrl(this.groupDataSourceURI, [
+                    //FiltersService.filterByParentId() !!VP It should be enabled after backend correction
+                ]),
                 this.filters,
                 loadOptions,
                 /** @todo change to strict typing and handle typescript error */
@@ -480,7 +482,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 first(),
                 switchMap((odataRequestValues: ODataRequestValues) => {
                     const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
-                        this.getODataUrl(this.groupDataSourceURI),
+                        this.getODataUrl(this.groupDataSourceURI, [
+                            //FiltersService.filterByParentId() !!VP It should be enabled after backend correction
+                        ]),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
                         this.dateField,
@@ -619,7 +623,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI),
+                url: this.getODataUrl(this.totalDataSourceURI, [
+                    this.filterModelStatus.filterMethod(this.filterModelStatus),
+                    FiltersService.filterByClientGroupId(),
+                    FiltersService.filterByParentId()
+                ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;
@@ -747,7 +755,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
             const chartDataUrl = this.crmService.getChartDataUrl(
-                this.getODataUrl(this.groupDataSourceURI),
+                this.getODataUrl(this.groupDataSourceURI, [
+                    //FiltersService.filterByParentId() !!VP It should be enabled after backend correction
+                ]),
                 odataRequestValues,
                 summaryBy,
                 this.dateField
@@ -768,7 +778,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).pipe(
             map(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
                 return this.mapService.getSliceMapUrl(
-                    this.getODataUrl(this.groupDataSourceURI),
+                    this.getODataUrl(this.groupDataSourceURI, [
+                        //FiltersService.filterByParentId() !!VP It should be enabled after backend correction
+                    ]),
                     odataRequestValues,
                     mapArea,
                     this.dateField,

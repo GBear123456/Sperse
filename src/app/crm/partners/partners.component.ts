@@ -472,7 +472,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI),
+                url: this.getODataUrl(this.totalDataSourceURI, [
+                    FiltersService.filterByParentId()
+                ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;

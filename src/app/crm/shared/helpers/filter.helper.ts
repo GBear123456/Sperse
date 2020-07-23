@@ -128,7 +128,7 @@ export class FilterHelpers {
         return { 'GroupId': {'eq': ContactGroup.Partner} };
     }
 
-    static filterByParentId() {
-        return { 'ParentId': {'eq': null} };
+    static filterByParentId(value = null) {
+        return { 'ParentId': {'eq': value} };
     }
 }
