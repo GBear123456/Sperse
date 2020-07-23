@@ -139,11 +139,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent = this.getRootComponent();
         this._activatedRoute.params.pipe(
             takeUntil(this.destroy$),
-            switchMap((params: Params) => this.loadContactInfo(params))
-        ).subscribe(() => this.initNavButtons());
-        this._activatedRoute.queryParams
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((params: Params) => this.queryParams = params);
+            switchMap((params: Params) => this.loadContactInfo(params)),
+            switchMap(() => this._activatedRoute.queryParams)
+        ).subscribe((params: Params) => {
+            this.queryParams = params;
+            this.initNavButtons();
+        });
 
         contactsService.invalidateSubscribe(area => this.invalidate(area));
         contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
@@ -301,7 +302,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 label: this.l('OrdersAndInvoices'),
                 route: 'invoices',
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
-                hidden: !!this.contactInfo.parentId    
+                hidden: !!this.contactInfo.parentId
             },
             { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
             { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },
@@ -648,7 +649,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 queryParams: _.extend(
                     _.mapObject(
                         this.queryParams,
-                        (val, key) => key == 'referrer' ? undefined : val
+                        (val, key) => key == 'referrer' ? '' : val
                     ),
                     refresh ? {refresh: Date.now()} : {}
                 )
