@@ -7394,6 +7394,61 @@ export class CommonUserInfoServiceProxy {
         }
         return _observableOf<string>(<any>null);
     }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getRapidToken(contactId: number | null | undefined): Observable<GetRapidTokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/CommonUserInfo/GetRapidToken?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRapidToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRapidToken(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRapidTokenOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRapidTokenOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRapidToken(response: HttpResponseBase): Observable<GetRapidTokenOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRapidTokenOutput.fromJS(resultData200) : new GetRapidTokenOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRapidTokenOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -35762,7 +35817,6 @@ export class MoveActivityDto implements IMoveActivityDto {
     endDate!: moment.Moment | undefined;
     allDay!: boolean | undefined;
     sortOrder!: number | undefined;
-    stageId!: number | undefined;
 
     constructor(data?: IMoveActivityDto) {
         if (data) {
@@ -35780,7 +35834,6 @@ export class MoveActivityDto implements IMoveActivityDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.allDay = data["allDay"];
             this.sortOrder = data["sortOrder"];
-            this.stageId = data["stageId"];
         }
     }
 
@@ -35798,7 +35851,6 @@ export class MoveActivityDto implements IMoveActivityDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["allDay"] = this.allDay;
         data["sortOrder"] = this.sortOrder;
-        data["stageId"] = this.stageId;
         return data; 
     }
 }
@@ -35809,7 +35861,6 @@ export interface IMoveActivityDto {
     endDate: moment.Moment | undefined;
     allDay: boolean | undefined;
     sortOrder: number | undefined;
-    stageId: number | undefined;
 }
 
 export class TransitionActivityDto implements ITransitionActivityDto {
@@ -43951,6 +44002,46 @@ export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
 }
 
+export class GetRapidTokenOutput implements IGetRapidTokenOutput {
+    token!: string | undefined;
+    expirationDate!: moment.Moment | undefined;
+
+    constructor(data?: IGetRapidTokenOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.token = data["token"];
+            this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetRapidTokenOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRapidTokenOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetRapidTokenOutput {
+    token: string | undefined;
+    expirationDate: moment.Moment | undefined;
+}
+
 export enum MaritalStatus {
     Single = "Single", 
     Married = "Married", 
@@ -45209,6 +45300,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     contactDate!: moment.Moment | undefined;
     groupId!: string | undefined;
     typeId!: string | undefined;
+    parentId!: number | undefined;
     affiliateCode!: string | undefined;
     xref!: string | undefined;
     userId!: number | undefined;
@@ -45244,6 +45336,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.groupId = data["groupId"];
             this.typeId = data["typeId"];
+            this.parentId = data["parentId"];
             this.affiliateCode = data["affiliateCode"];
             this.xref = data["xref"];
             this.userId = data["userId"];
@@ -45291,6 +45384,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["groupId"] = this.groupId;
         data["typeId"] = this.typeId;
+        data["parentId"] = this.parentId;
         data["affiliateCode"] = this.affiliateCode;
         data["xref"] = this.xref;
         data["userId"] = this.userId;
@@ -45331,6 +45425,7 @@ export interface IContactInfoForMerge {
     contactDate: moment.Moment | undefined;
     groupId: string | undefined;
     typeId: string | undefined;
+    parentId: number | undefined;
     affiliateCode: string | undefined;
     xref: string | undefined;
     userId: number | undefined;
