@@ -312,6 +312,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             partnerTypeName: partnerTypeName,
             sourceContactId: this.sourceContactId,
             trackingInfo: trackingInfo,
+            parentContactId: this.data.parentId,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null
         };
         if (this.disallowMultipleItems) {

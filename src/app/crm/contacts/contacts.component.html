@@ -59,6 +59,15 @@
                         <a class="add-new-contact">{{l('AddRelatedContact')}}</a>
                     </div>
                 </ng-template>
+                <div class="contact-persons-info" (click)="addNewContact($event, true)" *ngIf="!contactInfo?.parentId; else backToParent">
+                    <a class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
+                </div>
+                <ng-template #backToParent>
+                    <div class="contact-persons-info" (click)="showParent()" [title]="l('Parent Contact')">
+                        <img src="./assets/common/icons/similar-contacts.svg">
+                        <a class="add-new-contact">{{contactInfo?.parentName}}</a>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </ng-container>

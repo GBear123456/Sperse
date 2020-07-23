@@ -235,10 +235,10 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             },
             {
                 type: ContextType.AddContact,
-                text: this.ls.l('AddContact'),
+                text: this.ls.l('AddSubContact'),
                 selected: false,
                 icon: 'add-contact',
-                visible: true,
+                visible: !this.data.parentId,
                 contactGroups: this.allContactGroupsExceptUser
             },
             {
@@ -498,8 +498,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     closeOnNavigation: false,
                     data: {
                         refreshParent: () => {},
+                        parentId: this.data.id,
                         customerType: this.contactGroup
                     }
+                }).afterClosed().subscribe(res => {
+                    this.contactsService.invalidate('sub-contacts');
                 });
             });
         else if (selectedMenuItem.type === ContextType.AddFiles)

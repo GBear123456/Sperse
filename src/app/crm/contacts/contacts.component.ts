@@ -300,12 +300,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 name: 'invoices',
                 label: this.l('OrdersAndInvoices'),
                 route: 'invoices',
-                disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices)
+                disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
+                hidden: !!this.contactInfo.parentId    
             },
-            { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !contact.userId && !this.isClientDetailPage() },
-            { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !this.isClientDetailPage() },
-            { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information' },
-            { name: 'lead-related-contacts', label: this.l('LeadsRelatedContacts'), route: 'lead-related-contacts' },
+            { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
+            { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },
+            { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information', hidden: !!this.contactInfo.parentId },
+            { name: 'lead-related-contacts', label: this.l('LeadsRelatedContacts'), route: 'lead-related-contacts', hidden: !!this.contactInfo.parentId },
             {
                 name: 'activity-logs',
                 label: this.l('ActivityLogs'),
@@ -765,7 +766,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.contactService;
     }
 
-    addNewContact(event) {
+    addNewContact(event, isSubContact = false) {
         if (this.isUserProfile)
             return;
 
@@ -777,15 +778,19 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                parentId: isSubContact ? this.contactInfo.id : undefined,
                 isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
-                company: companyInfo && companyInfo.fullName,
+                company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
                 customerType: this.contactGroupId.value || ContactGroup.Client,
                 refreshParent: () => {}
             }
         }).afterClosed().subscribe(() => {
-            this.orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result) => {
-                this.contactInfo['organizationContactInfo'] = result;
-            });
+            if (isSubContact)
+                this.contactsService.invalidate('sub-contacts');
+            else
+                this.orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result) => {
+                    this.contactInfo['organizationContactInfo'] = result;
+                });
         });
         event.stopPropagation();
     }
@@ -800,5 +805,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     loadTargetEntity(event, direction) {
         this.targetEntity.next(direction);
+    }
+
+    showParent() {
+        this.contactsService.updateLocation(this.contactInfo.parentId);
     }
 }

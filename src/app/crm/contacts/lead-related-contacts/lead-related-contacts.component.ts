@@ -47,6 +47,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
     @ViewChild('leadDataGrid', {static: false}) leadDataGrid: DxDataGridComponent;
     @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
+    @ViewChild('subContactDataGrid', {static: false}) subContactDataGrid: DxDataGridComponent;
 
     data = {
         contactInfo: new ContactInfoDto(),
@@ -58,17 +59,24 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     private readonly leadDataSourceURI = 'Lead';
     private readonly contactDataSourceURI = 'Contact';
     private readonly ident = 'LeadRelatedContacts';
+    private readonly CONTACT_TAB_INDEX = 1;
 
     actionMenuItems: ActionMenuItem[];
     readonly clientFields = ClientFields;
     readonly leadFields = LeadFields;
 
     set selectedTabIndex(val: number) {
-        val && this.initContactDataSource();
+        if (val) {
+            if (val == this.CONTACT_TAB_INDEX)
+                this.initContactDataSource();
+            else
+                this.initSubContactDataSource();
+        }
     }
 
     leadDataSource;
     contactDataSource;
+    subContactDataSource;
     actionRecordData: any;
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
@@ -92,6 +100,10 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {
         this.contactsService.loadLeadInfo();
+        this.contactsService.invalidateSubscribe(area => {
+            if (area == 'sub-contacts')
+                this.subContactDataGrid.instance.refresh();
+        })
     }
 
     ngOnInit() {
@@ -145,6 +157,37 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                             this.clientFields.ContactDate,
                             this.clientFields.BankCode,
                             this.clientFields.SourceContactId,
+                            this.clientFields.GroupId
+                        ]
+                    );
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                }
+            })
+        });
+    }
+
+    initSubContactDataSource() {
+        this.subContactDataSource = new DataSource({
+            store: new ODataStore({
+                key: this.clientFields.Id,
+                url: this.oDataService.getODataUrl(
+                    this.contactDataSourceURI,
+                    {[this.clientFields.ParentId]: this.data.contactInfo.id}
+                ),
+                version: AppConsts.ODataVersion,
+                deserializeDates: false,
+                beforeSend: (request) => {
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.subContactDataGrid,
+                        [
+                            this.clientFields.Id,
+                            this.clientFields.Name,
+                            this.clientFields.Email,
+                            this.clientFields.Status,
+                            this.clientFields.ContactDate,
+                            this.clientFields.BankCode,
+                            this.clientFields.ParentId,
                             this.clientFields.GroupId
                         ]
                     );
@@ -262,6 +305,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 this.actionRecordData.GroupId,
                 id, () => {
                     (this.reuseService as CustomReuseStrategy).invalidate('clients');
+                    this.subContactDataGrid.instance.refresh();
                     this.contactDataGrid.instance.refresh();
                 }
             );
