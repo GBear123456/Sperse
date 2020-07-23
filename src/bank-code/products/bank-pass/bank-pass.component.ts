@@ -99,7 +99,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 this.dataSourceURI,
                 [
                     ...FiltersService.getCustomerFilters(),
-                    this.bankCodeService.getSourceFilters()
+                    this.bankCodeService.getSourceFilters(),
+                    FiltersService.filterByParentId()
                 ]
             ),
             version: AppConsts.ODataVersion,
