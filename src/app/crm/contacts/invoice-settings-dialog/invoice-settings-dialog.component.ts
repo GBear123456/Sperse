@@ -43,13 +43,17 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderFullName,
         EmailTags.SenderPhone,
         EmailTags.SenderEmail,
-        EmailTags.SenderWebSite,
+        EmailTags.SenderWebSite1,
+        EmailTags.SenderWebSite2,
+        EmailTags.SenderWebSite3,
         EmailTags.SenderCompany,
         EmailTags.SenderCompanyTitle,
         EmailTags.SenderCompanyLogo,
         EmailTags.SenderCompanyPhone,
         EmailTags.SenderCompanyEmail,
-        EmailTags.SenderCompanyWebSite
+        EmailTags.SenderCompanyWebSite,
+        EmailTags.SenderCalendly, 
+        EmailTags.SenderAffiliateCode
     ];
 
     constructor(

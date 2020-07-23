@@ -309,9 +309,11 @@ export class ContactsService {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
             dialogComponent.tagsList = [
                 EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName,
-                EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite,
-                EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo,
-                EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite
+                EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1, 
+                EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany, 
+                EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone, 
+                EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly, 
+                EmailTags.SenderAffiliateCode
             ];
         }
     }

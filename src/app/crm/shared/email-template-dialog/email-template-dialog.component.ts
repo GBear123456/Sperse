@@ -23,6 +23,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
     ContactCommunicationServiceProxy, UpdateEmailTemplateRequest, GetTemplateReponse, ContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
@@ -32,7 +33,7 @@ import { EmailTags } from '@app/crm/contacts/contacts.const';
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
     styleUrls: [ 'email-template-dialog.component.less' ],
-    providers: [ EmailTemplateServiceProxy ],
+    providers: [ PhoneFormatPipe, EmailTemplateServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
@@ -83,6 +84,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     charCount: number;
 
     constructor(
+        private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
         private profileService: ProfileService,
@@ -349,7 +351,10 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     getTagValue(name) {
-        return this.data.tags && this.data.tags[name];
+        let value = this.data.tags && this.data.tags[name];
+        if (name == EmailTags.SenderPhone && value)
+            value = this.phonePipe.transform(value);
+        return value;
     }
 
     getWebsiteLinks(list) {

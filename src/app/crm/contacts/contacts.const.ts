@@ -19,11 +19,15 @@ export enum EmailTags {
     SenderFullName       = 'SenderFullName',
     SenderPhone          = 'SenderPhone',
     SenderEmail          = 'SenderEmail',
-    SenderWebSite        = 'SenderWebSite',
+    SenderWebSite1       = 'SenderWebSite1',
+    SenderWebSite2       = 'SenderWebSite2',
+    SenderWebSite3       = 'SenderWebSite3',
     SenderCompany        = 'SenderCompany',
     SenderCompanyTitle   = 'SenderCompanyTitle',
     SenderCompanyLogo    = 'SenderCompanyLogo',
     SenderCompanyPhone   = 'SenderCompanyPhone',
     SenderCompanyEmail   = 'SenderCompanyEmail',
-    SenderCompanyWebSite = 'SenderCompanyWebSite'
+    SenderCompanyWebSite = 'SenderCompanyWebSite',
+    SenderCalendly       = 'SenderCalendly',
+    SenderAffiliateCode  = 'SenderAffiliateCode'
 }

@@ -3,6 +3,7 @@ import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, On
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party import */
+import capitalize from 'underscore.string/capitalize';
 import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
@@ -235,7 +236,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             },
             {
                 type: ContextType.AddContact,
-                text: this.ls.l('AddSubContact'),
+                text: capitalize(this.ls.l('AddSubContact')),
                 selected: false,
                 icon: 'add-contact',
                 visible: !this.data.parentId,
