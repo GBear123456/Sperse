@@ -100,6 +100,13 @@ export class PlatformSelectComponent {
                         && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode
                     ) {
                         this.modules.footerItems.push(moduleConfig);
+                    } else if (
+                        AppConsts.appMemberPortalUrl
+                        && !appService.isHostTenant
+                        && module.name === 'MemberPortal'
+                        && this.appSessionService.tenant.customLayoutType == LayoutType.Rapid
+                    ) {
+                        this.modules.footerItems.push(module);
                     }
                 } else if (module.showInDropdown) {
                     this.modules.items.push(moduleConfig);
@@ -149,6 +156,11 @@ export class PlatformSelectComponent {
                 this.dropDown.option('disabled', false);
             });
             this.dropDown.close();
+        }
+
+        if (module.name === 'MemberPortal') {
+            AppConsts.appMemberPortalUrl && this.authService.setTokenBeforeRedirect();
+            return window.open(AppConsts.appMemberPortalUrl, '_blank');
         }
     }
 
