@@ -3,14 +3,13 @@
               [buttons]="buttons"
               [editTitle]="false">
     <ng-container headerContent>
-        <label class="template">{{ls.l('Template')}}</label>
         <dx-select-box
             name="template"
-            width="250px"
+            width="380px"
             height="40px"
             displayExpr="name"
             valueExpr="id"
-            placeholder=""
+            [placeholder]="ls.l('Template')"
             [disabled]="onTemplateCreate.observers.length && !data.contact"
             [(value)]="data.templateId"
             [showClearButton]="templateEditMode"
