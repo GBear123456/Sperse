@@ -162,6 +162,13 @@ export class AppService extends AppServiceBase {
                     name: 'Store',
                     showDescription: false,
                     isComingSoon: true
+                },
+                {
+                    name: 'MemberPortal',
+                    showDescription: false,
+                    showInDropdown: true,
+                    footerItem: true,
+                    isMemberPortal: true
                 }
             ],
             {
