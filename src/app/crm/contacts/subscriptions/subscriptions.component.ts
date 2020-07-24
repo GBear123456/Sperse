@@ -201,7 +201,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         this.dialog.open(AddSubscriptionDialogComponent, {
             panelClass: ['slider'],
             hasBackdrop: false,
-            closeOnNavigation: true,
+            closeOnNavigation: false,
+            disableClose: true,
             data: data
         });
         e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();

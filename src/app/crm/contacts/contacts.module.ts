@@ -141,6 +141,7 @@ import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
+import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 
 @NgModule({
     declarations: [
@@ -201,7 +202,8 @@ import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-relat
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
         CreateInvoiceDialogComponent,
-        LeadRelatedContactsComponent
+        LeadRelatedContactsComponent,
+        AddServiceProductDialogComponent
     ],
     imports: [
         FormsModule,
@@ -284,7 +286,8 @@ import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-relat
         CancelSubscriptionDialogComponent,
         OrganizationUnitsDialogComponent,
         MergeContactDialogComponent,
-        MarkAsPaidDialogComponent
+        MarkAsPaidDialogComponent,
+        AddServiceProductDialogComponent
     ],
     providers: [
         DialogService,

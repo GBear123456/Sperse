@@ -17,7 +17,11 @@
                                displayExpr="code"
                                valueExpr="code"
                                [(value)]="subscription.code"
-                               (onSelectionChanged)="onServiceTypeChanged($event, subscription)">
+                               placeholder="Select service..."
+                               (onValueChanged)="onServiceTypeChanged($event, subscription)">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message=""></dxi-validation-rule>
+                    </dx-validator>
                 </dx-select-box>
             </div>
             <div class="field">
@@ -43,8 +47,7 @@
             </div>
             <div class="field">
                 <label for="endDate">{{ls.l('StartDate') }}</label>
-                <dx-date-box #startDateDateBox
-                             type="date"
+                <dx-date-box type="date"
                              [min]="subscription.startDate || today"
                              [max]="subscription.maxStartDate"
                              [(value)]="subscription.startDate"
@@ -53,8 +56,7 @@
             </div>
             <div class="field">
                 <label for="endDate">{{ls.l('EndDate') }}</label>
-                <dx-date-box #endDateDateBox
-                             [min]="subscription.startDate"
+                <dx-date-box [min]="subscription.startDate"
                              type="date"
                              [(value)]="subscription.endDate">
                 </dx-date-box>
