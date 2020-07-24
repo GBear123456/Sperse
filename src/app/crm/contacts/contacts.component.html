@@ -60,6 +60,7 @@
                     </div>
                 </ng-template>
                 <div class="contact-persons-info" (click)="addNewContact($event, true)" *ngIf="!contactInfo?.parentId; else backToParent">
+                    <img src="./assets/common/icons/similar-contacts.svg" [alt]="l('SubContact')">
                     <a class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
                 </div>
                 <ng-template #backToParent>

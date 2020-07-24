@@ -247,7 +247,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 text: this.ls.l('AddInvoice'),
                 selected: false,
                 icon: 'money',
-                visible: this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                visible: !this.data.parentId && 
+                    this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                 contactGroups: this.allContactGroups
             }
         ];
