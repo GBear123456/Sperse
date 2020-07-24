@@ -22,6 +22,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { ActivityAssignedUsersStoreActions, AppStore } from '@app/store';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -178,10 +179,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     if (customize >= 0) {
                         if (customize) {
                             request.method = 'POST';
-                            if (request.payload.AllDay) {
-                                request.payload.StartDate = request.payload.StartDate.substring(0, 19) + 'Z';
-                                request.payload.EndDate = request.payload.EndDate.substring(0, 19) + 'Z';
-                            }
+                            request.payload.StartDate = DateHelper.addTimezoneOffset(new Date(request.payload.StartDate), true).toISOString();
+                            request.payload.EndDate = DateHelper.addTimezoneOffset(new Date(request.payload.EndDate), true).toISOString();
                         }
                         let endpoint = this.parseODataURL(request.url);
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
@@ -616,24 +615,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         return new Date(moment(value).format('YYYY-MM-DD HH:mm:ss'));
     }
 
-    onAppointmentUpdating(event) {
-        let period = <any>this.getPeriodType();
-        if (period == 'month') {
-            const delimiter = 'T';
-            const oldActivity: ActivityDto = event.oldData;
-            const newActivity: ActivityDto = event.newData;
-            let diff = moment(newActivity.StartDate).diff(event.oldData.StartDate, 'days'),
-                newDateParts = newActivity.StartDate.split(delimiter),
-                oldDateParts = oldActivity.StartDate.split(delimiter);
-            newActivity.StartDate = newDateParts.shift() + delimiter + oldDateParts.pop();
-
-            let endDate = moment(oldActivity.EndDate).add(diff, 'days').format('YYYY-MM-DDTHH:mm:ss');
-            newDateParts = endDate.split(delimiter);
-            oldDateParts = oldActivity.EndDate.split(delimiter);
-            event.newData.EndDate = newDateParts.shift() + delimiter + oldDateParts.pop();
-        }
-    }
-
     onViewChanged(view: string) {
         if (this.showPipeline && this.currentView == view)
             this.currentView = null;
@@ -663,6 +644,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.updateCalendarCaption();
         this.initToolbarConfig();
         this.popoverCalendarVisible = false;
+    }
+
+    onAppointmentUpdating($event) {
+        //!!VP Should be added correct adjustments
     }
 
     updateCurrentDate(direction: 1 | -1) {
