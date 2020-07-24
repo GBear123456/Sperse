@@ -259,7 +259,8 @@ export class BankCodeService {
         filters.push(
             { 'BankCode': { 'ne': null }},
             { 'BankCode': { 'ne': '' }},
-            ...FiltersService.getCustomerFilters()
+            ...FiltersService.getCustomerFilters(),
+            FiltersService.filterByParentId()
         );
         let filter = buildQuery({
             filter: filters
