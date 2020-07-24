@@ -113,6 +113,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         map((personOrganizationInfo: PersonOrgRelationShortInfo) => personOrganizationInfo && personOrganizationInfo.jobTitle)
     );
     contactId: number;
+    leadId: number;
 
     private readonly CACHE_KEY_PREFIX = 'DetailsHeader';
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
@@ -160,6 +161,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+        this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(lead => {
+            this.leadId = lead && lead.id;
+        });
         this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
         });
@@ -354,7 +358,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             } else {
                 this.data.primaryOrganizationContactId = null;
                 this.data.personContactInfo.orgRelations = [];
-                this.contactsService.updateLocation(this.data.id, this.data['leadId']);
+                this.contactsService.updateLocation(this.data.id, this.leadId);
             }
         } else {
             let orgRelation = _.find(orgRelations, item => item.isPrimary) || orgRelations[0];
@@ -596,7 +600,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             .subscribe((result: OrganizationContactInfoDto) => {
                 this.data['organizationContactInfo'] = result;
                 this.selectedOrganizationId.next(orgRelationId);
-                this.contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
+                this.contactsService.updateLocation(this.data.id, this.leadId, result && result.id);
             });
     }
 

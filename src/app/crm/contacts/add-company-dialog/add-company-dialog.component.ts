@@ -124,7 +124,7 @@ export class AddCompanyDialogComponent {
             switchMap((response: CreatePersonOrgRelationOutput) => {
                 let result = of(response);
                 if (response.organizationId) {
-                    this.data.updateLocation(this.data.contactId, this.data.contactInfo['leadId'], response.organizationId);
+                    this.data.updateLocation(this.data.contactId, this.data.leadId, response.organizationId);
                     /** Reload list of organization units */
                     if (this.data.contactInfo.groupId === ContactGroup.Partner) {
                         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(true));
