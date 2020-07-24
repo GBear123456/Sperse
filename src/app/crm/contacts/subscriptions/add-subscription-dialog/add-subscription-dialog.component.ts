@@ -10,7 +10,7 @@ import {
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -33,7 +33,9 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AddServiceProductDialogComponent } from './add-service-product-dialog/add-service-product-dialog.component';
+import { AppPermissionService } from '../../../../../shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'add-subscription-dialog',
@@ -51,6 +53,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     today = new Date();
     private slider: any;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    readonly addNewItemId = -1;
     serviceTypes: ServiceProductDto[] = null;
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
@@ -80,9 +83,10 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
         private invoicesService: InvoicesService,
-        private appSession: AppSessionService,
+        private permission: AppPermissionService,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
+        public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
@@ -104,6 +108,14 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         this.orderDropdownComponent.initOrderDataSource();
         this.serviceProductProxy.getAll(false).subscribe(result => {
             this.serviceTypes = result;
+
+            if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
+                let addNewItemElement = new ServiceProductDto();
+                addNewItemElement.id = this.addNewItemId;
+                addNewItemElement.code = '+ Add new item';
+                addNewItemElement.name = '+ Add new item';
+                this.serviceTypes.push(addNewItemElement);
+            }
         });
     }
 
@@ -149,7 +161,16 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     }
 
     onServiceTypeChanged(event, sub: SubscriptionInput) {
-        this.setServiceProduct(event.selectedItem, sub);
+        if (!event.value)
+            return;
+
+        let selectedItem: ServiceProductDto = event.component.option('selectedItem');
+        if (selectedItem.id == this.addNewItemId) {
+            this.showAddServiceProductDialog(event.component, sub, event.previousValue);
+        }
+        else {
+            this.setServiceProduct(selectedItem, sub);
+        }
     }
 
     onServiceLevelChanged(event, sub: SubscriptionInput) {
@@ -181,6 +202,29 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
 
     onStartDateChanged(subscription) {
         subscription.endDate = null;
+    }
+
+    showAddServiceProductDialog(component, sub: SubscriptionInput, previousValue: string) {
+        let dialogRef = this.dialog.open(AddServiceProductDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                title: this.ls.l('Edit Template'),
+                templateType: 'Contact',
+                saveTitle: this.ls.l('Save')
+            }
+        });
+
+        dialogRef.afterClosed().subscribe((res: ServiceProductDto) => {
+            if (res) {
+                this.serviceTypes.splice(this.serviceTypes.length - 1, 0, res);
+                component.option('value', res.code);
+            }
+            else {
+                component.option('value', previousValue);
+            }
+        });
     }
 
     removeSubscriptionFields(index) {

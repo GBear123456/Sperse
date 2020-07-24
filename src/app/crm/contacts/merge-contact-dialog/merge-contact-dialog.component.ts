@@ -240,7 +240,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getUsageTypeDictionary(types) {
-        return types.reduce((acc, val) => {
+        return types && types.reduce((acc, val) => {
             acc[val.id] = val.name;
             return acc;
         }, {dt: this.ls.l('General')});
@@ -314,7 +314,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     checkSingleField(field, targetValues) {
         if (field == this.ASSIGNED_USER_EMAIL) {
             let data = this.data.mergeInfo;
-            return targetValues.length && (data.targetContactInfo.userIsActive || !data.ContactInfo.userIsActive);
+            return targetValues.length;
         } else
             return (targetValues.length || !this.keepSource);
     }
@@ -562,12 +562,16 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getActiveUserEmail(value, column) {
-        if (column == this.COLUMN_RESULT_FIELD) {
-            let sourceContact = this.data.mergeInfo.contactInfo,
-                targetContact = this.data.mergeInfo.targetContactInfo;
-            if (targetContact.isUserActive && targetContact.userEmailAddress)
+        let sourceContact = this.data.mergeInfo.contactInfo,
+            targetContact = this.data.mergeInfo.targetContactInfo;
+        if (column == this.COLUMN_SOURCE_FIELD)
+            value.text = sourceContact.userEmailAddress;
+        else if (column == this.COLUMN_TARGET_FIELD)
+            value.text = targetContact.userEmailAddress;
+        else if (column == this.COLUMN_RESULT_FIELD) {
+            if (targetContact.userIsActive && targetContact.userEmailAddress)
                 value.text = targetContact.userEmailAddress;
-            else if (sourceContact.isUserActive && sourceContact.userEmailAddress)
+            else if (sourceContact.userIsActive && sourceContact.userEmailAddress)
                 value.text = sourceContact.userEmailAddress;
             else
                 value.text = targetContact.userEmailAddress || sourceContact.userEmailAddress;
@@ -593,9 +597,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
             return sourceContact.userLastLoginTime;
         else if (column == this.COLUMN_TARGET_FIELD)
             return targetContact.userLastLoginTime;
-        else
-            return targetContact.userLastLoginTime
-                || sourceContact.userLastLoginTime;
+        else if (column == this.COLUMN_RESULT_FIELD) {
+            if (targetContact.userIsActive && targetContact.userEmailAddress)
+                return targetContact.userLastLoginTime
+            else if (sourceContact.userIsActive && sourceContact.userEmailAddress)
+                return sourceContact.userLastLoginTime
+            else
+                return targetContact.userLastLoginTime || sourceContact.userLastLoginTime
+        }
     }
 
     save() {
