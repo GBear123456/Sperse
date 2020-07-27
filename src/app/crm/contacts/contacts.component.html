@@ -15,7 +15,7 @@
     <ng-container underHeader>
         <div class="general-links">
             <a (click)="contactsService.showEmailDialog({ contact: contactInfo }).subscribe()"
-               [class.disabled]="!isCommunicationHistoryAllowed">
+               [class.disabled]="!isSendSmsAndEmailAllowed">
                 <i class="inbox-icon" aria-hidden="true"></i>
             </a>
             <i class="phone-icon" aria-hidden="true" [class.disabled]="true"></i>

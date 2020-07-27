@@ -294,7 +294,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
                 route: 'user-information'
             },
-            { name: 'user-inbox', label: this.l('CommunicationHistory'), route: 'user-inbox' },
+            { 
+                name: 'user-inbox', 
+                label: this.l('CommunicationHistory'), 
+                route: 'user-inbox', 
+                hidden: !this.isCommunicationHistoryAllowed
+            },
             { name: 'documents', label: this.l('Documents'), route: 'documents' },
             { name: 'notes', label: this.l('Notes'), route: 'notes'},
             {
