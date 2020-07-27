@@ -21,9 +21,11 @@ import {
     InvoiceSettings,
     ServiceProductServiceProxy,
     ServiceProductDto,
-    ServiceProductLevelDto
+    ServiceProductLevelDto,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
@@ -55,6 +57,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
         private notify: NotifyService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
+        private userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<AddServiceProductDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -67,7 +70,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
         });
 
         this.serviceProduct = new ServiceProductDto();
-        this.serviceProduct.systemType = 'General';
+        this.serviceProduct.systemType = this.userManagementService.isLayout(LayoutType.BankCode) ? 'BANKCODE' : 'General';
         this.serviceProduct.serviceProductLevels = [];
     }
 
