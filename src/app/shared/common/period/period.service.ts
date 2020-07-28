@@ -68,6 +68,11 @@ export class PeriodService {
             case Period.ThisMonth:
                 periodName = 'month';
                 break;
+            case Period.Last7Days:
+                periodName = 'last7days';
+                startDate.subtract(1, 'day');
+                endDate.subtract(7, 'day');
+                break;
             case Period.LastMonth:
                 periodName = 'month';
                 startDate.subtract(1, 'month');

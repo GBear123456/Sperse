@@ -3,6 +3,7 @@ export enum Period {
     Yesterday = 'Yesterday',
     ThisWeek = 'ThisWeek',
     ThisMonth = 'ThisMonth',
+    Last7Days = 'Last7Days',
     LastMonth = 'LastMonth',
     LastQuarter = 'LastQuarter',
     ThisYear = 'ThisYear',
