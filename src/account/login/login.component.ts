@@ -18,7 +18,7 @@ import { AdvicePeriodLoginComponent } from './layouts/advice-period/advice-perio
 import { BankCodeLoginComponent } from './layouts/bank-code/bank-code-login.component';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { TitleService } from '@shared/common/title/title.service';
-import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-login.component";
+import { RapidLoginComponent } from '@root/account/login/layouts/rapid/rapid-login.component';
 
 @Directive({
     selector: '[ad-login-host]'

@@ -14,7 +14,9 @@ export class UrlHelper {
     }
 
     static getQueryParametersUsingParameters(search: string): any {
-        return search.replace(/(^\?)/, '').split('&').map(function (n) { return n = n.split('='), this[n[0]] = n[1], this; }.bind({}))[0];
+        return search ? search.replace(/(^\?)/, '').split('&').map(function (n) {
+            return n = n.split('='), this[n[0]] = n[1], this;
+        }.bind({}))[0] : {};
     }
 
     static getInitialUrlParameters(): string {
