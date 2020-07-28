@@ -26060,13 +26060,13 @@ export class ServiceProductServiceProxy {
     }
 
     /**
-     * @showDeactivated (optional) 
+     * @includeDeactivated (optional) 
      * @return Success
      */
-    getAll(showDeactivated: boolean | null | undefined): Observable<ServiceProductDto[]> {
+    getAll(includeDeactivated: boolean | null | undefined): Observable<ServiceProductDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll?";
-        if (showDeactivated !== undefined)
-            url_ += "showDeactivated=" + encodeURIComponent("" + showDeactivated) + "&"; 
+        if (includeDeactivated !== undefined)
+            url_ += "includeDeactivated=" + encodeURIComponent("" + includeDeactivated) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -29828,6 +29828,58 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getSendGridSettings(): Observable<SendGridSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetSendGridSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSendGridSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSendGridSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<SendGridSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SendGridSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSendGridSettings(response: HttpResponseBase): Observable<SendGridSettingsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SendGridSettingsDto.fromJS(resultData200) : new SendGridSettingsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SendGridSettingsDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getYTelSettings(): Observable<YTelSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetYTelSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -30171,6 +30223,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateIAgeSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateSendGridSettings(body: SendGridSettingsDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateSendGridSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSendGridSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSendGridSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateSendGridSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -70066,6 +70170,42 @@ export interface IIAgeSettingsEditDto {
     passwordResetEmailId: number | undefined;
     isEnabled: boolean | undefined;
     offerAnnouncementEmailId: number | undefined;
+}
+
+export class SendGridSettingsDto implements ISendGridSettingsDto {
+    apiKey!: string | undefined;
+
+    constructor(data?: ISendGridSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.apiKey = data["apiKey"];
+        }
+    }
+
+    static fromJS(data: any): SendGridSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendGridSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["apiKey"] = this.apiKey;
+        return data; 
+    }
+}
+
+export interface ISendGridSettingsDto {
+    apiKey: string | undefined;
 }
 
 export class RapidSettingsDto implements IRapidSettingsDto {

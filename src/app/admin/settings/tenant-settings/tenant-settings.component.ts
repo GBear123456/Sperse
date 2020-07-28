@@ -35,6 +35,7 @@ import {
     EPCVIPServer,
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
+    SendGridSettingsDto,
     YTelSettingsEditDto,
     LayoutType,
     RapidSettingsDto
@@ -85,6 +86,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     epcvipEmailServers: string[] = [];
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
     iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
+    sendGridSettings: SendGridSettingsDto = new SendGridSettingsDto();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
     rapidSettings: RapidSettingsDto = new RapidSettingsDto();
     logoUploader: FileUploader;
@@ -149,6 +151,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
+            this.tenantSettingsService.getSendGridSettings(),
             this.tenantSettingsService.getYTelSettings(),
             this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
         ];
@@ -175,6 +178,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.epcvipEmailSettings,
                     this.ongageSettings,
                     this.iageSettings,
+                    this.sendGridSettings,
                     this.yTelSettings,
                     this.rapidSettings
                 ] = results;
@@ -333,6 +337,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
+            this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
         if (this.isAdminCustomizations)
