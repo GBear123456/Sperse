@@ -26897,6 +26897,74 @@ export class StageServiceProxy {
 }
 
 @Injectable()
+export class StageChecklistServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    isCompletedForLead(body: IsStageChecklistCompletedInput | null | undefined): Observable<IsStageChecklistCompletedOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/IsCompletedForLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsCompletedForLead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsCompletedForLead(<any>response_);
+                } catch (e) {
+                    return <Observable<IsStageChecklistCompletedOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<IsStageChecklistCompletedOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processIsCompletedForLead(response: HttpResponseBase): Observable<IsStageChecklistCompletedOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? IsStageChecklistCompletedOutput.fromJS(resultData200) : new IsStageChecklistCompletedOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<IsStageChecklistCompletedOutput>(<any>null);
+    }
+}
+
+@Injectable()
 export class SyncServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -58888,6 +58956,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     leadId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
+    completeChecklist!: boolean | undefined;
 
     constructor(data?: IUpdateLeadStageInfo) {
         if (data) {
@@ -58903,6 +58972,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
             this.leadId = data["leadId"];
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
+            this.completeChecklist = data["completeChecklist"];
         }
     }
 
@@ -58918,6 +58988,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         data["leadId"] = this.leadId;
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
+        data["completeChecklist"] = this.completeChecklist;
         return data; 
     }
 }
@@ -58926,6 +58997,7 @@ export interface IUpdateLeadStageInfo {
     leadId: number;
     stageId: number;
     sortOrder: number | undefined;
+    completeChecklist: boolean | undefined;
 }
 
 export class ProcessLeadInput implements IProcessLeadInput {
@@ -68284,6 +68356,78 @@ export class UpdateSortOrderInput implements IUpdateSortOrderInput {
 export interface IUpdateSortOrderInput {
     id: number;
     sortOrder: number;
+}
+
+export class IsStageChecklistCompletedInput implements IIsStageChecklistCompletedInput {
+    entityId!: number;
+
+    constructor(data?: IIsStageChecklistCompletedInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.entityId = data["entityId"];
+        }
+    }
+
+    static fromJS(data: any): IsStageChecklistCompletedInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new IsStageChecklistCompletedInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["entityId"] = this.entityId;
+        return data; 
+    }
+}
+
+export interface IIsStageChecklistCompletedInput {
+    entityId: number;
+}
+
+export class IsStageChecklistCompletedOutput implements IIsStageChecklistCompletedOutput {
+    isCompleted!: boolean | undefined;
+
+    constructor(data?: IIsStageChecklistCompletedOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.isCompleted = data["isCompleted"];
+        }
+    }
+
+    static fromJS(data: any): IsStageChecklistCompletedOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new IsStageChecklistCompletedOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isCompleted"] = this.isCompleted;
+        return data; 
+    }
+}
+
+export interface IIsStageChecklistCompletedOutput {
+    isCompleted: boolean | undefined;
 }
 
 export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationInput {

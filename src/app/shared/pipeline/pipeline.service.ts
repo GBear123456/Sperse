@@ -216,7 +216,8 @@ export class PipelineService {
             new UpdateLeadStageInfo({
                 leadId: this.getEntityId(entity),
                 stageId: toStage.id,
-                sortOrder: entity.SortOrder
+                sortOrder: entity.SortOrder,
+                completeChecklist: false
             })
         ).pipe(finalize(() => {
             entity.locked = false;
