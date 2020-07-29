@@ -2,11 +2,13 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 
 /** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
-import { finalize, filter, first, map, startWith } from 'rxjs/operators';
+import { finalize, filter, takeUntil,
+    first, map, startWith } from 'rxjs/operators';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
@@ -24,11 +26,13 @@ import {
     CreateOrUpdateUserInput,
     TenantHostType,
     UpdateUserEmailDto,
+    OrganizationUnitShortDto,
     CreateUserForContactInput,
     RoleListDto,
     UserRoleDto,
     ContactInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { ContactsService } from '../contacts.service';
@@ -116,6 +120,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     constructor(
+        private store$: Store<CrmStore.State>,
         private appStoreService: AppStoreService,
         private userService: UserServiceProxy,
         private contactsService: ContactsService,
@@ -140,8 +145,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             this.data = this.userService['data'];
             if (this.data.userId = userId)
                 this.loadData();
-            else
+            else {
+                this.loadOrganizationUnits();
                 this.getPhonesAndEmails();
+            }
             if (this.contactsService.settingsDialogOpened.value)
                 this.toggleOrgUnitsDialog(0, false);
             this.updateToolbarOptions();
@@ -149,14 +156,17 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
         this.contactsService.orgUnitsSaveSubscribe(
             data => {
-                this.data.raw.memberedOrganizationUnits = [];
-                (this.selectedOrgUnits = data).forEach((item) => {
-                    this.data.raw.memberedOrganizationUnits.push(
-                        this.data.raw.allOrganizationUnits.find((organizationUnit) => {
-                            return organizationUnit.id === item;
-                        })['code']
-                    );
-                });
+                this.selectedOrgUnits = data;
+                if (this.data.raw) {
+                    this.data.raw.memberedOrganizationUnits = [];
+                    this.selectedOrgUnits.forEach((item) => {
+                        this.data.raw.memberedOrganizationUnits.push(
+                            this.data.raw.allOrganizationUnits.find((organizationUnit) => {
+                                return organizationUnit.id === item;
+                            })['code']
+                        );
+                    });
+                }
             },
             this.ident
         );
@@ -167,6 +177,20 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.updateInviteDataRoles();
             });
         this.updateInviteDataRoles();
+    }
+
+    private loadOrganizationUnits() {
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
+        this.store$.pipe(
+            select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
+            takeUntil(this.lifecycleSubjectService.destroy$),
+            filter(Boolean)
+        ).subscribe((organizationUnits: OrganizationUnitShortDto[]) => {
+            this.contactsService.orgUnitsUpdate({
+                allOrganizationUnits: organizationUnits,
+                selectedOrgUnits: []
+            });
+        });
     }
 
     private updateToolbarOptions() {
@@ -460,9 +484,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.dialog.open(OrganizationUnitsDialogComponent, {
                         id: 'user-organization-units-dialog',
                         panelClass: ['slider'],
-                        disableClose: false,
+                        disableClose: true,
                         hasBackdrop: false,
-                        closeOnNavigation: true,
+                        closeOnNavigation: false,
                         data: {
                             title: this.ls.l('OrganizationUnits'),
                             selectionMode: 'multiple'

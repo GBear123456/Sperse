@@ -24,12 +24,10 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 export class DashboardWidgetsService  {
     public period$: Observable<PeriodModel> = this.calendarService.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
-            return dateRange.period
-                    ? this.periodService.getDatePeriod(dateRange.period)
-                    : {
-                        from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
-                        to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to')
-                    } as PeriodModel;
+            return {
+                    from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
+                    to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to')
+                } as PeriodModel;
             }
         )
     );
