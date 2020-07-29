@@ -60,8 +60,6 @@ export class AppPreBootstrap {
     }
 
     private static updateAppConsts(appConfig) {
-        AppConsts.appBaseUrlFormat = environment.appBaseUrl;
-        AppConsts.remoteServiceBaseUrlFormat = appConfig.remoteServiceBaseUrl;
         AppConsts.recaptchaSiteKey = appConfig.recaptchaSiteKey;
         AppConsts.googleSheetClientId = appConfig.googleSheetClientId;
         AppConsts.subscriptionExpireNootifyDayCount = appConfig.subscriptionExpireNootifyDayCount;
