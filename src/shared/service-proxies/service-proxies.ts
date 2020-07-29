@@ -65849,6 +65849,50 @@ export interface IActionDto {
     targetStageId: number | undefined;
 }
 
+export class StageChecklistPointDto implements IStageChecklistPointDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IStageChecklistPointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): StageChecklistPointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageChecklistPointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IStageChecklistPointDto {
+    id: number | undefined;
+    name: string | undefined;
+    sortOrder: number | undefined;
+}
+
 export class StageDto implements IStageDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -65856,6 +65900,7 @@ export class StageDto implements IStageDto {
     color!: string | undefined;
     isFinal!: boolean | undefined;
     accessibleActions!: ActionDto[] | undefined;
+    checklistPoints!: StageChecklistPointDto[] | undefined;
 
     constructor(data?: IStageDto) {
         if (data) {
@@ -65877,6 +65922,11 @@ export class StageDto implements IStageDto {
                 this.accessibleActions = [];
                 for (let item of data["accessibleActions"])
                     this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+            if (data["checklistPoints"] && data["checklistPoints"].constructor === Array) {
+                this.checklistPoints = [];
+                for (let item of data["checklistPoints"])
+                    this.checklistPoints.push(StageChecklistPointDto.fromJS(item));
             }
         }
     }
@@ -65900,6 +65950,11 @@ export class StageDto implements IStageDto {
             for (let item of this.accessibleActions)
                 data["accessibleActions"].push(item.toJSON());
         }
+        if (this.checklistPoints && this.checklistPoints.constructor === Array) {
+            data["checklistPoints"] = [];
+            for (let item of this.checklistPoints)
+                data["checklistPoints"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -65911,6 +65966,7 @@ export interface IStageDto {
     color: string | undefined;
     isFinal: boolean | undefined;
     accessibleActions: ActionDto[] | undefined;
+    checklistPoints: StageChecklistPointDto[] | undefined;
 }
 
 export class PipelineDto implements IPipelineDto {
