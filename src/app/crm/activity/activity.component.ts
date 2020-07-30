@@ -70,6 +70,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public showPipeline = false;
     public pipelineDataSource: any;
     public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
+    public cellDuration = 15;
 
     public activityTypes = ActivityType;
     private selectedEntities: any[] = [];
@@ -333,6 +334,39 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             'class': 'bold'
                         }
                     },
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        widget: 'dxTextBox',
+                        disabled: false,
+                        options: {
+                            width: 250,
+                            height: 40,
+                            readOnly: true,
+                            visible: this.currentView != 'month',
+                            value: this.l('CellDurationMinutes') + ':'
+                        }
+                    },
+                    {
+                        widget: 'dxNumberBox',
+                        options: {
+                            width: 60,
+                            height: 40,
+                            visible: this.currentView != 'month',
+                            value: this.cellDuration,
+                            showSpinButtons: true,
+                            onValueChanged: event => {
+                                this.cellDuration = event.value;
+                            },
+                            step: 5,
+                            max: 60,
+                            min: 5
+                        }
+                    }
                 ]
             },
             {
