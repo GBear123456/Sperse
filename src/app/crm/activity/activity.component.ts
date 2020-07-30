@@ -177,11 +177,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     let customize = ['DELETE', 'PATCH'].indexOf(request.method);
                     if (customize >= 0) {
-                        if (customize) {
+                        if (customize)
                             request.method = 'POST';
-                            request.payload.StartDate = DateHelper.addTimezoneOffset(new Date(request.payload.StartDate), true).toISOString();
-                            request.payload.EndDate = DateHelper.addTimezoneOffset(new Date(request.payload.EndDate), true).toISOString();
-                        }
                         let endpoint = this.parseODataURL(request.url);
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
                             + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
@@ -646,8 +643,19 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.popoverCalendarVisible = false;
     }
 
-    onAppointmentUpdating($event) {
-        //!!VP Should be added correct adjustments
+    onAppointmentUpdating(event) {
+        if (this.currentView == 'month') {
+            if (event.newData.AllDay) {
+                event.newData.StartDate = DateHelper.removeTimezoneOffset(new Date(event.newData.StartDate), true, 'from').toISOString();
+                event.newData.EndDate = DateHelper.removeTimezoneOffset(new Date(event.newData.EndDate), true, 'from').toISOString();
+            } else
+            if (Date.parse(event.newData.StartDate) - Date.parse(event.newData.EndDate)
+                == Date.parse(event.oldData.StartDate) - Date.parse(event.oldData.EndDate)
+            ) {
+                event.newData.StartDate = DateHelper.addTimezoneOffset(new Date(event.newData.StartDate), true).toISOString();
+                event.newData.EndDate = DateHelper.addTimezoneOffset(new Date(event.newData.EndDate), true).toISOString();
+            }
+        }
     }
 
     updateCurrentDate(direction: 1 | -1) {
