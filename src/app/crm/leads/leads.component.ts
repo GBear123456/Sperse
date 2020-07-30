@@ -1257,11 +1257,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
+                        disabled: !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
                                     text: this.l('Email'),
+                                    disabled: this.selectedClientKeys.length > 1,
                                     action: () => {
                                         this.contactService.showEmailDialog({
                                             contactId: this.selectedClientKeys[0],
@@ -1271,6 +1272,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 },
                                 {
                                     text: this.l('SMS'),
+                                    disabled: this.selectedClientKeys.length > 1,
                                     action: () => {
                                         const selectedLeads = this.selectedLeads;
                                         const contact = selectedLeads && selectedLeads[selectedLeads.length - 1];
@@ -1279,6 +1281,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                             phoneNumber: contact && contact.Phone,
                                             firstName: parsedName && parsedName.first,
                                             lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('RP Email'),
+                                    disabled: this.selectedClientKeys.length < 1,
+                                    visible: this.appSession.tenant.name == 'Performance Partners' && ContactGroup[this.selectedContactGroup] == ContactGroup.Partner,
+                                    action: () => {
+                                        this.message.confirm("", this.l('ReferralPartnersSendEmailConfirmation', this.selectedClientKeys.length), (res) => {
+                                            if (res) {
+                                                abp.ui.setBusy();
+                                                this.contactProxy
+                                                    .sendReferralPartnersEmail(this.selectedClientKeys)
+                                                    .subscribe(null, null, () => abp.ui.clearBusy());
+                                            }
                                         });
                                     }
                                 }
