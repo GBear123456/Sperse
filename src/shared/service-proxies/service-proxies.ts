@@ -26963,8 +26963,8 @@ export class StageChecklistServiceProxy {
      * @leadId (optional) 
      * @return Success
      */
-    getForLead(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/GetForLead?";
+    getAllPointsForLead(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/GetAllPointsForLead?";
         if (leadId !== undefined)
             url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -26979,11 +26979,11 @@ export class StageChecklistServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetForLead(response_);
+            return this.processGetAllPointsForLead(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetForLead(<any>response_);
+                    return this.processGetAllPointsForLead(<any>response_);
                 } catch (e) {
                     return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(e);
                 }
@@ -26992,7 +26992,7 @@ export class StageChecklistServiceProxy {
         }));
     }
 
-    protected processGetForLead(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
+    protected processGetAllPointsForLead(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -68786,7 +68786,7 @@ export interface IUpdateSortOrderInput {
 }
 
 export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
-    id!: number | undefined;
+    pointEntityId!: number | undefined;
     pointId!: number | undefined;
     name!: string | undefined;
     isDone!: boolean | undefined;
@@ -68804,7 +68804,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.pointEntityId = data["pointEntityId"];
             this.pointId = data["pointId"];
             this.name = data["name"];
             this.isDone = data["isDone"];
@@ -68822,7 +68822,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["pointEntityId"] = this.pointEntityId;
         data["pointId"] = this.pointId;
         data["name"] = this.name;
         data["isDone"] = this.isDone;
@@ -68833,7 +68833,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 }
 
 export interface IStageChecklistPointInfoOutput {
-    id: number | undefined;
+    pointEntityId: number | undefined;
     pointId: number | undefined;
     name: string | undefined;
     isDone: boolean | undefined;
