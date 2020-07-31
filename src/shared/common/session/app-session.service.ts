@@ -28,6 +28,10 @@ export class AppSessionService {
         return this.user && this.user.userName == 'demo@lendspace.com';
     }
 
+    get isPerformancePartnerTenant() {
+        return this.tenantName == 'Performance Partners';
+    }
+
     get application(): ApplicationInfoDto {
         return this._application;
     }

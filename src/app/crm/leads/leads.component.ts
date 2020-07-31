@@ -1287,7 +1287,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     text: this.l('RP Email'),
                                     disabled: this.selectedClientKeys.length < 1,
-                                    visible: this.appSession.tenantId && this.appSession.tenant.name == 'Performance Partners' && ContactGroup[this.selectedContactGroup] == ContactGroup.Partner,
+                                    visible: this.appSession.isPerformancePartnerTenant && ContactGroup[this.selectedContactGroup] == ContactGroup.Partner,
                                     action: () => {
                                         this.message.confirm("", this.l('ReferralPartnersSendEmailConfirmation', this.selectedClientKeys.length), (res) => {
                                             if (res) {
