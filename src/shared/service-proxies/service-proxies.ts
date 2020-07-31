@@ -54331,8 +54331,6 @@ export interface IHostUserManagementSettingsEditDto {
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
-    defaultFromAddress!: string | undefined;
-    defaultFromDisplayName!: string | undefined;
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
     smtpEnableSsl!: boolean | undefined;
@@ -54340,6 +54338,8 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     smtpDomain!: string | undefined;
     smtpUserName!: string | undefined;
     smtpPassword!: string | undefined;
+    defaultFromAddress!: string | undefined;
+    defaultFromDisplayName!: string | undefined;
 
     constructor(data?: IEmailSettingsEditDto) {
         if (data) {
@@ -54352,8 +54352,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     init(data?: any) {
         if (data) {
-            this.defaultFromAddress = data["defaultFromAddress"];
-            this.defaultFromDisplayName = data["defaultFromDisplayName"];
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
@@ -54361,6 +54359,8 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.smtpDomain = data["smtpDomain"];
             this.smtpUserName = data["smtpUserName"];
             this.smtpPassword = data["smtpPassword"];
+            this.defaultFromAddress = data["defaultFromAddress"];
+            this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
     }
 
@@ -54373,8 +54373,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["defaultFromAddress"] = this.defaultFromAddress;
-        data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
@@ -54382,13 +54380,13 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["smtpDomain"] = this.smtpDomain;
         data["smtpUserName"] = this.smtpUserName;
         data["smtpPassword"] = this.smtpPassword;
+        data["defaultFromAddress"] = this.defaultFromAddress;
+        data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
     }
 }
 
 export interface IEmailSettingsEditDto {
-    defaultFromAddress: string | undefined;
-    defaultFromDisplayName: string | undefined;
     smtpHost: string | undefined;
     smtpPort: number | undefined;
     smtpEnableSsl: boolean | undefined;
@@ -54396,6 +54394,8 @@ export interface IEmailSettingsEditDto {
     smtpDomain: string | undefined;
     smtpUserName: string | undefined;
     smtpPassword: string | undefined;
+    defaultFromAddress: string | undefined;
+    defaultFromDisplayName: string | undefined;
 }
 
 export class TenantManagementSettingsEditDto implements ITenantManagementSettingsEditDto {
@@ -70228,6 +70228,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
     apiKey!: string | undefined;
     rpTemplateId!: string | undefined;
     rpFromEmail!: string | undefined;
+    defaultFromAddress!: string | undefined;
+    defaultFromDisplayName!: string | undefined;
 
     constructor(data?: ISendGridSettingsDto) {
         if (data) {
@@ -70243,6 +70245,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
             this.apiKey = data["apiKey"];
             this.rpTemplateId = data["rpTemplateId"];
             this.rpFromEmail = data["rpFromEmail"];
+            this.defaultFromAddress = data["defaultFromAddress"];
+            this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
     }
 
@@ -70258,6 +70262,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
         data["apiKey"] = this.apiKey;
         data["rpTemplateId"] = this.rpTemplateId;
         data["rpFromEmail"] = this.rpFromEmail;
+        data["defaultFromAddress"] = this.defaultFromAddress;
+        data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
     }
 }
@@ -70266,6 +70272,8 @@ export interface ISendGridSettingsDto {
     apiKey: string | undefined;
     rpTemplateId: string | undefined;
     rpFromEmail: string | undefined;
+    defaultFromAddress: string | undefined;
+    defaultFromDisplayName: string | undefined;
 }
 
 export class RapidSettingsDto implements IRapidSettingsDto {
