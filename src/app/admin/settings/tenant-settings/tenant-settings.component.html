@@ -286,11 +286,13 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
-                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':settings.email.defaultFromAddress}" [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':settings.email.defaultFromAddress}"
+                               (change)="sendGridSettings.defaultFromAddress = $event.target.value" [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
                     </div>
                     <div class="form-group">
                         <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
-                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}" [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}"
+                               (change)="sendGridSettings.defaultFromDisplayName = $event.target.value" [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
                     </div>
                     <div class="form-group">
                         <label for="SmtpHost">{{l("SmtpHost")}}</label>
@@ -578,6 +580,26 @@
                         <label for="SendGridApiKey">{{l("SendGridApiKey")}}</label>
                         <input id="SendGridApiKey" type="text" name="SendGridApiKey" class="form-control" [(ngModel)]="sendGridSettings.apiKey" maxlength="128">
                     </div>
+                    <div class="form-group">
+                        <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
+                               (change)="settings.email.defaultFromAddress = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromAddress" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control"
+                               (change)="settings.email.defaultFromDisplayName = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromDisplayName" maxlength="128">
+                    </div>
+                    <ng-container *ngIf="isPerformancePartner">
+                        <div class="form-group">
+                            <label for="SendGridRPTemplateId">{{l("SendGridRPTemplate")}}</label>
+                            <input id="SendGridRPTemplateId" type="text" name="SendGridRPTemplateId" class="form-control" [(ngModel)]="sendGridSettings.rpTemplateId" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="SendGridRPFrom">{{l("SendGridRPFrom")}}</label>
+                            <input id="SendGridRPFrom" type="email" name="SendGridRPFrom" class="form-control" [(ngModel)]="sendGridSettings.rpFromEmail" maxlength="128">
+                        </div>
+                    </ng-container>
                 </div>
             </mat-tab>
             <mat-tab [label]="l('YTel')">

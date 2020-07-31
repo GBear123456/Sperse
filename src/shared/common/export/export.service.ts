@@ -83,8 +83,16 @@ export class ExportService {
 
     exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string): Promise<any> {
         this.loadingService.startLoading();
-        return this['exportTo' + type + 'Internal'](dataGrid, option == 'all', prefix)
-            .then(() => this.loadingService.finishLoading());
+        if (dataGrid && dataGrid.instance && dataGrid.instance.getDataSource().isLoading())
+            return new Promise((resolve) => {
+                dataGrid.instance.on('contentReady', () => {
+                    dataGrid.instance.off('contentReady');
+                    resolve(this.exportTo(option, type, dataGrid, prefix));
+                });
+            });
+        else
+            return this['exportTo' + type + 'Internal'](dataGrid, option == 'all', prefix)
+                .then(() => this.loadingService.finishLoading());
     }
 
     exportToXLS(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
