@@ -8694,6 +8694,58 @@ export class ContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendReferralPartnersEmail(body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/SendReferralPartnersEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendReferralPartnersEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendReferralPartnersEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendReferralPartnersEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -26908,6 +26960,65 @@ export class StageChecklistServiceProxy {
     }
 
     /**
+     * @leadId (optional) 
+     * @return Success
+     */
+    getAllPointsForLead(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/GetAllPointsForLead?";
+        if (leadId !== undefined)
+            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllPointsForLead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllPointsForLead(<any>response_);
+                } catch (e) {
+                    return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllPointsForLead(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(StageChecklistPointInfoOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -27169,6 +27280,58 @@ export class StageChecklistServiceProxy {
             }));
         }
         return _observableOf<IsStageChecklistCompletedOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updatePointIsDoneForLead(body: UpdateStageChecklistPointIsDoneInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/UpdatePointIsDoneForLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePointIsDoneForLead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePointIsDoneForLead(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePointIsDoneForLead(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -68622,6 +68785,62 @@ export interface IUpdateSortOrderInput {
     sortOrder: number;
 }
 
+export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
+    pointEntityId!: number | undefined;
+    pointId!: number | undefined;
+    name!: string | undefined;
+    isDone!: boolean | undefined;
+    doneDate!: moment.Moment | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IStageChecklistPointInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pointEntityId = data["pointEntityId"];
+            this.pointId = data["pointId"];
+            this.name = data["name"];
+            this.isDone = data["isDone"];
+            this.doneDate = data["doneDate"] ? moment(data["doneDate"].toString()) : <any>undefined;
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): StageChecklistPointInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageChecklistPointInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pointEntityId"] = this.pointEntityId;
+        data["pointId"] = this.pointId;
+        data["name"] = this.name;
+        data["isDone"] = this.isDone;
+        data["doneDate"] = this.doneDate ? this.doneDate.toISOString() : <any>undefined;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IStageChecklistPointInfoOutput {
+    pointEntityId: number | undefined;
+    pointId: number | undefined;
+    name: string | undefined;
+    isDone: boolean | undefined;
+    doneDate: moment.Moment | undefined;
+    sortOrder: number | undefined;
+}
+
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
     stageId!: number;
     name!: string;
@@ -68812,6 +69031,54 @@ export class IsStageChecklistCompletedOutput implements IIsStageChecklistComplet
 
 export interface IIsStageChecklistCompletedOutput {
     isCompleted: boolean | undefined;
+}
+
+export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageChecklistPointIsDoneInput {
+    pointEntityId!: number | undefined;
+    pointId!: number | undefined;
+    entityId!: number | undefined;
+    isDone!: boolean | undefined;
+
+    constructor(data?: IUpdateStageChecklistPointIsDoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pointEntityId = data["pointEntityId"];
+            this.pointId = data["pointId"];
+            this.entityId = data["entityId"];
+            this.isDone = data["isDone"];
+        }
+    }
+
+    static fromJS(data: any): UpdateStageChecklistPointIsDoneInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateStageChecklistPointIsDoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pointEntityId"] = this.pointEntityId;
+        data["pointId"] = this.pointId;
+        data["entityId"] = this.entityId;
+        data["isDone"] = this.isDone;
+        return data; 
+    }
+}
+
+export interface IUpdateStageChecklistPointIsDoneInput {
+    pointEntityId: number | undefined;
+    pointId: number | undefined;
+    entityId: number | undefined;
+    isDone: boolean | undefined;
 }
 
 export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationInput {
@@ -70702,6 +70969,8 @@ export interface IIAgeSettingsEditDto {
 
 export class SendGridSettingsDto implements ISendGridSettingsDto {
     apiKey!: string | undefined;
+    rpTemplateId!: string | undefined;
+    rpFromEmail!: string | undefined;
 
     constructor(data?: ISendGridSettingsDto) {
         if (data) {
@@ -70715,6 +70984,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
+            this.rpTemplateId = data["rpTemplateId"];
+            this.rpFromEmail = data["rpFromEmail"];
         }
     }
 
@@ -70728,12 +70999,16 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
+        data["rpTemplateId"] = this.rpTemplateId;
+        data["rpFromEmail"] = this.rpFromEmail;
         return data; 
     }
 }
 
 export interface ISendGridSettingsDto {
     apiKey: string | undefined;
+    rpTemplateId: string | undefined;
+    rpFromEmail: string | undefined;
 }
 
 export class RapidSettingsDto implements IRapidSettingsDto {
