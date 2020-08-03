@@ -84,11 +84,11 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() saveOnEnter = false;
     @Input() showEditModeOnEditButtonClick = false;
     @Input() buttonsPosition: 'right' | 'below' = 'right';
+    @Input() isEditModeEnabled = false;
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
     @Output() itemDeleted: EventEmitter<any> = new EventEmitter();
     @Output() openDialog: EventEmitter<any> = new EventEmitter();
 
-    isEditModeEnabled = false;
     valueOriginal = '';
     private _data: InplaceEditModel;
     private _clickTimeout;

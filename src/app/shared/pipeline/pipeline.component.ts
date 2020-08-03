@@ -36,6 +36,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
+import { CheckListDialogComponent } from './check-list-dialog/check-list-dialog.component';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -178,7 +179,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }),
             switchMap(pipeline => pipeline)
         ).subscribe((pipeline: PipelineDto) => {
-            this.pipeline = pipeline;
+            console.log(this.pipeline = pipeline);
             this.createStageInput.pipelineId = this.pipeline.id;
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
@@ -958,4 +959,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         setTimeout(() => this.changeDetector.detectChanges());
     }
 
+    showCheckListdialog(stage) {
+        this.currentTooltip.hide();
+        this.dialog.open(CheckListDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: false,
+            data: {
+                stage: stage
+            }
+        }).afterClosed().subscribe(result => {
+
+        });
+    }
 }
