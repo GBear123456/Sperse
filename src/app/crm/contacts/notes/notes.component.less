@@ -1,4 +1,7 @@
 ﻿:host {
+    display: block;
+    height: 100%;
+
     .wrapper {
         display: flex;
         margin: 0px 23px;
@@ -14,6 +17,11 @@
             ::ng-deep dx-data-grid {
                 .title {
                     margin-top: 5px;
+                }
+
+                .text-wrap {
+                    display: inline-block;
+                    white-space: break-spaces;
                 }
 
                 .dx-template-wrapper,
