@@ -203,6 +203,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     this.finishLoading();
                     this.totalCount = res && res.length;
                     res.forEach((record) => {
+                        if (record.StartDate == record.EndDate)
+                            record.EndDate = undefined;
                         record.fieldTimeZone = 'Etc/UTC';
                     });
                     this.changeDetectorRef.detectChanges();

@@ -36,6 +36,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.type';
 import { InvoiceFields } from '@app/crm/contacts/notes/note-add-dialog/invoice-fields.enum';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 class PhoneNumber {
     id: any;
@@ -168,16 +169,16 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 });
             }, 100);
         });
-    }                                         
+    }
 
     initNoteData() {
         let note = this.data.note;
         if (note && note.id) {
             this.noteId = note.id;
-            this.contactId= note.contactId;
+            this.contactId = note.contactId;
             this.summary = note.text;
             this.phone = note.contactPhoneId;
-            this.type = note.noteType; 
+            this.type = note.noteType;
             this.followupDate = note.followUpDateTime;
             this.currentDate = note.dateTime;
             this.addedBy = note.addedByUserId;
@@ -207,8 +208,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 text: this.summary,
                 contactPhoneId: this.phone || undefined,
                 noteType: this.type,
-                followUpDateTime: this.followupDate || undefined,
-                dateTime: this.currentDate || undefined,
+                followUpDateTime: this.getDateTime(this.followupDate),
+                dateTime: this.getDateTime(this.currentDate),
                 addedByUserId: parseInt(this.addedBy) || undefined,
                 orderId: this.orderId,
                 leadId: this._contactInfo['leadId']
@@ -227,6 +228,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.clientService.invalidate('notes');
             });
         }
+    }
+
+    getDateTime(value) {
+        return value && DateHelper.removeTimezoneOffset(value, true) || undefined;
     }
 
     resetFields() {
