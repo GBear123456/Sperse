@@ -217,7 +217,7 @@ export class PipelineService {
                 leadId: this.getEntityId(entity),
                 stageId: toStage.id,
                 sortOrder: entity.SortOrder,
-                completeChecklist: false
+                ignoreChecklist: false
             })
         ).pipe(finalize(() => {
             entity.locked = false;

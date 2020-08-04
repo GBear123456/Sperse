@@ -27230,62 +27230,6 @@ export class StageChecklistServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    isCompletedForLead(body: IsStageChecklistCompletedInput | null | undefined): Observable<IsStageChecklistCompletedOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/IsCompletedForLead";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processIsCompletedForLead(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processIsCompletedForLead(<any>response_);
-                } catch (e) {
-                    return <Observable<IsStageChecklistCompletedOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<IsStageChecklistCompletedOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processIsCompletedForLead(response: HttpResponseBase): Observable<IsStageChecklistCompletedOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? IsStageChecklistCompletedOutput.fromJS(resultData200) : new IsStageChecklistCompletedOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<IsStageChecklistCompletedOutput>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
     updatePointIsDoneForLead(body: UpdateStageChecklistPointIsDoneInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/UpdatePointIsDoneForLead";
         url_ = url_.replace(/[?&]$/, "");
@@ -54718,8 +54662,6 @@ export interface IHostUserManagementSettingsEditDto {
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
-    defaultFromAddress!: string | undefined;
-    defaultFromDisplayName!: string | undefined;
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
     smtpEnableSsl!: boolean | undefined;
@@ -54727,6 +54669,8 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     smtpDomain!: string | undefined;
     smtpUserName!: string | undefined;
     smtpPassword!: string | undefined;
+    defaultFromAddress!: string | undefined;
+    defaultFromDisplayName!: string | undefined;
 
     constructor(data?: IEmailSettingsEditDto) {
         if (data) {
@@ -54739,8 +54683,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     init(data?: any) {
         if (data) {
-            this.defaultFromAddress = data["defaultFromAddress"];
-            this.defaultFromDisplayName = data["defaultFromDisplayName"];
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
@@ -54748,6 +54690,8 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.smtpDomain = data["smtpDomain"];
             this.smtpUserName = data["smtpUserName"];
             this.smtpPassword = data["smtpPassword"];
+            this.defaultFromAddress = data["defaultFromAddress"];
+            this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
     }
 
@@ -54760,8 +54704,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["defaultFromAddress"] = this.defaultFromAddress;
-        data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
@@ -54769,13 +54711,13 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["smtpDomain"] = this.smtpDomain;
         data["smtpUserName"] = this.smtpUserName;
         data["smtpPassword"] = this.smtpPassword;
+        data["defaultFromAddress"] = this.defaultFromAddress;
+        data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
     }
 }
 
 export interface IEmailSettingsEditDto {
-    defaultFromAddress: string | undefined;
-    defaultFromDisplayName: string | undefined;
     smtpHost: string | undefined;
     smtpPort: number | undefined;
     smtpEnableSsl: boolean | undefined;
@@ -54783,6 +54725,8 @@ export interface IEmailSettingsEditDto {
     smtpDomain: string | undefined;
     smtpUserName: string | undefined;
     smtpPassword: string | undefined;
+    defaultFromAddress: string | undefined;
+    defaultFromDisplayName: string | undefined;
 }
 
 export class TenantManagementSettingsEditDto implements ITenantManagementSettingsEditDto {
@@ -58508,6 +58452,7 @@ export class CancelLeadInfo implements ICancelLeadInfo {
     comment!: string | undefined;
     sortOrder!: number | undefined;
     stageId!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: ICancelLeadInfo) {
         if (data) {
@@ -58525,6 +58470,7 @@ export class CancelLeadInfo implements ICancelLeadInfo {
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
             this.stageId = data["stageId"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -58542,6 +58488,7 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
         data["stageId"] = this.stageId;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -58552,6 +58499,7 @@ export interface ICancelLeadInfo {
     comment: string | undefined;
     sortOrder: number | undefined;
     stageId: number | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
@@ -59327,7 +59275,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     leadId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
-    completeChecklist!: boolean | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IUpdateLeadStageInfo) {
         if (data) {
@@ -59343,7 +59291,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
             this.leadId = data["leadId"];
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
-            this.completeChecklist = data["completeChecklist"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -59359,7 +59307,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         data["leadId"] = this.leadId;
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
-        data["completeChecklist"] = this.completeChecklist;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -59368,7 +59316,7 @@ export interface IUpdateLeadStageInfo {
     leadId: number;
     stageId: number;
     sortOrder: number | undefined;
-    completeChecklist: boolean | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class ProcessLeadInput implements IProcessLeadInput {
@@ -59377,6 +59325,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
     amount!: number | undefined;
     comment!: string | undefined;
     sortOrder!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IProcessLeadInput) {
         if (data) {
@@ -59394,6 +59343,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
             this.amount = data["amount"];
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -59411,6 +59361,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
         data["amount"] = this.amount;
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -59421,6 +59372,7 @@ export interface IProcessLeadInput {
     amount: number | undefined;
     comment: string | undefined;
     sortOrder: number | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class LeadInfoDto implements ILeadInfoDto {
@@ -68961,78 +68913,6 @@ export interface IUpdateStageChecklistPointSortOrderInput {
     sortOrder: number;
 }
 
-export class IsStageChecklistCompletedInput implements IIsStageChecklistCompletedInput {
-    entityId!: number;
-
-    constructor(data?: IIsStageChecklistCompletedInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.entityId = data["entityId"];
-        }
-    }
-
-    static fromJS(data: any): IsStageChecklistCompletedInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new IsStageChecklistCompletedInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["entityId"] = this.entityId;
-        return data; 
-    }
-}
-
-export interface IIsStageChecklistCompletedInput {
-    entityId: number;
-}
-
-export class IsStageChecklistCompletedOutput implements IIsStageChecklistCompletedOutput {
-    isCompleted!: boolean | undefined;
-
-    constructor(data?: IIsStageChecklistCompletedOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.isCompleted = data["isCompleted"];
-        }
-    }
-
-    static fromJS(data: any): IsStageChecklistCompletedOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new IsStageChecklistCompletedOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["isCompleted"] = this.isCompleted;
-        return data; 
-    }
-}
-
-export interface IIsStageChecklistCompletedOutput {
-    isCompleted: boolean | undefined;
-}
-
 export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageChecklistPointIsDoneInput {
     pointEntityId!: number | undefined;
     pointId!: number | undefined;
@@ -70971,6 +70851,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
     apiKey!: string | undefined;
     rpTemplateId!: string | undefined;
     rpFromEmail!: string | undefined;
+    defaultFromAddress!: string | undefined;
+    defaultFromDisplayName!: string | undefined;
 
     constructor(data?: ISendGridSettingsDto) {
         if (data) {
@@ -70986,6 +70868,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
             this.apiKey = data["apiKey"];
             this.rpTemplateId = data["rpTemplateId"];
             this.rpFromEmail = data["rpFromEmail"];
+            this.defaultFromAddress = data["defaultFromAddress"];
+            this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
     }
 
@@ -71001,6 +70885,8 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
         data["apiKey"] = this.apiKey;
         data["rpTemplateId"] = this.rpTemplateId;
         data["rpFromEmail"] = this.rpFromEmail;
+        data["defaultFromAddress"] = this.defaultFromAddress;
+        data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
     }
 }
@@ -71009,6 +70895,8 @@ export interface ISendGridSettingsDto {
     apiKey: string | undefined;
     rpTemplateId: string | undefined;
     rpFromEmail: string | undefined;
+    defaultFromAddress: string | undefined;
+    defaultFromDisplayName: string | undefined;
 }
 
 export class RapidSettingsDto implements IRapidSettingsDto {
