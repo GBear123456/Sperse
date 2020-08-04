@@ -41,7 +41,7 @@
                 headerCellTemplate="actionsCellTemplate">
             </dxi-column>
 
-            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                 {{ cellData.value | date: formatting.dateTime : userTimezone }}

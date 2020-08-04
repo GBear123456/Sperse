@@ -21,7 +21,7 @@
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
             <dxi-column alignment="center" width="40px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
             <dxi-column dataField="text" caption="{{l('Note')}}" width="350px" cssClass="clipboard-holder" dataType="string" cellTemplate="textCell"></dxi-column>
             <dxi-column dataField="dateTime" caption="{{l('Date')}}" sortOrder="desc" cssClass="tabular clipboard-holder" [calculateCellValue]="calculateDateCellValue"></dxi-column>

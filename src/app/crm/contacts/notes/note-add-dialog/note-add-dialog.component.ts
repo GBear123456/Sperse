@@ -96,7 +96,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         super(injector);
 
         this.initTypes();
-        this.initNoteData();
         this._contactInfo = this.data.contactInfo;
         let personContactInfo = this._contactInfo.personContactInfo;
         const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
@@ -146,6 +145,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             })
         });
         this.applyOrdersFilter();
+        this.initNoteData();
     }
 
     ngOnInit() {
@@ -174,13 +174,15 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     initNoteData() {
         let note = this.data.note;
         if (note && note.id) {
+            if (this.contactId = note.contactId)
+                this.onContactChanged({value: this.contactId});
+
             this.noteId = note.id;
-            this.contactId = note.contactId;
             this.summary = note.text;
             this.phone = note.contactPhoneId;
             this.type = note.noteType;
-            this.followupDate = note.followUpDateTime;
-            this.currentDate = note.dateTime;
+            this.followupDate = note.followUpDateTime && DateHelper.addTimezoneOffset(note.followUpDateTime.toDate(), true);
+            this.currentDate = note.dateTime && DateHelper.addTimezoneOffset(note.dateTime.toDate(), true);
             this.addedBy = note.addedByUserId;
             this.orderId = note.orderId;
         }
