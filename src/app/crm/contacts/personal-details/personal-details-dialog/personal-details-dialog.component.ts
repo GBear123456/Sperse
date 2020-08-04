@@ -16,7 +16,7 @@ import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto,
-    UpdateContactAffiliateCodeInput, UpdateContactXrefInput } from '@shared/service-proxies/service-proxies';
+    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -69,8 +69,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         message: this.ls.l('MaxLengthIs', 255)
     }];
     isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
+    isLayoutTypeRapid = this.userManagementService.isLayout(LayoutType.Rapid);
     userTimezone = DateHelper.getUserTimezone();
-    formatting = AppConsts.formatting;    
+    formatting = AppConsts.formatting;
     sourceContacts = [];
 
     constructor(
@@ -246,6 +247,22 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             this.contactInfo.personContactInfo.xref = value;
             this.contactXref.next(value);
         });
+    }
+
+    updateCustomField(value, property) {
+        if (value)
+            value = value.trim();
+        let initialValue = this.contactInfo.personContactInfo[property];
+        this.contactInfo.personContactInfo[property] = value;
+
+        this.contactProxy.updateCustomFields(new UpdateContactCustomFieldsInput({
+            contactId: this.contactInfo.personContactInfo.id,
+            customField1: this.contactInfo.personContactInfo.customField1,
+            customField2: this.contactInfo.personContactInfo.customField2,
+            customField3: this.contactInfo.personContactInfo.customField3,
+            customField4: this.contactInfo.personContactInfo.customField4,
+            customField5: this.contactInfo.personContactInfo.customField5
+        })).subscribe(null, () => this.contactInfo.personContactInfo[property] = initialValue);
     }
 
     saveToClipboard(value) {

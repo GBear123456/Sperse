@@ -36,6 +36,10 @@
                 color: #f44336;
             }
 
+            i.hidden {
+                display: none;
+            }
+
             &.below {
                 position: absolute;
                 bottom: -32px;
@@ -47,10 +51,8 @@
             }
         }
 
-        &:hover {
-            .actions:not(.hidden) {
-                visibility: visible;
-            }
+        &:hover .actions {
+            visibility: visible;
         }
 
         .placeholder {

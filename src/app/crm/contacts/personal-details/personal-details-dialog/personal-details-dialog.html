@@ -76,9 +76,21 @@
                             </inplace-edit>
                         </div>
                         <ng-container *ngFor="let n of [1,2,3,4,5]">
-                            <div class="field" *ngIf="isLayoutTypeBankCode || contactInfo?.personContactInfo['customField' + n] as value">
-                                <label>{{ ls.l('Contact_CustomField' + n) }}</label>
-                                <span>{{ value }}<i class="save-to-clipboard" (click)="saveToClipboard(value)"></i></span>
+                            <div class="field" *ngIf="isLayoutTypeBankCode || isLayoutTypeRapid || contactInfo?.personContactInfo['customField' + n]">
+                                <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
+                                <inplace-edit [id]="'Contact_CustomField' + n"
+                                              lEntityName="Name"
+                                              [editPlaceholder]="ls.l('Contact_CustomField' + n)"
+                                              [value]="contactInfo?.personContactInfo['customField' + n]"
+                                              [isOptional]="true"
+                                              [showInlineEditButton]="true"
+                                              [isDeleteEnabled]="true"
+                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
+                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
+                                              [isReadOnlyField]="!isLayoutTypeRapid || !permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              (valueChanged)="updateCustomField($event, 'customField' + n)"
+                                              (itemDeleted)="updateCustomField(null, 'customField' + n)">
+                                </inplace-edit>
                             </div>
                         </ng-container>
                     </div>
