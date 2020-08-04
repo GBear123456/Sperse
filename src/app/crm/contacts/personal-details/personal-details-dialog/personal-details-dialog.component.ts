@@ -2,17 +2,21 @@
 import { Component, OnInit, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import { ClipboardService } from 'ngx-clipboard';
 import { CacheService } from 'ng2-cache-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 /** Application imports */
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { NotifyService } from '@abp/notify/notify.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { LayoutType, ContactServiceProxy, ContactInfoDto, UpdateContactAffiliateCodeInput, UpdateContactXrefInput } from '@shared/service-proxies/service-proxies';
+import { LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto,
+    UpdateContactAffiliateCodeInput, UpdateContactXrefInput } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -27,7 +31,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;
+    leadInfo: LeadInfoDto; 
     configMode: boolean;
+    sourceContactName: string;
     overviewPanelSetting = {
         clientScores: true,
         totalApproved: true,
@@ -36,10 +42,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     private slider: any;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
+    private readonly ident = 'PersonalDetailsDialog';
+    private contactXref: ReplaySubject<string> = new ReplaySubject(1);
     affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
         map((affiliateCode: string) => (affiliateCode || '').trim())
     );
-    private contactXref: ReplaySubject<string> = new ReplaySubject(1);
     contactXref$: Observable<string> = this.contactXref.asObservable().pipe(
         map((contactXref: string) => (contactXref || '').trim())
     );
@@ -62,9 +69,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         message: this.ls.l('MaxLengthIs', 255)
     }];
     isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
-    private readonly ident = 'PersonalDetailsDialog';
+    userTimezone = DateHelper.getUserTimezone();
+    formatting = AppConsts.formatting;    
+    sourceContacts = [];
 
     constructor(
+        private clipboardService: ClipboardService,
+        private notifyService: NotifyService,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         private contactProxy: ContactServiceProxy,
@@ -85,10 +96,15 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
         contactsService.contactInfoSubscribe(contactInfo => {
             if (contactInfo && contactInfo.id) {
-                this.contactInfo = contactInfo;
+                console.log(this.contactInfo = contactInfo);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
             }
+        }, this.ident);
+
+        contactsService.leadInfoSubscribe(leadInfo => {
+            this.leadInfo = leadInfo;
+            this.updateSourceContactName();
         }, this.ident);
 
         if (this.showOverviewTab) {
@@ -125,6 +141,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 });
             }, 100);
         });
+    }
+
+    onSourceContactLoaded(contacts) {
+        this.sourceContacts = contacts;
+        this.updateSourceContactName();
+    }
+
+    updateSourceContactName() {
+        let contact = this.sourceContacts.find(item =>
+            item.id == (this.leadInfo && this.leadInfo.sourceContactId));
+        this.sourceContactName = contact && contact.name;
     }
 
     getTabContentHeight() {
@@ -219,6 +246,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             this.contactInfo.personContactInfo.xref = value;
             this.contactXref.next(value);
         });
+    }
+
+    saveToClipboard(value) {
+        this.clipboardService.copyFromContent(value);
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
     }
 
     close() {

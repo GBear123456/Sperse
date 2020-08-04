@@ -5,6 +5,7 @@
     display: block;
     min-width: 400px;
     padding: 20px;
+    height: calc(~"100vh - 250px");
 
     h2 {
         position: relative;
@@ -73,21 +74,81 @@
             padding-bottom: 20px;
         }
 
+        hr {
+            margin: 0;
+        }
+
         h3 {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.56px;
             color: #202b35;
             text-transform: uppercase;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
-        h4 {
+
+        h4, label {
             font-size: 14px;
             line-height: 1.43;
             letter-spacing: 0.28px;
             color: #677380;
             margin-bottom: 0;
         }
+
+        label {
+            min-width: 140px;
+        }
+        
+        span {
+            padding-right: 30px;
+            position: relative;
+            i.save-to-clipboard {
+                top: 0px;
+                right: 0px;
+                position: absolute;
+                display: none;
+            }
+            &:hover {
+                i.save-to-clipboard {
+                    display: inline-block;
+                }
+            }
+        }
+
+        p {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 0;
+            &.date-ago {
+                min-width: 140px;
+                text-align: right;
+                padding-right: 20px;
+            }
+            &.channel-code {
+                min-width: 140px;
+            }
+        }
+
+        .field {
+            line-height: 30px;
+            padding: 10px 0;
+        }
+
+        .affiliate-title {
+            white-space: nowrap;
+            h3, h4 {
+                display: inline-block;                
+            }
+            h4 {
+                padding-left: 10px;
+            }
+        }
+
+        .affiliate-field {
+            padding-left: 20px;
+        }
+
         ::ng-deep inplace-edit {
             .inplace-edit-edit-mode {
                 width: 80%;
