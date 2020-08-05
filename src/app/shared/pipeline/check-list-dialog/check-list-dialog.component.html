@@ -10,7 +10,7 @@
         <dxo-row-dragging [allowReordering]="true" dropFeedbackMode="push" [onReorder]="onReorder" container="#dragcontainer"></dxo-row-dragging>
         <dxi-column dataField="id" dataType="number" [visible]="false"></dxi-column>
         <dxi-column dataField="color" dataType="string" cellTemplate="colorCell" width="30px"></dxi-column>
-        <dxi-column dataField="sortOrder" dataType="number" [visible]="false" sortOrder="desc"></dxi-column>
+        <dxi-column dataField="sortOrder" dataType="number" [visible]="false" sortOrder="asc"></dxi-column>
         <dxi-column dataField="name" dataType="string" cellTemplate="nameCell"></dxi-column>
         <div *dxTemplate="let cell of 'colorCell'">
             <dx-check-box 

@@ -1,14 +1,15 @@
 /** Core imports */
-import { Component, OnInit, Inject, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
-import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
+import { CrmStore, PipelinesStoreActions, PipelinesStoreSelectors } from '@app/crm/store';
 import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStageChecklistPointSortOrderInput,
     RenameStageChecklistPointInput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -21,6 +22,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     providers: [StageChecklistServiceProxy]
 })
 export class CheckListDialogComponent implements OnInit, AfterViewInit {
+    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+
     private slider: any;
     dataSource: any[] = [];
 
@@ -120,14 +123,33 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
 
     onReorder = (event) => {
         this.startLoading();
-        this.dataSource[event.fromIndex].sortOrder = this.dataSource[event.toIndex].sortOrder;
-        updatePointSortOrder(new UpdateStageChecklistPointSortOrderInput({
-            id: this.dataSource[event.fromIndex].id,
-            sortOrder: this.dataSource.length ? this.dataSource[event.toIndex].sortOrder : 0
+        let dataGridInstance = this.dataGrid.instance,
+            records = dataGridInstance.getVisibleRows(),
+            fromData = records[event.fromIndex].data,
+            toData = records[event.toIndex].data,
+            direction = fromData.sortOrder > toData.sortOrder ? 0.1 : -0.1;
+        fromData.sortOrder = toData.sortOrder;
+        toData.sortOrder = toData.sortOrder + direction;
+        dataGridInstance.refresh();
+        this.checklistProxy.updatePointSortOrder(new UpdateStageChecklistPointSortOrderInput({
+            id: fromData.id,
+            sortOrder: this.dataSource.length ? fromData.sortOrder : 0
         })).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+            this.store$.pipe(select(PipelinesStoreSelectors.getSortedPipeline({
+                purpose: this.dialogData.pipelinePurposeId,
+                contactGroupId: this.dialogData.contactGroupId
+            })), first()).subscribe((pipeline: any) => {
+                pipeline.stages.some(stage => {
+                    if (this.dialogData.stage.id == stage.id) {
+                        this.dataSource = stage.checklistPoints;
+                        dataGridInstance.refresh();
+                        return true;
+                    }
+                });
+            });
         });
     }
 

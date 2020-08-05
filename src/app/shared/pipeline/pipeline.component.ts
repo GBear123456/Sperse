@@ -970,7 +970,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             hasBackdrop: false,
             closeOnNavigation: true,
             data: {
-                stage: stage
+                stage: stage,
+                pipelinePurposeId: this.pipelinePurposeId,
+                contactGroupId: this.contactGroupId
             }
         }).afterClosed().subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
