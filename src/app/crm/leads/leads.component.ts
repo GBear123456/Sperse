@@ -1745,6 +1745,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._activate.next(false);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+        this.pipelineComponent.deactivate();
         this.hideHostElement();
     }
 

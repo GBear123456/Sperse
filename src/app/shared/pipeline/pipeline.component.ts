@@ -692,6 +692,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.subscribers = [];
     }
 
+    deactivate() {
+        this.dialog.closeAll();
+    }
+
     ngOnDestroy() {
         this.destroyPipeline();
     }
@@ -964,11 +968,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.dialog.open(CheckListDialogComponent, {
             panelClass: ['slider'],
             hasBackdrop: false,
+            closeOnNavigation: true,
             data: {
                 stage: stage
             }
-        }).afterClosed().subscribe(result => {
-
+        }).afterClosed().subscribe(() => {
+            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
         });
     }
 }

@@ -25,12 +25,13 @@
                 [value]="cell.value"
                 [isDeleteEnabled]="true"
                 [isEditModeEnabled]="!cell.value"
+                [showRefreshButton]="cell.id"
                 [lDeleteConfirmTitle]="ls.l('ChecklistDeleteWarningTitle')"
                 [lDeleteConfirmMessage]="ls.l('ChecklistDeleteWarningMessage')"
                 [lEntityName]="ls.l('Name')"
                 [editPlaceholder]="ls.l('Name')"
                 [validationRules]="validationRules"
-                (itemDeleted)="onDelete($event)"
+                (itemDeleted)="onDelete($event, cell)"
                 (valueChanged)="onChanged($event, cell)">
             </inplace-edit>
         </div>
