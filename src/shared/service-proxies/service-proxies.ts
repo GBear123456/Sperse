@@ -46925,6 +46925,7 @@ export interface IMergeContactInput {
 
 export class SimilarContactOutput implements ISimilarContactOutput {
     id!: number | undefined;
+    parentId!: number | undefined;
     name!: string | undefined;
     photo!: string | undefined;
     companyName!: string | undefined;
@@ -46944,6 +46945,7 @@ export class SimilarContactOutput implements ISimilarContactOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.parentId = data["parentId"];
             this.name = data["name"];
             this.photo = data["photo"];
             this.companyName = data["companyName"];
@@ -46963,6 +46965,7 @@ export class SimilarContactOutput implements ISimilarContactOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["parentId"] = this.parentId;
         data["name"] = this.name;
         data["photo"] = this.photo;
         data["companyName"] = this.companyName;
@@ -46975,6 +46978,7 @@ export class SimilarContactOutput implements ISimilarContactOutput {
 
 export interface ISimilarContactOutput {
     id: number | undefined;
+    parentId: number | undefined;
     name: string | undefined;
     photo: string | undefined;
     companyName: string | undefined;
