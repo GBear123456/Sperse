@@ -21,7 +21,8 @@ import {
     skip,
     switchMap,
     takeUntil,
-    tap
+    tap,
+    finalize
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import invert from 'lodash/invert';
@@ -1294,7 +1295,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                                 abp.ui.setBusy();
                                                 this.contactProxy
                                                     .sendReferralPartnersEmail(this.selectedClientKeys)
-                                                    .subscribe(null, null, () => abp.ui.clearBusy());
+                                                    .pipe(finalize(() => abp.ui.clearBusy()))
+                                                    .subscribe();
                                             }
                                         });
                                     }

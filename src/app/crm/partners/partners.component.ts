@@ -20,7 +20,8 @@ import {
     skip,
     switchMap,
     takeUntil,
-    tap
+    tap,
+    finalize
 } from 'rxjs/operators';
 import * as _ from 'underscore';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
@@ -1149,7 +1150,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                                 abp.ui.setBusy();
                                                 this.contactProxy
                                                     .sendReferralPartnersEmail(this.selectedPartnerKeys)
-                                                    .subscribe(null, null, () => abp.ui.clearBusy());
+                                                    .pipe(finalize(() => abp.ui.clearBusy()))
+                                                    .subscribe();
                                             }
                                         });
                                     }
