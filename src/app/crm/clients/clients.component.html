@@ -124,6 +124,7 @@
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
+                        <dxi-column [dataField]="clientFields.UserId" [caption]="l('UserId')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                         <dxi-column [dataField]="clientFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
