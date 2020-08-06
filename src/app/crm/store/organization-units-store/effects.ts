@@ -33,7 +33,7 @@ export class OrganizationUnitsEffects {
                 return empty();
             }
 
-            return this.dictionaryServiceProxy.getOrganizationUnits(false)
+            return this.dictionaryServiceProxy.getOrganizationUnits(null, null, false)
                 .pipe(
                     map((organizationUnitsList: OrganizationUnitShortDto[]) => {
                         return new organizationUnitsActions.LoadSuccessAction(organizationUnitsList);

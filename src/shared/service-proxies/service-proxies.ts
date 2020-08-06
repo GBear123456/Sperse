@@ -13346,13 +13346,19 @@ export class DictionaryServiceProxy {
     }
 
     /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
      * @partnersOnly (optional) 
      * @return Success
      */
-    getOrganizationUnits(partnersOnly: boolean | null | undefined): Observable<OrganizationUnitShortDto[]> {
+    getOrganizationUnits(searchPhrase: string | null | undefined, topCount: number | null | undefined, partnersOnly: boolean | null | undefined): Observable<OrganizationUnitShortDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetOrganizationUnits?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
         if (partnersOnly !== undefined)
-            url_ += "partnersOnly=" + encodeURIComponent("" + partnersOnly) + "&"; 
+            url_ += "PartnersOnly=" + encodeURIComponent("" + partnersOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

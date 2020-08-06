@@ -38,7 +38,7 @@ export class SystemSettingsComponent implements OnInit {
         return {id: item, name: this.ls.l('HostType_' + item)};
     });
 
-    orgUnits = this.dictionaryProxy.getOrganizationUnits(true);
+    orgUnits = this.dictionaryProxy.getOrganizationUnits(null, null, true);
     tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
         && this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
 
