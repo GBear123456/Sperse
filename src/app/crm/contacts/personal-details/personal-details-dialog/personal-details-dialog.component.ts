@@ -31,7 +31,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;
-    leadInfo: LeadInfoDto; 
+    leadInfo: LeadInfoDto;
     configMode: boolean;
     sourceContactName: string;
     overviewPanelSetting = {
@@ -97,7 +97,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
         contactsService.contactInfoSubscribe(contactInfo => {
             if (contactInfo && contactInfo.id) {
-                console.log(this.contactInfo = contactInfo);
+                this.contactInfo = contactInfo;
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
             }
