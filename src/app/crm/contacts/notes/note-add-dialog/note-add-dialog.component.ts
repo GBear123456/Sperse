@@ -117,7 +117,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                    phones: personContactInfo.details.phones
                }];
         this.contacts = relatedPersons.concat(relatedOrganizations);
-        this.onContactChanged({value: this.contacts[0].id});
+        this.onContactChanged({value: this.data.contactInfo.id});
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
