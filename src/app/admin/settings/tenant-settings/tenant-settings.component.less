@@ -30,6 +30,9 @@
 
     input {
         outline: none;
+        &:required, &:invalid {
+            box-shadow: none;
+        }
     }
 
     ::ng-deep {
