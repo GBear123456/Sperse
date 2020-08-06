@@ -18958,6 +18958,58 @@ export class LeadServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateSourceOrganizationUnits(body: UpdateLeadSourceOrganizationUnitsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateSourceOrganizationUnits";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSourceOrganizationUnits(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSourceOrganizationUnits(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateSourceOrganizationUnits(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @leadId (optional) 
      * @forceDelete (optional) 
      * @return Success
@@ -59542,6 +59594,57 @@ export class UpdateLeadSourceOrganizationUnitInput implements IUpdateLeadSourceO
 
 export interface IUpdateLeadSourceOrganizationUnitInput {
     leadId: number;
+    sourceOrganizationUnitId: number;
+}
+
+export class UpdateLeadSourceOrganizationUnitsInput implements IUpdateLeadSourceOrganizationUnitsInput {
+    leadIds!: number[];
+    sourceOrganizationUnitId!: number;
+
+    constructor(data?: IUpdateLeadSourceOrganizationUnitsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.leadIds = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["leadIds"] && data["leadIds"].constructor === Array) {
+                this.leadIds = [];
+                for (let item of data["leadIds"])
+                    this.leadIds.push(item);
+            }
+            this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadSourceOrganizationUnitsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadSourceOrganizationUnitsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.leadIds && this.leadIds.constructor === Array) {
+            data["leadIds"] = [];
+            for (let item of this.leadIds)
+                data["leadIds"].push(item);
+        }
+        data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadSourceOrganizationUnitsInput {
+    leadIds: number[];
     sourceOrganizationUnitId: number;
 }
 
