@@ -20,7 +20,7 @@
                         </div>
                         <div class="form-group">
                             <label for="EmailAddress">{{ls.l("EmailAddress")}} *</label>
-                            <input id="EmailAddress" #emailAddressInput="ngModel" type="email" disabled name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required email maxlength="256">
+                            <input id="EmailAddress" #emailAddressInput="ngModel" type="email" name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required email maxlength="256">
                             <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: ls.l('InvalidEmailAddress')}]"></validation-messages>
                         </div>
                         <div *ngIf="smsEnabled && !isPhoneNumberEmpty">
