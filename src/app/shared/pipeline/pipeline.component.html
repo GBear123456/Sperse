@@ -63,6 +63,10 @@
                         <li class="list-group-item" [hidden]="disallowDelete(stage)">
                             <a (click)="updateStage(stage, 'Merge')" [ngClass]="{disabled: !isConfigureAllowed}"><i class="delete-stage"></i> <span>{{l('Delete_Stage')}}</span></a>
                         </li>
+                        <hr>    
+                        <li class="list-group-item">
+                            <a (click)="showCheckListdialog(stage)" [ngClass]="{disabled: !isConfigureAllowed}"><i class="check-list-stage"></i> <span>{{l('CheckList_Stage')}}</span></a>
+                        </li>
                         <li class="list-group-item">
                             <a (click)="moveStage(stage, false)" [ngClass]="{disabled: disallowMove(stage)}"><i class="left-arrow"></i> <span>{{l('Move_Left_Stage')}}</span></a>
                             <a (click)="moveStage(stage, true)" [ngClass]="{disabled: disallowMove(stage, true)}"><span>{{l('Move_Right_Stage')}}</span> <i class="right-arrow"></i></a>

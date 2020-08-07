@@ -28,6 +28,7 @@ import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lea
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { PipelineService } from './pipeline.service';
 import { ReplacePipe } from '@shared/common/pipes/replace.pipe';
+import { CheckListDialogComponent } from './check-list-dialog/check-list-dialog.component';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
@@ -56,6 +57,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
     ],
     declarations: [
         PipelineComponent,
+        CheckListDialogComponent,
         EntityCancelDialogComponent,
         LeadCompleteDialogComponent,
         ReplacePipe,
@@ -68,6 +70,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         AddRenameMergeDialogComponent
     ],
     entryComponents: [
+        CheckListDialogComponent,
         EntityCancelDialogComponent,
         LeadCompleteDialogComponent,
         AddRenameMergeDialogComponent
