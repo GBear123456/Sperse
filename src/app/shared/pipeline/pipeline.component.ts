@@ -37,6 +37,7 @@ import {
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { CheckListDialogComponent } from './check-list-dialog/check-list-dialog.component';
+import { EntityCheckListDialogComponent } from './entity-check-list-dialog/entity-check-list-dialog.component';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -119,7 +120,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     stages: Stage[];
     allStagesEntitiesTotal: number;
     isConfigureAllowed = this.isGranted(AppPermissions.CRMPipelinesConfigure);
-
+    isLeadPipeline = this.pipelinePurposeId == AppConsts.PipelinePurposeIds.lead;
     private queryWithSearch: any = [];
     private params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 5;
@@ -172,14 +173,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.subscribers.push(this.pipelineService.dataLayoutType$.pipe(
             filter(() => !this.pipeline || this.pipeline.contactGroupId != this.contactGroupId),
             switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)),
-            map((pipeline) => {
+            map(pipeline => {
                 return this._dataSource ?
                     of(pipeline) :
                     of(pipeline).pipe(delayWhen(() => this.dataSource$));
             }),
             switchMap(pipeline => pipeline)
         ).subscribe((pipeline: PipelineDto) => {
-            console.log(this.pipeline = pipeline);
+            this.pipeline = pipeline;
+            this.isLeadPipeline = pipeline.purpose == AppConsts.PipelinePurposeIds.lead;
             this.createStageInput.pipelineId = this.pipeline.id;
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
@@ -617,7 +619,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return new DataSource(extend(config, {
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
             requireTotalCount: !this.totalsURI,
-            select: this.selectFields.concat('SortOrder'),
+            select: this.selectFields.concat(['SortOrder', 
+                this.isLeadPipeline ? 'StageChecklistPointDoneCount' : null
+            ].filter(Boolean))
         }));
     }
 
@@ -963,7 +967,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         setTimeout(() => this.changeDetector.detectChanges());
     }
 
-    showCheckListdialog(stage) {
+    showChecklistConfigDialog(stage) {
         this.currentTooltip.hide();
         this.dialog.open(CheckListDialogComponent, {
             panelClass: ['slider'],
@@ -977,5 +981,23 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
         });
+    }
+
+    showChecklistEntityDialog(event, entity) {
+        this.dialog.open(EntityCheckListDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                entity: entity,
+                pipelinePurposeId: this.pipelinePurposeId,
+                contactGroupId: this.contactGroupId
+            }
+        }).afterClosed().subscribe(() => {
+            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+        });
+
+        event.stopPropagation();
+        this.hideStageHighlighting();
     }
 }

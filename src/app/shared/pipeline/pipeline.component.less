@@ -253,6 +253,7 @@
                             }
                         }
                         .full-name {
+                            width: 100%;
                             display: inline-block;
                             max-height: 42px;
                             text-overflow: ellipsis;
@@ -263,6 +264,15 @@
                                     font-style: italic;
                                     font-weight: 200;
                                     font-size: 12px;
+                                }
+                                &.checklist {
+                                    z-index: 9;
+                                    float: right;
+                                    cursor: pointer;
+                                    color: rgb(0, 174, 239);
+                                    &:hover {
+                                        text-decoration: underline;
+                                    }
                                 }
                             }
                         }
