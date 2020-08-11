@@ -10,7 +10,8 @@ import { finalize, first } from 'rxjs/operators';
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
 import { CrmStore, PipelinesStoreActions, PipelinesStoreSelectors } from '@app/crm/store';
-import { StageChecklistServiceProxy, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { StageChecklistServiceProxy, LeadServiceProxy,
+    UpdateLeadStagePointInput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
@@ -24,11 +25,8 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     private slider: any;
+    private isUpdated = false;
     dataSource: any[] = [];
-
-    validationRules = [
-        { type: 'required', message: this.ls.l('FieldIsRequired') },
-    ];
 
     constructor(
         private elementRef: ElementRef,
@@ -41,9 +39,7 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService
     ) {
-        leadProxy.getStageChecklistPoints(data.entity.Id).subscribe(res => {
-            console.log(this.dataSource = res);
-        });
+        this.loadData();
     }
 
     ngOnInit() {
@@ -69,6 +65,17 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
         });
     }
 
+    loadData() {
+        this.startLoading();
+        this.leadProxy.getStageChecklistPoints(
+            this.data.entity.Id
+        ).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(res => {
+            this.dataSource = res;
+        });
+    }
+
     startLoading() {
         this.loadingService.startLoading(this.elementRef.nativeElement);
     }
@@ -78,10 +85,20 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
     }
 
     onValueChanged(event, cell) {
-        console.log(event, cell);
+        this.startLoading();
+        this.leadProxy.updateLeadStagePoint(new UpdateLeadStagePointInput({
+            pointId: cell.data.id,
+            leadId: this.data.entity.Id,
+            isDone: event.value
+        })).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.isUpdated = true;
+            this.loadData();
+        });
     }
 
     close() {
-        this.dialogRef.close();
+        this.dialogRef.close(this.isUpdated);
     }
 }

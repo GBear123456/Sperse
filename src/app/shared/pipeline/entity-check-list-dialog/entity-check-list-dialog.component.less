@@ -8,15 +8,6 @@
     display: block;
     max-width: 500px;    
 
-    #dragcontainer {
-        ::ng-deep .dx-sortable-dragging {
-            &:after {
-                content: ''!important;
-                display: none!important;
-            }
-        }
-    }
-
     h2 {
         position: relative;
         padding-left: 10px;
@@ -53,8 +44,20 @@
             .dx-datagrid-header-panel {
                 display: block!important;
             }
-            .inplace-container {
-                width:320px;
+            .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+                vertical-align: bottom;
+            }
+            .dx-datagrid-focus-overlay {
+                display: none;
+            }
+            .pending {
+                color: #ff4e71;
+                background: #ffaabb;
+                font-weight: 600;
+                border-radius: 13px;
+                padding: 4px 7px;
+                width: 110px;
+                text-align: center;
             }
         }
     }
