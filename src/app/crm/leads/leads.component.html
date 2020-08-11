@@ -25,7 +25,9 @@
         </action-menu>
         <source-contact-list #sourceList
             targetSelector=".dx-button[aria-label=Source]"
+            [showOrgUnits]="true"
             [filterModel]="filterModelSource"
+            [selectedLeads]="selectedLeads"
             [selectedKeys]="hasBulkPermission ? selectedClientKeys : []"
             [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
             (onApply)="onSourceApply($event)">

@@ -19188,6 +19188,7 @@ export class LeadServiceProxy {
         }
         return _observableOf<EntityContactInfo[]>(<any>null);
     }
+
     /**
      * @leadId (optional) 
      * @return Success
@@ -26269,6 +26270,69 @@ export class SecurityManagementServiceProxy {
 }
 
 @Injectable()
+export class SendGridServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @apiKey (optional) 
+     * @return Success
+     */
+    processWebHook(apiKey: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/SendGrid/ProcessWebHook?";
+        if (apiKey !== undefined)
+            url_ += "apiKey=" + encodeURIComponent("" + apiKey) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProcessWebHook(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProcessWebHook(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processProcessWebHook(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ServiceProductServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -26611,292 +26675,6 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
-export class SimpleServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    method1(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple01/Simple/Method1";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMethod1(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMethod1(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMethod1(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @param1 (optional) 
-     * @return Success
-     */
-    method2(param1: number | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple01/Simple/Method2?";
-        if (param1 !== undefined)
-            url_ += "param1=" + encodeURIComponent("" + param1) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMethod2(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMethod2(<any>response_);
-                } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<number>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMethod2(response: HttpResponseBase): Observable<number> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @integerValue (optional) 
-     * @return Success
-     */
-    get(stringValue: string, integerValue: number | null | undefined): Observable<OutputDto> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/Get?";
-        if (stringValue === undefined || stringValue === null)
-            throw new Error("The parameter 'stringValue' must be defined and cannot be null.");
-        else
-            url_ += "StringValue=" + encodeURIComponent("" + stringValue) + "&"; 
-        if (integerValue !== undefined)
-            url_ += "IntegerValue=" + encodeURIComponent("" + integerValue) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(<any>response_);
-                } catch (e) {
-                    return <Observable<OutputDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OutputDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<OutputDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OutputDto.fromJS(resultData200) : new OutputDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OutputDto>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    post(body: InputDto | null | undefined): Observable<OutputDto> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/Post";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPost(<any>response_);
-                } catch (e) {
-                    return <Observable<OutputDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OutputDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPost(response: HttpResponseBase): Observable<OutputDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OutputDto.fromJS(resultData200) : new OutputDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OutputDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getLeadsWithOrder(): Observable<LeadDto[]> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/GetLeadsWithOrder";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLeadsWithOrder(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetLeadsWithOrder(<any>response_);
-                } catch (e) {
-                    return <Observable<LeadDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<LeadDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetLeadsWithOrder(response: HttpResponseBase): Observable<LeadDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(LeadDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LeadDto[]>(<any>null);
-    }
-}
-
-@Injectable()
 export class StageServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -27125,65 +26903,6 @@ export class StageChecklistServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @leadId (optional) 
-     * @return Success
-     */
-    getAllPointsForLead(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/GetAllPointsForLead?";
-        if (leadId !== undefined)
-            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllPointsForLead(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAllPointsForLead(<any>response_);
-                } catch (e) {
-                    return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetAllPointsForLead(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(StageChecklistPointInfoOutput.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
     }
 
     /**
@@ -39136,6 +38855,7 @@ export interface ICreateLeadOutput {
 
 export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
     systemTotals!: { [key: string] : number; } | undefined;
+    lastCrackedCode!: string | undefined;
     generationTime!: moment.Moment | undefined;
 
     constructor(data?: IGetSystemTotalsOutput) {
@@ -39156,6 +38876,7 @@ export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
                         this.systemTotals[key] = data["systemTotals"][key];
                 }
             }
+            this.lastCrackedCode = data["lastCrackedCode"];
             this.generationTime = data["generationTime"] ? moment(data["generationTime"].toString()) : <any>undefined;
         }
     }
@@ -39176,6 +38897,7 @@ export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
                     data["systemTotals"][key] = this.systemTotals[key];
             }
         }
+        data["lastCrackedCode"] = this.lastCrackedCode;
         data["generationTime"] = this.generationTime ? this.generationTime.toISOString() : <any>undefined;
         return data; 
     }
@@ -39183,6 +38905,7 @@ export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
 
 export interface IGetSystemTotalsOutput {
     systemTotals: { [key: string] : number; } | undefined;
+    lastCrackedCode: string | undefined;
     generationTime: moment.Moment | undefined;
 }
 
@@ -47250,10 +46973,10 @@ export enum MergeLeadMode {
 
 export class MergeContactInput implements IMergeContactInput {
     contactId!: number;
-    contactLeadId!: number;
+    contactLeadId!: number | undefined;
     contactMergeOptions!: ContactMergeOptions | undefined;
     targetContactId!: number;
-    targetContactLeadId!: number;
+    targetContactLeadId!: number | undefined;
     targetContactMergeOptions!: TargetContactMergeOptions | undefined;
     primaryContactInfo!: PrimaryContactInfo | undefined;
     mergeLeadMode!: MergeLeadMode;
@@ -47303,10 +47026,10 @@ export class MergeContactInput implements IMergeContactInput {
 
 export interface IMergeContactInput {
     contactId: number;
-    contactLeadId: number;
+    contactLeadId: number | undefined;
     contactMergeOptions: ContactMergeOptions | undefined;
     targetContactId: number;
-    targetContactLeadId: number;
+    targetContactLeadId: number | undefined;
     targetContactMergeOptions: TargetContactMergeOptions | undefined;
     primaryContactInfo: PrimaryContactInfo | undefined;
     mergeLeadMode: MergeLeadMode;
@@ -58708,7 +58431,6 @@ export class CancelLeadInfo implements ICancelLeadInfo {
     comment!: string | undefined;
     sortOrder!: number | undefined;
     stageId!: number | undefined;
-    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: ICancelLeadInfo) {
         if (data) {
@@ -58726,7 +58448,6 @@ export class CancelLeadInfo implements ICancelLeadInfo {
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
             this.stageId = data["stageId"];
-            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -58744,7 +58465,6 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
         data["stageId"] = this.stageId;
-        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -58755,7 +58475,6 @@ export interface ICancelLeadInfo {
     comment: string | undefined;
     sortOrder: number | undefined;
     stageId: number | undefined;
-    ignoreChecklist: boolean | undefined;
 }
 
 export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
@@ -60051,6 +59770,62 @@ export class UpdateLeadSourceOrganizationUnitsInput implements IUpdateLeadSource
 export interface IUpdateLeadSourceOrganizationUnitsInput {
     leadIds: number[];
     sourceOrganizationUnitId: number;
+}
+
+export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
+    id!: number | undefined;
+    name!: string | undefined;
+    sortOrder!: number | undefined;
+    isDone!: boolean | undefined;
+    completionTime!: moment.Moment | undefined;
+    completedByUserId!: number | undefined;
+
+    constructor(data?: IStageChecklistPointInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+            this.isDone = data["isDone"];
+            this.completionTime = data["completionTime"] ? moment(data["completionTime"].toString()) : <any>undefined;
+            this.completedByUserId = data["completedByUserId"];
+        }
+    }
+
+    static fromJS(data: any): StageChecklistPointInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageChecklistPointInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        data["isDone"] = this.isDone;
+        data["completionTime"] = this.completionTime ? this.completionTime.toISOString() : <any>undefined;
+        data["completedByUserId"] = this.completedByUserId;
+        return data; 
+    }
+}
+
+export interface IStageChecklistPointInfoOutput {
+    id: number | undefined;
+    name: string | undefined;
+    sortOrder: number | undefined;
+    isDone: boolean | undefined;
+    completionTime: moment.Moment | undefined;
+    completedByUserId: number | undefined;
 }
 
 export class LeadTypeDto implements ILeadTypeDto {
@@ -68776,126 +68551,6 @@ export interface IAuthTestOutput {
     userName: string | undefined;
 }
 
-export class OutputDto implements IOutputDto {
-    id!: number | undefined;
-    result!: boolean | undefined;
-
-    constructor(data?: IOutputDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.result = data["result"];
-        }
-    }
-
-    static fromJS(data: any): OutputDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OutputDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["result"] = this.result;
-        return data; 
-    }
-}
-
-export interface IOutputDto {
-    id: number | undefined;
-    result: boolean | undefined;
-}
-
-export class InputDto implements IInputDto {
-    stringValue!: string;
-    integerValue!: number | undefined;
-
-    constructor(data?: IInputDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.stringValue = data["stringValue"];
-            this.integerValue = data["integerValue"];
-        }
-    }
-
-    static fromJS(data: any): InputDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new InputDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["stringValue"] = this.stringValue;
-        data["integerValue"] = this.integerValue;
-        return data; 
-    }
-}
-
-export interface IInputDto {
-    stringValue: string;
-    integerValue: number | undefined;
-}
-
-export class LeadDto implements ILeadDto {
-    id!: number | undefined;
-    stageId!: number | undefined;
-
-    constructor(data?: ILeadDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.stageId = data["stageId"];
-        }
-    }
-
-    static fromJS(data: any): LeadDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["stageId"] = this.stageId;
-        return data; 
-    }
-}
-
-export interface ILeadDto {
-    id: number | undefined;
-    stageId: number | undefined;
-}
-
 export class CreateStageInput implements ICreateStageInput {
     pipelineId!: number;
     name!: string;
@@ -69062,62 +68717,6 @@ export class UpdateSortOrderInput implements IUpdateSortOrderInput {
 export interface IUpdateSortOrderInput {
     id: number;
     sortOrder: number;
-}
-
-export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
-    pointEntityId!: number | undefined;
-    pointId!: number | undefined;
-    name!: string | undefined;
-    isDone!: boolean | undefined;
-    doneDate!: moment.Moment | undefined;
-    sortOrder!: number | undefined;
-
-    constructor(data?: IStageChecklistPointInfoOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.pointEntityId = data["pointEntityId"];
-            this.pointId = data["pointId"];
-            this.name = data["name"];
-            this.isDone = data["isDone"];
-            this.doneDate = data["doneDate"] ? moment(data["doneDate"].toString()) : <any>undefined;
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): StageChecklistPointInfoOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new StageChecklistPointInfoOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["pointEntityId"] = this.pointEntityId;
-        data["pointId"] = this.pointId;
-        data["name"] = this.name;
-        data["isDone"] = this.isDone;
-        data["doneDate"] = this.doneDate ? this.doneDate.toISOString() : <any>undefined;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface IStageChecklistPointInfoOutput {
-    pointEntityId: number | undefined;
-    pointId: number | undefined;
-    name: string | undefined;
-    isDone: boolean | undefined;
-    doneDate: moment.Moment | undefined;
-    sortOrder: number | undefined;
 }
 
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
@@ -70492,7 +70091,8 @@ export interface IUpdateSslBindingInput {
 }
 
 export class IntegrationsSettings implements IIntegrationsSettings {
-    googleMapsJavascriptApiKey!: string;
+    googleMapsJavascriptApiKey!: string | undefined;
+    googleCloudTranslationApiKey!: string | undefined;
 
     constructor(data?: IIntegrationsSettings) {
         if (data) {
@@ -70506,6 +70106,7 @@ export class IntegrationsSettings implements IIntegrationsSettings {
     init(data?: any) {
         if (data) {
             this.googleMapsJavascriptApiKey = data["googleMapsJavascriptApiKey"];
+            this.googleCloudTranslationApiKey = data["googleCloudTranslationApiKey"];
         }
     }
 
@@ -70519,12 +70120,14 @@ export class IntegrationsSettings implements IIntegrationsSettings {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["googleMapsJavascriptApiKey"] = this.googleMapsJavascriptApiKey;
+        data["googleCloudTranslationApiKey"] = this.googleCloudTranslationApiKey;
         return data; 
     }
 }
 
 export interface IIntegrationsSettings {
-    googleMapsJavascriptApiKey: string;
+    googleMapsJavascriptApiKey: string | undefined;
+    googleCloudTranslationApiKey: string | undefined;
 }
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {

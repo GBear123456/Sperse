@@ -28,7 +28,7 @@ import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
+import { OrganizationUnitsDialogComponent } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
