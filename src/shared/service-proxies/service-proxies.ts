@@ -19078,6 +19078,7 @@ export class LeadServiceProxy {
         }
         return _observableOf<EntityContactInfo[]>(<any>null);
     }
+
     /**
      * @leadId (optional) 
      * @return Success
@@ -27015,65 +27016,6 @@ export class StageChecklistServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @leadId (optional) 
-     * @return Success
-     */
-    getAllPointsForLead(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/GetAllPointsForLead?";
-        if (leadId !== undefined)
-            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllPointsForLead(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAllPointsForLead(<any>response_);
-                } catch (e) {
-                    return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetAllPointsForLead(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(StageChecklistPointInfoOutput.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
     }
 
     /**
@@ -45365,6 +45307,12 @@ export class ContactInfoDto implements IContactInfoDto {
     statusId!: string | undefined;
     groupId!: string | undefined;
     assignedUserId!: number | undefined;
+    assignedUserName!: string | undefined;
+    creatorUserId!: number | undefined;
+    creatorUserName!: string | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    lastModifierUserName!: string | undefined;
     starId!: number | undefined;
     ratingId!: number | undefined;
     tags!: number[] | undefined;
@@ -45374,6 +45322,7 @@ export class ContactInfoDto implements IContactInfoDto {
     affiliateCode!: string | undefined;
     parentId!: number | undefined;
     parentName!: string | undefined;
+    contactDate!: moment.Moment | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -45391,6 +45340,12 @@ export class ContactInfoDto implements IContactInfoDto {
             this.statusId = data["statusId"];
             this.groupId = data["groupId"];
             this.assignedUserId = data["assignedUserId"];
+            this.assignedUserName = data["assignedUserName"];
+            this.creatorUserId = data["creatorUserId"];
+            this.creatorUserName = data["creatorUserName"];
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.lastModifierUserName = data["lastModifierUserName"];
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
             if (data["tags"] && data["tags"].constructor === Array) {
@@ -45408,6 +45363,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.affiliateCode = data["affiliateCode"];
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
+            this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
         }
     }
 
@@ -45425,6 +45381,12 @@ export class ContactInfoDto implements IContactInfoDto {
         data["statusId"] = this.statusId;
         data["groupId"] = this.groupId;
         data["assignedUserId"] = this.assignedUserId;
+        data["assignedUserName"] = this.assignedUserName;
+        data["creatorUserId"] = this.creatorUserId;
+        data["creatorUserName"] = this.creatorUserName;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["lastModifierUserName"] = this.lastModifierUserName;
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
         if (this.tags && this.tags.constructor === Array) {
@@ -45442,6 +45404,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["affiliateCode"] = this.affiliateCode;
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
+        data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -45452,6 +45415,12 @@ export interface IContactInfoDto {
     statusId: string | undefined;
     groupId: string | undefined;
     assignedUserId: number | undefined;
+    assignedUserName: string | undefined;
+    creatorUserId: number | undefined;
+    creatorUserName: string | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    lastModifierUserName: string | undefined;
     starId: number | undefined;
     ratingId: number | undefined;
     tags: number[] | undefined;
@@ -45461,6 +45430,7 @@ export interface IContactInfoDto {
     affiliateCode: string | undefined;
     parentId: number | undefined;
     parentName: string | undefined;
+    contactDate: moment.Moment | undefined;
 }
 
 export class ContactDetailsDto implements IContactDetailsDto {
@@ -58510,7 +58480,6 @@ export class CancelLeadInfo implements ICancelLeadInfo {
     comment!: string | undefined;
     sortOrder!: number | undefined;
     stageId!: number | undefined;
-    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: ICancelLeadInfo) {
         if (data) {
@@ -58528,7 +58497,6 @@ export class CancelLeadInfo implements ICancelLeadInfo {
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
             this.stageId = data["stageId"];
-            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -58546,7 +58514,6 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
         data["stageId"] = this.stageId;
-        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -58557,7 +58524,6 @@ export interface ICancelLeadInfo {
     comment: string | undefined;
     sortOrder: number | undefined;
     stageId: number | undefined;
-    ignoreChecklist: boolean | undefined;
 }
 
 export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
@@ -59804,6 +59770,62 @@ export interface IUpdateLeadSourceOrganizationUnitInput {
     sourceOrganizationUnitId: number;
 }
 
+export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
+    id!: number | undefined;
+    name!: string | undefined;
+    sortOrder!: number | undefined;
+    isDone!: boolean | undefined;
+    completionTime!: moment.Moment | undefined;
+    completedByUserId!: number | undefined;
+
+    constructor(data?: IStageChecklistPointInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+            this.isDone = data["isDone"];
+            this.completionTime = data["completionTime"] ? moment(data["completionTime"].toString()) : <any>undefined;
+            this.completedByUserId = data["completedByUserId"];
+        }
+    }
+
+    static fromJS(data: any): StageChecklistPointInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageChecklistPointInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        data["isDone"] = this.isDone;
+        data["completionTime"] = this.completionTime ? this.completionTime.toISOString() : <any>undefined;
+        data["completedByUserId"] = this.completedByUserId;
+        return data; 
+    }
+}
+
+export interface IStageChecklistPointInfoOutput {
+    id: number | undefined;
+    name: string | undefined;
+    sortOrder: number | undefined;
+    isDone: boolean | undefined;
+    completionTime: moment.Moment | undefined;
+    completedByUserId: number | undefined;
+}
+
 export class LeadTypeDto implements ILeadTypeDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -60732,8 +60754,13 @@ export class NoteInfoDto implements INoteInfoDto {
     addedByUserName!: string | undefined;
     noteType!: NoteType | undefined;
     noteTypeName!: string | undefined;
+    contactPhoneId!: number | undefined;
     contactPhoneNumber!: string | undefined;
     contactName!: string | undefined;
+    orderId!: number | undefined;
+    leadId!: number | undefined;
+    followUpDateTime!: moment.Moment | undefined;
+    addedByUserId!: number | undefined;
 
     constructor(data?: INoteInfoDto) {
         if (data) {
@@ -60753,8 +60780,13 @@ export class NoteInfoDto implements INoteInfoDto {
             this.addedByUserName = data["addedByUserName"];
             this.noteType = data["noteType"];
             this.noteTypeName = data["noteTypeName"];
+            this.contactPhoneId = data["contactPhoneId"];
             this.contactPhoneNumber = data["contactPhoneNumber"];
             this.contactName = data["contactName"];
+            this.orderId = data["orderId"];
+            this.leadId = data["leadId"];
+            this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
+            this.addedByUserId = data["addedByUserId"];
         }
     }
 
@@ -60774,8 +60806,13 @@ export class NoteInfoDto implements INoteInfoDto {
         data["addedByUserName"] = this.addedByUserName;
         data["noteType"] = this.noteType;
         data["noteTypeName"] = this.noteTypeName;
+        data["contactPhoneId"] = this.contactPhoneId;
         data["contactPhoneNumber"] = this.contactPhoneNumber;
         data["contactName"] = this.contactName;
+        data["orderId"] = this.orderId;
+        data["leadId"] = this.leadId;
+        data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
+        data["addedByUserId"] = this.addedByUserId;
         return data; 
     }
 }
@@ -60788,8 +60825,13 @@ export interface INoteInfoDto {
     addedByUserName: string | undefined;
     noteType: NoteType | undefined;
     noteTypeName: string | undefined;
+    contactPhoneId: number | undefined;
     contactPhoneNumber: string | undefined;
     contactName: string | undefined;
+    orderId: number | undefined;
+    leadId: number | undefined;
+    followUpDateTime: moment.Moment | undefined;
+    addedByUserId: number | undefined;
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
@@ -68795,62 +68837,6 @@ export interface IUpdateSortOrderInput {
     sortOrder: number;
 }
 
-export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
-    pointEntityId!: number | undefined;
-    pointId!: number | undefined;
-    name!: string | undefined;
-    isDone!: boolean | undefined;
-    doneDate!: moment.Moment | undefined;
-    sortOrder!: number | undefined;
-
-    constructor(data?: IStageChecklistPointInfoOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.pointEntityId = data["pointEntityId"];
-            this.pointId = data["pointId"];
-            this.name = data["name"];
-            this.isDone = data["isDone"];
-            this.doneDate = data["doneDate"] ? moment(data["doneDate"].toString()) : <any>undefined;
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): StageChecklistPointInfoOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new StageChecklistPointInfoOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["pointEntityId"] = this.pointEntityId;
-        data["pointId"] = this.pointId;
-        data["name"] = this.name;
-        data["isDone"] = this.isDone;
-        data["doneDate"] = this.doneDate ? this.doneDate.toISOString() : <any>undefined;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface IStageChecklistPointInfoOutput {
-    pointEntityId: number | undefined;
-    pointId: number | undefined;
-    name: string | undefined;
-    isDone: boolean | undefined;
-    doneDate: moment.Moment | undefined;
-    sortOrder: number | undefined;
-}
-
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
     stageId!: number;
     name!: string;
@@ -68972,10 +68958,9 @@ export interface IUpdateStageChecklistPointSortOrderInput {
 }
 
 export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageChecklistPointIsDoneInput {
-    pointEntityId!: number | undefined;
-    pointId!: number | undefined;
-    entityId!: number | undefined;
-    isDone!: boolean | undefined;
+    pointId!: number;
+    entityId!: number;
+    isDone!: boolean;
 
     constructor(data?: IUpdateStageChecklistPointIsDoneInput) {
         if (data) {
@@ -68988,7 +68973,6 @@ export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageCheckli
 
     init(data?: any) {
         if (data) {
-            this.pointEntityId = data["pointEntityId"];
             this.pointId = data["pointId"];
             this.entityId = data["entityId"];
             this.isDone = data["isDone"];
@@ -69004,7 +68988,6 @@ export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageCheckli
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["pointEntityId"] = this.pointEntityId;
         data["pointId"] = this.pointId;
         data["entityId"] = this.entityId;
         data["isDone"] = this.isDone;
@@ -69013,10 +68996,9 @@ export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageCheckli
 }
 
 export interface IUpdateStageChecklistPointIsDoneInput {
-    pointEntityId: number | undefined;
-    pointId: number | undefined;
-    entityId: number | undefined;
-    isDone: boolean | undefined;
+    pointId: number;
+    entityId: number;
+    isDone: boolean;
 }
 
 export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationInput {
