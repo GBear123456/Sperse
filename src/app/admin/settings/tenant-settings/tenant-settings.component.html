@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group">
                         <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
-                        <input #publicSiteUrl="ngModel" id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
+                        <input #publicSiteUrl="ngModel" (change)="changeDetection.detectChanges()" id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
                     </div>
                     <div>
                         <span class="help-block text-danger" *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">{{l("Invalid_PublicSiteUrl")}}</span>
@@ -275,7 +275,7 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="MemberPortalUrl">{{l("MemberPortalUrl")}}</label>
-                        <input #memberPortalUrl="ngModel" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128" [pattern]="urlRegexPattern">
+                        <input #memberPortalUrl="ngModel" (change)="changeDetection.detectChanges()" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128"  [pattern]="urlRegexPattern">
                     </div>
                     <div>
                         <span class="help-block text-danger" *ngIf="!memberPortalUrl.valid && !memberPortalUrl.pristine">{{l("Invalid_MemberPortalUrl")}}</span>
@@ -474,7 +474,7 @@
                         </div>
                         <div class="form-group">
                             <label for="EPCVIPEmailBaseUrl">{{l("EPCVIPEmailBaseUrl")}}</label>
-                            <input #epcvipEmailBaseUrl="ngModel" id="EPCVIPEmailBaseUrl" type="url" name="EPCVIPEmailBaseUrl" class="form-control" [(ngModel)]="epcvipEmailSettings.baseUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
+                            <input #epcvipEmailBaseUrl="ngModel" (change)="changeDetection.detectChanges()" id="EPCVIPEmailBaseUrl" type="url" name="EPCVIPEmailBaseUrl" class="form-control" [(ngModel)]="epcvipEmailSettings.baseUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
                         </div>
                         <div>
                             <span class="help-block text-danger" *ngIf="!epcvipEmailBaseUrl.valid && !epcvipEmailBaseUrl.pristine">{{l("Invalid_EPCVIPEmailBaseUrl")}}</span>

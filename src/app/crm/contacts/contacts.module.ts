@@ -87,8 +87,6 @@ import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
-import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
-import { OrganizationUnitsDialogComponent } from './organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
 import {
@@ -139,6 +137,7 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
+import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organization-units-tree.module';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
@@ -179,8 +178,6 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         UploadDocumentDialogComponent,
         UploadDocumentsDialogComponent,
         DocumentTypesListComponent,
-        OrganizationUnitsTreeComponent,
-        OrganizationUnitsDialogComponent,
         PermissionTreeComponent,
         AddContactDialogComponent,
         AddCompanyDialogComponent,
@@ -260,7 +257,8 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         CountryPhoneNumberModule,
         ModalDialogModule,
         RatingBarModule,
-        ListsModule
+        ListsModule,
+        OrgUnitsTreeModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,
@@ -284,7 +282,6 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         SMSDialogComponent,
         AddSubscriptionDialogComponent,
         CancelSubscriptionDialogComponent,
-        OrganizationUnitsDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
         AddServiceProductDialogComponent

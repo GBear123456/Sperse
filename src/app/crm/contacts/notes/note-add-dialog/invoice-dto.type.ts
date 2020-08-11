@@ -6,4 +6,4 @@ export type InvoiceDto = Pick<FullInvoiceDto,
     | 'ContactId'
     | 'OrderStage'
     | 'OrderType'
-    | 'Date'>
+    | 'Date'>;

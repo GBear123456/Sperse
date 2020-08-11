@@ -81,7 +81,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     isRapidTenantLayout: boolean = this.appSession.tenant.customLayoutType == LayoutType.Rapid;
-    isPerformancePartner: boolean = this.appSession.tenant.name == 'Performance Partners';
+    isPerformancePartner: boolean = this.appSession.isPerformancePartnerTenant;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
@@ -120,7 +120,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tokenService: TokenService,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
-        private changeDetection: ChangeDetectorRef
+        public changeDetection: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

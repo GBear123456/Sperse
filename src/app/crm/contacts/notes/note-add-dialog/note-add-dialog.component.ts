@@ -16,6 +16,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CreateNoteInput,
+    UpdateNoteInput,
     NotesServiceProxy,
     ContactPhoneDto,
     UserServiceProxy,
@@ -35,6 +36,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.type';
 import { InvoiceFields } from '@app/crm/contacts/notes/note-add-dialog/invoice-fields.enum';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 class PhoneNumber {
     id: any;
@@ -76,6 +78,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     phones: PhoneNumber[];
     ordersDataSource: any;
     invoicesFields: KeysEnum<InvoiceDto> = InvoiceFields;
+    noteId: number;
 
     constructor(
         injector: Injector,
@@ -93,7 +96,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         super(injector);
 
         this.initTypes();
-
         this._contactInfo = this.data.contactInfo;
         let personContactInfo = this._contactInfo.personContactInfo;
         const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
@@ -102,19 +104,20 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 organizationRelation.organization['fullName'] = organizationRelation.organization.name;
                 return organizationRelation.organization;
             }) : [];
-        const relatedPersons: PersonShortInfoDto[] = this._contactInfo['organizationContactInfo'] &&
-                                                     this._contactInfo['organizationContactInfo'].contactPersons
-                             ? this._contactInfo['organizationContactInfo'].contactPersons
-                             : [{
-                                    id: this._contactInfo.id,
-                                    fullName: personContactInfo.fullName,
-                                    jobTitle: personContactInfo.jobTitle,
-                                    ratingId: this._contactInfo.ratingId,
-                                    thumbnail: personContactInfo.primaryPhoto,
-                                    phones: personContactInfo.details.phones
-                                }];
+        const relatedPersons: PersonShortInfoDto[] =
+            this._contactInfo['organizationContactInfo'] &&
+            this._contactInfo['organizationContactInfo'].contactPersons
+            ? this._contactInfo['organizationContactInfo'].contactPersons
+            : [{
+                   id: this._contactInfo.id,
+                   fullName: personContactInfo.fullName,
+                   jobTitle: personContactInfo.jobTitle,
+                   ratingId: this._contactInfo.ratingId,
+                   thumbnail: personContactInfo.primaryPhoto,
+                   phones: personContactInfo.details.phones
+               }];
         this.contacts = relatedPersons.concat(relatedOrganizations);
-        this.onContactChanged({value: this.contacts[0].id});
+        this.onContactChanged({value: this.data.contactInfo.id});
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
@@ -142,6 +145,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             })
         });
         this.applyOrdersFilter();
+        this.initNoteData();
     }
 
     ngOnInit() {
@@ -167,6 +171,23 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
     }
 
+    initNoteData() {
+        let note = this.data.note;
+        if (note && note.id) {
+            if (this.contactId = note.contactId)
+                this.onContactChanged({value: this.contactId});
+
+            this.noteId = note.id;
+            this.summary = note.text;
+            this.phone = note.contactPhoneId;
+            this.type = note.noteType;
+            this.followupDate = note.followUpDateTime && DateHelper.addTimezoneOffset(note.followUpDateTime.toDate(), true);
+            this.currentDate = note.dateTime && DateHelper.addTimezoneOffset(note.dateTime.toDate(), true);
+            this.addedBy = note.addedByUserId;
+            this.orderId = note.orderId;
+        }
+    }
+
     initTypes(switchToDefault = true) {
         if (switchToDefault) {
             this.defaultType = NoteType.Note;
@@ -182,24 +203,37 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     saveNote() {
-        if (this.validator.validate().isValid)
-            this.notesService.createNote(CreateNoteInput.fromJS({
+        if (this.validator.validate().isValid) {
+            let note: any = {
+                id: this.noteId,
                 contactId: this.contactId || this._contactInfo.id,
                 text: this.summary,
                 contactPhoneId: this.phone || undefined,
                 noteType: this.type,
-                followUpDateTime: this.followupDate || undefined,
-                dateTime: this.currentDate || undefined,
+                followUpDateTime: this.getDateTime(this.followupDate),
+                dateTime: this.getDateTime(this.currentDate),
                 addedByUserId: parseInt(this.addedBy) || undefined,
                 orderId: this.orderId,
                 leadId: this._contactInfo['leadId']
-            })).subscribe(() => {
+            }, request;
+
+            if (this.noteId)
+                request = this.notesService.updateNote(UpdateNoteInput.fromJS(note));
+            else
+                request = this.notesService.createNote(CreateNoteInput.fromJS(note));
+
+            request.subscribe(() => {
                 /** Clear the form data */
                 this.resetFields();
                 this.validator.reset();
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.clientService.invalidate('notes');
             });
+        }
+    }
+
+    getDateTime(value) {
+        return value && DateHelper.removeTimezoneOffset(value, true) || undefined;
     }
 
     resetFields() {

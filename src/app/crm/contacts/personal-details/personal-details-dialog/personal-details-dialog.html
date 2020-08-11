@@ -1,3 +1,8 @@
+<source-contact-list
+    [leadId]="leadInfo?.id"
+    [selectedKey]="leadInfo?.sourceContactId"
+    (onDataLoaded)="onSourceContactLoaded($event)">
+</source-contact-list>
 <h2 mat-dialog-title>{{ls.l('Personal Settings')}}<span class="close" (click)="close()"></span></h2>
 <mat-dialog-content>
     <mat-tab-group>
@@ -5,45 +10,88 @@
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
                 <div class="general-tab">
                     <div>
-                        <h3>{{ ls.l('AffiliateInfo') }}</h3>
-                        <h4>{{ ls.l('AffiliateCode') }}</h4>
-                        <inplace-edit [id]="contactInfo.id"
-                                      lEntityName="Name"
-                                      [editPlaceholder]="ls.l('Affiliate')"
-                                      [value]="affiliateCode$ | async"
-                                      [showInlineEditButton]="true"
-                                      [isDeleteEnabled]="true"
-                                      [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
-                                      [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
-                                      [validationRules]="affiliateValidationRules"
-                                      [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
-                                      (valueChanged)="updateAffiliateCode($event)"
-                                      (itemDeleted)="deleteItem(ls.l('Affiliate'))">
-                        </inplace-edit>
+                        <div class="affiliate-title"><h3>{{ ls.l('AffiliateInfo') }}</h3><h4>{{ ls.l('AffiliateCode') }}</h4></div>
+                        <div class="affiliate-field">
+                            <inplace-edit [id]="contactInfo.id"
+                                          lEntityName="Name"
+                                          [editPlaceholder]="ls.l('Affiliate')"
+                                          [value]="affiliateCode$ | async"
+                                          [showInlineEditButton]="true"
+                                          [isDeleteEnabled]="true"
+                                          [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
+                                          [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
+                                          [validationRules]="affiliateValidationRules"
+                                          [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                          (valueChanged)="updateAffiliateCode($event)"
+                                          (itemDeleted)="deleteItem(ls.l('Affiliate'))">
+                            </inplace-edit>
+                        </div>
                     </div>
                     <div>
-                        <h4>{{ ls.l('Xref') }}</h4>
-                        <inplace-edit [id]="contactInfo.id"
-                                      lEntityName="Name"
-                                      [editPlaceholder]="ls.l('Xref')"
-                                      [value]="contactXref$ | async"
-                                      [isOptional]="true"
-                                      [showInlineEditButton]="true"
-                                      [isDeleteEnabled]="true"
-                                      [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
-                                      [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
-                                      [validationRules]="xrefValidationRules"
-                                      [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
-                                      (valueChanged)="updateXref($event)"
-                                      (itemDeleted)="deleteItem(ls.l('Xref'))">
-                        </inplace-edit>
-                    </div>
-                    <div>
+                        <h3>{{ ls.l('SourceInfo') }}</h3>
+                        <div class="field">
+                            <label>{{ ls.l('ReferralPartner') }}:</label>
+                            <span>{{sourceContactName}}<i *ngIf="sourceContactName" class="save-to-clipboard" (click)="saveToClipboard(sourceContactName)"></i></span>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label>{{ ls.l('AssignedToRM') }}:</label>
+                            <span>{{contactInfo?.assignedUserName}}<i *ngIf="contactInfo?.assignedUserName" class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.assignedUserName)"></i></span>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label>{{ ls.l('CreatedBy') }}:</label>
+                            <span>{{contactInfo?.creatorUserName}}<i *ngIf="contactInfo?.creatorUserName" class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.creatorUserName)"></i></span>
+                            <p class="channel-code">{{leadInfo?.channelCode}}</p><p>on {{contactInfo?.contactDate | date: formatting.dateTime : userTimezone}}</p>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label>{{ ls.l('LastUpdatedBy') }}:</label>
+                            <span>{{contactInfo?.lastModifierUserName}}<i *ngIf="contactInfo?.lastModifierUserName" class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.lastModifierUserName)"></i></span>
+                            <p class="date-ago">({{contactInfo?.lastModificationTime | timeAgo}})</p><p>on {{contactInfo?.lastModificationTime | date: formatting.dateTime : userTimezone}}</p>
+                        </div>
+                        <div class="field">
+                            <label>{{ ls.l('ContactID') }}:</label>
+                            <span>{{contactInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.id)"></i></span>
+                        </div>
+                        <div class="field">                        
+                            <label>{{ ls.l('RecentLeadID') }}:</label>
+                            <span>{{leadInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard(leadInfo?.id)"></i></span>
+                        </div>
+                        <div class="field">
+                            <label>{{ ls.l('Xref') }}:</label>
+                            <inplace-edit [id]="contactInfo.id"
+                                          lEntityName="Name"
+                                          [editPlaceholder]="ls.l('Xref')"
+                                          [value]="contactXref$ | async"
+                                          [isOptional]="true"
+                                          [showInlineEditButton]="true"
+                                          [isDeleteEnabled]="true"
+                                          [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
+                                          [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
+                                          [validationRules]="xrefValidationRules"
+                                          [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                          (valueChanged)="updateXref($event)"
+                                          (itemDeleted)="deleteItem(ls.l('Xref'))">
+                            </inplace-edit>
+                        </div>
                         <ng-container *ngFor="let n of [1,2,3,4,5]">
-                            <ng-container *ngIf="isLayoutTypeBankCode || contactInfo?.personContactInfo['customField' + n]">
-                                <h4>{{ ls.l('Contact_CustomField' + n) }}</h4>
-                                <p>{{ contactInfo?.personContactInfo['customField' + n] }}</p>
-                            </ng-container>
+                            <div class="field" *ngIf="isLayoutTypeBankCode || isLayoutTypeRapid || contactInfo?.personContactInfo['customField' + n]">
+                                <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
+                                <inplace-edit [id]="'Contact_CustomField' + n"
+                                              lEntityName="Name"
+                                              [editPlaceholder]="ls.l('Contact_CustomField' + n)"
+                                              [value]="contactInfo?.personContactInfo['customField' + n]"
+                                              [isOptional]="true"
+                                              [showInlineEditButton]="true"
+                                              [isDeleteEnabled]="true"
+                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
+                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
+                                              [isReadOnlyField]="!isLayoutTypeRapid || !permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              (valueChanged)="updateCustomField($event, 'customField' + n)"
+                                              (itemDeleted)="updateCustomField(null, 'customField' + n)">
+                                </inplace-edit>
+                            </div>
                         </ng-container>
                     </div>
                 </div>

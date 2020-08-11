@@ -33,7 +33,7 @@ import {
     ContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
-import { OrganizationUnitsDialogComponent } from '../organization-units-tree/organization-units-dialog/organization-units-dialog.component';
+import { OrganizationUnitsDialogComponent } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';

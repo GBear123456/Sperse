@@ -3,15 +3,15 @@
     listHeight="calc(100% - 75px)"
     accessKey="sourceContactList"
     [targetSelector]="targetSelector"
-    [title]="ls.l('SourceContact')"
+    [title]="showOrgUnits ? '' : ls.l('SourceContact')"
     [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && !!selectedKeys.length"
     [hideButtons]="!hasBulkUpdatePermission || (!selectedKeys || !selectedKeys.length) || !!selectedKey"
     [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
     [showConfirmation]="false"
     [highlightSelected]="true"
     [searchEnabled]="true"
-    [customSearchEnabled]="true"
     [convertNameStartCase]="false"
+    [customSearchEnabled]="showContacts"
     [filterModel]="selectedKeys ? filterModel : undefined"
     [bulkUpdatePermissionKey]="bulkUpdatePermissionKey"
     (onItemSelected)="onItemSelected.emit($event)"
@@ -20,4 +20,11 @@
     (onFilterApply)="onFilterApply($event)"
     (onApply)="onApply.emit($event)"
     [list]="contacts">
+        <div custom-title [hidden]="!showOrgUnits">
+            <span [class]="showContacts ? 'selected' : ''" (click)="toogleContacts()">{{ls.l('SourceContact')}}</span>
+            <span [class]="showContacts ? '' : 'selected'" (click)="toogleContacts()" [hidden]="!selectedKeys?.length">{{ls.l('Owner')}}</span>
+        </div>
+        <div custom-content>
+            <oranization-units-tree selectionMode="single" [hidden]="!showOrgUnits || showContacts"></oranization-units-tree>
+        </div>
 </app-static-list>

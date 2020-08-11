@@ -25,7 +25,9 @@
         </action-menu>
         <source-contact-list #sourceList
             targetSelector=".dx-button[aria-label=Source]"
+            [showOrgUnits]="true"
             [filterModel]="filterModelSource"
+            [selectedLeads]="selectedLeads"
             [selectedKeys]="hasBulkPermission ? selectedClientKeys : []"
             [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
             (onApply)="onSourceApply($event)">
@@ -111,6 +113,8 @@
                             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column [dataField]="leadFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
+                            <dxi-column [dataField]="leadFields.CustomerId" [caption]="l('ContactId')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                            <dxi-column [dataField]="leadFields.UserId" [caption]="l('UserId')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                             <dxi-column [dataField]="leadFields.SourceOrganizationUnitId" [renderAsync]="true" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
                             <dxi-column [dataField]="leadFields.PhotoPublicId"
                                         caption=""

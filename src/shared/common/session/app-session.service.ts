@@ -8,6 +8,7 @@ import {
     UserGroup,
     UserLoginInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class AppSessionService {
@@ -26,6 +27,10 @@ export class AppSessionService {
 
     get isLendspaceDemoUser() {  //!!VP should be added corresponding permissions for such case (temp solution)
         return this.user && this.user.userName == 'demo@lendspace.com';
+    }
+
+    get isPerformancePartnerTenant() {
+        return this.tenantName == 'Performance Partners';
     }
 
     get application(): ApplicationInfoDto {
@@ -92,6 +97,10 @@ export class AppSessionService {
                 this._application = result.application;
                 this._user = result.user;
                 this._tenant = result.tenant;
+
+                if (AppConsts.isMobile && this.tenant.customLayoutType == LayoutType.BankCode)
+                    AppConsts.appMemberPortalUrl = undefined;
+
                 resolve(true);
             };
 

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -12,7 +12,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { OrganizationUnitDto, OrganizationUnitServiceProxy,
     UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
-import { ContactsService } from '../contacts.service';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -47,6 +47,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
                         event.event.preventDefault();
 
                         this.searchEnabled = !this.searchEnabled;
+                        this.organizationUnitsTree.instance.repaint();
                     }
                 },
                 {
@@ -93,7 +94,8 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         private ls: AppLocalizationService,
         private permissionChecker: AppPermissionService,
         private notifyService: NotifyService,
-        private loadingService: LoadingService
+        private loadingService: LoadingService,
+        public elementRef: ElementRef
     ) {
         contactsService.orgUnitsSubscribe(
             (userData) => {

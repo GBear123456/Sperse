@@ -1,4 +1,9 @@
 <div class="wrapper">
+    <action-menu width="150px"
+        [items]="actionMenuItems"
+        target=""
+        (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
     <div class="grid-view">
         <dx-data-grid            
             height="100%"
@@ -9,18 +14,25 @@
             [columnAutoWidth]="true"
             [allowColumnResizing]="true"
             [hoverStateEnabled]="true"
+            (onCellClick)="onCellClick($event)"
             (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
             (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
-            <dxi-column width="40px" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-            <dxi-column dataField="text" caption="{{l('Note')}}" width="350px" cssClass="text-wrap clipboard-holder" dataType="string"></dxi-column>
+            <dxi-column alignment="center" width="40px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
+
+            <dxi-column dataField="text" caption="{{l('Note')}}" width="350px" cssClass="clipboard-holder" dataType="string" cellTemplate="textCell"></dxi-column>
             <dxi-column dataField="dateTime" caption="{{l('Date')}}" sortOrder="desc" cssClass="tabular clipboard-holder" [calculateCellValue]="calculateDateCellValue"></dxi-column>
             <dxi-column dataField="addedByUserName" caption="{{l('AddedBy')}}" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="noteTypeName" caption="{{l('Type')}}" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="contactPhoneNumber" caption="{{l('Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
             <dxi-column dataField="contactName" caption="{{l('Contact')}}" cssClass="clipboard-holder"></dxi-column>
+
+            <div *dxTemplate="let cellData of 'textCell'" class="text-wrap">
+                {{cellData.value}}            
+            </div>
 
             <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                 {{cellData.value | phone}}

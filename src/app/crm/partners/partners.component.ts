@@ -20,7 +20,8 @@ import {
     skip,
     switchMap,
     takeUntil,
-    tap
+    tap,
+    finalize
 } from 'rxjs/operators';
 import * as _ from 'underscore';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
@@ -1112,11 +1113,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: this.selectedPartnerKeys.length > 1 || !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
                                     text: this.l('Email'),
+                                    disabled: this.selectedPartnerKeys.length > 1,
                                     action: () => {
                                         this.contactService.showEmailDialog({
                                             contactId: this.selectedPartnerKeys[0],
@@ -1126,6 +1128,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 },
                                 {
                                     text: this.l('SMS'),
+                                    disabled: this.selectedPartnerKeys.length > 1,
                                     action: () => {
                                         const selectedPartners = this.selectedPartners;
                                         const contact = selectedPartners && selectedPartners[selectedPartners.length - 1];
@@ -1134,6 +1137,22 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                             phoneNumber: contact && contact.Phone,
                                             firstName: parsedName && parsedName.first,
                                             lastName: parsedName && parsedName.last
+                                        });
+                                    }
+                                },
+                                {
+                                    text: this.l('RP Email'),
+                                    disabled: this.selectedPartnerKeys.length < 1,
+                                    visible: this.appSession.isPerformancePartnerTenant,
+                                    action: () => {
+                                        this.message.confirm("", this.l('ReferralPartnersSendEmailConfirmation', this.selectedPartnerKeys.length), (res) => {
+                                            if (res) {
+                                                abp.ui.setBusy();
+                                                this.contactProxy
+                                                    .sendReferralPartnersEmail(this.selectedPartnerKeys)
+                                                    .pipe(finalize(() => abp.ui.clearBusy()))
+                                                    .subscribe();
+                                            }
                                         });
                                     }
                                 }
