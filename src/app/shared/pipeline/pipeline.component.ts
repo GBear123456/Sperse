@@ -443,6 +443,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
         const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false);
         entities$.subscribe((result) => {
+            this.stageId = undefined;
             if (result && this.totalsURI && !oneStageOnly)
                 this.processTotalsRequest(this.queryWithSearch);
         });
@@ -619,7 +620,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return new DataSource(extend(config, {
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
             requireTotalCount: !this.totalsURI,
-            select: this.selectFields.concat(['SortOrder', 
+            select: this.selectFields.concat(['SortOrder',
                 this.isLeadPipeline ? 'StageChecklistPointDoneCount' : null
             ].filter(Boolean))
         }));

@@ -78,7 +78,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
 
     addNewRecord() {
         if (this.dataSource.every(item => item.id))
-            this.dataSource.push({sortOrder: 0, id: null, name: undefined});
+            this.dataSource.push({sortOrder: Infinity, id: null, name: undefined});
     }
 
     onChanged(value, cell) {
@@ -93,13 +93,14 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                 ).subscribe(() => {
                     this.isUpdated = true;
                     this.dataSource[cell.rowIndex].name = value;
+                    this.dataGrid.instance.repaint();
                 });
             } else
                 this.notifyService.error(this.ls.l('NameIsRequired'));
         } else {
             if (value) {
                 this.startLoading();
-                this.dataSource[cell.rowIndex].name = value;
+                cell.data.name = value;
                 this.checklistProxy.createPoint(new CreateStageChecklistPointInput({
                     stageId: this.dialogData.stage.id,
                     name: value
@@ -107,8 +108,9 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                     finalize(() => this.finishLoading())
                 ).subscribe((res: any) => {
                     this.isUpdated = true;
-                    this.dataSource[cell.rowIndex].id = res.id;
-                    this.dataSource[cell.rowIndex].sortOrder = res.sortOrder;
+                    cell.data.id = res.id;
+                    cell.data.sortOrder = res.sortOrder;
+                    this.dataGrid.instance.repaint();
                 });
             } else
                 this.dataSource.splice(cell.rowIndex, 1);
@@ -121,13 +123,19 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.isUpdated = true;
-            this.dataSource.splice(cell.rowIndex, 1);
+            this.dataSource.some((item, index) => {
+                if (item.id == cell.data.id) {
+                    this.dataSource.splice(index, 1);
+                    return true;
+                }
+            })
         });
     }
 
     onReorder = (event) => {
-        if (this.dataSource.length < 2)
-            return ;
+        if (isNaN(event.fromIndex) || isNaN(event.toIndex) 
+            || event.fromIndex == event.toIndex || this.dataSource.length < 2
+        ) return ;
 
         this.startLoading();
         let dataGridInstance = this.dataGrid.instance,
@@ -137,25 +145,29 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
             direction = fromData.sortOrder > toData.sortOrder ? 0.1 : -0.1;
         fromData.sortOrder = toData.sortOrder;
         toData.sortOrder = toData.sortOrder + direction;
-        dataGridInstance.refresh();
+        dataGridInstance.repaint();
         this.checklistProxy.updatePointSortOrder(new UpdateStageChecklistPointSortOrderInput({
             id: fromData.id,
             sortOrder: this.dataSource.length ? fromData.sortOrder : 0
         })).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
-            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
-            this.store$.pipe(select(PipelinesStoreSelectors.getSortedPipeline({
-                purpose: this.dialogData.pipelinePurposeId,
-                contactGroupId: this.dialogData.contactGroupId
-            })), first()).subscribe((pipeline: any) => {
-                pipeline.stages.some(stage => {
-                    if (this.dialogData.stage.id == stage.id) {
-                        this.dataSource = stage.checklistPoints;
-                        dataGridInstance.refresh();
-                        return true;
-                    }
-                });
+            this.reloadStageConfig();
+        });
+    }
+
+    reloadStageConfig() {
+        this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+        this.store$.pipe(select(PipelinesStoreSelectors.getSortedPipeline({
+            purpose: this.dialogData.pipelinePurposeId,
+            contactGroupId: this.dialogData.contactGroupId
+        })), first()).subscribe((pipeline: any) => {
+            pipeline.stages.some(stage => {
+                if (this.dialogData.stage.id == stage.id) {
+                    this.dataSource = stage.checklistPoints;
+                    this.dataGrid.instance.repaint();
+                    return true;
+                }
             });
         });
     }
