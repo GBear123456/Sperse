@@ -76,7 +76,7 @@
                             </inplace-edit>
                         </div>
                         <ng-container *ngFor="let n of [1,2,3,4,5]">
-                            <div class="field" *ngIf="isLayoutTypeBankCode || isLayoutTypeRapid || contactInfo?.personContactInfo['customField' + n]">
+                            <div class="field">
                                 <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
                                 <inplace-edit [id]="'Contact_CustomField' + n"
                                               lEntityName="Name"
@@ -87,7 +87,7 @@
                                               [isDeleteEnabled]="true"
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                              [isReadOnlyField]="!isLayoutTypeRapid || !permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
                                               (valueChanged)="updateCustomField($event, 'customField' + n)"
                                               (itemDeleted)="updateCustomField(null, 'customField' + n)">
                                 </inplace-edit>
