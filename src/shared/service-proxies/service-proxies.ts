@@ -7521,6 +7521,61 @@ export class ContactServiceProxy {
      * @contactId (optional) 
      * @return Success
      */
+    getContactLastModificationInfo(contactId: number | null | undefined): Observable<LastModificationInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactLastModificationInfo?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactLastModificationInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactLastModificationInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<LastModificationInfo>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LastModificationInfo>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactLastModificationInfo(response: HttpResponseBase): Observable<LastModificationInfo> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LastModificationInfo.fromJS(resultData200) : new LastModificationInfo();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LastModificationInfo>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
     getContactDetails(contactId: number | null | undefined): Observable<ContactDetailsDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactDetails?";
         if (contactId !== undefined)
@@ -38752,9 +38807,11 @@ export class CreateLeadInput implements ICreateLeadInput {
     lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
+    companyName!: string | undefined;
     emailAddress!: CreateContactEmailInputWithoutCheck | undefined;
     phoneNumber!: CreateContactPhoneInputWithoutCheck | undefined;
     address!: CreateContactAddressInputWithoutCheck | undefined;
+    isAIGeneratedBankCode!: boolean | undefined;
     bankCode!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -38774,9 +38831,11 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.lastName = data["lastName"];
             this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
+            this.companyName = data["companyName"];
             this.emailAddress = data["emailAddress"] ? CreateContactEmailInputWithoutCheck.fromJS(data["emailAddress"]) : <any>undefined;
             this.phoneNumber = data["phoneNumber"] ? CreateContactPhoneInputWithoutCheck.fromJS(data["phoneNumber"]) : <any>undefined;
             this.address = data["address"] ? CreateContactAddressInputWithoutCheck.fromJS(data["address"]) : <any>undefined;
+            this.isAIGeneratedBankCode = data["isAIGeneratedBankCode"];
             this.bankCode = data["bankCode"];
         }
     }
@@ -38796,9 +38855,11 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["lastName"] = this.lastName;
         data["nameSuffix"] = this.nameSuffix;
         data["nickName"] = this.nickName;
+        data["companyName"] = this.companyName;
         data["emailAddress"] = this.emailAddress ? this.emailAddress.toJSON() : <any>undefined;
         data["phoneNumber"] = this.phoneNumber ? this.phoneNumber.toJSON() : <any>undefined;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["isAIGeneratedBankCode"] = this.isAIGeneratedBankCode;
         data["bankCode"] = this.bankCode;
         return data; 
     }
@@ -38811,9 +38872,11 @@ export interface ICreateLeadInput {
     lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
+    companyName: string | undefined;
     emailAddress: CreateContactEmailInputWithoutCheck | undefined;
     phoneNumber: CreateContactPhoneInputWithoutCheck | undefined;
     address: CreateContactAddressInputWithoutCheck | undefined;
+    isAIGeneratedBankCode: boolean | undefined;
     bankCode: string | undefined;
 }
 
@@ -45205,9 +45268,6 @@ export class ContactInfoDto implements IContactInfoDto {
     assignedUserName!: string | undefined;
     creatorUserId!: number | undefined;
     creatorUserName!: string | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    lastModifierUserName!: string | undefined;
     starId!: number | undefined;
     ratingId!: number | undefined;
     tags!: number[] | undefined;
@@ -45238,9 +45298,6 @@ export class ContactInfoDto implements IContactInfoDto {
             this.assignedUserName = data["assignedUserName"];
             this.creatorUserId = data["creatorUserId"];
             this.creatorUserName = data["creatorUserName"];
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.lastModifierUserName = data["lastModifierUserName"];
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
             if (data["tags"] && data["tags"].constructor === Array) {
@@ -45279,9 +45336,6 @@ export class ContactInfoDto implements IContactInfoDto {
         data["assignedUserName"] = this.assignedUserName;
         data["creatorUserId"] = this.creatorUserId;
         data["creatorUserName"] = this.creatorUserName;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["lastModifierUserName"] = this.lastModifierUserName;
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
         if (this.tags && this.tags.constructor === Array) {
@@ -45313,9 +45367,6 @@ export interface IContactInfoDto {
     assignedUserName: string | undefined;
     creatorUserId: number | undefined;
     creatorUserName: string | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    lastModifierUserName: string | undefined;
     starId: number | undefined;
     ratingId: number | undefined;
     tags: number[] | undefined;
@@ -45326,6 +45377,50 @@ export interface IContactInfoDto {
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
+}
+
+export class LastModificationInfo implements ILastModificationInfo {
+    date!: moment.Moment | undefined;
+    userId!: number | undefined;
+    userName!: string | undefined;
+
+    constructor(data?: ILastModificationInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.userId = data["userId"];
+            this.userName = data["userName"];
+        }
+    }
+
+    static fromJS(data: any): LastModificationInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new LastModificationInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data; 
+    }
+}
+
+export interface ILastModificationInfo {
+    date: moment.Moment | undefined;
+    userId: number | undefined;
+    userName: string | undefined;
 }
 
 export class ContactDetailsDto implements IContactDetailsDto {
