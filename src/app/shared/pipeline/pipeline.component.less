@@ -254,12 +254,17 @@
                         }
                         .full-name {
                             width: 100%;
-                            display: inline-block;
+                            display: flex;
+                            justify-content: space-between;
                             max-height: 42px;
                             text-overflow: ellipsis;
                             overflow: hidden;
                             span {
                                 white-space: nowrap;
+                                &.name {
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                }
                                 &.no-name{
                                     font-style: italic;
                                     font-weight: 200;

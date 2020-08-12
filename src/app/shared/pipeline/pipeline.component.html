@@ -97,7 +97,7 @@
                     <div class="row">
                         <div class="full-name">
                             <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email) as name; else noName">
-                                <span [title]="name">{{ name }}</span>
+                                <span [title]="name" class="name">{{ name }}</span>
                             </ng-container>
                             <ng-template #noName>
                                 <span class="no-name">{{ l('ClientNoName') }}</span>
