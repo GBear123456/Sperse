@@ -215,7 +215,7 @@ export class PipelineService {
 
     updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete) {
         let leadId = this.getEntityId(entity);
-        this.ignoreStageChecklist(
+        this.ignoreStageChecklist(fromStage,
             toStage.sortOrder > fromStage.sortOrder ? leadId : null
         ).subscribe(ignore => {
             this.leadService.updateLeadStage(
@@ -241,7 +241,7 @@ export class PipelineService {
     }
 
     processLead(fromStage: Stage, toStage: Stage, entity, complete) {
-        this.ignoreStageChecklist(this.getEntityId(entity)).subscribe(ignore => {
+        this.ignoreStageChecklist(fromStage, this.getEntityId(entity)).subscribe(ignore => {
             if (entity.data)
                 this.processLeadInternal(entity, {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             else
@@ -288,8 +288,8 @@ export class PipelineService {
         });
     }
 
-    private ignoreStageChecklist(leadId: number): Observable<boolean> {
-        if (leadId)
+    private ignoreStageChecklist(stage: Stage, leadId: number): Observable<boolean> {
+        if (stage.checklistPoints && stage.checklistPoints.length && leadId)
             return this.leadService.getStageChecklistPoints(leadId).pipe(switchMap(stages => {
                 if (stages.every(item => item.isDone))
                     return of(false);

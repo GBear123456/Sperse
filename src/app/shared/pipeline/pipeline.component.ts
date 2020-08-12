@@ -620,7 +620,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return new DataSource(extend(config, {
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
             requireTotalCount: !this.totalsURI,
-            select: this.selectFields.concat(['SortOrder', 
+            select: this.selectFields.concat(['SortOrder',
                 this.isLeadPipeline ? 'StageChecklistPointDoneCount' : null
             ].filter(Boolean))
         }));
