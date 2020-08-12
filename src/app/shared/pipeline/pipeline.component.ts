@@ -978,8 +978,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 pipelinePurposeId: this.pipelinePurposeId,
                 contactGroupId: this.contactGroupId
             }
-        }).afterClosed().subscribe(() => {
-            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+        }).afterClosed().subscribe(isUpdated => {
+            if (isUpdated)
+                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
         });
     }
 
@@ -993,8 +994,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 pipelinePurposeId: this.pipelinePurposeId,
                 contactGroupId: this.contactGroupId
             }
-        }).afterClosed().subscribe(() => {
-            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+        }).afterClosed().subscribe(isUpdated => {
+            if (isUpdated)
+                this.refresh(entity.StageId);
         });
 
         event.stopPropagation();

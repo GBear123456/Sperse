@@ -25,6 +25,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     private slider: any;
+    private isUpdated = false;
     dataSource: any[] = [];
 
     validationRules = [
@@ -90,6 +91,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                 })).pipe(
                     finalize(() => this.finishLoading())
                 ).subscribe(() => {
+                    this.isUpdated = true;
                     this.dataSource[cell.rowIndex].name = value;
                 });
             } else
@@ -104,6 +106,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                 })).pipe(
                     finalize(() => this.finishLoading())
                 ).subscribe((res: any) => {
+                    this.isUpdated = true;
                     this.dataSource[cell.rowIndex].id = res.id;
                     this.dataSource[cell.rowIndex].sortOrder = res.sortOrder;
                 });
@@ -117,11 +120,15 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         this.checklistProxy.deletePoint(cell.data.id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
+            this.isUpdated = true;
             this.dataSource.splice(cell.rowIndex, 1);
         });
     }
 
     onReorder = (event) => {
+        if (this.dataSource.length < 2)
+            return ;
+
         this.startLoading();
         let dataGridInstance = this.dataGrid.instance,
             records = dataGridInstance.getVisibleRows(),
@@ -154,6 +161,6 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     }
 
     close() {
-        this.dialogRef.close();
+        this.dialogRef.close(this.isUpdated);
     }
 }

@@ -19247,6 +19247,58 @@ export class LeadServiceProxy {
         }
         return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateLeadStagePoint(body: UpdateLeadStagePointInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadStagePoint";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLeadStagePoint(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLeadStagePoint(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateLeadStagePoint(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -27095,58 +27147,6 @@ export class StageChecklistServiceProxy {
     }
 
     protected processDeletePoint(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    updatePointIsDoneForLead(body: UpdateStageChecklistPointIsDoneInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/UpdatePointIsDoneForLead";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdatePointIsDoneForLead(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdatePointIsDoneForLead(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdatePointIsDoneForLead(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -59828,6 +59828,50 @@ export interface IStageChecklistPointInfoOutput {
     completedByUserId: number | undefined;
 }
 
+export class UpdateLeadStagePointInput implements IUpdateLeadStagePointInput {
+    pointId!: number;
+    leadId!: number;
+    isDone!: boolean;
+
+    constructor(data?: IUpdateLeadStagePointInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pointId = data["pointId"];
+            this.leadId = data["leadId"];
+            this.isDone = data["isDone"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadStagePointInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadStagePointInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pointId"] = this.pointId;
+        data["leadId"] = this.leadId;
+        data["isDone"] = this.isDone;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadStagePointInput {
+    pointId: number;
+    leadId: number;
+    isDone: boolean;
+}
+
 export class LeadTypeDto implements ILeadTypeDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -68837,54 +68881,6 @@ export class UpdateStageChecklistPointSortOrderInput implements IUpdateStageChec
 export interface IUpdateStageChecklistPointSortOrderInput {
     id: number;
     sortOrder: number;
-}
-
-export class UpdateStageChecklistPointIsDoneInput implements IUpdateStageChecklistPointIsDoneInput {
-    pointEntityId!: number | undefined;
-    pointId!: number | undefined;
-    entityId!: number | undefined;
-    isDone!: boolean | undefined;
-
-    constructor(data?: IUpdateStageChecklistPointIsDoneInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.pointEntityId = data["pointEntityId"];
-            this.pointId = data["pointId"];
-            this.entityId = data["entityId"];
-            this.isDone = data["isDone"];
-        }
-    }
-
-    static fromJS(data: any): UpdateStageChecklistPointIsDoneInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateStageChecklistPointIsDoneInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["pointEntityId"] = this.pointEntityId;
-        data["pointId"] = this.pointId;
-        data["entityId"] = this.entityId;
-        data["isDone"] = this.isDone;
-        return data; 
-    }
-}
-
-export interface IUpdateStageChecklistPointIsDoneInput {
-    pointEntityId: number | undefined;
-    pointId: number | undefined;
-    entityId: number | undefined;
-    isDone: boolean | undefined;
 }
 
 export class SetupSyncUserApplicationInput implements ISetupSyncUserApplicationInput {
