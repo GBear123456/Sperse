@@ -60,12 +60,18 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     private readonly contactDataSourceURI = 'Contact';
     private readonly ident = 'LeadRelatedContacts';
     private readonly CONTACT_TAB_INDEX = 1;
+    private _selectedTabIndex = 0;
 
     actionMenuItems: ActionMenuItem[];
     readonly clientFields = ClientFields;
     readonly leadFields = LeadFields;
 
+    get selectedTabIndex(): number {
+        return this._selectedTabIndex;
+    }
+
     set selectedTabIndex(val: number) {
+        this._selectedTabIndex = val;
         if (val) {
             if (val == this.CONTACT_TAB_INDEX)
                 this.initContactDataSource();
@@ -104,6 +110,10 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
             if (area == 'sub-contacts')
                 this.subContactDataGrid.instance.refresh();
         })
+        this.route.queryParams.subscribe(params => {
+            if (params['tab'])
+                this.selectedTabIndex = parseInt(params['tab']);
+        });
     }
 
     ngOnInit() {
