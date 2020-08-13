@@ -3,7 +3,7 @@ import { Component, Input, EventEmitter, Output, ViewChild, AfterViewInit,
     OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { finalize, filter } from 'rxjs/operators';
+import { first, finalize, filter } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
@@ -12,8 +12,10 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactServiceProxy, SourceContactInfo, LeadServiceProxy,
-    UpdateLeadSourceOrganizationUnitsInput } from '@shared/service-proxies/service-proxies';
+import {
+    ContactServiceProxy, SourceContactInfo, LeadServiceProxy,
+    UpdateLeadSourceOrganizationUnitsInput, OrganizationUnitDto
+} from '@shared/service-proxies/service-proxies';
 import { SourceContact } from './source-contact.interface';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { OrganizationUnitsTreeComponent } from '@shared/common/organization-units-tree/organization-units-tree.component';
@@ -56,7 +58,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     private ident = _.uniqueId(this.targetSelector);
     hasBulkUpdatePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMBulkUpdates);
     showContacts = true;
-    orgUnits: any;
+    orgUnits: OrganizationUnitDto[];
 
     constructor(
         public ls: AppLocalizationService,
@@ -118,12 +120,12 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
 
     private loadOrganizationUnits() {
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-        let subscription = this.store$.pipe(
+        this.store$.pipe(
             select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
-            filter(Boolean)
-        ).subscribe(orgUnits => {
+            filter(Boolean),
+            first()
+        ).subscribe((orgUnits: OrganizationUnitDto[]) => {
             this.orgUnits = orgUnits;
-            subscription.unsubscribe();
         });
     }
 
@@ -153,7 +155,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         this.toggle();
     }
 
-    toogleContacts() {
+    toggleContacts() {
         if (this.showContacts) {
             if (this.selectedKeys.length)
                 this.contactsService.orgUnitsUpdate({
