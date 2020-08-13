@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -110,7 +110,9 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
             if (area == 'sub-contacts')
                 this.subContactDataGrid.instance.refresh();
         })
-        this.route.queryParams.subscribe(params => {
+        this.route.queryParams.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe(params => {
             if (params['tab'])
                 this.selectedTabIndex = parseInt(params['tab']);
         });
