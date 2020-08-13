@@ -228,7 +228,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (value[1].classList.contains('selected')) {
                     const checkReloadStages = (entity, stages?: Stage[]) => {
                         this.selectedEntities.splice(this.selectedEntities.indexOf(entity), 1);
-                        if (!this.selectedEntities.length)
+                        if (!this.getSelectedEntities().length)
                             this.reloadStagesInternal(reloadStageList).pipe(
                                 finalize(() => {
                                     if (stages && stages.length) {
@@ -239,7 +239,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                 })
                             ).subscribe(() => this.detectChanges());
                     };
-                    this.getSelectedEntities().forEach((entity) => {
+                    this.getSelectedEntities().forEach(entity => {
                         let oldStage = this.stages.find(stage => stage.id == entity.StageId);
                         if (oldStage.isFinal) {
                             return checkReloadStages(entity, [oldStage]);
@@ -247,15 +247,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                         if (entity) {
                             entity.SortOrder = newSortOrder;
-                            this.updateEntityStage(entity, newStage, oldStage, () => {
-                                this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
-                                let entities = oldStage.entities;
-                                if (entity.Id != entityId)
-                                    entities.splice(entities.indexOf(entity), 1);
-                                if (!entities.length)
+                            this.updateEntityStage(entity, newStage, oldStage, (cancelled: boolean) => {
+                                entity.selected = false;
+                                if (cancelled) {
+                                    newStage.isLoading =
+                                    oldStage.isLoading = false;
+                                    this.detectChanges();
+                                } else {
+                                    this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
+                                    let entities = oldStage.entities,
+                                        itemIndex = entities.indexOf(entity);
+                                    if (entity.Id != entityId && itemIndex >= 0)
+                                        entities.splice(itemIndex, 1);
                                     reloadStageList.push(oldStage.stageIndex);
-                                checkReloadStages(entity, [oldStage]);
-                            });
+                                    checkReloadStages(entity, [oldStage]);
+                                }
+                            }, true);
                         }
                     });
                 } else {
@@ -271,8 +278,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage,
                         (cancelled: boolean) => {
                             if (cancelled) {
-                                newStage.isLoading =
-                                stage.isLoading = false;
+                                stage.isLoading =
+                                newStage.isLoading = false;
                                 this.detectChanges();
                             } else {
                                 this.reloadStagesInternal([stage.stageIndex, newStage.stageIndex]).pipe(
@@ -672,17 +679,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private reloadStagesInternal(stageIndexList: number[]): Observable<any> {
         return forkJoin.apply(this,
             stageIndexList.filter((val, index) => stageIndexList.indexOf(val) == index)
-                          .map((stageIndex) => this.loadData(0, stageIndex, true))
+                .map(stageIndex => this.loadData(0, stageIndex, true))
         );
     }
 
-    private updateEntityStage(entity, newStage: Stage, oldStage: Stage, complete = null) {
+    private updateEntityStage(entity, newStage: Stage, oldStage: Stage, complete = null, forced = false) {
         if (entity && entity.Id) {
             setTimeout(() => {
                 newStage.isLoading = oldStage.isLoading = true;
                 if (newStage.name != oldStage.name) {
                     this.pipelineService.updateEntityStage(
-                        this.pipelinePurposeId, entity, oldStage, newStage, complete
+                        this.pipelinePurposeId, entity, oldStage, newStage, complete, forced
                     );
                 } else
                     this.pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
