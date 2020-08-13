@@ -68,8 +68,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         max: 255,
         message: this.ls.l('MaxLengthIs', 255)
     }];
-    isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
-    isLayoutTypeRapid = this.userManagementService.isLayout(LayoutType.Rapid);
     userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
     sourceContacts = [];

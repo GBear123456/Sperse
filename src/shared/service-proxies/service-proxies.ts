@@ -7521,7 +7521,7 @@ export class ContactServiceProxy {
      * @contactId (optional) 
      * @return Success
      */
-    getContactLastModificationInfo(contactId: number | null | undefined): Observable<LastModificationInfo> {
+    getContactLastModificationInfo(contactId: number | null | undefined): Observable<ContactLastModificationInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactLastModificationInfo?";
         if (contactId !== undefined)
             url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
@@ -7543,14 +7543,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processGetContactLastModificationInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<LastModificationInfo>><any>_observableThrow(e);
+                    return <Observable<ContactLastModificationInfoDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LastModificationInfo>><any>_observableThrow(response_);
+                return <Observable<ContactLastModificationInfoDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactLastModificationInfo(response: HttpResponseBase): Observable<LastModificationInfo> {
+    protected processGetContactLastModificationInfo(response: HttpResponseBase): Observable<ContactLastModificationInfoDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7561,7 +7561,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? LastModificationInfo.fromJS(resultData200) : new LastModificationInfo();
+            result200 = resultData200 ? ContactLastModificationInfoDto.fromJS(resultData200) : new ContactLastModificationInfoDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -7569,7 +7569,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LastModificationInfo>(<any>null);
+        return _observableOf<ContactLastModificationInfoDto>(<any>null);
     }
 
     /**
@@ -45379,12 +45379,12 @@ export interface IContactInfoDto {
     contactDate: moment.Moment | undefined;
 }
 
-export class LastModificationInfo implements ILastModificationInfo {
+export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
     date!: moment.Moment | undefined;
     userId!: number | undefined;
     userName!: string | undefined;
 
-    constructor(data?: ILastModificationInfo) {
+    constructor(data?: IContactLastModificationInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -45401,9 +45401,9 @@ export class LastModificationInfo implements ILastModificationInfo {
         }
     }
 
-    static fromJS(data: any): LastModificationInfo {
+    static fromJS(data: any): ContactLastModificationInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new LastModificationInfo();
+        let result = new ContactLastModificationInfoDto();
         result.init(data);
         return result;
     }
@@ -45417,7 +45417,7 @@ export class LastModificationInfo implements ILastModificationInfo {
     }
 }
 
-export interface ILastModificationInfo {
+export interface IContactLastModificationInfoDto {
     date: moment.Moment | undefined;
     userId: number | undefined;
     userName: string | undefined;
