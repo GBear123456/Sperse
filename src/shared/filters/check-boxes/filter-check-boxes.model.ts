@@ -50,9 +50,11 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args: any) {
-        if (args)
-            remove(this.value, (val: any) => val == args);
-        else
-            this.value = [];
+        if (this.isClearAllowed) {
+            if (args)
+                remove(this.value, (val: any) => val == args);
+            else
+                this.value = [];
+        }
     }
 }
