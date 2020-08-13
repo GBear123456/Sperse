@@ -590,6 +590,10 @@
                         <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control"
                                (change)="settings.email.defaultFromDisplayName = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromDisplayName" maxlength="128">
                     </div>
+                    <div class="form-group">
+                        <label for="SendGridWebhookApiKey">{{l("SendGridWebhookApiKey")}}</label>
+                        <input id="SendGridWebhookApiKey" type="text" name="SendGridWebhookApiKey" class="form-control" [(ngModel)]="sendGridSettings.webhookApiKey" maxlength="128">
+                    </div>
                     <ng-container *ngIf="isPerformancePartner">
                         <div class="form-group">
                             <label for="SendGridRPTemplateId">{{l("SendGridRPTemplate")}}</label>
