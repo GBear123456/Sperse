@@ -7,7 +7,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
 import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
-import { filter, map, finalize, switchMap, publishReplay, refCount } from 'rxjs/operators';
+import { first, filter, map, finalize, switchMap, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -248,7 +248,9 @@ export class PipelineService {
                 return this.processLeadInternal(entity,
                     {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             if (!useLastData || !this.lastEntityData$) {
-                this.lastEntityData$ = this.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).pipe(
+                this.lastEntityData$ = this.getPipelineDefinitionObservable(
+                    AppConsts.PipelinePurposeIds.order
+                ).pipe(first(),
                     switchMap(pipeline => {
                         return this.dialog.open(LeadCompleteDialogComponent, {
                             data: {
