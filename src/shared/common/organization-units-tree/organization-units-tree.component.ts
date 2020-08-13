@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component, Input, ViewChild, OnDestroy, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, 
+    ViewChild, OnDestroy, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -26,7 +27,9 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class OrganizationUnitsTreeComponent implements OnDestroy {
     @ViewChild(DxTreeViewComponent, { static: false }) organizationUnitsTree: DxTreeViewComponent;
+    @Output() onFilterApplied: EventEmitter<any> = new EventEmitter();
     @Input() selectionMode = 'multiple';
+    @Input() showFilterButton = false;
 
     public oranizationUnitsDataSource: DataSource;
     public searchEnabled = false;
@@ -177,6 +180,11 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
         event.stopPropagation();
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
+    }
+
+    onFilterClick(event, data) {
+        event.stopPropagation();
+        this.onFilterApplied.emit(data);
     }
 
     ngOnDestroy() {

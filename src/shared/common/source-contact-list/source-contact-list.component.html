@@ -17,14 +17,20 @@
     (onItemSelected)="onItemSelected.emit($event)"
     (onListFiltered)="onSourceFiltered($event)"
     (onOptionChanged)="onOptionChanged($event)"
-    (onFilterApply)="onFilterApply($event)"
+    (onFilterApply)="onContactFilterApply($event)"
     (onApply)="onApply.emit($event)"
     [list]="contacts">
         <div custom-title [hidden]="!showOrgUnits">
             <span [class]="showContacts ? 'selected' : ''" (click)="toggleContacts()">{{ls.l('SourceContact')}}</span>
-            <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()" [hidden]="!selectedKeys?.length">{{ls.l('Owner')}}</span>
+            <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()">{{ls.l('Owner')}}</span>
+            <span class="filter-apply" [hidden]="showContacts || !selectedOrgUnits?.length" (click)="applyOrganizationUnits()">{{ls.l('Apply')}}</span>
         </div>
         <div custom-content>
-            <oranization-units-tree selectionMode="single" [hidden]="!showOrgUnits || showContacts"></oranization-units-tree>
+            <oranization-units-tree 
+                selectionMode="single" 
+                showFilterButton="true" 
+                [hidden]="!showOrgUnits || showContacts"
+                (onFilterApplied)="onOwnerFilter($event)">
+            </oranization-units-tree>
         </div>
 </app-static-list>
