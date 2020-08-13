@@ -70916,6 +70916,7 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
     apiKey!: string | undefined;
     rpTemplateId!: string | undefined;
     rpFromEmail!: string | undefined;
+    webhookApiKey!: string | undefined;
     defaultFromAddress!: string | undefined;
     defaultFromDisplayName!: string | undefined;
 
@@ -70933,6 +70934,7 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
             this.apiKey = data["apiKey"];
             this.rpTemplateId = data["rpTemplateId"];
             this.rpFromEmail = data["rpFromEmail"];
+            this.webhookApiKey = data["webhookApiKey"];
             this.defaultFromAddress = data["defaultFromAddress"];
             this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
@@ -70950,6 +70952,7 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
         data["apiKey"] = this.apiKey;
         data["rpTemplateId"] = this.rpTemplateId;
         data["rpFromEmail"] = this.rpFromEmail;
+        data["webhookApiKey"] = this.webhookApiKey;
         data["defaultFromAddress"] = this.defaultFromAddress;
         data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
@@ -70960,6 +70963,7 @@ export interface ISendGridSettingsDto {
     apiKey: string | undefined;
     rpTemplateId: string | undefined;
     rpFromEmail: string | undefined;
+    webhookApiKey: string | undefined;
     defaultFromAddress: string | undefined;
     defaultFromDisplayName: string | undefined;
 }
