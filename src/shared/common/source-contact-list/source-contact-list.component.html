@@ -23,7 +23,7 @@
         <div custom-title [hidden]="!showOrgUnits">
             <span [class]="showContacts ? 'selected' : ''" (click)="toggleContacts()">{{ls.l('SourceContact')}}</span>
             <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()">{{ls.l('Owner')}}</span>
-            <span class="filter-apply" [hidden]="showContacts || !selectedOrgUnits?.length" (click)="applyOrganizationUnits()">{{ls.l('Apply')}}</span>
+            <span class="filter-apply" [hidden]="showContacts || !selectedOrgUnits?.length || (!hasBulkUpdatePermission && selectedOrgUnits?.length > 1)" (click)="applyOrganizationUnits()">{{ls.l('Apply')}}</span>
         </div>
         <div custom-content>
             <oranization-units-tree 
