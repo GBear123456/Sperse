@@ -47,8 +47,8 @@
                         <hr>
                         <div class="field">
                             <label>{{ ls.l('LastUpdatedBy') }}:</label>
-                            <span>{{contactInfo?.lastModifierUserName}}<i *ngIf="contactInfo?.lastModifierUserName" class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.lastModifierUserName)"></i></span>
-                            <p class="date-ago">({{contactInfo?.lastModificationTime | timeAgo}})</p><p>on {{contactInfo?.lastModificationTime | date: formatting.dateTime : userTimezone}}</p>
+                            <span>{{lastModificationInfo?.userName}}<i *ngIf="lastModificationInfo?.userName" class="save-to-clipboard" (click)="saveToClipboard(lastModificationInfo?.userName)"></i></span>
+                            <p class="date-ago">({{lastModificationInfo?.date | timeAgo}})</p><p>on {{lastModificationInfo?.date | date: formatting.dateTime : userTimezone}}</p>
                         </div>
                         <div class="field">
                             <label>{{ ls.l('ContactID') }}:</label>
