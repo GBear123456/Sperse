@@ -181,15 +181,16 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         this.toggle();
     }
 
-    toggleContacts() {
+    toggleContacts() {        
         if (this.showContacts) {
             this.contactsService.orgUnitsUpdate({
                 allOrganizationUnits: this.orgUnits,
                 selectedOrgUnits: this.selectedLeads.length ? this.selectedOrgUnits :
                     [this.filterModelOrgUnit.items.element.value[0]].filter(Boolean)
             });
-        }
-        this.showContacts = !this.showContacts;
+        }        
+        this.sourceComponent.dxList.instance.option('visible', 
+            this.showContacts = !this.showContacts);
         setTimeout(() => {
             this.sourceComponent.dxTooltip.instance.repaint();
         });
