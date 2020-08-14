@@ -1,5 +1,5 @@
 <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
-<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 280px)'">
+<dx-scroll-view showScrollbar="onHover" [height]="'calc(100vh - 320px)'">
     <dx-tree-view dataStructure="plain"
         [disabled]="!isEditAllowed"
         [selectionMode]="selectionMode"
@@ -8,12 +8,13 @@
         keyExpr="id"
         [selectByClick]="true"
         displayExpr="displayName"
-        showCheckBoxesMode="normal"
+        [showCheckBoxesMode]="showCheckBoxesMode"
         [selectNodesRecursive]="false"
         [searchEnabled]="searchEnabled"
         (onItemSelectionChanged)="onChange($event)">
         <div *dxTemplate="let data of 'item'" class="clipboard-holder">
-            {{data.displayName}}<i class="save-to-clipboard" (click)="saveToClipboard($event, data.displayName)"></i>
+            <span [title]="data.displayName">{{data.displayName}}</span><i class="save-to-clipboard" (click)="saveToClipboard($event, data.displayName)"></i>
+            <a class="filter-icon dx-icon" [hidden]="!showFilterButton" (click)="onFilterClick($event, data)"></a>
         </div>
     </dx-tree-view>
 </dx-scroll-view>

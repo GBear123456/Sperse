@@ -4,8 +4,8 @@
     accessKey="sourceContactList"
     [targetSelector]="targetSelector"
     [title]="showOrgUnits ? '' : ls.l('SourceContact')"
-    [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && !!selectedKeys.length"
-    [hideButtons]="!hasBulkUpdatePermission || (!selectedKeys || !selectedKeys.length) || !!selectedKey"
+    [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && !!selectedKeys?.length"
+    [hideButtons]="!hasBulkUpdatePermission || (!selectedKeys || !selectedKeys?.length) || !!selectedKey"
     [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
     [showConfirmation]="false"
     [highlightSelected]="true"
@@ -17,14 +17,21 @@
     (onItemSelected)="onItemSelected.emit($event)"
     (onListFiltered)="onSourceFiltered($event)"
     (onOptionChanged)="onOptionChanged($event)"
-    (onFilterApply)="onFilterApply($event)"
+    (onFilterApply)="onContactFilterApply($event)"
     (onApply)="onApply.emit($event)"
     [list]="contacts">
         <div custom-title [hidden]="!showOrgUnits">
-            <span [class]="showContacts ? 'selected' : ''" (click)="toogleContacts()">{{ls.l('SourceContact')}}</span>
-            <span [class]="showContacts ? '' : 'selected'" (click)="toogleContacts()">{{ls.l('Owner')}}</span>
+            <span [class]="showContacts ? 'selected' : ''" (click)="toggleContacts()">{{ls.l('SourceContact')}}</span>
+            <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()">{{ls.l('Owner')}}</span>
+            <span class="filter-apply" [hidden]="showContacts || !selectedOrgUnits?.length || !hasBulkUpdatePermission" (click)="applyOrganizationUnits()">{{ls.l('Apply')}}</span>
         </div>
         <div custom-content>
-            <oranization-units-tree selectionMode="single" [hidden]="!showOrgUnits || showContacts"></oranization-units-tree>
+            <oranization-units-tree 
+                selectionMode="single" 
+                showFilterButton="true"
+                [showCheckBoxesMode]="hasBulkUpdatePermission && selectedKeys?.length ? 'normal' : 'none'" 
+                [hidden]="!showOrgUnits || showContacts"
+                (onFilterApplied)="onOwnerFilter($event)">
+            </oranization-units-tree>
         </div>
 </app-static-list>
