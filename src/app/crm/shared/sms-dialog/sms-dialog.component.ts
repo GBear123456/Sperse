@@ -71,11 +71,8 @@ export class SMSDialogComponent {
         this.phones = person && person.details && person.details.phones
             .concat(data.contact['organizationContactInfo'].details ? data.contact['organizationContactInfo'].details.phones : [])
             .map((item: ContactPhoneDto) => item.phoneNumber);
-        if (primary)
-            this.phoneNumber = primary.phoneNumber;
-
         this.smsText = data.body;
-        this.phoneNumber = data.phoneNumber;
+        this.phoneNumber = data.phoneNumber || primary && primary.phoneNumber || this.phones && this.phones.length && this.phones[0];
         this.tags[Tags.LegalName] = appSession.tenant ? appSession.tenant.name : AppConsts.defaultTenantName;
         this.tags[Tags.ClientFirstName] = data.firstName || (person && person.person && person.person.firstName);
         this.tags[Tags.ClientLastName] = data.lastName || (person && person.person && person.person.lastName);

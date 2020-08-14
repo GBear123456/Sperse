@@ -18,6 +18,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
     styleUrls: ['./similar-entities-dialog.component.less'],
 })
 export class SimilarEntitiesDialogComponent {
+    private readonly SUB_CONTACTS_TAB_INDEX = 2;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -34,9 +35,14 @@ export class SimilarEntitiesDialogComponent {
         this.itemDetailsService.clearItemsSource();
         this.data.componentRef.close();
         this.dialogRef.close();
+        if (similarEntity.parentId)
+            queryParams = {...queryParams, tab: this.SUB_CONTACTS_TAB_INDEX};
         this.router.navigate(
-            ['app/crm/contact/' + similarEntity.id + '/contact-information'], { queryParams:
-                queryParams.referrer ? queryParams : { ...queryParams, referrer: this.router.url.split('?').shift() }
+            ['app/crm/contact/' + (similarEntity.parentId || similarEntity.id) + '/' + 
+                (similarEntity.parentId ? 'lead-related-contacts' : 'contact-information')
+            ], { 
+                queryParams: queryParams.referrer ? queryParams : 
+                    { ...queryParams, referrer: this.router.url.split('?').shift() }
             }
         );
     }

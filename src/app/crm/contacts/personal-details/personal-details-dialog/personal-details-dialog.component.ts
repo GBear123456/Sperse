@@ -15,7 +15,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto,
+import { LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
@@ -68,8 +68,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         max: 255,
         message: this.ls.l('MaxLengthIs', 255)
     }];
-    isLayoutTypeBankCode = this.userManagementService.isLayout(LayoutType.BankCode);
-    isLayoutTypeRapid = this.userManagementService.isLayout(LayoutType.Rapid);
+    lastModificationInfo: ContactLastModificationInfoDto;
     userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
     sourceContacts = [];
@@ -100,6 +99,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.contactInfo = contactInfo;
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
+                this.contactProxy.getContactLastModificationInfo(
+                    contactInfo.id
+                ).subscribe(lastModificationInfo => {
+                    this.lastModificationInfo = lastModificationInfo;
+                });
             }
         }, this.ident);
 

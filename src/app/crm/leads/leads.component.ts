@@ -207,6 +207,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         items: { from: new FilterItemModel(), to: new FilterItemModel() },
         options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
     });
+    filterModelOrgUnit: FilterModel;
     filterModelStages: FilterModel;
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
@@ -1025,7 +1026,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             })
                     }
                 }),
-                new FilterModel({
+                this.filterModelOrgUnit = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'SourceOrganizationUnitId',
                     hidden: this.appSession.userIsMember,
@@ -1178,6 +1179,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleSource.bind(this),
                         attr: {
                             'filter-selected': !!this.filterModelSource.items.element['contact']
+                                || !!this.filterModelOrgUnit.items.element.value.length
                         }
                     },
                     {
@@ -1806,6 +1808,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.createButtonEnabledSet();
             this.initToolbarConfig();
         }
+    }
+
+    onOwnerFilterApply(event) {
+        let filter = this.filterModelOrgUnit.items.element.value;
+        this.filterModelOrgUnit.items.element.value = filter && filter[0] == event.id ? [] : [event.id];
+        this.filtersService.change([this.filterModelOrgUnit]);
     }
 
     onSourceApply(contacts) {

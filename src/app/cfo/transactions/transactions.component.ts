@@ -240,7 +240,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 dataSource$: this.filtersInitialData$.pipe(pluck('currencies')),
                 nameField: 'name',
                 keyExpr: 'id',
-                value: [ this.cfoPreferencesService.selectedCurrencyId ]
+                value: [ this.cfoPreferencesService.selectedCurrencyId ],
+                isClearAllowed: false
             })
         },
         options: { method: 'filterByFilterElement' }
