@@ -102,7 +102,11 @@
                             <ng-template #noName>
                                 <span class="no-name">{{ l('ClientNoName') }}</span>
                             </ng-template>
-                            <span *ngIf="isLeadPipeline && !stage.isFinal" class="checklist" (click)="showChecklistEntityDialog($event, entity)">{{entity?.StageChecklistPointDoneCount}}/{{stage?.checklistPoints?.length || 0}}</span>
+                            <span *ngIf="isLeadPipeline && !stage.isFinal && stage?.checklistPoints?.length"
+                                  class="checklist"
+                                  (click)="showChecklistEntityDialog($event, entity)">
+                                {{entity?.StageChecklistPointDoneCount}}/{{stage?.checklistPoints?.length || 0}}
+                            </span>
                         </div>
                         <div class="bank-code" *ngIf="entity?.BankCode && userManagementService.checkBankCodeFeature()">
                             <bank-code-letter [id]="'bankCode' + entity.Id"
