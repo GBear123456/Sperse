@@ -375,8 +375,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         });
     }
 
-    getSendGridWebhookHint(): string {
-        let apiKey = this.sendGridSettings.webhookApiKey || '{webhook_api_key}';
-        return this.l('SendGridWebhookHint', 'https://app.sendgrid.com/settings/mail_settings', AppConsts.remoteServiceBaseUrl + `/api/SendGrid/ProcessWebHook?apiKey=${apiKey}`);
+    getSendGridWebhookUrl(): string {
+        let key = this.sendGridSettings.webhookKey || '{webhook_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/SendGrid/ProcessWebHook?key=${key}`;
     }
 }
