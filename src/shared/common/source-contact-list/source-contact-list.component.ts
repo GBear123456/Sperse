@@ -14,6 +14,7 @@ import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelector
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import {
+    ContactCommunicationServiceProxy, ContactPhotoServiceProxy,
     ContactServiceProxy, SourceContactInfo, LeadServiceProxy,
     UpdateLeadSourceOrganizationUnitsInput, OrganizationUnitDto
 } from '@shared/service-proxies/service-proxies';
@@ -25,11 +26,12 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
-  selector: 'source-contact-list',
-  templateUrl: './source-contact-list.component.html',
-  styleUrls: ['./source-contact-list.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ ContactServiceProxy ]
+    selector: 'source-contact-list',
+    templateUrl: './source-contact-list.component.html',
+    styleUrls: ['./source-contact-list.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ ContactsService, ContactServiceProxy, LeadServiceProxy,
+    ContactPhotoServiceProxy, ContactCommunicationServiceProxy ]
 })
 export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     @ViewChild(StaticListComponent, { static: true }) sourceComponent: StaticListComponent;
@@ -76,15 +78,17 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     ) {}
 
     ngAfterViewInit() {
-        this.loadOrganizationUnits();
-        this.orgUnitsComponent.organizationUnitsTree.instance.on('contentReady', () => {
-            this.changeDetectorRef.detectChanges();
-        });
-        this.showOrgUnits && this.contactsService.orgUnitsSaveSubscribe(data => {
-            if (this.selectedLeads.length && this.sourceComponent.tooltipVisible) {
-                this.selectedOrgUnits = data;
-            }
-        }, this.ident);
+        if (this.showOrgUnits) {
+            this.loadOrganizationUnits();
+            this.orgUnitsComponent.organizationUnitsTree.instance.on('contentReady', () => {
+                this.changeDetectorRef.detectChanges();
+            });
+            this.contactsService.orgUnitsSaveSubscribe(data => {
+                if (this.selectedLeads.length && this.sourceComponent.tooltipVisible) {
+                    this.selectedOrgUnits = data;
+                }
+            }, this.ident);
+        }
     }
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
@@ -200,7 +204,9 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.ident);
-        this.orgUnitsComponent.organizationUnitsTree.instance.off('contentReady');
+        if (this.showOrgUnits) {
+            this.contactsService.unsubscribe(this.ident);
+            this.orgUnitsComponent.organizationUnitsTree.instance.off('contentReady');
+        }
     }
 }
