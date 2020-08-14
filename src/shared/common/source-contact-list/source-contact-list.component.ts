@@ -128,7 +128,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         if (this.selectedOrgUnits && this.selectedOrgUnits.length) {
             this.toggle();
             ContactsHelper.showConfirmMessage(
-                this.ls.l('UpdateForSelected', this.ls.l('Owner'), this.ls.l('Contact(s)')), '',
+                this.ls.l('UpdateForSelected', this.ls.l('Owner'), this.ls.l('Leads')), '',
             isConfirmed => {
                 if (isConfirmed) {
                     abp.ui.setBusy();
@@ -142,7 +142,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
                         this.notifyService.info(this.ls.l('SavedSuccessfully'));
                     });
                 }
-            }, false, this.ls.l('SourceUpdateConfirmation', ''));
+            }, false, this.ls.l('SourceUpdateConfirmation', 'Leads'));
         }
     }
 

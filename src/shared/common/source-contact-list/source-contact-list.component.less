@@ -15,6 +15,7 @@ div {
             color: #000;
             opacity: 0.4;
             &:not(.selected):hover {
+                color: #00AEEF;
                 text-decoration: underline;
             }
             &.selected {
@@ -24,8 +25,10 @@ div {
                 pointer-events: none;
             }
             &.filter-apply {
+                opacity: 1;
                 cursor: pointer;
                 font-size: 14px;
+                font-weight: 400;
                 line-height: 1.21;
                 letter-spacing: 0.3px;
                 color: #00AEEF;
@@ -35,6 +38,7 @@ div {
 
                 &:hover {
                     color: lighten(#00AEEF, 20%);
+                    text-decoration: none;
                 }
             }
         }

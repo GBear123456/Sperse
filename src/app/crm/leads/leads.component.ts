@@ -1810,7 +1810,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onOwnerFilterApply(event) {
-        this.filterModelOrgUnit.items.element.value = [event.id];
+        let filter = this.filterModelOrgUnit.items.element.value;
+        this.filterModelOrgUnit.items.element.value = filter && filter[0] == event.id ? [] : [event.id];
         this.filtersService.change([this.filterModelOrgUnit]);
     }
 

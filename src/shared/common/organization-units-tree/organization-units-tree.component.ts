@@ -30,6 +30,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
     @Output() onFilterApplied: EventEmitter<any> = new EventEmitter();
     @Input() selectionMode = 'multiple';
     @Input() showFilterButton = false;
+    @Input() showCheckBoxesMode = 'normal';
 
     public oranizationUnitsDataSource: DataSource;
     public searchEnabled = false;
