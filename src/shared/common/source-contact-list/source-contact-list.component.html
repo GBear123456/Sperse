@@ -26,7 +26,7 @@
             <span class="filter-apply" [hidden]="showContacts || !selectedOrgUnits?.length || !hasBulkUpdatePermission" (click)="applyOrganizationUnits()">{{ls.l('Apply')}}</span>
         </div>
         <div custom-content>
-            <oranization-units-tree 
+            <oranization-units-tree
                 selectionMode="single" 
                 showFilterButton="true"
                 [showCheckBoxesMode]="hasBulkUpdatePermission && selectedKeys?.length ? 'normal' : 'none'" 
