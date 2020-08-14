@@ -30,6 +30,7 @@
                 [lDeleteConfirmMessage]="ls.l('ChecklistDeleteWarningMessage')"
                 [lEntityName]="ls.l('Name')"
                 [editPlaceholder]="ls.l('Name')"
+                [showInlineEditButton]="true"
                 [validationRules]="validationRules"
                 (itemDeleted)="onDelete($event, cell)"
                 (valueChanged)="onChanged($event, cell)">
