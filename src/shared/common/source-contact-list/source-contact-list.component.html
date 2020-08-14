@@ -22,7 +22,7 @@
     [list]="contacts">
         <div custom-title [hidden]="!showOrgUnits">
             <span [class]="showContacts ? 'selected' : ''" (click)="toogleContacts()">{{ls.l('SourceContact')}}</span>
-            <span [class]="showContacts ? '' : 'selected'" (click)="toogleContacts()" [hidden]="!selectedKeys?.length">{{ls.l('Owner')}}</span>
+            <span [class]="showContacts ? '' : 'selected'" (click)="toogleContacts()">{{ls.l('Owner')}}</span>
         </div>
         <div custom-content>
             <oranization-units-tree selectionMode="single" [hidden]="!showOrgUnits || showContacts"></oranization-units-tree>

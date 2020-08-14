@@ -987,8 +987,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 contactGroupId: this.contactGroupId
             }
         }).afterClosed().subscribe(isUpdated => {
+            this.stages.some(item => {
+                if (item.id == stage.id) {
+                    item.checklistPoints = stage.checklistPoints;
+                    return true;
+                }                
+            });
             if (isUpdated)
-                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                this.refresh(stage.id);
         });
     }
 

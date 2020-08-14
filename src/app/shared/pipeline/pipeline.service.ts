@@ -97,7 +97,20 @@ export class PipelineService {
                 purpose: pipelinePurposeId,
                 contactGroupId: contactGroupId
             })),
-            filter(Boolean),
+            filter((pipelineDefinition: PipelineDto) => {
+                if (pipelineDefinition) {
+                    let oldDefinition = this.pipelineDefinitions[pipelinePurposeId];
+                    if (!oldDefinition || pipelineDefinition.stages.length != oldDefinition.stages.length) 
+                        return true;
+                    
+                    return pipelineDefinition.stages.some(stage => {
+                        let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
+                        return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder 
+                            || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
+                    });
+                }
+                return false;
+            }),
             map((pipelineDefinition: PipelineDto) => {
                 this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
                 pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,

@@ -5,7 +5,8 @@ import { Component, OnInit, Inject, AfterViewInit, ElementRef, ViewChild } from 
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, skip } from 'rxjs/operators';
+import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
@@ -42,7 +43,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         @Inject(MAT_DIALOG_DATA) public dialogData: any,
         public ls: AppLocalizationService
     ) {
-        this.dataSource = dialogData.stage.checklistPoints || [];
+        this.dataSource = cloneDeep(dialogData.stage.checklistPoints) || [];
     }
 
     ngOnInit() {
@@ -93,7 +94,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                 ).subscribe(() => {
                     this.isUpdated = true;
                     this.dataSource[cell.rowIndex].name = value;
-                    this.dataGrid.instance.repaint();
+                    this.reloadStageConfig();
                 });
             } else
                 this.notifyService.error(this.ls.l('NameIsRequired'));
@@ -110,7 +111,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                     this.isUpdated = true;
                     cell.data.id = res.id;
                     cell.data.sortOrder = res.sortOrder;
-                    this.dataGrid.instance.repaint();
+                    this.reloadStageConfig();
                 });
             } else
                 this.dataSource.splice(cell.rowIndex, 1);
@@ -123,17 +124,18 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.isUpdated = true;
+            this.reloadStageConfig();
             this.dataSource.some((item, index) => {
                 if (item.id == cell.data.id) {
                     this.dataSource.splice(index, 1);
                     return true;
                 }
-            })
+            });
         });
     }
 
     onReorder = (event) => {
-        if (isNaN(event.fromIndex) || isNaN(event.toIndex) 
+        if (isNaN(event.fromIndex) || isNaN(event.toIndex)
             || event.fromIndex == event.toIndex || this.dataSource.length < 2
         ) return ;
 
@@ -142,13 +144,14 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
             records = dataGridInstance.getVisibleRows(),
             fromData = records[event.fromIndex].data,
             toData = records[event.toIndex].data,
-            direction = fromData.sortOrder > toData.sortOrder ? 0.1 : -0.1;
+            direction = fromData.sortOrder > toData.sortOrder ? 0.000000001 : -0.000000001;
         fromData.sortOrder = toData.sortOrder;
         toData.sortOrder = toData.sortOrder + direction;
-        dataGridInstance.repaint();
+        dataGridInstance.refresh();
         this.checklistProxy.updatePointSortOrder(new UpdateStageChecklistPointSortOrderInput({
             id: fromData.id,
-            sortOrder: this.dataSource.length ? fromData.sortOrder : 0
+            sortOrder: this.dataSource.length ? (records[event.toIndex + 1] ?
+                records[event.toIndex + 1].data.sortOrder : toData.sortOrder + 1) : 0
         })).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
@@ -161,11 +164,12 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         this.store$.pipe(select(PipelinesStoreSelectors.getSortedPipeline({
             purpose: this.dialogData.pipelinePurposeId,
             contactGroupId: this.dialogData.contactGroupId
-        })), first()).subscribe((pipeline: any) => {
+        })), skip(1), first()).subscribe((pipeline: any) => {
             pipeline.stages.some(stage => {
                 if (this.dialogData.stage.id == stage.id) {
-                    this.dataSource = stage.checklistPoints;
-                    this.dataGrid.instance.repaint();
+                    this.dialogData.stage.checklistPoints =
+                    this.dataSource = cloneDeep(stage.checklistPoints);
+                    this.dataGrid.instance.refresh();
                     return true;
                 }
             });
