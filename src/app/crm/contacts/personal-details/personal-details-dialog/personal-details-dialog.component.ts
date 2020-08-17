@@ -15,13 +15,16 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto,
-    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput } from '@shared/service-proxies/service-proxies';
+import {
+    LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto,
+    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, SourceContactInfo
+} from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -32,8 +35,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;
     leadInfo: LeadInfoDto;
+    stageColor: string;
     configMode: boolean;
     sourceContactName: string;
+    sourceAffiliateCode: string;
     overviewPanelSetting = {
         clientScores: true,
         totalApproved: true,
@@ -72,7 +77,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     isLayoutTypeRapid = this.userManagementService.isLayout(LayoutType.Rapid);
     userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
-    sourceContacts = [];
+    sourceContacts: SourceContactInfo[] = [];
 
     constructor(
         private clipboardService: ClipboardService,
@@ -82,6 +87,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private contactProxy: ContactServiceProxy,
         private elementRef: ElementRef,
         private contactsService: ContactsService,
+        private pipelineService: PipelineService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -105,6 +111,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
         contactsService.leadInfoSubscribe(leadInfo => {
             this.leadInfo = leadInfo;
+            this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
             this.updateSourceContactName();
         }, this.ident);
 
@@ -144,7 +151,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    onSourceContactLoaded(contacts) {
+    onSourceContactLoaded(contacts: SourceContactInfo[]) {
         this.sourceContacts = contacts;
         this.updateSourceContactName();
     }
@@ -153,6 +160,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         let contact = this.sourceContacts.find(item =>
             item.id == (this.leadInfo && this.leadInfo.sourceContactId));
         this.sourceContactName = contact && contact.name;
+        this.sourceAffiliateCode = contact && contact.affiliateCode;
     }
 
     getTabContentHeight() {

@@ -32,7 +32,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     @ViewChild(StaticListComponent, { static: true }) sourceComponent: StaticListComponent;
     @ViewChild(OrganizationUnitsTreeComponent, { static: true }) orgUnitsComponent: OrganizationUnitsTreeComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
-    @Output() onDataLoaded: EventEmitter<any> = new EventEmitter();
+    @Output() onDataLoaded: EventEmitter<SourceContactInfo[]> = new EventEmitter();
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Input() targetSelector = '#PartnersSource';
     @Input() selectedKeys: number[];

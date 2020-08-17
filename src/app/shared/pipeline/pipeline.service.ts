@@ -422,6 +422,11 @@ export class PipelineService {
             complete && complete();
     }
 
+    getStageColorByName(stageName: string): string {
+        const stage = this.getStageByName(AppConsts.PipelinePurposeIds.lead, stageName);
+        return this.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder);
+    }
+
     getStageDefaultColorByStageSortOrder(stageSortOrder: number): string {
         const layoutType = this.appSessionService.layoutType;
         const stagesColors = this.defaultStagesColors[layoutType] || this.defaultStagesColors[LayoutType.Default];

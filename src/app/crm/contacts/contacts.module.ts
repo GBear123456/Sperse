@@ -7,6 +7,7 @@ import * as ngCommon from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -258,7 +259,8 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         ModalDialogModule,
         RatingBarModule,
         ListsModule,
-        OrgUnitsTreeModule
+        OrgUnitsTreeModule,
+        MatExpansionModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,

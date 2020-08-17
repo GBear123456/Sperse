@@ -26,7 +26,14 @@
                                         </a>
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
-                                        <div *ngIf="getPropValue(item.name) as value" [hidden]="isEditAllowed && !item.readonly" (click)="showApplicationAllowed && item.action && item.action()" class="item-value" [ngClass]="{'item-link': showApplicationAllowed && item.action, 'clipboard-holder': true}"><span [title]="value" [ngClass]="{'wide': item.wide}">{{value}}</span><i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i></div>
+                                        <div *ngIf="getPropValue(item.name) as value"
+                                             class="item-value clipboard-holder"
+                                             [ngClass]="{'item-link': showApplicationAllowed && item.action}"
+                                             [hidden]="isEditAllowed && !item.readonly"
+                                             (click)="showApplicationAllowed && item.action && item.action()">
+                                            <span [title]="value" [ngClass]="{'wide': item.wide}">{{value}}</span>
+                                            <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
+                                        </div>
                                         <ng-container *ngIf="isEditAllowed && !item.readonly">
                                             <div [ngSwitch]="item?.data ? 'select' : 'text'" [ngStyle]="{'margin-right': item?.data ? '0' : '50px'}">
                                                 <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>

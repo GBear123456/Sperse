@@ -543,8 +543,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getStageColorByName(stageName: string) {
-        let stage = this.pipelineService.getStageByName(AppConsts.PipelinePurposeIds.lead, stageName);
-        return this.pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder);
+        return this.pipelineService.getStageColorByName(stageName);
     }
 
     setAsPrimary(field, value) {
