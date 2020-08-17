@@ -253,16 +253,31 @@
                             }
                         }
                         .full-name {
-                            display: inline-block;
+                            width: 100%;
+                            display: flex;
+                            justify-content: space-between;
                             max-height: 42px;
                             text-overflow: ellipsis;
                             overflow: hidden;
                             span {
                                 white-space: nowrap;
+                                &.name {
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                }
                                 &.no-name{
                                     font-style: italic;
                                     font-weight: 200;
                                     font-size: 12px;
+                                }
+                                &.checklist {
+                                    z-index: 9;
+                                    float: right;
+                                    cursor: pointer;
+                                    color: rgb(0, 174, 239);
+                                    &:hover {
+                                        text-decoration: underline;
+                                    }
                                 }
                             }
                         }
@@ -682,6 +697,10 @@
         list-style-type: none;
         text-align: left;
 
+        hr {
+            margin-bottom: 0px;
+        }
+
         .list-group-item {
             margin: 0;
             padding: 12px 0 0 0;
@@ -742,6 +761,9 @@
                     }
                     &.delete-stage {
                         background: url(../../../assets/common/icons/pipeline/remove.svg) no-repeat;
+                    }
+                    &.check-list-stage {
+                        background: url(../../../assets/common/icons/pipeline/checklist.svg) no-repeat;
                     }
                     &.right-arrow {
                         background: url(../../../assets/common/icons/pipeline/right-arrow.svg) no-repeat center;

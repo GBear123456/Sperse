@@ -63,6 +63,12 @@
                         <li class="list-group-item" [hidden]="disallowDelete(stage)">
                             <a (click)="updateStage(stage, 'Merge')" [ngClass]="{disabled: !isConfigureAllowed}"><i class="delete-stage"></i> <span>{{l('Delete_Stage')}}</span></a>
                         </li>
+                        <ng-container *ngIf="isLeadPipeline && !stage.isFinal">
+                            <hr>    
+                            <li class="list-group-item">
+                                <a (click)="showChecklistConfigDialog(stage)" [ngClass]="{disabled: !isConfigureAllowed}"><i class="check-list-stage"></i> <span>{{l('CheckList_Stage')}}</span></a>
+                            </li>
+                        </ng-container>
                         <li class="list-group-item">
                             <a (click)="moveStage(stage, false)" [ngClass]="{disabled: disallowMove(stage)}"><i class="left-arrow"></i> <span>{{l('Move_Left_Stage')}}</span></a>
                             <a (click)="moveStage(stage, true)" [ngClass]="{disabled: disallowMove(stage, true)}"><span>{{l('Move_Right_Stage')}}</span> <i class="right-arrow"></i></a>
@@ -91,11 +97,16 @@
                     <div class="row">
                         <div class="full-name">
                             <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email) as name; else noName">
-                                <span [title]="name">{{ name }}</span>
+                                <span [title]="name" class="name">{{ name }}</span>
                             </ng-container>
                             <ng-template #noName>
                                 <span class="no-name">{{ l('ClientNoName') }}</span>
                             </ng-template>
+                            <span *ngIf="isLeadPipeline && !stage.isFinal && stage?.checklistPoints?.length"
+                                  class="checklist"
+                                  (click)="showChecklistEntityDialog($event, entity)">
+                                {{entity?.StageChecklistPointDoneCount}}/{{stage?.checklistPoints?.length || 0}}
+                            </span>
                         </div>
                         <div class="bank-code" *ngIf="entity?.BankCode && userManagementService.checkBankCodeFeature()">
                             <bank-code-letter [id]="'bankCode' + entity.Id"

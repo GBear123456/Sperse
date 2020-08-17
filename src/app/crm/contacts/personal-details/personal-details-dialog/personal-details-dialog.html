@@ -30,12 +30,12 @@
                     <div>
                         <h3>{{ ls.l('SourceInfo') }}</h3>
                         <div class="field">
-                            <label>{{ ls.l('ReferralPartner') }}:</label>
+                            <label>{{ ls.l('PersonalSettings.Contact') }}:</label>
                             <span>{{sourceContactName}}<i *ngIf="sourceContactName" class="save-to-clipboard" (click)="saveToClipboard(sourceContactName)"></i></span>
                         </div>
                         <hr>
                         <div class="field">
-                            <label>{{ ls.l('AssignedToRM') }}:</label>
+                            <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                             <span>{{contactInfo?.assignedUserName}}<i *ngIf="contactInfo?.assignedUserName" class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.assignedUserName)"></i></span>
                         </div>
                         <hr>
@@ -47,8 +47,8 @@
                         <hr>
                         <div class="field">
                             <label>{{ ls.l('LastUpdatedBy') }}:</label>
-                            <span>{{contactInfo?.lastModifierUserName}}<i *ngIf="contactInfo?.lastModifierUserName" class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.lastModifierUserName)"></i></span>
-                            <p class="date-ago">({{contactInfo?.lastModificationTime | timeAgo}})</p><p>on {{contactInfo?.lastModificationTime | date: formatting.dateTime : userTimezone}}</p>
+                            <span>{{lastModificationInfo?.userName}}<i *ngIf="lastModificationInfo?.userName" class="save-to-clipboard" (click)="saveToClipboard(lastModificationInfo?.userName)"></i></span>
+                            <p class="date-ago">({{lastModificationInfo?.date | timeAgo}})</p><p>on {{lastModificationInfo?.date | date: formatting.dateTime : userTimezone}}</p>
                         </div>
                         <div class="field">
                             <label>{{ ls.l('ContactID') }}:</label>
@@ -76,7 +76,7 @@
                             </inplace-edit>
                         </div>
                         <ng-container *ngFor="let n of [1,2,3,4,5]">
-                            <div class="field" *ngIf="isLayoutTypeBankCode || isLayoutTypeRapid || contactInfo?.personContactInfo['customField' + n]">
+                            <div class="field">
                                 <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
                                 <inplace-edit [id]="'Contact_CustomField' + n"
                                               lEntityName="Name"
@@ -87,7 +87,7 @@
                                               [isDeleteEnabled]="true"
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                              [isReadOnlyField]="!isLayoutTypeRapid || !permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
                                               (valueChanged)="updateCustomField($event, 'customField' + n)"
                                               (itemDeleted)="updateCustomField(null, 'customField' + n)">
                                 </inplace-edit>

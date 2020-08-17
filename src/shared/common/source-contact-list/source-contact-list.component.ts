@@ -3,17 +3,21 @@ import { Component, Input, EventEmitter, Output, ViewChild, AfterViewInit,
     OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { finalize, filter } from 'rxjs/operators';
+import { first, finalize, filter } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactServiceProxy, SourceContactInfo, LeadServiceProxy,
-    UpdateLeadSourceOrganizationUnitsInput } from '@shared/service-proxies/service-proxies';
+import {
+    ContactCommunicationServiceProxy, ContactPhotoServiceProxy,
+    ContactServiceProxy, SourceContactInfo, LeadServiceProxy,
+    UpdateLeadSourceOrganizationUnitsInput, OrganizationUnitDto
+} from '@shared/service-proxies/service-proxies';
 import { SourceContact } from './source-contact.interface';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { OrganizationUnitsTreeComponent } from '@shared/common/organization-units-tree/organization-units-tree.component';
@@ -22,23 +26,26 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
-  selector: 'source-contact-list',
-  templateUrl: './source-contact-list.component.html',
-  styleUrls: ['./source-contact-list.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ ContactServiceProxy ]
+    selector: 'source-contact-list',
+    templateUrl: './source-contact-list.component.html',
+    styleUrls: ['./source-contact-list.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ ContactsService, ContactServiceProxy, LeadServiceProxy,
+    ContactPhotoServiceProxy, ContactCommunicationServiceProxy ]
 })
 export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     @ViewChild(StaticListComponent, { static: true }) sourceComponent: StaticListComponent;
     @ViewChild(OrganizationUnitsTreeComponent, { static: true }) orgUnitsComponent: OrganizationUnitsTreeComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onDataLoaded: EventEmitter<any> = new EventEmitter();
+    @Output() onOwnerFilterApply: EventEmitter<any> = new EventEmitter();
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Input() targetSelector = '#PartnersSource';
     @Input() selectedKeys: number[];
     @Input() selectedLeads: any[];
     @Input() bulkUpdatePermissionKey;
     @Input() filterModel: FilterModel;
+    @Input() filterModelOrgUnit: FilterModel;
     @Input() showOrgUnits: boolean;
     @Input() selectedKey: number;
     @Input()
@@ -55,8 +62,9 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     private lookupSubscription: any;
     private ident = _.uniqueId(this.targetSelector);
     hasBulkUpdatePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMBulkUpdates);
+    orgUnits: OrganizationUnitDto[];
+    selectedOrgUnits = [];
     showContacts = true;
-    orgUnits: any;
 
     constructor(
         public ls: AppLocalizationService,
@@ -67,27 +75,20 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         private permissionCheckerService: PermissionCheckerService,
         private notifyService: NotifyService,
         private leadProxy: LeadServiceProxy
-    ) {
-        contactsService.orgUnitsSaveSubscribe(data => {
-            if (this.selectedLeads.length) {
-                abp.ui.setBusy();
-                leadProxy.updateSourceOrganizationUnits(new UpdateLeadSourceOrganizationUnitsInput({
-                    leadIds: this.selectedLeads.map(item => item.Id),
-                    sourceOrganizationUnitId: data[0]
-                })).pipe(
-                    finalize(() => abp.ui.clearBusy())
-                ).subscribe(() => {
-                    this.notifyService.info(this.ls.l('SavedSuccessfully'));
-                });
-            }
-        }, this.ident);
-    }
+    ) {}
 
     ngAfterViewInit() {
-        this.loadOrganizationUnits();
-        this.orgUnitsComponent.organizationUnitsTree.instance.on('contentReady', () => {
-            this.changeDetectorRef.detectChanges();
-        });
+        if (this.showOrgUnits) {
+            this.loadOrganizationUnits();
+            this.orgUnitsComponent.organizationUnitsTree.instance.on('contentReady', () => {
+                this.changeDetectorRef.detectChanges();
+            });
+            this.contactsService.orgUnitsSaveSubscribe(data => {
+                if (this.selectedLeads.length && this.sourceComponent.tooltipVisible) {
+                    this.selectedOrgUnits = data;
+                }
+            }, this.ident);
+        }
     }
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
@@ -118,13 +119,35 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
 
     private loadOrganizationUnits() {
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-        let subscription = this.store$.pipe(
+        this.store$.pipe(
             select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
-            filter(Boolean)
-        ).subscribe(orgUnits => {
+            filter(Boolean),
+            first()
+        ).subscribe((orgUnits: OrganizationUnitDto[]) => {
             this.orgUnits = orgUnits;
-            subscription.unsubscribe();
         });
+    }
+
+    applyOrganizationUnits() {
+        if (this.selectedOrgUnits && this.selectedOrgUnits.length) {
+            this.toggle();
+            ContactsHelper.showConfirmMessage(
+                this.ls.l('UpdateForSelected', this.ls.l('Owner'), this.ls.l('Leads')), '',
+            isConfirmed => {
+                if (isConfirmed) {
+                    abp.ui.setBusy();
+                    this.leadProxy.updateSourceOrganizationUnits(new UpdateLeadSourceOrganizationUnitsInput({
+                        leadIds: this.selectedLeads.map(item => item.Id),
+                        sourceOrganizationUnitId: this.selectedOrgUnits[0]
+                    })).pipe(
+                        finalize(() => abp.ui.clearBusy())
+                    ).subscribe(() => {
+                        this.selectedOrgUnits = undefined;
+                        this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                    });
+                }
+            }, false, this.ls.l('SourceUpdateConfirmation', 'Leads'));
+        }
     }
 
     onSourceFiltered(event) {
@@ -144,7 +167,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
             setTimeout(() => this.sourceComponent.dxTooltip.instance.repaint());
     }
 
-    onFilterApply(contact) {
+    onContactFilterApply(contact) {
         let filterElement = this.filterModel.items.element;
         if (filterElement['contact'] && filterElement['contact'].id == contact.id)
             filterElement['contact'] = undefined;
@@ -153,17 +176,25 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         this.toggle();
     }
 
-    toogleContacts() {
+    onOwnerFilter(event) {
+        this.onOwnerFilterApply.emit(event);
+        this.toggle();
+    }
+
+    toggleContacts() {        
         if (this.showContacts) {
-            if (this.selectedKeys.length)
-                this.contactsService.orgUnitsUpdate({
-                    allOrganizationUnits: this.orgUnits,
-                    selectedOrgUnits: []
-                });
-            else
-                return;
-        }
-        this.showContacts = !this.showContacts;
+            this.contactsService.orgUnitsUpdate({
+                allOrganizationUnits: this.orgUnits,
+                selectedOrgUnits: this.selectedLeads.length ? this.selectedOrgUnits :
+                    [this.filterModelOrgUnit.items.element.value[0]].filter(Boolean)
+            });
+        }        
+        this.sourceComponent.dxList.instance.option('visible', 
+            this.showContacts = !this.showContacts);
+        setTimeout(() => {
+            this.sourceComponent.dxTooltip.instance.repaint();
+        });
+        this.changeDetectorRef.detectChanges();
     }
 
     toggle() {
@@ -174,7 +205,9 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.contactsService.unsubscribe(this.ident);
-        this.orgUnitsComponent.organizationUnitsTree.instance.off('contentReady');
+        if (this.showOrgUnits) {
+            this.contactsService.unsubscribe(this.ident);
+            this.orgUnitsComponent.organizationUnitsTree.instance.off('contentReady');
+        }
     }
 }

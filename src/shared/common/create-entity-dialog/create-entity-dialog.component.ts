@@ -20,7 +20,7 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
-import { finalize, filter } from 'rxjs/operators';
+import { finalize, filter, first } from 'rxjs/operators';
 
 /** Application imports */
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
@@ -241,9 +241,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     ngAfterViewInit() {
-        if (this.sourceComponent) {
+        if (this.sourceComponent)
             this.sourceComponent.loadSourceContacts();
-        }
     }
 
     saveOptionsInit() {
@@ -918,7 +917,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     leadStagesLoad() {
         this.modalDialog.startLoading();
         this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
-            .subscribe(
+            .pipe(first(), finalize(() => this.modalDialog.finishLoading())).subscribe(
                 result => {
                     this.stages = result.stages.map((stage) => {
                         if (stage.sortOrder === this.defaultStageSortOrder) {
@@ -931,7 +930,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                         };
                     });
                     this.changeDetectorRef.detectChanges();
-                    this.modalDialog.finishLoading();
                 },
                 () => this.modalDialog.finishLoading()
             );
