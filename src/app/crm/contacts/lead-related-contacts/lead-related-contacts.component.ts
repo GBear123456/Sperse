@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -77,7 +77,8 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 this.initContactDataSource();
             else
                 this.initSubContactDataSource();
-        }
+        } else
+            this.initLeadDataSource();
     }
 
     leadDataSource;
@@ -109,25 +110,29 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         this.contactsService.invalidateSubscribe(area => {
             if (area == 'sub-contacts')
                 this.subContactDataGrid.instance.refresh();
-        })
-        this.route.queryParams.subscribe(params => {
-            if (params['tab'])
-                this.selectedTabIndex = parseInt(params['tab']);
         });
     }
 
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.data.leadInfo = leadInfo;
-            this.initLeadDataSource();
         }, this.ident);
         this.contactsService.contactInfoSubscribe(contactInfo => {
             this.data.contactInfo = contactInfo;
-            this.initToolbarInfo();
-            this.initLeadDataSource();
             this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();
+            this.initQueryParams();
         }, this.ident);
+    }
+
+    initQueryParams() {
+        this.route.queryParams.pipe(first()).subscribe(params => {
+            if (params['tab']) {
+                this.selectedTabIndex = parseInt(params['tab']);
+                this.removeTabQueryParam();
+            } else
+                this.initLeadDataSource();
+        });
     }
 
     initActionMenuItems() {
@@ -243,7 +248,11 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
             };
     }
 
-    initToolbarInfo() {
+    removeTabQueryParam() {
+        this.router.navigate([], {
+            queryParams: {tab: null},
+            queryParamsHandling: 'merge'
+        });
     }
 
     onCellClick(event) {

@@ -11,6 +11,7 @@ export class FilterItemModel {
     disableOuterScroll: boolean;
     ls: AppLocalizationService;
     tip?: string;
+    isClearAllowed = true;
     protected _value: any = '';
 
     public constructor(value?: any, isPartial = false) {

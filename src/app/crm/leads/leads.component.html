@@ -28,8 +28,10 @@
             [showOrgUnits]="true"
             [filterModel]="filterModelSource"
             [selectedLeads]="selectedLeads"
+            [filterModelOrgUnit]="filterModelOrgUnit"
             [selectedKeys]="hasBulkPermission ? selectedClientKeys : []"
             [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
+            (onOwnerFilterApply)="onOwnerFilterApply($event)"
             (onApply)="onSourceApply($event)">
         </source-contact-list>
         <app-static-list #stageList

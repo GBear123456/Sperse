@@ -7521,6 +7521,61 @@ export class ContactServiceProxy {
      * @contactId (optional) 
      * @return Success
      */
+    getContactLastModificationInfo(contactId: number | null | undefined): Observable<ContactLastModificationInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactLastModificationInfo?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactLastModificationInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactLastModificationInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactLastModificationInfoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactLastModificationInfoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactLastModificationInfo(response: HttpResponseBase): Observable<ContactLastModificationInfoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactLastModificationInfoDto.fromJS(resultData200) : new ContactLastModificationInfoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactLastModificationInfoDto>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
     getContactDetails(contactId: number | null | undefined): Observable<ContactDetailsDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactDetails?";
         if (contactId !== undefined)
@@ -18587,6 +18642,58 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updateLeadStagePoint(body: UpdateLeadStagePointInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadStagePoint";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLeadStagePoint(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLeadStagePoint(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateLeadStagePoint(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     processLead(body: ProcessLeadInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLead";
         url_ = url_.replace(/[?&]$/, "");
@@ -19187,6 +19294,65 @@ export class LeadServiceProxy {
             }));
         }
         return _observableOf<EntityContactInfo[]>(<any>null);
+    }
+
+    /**
+     * @leadId (optional) 
+     * @return Success
+     */
+    getStageChecklistPoints(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetStageChecklistPoints?";
+        if (leadId !== undefined)
+            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStageChecklistPoints(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStageChecklistPoints(<any>response_);
+                } catch (e) {
+                    return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStageChecklistPoints(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(StageChecklistPointInfoOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
     }
 }
 
@@ -26553,292 +26719,6 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
-export class SimpleServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    method1(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple01/Simple/Method1";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMethod1(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMethod1(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMethod1(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @param1 (optional) 
-     * @return Success
-     */
-    method2(param1: number | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple01/Simple/Method2?";
-        if (param1 !== undefined)
-            url_ += "param1=" + encodeURIComponent("" + param1) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMethod2(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMethod2(<any>response_);
-                } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<number>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMethod2(response: HttpResponseBase): Observable<number> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @integerValue (optional) 
-     * @return Success
-     */
-    get(stringValue: string, integerValue: number | null | undefined): Observable<OutputDto> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/Get?";
-        if (stringValue === undefined || stringValue === null)
-            throw new Error("The parameter 'stringValue' must be defined and cannot be null.");
-        else
-            url_ += "StringValue=" + encodeURIComponent("" + stringValue) + "&"; 
-        if (integerValue !== undefined)
-            url_ += "IntegerValue=" + encodeURIComponent("" + integerValue) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(<any>response_);
-                } catch (e) {
-                    return <Observable<OutputDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OutputDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<OutputDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OutputDto.fromJS(resultData200) : new OutputDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OutputDto>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    post(body: InputDto | null | undefined): Observable<OutputDto> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/Post";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPost(<any>response_);
-                } catch (e) {
-                    return <Observable<OutputDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OutputDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPost(response: HttpResponseBase): Observable<OutputDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OutputDto.fromJS(resultData200) : new OutputDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OutputDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getLeadsWithOrder(): Observable<LeadDto[]> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/GetLeadsWithOrder";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLeadsWithOrder(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetLeadsWithOrder(<any>response_);
-                } catch (e) {
-                    return <Observable<LeadDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<LeadDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetLeadsWithOrder(response: HttpResponseBase): Observable<LeadDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(LeadDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LeadDto[]>(<any>null);
-    }
-}
-
-@Injectable()
 export class StageServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -27039,6 +26919,230 @@ export class StageServiceProxy {
     }
 
     protected processUpdateStageSortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class StageChecklistServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createPoint(body: CreateStageChecklistPointInput | null | undefined): Observable<CreatePointInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/CreatePoint";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreatePoint(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreatePoint(<any>response_);
+                } catch (e) {
+                    return <Observable<CreatePointInfoOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreatePointInfoOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreatePoint(response: HttpResponseBase): Observable<CreatePointInfoOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreatePointInfoOutput.fromJS(resultData200) : new CreatePointInfoOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreatePointInfoOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    renamePoint(body: RenameStageChecklistPointInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/RenamePoint";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRenamePoint(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRenamePoint(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRenamePoint(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updatePointSortOrder(body: UpdateStageChecklistPointSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/UpdatePointSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePointSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePointSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePointSortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deletePoint(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/DeletePoint?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeletePoint(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeletePoint(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeletePoint(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -38640,9 +38744,11 @@ export class CreateLeadInput implements ICreateLeadInput {
     lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
+    companyName!: string | undefined;
     emailAddress!: CreateContactEmailInputWithoutCheck | undefined;
     phoneNumber!: CreateContactPhoneInputWithoutCheck | undefined;
     address!: CreateContactAddressInputWithoutCheck | undefined;
+    isAIGeneratedBankCode!: boolean | undefined;
     bankCode!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -38662,9 +38768,11 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.lastName = data["lastName"];
             this.nameSuffix = data["nameSuffix"];
             this.nickName = data["nickName"];
+            this.companyName = data["companyName"];
             this.emailAddress = data["emailAddress"] ? CreateContactEmailInputWithoutCheck.fromJS(data["emailAddress"]) : <any>undefined;
             this.phoneNumber = data["phoneNumber"] ? CreateContactPhoneInputWithoutCheck.fromJS(data["phoneNumber"]) : <any>undefined;
             this.address = data["address"] ? CreateContactAddressInputWithoutCheck.fromJS(data["address"]) : <any>undefined;
+            this.isAIGeneratedBankCode = data["isAIGeneratedBankCode"];
             this.bankCode = data["bankCode"];
         }
     }
@@ -38684,9 +38792,11 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["lastName"] = this.lastName;
         data["nameSuffix"] = this.nameSuffix;
         data["nickName"] = this.nickName;
+        data["companyName"] = this.companyName;
         data["emailAddress"] = this.emailAddress ? this.emailAddress.toJSON() : <any>undefined;
         data["phoneNumber"] = this.phoneNumber ? this.phoneNumber.toJSON() : <any>undefined;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["isAIGeneratedBankCode"] = this.isAIGeneratedBankCode;
         data["bankCode"] = this.bankCode;
         return data; 
     }
@@ -38699,9 +38809,11 @@ export interface ICreateLeadInput {
     lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
+    companyName: string | undefined;
     emailAddress: CreateContactEmailInputWithoutCheck | undefined;
     phoneNumber: CreateContactPhoneInputWithoutCheck | undefined;
     address: CreateContactAddressInputWithoutCheck | undefined;
+    isAIGeneratedBankCode: boolean | undefined;
     bankCode: string | undefined;
 }
 
@@ -38747,6 +38859,7 @@ export interface ICreateLeadOutput {
 
 export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
     systemTotals!: { [key: string] : number; } | undefined;
+    lastCrackedCode!: string | undefined;
     generationTime!: moment.Moment | undefined;
 
     constructor(data?: IGetSystemTotalsOutput) {
@@ -38767,6 +38880,7 @@ export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
                         this.systemTotals[key] = data["systemTotals"][key];
                 }
             }
+            this.lastCrackedCode = data["lastCrackedCode"];
             this.generationTime = data["generationTime"] ? moment(data["generationTime"].toString()) : <any>undefined;
         }
     }
@@ -38787,6 +38901,7 @@ export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
                     data["systemTotals"][key] = this.systemTotals[key];
             }
         }
+        data["lastCrackedCode"] = this.lastCrackedCode;
         data["generationTime"] = this.generationTime ? this.generationTime.toISOString() : <any>undefined;
         return data; 
     }
@@ -38794,6 +38909,7 @@ export class GetSystemTotalsOutput implements IGetSystemTotalsOutput {
 
 export interface IGetSystemTotalsOutput {
     systemTotals: { [key: string] : number; } | undefined;
+    lastCrackedCode: string | undefined;
     generationTime: moment.Moment | undefined;
 }
 
@@ -45089,9 +45205,6 @@ export class ContactInfoDto implements IContactInfoDto {
     assignedUserName!: string | undefined;
     creatorUserId!: number | undefined;
     creatorUserName!: string | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    lastModifierUserName!: string | undefined;
     starId!: number | undefined;
     ratingId!: number | undefined;
     tags!: number[] | undefined;
@@ -45122,9 +45235,6 @@ export class ContactInfoDto implements IContactInfoDto {
             this.assignedUserName = data["assignedUserName"];
             this.creatorUserId = data["creatorUserId"];
             this.creatorUserName = data["creatorUserName"];
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.lastModifierUserName = data["lastModifierUserName"];
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
             if (data["tags"] && data["tags"].constructor === Array) {
@@ -45163,9 +45273,6 @@ export class ContactInfoDto implements IContactInfoDto {
         data["assignedUserName"] = this.assignedUserName;
         data["creatorUserId"] = this.creatorUserId;
         data["creatorUserName"] = this.creatorUserName;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["lastModifierUserName"] = this.lastModifierUserName;
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
         if (this.tags && this.tags.constructor === Array) {
@@ -45197,9 +45304,6 @@ export interface IContactInfoDto {
     assignedUserName: string | undefined;
     creatorUserId: number | undefined;
     creatorUserName: string | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    lastModifierUserName: string | undefined;
     starId: number | undefined;
     ratingId: number | undefined;
     tags: number[] | undefined;
@@ -45210,6 +45314,50 @@ export interface IContactInfoDto {
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
+}
+
+export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
+    date!: moment.Moment | undefined;
+    userId!: number | undefined;
+    userName!: string | undefined;
+
+    constructor(data?: IContactLastModificationInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.userId = data["userId"];
+            this.userName = data["userName"];
+        }
+    }
+
+    static fromJS(data: any): ContactLastModificationInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactLastModificationInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        return data; 
+    }
+}
+
+export interface IContactLastModificationInfoDto {
+    date: moment.Moment | undefined;
+    userId: number | undefined;
+    userName: string | undefined;
 }
 
 export class ContactDetailsDto implements IContactDetailsDto {
@@ -46861,10 +47009,10 @@ export enum MergeLeadMode {
 
 export class MergeContactInput implements IMergeContactInput {
     contactId!: number;
-    contactLeadId!: number;
+    contactLeadId!: number | undefined;
     contactMergeOptions!: ContactMergeOptions | undefined;
     targetContactId!: number;
-    targetContactLeadId!: number;
+    targetContactLeadId!: number | undefined;
     targetContactMergeOptions!: TargetContactMergeOptions | undefined;
     primaryContactInfo!: PrimaryContactInfo | undefined;
     mergeLeadMode!: MergeLeadMode;
@@ -46914,10 +47062,10 @@ export class MergeContactInput implements IMergeContactInput {
 
 export interface IMergeContactInput {
     contactId: number;
-    contactLeadId: number;
+    contactLeadId: number | undefined;
     contactMergeOptions: ContactMergeOptions | undefined;
     targetContactId: number;
-    targetContactLeadId: number;
+    targetContactLeadId: number | undefined;
     targetContactMergeOptions: TargetContactMergeOptions | undefined;
     primaryContactInfo: PrimaryContactInfo | undefined;
     mergeLeadMode: MergeLeadMode;
@@ -59138,6 +59286,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     leadId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IUpdateLeadStageInfo) {
         if (data) {
@@ -59153,6 +59302,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
             this.leadId = data["leadId"];
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -59168,6 +59318,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         data["leadId"] = this.leadId;
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -59176,6 +59327,51 @@ export interface IUpdateLeadStageInfo {
     leadId: number;
     stageId: number;
     sortOrder: number | undefined;
+    ignoreChecklist: boolean | undefined;
+}
+
+export class UpdateLeadStagePointInput implements IUpdateLeadStagePointInput {
+    leadId!: number;
+    pointId!: number;
+    isDone!: boolean;
+
+    constructor(data?: IUpdateLeadStagePointInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.pointId = data["pointId"];
+            this.isDone = data["isDone"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadStagePointInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadStagePointInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["pointId"] = this.pointId;
+        data["isDone"] = this.isDone;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadStagePointInput {
+    leadId: number;
+    pointId: number;
+    isDone: boolean;
 }
 
 export class ProcessLeadInput implements IProcessLeadInput {
@@ -59184,6 +59380,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
     amount!: number | undefined;
     comment!: string | undefined;
     sortOrder!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IProcessLeadInput) {
         if (data) {
@@ -59201,6 +59398,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
             this.amount = data["amount"];
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -59218,6 +59416,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
         data["amount"] = this.amount;
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -59228,6 +59427,7 @@ export interface IProcessLeadInput {
     amount: number | undefined;
     comment: string | undefined;
     sortOrder: number | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class LeadInfoDto implements ILeadInfoDto {
@@ -59650,6 +59850,62 @@ export class UpdateLeadSourceOrganizationUnitsInput implements IUpdateLeadSource
 export interface IUpdateLeadSourceOrganizationUnitsInput {
     leadIds: number[];
     sourceOrganizationUnitId: number;
+}
+
+export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
+    id!: number | undefined;
+    name!: string | undefined;
+    sortOrder!: number | undefined;
+    isDone!: boolean | undefined;
+    completionTime!: moment.Moment | undefined;
+    completedByUserId!: number | undefined;
+
+    constructor(data?: IStageChecklistPointInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+            this.isDone = data["isDone"];
+            this.completionTime = data["completionTime"] ? moment(data["completionTime"].toString()) : <any>undefined;
+            this.completedByUserId = data["completedByUserId"];
+        }
+    }
+
+    static fromJS(data: any): StageChecklistPointInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageChecklistPointInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        data["isDone"] = this.isDone;
+        data["completionTime"] = this.completionTime ? this.completionTime.toISOString() : <any>undefined;
+        data["completedByUserId"] = this.completedByUserId;
+        return data; 
+    }
+}
+
+export interface IStageChecklistPointInfoOutput {
+    id: number | undefined;
+    name: string | undefined;
+    sortOrder: number | undefined;
+    isDone: boolean | undefined;
+    completionTime: moment.Moment | undefined;
+    completedByUserId: number | undefined;
 }
 
 export class LeadTypeDto implements ILeadTypeDto {
@@ -66098,6 +66354,50 @@ export interface IActionDto {
     targetStageId: number | undefined;
 }
 
+export class StageChecklistPointDto implements IStageChecklistPointDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IStageChecklistPointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): StageChecklistPointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageChecklistPointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IStageChecklistPointDto {
+    id: number | undefined;
+    name: string | undefined;
+    sortOrder: number | undefined;
+}
+
 export class StageDto implements IStageDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -66105,6 +66405,7 @@ export class StageDto implements IStageDto {
     color!: string | undefined;
     isFinal!: boolean | undefined;
     accessibleActions!: ActionDto[] | undefined;
+    checklistPoints!: StageChecklistPointDto[] | undefined;
 
     constructor(data?: IStageDto) {
         if (data) {
@@ -66126,6 +66427,11 @@ export class StageDto implements IStageDto {
                 this.accessibleActions = [];
                 for (let item of data["accessibleActions"])
                     this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+            if (data["checklistPoints"] && data["checklistPoints"].constructor === Array) {
+                this.checklistPoints = [];
+                for (let item of data["checklistPoints"])
+                    this.checklistPoints.push(StageChecklistPointDto.fromJS(item));
             }
         }
     }
@@ -66149,6 +66455,11 @@ export class StageDto implements IStageDto {
             for (let item of this.accessibleActions)
                 data["accessibleActions"].push(item.toJSON());
         }
+        if (this.checklistPoints && this.checklistPoints.constructor === Array) {
+            data["checklistPoints"] = [];
+            for (let item of this.checklistPoints)
+                data["checklistPoints"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -66160,6 +66471,7 @@ export interface IStageDto {
     color: string | undefined;
     isFinal: boolean | undefined;
     accessibleActions: ActionDto[] | undefined;
+    checklistPoints: StageChecklistPointDto[] | undefined;
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -68319,126 +68631,6 @@ export interface IAuthTestOutput {
     userName: string | undefined;
 }
 
-export class OutputDto implements IOutputDto {
-    id!: number | undefined;
-    result!: boolean | undefined;
-
-    constructor(data?: IOutputDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.result = data["result"];
-        }
-    }
-
-    static fromJS(data: any): OutputDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OutputDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["result"] = this.result;
-        return data; 
-    }
-}
-
-export interface IOutputDto {
-    id: number | undefined;
-    result: boolean | undefined;
-}
-
-export class InputDto implements IInputDto {
-    stringValue!: string;
-    integerValue!: number | undefined;
-
-    constructor(data?: IInputDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.stringValue = data["stringValue"];
-            this.integerValue = data["integerValue"];
-        }
-    }
-
-    static fromJS(data: any): InputDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new InputDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["stringValue"] = this.stringValue;
-        data["integerValue"] = this.integerValue;
-        return data; 
-    }
-}
-
-export interface IInputDto {
-    stringValue: string;
-    integerValue: number | undefined;
-}
-
-export class LeadDto implements ILeadDto {
-    id!: number | undefined;
-    stageId!: number | undefined;
-
-    constructor(data?: ILeadDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.stageId = data["stageId"];
-        }
-    }
-
-    static fromJS(data: any): LeadDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["stageId"] = this.stageId;
-        return data; 
-    }
-}
-
-export interface ILeadDto {
-    id: number | undefined;
-    stageId: number | undefined;
-}
-
 export class CreateStageInput implements ICreateStageInput {
     pipelineId!: number;
     name!: string;
@@ -68603,6 +68795,166 @@ export class UpdateSortOrderInput implements IUpdateSortOrderInput {
 }
 
 export interface IUpdateSortOrderInput {
+    id: number;
+    sortOrder: number;
+}
+
+export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
+    stageId!: number;
+    name!: string;
+
+    constructor(data?: ICreateStageChecklistPointInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.stageId = data["stageId"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreateStageChecklistPointInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateStageChecklistPointInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["stageId"] = this.stageId;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICreateStageChecklistPointInput {
+    stageId: number;
+    name: string;
+}
+
+export class CreatePointInfoOutput implements ICreatePointInfoOutput {
+    id!: number | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: ICreatePointInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreatePointInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreatePointInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICreatePointInfoOutput {
+    id: number | undefined;
+    sortOrder: number | undefined;
+}
+
+export class RenameStageChecklistPointInput implements IRenameStageChecklistPointInput {
+    id!: number;
+    name!: string;
+
+    constructor(data?: IRenameStageChecklistPointInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): RenameStageChecklistPointInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RenameStageChecklistPointInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IRenameStageChecklistPointInput {
+    id: number;
+    name: string;
+}
+
+export class UpdateStageChecklistPointSortOrderInput implements IUpdateStageChecklistPointSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateStageChecklistPointSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateStageChecklistPointSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateStageChecklistPointSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateStageChecklistPointSortOrderInput {
     id: number;
     sortOrder: number;
 }
@@ -69811,7 +70163,8 @@ export interface IUpdateSslBindingInput {
 }
 
 export class IntegrationsSettings implements IIntegrationsSettings {
-    googleMapsJavascriptApiKey!: string;
+    googleMapsJavascriptApiKey!: string | undefined;
+    googleCloudTranslationApiKey!: string | undefined;
 
     constructor(data?: IIntegrationsSettings) {
         if (data) {
@@ -69825,6 +70178,7 @@ export class IntegrationsSettings implements IIntegrationsSettings {
     init(data?: any) {
         if (data) {
             this.googleMapsJavascriptApiKey = data["googleMapsJavascriptApiKey"];
+            this.googleCloudTranslationApiKey = data["googleCloudTranslationApiKey"];
         }
     }
 
@@ -69838,12 +70192,14 @@ export class IntegrationsSettings implements IIntegrationsSettings {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["googleMapsJavascriptApiKey"] = this.googleMapsJavascriptApiKey;
+        data["googleCloudTranslationApiKey"] = this.googleCloudTranslationApiKey;
         return data; 
     }
 }
 
 export interface IIntegrationsSettings {
-    googleMapsJavascriptApiKey: string;
+    googleMapsJavascriptApiKey: string | undefined;
+    googleCloudTranslationApiKey: string | undefined;
 }
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
@@ -70497,6 +70853,7 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
     apiKey!: string | undefined;
     rpTemplateId!: string | undefined;
     rpFromEmail!: string | undefined;
+    webhookKey!: string | undefined;
     defaultFromAddress!: string | undefined;
     defaultFromDisplayName!: string | undefined;
 
@@ -70514,6 +70871,7 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
             this.apiKey = data["apiKey"];
             this.rpTemplateId = data["rpTemplateId"];
             this.rpFromEmail = data["rpFromEmail"];
+            this.webhookKey = data["webhookKey"];
             this.defaultFromAddress = data["defaultFromAddress"];
             this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
@@ -70531,6 +70889,7 @@ export class SendGridSettingsDto implements ISendGridSettingsDto {
         data["apiKey"] = this.apiKey;
         data["rpTemplateId"] = this.rpTemplateId;
         data["rpFromEmail"] = this.rpFromEmail;
+        data["webhookKey"] = this.webhookKey;
         data["defaultFromAddress"] = this.defaultFromAddress;
         data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
@@ -70541,6 +70900,7 @@ export interface ISendGridSettingsDto {
     apiKey: string | undefined;
     rpTemplateId: string | undefined;
     rpFromEmail: string | undefined;
+    webhookKey: string | undefined;
     defaultFromAddress: string | undefined;
     defaultFromDisplayName: string | undefined;
 }

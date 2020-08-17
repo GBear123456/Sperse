@@ -6,8 +6,8 @@ import { RouteReuseStrategy } from '@angular/router';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, finalize } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { first, filter, map, finalize, switchMap, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -26,6 +26,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { Stage } from '@app/shared/pipeline/stage.model';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { MessageService } from '@abp/message/message.service';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -64,10 +65,14 @@ export class PipelineService {
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private compactView: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     compactView$: Observable<boolean> = this.compactView.asObservable();
+    private lastIgnoreChecklist$: Observable<boolean>;
+    private lastEntityData$: Observable<any>;
+    private pipelineObservables = {};
 
     constructor(
         injector: Injector,
         private dialog: MatDialog,
+        private message: MessageService,
         private reuseService: RouteReuseStrategy,
         private leadService: LeadServiceProxy,
         private orderService: OrderServiceProxy,
@@ -88,21 +93,40 @@ export class PipelineService {
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId?: ContactGroup): Observable<PipelineDto> {
-        return this.store$.pipe(
-            select(PipelinesStoreSelectors.getSortedPipeline({
-                purpose: pipelinePurposeId,
-                contactGroupId: contactGroupId
-            })),
-            filter(Boolean),
-            map((pipelineDefinition: PipelineDto) => {
-                this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                    (stage) => {
-                        return stage.sortOrder;
-                    });
-                return pipelineDefinition;
-            })
-        ) as Observable<PipelineDto>;
+        let pipeline = this.pipelineObservables[pipelinePurposeId];
+        if (pipeline && pipeline[contactGroupId])
+            return pipeline[contactGroupId];
+        else {
+            pipeline = this.pipelineObservables[pipelinePurposeId] = {};
+            return pipeline[contactGroupId] = this.store$.pipe(
+                select(PipelinesStoreSelectors.getSortedPipeline({
+                    purpose: pipelinePurposeId,
+                    contactGroupId: contactGroupId
+                })),
+                filter((pipelineDefinition: PipelineDto) => {
+                    if (pipelineDefinition) {
+                        let oldDefinition = this.pipelineDefinitions[pipelinePurposeId];
+                        if (!oldDefinition || pipelineDefinition.stages.length != oldDefinition.stages.length)
+                            return true;
+
+                        return pipelineDefinition.stages.some(stage => {
+                            let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
+                            return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder
+                                || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
+                        });
+                    }
+                    return false;
+                }),
+                map((pipelineDefinition: PipelineDto) => {
+                    this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                    pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
+                        (stage) => {
+                            return stage.sortOrder;
+                        });
+                    return pipelineDefinition;
+                }), publishReplay(), refCount()
+            ) as Observable<PipelineDto>;
+        }
     }
 
     getStages(pipelinePurposeId: string): StageDto[] {
@@ -117,7 +141,7 @@ export class PipelineService {
         return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
     }
 
-    updateEntityStage(pipelinePurposeId: string, entity, fromStage: Stage, toStage: Stage, complete = null) {
+    updateEntityStage(pipelinePurposeId: string, entity, fromStage: Stage, toStage: Stage, complete = null, forced = false) {
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {
@@ -127,9 +151,9 @@ export class PipelineService {
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_LEAD)
                     this.cancelLead(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
-                    this.updateLeadStage(fromStage, toStage, entity, complete);
+                    this.updateLeadStage(fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
-                    this.processLead(fromStage, toStage, entity, complete);
+                    this.processLead(fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_ORDER)
                     this.cancelOrder(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ORDER_STAGE)
@@ -211,45 +235,70 @@ export class PipelineService {
         });
     }
 
-    updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete) {
-        this.leadService.updateLeadStage(
-            new UpdateLeadStageInfo({
-                leadId: this.getEntityId(entity),
-                stageId: toStage.id,
-                sortOrder: entity.SortOrder
-            })
-        ).pipe(finalize(() => {
-            entity.locked = false;
-            complete && complete();
-        })).subscribe(() => {
-            this.completeEntityUpdate(entity, fromStage, toStage);
+    updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+        let leadId = this.getEntityId(entity);
+        this.ignoreStageChecklist(fromStage,
+            toStage.sortOrder > fromStage.sortOrder ? leadId : null, useLastData
+        ).subscribe(ignore => {
+            this.leadService.updateLeadStage(
+                new UpdateLeadStageInfo({
+                    leadId: leadId,
+                    stageId: toStage.id,
+                    sortOrder: entity.SortOrder,
+                    ignoreChecklist: ignore
+                })
+            ).pipe(finalize(() => {
+                entity.locked = false;
+                complete && complete();
+            })).subscribe(() => {
+                this.completeEntityUpdate(entity, fromStage, toStage);
+            }, () => {
+                this.moveEntityTo(entity, toStage, fromStage);
+            });
         }, () => {
             this.moveEntityTo(entity, toStage, fromStage);
+            entity.locked = false;
+            complete && complete(true);
         });
     }
 
-    processLead(fromStage: Stage, toStage: Stage, entity, complete) {
-        if (entity.data)
-            this.processLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
-        else
-            this.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).subscribe(
-                (pipeline) => {
-                    toStage.isLoading = false;
-                    fromStage.isLoading = false;
-                    this.dialog.open(LeadCompleteDialogComponent, {
-                        data: {
-                            stages: pipeline.stages
-                        }
-                    }).afterClosed().subscribe(data => {
-                        if (data)
-                            this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
-                        else {
-                            this.moveEntityTo(entity, toStage, fromStage);
-                            complete && complete(true);
-                        }
-                    });
+    processLead(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+        this.ignoreStageChecklist(fromStage, this.getEntityId(entity), useLastData).subscribe(ignore => {
+            if (entity.data)
+                return this.processLeadInternal(entity,
+                    {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
+            if (!useLastData || !this.lastEntityData$) {
+                this.lastEntityData$ = this.getPipelineDefinitionObservable(
+                    AppConsts.PipelinePurposeIds.order
+                ).pipe(first(),
+                    switchMap(pipeline => {
+                        return this.dialog.open(LeadCompleteDialogComponent, {
+                            data: {
+                                stages: pipeline.stages
+                            }
+                        }).afterClosed();
+                    }), publishReplay(), refCount()
+                );
+            }
+
+            this.lastEntityData$.subscribe(data => {
+                toStage.isLoading = false;
+                fromStage.isLoading = false;
+                this.lastEntityData$ = undefined;
+                if (data)
+                    this.processLeadInternal(entity,
+                        {...data, fromStage, toStage, ignoreChecklist: ignore}, complete);
+                else {
+                    this.moveEntityTo(entity, toStage, fromStage);
+                    entity.locked = false;
+                    complete && complete(true);
                 }
-            );
+            });
+        }, () => {
+            this.moveEntityTo(entity, toStage, fromStage);
+            entity.locked = false;
+            complete && complete(true);
+        });
     }
 
     private processLeadInternal(entity, data, complete) {
@@ -259,14 +308,48 @@ export class PipelineService {
                 orderStageId: data.orderStageId,
                 amount: data.amount,
                 comment: data.comment,
+                ignoreChecklist: data.ignoreChecklist
             })
         ).pipe(finalize(() => {
             entity.locked = false;
-            complete && complete(data);
+            complete && complete();
             (this.reuseService as CustomReuseStrategy).invalidate('orders');
         })).subscribe(() => {
             this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
+    }
+
+    private ignoreStageChecklist(stage: Stage, leadId: number, useLastData = false): Observable<boolean> {
+        if (useLastData && this.lastIgnoreChecklist$)
+            return this.lastIgnoreChecklist$;
+        else if (stage.checklistPoints && stage.checklistPoints.length && leadId)
+            return this.leadService.getStageChecklistPoints(
+                leadId
+            ).pipe(switchMap(stages => {
+                if (useLastData && this.lastIgnoreChecklist$)
+                    return this.lastIgnoreChecklist$;
+                else if (stages.every(item => item.isDone))
+                    return of(false);
+
+                let subject = new Subject<boolean>();
+                this.lastIgnoreChecklist$ = subject.asObservable();
+
+                this.message.confirm(
+                    this.ls.l('ChecklistConfirmationMessage'),
+                    isConfirmed => {
+                        this.lastIgnoreChecklist$ = undefined;
+                        if (isConfirmed)
+                            subject.next(true);
+                        else
+                            subject.error({});
+                        subject.complete();
+                    }
+                );
+
+                return this.lastIgnoreChecklist$;
+            }));
+        else
+            return of(false);
     }
 
     cancelLead(fromStage: Stage, toStage: Stage, entity, complete) {
