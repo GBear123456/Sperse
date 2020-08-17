@@ -1,6 +1,7 @@
-import { Injectable, OnDestroy, NgZone } from '@angular/core';
+import { Injectable, Injector, OnDestroy, NgZone } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class AppAuthService implements OnDestroy {
@@ -9,6 +10,7 @@ export class AppAuthService implements OnDestroy {
     private readonly REDIRECT_AUTH_DATA = 'AuthData';
 
     constructor(
+        private injector: Injector,
         private appLocalizationService: AppLocalizationService,
         private ngZone: NgZone = null,
     ) {}
@@ -18,16 +20,18 @@ export class AppAuthService implements OnDestroy {
             setTimeout(() => this.logout(reload, returnUrl), 500);
             return;
         }
-        this.stopTokenCheck();
-        abp.auth.clearToken();
-        abp.multiTenancy.setTenantIdCookie();
-        if (reload !== false) {
-            if (returnUrl) {
-                location.href = returnUrl;
-            } else {
-                location.href = AppConsts.appBaseUrl;
+        this.injector.get(TokenAuthServiceProxy).logOut().subscribe(() => {
+            this.stopTokenCheck();
+            abp.auth.clearToken();
+            abp.multiTenancy.setTenantIdCookie();
+            if (reload !== false) {
+                if (returnUrl) {
+                    location.href = returnUrl;
+                } else {
+                    location.href = AppConsts.appBaseUrl;
+                }
             }
-        }
+        });
     }
 
     getTopLevelDomain() {

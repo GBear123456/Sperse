@@ -12,7 +12,7 @@ import { Observable, from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 export class AppPreBootstrap {
-    static run(appRootUrl: string, callback: (sessionCallback?) => void, resolve: any, reject: any, router: Router): void {
+    static run(appAuthService: AppAuthService, callback: (sessionCallback?) => void, resolve: any, reject: any, router: Router): void {
         let abpAjax: any = abp.ajax;
         if (abpAjax.defaultError) {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
@@ -26,11 +26,11 @@ export class AppPreBootstrap {
         };
 
         abp.multiTenancy.setTenantIdCookie();
-        AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
+        AppPreBootstrap.getApplicationConfig(() => {
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
-                    new AppAuthService(null).logout();
+                    appAuthService.logout();
                 }
                 callback(() => router.navigate(['app/account/select-edition']));
             } else if (queryStringObj.secureId) {
@@ -68,13 +68,13 @@ export class AppPreBootstrap {
             ? appConfig.remoteServiceBaseUrl : location.origin;
     }
 
-    private static getApplicationConfig(appRootUrl: string, callback: () => void) {
+    private static getApplicationConfig(callback: () => void) {
         if (window['appconfig']) {
             AppPreBootstrap.updateAppConsts(window['appconfig']);
             callback();
         } else
             return $.ajax({
-                url: appRootUrl + 'assets/' + environment.appConfig,
+                url: AppConsts.appBaseHref + 'assets/' + environment.appConfig,
                 method: 'GET',
                 dataType: 'json'
             }).done(result => {

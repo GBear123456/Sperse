@@ -61,7 +61,7 @@ export function appInitializerFactory(
         handleLogoutRequest(appAuthService);
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
-            AppPreBootstrap.run(AppConsts.appBaseHref, (sessionCallback?) => {
+            AppPreBootstrap.run(appAuthService, (sessionCallback?) => {
                 appAuthService.startTokenCheck();
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
                 appSessionService.init().then(

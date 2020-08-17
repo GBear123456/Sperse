@@ -103,7 +103,6 @@ export class AppSessionService {
 
                 resolve(true);
             };
-
             let generalInfo = window['generalInfo'];
             if (generalInfo && generalInfo.loginInfo)
                 updateLoginInfo(generalInfo.loginInfo);
