@@ -22,6 +22,7 @@
         <div *dxTemplate="let cell of 'nameCell'" class="inplace-container">
             <inplace-edit
                 [id]="cell.value"
+                [maxLength]="50"
                 [value]="cell.value"
                 [isDeleteEnabled]="true"
                 [isEditModeEnabled]="!cell.value"
