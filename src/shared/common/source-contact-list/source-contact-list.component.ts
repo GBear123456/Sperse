@@ -37,7 +37,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     @ViewChild(StaticListComponent, { static: true }) sourceComponent: StaticListComponent;
     @ViewChild(OrganizationUnitsTreeComponent, { static: true }) orgUnitsComponent: OrganizationUnitsTreeComponent;
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
-    @Output() onDataLoaded: EventEmitter<SourceContactInfo[]> = new EventEmitter();
+    @Output() onDataLoaded: EventEmitter<SourceContact[]> = new EventEmitter();
     @Output() onOwnerFilterApply: EventEmitter<any> = new EventEmitter();
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Input() targetSelector = '#PartnersSource';
@@ -109,7 +109,8 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
                             suffix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
                             addition: person ?
                                 [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :
-                                (item.companyName ? this.ls.l('Company') : '')
+                                (item.companyName ? this.ls.l('Company') : ''),
+                            affiliateCode: item.affiliateCode
                         };
                     }));
                     this.changeDetectorRef.detectChanges();

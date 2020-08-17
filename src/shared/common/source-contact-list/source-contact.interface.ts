@@ -3,4 +3,5 @@ export interface SourceContact {
     name: string;
     suffix: string;
     addition: string;
+    affiliateCode: string;
 }

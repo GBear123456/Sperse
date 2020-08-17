@@ -36,6 +36,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 
 @Component({
     selector: 'lead-information',
@@ -77,7 +78,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     stages: any[];
     types: any[];
     sources: any[];
-    sourceContacts = [];
+    sourceContacts: SourceContact[] = [];
     sourceContactName: string;
     layoutColumns: any[] = [
         {
@@ -310,7 +311,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.sourceContactName = contact && contact.name;
     }
 
-    onSourceContactLoaded(contacts) {
+    onSourceContactLoaded(contacts: SourceContact[]) {
         this.sourceContacts = contacts;
         this.updateSourceContactName();
     }

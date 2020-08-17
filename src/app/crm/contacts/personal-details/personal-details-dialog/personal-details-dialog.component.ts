@@ -16,7 +16,7 @@ import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
-    LayoutType, ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto,
+    ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, SourceContactInfo
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -25,6 +25,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -76,7 +77,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     lastModificationInfo: ContactLastModificationInfoDto;
     userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
-    sourceContacts: SourceContactInfo[] = [];
+    sourceContacts: SourceContact[] = [];
 
     constructor(
         private clipboardService: ClipboardService,
@@ -155,7 +156,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    onSourceContactLoaded(contacts: SourceContactInfo[]) {
+    onSourceContactLoaded(contacts: SourceContact[]) {
         this.sourceContacts = contacts;
         this.updateSourceContactName();
     }

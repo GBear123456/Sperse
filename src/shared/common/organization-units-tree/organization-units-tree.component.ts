@@ -21,7 +21,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
-    selector: 'oranization-units-tree',
+    selector: 'organization-units-tree',
     templateUrl: './organization-units-tree.component.html',
     styleUrls: ['./organization-units-tree.component.less']
 })
