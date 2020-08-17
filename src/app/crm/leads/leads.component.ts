@@ -97,7 +97,6 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
@@ -117,7 +116,10 @@ import { MessageService } from '@abp/message/message.service';
 
 @Component({
     templateUrl: './leads.component.html',
-    styleUrls: ['./leads.component.less'],
+    styleUrls: [
+        '../shared/styles/grouped-action-menu.less',
+        './leads.component.less'
+    ],
     providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService, MapService],
     animations: [appModuleAnimation()]
 })
@@ -156,18 +158,84 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
     }
     actionEvent: any;
-    actionMenuItems: ActionMenuItem[] = [
+    actionMenuItems: any[] = [
         {
-            text: this.l('Edit'),
-            class: 'edit',
-            visible: true,
-            action: () => this.showLeadDetails({data: this.actionEvent})
+            key: '',
+            items: [
+                {
+                    text: this.l('Call'),
+                    class: 'call',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('SendEmail'),
+                    class: 'email',
+                    action: () => {
+                        this.contactService.showEmailDialog({
+                            contactId: (this.actionEvent.data || this.actionEvent).CustomerId
+                        }).subscribe();
+                    }
+                },
+            ]
         },
         {
-            text: this.l('LoginAsThisUser'),
-            class: 'login',
-            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-            action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
+            key: '',
+            items: [
+                {
+                    text: this.l('NotesAndCallLog'),
+                    class: 'notes',
+                    action: () => {
+                        this.showLeadDetails({ data: this.actionEvent }, 'notes');
+                    },
+                    button: {
+                        text: '+Add',
+                        action: () => {
+                            this.showLeadDetails({ data: this.actionEvent }, 'notes', {
+                                addNew: true
+                            });
+                        }
+                    }
+                },
+                {
+                    text: this.l('Appointment'),
+                    class: 'appointment',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('Orders'),
+                    class: 'orders',
+                    action: () => {
+                        this.showLeadDetails({ data: this.actionEvent }, 'invoices');
+                    }
+                },
+                {
+                    text: this.l('Notifications'),
+                    class: 'notifications',
+                    disabled: true,
+                    action: () => {}
+                }
+            ]
+        },
+        {
+            key: '',
+            items: [
+                {
+                    text: this.l('Delete'),
+                    class: 'delete',
+                    disabled: false,
+                    action: () => {
+                        this.deleteLeads([(this.actionEvent.data || this.actionEvent).Id]);
+                    }
+                },
+                {
+                    text: this.l('EditRow'),
+                    class: 'edit',
+                    visible: true,
+                    action: () => this.showLeadDetails({ data: this.actionEvent })
+                }
+            ]
         }
     ];
     contactGroups = Object.keys(ContactGroup)
@@ -1635,7 +1703,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    showLeadDetails(event) {
+    showLeadDetails(event, section?: string, queryParams?: Params) {
         const lead: LeadDto = event.data;
         let leadId = lead && lead.Id,
             clientId = lead && lead.CustomerId;
@@ -1648,8 +1716,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
             || this.dataGrid.instance.getDataSource(), event.loadMethod);
         setTimeout(() => {
-            this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
-                {queryParams: {referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType.value}});
+            this._router.navigate(
+                ['app/crm/contact', clientId, 'lead', leadId]
+                    .concat(orgId ? ['company', orgId] : [])
+                    .concat(section ? [ section ] : []),
+                    { queryParams: {
+                        referrer: 'app/crm/leads',
+                        dataLayoutType: this.dataLayoutType.value,
+                        ...queryParams
+                    }}
+                );
         });
     }
 
@@ -1696,8 +1772,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    deleteLeads() {
-        let selectedIds: number[] = this.selectedLeads.map(lead => lead.Id);
+    deleteLeads(leadIds?: number[]) {
+        let selectedIds: number[] = leadIds && leadIds ? leadIds : this.selectedLeads.map(lead => lead.Id);
         ContactsHelper.showConfirmMessage(this.l('LeadsDeleteWarningMessage'), this.l('ForceDelete'), (isConfirmed, forceDelete) => {
             if (isConfirmed) {
                 let request = this.getDeleteMethod(selectedIds, forceDelete);

@@ -21,6 +21,9 @@
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
                      [visible]="actionEvent"
+                     [grouped]="true"
+                     class="grouped-action-menu"
+                     width="300px"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <source-contact-list #sourceList

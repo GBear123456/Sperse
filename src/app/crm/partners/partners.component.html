@@ -19,6 +19,9 @@
     <div class="main-wrapper">
         <action-menu [items]="actionMenuItems"
                      [visible]="!!actionEvent"
+                     class="grouped-action-menu"
+                     width="300px"
+                     [grouped]="true"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <app-static-list #statusesList

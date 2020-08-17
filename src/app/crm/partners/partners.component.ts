@@ -26,7 +26,6 @@ import {
 import * as _ from 'underscore';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -97,7 +96,6 @@ import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
@@ -106,7 +104,6 @@ import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-in
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
-import { Param } from '@shared/common/odata/param.model';
 import { PartnerDto } from '@app/crm/partners/partner-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
@@ -115,7 +112,10 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './partners.component.html',
-    styleUrls: ['./partners.component.less'],
+    styleUrls: [
+        '../shared/styles/grouped-action-menu.less',
+        './partners.component.less'
+    ],
     animations: [appModuleAnimation()],
     providers: [
         ClientService,
@@ -174,18 +174,89 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private organizationUnits: OrganizationUnitDto[];
 
     actionEvent: any;
-    actionMenuItems: ActionMenuItem[] = [
+    actionMenuItems: any[] = [
         {
-            text: this.l('Edit'),
-            class: 'edit',
-            visible: true,
-            action: () => this.showPartnerDetails(this.actionEvent)
+            key: '',
+            items: [
+                {
+                    text: this.l('Call'),
+                    class: 'call',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('SendEmail'),
+                    class: 'email',
+                    action: () => {
+                        this.contactService.showEmailDialog({
+                            contactId: (this.actionEvent.data || this.actionEvent).Id
+                        }).subscribe();
+                    }
+                },
+            ]
         },
         {
-            text: this.l('LoginAsThisUser'),
-            class: 'login',
-            visible: this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-            action: () => this.impersonationService.impersonate(this.actionEvent.data.UserId, this.appSession.tenantId)
+            key: '',
+            items: [
+                {
+                    text: this.l('NotesAndCallLog'),
+                    class: 'notes',
+                    action: () => {
+                        this.showPartnerDetails(this.actionEvent, 'notes');
+                    },
+                    button: {
+                        text: '+Add',
+                        action: () => {
+                            this.showPartnerDetails(this.actionEvent, 'notes', {
+                                addNew: true
+                            });
+                        }
+                    }
+                },
+                {
+                    text: this.l('Appointment'),
+                    class: 'appointment',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('Orders'),
+                    class: 'orders',
+                    action: () => {
+                        this.showPartnerDetails(this.actionEvent, 'invoices');
+                    }
+                },
+                {
+                    text: this.l('Notifications'),
+                    class: 'notifications',
+                    disabled: true,
+                    action: () => {}
+                }
+            ]
+        },
+        {
+            key: '',
+            items: [
+                {
+                    text: this.l('Delete'),
+                    class: 'delete',
+                    disabled: false,
+                    action: () => {
+                        this.contactService.deleteContact(
+                            this.actionEvent.Name,
+                            ContactGroup.Client,
+                            this.actionEvent.Id,
+                            () => this.invalidate()
+                        );
+                    }
+                },
+                {
+                    text: this.l('EditRow'),
+                    class: 'edit',
+                    visible: true,
+                    action: () => this.showPartnerDetails(this.actionEvent)
+                }
+            ]
         }
     ];
 
@@ -703,7 +774,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(() => this.invalidate());
     }
 
-    showPartnerDetails(event) {
+    showPartnerDetails(event, section?: string, queryParams?: Params) {
         let partner: PartnerDto = event.data || event,
             orgId = partner.OrganizationId,
             partnerId = partner.Id;
@@ -714,8 +785,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
             this.searchClear = false;
             setTimeout(() => {
-                this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
-                { queryParams: { referrer: 'app/crm/partners'} });
+                this._router.navigate(
+                    ['app/crm/contact', partnerId]
+                        .concat(orgId ? ['company', orgId] : [])
+                        .concat(section ? [ section ] : []),
+                { queryParams: { referrer: 'app/crm/partners', ...queryParams } });
             });
         }
     }
@@ -1076,7 +1150,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     text: this.l('Delete'),
                                     disabled: this.selectedPartners.length != 1, // need update
                                     action: () => {
-                                        const client =  this.selectedPartners[0];
+                                        const client = this.selectedPartners[0];
                                         this.contactService.deleteContact(
                                             client.Name,
                                             ContactGroup.Client,

@@ -127,6 +127,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
     templateUrl: './clients.component.html',
     styleUrls: [
         '../shared/styles/client-status.less',
+        '../shared/styles/grouped-action-menu.less',
         './clients.component.less'
     ],
     animations: [appModuleAnimation()],
@@ -303,7 +304,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         this.showClientDetails(this.actionEvent, 'notes');
                     },
                     button: {
-                        text: '+' + 'Add',
+                        text: '+Add',
                         action: () => {
                             this.showClientDetails(this.actionEvent, 'notes', {
                                 addNew: true

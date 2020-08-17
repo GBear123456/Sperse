@@ -2,14 +2,12 @@
 import { Component, OnInit, Inject, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { finalize, first } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
-import { CrmStore, PipelinesStoreActions, PipelinesStoreSelectors } from '@app/crm/store';
 import { StageChecklistServiceProxy, LeadServiceProxy,
     UpdateLeadStagePointInput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -34,7 +32,6 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
         private notifyService: NotifyService,
         private checklistProxy: StageChecklistServiceProxy,
         private loadingService: LoadingService,
-        private store$: Store<CrmStore.State>,
         public dialogRef: MatDialogRef<EntityCheckListDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService
