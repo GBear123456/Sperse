@@ -991,7 +991,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (item.id == stage.id) {
                     item.checklistPoints = stage.checklistPoints;
                     return true;
-                }                
+                }
             });
             if (isUpdated)
                 this.refresh(stage.id);

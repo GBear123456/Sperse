@@ -67,6 +67,7 @@ export class PipelineService {
     compactView$: Observable<boolean> = this.compactView.asObservable();
     private lastIgnoreChecklist$: Observable<boolean>;
     private lastEntityData$: Observable<any>;
+    private pipelineObservables = {};
 
     constructor(
         injector: Injector,
@@ -92,34 +93,40 @@ export class PipelineService {
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId?: ContactGroup): Observable<PipelineDto> {
-        return this.store$.pipe(
-            select(PipelinesStoreSelectors.getSortedPipeline({
-                purpose: pipelinePurposeId,
-                contactGroupId: contactGroupId
-            })),
-            filter((pipelineDefinition: PipelineDto) => {
-                if (pipelineDefinition) {
-                    let oldDefinition = this.pipelineDefinitions[pipelinePurposeId];
-                    if (!oldDefinition || pipelineDefinition.stages.length != oldDefinition.stages.length) 
-                        return true;
-                    
-                    return pipelineDefinition.stages.some(stage => {
-                        let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
-                        return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder 
-                            || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
-                    });
-                }
-                return false;
-            }),
-            map((pipelineDefinition: PipelineDto) => {
-                this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                    (stage) => {
-                        return stage.sortOrder;
-                    });
-                return pipelineDefinition;
-            })
-        ) as Observable<PipelineDto>;
+        let pipeline = this.pipelineObservables[pipelinePurposeId];
+        if (pipeline && pipeline[contactGroupId])
+            return pipeline[contactGroupId];
+        else {
+            pipeline = this.pipelineObservables[pipelinePurposeId] = {};
+            return pipeline[contactGroupId] = this.store$.pipe(
+                select(PipelinesStoreSelectors.getSortedPipeline({
+                    purpose: pipelinePurposeId,
+                    contactGroupId: contactGroupId
+                })),
+                filter((pipelineDefinition: PipelineDto) => {
+                    if (pipelineDefinition) {
+                        let oldDefinition = this.pipelineDefinitions[pipelinePurposeId];
+                        if (!oldDefinition || pipelineDefinition.stages.length != oldDefinition.stages.length)
+                            return true;
+
+                        return pipelineDefinition.stages.some(stage => {
+                            let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
+                            return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder
+                                || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
+                        });
+                    }
+                    return false;
+                }),
+                map((pipelineDefinition: PipelineDto) => {
+                    this.pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                    pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
+                        (stage) => {
+                            return stage.sortOrder;
+                        });
+                    return pipelineDefinition;
+                }), publishReplay(), refCount()
+            ) as Observable<PipelineDto>;
+        }
     }
 
     getStages(pipelinePurposeId: string): StageDto[] {
