@@ -144,14 +144,14 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
             records = dataGridInstance.getVisibleRows(),
             fromData = records[event.fromIndex].data,
             toData = records[event.toIndex].data,
-            direction = fromData.sortOrder > toData.sortOrder ? 0.000000001 : -0.000000001;
+            moveDown = event.fromIndex < event.toIndex,
+            nextItem = records[event.toIndex + 1];
         fromData.sortOrder = toData.sortOrder;
-        toData.sortOrder = toData.sortOrder + direction;
+        toData.sortOrder = toData.sortOrder + (0.000000001 * [1, -1][Number(moveDown)]);
         dataGridInstance.refresh();
         this.checklistProxy.updatePointSortOrder(new UpdateStageChecklistPointSortOrderInput({
-            id: fromData.id,
-            sortOrder: this.dataSource.length ? (records[event.toIndex + 1] ?
-                records[event.toIndex + 1].data.sortOrder : toData.sortOrder + 1) : 0
+            sortOrder: moveDown ? (nextItem ? nextItem.data.sortOrder : fromData.sortOrder + 1) : fromData.sortOrder,
+            id: fromData.id
         })).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
