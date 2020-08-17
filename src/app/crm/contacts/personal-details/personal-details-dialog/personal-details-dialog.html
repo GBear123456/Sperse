@@ -35,34 +35,37 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div *ngIf="sourceContactName" class="field">
+                            <div *ngIf="sourceContact" class="field">
                                 <label>{{ ls.l('ReferralPartner') }}:</label>
                                 <div>
-                                    <div class="thumbnail"></div>
+                                    <div class="thumbnail">
+                                        <img [src]="getThumbnailSrc()"/>
+                                    </div>
                                     <div class="field-info">
-                                        <span>{{sourceContactName}}
-                                            <i *ngIf="sourceContactName"
-                                               class="save-to-clipboard"
-                                               (click)="saveToClipboard(sourceContactName)">
+                                        <span *ngIf="sourceContact.name">{{ sourceContact.name }}
+                                            <i class="save-to-clipboard"
+                                               (click)="saveToClipboard(sourceContact.name)">
                                             </i>
                                         </span>
-                                        <div *ngIf="sourceAffiliateCode" class="additional-info">
+                                        <div *ngIf="sourceContact.affiliateCode as affiliateCode" class="additional-info">
                                             <label>{{ ls.l('AffiliateCode') }}:</label>
-                                            <span>{{ sourceAffiliateCode }}</span>
+                                            <span>{{ affiliateCode }}</span>
                                         </div>
                                         <hr/>
                                     </div>
                                 </div>
                             </div>
-                            <div class="field">
+                            <div *ngIf="contactInfo?.assignedUserName as assignedUserName" class="field">
                                 <label>{{ ls.l('AssignedToRM') }}:</label>
                                 <div>
-                                    <div class="thumbnail"></div>
+                                    <div class="thumbnail">
+                                        <img [src]="getThumbnailSrc(contactInfo.assignedUserPicturePublicId)"/>
+                                    </div>
                                     <div class="field-info">
-                                        <span>{{contactInfo?.assignedUserName}}
-                                            <i *ngIf="contactInfo?.assignedUserName"
+                                        <span>{{assignedUserName}}
+                                            <i
                                                class="save-to-clipboard"
-                                               (click)="saveToClipboard(contactInfo?.assignedUserName)">
+                                               (click)="saveToClipboard(assignedUserName)">
                                             </i>
                                         </span>
                                         <hr/>
@@ -72,13 +75,14 @@
                             <div class="field">
                                 <label>{{ ls.l('CreatedBy') }}:</label>
                                 <div>
-                                    <div class="thumbnail"></div>
+                                    <div class="thumbnail">
+                                        <img [src]="getThumbnailSrc(contactInfo?.creatorUserPicturePublicId)"/>
+                                    </div>
                                     <div class="field-info">
-                                        <span>
-                                            {{contactInfo?.creatorUserName}}
-                                            <i *ngIf="contactInfo?.creatorUserName"
-                                               class="save-to-clipboard"
-                                               (click)="saveToClipboard(contactInfo?.creatorUserName)">
+                                        <span *ngIf="contactInfo?.creatorUserName as creatorUserName">
+                                            {{creatorUserName}}
+                                            <i class="save-to-clipboard"
+                                               (click)="saveToClipboard(creatorUserName)">
                                             </i>
                                         </span>
                                         <div class="additional-info">
@@ -91,20 +95,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field" *ngIf="contactInfo?.lastModifierUserName as lastModifierUserName">
+                            <div class="field" *ngIf="lastModificationInfo.userId">
                                 <label>{{ ls.l('LastUpdatedBy') }}:</label>
                                 <div>
-                                    <div class="thumbnail"></div>
+                                    <div class="thumbnail">
+                                        <img [src]="getThumbnailSrc(lastModificationInfo.photoPublicId)"/>
+                                    </div>
                                     <div class="field-info">
-                                        <span>{{lastModifierUserName}}
-                                            <i *ngIf="lastModifierUserName"
-                                                  class="save-to-clipboard"
-                                                  (click)="saveToClipboard(lastModifierUserName)">
+                                        <span *ngIf="lastModificationInfo.userName">{{lastModificationInfo.userName}}
+                                            <i class="save-to-clipboard"
+                                               (click)="saveToClipboard(lastModificationInfo.userName)">
                                             </i>
                                         </span>
-                                        <div class="additional-info">
-                                            <span class="date-ago">({{contactInfo?.lastModificationTime | timeAgo}})</span>
-                                            <span>on {{contactInfo?.lastModificationTime | date: formatting.dateTime : userTimezone}}</span>
+                                        <div *ngIf="lastModificationInfo.date as lastModificationTime" class="additional-info">
+                                            <span>on {{lastModificationTime | date: formatting.dateTime : userTimezone}} </span>
+                                            <span class="date-ago">({{lastModificationTime | timeAgo}})</span>
                                         </div>
                                     </div>
                                 </div>

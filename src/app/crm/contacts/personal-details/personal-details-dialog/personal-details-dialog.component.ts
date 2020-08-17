@@ -26,6 +26,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -38,8 +39,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     leadInfo: LeadInfoDto;
     stageColor: string;
     configMode: boolean;
-    sourceContactName: string;
-    sourceAffiliateCode: string;
+    sourceContact: SourceContact;
     overviewPanelSetting = {
         clientScores: true,
         totalApproved: true,
@@ -88,6 +88,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private elementRef: ElementRef,
         private contactsService: ContactsService,
         private pipelineService: PipelineService,
+        private profileService: ProfileService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -164,8 +165,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     updateSourceContactName() {
         let contact = this.sourceContacts.find(item =>
             item.id == (this.leadInfo && this.leadInfo.sourceContactId));
-        this.sourceContactName = contact && contact.name;
-        this.sourceAffiliateCode = contact && contact.affiliateCode;
+        this.sourceContact = contact;
     }
 
     getTabContentHeight() {
@@ -285,6 +285,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     close() {
         this.dialogRef.close(true);
+    }
+
+    getThumbnailSrc(thumbnailId?: string) {
+        return this.profileService.getProfilePictureUrl(thumbnailId);
     }
 
     ngOnDestroy() {
