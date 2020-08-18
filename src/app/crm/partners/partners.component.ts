@@ -216,7 +216,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         this.showPartnerDetails(this.actionEvent, 'notes');
                     },
                     button: {
-                        text: '+Add',
+                        text: '+' + this.l('Add'),
                         action: () => {
                             this.showPartnerDetails(this.actionEvent, 'notes', {
                                 addNew: true

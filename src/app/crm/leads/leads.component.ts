@@ -203,7 +203,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.showLeadDetails({ data: this.actionEvent }, 'notes');
                     },
                     button: {
-                        text: '+Add',
+                        text: '+' + this.l('Add'),
                         action: () => {
                             this.showLeadDetails({ data: this.actionEvent }, 'notes', {
                                 addNew: true
@@ -1802,20 +1802,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     deleteLeads(leadIds?: number[]) {
-        let selectedIds: number[] = leadIds && leadIds ? leadIds : this.selectedLeads.map(lead => lead.Id);
-        ContactsHelper.showConfirmMessage(this.l('LeadsDeleteWarningMessage'), this.l('ForceDelete'), (isConfirmed, forceDelete) => {
-            if (isConfirmed) {
-                let request = this.getDeleteMethod(selectedIds, forceDelete);
-                request.subscribe(() => {
-                    this.refresh();
-                    if (this.dataGrid && this.dataGrid.instance) {
-                        this.dataGrid.instance.deselectAll();
-                        this.selectedClientKeys = [];
-                    }
-                    this.notify.success(this.l('SuccessfullyDeleted'));
-                });
-            }
-        },
+        let selectedIds: number[] = leadIds || this.selectedLeads.map(lead => lead.Id);
+        ContactsHelper.showConfirmMessage(
+            this.l('LeadsDeleteWarningMessage'),
+            this.l('ForceDelete'),
+            (isConfirmed: boolean, forceDelete: boolean) => {
+                if (isConfirmed) {
+                    let request = this.getDeleteMethod(selectedIds, forceDelete);
+                    request.subscribe(() => {
+                        this.refresh();
+                        if (this.dataGrid && this.dataGrid.instance) {
+                            this.dataGrid.instance.deselectAll();
+                            this.selectedClientKeys = [];
+                        }
+                        this.notify.success(this.l('SuccessfullyDeleted'));
+                    });
+                }
+            },
         this.permission.isGranted(AppPermissions.CRMForceDeleteEntites));
     }
 
