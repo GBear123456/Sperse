@@ -1,7 +1,6 @@
 <source-contact-list
     [leadId]="leadInfo?.id"
-    [selectedKey]="leadInfo?.sourceContactId"
-    (onDataLoaded)="onSourceContactLoaded($event)">
+    [selectedKey]="leadInfo?.sourceContactId">
 </source-contact-list>
 <h2 mat-dialog-title>{{ls.l('Personal Settings')}}<span class="close" (click)="close()"></span></h2>
 <mat-dialog-content>
@@ -35,19 +34,19 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div *ngIf="sourceContact" class="field">
+                            <div *ngIf="leadInfo?.sourceContactId" class="field">
                                 <label>{{ ls.l('PersonalSettings.Contact') }}:</label>
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc()"/>
+                                        <img [src]="getThumbnailSrc(leadInfo.sourceContactPhotoPublicId)"/>
                                     </div>
                                     <div class="field-info">
-                                        <span *ngIf="sourceContact.name">{{ sourceContact.name }}
+                                        <span *ngIf="leadInfo.sourceContactName">{{ leadInfo.sourceContactName }}
                                             <i class="save-to-clipboard"
-                                               (click)="saveToClipboard(sourceContact.name)">
+                                               (click)="saveToClipboard(leadInfo.sourceContactName)">
                                             </i>
                                         </span>
-                                        <div *ngIf="sourceContact.affiliateCode as affiliateCode" class="additional-info">
+                                        <div *ngIf="leadInfo.sourceContactAffiliateCode as affiliateCode" class="additional-info">
                                             <label>{{ ls.l('AffiliateCode') }}:</label>
                                             <span>{{ affiliateCode }}</span>
                                         </div>
@@ -152,7 +151,7 @@
                                 </inplace-edit>
                             </div>
                             <ng-container *ngFor="let n of [1,2,3,4,5]">
-                                <div class="field" *ngIf="isLayoutTypeBankCode || isLayoutTypeRapid || contactInfo?.personContactInfo['customField' + n]">
+                                <div class="field">
                                     <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
                                     <inplace-edit [id]="'Contact_CustomField' + n"
                                                   lEntityName="Name"
@@ -163,7 +162,7 @@
                                                   [isDeleteEnabled]="true"
                                                   [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
                                                   [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                                  [isReadOnlyField]="!isLayoutTypeRapid || !permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                                  [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
                                                   (valueChanged)="updateCustomField($event, 'customField' + n)"
                                                   (itemDeleted)="updateCustomField(null, 'customField' + n)">
                                     </inplace-edit>
