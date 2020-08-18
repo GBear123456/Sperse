@@ -36,7 +36,7 @@
                                 <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <div *ngIf="sourceContact" class="field">
-                                <label>{{ ls.l('ReferralPartner') }}:</label>
+                                <label>{{ ls.l('PersonalSettings.Contact') }}:</label>
                                 <div>
                                     <div class="thumbnail">
                                         <img [src]="getThumbnailSrc()"/>
@@ -56,7 +56,7 @@
                                 </div>
                             </div>
                             <div *ngIf="contactInfo?.assignedUserName as assignedUserName" class="field">
-                                <label>{{ ls.l('AssignedToRM') }}:</label>
+                                <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                                 <div>
                                     <div class="thumbnail">
                                         <img [src]="getThumbnailSrc(contactInfo.assignedUserPicturePublicId)"/>
@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field" *ngIf="lastModificationInfo.userId">
+                            <div class="field" *ngIf="lastModificationInfo?.userId">
                                 <label>{{ ls.l('LastUpdatedBy') }}:</label>
                                 <div>
                                     <div class="thumbnail">
