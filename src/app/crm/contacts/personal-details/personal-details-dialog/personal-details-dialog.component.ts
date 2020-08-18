@@ -127,7 +127,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.ls.l('Post-sale Checklist'), this.checklistOrderDataSource, []);
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
                 this.leadProxy.getStageChecklistPoints(
-                    leadInfo.id
+                    leadInfo.id, null
                 ).subscribe(checklist => {
                     this.initChecklistDataSource(AppConsts.PipelinePurposeIds.lead,
                         this.ls.l('Pre-sale Checklist'), this.checklistLeadDataSource, checklist);
