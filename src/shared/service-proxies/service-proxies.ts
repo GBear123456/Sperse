@@ -59754,6 +59754,8 @@ export class LeadInfoDto implements ILeadInfoDto {
     entryUrl!: string | undefined;
     primaryLeadRequestId!: number | undefined;
     sourceContactId!: number | undefined;
+    sourceContactName!: string | undefined;
+    sourceContactAffiliateCode!: string | undefined;
     sourceContactPhotoPublicId!: string | undefined;
     sourceOrganizationUnitId!: number | undefined;
     customField1!: string | undefined;
@@ -59795,6 +59797,8 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.entryUrl = data["entryUrl"];
             this.primaryLeadRequestId = data["primaryLeadRequestId"];
             this.sourceContactId = data["sourceContactId"];
+            this.sourceContactName = data["sourceContactName"];
+            this.sourceContactAffiliateCode = data["sourceContactAffiliateCode"];
             this.sourceContactPhotoPublicId = data["sourceContactPhotoPublicId"];
             this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
             this.customField1 = data["customField1"];
@@ -59836,6 +59840,8 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["entryUrl"] = this.entryUrl;
         data["primaryLeadRequestId"] = this.primaryLeadRequestId;
         data["sourceContactId"] = this.sourceContactId;
+        data["sourceContactName"] = this.sourceContactName;
+        data["sourceContactAffiliateCode"] = this.sourceContactAffiliateCode;
         data["sourceContactPhotoPublicId"] = this.sourceContactPhotoPublicId;
         data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
         data["customField1"] = this.customField1;
@@ -59870,6 +59876,8 @@ export interface ILeadInfoDto {
     entryUrl: string | undefined;
     primaryLeadRequestId: number | undefined;
     sourceContactId: number | undefined;
+    sourceContactName: string | undefined;
+    sourceContactAffiliateCode: string | undefined;
     sourceContactPhotoPublicId: string | undefined;
     sourceOrganizationUnitId: number | undefined;
     customField1: string | undefined;
