@@ -63696,6 +63696,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
     orderId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IUpdateOrderStageInfo) {
         if (data) {
@@ -63711,6 +63712,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
             this.orderId = data["orderId"];
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -63726,6 +63728,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
         data["orderId"] = this.orderId;
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -63734,12 +63737,14 @@ export interface IUpdateOrderStageInfo {
     orderId: number;
     stageId: number;
     sortOrder: number | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class ProcessOrderInfo implements IProcessOrderInfo {
     id!: number;
     sortOrder!: number | undefined;
     stageId!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IProcessOrderInfo) {
         if (data) {
@@ -63755,6 +63760,7 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
             this.id = data["id"];
             this.sortOrder = data["sortOrder"];
             this.stageId = data["stageId"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -63770,6 +63776,7 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
         data["id"] = this.id;
         data["sortOrder"] = this.sortOrder;
         data["stageId"] = this.stageId;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -63778,6 +63785,7 @@ export interface IProcessOrderInfo {
     id: number;
     sortOrder: number | undefined;
     stageId: number | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class CancelOrderInfo implements ICancelOrderInfo {
