@@ -7394,61 +7394,6 @@ export class CommonUserInfoServiceProxy {
         }
         return _observableOf<string>(<any>null);
     }
-
-    /**
-     * @contactId (optional) 
-     * @return Success
-     */
-    getRapidToken(contactId: number | null | undefined): Observable<GetRapidTokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/CommonUserInfo/GetRapidToken?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetRapidToken(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetRapidToken(<any>response_);
-                } catch (e) {
-                    return <Observable<GetRapidTokenOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetRapidTokenOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetRapidToken(response: HttpResponseBase): Observable<GetRapidTokenOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetRapidTokenOutput.fromJS(resultData200) : new GetRapidTokenOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetRapidTokenOutput>(<any>null);
-    }
 }
 
 @Injectable()
@@ -21664,6 +21609,77 @@ export class OrderServiceProxy {
     }
 
     /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @hasUserAccount (optional) 
+     * @exceptUserIds (optional) 
+     * @excludeSubContacts (optional) 
+     * @return Success
+     */
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (hasUserAccount !== undefined)
+            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
+        if (exceptUserIds !== undefined)
+            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
+        if (excludeSubContacts !== undefined)
+            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllByPhrase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllByPhrase(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityContactInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityContactInfo[]>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @return Success
      */
@@ -21720,6 +21736,65 @@ export class OrderServiceProxy {
             }));
         }
         return _observableOf<OrderHistoryInfo[]>(<any>null);
+    }
+
+    /**
+     * @orderId (optional) 
+     * @return Success
+     */
+    getStageChecklistPoints(orderId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/GetStageChecklistPoints?";
+        if (orderId !== undefined)
+            url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStageChecklistPoints(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStageChecklistPoints(<any>response_);
+                } catch (e) {
+                    return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StageChecklistPointInfoOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStageChecklistPoints(response: HttpResponseBase): Observable<StageChecklistPointInfoOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(StageChecklistPointInfoOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
     }
 
     /**
@@ -21808,6 +21883,58 @@ export class OrderServiceProxy {
     }
 
     protected processUpdateStage(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateStagePoint(body: UpdateOrderStagePointInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/UpdateStagePoint";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateStagePoint(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateStagePoint(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateStagePoint(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21928,77 +22055,6 @@ export class OrderServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @searchPhrase (optional) 
-     * @topCount (optional) 
-     * @hasUserAccount (optional) 
-     * @exceptUserIds (optional) 
-     * @excludeSubContacts (optional) 
-     * @return Success
-     */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
-        if (searchPhrase !== undefined)
-            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
-        if (topCount !== undefined)
-            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
-        if (hasUserAccount !== undefined)
-            url_ += "HasUserAccount=" + encodeURIComponent("" + hasUserAccount) + "&"; 
-        if (exceptUserIds !== undefined)
-            exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
-        if (excludeSubContacts !== undefined)
-            url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllByPhrase(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAllByPhrase(<any>response_);
-                } catch (e) {
-                    return <Observable<EntityContactInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<EntityContactInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetAllByPhrase(response: HttpResponseBase): Observable<EntityContactInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(EntityContactInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<EntityContactInfo[]>(<any>null);
     }
 
     /**
@@ -25488,6 +25544,125 @@ export class QuestionnaireServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class RapidServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTokenForCurrentUser(): Observable<GetRapidTokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetTokenForCurrentUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTokenForCurrentUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTokenForCurrentUser(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRapidTokenOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRapidTokenOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTokenForCurrentUser(response: HttpResponseBase): Observable<GetRapidTokenOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRapidTokenOutput.fromJS(resultData200) : new GetRapidTokenOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRapidTokenOutput>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getTokenForContact(contactId: number | null | undefined): Observable<GetRapidTokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetTokenForContact?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTokenForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTokenForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRapidTokenOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRapidTokenOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTokenForContact(response: HttpResponseBase): Observable<GetRapidTokenOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRapidTokenOutput.fromJS(resultData200) : new GetRapidTokenOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRapidTokenOutput>(<any>null);
     }
 }
 
@@ -44673,46 +44848,6 @@ export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
 }
 
-export class GetRapidTokenOutput implements IGetRapidTokenOutput {
-    token!: string | undefined;
-    expirationDate!: moment.Moment | undefined;
-
-    constructor(data?: IGetRapidTokenOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.token = data["token"];
-            this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): GetRapidTokenOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetRapidTokenOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IGetRapidTokenOutput {
-    token: string | undefined;
-    expirationDate: moment.Moment | undefined;
-}
-
 export enum MaritalStatus {
     Single = "Single", 
     Married = "Married", 
@@ -59754,6 +59889,8 @@ export class LeadInfoDto implements ILeadInfoDto {
     entryUrl!: string | undefined;
     primaryLeadRequestId!: number | undefined;
     sourceContactId!: number | undefined;
+    sourceContactName!: string | undefined;
+    sourceContactAffiliateCode!: string | undefined;
     sourceContactPhotoPublicId!: string | undefined;
     sourceOrganizationUnitId!: number | undefined;
     customField1!: string | undefined;
@@ -59795,6 +59932,8 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.entryUrl = data["entryUrl"];
             this.primaryLeadRequestId = data["primaryLeadRequestId"];
             this.sourceContactId = data["sourceContactId"];
+            this.sourceContactName = data["sourceContactName"];
+            this.sourceContactAffiliateCode = data["sourceContactAffiliateCode"];
             this.sourceContactPhotoPublicId = data["sourceContactPhotoPublicId"];
             this.sourceOrganizationUnitId = data["sourceOrganizationUnitId"];
             this.customField1 = data["customField1"];
@@ -59836,6 +59975,8 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["entryUrl"] = this.entryUrl;
         data["primaryLeadRequestId"] = this.primaryLeadRequestId;
         data["sourceContactId"] = this.sourceContactId;
+        data["sourceContactName"] = this.sourceContactName;
+        data["sourceContactAffiliateCode"] = this.sourceContactAffiliateCode;
         data["sourceContactPhotoPublicId"] = this.sourceContactPhotoPublicId;
         data["sourceOrganizationUnitId"] = this.sourceOrganizationUnitId;
         data["customField1"] = this.customField1;
@@ -59870,6 +60011,8 @@ export interface ILeadInfoDto {
     entryUrl: string | undefined;
     primaryLeadRequestId: number | undefined;
     sourceContactId: number | undefined;
+    sourceContactName: string | undefined;
+    sourceContactAffiliateCode: string | undefined;
     sourceContactPhotoPublicId: string | undefined;
     sourceOrganizationUnitId: number | undefined;
     customField1: string | undefined;
@@ -63696,6 +63839,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
     orderId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IUpdateOrderStageInfo) {
         if (data) {
@@ -63711,6 +63855,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
             this.orderId = data["orderId"];
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -63726,6 +63871,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
         data["orderId"] = this.orderId;
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -63734,12 +63880,58 @@ export interface IUpdateOrderStageInfo {
     orderId: number;
     stageId: number;
     sortOrder: number | undefined;
+    ignoreChecklist: boolean | undefined;
+}
+
+export class UpdateOrderStagePointInput implements IUpdateOrderStagePointInput {
+    orderId!: number;
+    pointId!: number;
+    isDone!: boolean;
+
+    constructor(data?: IUpdateOrderStagePointInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderId = data["orderId"];
+            this.pointId = data["pointId"];
+            this.isDone = data["isDone"];
+        }
+    }
+
+    static fromJS(data: any): UpdateOrderStagePointInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrderStagePointInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
+        data["pointId"] = this.pointId;
+        data["isDone"] = this.isDone;
+        return data; 
+    }
+}
+
+export interface IUpdateOrderStagePointInput {
+    orderId: number;
+    pointId: number;
+    isDone: boolean;
 }
 
 export class ProcessOrderInfo implements IProcessOrderInfo {
     id!: number;
     sortOrder!: number | undefined;
     stageId!: number | undefined;
+    ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IProcessOrderInfo) {
         if (data) {
@@ -63755,6 +63947,7 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
             this.id = data["id"];
             this.sortOrder = data["sortOrder"];
             this.stageId = data["stageId"];
+            this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
 
@@ -63770,6 +63963,7 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
         data["id"] = this.id;
         data["sortOrder"] = this.sortOrder;
         data["stageId"] = this.stageId;
+        data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
 }
@@ -63778,6 +63972,7 @@ export interface IProcessOrderInfo {
     id: number;
     sortOrder: number | undefined;
     stageId: number | undefined;
+    ignoreChecklist: boolean | undefined;
 }
 
 export class CancelOrderInfo implements ICancelOrderInfo {
@@ -67613,6 +67808,46 @@ export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersD
 export interface ISubmitQuestionsAndAnswersDto {
     questionnaire: SubmitQuestionnaireDto | undefined;
     questionsAndAnswers: SubmitQuestionAndAnswersDto[] | undefined;
+}
+
+export class GetRapidTokenOutput implements IGetRapidTokenOutput {
+    token!: string | undefined;
+    expirationDate!: moment.Moment | undefined;
+
+    constructor(data?: IGetRapidTokenOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.token = data["token"];
+            this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetRapidTokenOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRapidTokenOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetRapidTokenOutput {
+    token: string | undefined;
+    expirationDate: moment.Moment | undefined;
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {

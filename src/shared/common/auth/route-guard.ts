@@ -91,12 +91,14 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 return 'app/' + lastModuleName;
         }
 
-        if (tenant && tenant.customLayoutType == LayoutType.BankCode) {
+        if (tenant && (tenant.customLayoutType == LayoutType.BankCode || tenant.customLayoutType == LayoutType.Rapid)) {
             if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
                 this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.appMemberPortalUrl;
-            } else
-                return '/code-breaker';
+            } else {
+                if (tenant.customLayoutType == LayoutType.BankCode)
+                    return '/code-breaker';
+            }
         }
 
         if ((!preferedModule || preferedModule == 'CRM') && this.feature.isEnabled(AppFeatures.CRM) && this.permissionChecker.isGranted(AppPermissions.CRM))
