@@ -324,7 +324,8 @@ export class PipelineService {
             return this.lastIgnoreChecklist$;
         else if (stage.checklistPoints && stage.checklistPoints.length && leadId)
             return this.leadService.getStageChecklistPoints(
-                leadId
+                leadId,
+                undefined
             ).pipe(switchMap(stages => {
                 if (useLastData && this.lastIgnoreChecklist$)
                     return this.lastIgnoreChecklist$;

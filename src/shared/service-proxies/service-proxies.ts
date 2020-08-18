@@ -19242,13 +19242,17 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @leadId (optional) 
+     * @stageIds (optional) 
      * @return Success
      */
-    getStageChecklistPoints(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+    getStageChecklistPoints(leadId: number, stageIds: number[] | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetStageChecklistPoints?";
-        if (leadId !== undefined)
-            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+        if (leadId === undefined || leadId === null)
+            throw new Error("The parameter 'leadId' must be defined and cannot be null.");
+        else
+            url_ += "LeadId=" + encodeURIComponent("" + leadId) + "&"; 
+        if (stageIds !== undefined)
+            stageIds && stageIds.forEach(item => { url_ += "StageIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21739,13 +21743,17 @@ export class OrderServiceProxy {
     }
 
     /**
-     * @orderId (optional) 
+     * @stageIds (optional) 
      * @return Success
      */
-    getStageChecklistPoints(orderId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+    getStageChecklistPoints(orderId: number, stageIds: number[] | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetStageChecklistPoints?";
-        if (orderId !== undefined)
-            url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
+        if (orderId === undefined || orderId === null)
+            throw new Error("The parameter 'orderId' must be defined and cannot be null.");
+        else
+            url_ += "OrderId=" + encodeURIComponent("" + orderId) + "&"; 
+        if (stageIds !== undefined)
+            stageIds && stageIds.forEach(item => { url_ += "StageIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
