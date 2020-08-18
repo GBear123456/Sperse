@@ -312,7 +312,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         this.showClientDetails(this.actionEvent, 'notes');
                     },
                     button: {
-                        text: '+Add',
+                        text: '+' + this.l('Add'),
                         action: () => {
                             this.showClientDetails(this.actionEvent, 'notes', {
                                 addNew: true

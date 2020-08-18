@@ -19242,13 +19242,17 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @leadId (optional) 
+     * @stageIds (optional) 
      * @return Success
      */
-    getStageChecklistPoints(leadId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+    getStageChecklistPoints(leadId: number, stageIds: number[] | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetStageChecklistPoints?";
-        if (leadId !== undefined)
-            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+        if (leadId === undefined || leadId === null)
+            throw new Error("The parameter 'leadId' must be defined and cannot be null.");
+        else
+            url_ += "LeadId=" + encodeURIComponent("" + leadId) + "&"; 
+        if (stageIds !== undefined)
+            stageIds && stageIds.forEach(item => { url_ += "StageIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21739,13 +21743,17 @@ export class OrderServiceProxy {
     }
 
     /**
-     * @orderId (optional) 
+     * @stageIds (optional) 
      * @return Success
      */
-    getStageChecklistPoints(orderId: number | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
+    getStageChecklistPoints(orderId: number, stageIds: number[] | null | undefined): Observable<StageChecklistPointInfoOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetStageChecklistPoints?";
-        if (orderId !== undefined)
-            url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
+        if (orderId === undefined || orderId === null)
+            throw new Error("The parameter 'orderId' must be defined and cannot be null.");
+        else
+            url_ += "OrderId=" + encodeURIComponent("" + orderId) + "&"; 
+        if (stageIds !== undefined)
+            stageIds && stageIds.forEach(item => { url_ += "StageIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -27408,6 +27416,65 @@ export class StageChecklistServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @stageId (optional) 
+     * @return Success
+     */
+    getPoints(stageId: number | null | undefined): Observable<StageChecklistPointDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/StageChecklist/GetPoints?";
+        if (stageId !== undefined)
+            url_ += "stageId=" + encodeURIComponent("" + stageId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPoints(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPoints(<any>response_);
+                } catch (e) {
+                    return <Observable<StageChecklistPointDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StageChecklistPointDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPoints(response: HttpResponseBase): Observable<StageChecklistPointDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(StageChecklistPointDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StageChecklistPointDto[]>(<any>null);
     }
 
     /**
@@ -60301,6 +60368,7 @@ export interface IUpdateLeadSourceOrganizationUnitsInput {
 }
 
 export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
+    stageId!: number | undefined;
     id!: number | undefined;
     name!: string | undefined;
     sortOrder!: number | undefined;
@@ -60319,6 +60387,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 
     init(data?: any) {
         if (data) {
+            this.stageId = data["stageId"];
             this.id = data["id"];
             this.name = data["name"];
             this.sortOrder = data["sortOrder"];
@@ -60337,6 +60406,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["stageId"] = this.stageId;
         data["id"] = this.id;
         data["name"] = this.name;
         data["sortOrder"] = this.sortOrder;
@@ -60348,6 +60418,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 }
 
 export interface IStageChecklistPointInfoOutput {
+    stageId: number | undefined;
     id: number | undefined;
     name: string | undefined;
     sortOrder: number | undefined;

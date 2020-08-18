@@ -66,7 +66,8 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
     loadData() {
         this.startLoading();
         this.leadProxy.getStageChecklistPoints(
-            this.data.entity.Id
+            this.data.entity.Id,
+            undefined
         ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(res => {
