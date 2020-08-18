@@ -55,23 +55,35 @@
                             </a>
                         </li>
                         <li class="list-group-item" [hidden]="stage.isFinal">
-                            <a (click)="updateStage(stage, 'Add')" [ngClass]="{disabled: !isConfigureAllowed}"><i class="add-stage"></i> <span>{{l('Add_New_Stage')}}</span></a>
+                            <a (click)="updateStage(stage, 'Add')" [ngClass]="{disabled: !isConfigureAllowed}">
+                                <i class="add-stage"></i> <span>{{l('Add_New_Stage')}}</span>
+                            </a>
                         </li>
                         <li class="list-group-item">
-                            <a (click)="updateStage(stage, 'Rename')" [ngClass]="{disabled: !isConfigureAllowed}"><i class="edit-stage"></i> <span>{{l('Rename_Stage')}}</span></a>
+                            <a (click)="updateStage(stage, 'Rename')" [ngClass]="{disabled: !isConfigureAllowed}">
+                                <i class="edit-stage"></i> <span>{{l('Rename_Stage')}}</span>
+                            </a>
                         </li>
                         <li class="list-group-item" [hidden]="disallowDelete(stage)">
-                            <a (click)="updateStage(stage, 'Merge')" [ngClass]="{disabled: !isConfigureAllowed}"><i class="delete-stage"></i> <span>{{l('Delete_Stage')}}</span></a>
+                            <a (click)="updateStage(stage, 'Merge')" [ngClass]="{disabled: !isConfigureAllowed}">
+                                <i class="delete-stage"></i> <span>{{l('Delete_Stage')}}</span>
+                            </a>
                         </li>
                         <ng-container *ngIf="isLeadPipeline && !stage.isFinal">
                             <hr>    
                             <li class="list-group-item">
-                                <a (click)="showChecklistConfigDialog(stage)" [ngClass]="{disabled: !isConfigureAllowed}"><i class="check-list-stage"></i> <span>{{l('CheckList_Stage')}}</span></a>
+                                <a (click)="showChecklistConfigDialog(stage)" [ngClass]="{disabled: !isConfigureAllowed}">
+                                    <i class="check-list-stage"></i> <span>{{l('CheckList_Stage')}}</span>
+                                </a>
                             </li>
                         </ng-container>
                         <li class="list-group-item">
-                            <a (click)="moveStage(stage, false)" [ngClass]="{disabled: disallowMove(stage)}"><i class="left-arrow"></i> <span>{{l('Move_Left_Stage')}}</span></a>
-                            <a (click)="moveStage(stage, true)" [ngClass]="{disabled: disallowMove(stage, true)}"><span>{{l('Move_Right_Stage')}}</span> <i class="right-arrow"></i></a>
+                            <a (click)="moveStage(stage, false)" [ngClass]="{disabled: disallowMove(stage)}">
+                                <i class="left-arrow"></i> <span>{{l('Move_Left_Stage')}}</span>
+                            </a>
+                            <a (click)="moveStage(stage, true)" [ngClass]="{disabled: disallowMove(stage, true)}">
+                                <span>{{l('Move_Right_Stage')}}</span> <i class="right-arrow"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>

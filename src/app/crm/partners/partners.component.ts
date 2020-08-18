@@ -109,6 +109,7 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -141,7 +142,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
-    private readonly MENU_LOGIN_INDEX = 1;
     private isSlice = this.appService.getModule() === 'slice';
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
@@ -174,9 +174,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private organizationUnits: OrganizationUnitDto[];
 
     actionEvent: any;
-    actionMenuItems: any[] = [
+    actionMenuGroups: ActionMenuGroup[] = [
         {
             key: '',
+            visible: true,
             items: [
                 {
                     text: this.l('Call'),
@@ -197,7 +198,17 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         },
         {
             key: '',
+            visible: true,
             items: [
+                {
+                    text: this.l('LoginAsThisUser'),
+                    class: 'login',
+                    checkVisible: (partner: PartnerDto) => !!partner.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+                    action: () => {
+                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
+                        this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
+                    }
+                },
                 {
                     text: this.l('NotesAndCallLog'),
                     class: 'notes',
@@ -236,6 +247,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         },
         {
             key: '',
+            visible: true,
             items: [
                 {
                     text: this.l('Delete'),
@@ -253,7 +265,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
-                    visible: true,
                     action: () => this.showPartnerDetails(this.actionEvent)
                 }
             ]
@@ -499,7 +510,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.partnerFields.Id,
                     this.partnerFields.OrganizationId,
                     this.partnerFields.Email,
-                    this.partnerFields.Phone
+                    this.partnerFields.Phone,
+                    this.partnerFields.UserId
                 ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1585,8 +1597,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     toggleActionsMenu(event) {
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
-            this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(event.data.UserId)
-                && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+            const partner: PartnerDto = event.data;
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, partner);
             this.actionEvent = actionRecord;
         });
     }

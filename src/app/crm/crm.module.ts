@@ -88,6 +88,7 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { ListsModule } from '../shared/common/lists/lists.module';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 
 @NgModule({
     imports: [
@@ -165,7 +166,8 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
         BankSettingsDialogComponent,
         CrmIntroComponent,
         ActivityComponent,
-        TypesDropdownComponent
+        TypesDropdownComponent,
+        EntityCheckListDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -179,7 +181,8 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
         BankSettingsDialogComponent,
         InvoiceAddressDialog,
         CreateActivityDialogComponent,
-        CrmIntroComponent
+        CrmIntroComponent,
+        EntityCheckListDialogComponent
     ]
 })
 export class CrmModule {

@@ -113,6 +113,8 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { MessageService } from '@abp/message/message.service';
+import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -138,7 +140,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(ToolBarComponent, {static: false}) toolbar: ToolBarComponent;
     @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
 
-    private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';
     private readonly groupDataSourceURI = 'LeadSlice';
@@ -158,9 +159,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
     }
     actionEvent: any;
-    actionMenuItems: any[] = [
+    actionMenuGroups: ActionMenuGroup[] = [
         {
             key: '',
+            visible: true,
             items: [
                 {
                     text: this.l('Call'),
@@ -181,7 +183,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         },
         {
             key: '',
+            visible: true,
             items: [
+                {
+                    text: this.l('LoginAsThisUser'),
+                    class: 'login',
+                    checkVisible: (lead: LeadDto) => {
+                        return !!lead.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+                    },
+                    action: () => {
+                        const lead: LeadDto = this.actionEvent.data || this.actionEvent;
+                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
+                    }
+                },
                 {
                     text: this.l('NotesAndCallLog'),
                     class: 'notes',
@@ -215,11 +229,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     class: 'notifications',
                     disabled: true,
                     action: () => {}
+                },
+                {
+                    getText: (lead: LeadDto) => {
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage);
+                        return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
+                    },
+                    class: 'checklist',
+                    checkVisible: (lead: LeadDto) => {
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage);
+                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
+                    },
+                    action: () => {
+                        this.openEntityChecklistDialog();
+                    }
                 }
             ]
         },
         {
             key: '',
+            visible: true,
             items: [
                 {
                     text: this.l('Delete'),
@@ -232,7 +261,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
-                    visible: true,
                     action: () => this.showLeadDetails({ data: this.actionEvent })
                 }
             ]
@@ -574,7 +602,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.leadFields.OrganizationId,
                             this.leadFields.UserId,
                             this.leadFields.Email,
-                            this.leadFields.Phone
+                            this.leadFields.Phone,
+                            this.leadFields.StageChecklistPointDoneCount
                         ]
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1856,8 +1885,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     toggleActionsMenu(event) {
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
             const lead: LeadDto = event.data;
-            this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(lead.UserId)
-                && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, lead);
             this.actionEvent = actionRecord;
         });
     }
@@ -1924,5 +1952,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }
+    }
+
+    openEntityChecklistDialog() {
+        let lead = this.actionEvent.data || this.actionEvent;
+        this.dialog.open(EntityCheckListDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                entity: lead,
+                pipelinePurposeId: this.pipelinePurposeId,
+                contactGroupId: this.contactGroupId
+            }
+        });
     }
 }

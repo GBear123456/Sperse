@@ -12,6 +12,7 @@ import { StageChecklistServiceProxy, LeadServiceProxy,
     UpdateLeadStagePointInput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { EntityCheckListData } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-data.interface';
 
 @Component({
     selector: 'entity-check-list-dialog',
@@ -33,7 +34,7 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
         private checklistProxy: StageChecklistServiceProxy,
         private loadingService: LoadingService,
         public dialogRef: MatDialogRef<EntityCheckListDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: EntityCheckListData,
         public ls: AppLocalizationService
     ) {
         this.loadData();

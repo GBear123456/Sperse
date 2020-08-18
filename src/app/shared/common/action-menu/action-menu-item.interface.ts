@@ -1,7 +1,13 @@
 export interface ActionMenuItem {
-    text: string;
+    text?: string;
+    getText?: (itemData: any) => string;
     class: string;
     visible?: boolean;
     disabled?: boolean;
     action: () => void;
+    checkVisible?: (itemData: any) => boolean;
+    button?: {
+        text: string;
+        action: () => void;
+    }
 }

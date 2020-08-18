@@ -122,6 +122,7 @@ import { ContactDto } from '@app/crm/clients/contact.dto';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -153,7 +154,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
-    private readonly MENU_LOGIN_INDEX = 1;
     private readonly dataSourceURI: string = 'Contact';
     private readonly totalDataSourceURI: string = 'Contact/$count';
     private readonly groupDataSourceURI: string = 'ContactSlice';
@@ -273,9 +273,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
 
     actionEvent: any;
-    actionMenuItems: any[] = [
+    actionMenuGroups: ActionMenuGroup[] = [
         {
             key: '',
+            visible: true,
             items: [
                 {
                     text: this.l('Call'),
@@ -291,12 +292,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             contactId: (this.actionEvent.data || this.actionEvent).Id
                         }).subscribe();
                     }
-                },
+                }
             ]
         },
         {
             key: '',
+            visible: true,
             items: [
+                {
+                    text: this.l('LoginAsThisUser'),
+                    class: 'login',
+                    checkVisible: (client: ContactDto) => !!client.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+                    action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId)
+                },
                 {
                     text: this.l('NotesAndCallLog'),
                     class: 'notes',
@@ -335,6 +343,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         },
         {
             key: '',
+            visible: true,
             items: [
                 {
                     text: this.l('Delete'),
@@ -352,7 +361,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
-                    visible: true,
                     action: () => this.showClientDetails(this.actionEvent)
                 }
             ]
@@ -1566,7 +1574,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     deactivate() {
         super.deactivate();
-
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
@@ -1580,10 +1587,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     toggleActionsMenu(event) {
-        const client: ContactDto = event.data;
-        this.actionMenuItems[this.MENU_LOGIN_INDEX].visible = Boolean(client.UserId)
-            && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionEvent => {
+            const client: ContactDto = event.data;
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, client);
             this.actionEvent = actionEvent;
             this.changeDetectorRef.detectChanges();
         });

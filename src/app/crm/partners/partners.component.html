@@ -17,7 +17,7 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
-        <action-menu [items]="actionMenuItems"
+        <action-menu [items]="actionMenuGroups"
                      [visible]="!!actionEvent"
                      class="grouped-action-menu"
                      width="300px"

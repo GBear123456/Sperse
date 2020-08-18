@@ -30,4 +30,5 @@ export interface LeadDto {
     AssignedUserName: string;
     BankCode: string;
     RefererUrl: string;
+    StageChecklistPointDoneCount: number;
 }
