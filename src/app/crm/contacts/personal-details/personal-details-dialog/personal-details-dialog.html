@@ -14,7 +14,7 @@
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="field">
-                                <label>{{ ls.l('AffiliateCode') }}</label>
+                                <label>{{ ls.l('AffiliateCode') }}: </label>
                                 <inplace-edit [id]="contactInfo.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('Affiliate')"
@@ -47,8 +47,8 @@
                                             </i>
                                         </span>
                                         <div *ngIf="leadInfo.sourceContactAffiliateCode as affiliateCode" class="additional-info">
-                                            <label>{{ ls.l('AffiliateCode') }}:</label>
-                                            <span>{{ affiliateCode }}</span>
+                                            <span>{{ ls.l('AffiliateCode') }}: </span>
+                                            <span class="bold">{{ affiliateCode }}</span>
                                         </div>
                                         <hr/>
                                     </div>
@@ -150,6 +150,7 @@
                                               (itemDeleted)="deleteItem(ls.l('Xref'))">
                                 </inplace-edit>
                             </div>
+                            <hr/>
                             <ng-container *ngFor="let n of [1,2,3,4,5]">
                                 <div class="field">
                                     <label>{{ ls.l('Contact_CustomField' + n) }}:</label>
