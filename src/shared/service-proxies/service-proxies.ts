@@ -60368,6 +60368,7 @@ export interface IUpdateLeadSourceOrganizationUnitsInput {
 }
 
 export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOutput {
+    stageId!: number | undefined;
     id!: number | undefined;
     name!: string | undefined;
     sortOrder!: number | undefined;
@@ -60386,6 +60387,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 
     init(data?: any) {
         if (data) {
+            this.stageId = data["stageId"];
             this.id = data["id"];
             this.name = data["name"];
             this.sortOrder = data["sortOrder"];
@@ -60404,6 +60406,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["stageId"] = this.stageId;
         data["id"] = this.id;
         data["name"] = this.name;
         data["sortOrder"] = this.sortOrder;
@@ -60415,6 +60418,7 @@ export class StageChecklistPointInfoOutput implements IStageChecklistPointInfoOu
 }
 
 export interface IStageChecklistPointInfoOutput {
+    stageId: number | undefined;
     id: number | undefined;
     name: string | undefined;
     sortOrder: number | undefined;
