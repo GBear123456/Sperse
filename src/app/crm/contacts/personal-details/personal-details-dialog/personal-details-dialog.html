@@ -201,6 +201,48 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
+        <mat-tab [label]="ls.l('Checklist')" *ngIf="checklistLeadDataSource[0]?.items?.length || checklistOrderDataSource[0]?.items?.length">
+            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(100)">
+                <dx-select-box 
+                    valueExpr="Id"
+                    displayExpr="Name"
+                    [width]="'370px'"
+                    [placeholder]="''"
+                    [value]="leadInfo?.id"
+                    [itemTemplate]="'cell'"
+                    [fieldTemplate]="'cell'"
+                    [deferRendering]="false"
+                    [focusStateEnabled]="false"
+                    [hoverStateEnabled]="false"
+                    [activeStateEnabled]="false"
+                    (onSelectionChanged)="onLeadChanged($event)"
+                    [dataSource]="contactLeadsDataSource">
+                    <div *dxTemplate="let cell of 'cell'">
+                        <dx-text-box
+                            [readOnly]="true"
+                            [elementAttr]="{'lead-checklist': true}"
+                            [focusStateEnabled]="false"
+                            [hoverStateEnabled]="false"
+                            value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})">
+                        </dx-text-box>
+                    </div>
+                </dx-select-box>
+                <dx-tree-view *ngIf="checklistLeadDataSource[0]?.items?.length"
+                    [height]="'100%'"
+                    showCheckBoxesMode="normal"
+                    [selectNodesRecursive]="false"
+                    [dataSource]="checklistLeadDataSource"
+                    (onSelectionChanged)="onChecklistChanged($event)">
+                </dx-tree-view>
+                <dx-tree-view *ngIf="checklistOrderDataSource[0]?.items?.length"
+                    [height]="'100%'"
+                    showCheckBoxesMode="normal"
+                    [selectNodesRecursive]="false"
+                    [dataSource]="checklistOrderDataSource"
+                    (onSelectionChanged)="onChecklistChanged($event)">
+                </dx-tree-view>
+            </dx-scroll-view>
+        </mat-tab>
         <mat-tab label="Activity" [disabled]="true">
             Activity
         </mat-tab>

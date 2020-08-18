@@ -212,4 +212,54 @@
             padding: 0 !important;
         }
     }
+
+    ::ng-deep dx-select-box {
+        ::ng-deep input {
+            font-size: 16px;
+        }
+    }
+
+    ::ng-deep dx-tree-view {
+        li[data-item-id="root"], 
+        li[data-item-id^="stage"] {
+            & > div.dx-checkbox {
+                display: none;
+            }
+            & > div.dx-treeview-item {
+                padding-left: 5px;
+                span {
+                    font-weight: 600!important;
+                    font-size: 16px!important;
+                }
+            }
+            .dx-checkbox:not(.dx-checkbox-checked) {
+                .dx-checkbox-icon {
+                    background: #ffaabb!important;
+                }
+            }
+        }
+        li[data-item-id^="stage"] {
+            & > div.dx-treeview-item {
+                span {
+                    font-weight: 500;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+
+::ng-deep .dx-list-item-selected {
+    dx-text-box[lead-checklist="true"] {
+        input {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+::ng-deep dx-text-box[lead-checklist="true"] {
+    input {
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+    }
 }
