@@ -117,7 +117,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
         contactsService.leadInfoSubscribe(leadInfo => {
             this.leadInfo = leadInfo;
-            this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
+            this.stageColor = leadInfo && this.pipelineService.getStageColorByName(leadInfo.stage);
             this.updateSourceContactName();
         }, this.ident);
 
