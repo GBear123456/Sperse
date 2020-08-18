@@ -17,7 +17,7 @@ import { VerificationChecklistItemType, VerificationChecklistItem,
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto,
-    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, SourceContactInfo
+    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
@@ -25,7 +25,6 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
@@ -39,7 +38,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     leadInfo: LeadInfoDto;
     stageColor: string;
     configMode: boolean;
-    sourceContact: SourceContact;
     overviewPanelSetting = {
         clientScores: true,
         totalApproved: true,
@@ -77,7 +75,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     lastModificationInfo: ContactLastModificationInfoDto;
     userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
-    sourceContacts: SourceContact[] = [];
 
     constructor(
         private clipboardService: ClipboardService,
@@ -118,7 +115,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         contactsService.leadInfoSubscribe(leadInfo => {
             this.leadInfo = leadInfo;
             this.stageColor = leadInfo && this.pipelineService.getStageColorByName(leadInfo.stage);
-            this.updateSourceContactName();
         }, this.ident);
 
         if (this.showOverviewTab) {
@@ -155,17 +151,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 });
             }, 100);
         });
-    }
-
-    onSourceContactLoaded(contacts: SourceContact[]) {
-        this.sourceContacts = contacts;
-        this.updateSourceContactName();
-    }
-
-    updateSourceContactName() {
-        let contact = this.sourceContacts.find(item =>
-            item.id == (this.leadInfo && this.leadInfo.sourceContactId));
-        this.sourceContact = contact;
     }
 
     getTabContentHeight() {
@@ -288,7 +273,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getThumbnailSrc(thumbnailId?: string) {
-        return this.profileService.getProfilePictureUrl(thumbnailId);
+        return this.profileService.getContactPhotoUrl(thumbnailId, true);
     }
 
     ngOnDestroy() {
