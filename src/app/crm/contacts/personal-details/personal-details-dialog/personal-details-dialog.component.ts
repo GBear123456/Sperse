@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, OnInit, AfterViewInit, ViewChild, Inject, ElementRef, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
@@ -7,7 +8,7 @@ import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { map, first, finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -90,6 +91,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistOrderId: number;
 
     constructor(
+        private route: ActivatedRoute,
         private leadProxy: LeadServiceProxy,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
@@ -256,9 +258,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (data: any) => {
-                        if (data.length)
-                            this.initChecklistByOrder(data[0]);
-                        else
+                        if (data.length) {
+                            let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
+                                orderId = params['orderId'] && parseInt(params['orderId']);
+                            this.initChecklistByOrder(data.filter(item => item.Id == orderId)[0] || data[0]);
+                        } else
                             this.checklistOrderId = null;
                     }
                 })
