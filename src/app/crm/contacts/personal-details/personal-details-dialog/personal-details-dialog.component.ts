@@ -19,9 +19,9 @@ import { VerificationChecklistItemType, VerificationChecklistItem,
     VerificationChecklistItemStatus } from '../../verification-checklist/verification-checklist.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
-    UpdateLeadStagePointInput, LeadServiceProxy, ContactServiceProxy, ContactInfoDto,
-    LeadInfoDto, ContactLastModificationInfoDto, UpdateContactAffiliateCodeInput, UpdateContactXrefInput,
-    UpdateContactCustomFieldsInput, PipelineDto, StageDto
+    UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
+    ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
+    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
@@ -50,6 +50,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     };
 
     private slider: any;
+    private readonly CHECKLIST_TAB_INDEX = 1;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
     private readonly ident = 'PersonalDetailsDialog';
     private contactXref: ReplaySubject<string> = new ReplaySubject(1);
@@ -77,13 +78,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         max: 255,
         message: this.ls.l('MaxLengthIs', 255)
     }];
+    selectedTabIndex = 0;
     lastModificationInfo: ContactLastModificationInfoDto;
     userTimezone = DateHelper.getUserTimezone();
     formatting = AppConsts.formatting;
     checklistLeadDataSource = [];
     checklistOrderDataSource = [];
     contactLeadsDataSource: DataSource;
+    contactOrdersDataSource: DataSource;
     checklistLeadId: number;
+    checklistOrderId: number;
 
     constructor(
         private leadProxy: LeadServiceProxy,
@@ -98,6 +102,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private profileService: ProfileService,
         private oDataService: ODataService,
         private loadingService: LoadingService,
+        private orderProxy: OrderServiceProxy,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -125,8 +130,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }, this.ident);
 
         contactsService.leadInfoSubscribe(leadInfo => {
-            if (this.leadInfo = leadInfo) {
+            if (leadInfo && (!this.leadInfo || this.leadInfo.id != leadInfo.id)) {
+                this.leadInfo = leadInfo;
                 this.initContactLeadsDataSource();
+                this.initContactOrdersDataSource();
+                this.initChecklistByLead(leadInfo);
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
             }
         }, this.ident);
@@ -167,32 +175,50 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    initChecklistByLeadId(leadId: number) {
-        this.checklistLeadId = leadId;
-        this.checklistOrderDataSource = this.initChecklistDataSource(
-            AppConsts.PipelinePurposeIds.order, this.ls.l('Post-sale Checklist'));
+    initChecklistByOrder(order: any) {
+        this.checklistOrderId = order.Id;
+        let orderDataSource = this.initChecklistDataSource(
+            AppConsts.PipelinePurposeIds.order, this.ls.l('Post-sale Checklist'), order.Stage),
+            stages = orderDataSource[0].items;
+        this.orderProxy.getStageChecklistPoints(
+            this.checklistOrderId, stages.map(item => item.key)
+        ).subscribe(checklist => {
+            this.checklistOrderDataSource = this.initSelectedChecklist(checklist, stages, orderDataSource);
+        });
+    }
+
+    initChecklistByLead(lead: any) {
+        this.checklistLeadId = lead.id || lead.Id;
         let leadDataSource = this.initChecklistDataSource(
-            AppConsts.PipelinePurposeIds.lead, this.ls.l('Pre-sale Checklist')),
+            AppConsts.PipelinePurposeIds.lead, this.ls.l('Pre-sale Checklist'), lead.stage || lead.Stage),
             stages = leadDataSource[0].items;
         this.leadProxy.getStageChecklistPoints(
-            leadId, stages.map(item => item.key)
+            this.checklistLeadId, stages.map(item => item.key)
         ).subscribe(checklist => {
-            checklist.forEach(item => {
-                stages.some(stage => {
-                    if (stage.key == item.stageId) {
-                        stage.items.some(point => {
-                            if (point.id == item.id) {
-                                point.date = item.completionTime;
-                                point.selected = item.isDone;
-                                return true;
-                            }
-                        });
-                        return true;
-                    }
-                });
-            });
-            this.checklistLeadDataSource = leadDataSource;
+            this.checklistLeadDataSource = this.initSelectedChecklist(checklist, stages, leadDataSource);
         });
+    }
+
+    initSelectedChecklist(checklist, stages, dataSource) {
+        let selectedCount = 0;
+        checklist.forEach(item => {
+            stages.some(stage => {
+                if (stage.key == item.stageId) {
+                    (stage.items || []).some(point => {
+                        if (point.id == item.id) {
+                            point.date = item.completionTime;
+                            if (point.selected = item.isDone)
+                                selectedCount++;
+                            return true;
+                        }
+                    });
+                    return true;
+                }
+            });
+        });
+        dataSource[0].total = checklist.length;
+        dataSource[0].progress = selectedCount;
+        return dataSource;
     }
 
     initContactLeadsDataSource() {
@@ -214,8 +240,33 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             });
     }
 
-    initChecklistDataSource(purposeId, rootName) {
-        let rootItem = {
+    initContactOrdersDataSource() {
+        if (this.contactInfo.id)
+            this.contactOrdersDataSource = new DataSource({
+                paginate: false,
+                requireTotalCount: true,
+                store: new ODataStore({
+                    key: 'Id',
+                    url: this.oDataService.getODataUrl('Order'),
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.$select = ['Id',  'Name', 'Stage', 'OrderDate'];
+                        request.params.$filter = 'ContactId eq ' + this.contactInfo.id;
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    onLoaded: (data: any) => {
+                        if (data.length)
+                            this.initChecklistByOrder(data[0]);
+                        else
+                            this.checklistOrderId = null;                        
+                    }
+                })
+            });
+    }
+
+    initChecklistDataSource(purposeId, rootName, stageName) {
+        let rootItem: any = {
             id: 'root',
             text: rootName.toUpperCase(),
             selected: false,
@@ -224,7 +275,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             items: []
         }, dataSource = [rootItem];
         this.pipelineService.getPipelineDefinitionObservable(
-            purposeId, this.contactInfo.groupId
+            purposeId, AppConsts.PipelinePurposeIds.lead == purposeId ? this.contactInfo.groupId : undefined
         ).pipe(first()).subscribe((pipeline: PipelineDto) => {
             pipeline.stages.forEach((stage: StageDto) => {
                 if (stage.checklistPoints)
@@ -241,7 +292,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                             return {
                                 id: point.id,
                                 text: point.name,
-                                disabled: stage.name != this.leadInfo.stage,
+                                disabled: stage.name != stageName,
                                 sortOrder: point.sortOrder
                             };
                         })
@@ -382,21 +433,41 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.loadingService.finishLoading(this.elementRef.nativeElement);
     }
 
-    onChecklistChanged(event) {
+    onChecklistChanged(event, isOrder = false) {
         this.startLoading();
-        this.leadProxy.updateLeadStagePoint(new UpdateLeadStagePointInput({
-            pointId: event.itemData.id,
-            leadId: this.checklistLeadId,
-            isDone: event.itemData.selected
-        })).pipe(
+        (isOrder ?  this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput({
+                pointId: event.itemData.id,
+                orderId: this.checklistOrderId,
+                isDone: event.itemData.selected
+            })) :
+            this.leadProxy.updateLeadStagePoint(new UpdateLeadStagePointInput({
+                pointId: event.itemData.id,
+                leadId: this.checklistLeadId,
+                isDone: event.itemData.selected
+            }))
+        ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
+            (isOrder ? this.checklistOrderDataSource :
+                this.checklistLeadDataSource)[0].progress +=
+                    (event.itemData.selected ? 1 : -1);
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }
 
+
     onLeadChanged(event) {
-        this.initChecklistByLeadId(event.selectedItem.Id);
+        if (event.selectedItem.Id != this.checklistLeadId)
+            this.initChecklistByLead(event.selectedItem);
+    }
+
+    onSelectInitialized(event) {
+        setTimeout(() => event.component.repaint(), 1000);
+    }
+
+    onOrderChanged(event: any) {
+        if (event.selectedItem.Id != this.checklistOrderId)
+            this.initChecklistByOrder(event.selectedItem);
     }
 
     ngOnDestroy() {

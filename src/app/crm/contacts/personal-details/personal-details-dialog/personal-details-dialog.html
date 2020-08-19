@@ -4,7 +4,7 @@
 </source-contact-list>
 <h2 mat-dialog-title>{{ls.l('Personal Settings')}}<span class="close" (click)="close()"></span></h2>
 <mat-dialog-content>
-    <mat-tab-group>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab [label]="ls.l('General')">
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
                 <div class="general-tab">
@@ -202,45 +202,91 @@
             </dx-scroll-view>
         </mat-tab>
         <mat-tab [label]="ls.l('Checklist')" [hidden]="!checklistLeadDataSource[0]?.items?.length && !checklistOrderDataSource[0]?.items?.length">
-            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(50)">
-                <dx-select-box
-                    valueExpr="Id"
-                    displayExpr="Name"
-                    [width]="'370px'"
-                    [placeholder]="''"
-                    [value]="leadInfo?.id"
-                    [itemTemplate]="'cell'"
-                    [fieldTemplate]="'cell'"
-                    [deferRendering]="false"
-                    [focusStateEnabled]="false"
-                    [hoverStateEnabled]="false"
-                    [activeStateEnabled]="false"
-                    (onSelectionChanged)="onLeadChanged($event)"
-                    [dataSource]="contactLeadsDataSource">
-                    <div *dxTemplate="let cell of 'cell'">
-                        <dx-text-box
-                            [readOnly]="true"
-                            [elementAttr]="{'lead-checklist': true}"
-                            [focusStateEnabled]="false"
-                            [hoverStateEnabled]="false"
-                            value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})">
-                        </dx-text-box>
+            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(50)" *ngIf="selectedTabIndex == CHECKLIST_TAB_INDEX">
+                <div class="lead-checklist">
+                    <dx-select-box
+                        valueExpr="Id"
+                        displayExpr="Name"
+                        [width]="'370px'"
+                        [placeholder]="''"
+                        [value]="checklistLeadId"
+                        [itemTemplate]="'cell'"
+                        [fieldTemplate]="'cell'"
+                        [deferRendering]="false"
+                        [focusStateEnabled]="false"
+                        [hoverStateEnabled]="false"
+                        [activeStateEnabled]="false"
+                        (onSelectionChanged)="onLeadChanged($event)"
+                        (onInitialized)="onSelectInitialized($event)"
+                        [dataSource]="contactLeadsDataSource">
+                        <div *dxTemplate="let cell of 'cell'">
+                            <dx-text-box
+                                [readOnly]="true"
+                                [elementAttr]="{'lead-checklist': true}"
+                                [focusStateEnabled]="false"
+                                [hoverStateEnabled]="false"
+                                value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})">
+                            </dx-text-box>
+                        </div>
+                    </dx-select-box>                
+                    <div class="progress-wrapper" *ngIf="checklistLeadDataSource && checklistLeadDataSource[0] as data">
+                        <svg width="28" height="28" class="progress">
+                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>                        
+                            <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
+                                class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
+                        </svg>
+                        <span>{{data.total}} / {{data.progress}}</span>
                     </div>
-                </dx-select-box>
-                <dx-tree-view *ngIf="checklistLeadDataSource[0]?.items?.length"
-                    [height]="'100%'"
-                    showCheckBoxesMode="normal"
-                    [selectNodesRecursive]="false"
-                    [dataSource]="checklistLeadDataSource"
-                    (onItemSelectionChanged)="onChecklistChanged($event)">
-                </dx-tree-view>
-                <dx-tree-view *ngIf="checklistOrderDataSource[0]?.items?.length"
-                    [height]="'100%'"
-                    showCheckBoxesMode="normal"
-                    [selectNodesRecursive]="false"
-                    [dataSource]="checklistOrderDataSource"
-                    (onItemSelectionChanged)="onChecklistChanged($event)">
-                </dx-tree-view>
+                    <dx-tree-view *ngIf="checklistLeadDataSource && checklistLeadDataSource[0]?.items?.length"
+                        [height]="'100%'"
+                        showCheckBoxesMode="normal"
+                        [selectNodesRecursive]="false"
+                        [dataSource]="checklistLeadDataSource"
+                        (onItemSelectionChanged)="onChecklistChanged($event)">
+                    </dx-tree-view>
+                </div>
+                <div class="order-chacklist">
+                    <dx-select-box *ngIf="checklistOrderId !== null"
+                        valueExpr="Id"
+                        displayExpr="Name"
+                        [width]="'370px'"
+                        [placeholder]="''"
+                        [value]="checklistOrderId"
+                        [itemTemplate]="'cell'"
+                        [fieldTemplate]="'cell'"
+                        [deferRendering]="false"
+                        [focusStateEnabled]="false"
+                        [hoverStateEnabled]="false"
+                        [activeStateEnabled]="false"
+                        (onSelectionChanged)="onOrderChanged($event)"
+                        (onInitialized)="onSelectInitialized($event)"
+                        [dataSource]="contactOrdersDataSource">
+                        <div *dxTemplate="let cell of 'cell'">
+                            <dx-text-box
+                                [readOnly]="true"
+                                [elementAttr]="{'lead-checklist': true}"
+                                [focusStateEnabled]="false"
+                                [hoverStateEnabled]="false"
+                                value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})">
+                            </dx-text-box>
+                        </div>
+                    </dx-select-box>                
+                    <div class="progress-wrapper" *ngIf="checklistOrderDataSource && checklistOrderDataSource[0] as data">
+                        <svg width="28" height="28" class="progress">
+                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>                        
+                            <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
+                                class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
+                        </svg>
+                        <span>{{data.total}} / {{data.progress}}</span>
+                    </div>
+                    <dx-tree-view *ngIf="checklistOrderId"
+                        [height]="'100%'"
+                        showCheckBoxesMode="normal"
+                        [selectNodesRecursive]="false"
+                        [dataSource]="checklistOrderDataSource"
+                        (onItemSelectionChanged)="onChecklistChanged($event, true)">
+                    </dx-tree-view>
+                </div>
             </dx-scroll-view>
         </mat-tab>
         <mat-tab label="Activity" [disabled]="true">

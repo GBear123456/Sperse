@@ -313,6 +313,25 @@
         }
     }
 
+    .progress-wrapper {
+        position: absolute;
+        right: 15px;
+        height: 26px;
+        padding: 3px;
+        .progress {
+            .ring {
+                transform: rotate(-90deg);
+                transform-origin: 50% 50%;
+                stroke-dasharray: 76, 76;
+            }
+        }
+        span {
+            position: relative;
+            bottom: 8px;
+            left: 5px;
+        }
+    }    
+
     .view-details {
         float: right;
     }
