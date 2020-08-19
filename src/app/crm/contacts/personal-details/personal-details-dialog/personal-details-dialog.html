@@ -263,10 +263,14 @@
                     </div>
                     <dx-tree-view *ngIf="checklistLeadDataSource && checklistLeadDataSource[0]?.items?.length"
                         [height]="'100%'"
+                        itemTemplate="cell"
                         showCheckBoxesMode="normal"
                         [selectNodesRecursive]="false"
                         [dataSource]="checklistLeadDataSource"
                         (onItemSelectionChanged)="onChecklistChanged($event)">
+                        <div *dxTemplate="let cell of 'cell'" class="data-item">
+                            <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
+                        </div>
                     </dx-tree-view>
                 </div>
                 <div class="order-chacklist">
@@ -305,10 +309,14 @@
                     </div>
                     <dx-tree-view *ngIf="checklistOrderId"
                         [height]="'100%'"
+                        itemTemplate="cell"
                         showCheckBoxesMode="normal"
                         [selectNodesRecursive]="false"
                         [dataSource]="checklistOrderDataSource"
                         (onItemSelectionChanged)="onChecklistChanged($event, true)">
+                        <div *dxTemplate="let cell of 'cell'" class="data-item">
+                            <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
+                        </div>
                     </dx-tree-view>
                 </div>
             </dx-scroll-view>
