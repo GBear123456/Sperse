@@ -9,12 +9,13 @@
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight()">
                 <div class="general-tab">
                     <mat-accordion displayMode="flat" [multi]="true">
-                        <mat-expansion-panel [expanded]="true">
+                        <mat-expansion-panel class="affiliate-info" [expanded]="true">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
+                                <a href="javascript:void(0);" class="view-details">{{ls.l('ViewDetails')}}</a>
                             </mat-expansion-panel-header>
                             <div class="field">
-                                <label>{{ ls.l('AffiliateCode') }}: </label>
+                                <!--<label>{{ ls.l('AffiliateCode') }}: </label>-->
                                 <inplace-edit [id]="contactInfo.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('Affiliate')"
@@ -204,7 +205,7 @@
         </mat-tab>
         <mat-tab [label]="ls.l('Checklist')" [hidden]="!checklistLeadDataSource[0]?.items?.length && !checklistOrderDataSource[0]?.items?.length">
             <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(50)">
-                <dx-select-box 
+                <dx-select-box
                     valueExpr="Id"
                     displayExpr="Name"
                     [width]="'370px'"
