@@ -19,7 +19,7 @@
                 [value]="false">
             </dx-check-box>
         </div>
-        <div *dxTemplate="let cell of 'nameCell'" class="inplace-container">
+        <div *dxTemplate="let cell of 'nameCell'" class="inplace-container" (keydown)="$event.stopPropagation()">
             <inplace-edit
                 [id]="cell.value"
                 [maxLength]="50"

@@ -259,7 +259,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         if (data.length)
                             this.initChecklistByOrder(data[0]);
                         else
-                            this.checklistOrderId = null;                        
+                            this.checklistOrderId = null;
                     }
                 })
             });
