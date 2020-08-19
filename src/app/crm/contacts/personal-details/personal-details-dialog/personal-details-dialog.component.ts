@@ -9,7 +9,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { map, first, finalize } from 'rxjs/operators';
+import { map, first, finalize, switchMap, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -22,7 +22,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
-    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto
+    UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
+    GetSourceContactInfoOutput
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
@@ -32,6 +33,8 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppService } from "@app/app.service";
+import { AppSessionService } from "@shared/common/session/app-session.service";
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -89,6 +92,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactOrdersDataSource: DataSource;
     checklistLeadId: number;
     checklistOrderId: number;
+    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactsService.contactInfo$.pipe(
+        map((contactInfo: ContactInfoDto) => contactInfo.id),
+        distinctUntilChanged(),
+        switchMap((id: number) => this.contactProxy.getSourceContactInfo(id))
+    );
 
     constructor(
         private route: ActivatedRoute,
@@ -109,6 +117,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
+        public appService: AppService,
+        public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
@@ -162,6 +172,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             top: '155px',
             right: '-100vw'
         });
+        this.sourceContactInfo$.subscribe();
     }
 
     ngAfterViewInit() {
