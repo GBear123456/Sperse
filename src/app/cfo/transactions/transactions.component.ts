@@ -135,6 +135,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
+    private filterQuery: Object;
     private dateFilter: FilterModel = new FilterModel({
         component: FilterCalendarComponent,
         operator: { from: 'ge', to: 'le' },
@@ -775,6 +776,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                     icon: 'xls',
                                 },
                                 {
+                                    action: this.downloadExcelReport.bind(this),
+                                    text: this.l('Export to Excel Report'),
+                                    icon: 'xls'
+                                },
+                                {
                                     action: this.exportToCSV.bind(this),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet'
@@ -1080,6 +1086,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
 
         filterQuery$.subscribe((filterQuery: string) => {
+            this.filterQuery = filterQuery;
             this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
             this.countDataSource.load();
             this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
@@ -1577,6 +1584,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (e.gridCell.rowType === 'header' && e.gridCell.column.dataField === 'Description') {
             e.value = 'Description';
         }
+    }
+
+    downloadExcelReport() {
+        let url = super.getODataUrl(this.dataSourceURI, this.filterQuery);
+        var params = url.split('?')[1];
+        url = AppConsts.remoteServiceBaseUrl + '/api/services/CFO/TransactionReport/Get?' + params;
+        document.location.href = url;
     }
 
     private moveDropdownsToHost() {
