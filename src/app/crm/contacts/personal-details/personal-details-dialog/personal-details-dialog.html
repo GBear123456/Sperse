@@ -33,26 +33,50 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div *ngIf="leadInfo?.sourceContactId" class="field">
-                                <label>{{ ls.l('PersonalSettings.Contact') }}:</label>
-                                <div>
-                                    <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(leadInfo.sourceContactPhotoPublicId)"/>
-                                    </div>
-                                    <div class="field-info">
-                                        <span *ngIf="leadInfo.sourceContactName">{{ leadInfo.sourceContactName }}
-                                            <i class="save-to-clipboard"
-                                               (click)="saveToClipboard(leadInfo.sourceContactName)">
-                                            </i>
-                                        </span>
-                                        <div *ngIf="leadInfo.sourceContactAffiliateCode as affiliateCode" class="additional-info">
-                                            <span>{{ ls.l('AffiliateCode') }}: </span>
-                                            <span class="bold">{{ affiliateCode }}</span>
+
+                            <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
+                                <div *ngIf="sourceContactInfo.sourceContactInfo as sourceContactInfo" class="field">
+                                    <label>{{ ls.l('PersonalSettings.Contact1') }}:</label>
+                                    <div>
+                                        <div class="thumbnail">
+                                            <img [src]="getThumbnailSrc(sourceContactInfo.photoPublicId)"/>
                                         </div>
-                                        <hr/>
+                                        <div class="field-info">
+                                            <span *ngIf="sourceContactInfo.name">{{ sourceContactInfo.name }}
+                                                <i class="save-to-clipboard"
+                                                   (click)="saveToClipboard(sourceContactInfo.name)">
+                                                </i>
+                                            </span>
+                                            <div *ngIf="sourceContactInfo.affiliateCode as affiliateCode" class="additional-info">
+                                                <span>{{ ls.l('AffiliateCode') }}: </span>
+                                                <span class="bold">{{ affiliateCode }}</span>
+                                            </div>
+                                            <hr/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <div
+                                    *ngIf="(appService.isHostTenant || (appSession.tenant && appSession.tenant.tenancyName === 'BankCode' || appSession.tenant.tenancyName === 'performancepartners'))
+                                            && sourceContactInfo.sourceContactOfSourceContactInfo as sourceContactOfSourceContactInfo"
+                                    class="field">
+                                    <label>{{ ls.l('PersonalSettings.Contact2') }}:</label>
+                                    <div>
+                                        <div class="thumbnail">
+                                            <img [src]="getThumbnailSrc(sourceContactOfSourceContactInfo.photoPublicId)"/>
+                                        </div>
+                                        <div class="field-info">
+                                            <span *ngIf="sourceContactOfSourceContactInfo.name">{{ sourceContactOfSourceContactInfo.name }}
+                                                <i class="save-to-clipboard"
+                                                   (click)="saveToClipboard(sourceContactOfSourceContactInfo.name)">
+                                                </i>
+                                            </span>
+                                            <hr/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+
                             <div *ngIf="contactInfo?.assignedUserName as assignedUserName" class="field">
                                 <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                                 <div>
@@ -107,7 +131,7 @@
                                         </span>
                                         <div *ngIf="lastModificationInfo.date as lastModificationTime" class="additional-info">
                                             <span>on {{lastModificationTime | date: formatting.dateTime : userTimezone}} </span>
-                                            <span class="date-ago">({{lastModificationTime | timeAgo}})</span>
+                                            <span class="date-ago">({{ lastModificationTime | timeAgo}})</span>
                                         </div>
                                     </div>
                                 </div>
@@ -228,10 +252,10 @@
                                 value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})">
                             </dx-text-box>
                         </div>
-                    </dx-select-box>                
+                    </dx-select-box>
                     <div class="progress-wrapper" *ngIf="checklistLeadDataSource && checklistLeadDataSource[0] as data">
                         <svg width="28" height="28" class="progress">
-                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>                        
+                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                             <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
                                 class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                         </svg>
@@ -270,10 +294,10 @@
                                 value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})">
                             </dx-text-box>
                         </div>
-                    </dx-select-box>                
+                    </dx-select-box>
                     <div class="progress-wrapper" *ngIf="checklistOrderDataSource && checklistOrderDataSource[0] as data">
                         <svg width="28" height="28" class="progress">
-                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>                        
+                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                             <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
                                 class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                         </svg>
