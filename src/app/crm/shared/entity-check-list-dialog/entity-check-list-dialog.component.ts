@@ -7,8 +7,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
-import { StageChecklistServiceProxy, LeadServiceProxy,
+import { LeadServiceProxy, OrderServiceProxy, UpdateOrderStagePointInput,
     UpdateLeadStagePointInput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -17,8 +18,7 @@ import { EntityCheckListData } from '@app/crm/shared/entity-check-list-dialog/en
 @Component({
     selector: 'entity-check-list-dialog',
     templateUrl: './entity-check-list-dialog.component.html',
-    styleUrls: ['./entity-check-list-dialog.component.less'],
-    providers: [StageChecklistServiceProxy]
+    styleUrls: ['./entity-check-list-dialog.component.less']
 })
 export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
@@ -31,7 +31,7 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
         private elementRef: ElementRef,
         private leadProxy: LeadServiceProxy,
         private notifyService: NotifyService,
-        private checklistProxy: StageChecklistServiceProxy,
+        private orderProxy: OrderServiceProxy,
         private loadingService: LoadingService,
         public dialogRef: MatDialogRef<EntityCheckListDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: EntityCheckListData,
@@ -65,9 +65,9 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
 
     loadData() {
         this.startLoading();
-        this.leadProxy.getStageChecklistPoints(
-            this.data.entity.Id,
-            undefined
+        (this.data.pipelinePurposeId == AppConsts.PipelinePurposeIds.order ?
+            this.orderProxy.getStageChecklistPoints(this.data.entity.Id, undefined) :
+            this.leadProxy.getStageChecklistPoints(this.data.entity.Id, undefined)
         ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(res => {
@@ -85,11 +85,16 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
 
     onValueChanged(event, cell) {
         this.startLoading();
-        this.leadProxy.updateLeadStagePoint(new UpdateLeadStagePointInput({
+        let data: any = {
             pointId: cell.data.id,
             leadId: this.data.entity.Id,
+            orderId: this.data.entity.Id,
             isDone: event.value
-        })).pipe(
+        };
+        (this.data.pipelinePurposeId == AppConsts.PipelinePurposeIds.order ?
+            this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput(data)) :
+            this.leadProxy.updateLeadStagePoint(new UpdateLeadStagePointInput(data))
+        ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.isUpdated = true;

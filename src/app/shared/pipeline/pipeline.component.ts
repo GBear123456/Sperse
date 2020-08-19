@@ -120,7 +120,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     stages: Stage[];
     allStagesEntitiesTotal: number;
     isConfigureAllowed = this.isGranted(AppPermissions.CRMPipelinesConfigure);
-    isLeadPipeline = this.pipelinePurposeId == AppConsts.PipelinePurposeIds.lead;
+    get isChecklistAllowed(): boolean {
+        return [AppConsts.PipelinePurposeIds.lead, AppConsts.PipelinePurposeIds.order].indexOf(this.pipeline.purpose) >= 0;
+    }
     private queryWithSearch: any = [];
     private params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 5;
@@ -181,7 +183,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             switchMap(pipeline => pipeline)
         ).subscribe((pipeline: PipelineDto) => {
             this.pipeline = pipeline;
-            this.isLeadPipeline = pipeline.purpose == AppConsts.PipelinePurposeIds.lead;
             this.createStageInput.pipelineId = this.pipeline.id;
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
@@ -628,7 +629,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             onLoadError: (error) => { this.httpInterceptor.handleError(error); },
             requireTotalCount: !this.totalsURI,
             select: this.selectFields.concat(['SortOrder',
-                this.isLeadPipeline ? 'StageChecklistPointDoneCount' : null
+                this.isChecklistAllowed ? 'StageChecklistPointDoneCount' : null
             ].filter(Boolean))
         }));
     }

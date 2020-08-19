@@ -1,5 +1,5 @@
 export interface EntityCheckListData {
     entity: { Id: number, Name: string };
-    pipelinePurposeId: number;
+    pipelinePurposeId: string;
     contactGroupId: number;
 }
