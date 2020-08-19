@@ -7749,6 +7749,61 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getSourceContactInfo(contactId: number | null | undefined): Observable<GetSourceContactInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContactInfo?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSourceContactInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSourceContactInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetSourceContactInfoOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetSourceContactInfoOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSourceContactInfo(response: HttpResponseBase): Observable<GetSourceContactInfoOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetSourceContactInfoOutput.fromJS(resultData200) : new GetSourceContactInfoOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetSourceContactInfoOutput>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -46517,6 +46572,94 @@ export interface IGetContactInfoForMergeOutput {
     contactLeadInfo: LeadInfoForMerge | undefined;
     targetContactInfo: ContactInfoForMerge | undefined;
     targetContactLeadInfo: LeadInfoForMerge | undefined;
+}
+
+export class SourceContactInfoOutput implements ISourceContactInfoOutput {
+    id!: number | undefined;
+    name!: string | undefined;
+    affiliateCode!: string | undefined;
+    photoPublicId!: string | undefined;
+
+    constructor(data?: ISourceContactInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.affiliateCode = data["affiliateCode"];
+            this.photoPublicId = data["photoPublicId"];
+        }
+    }
+
+    static fromJS(data: any): SourceContactInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SourceContactInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["affiliateCode"] = this.affiliateCode;
+        data["photoPublicId"] = this.photoPublicId;
+        return data; 
+    }
+}
+
+export interface ISourceContactInfoOutput {
+    id: number | undefined;
+    name: string | undefined;
+    affiliateCode: string | undefined;
+    photoPublicId: string | undefined;
+}
+
+export class GetSourceContactInfoOutput implements IGetSourceContactInfoOutput {
+    sourceContactInfo!: SourceContactInfoOutput | undefined;
+    sourceContactOfSourceContactInfo!: SourceContactInfoOutput | undefined;
+
+    constructor(data?: IGetSourceContactInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sourceContactInfo = data["sourceContactInfo"] ? SourceContactInfoOutput.fromJS(data["sourceContactInfo"]) : <any>undefined;
+            this.sourceContactOfSourceContactInfo = data["sourceContactOfSourceContactInfo"] ? SourceContactInfoOutput.fromJS(data["sourceContactOfSourceContactInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetSourceContactInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetSourceContactInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceContactInfo"] = this.sourceContactInfo ? this.sourceContactInfo.toJSON() : <any>undefined;
+        data["sourceContactOfSourceContactInfo"] = this.sourceContactOfSourceContactInfo ? this.sourceContactOfSourceContactInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetSourceContactInfoOutput {
+    sourceContactInfo: SourceContactInfoOutput | undefined;
+    sourceContactOfSourceContactInfo: SourceContactInfoOutput | undefined;
 }
 
 export class SubmitQuestionnaireDto implements ISubmitQuestionnaireDto {
