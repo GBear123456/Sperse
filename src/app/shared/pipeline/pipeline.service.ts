@@ -157,9 +157,9 @@ export class PipelineService {
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_ORDER)
                     this.cancelOrder(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ORDER_STAGE)
-                    this.updateOrderStage(fromStage, toStage, entity, complete);
+                    this.updateOrderStage(fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_ORDER) {
-                    this.processOrder(fromStage, toStage, entity, complete);
+                    this.processOrder(fromStage, toStage, entity, complete, forced);
                 } else {
                     entity.locked = false;
                     complete && complete();
@@ -319,13 +319,12 @@ export class PipelineService {
         });
     }
 
-    private ignoreStageChecklist(stage: Stage, leadId: number, useLastData = false): Observable<boolean> {
+    private ignoreStageChecklist(stage: Stage, entityId: number, useLastData = false, isOrder = false): Observable<boolean> {
         if (useLastData && this.lastIgnoreChecklist$)
             return this.lastIgnoreChecklist$;
-        else if (stage.checklistPoints && stage.checklistPoints.length && leadId)
-            return this.leadService.getStageChecklistPoints(
-                leadId,
-                undefined
+        else if (stage.checklistPoints && stage.checklistPoints.length && entityId)
+            return (isOrder ? this.orderService.getStageChecklistPoints(entityId, undefined) :
+                this.leadService.getStageChecklistPoints(entityId, undefined)
             ).pipe(switchMap(stages => {
                 if (useLastData && this.lastIgnoreChecklist$)
                     return this.lastIgnoreChecklist$;
@@ -389,36 +388,53 @@ export class PipelineService {
         });
     }
 
-    updateOrderStage(fromStage: Stage, toStage: Stage, entity, complete) {
-        this.orderService.updateStage(
-            UpdateOrderStageInfo.fromJS({
-                orderId: this.getEntityId(entity),
-                stageId: toStage.id,
-                sortOrder: entity.SortOrder
-            })
-        ).pipe(finalize(() => {
-            entity.locked = false;
-            complete && complete();
-        })).subscribe(() => {
-            this.completeEntityUpdate(entity, fromStage, toStage);
+    updateOrderStage(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+        let orderId = this.getEntityId(entity);
+        this.ignoreStageChecklist(fromStage,
+            toStage.sortOrder > fromStage.sortOrder ? orderId : null, useLastData, true
+        ).subscribe(ignore => {
+            this.orderService.updateStage(
+                UpdateOrderStageInfo.fromJS({
+                    orderId: this.getEntityId(entity),
+                    stageId: toStage.id,
+                    sortOrder: entity.SortOrder,
+                    ignoreChecklist: ignore
+                })
+            ).pipe(finalize(() => {
+                entity.locked = false;
+                complete && complete();
+            })).subscribe(() => {
+                this.completeEntityUpdate(entity, fromStage, toStage);
+            }, () => {
+                this.moveEntityTo(entity, toStage, fromStage);
+            });
         }, () => {
             this.moveEntityTo(entity, toStage, fromStage);
+            entity.locked = false;
+            complete && complete(true);
         });
     }
 
-    processOrder(fromStage: Stage, toStage: Stage, entity, complete) {
-        let model: ProcessOrderInfo = new ProcessOrderInfo();
-        model.id = this.getEntityId(entity);
-        model.sortOrder = entity.SortOrder;
-        this.orderService.process(
-            model
-        ).pipe(finalize(() => {
-            entity.locked = false;
-            complete && complete();
-        })).subscribe(() => {
-            this.completeEntityUpdate(entity, fromStage, toStage);
+    processOrder(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+        this.ignoreStageChecklist(fromStage, this.getEntityId(entity), useLastData, true).subscribe(ignore => {
+            let model: ProcessOrderInfo = new ProcessOrderInfo();
+            model.id = this.getEntityId(entity);
+            model.sortOrder = entity.SortOrder;
+            model.ignoreChecklist = ignore;
+            this.orderService.process(
+                model
+            ).pipe(finalize(() => {
+                entity.locked = false;
+                complete && complete();
+            })).subscribe(() => {
+                this.completeEntityUpdate(entity, fromStage, toStage);
+            }, () => {
+                this.moveEntityTo(entity, toStage, fromStage);
+            });
         }, () => {
             this.moveEntityTo(entity, toStage, fromStage);
+            entity.locked = false;
+            complete && complete(true);
         });
     }
 
