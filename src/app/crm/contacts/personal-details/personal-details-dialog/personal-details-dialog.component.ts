@@ -95,7 +95,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactsService.contactInfo$.pipe(
         map((contactInfo: ContactInfoDto) => contactInfo.id),
         distinctUntilChanged(),
-        switchMap((id: number) => this.contactProxy.getSourceContactInfo(id))
+        switchMap((id: number) => this.contactProxy.getSourceContactInfo(null, id))
     );
 
     constructor(

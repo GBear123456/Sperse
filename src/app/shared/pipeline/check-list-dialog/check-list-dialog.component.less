@@ -6,7 +6,7 @@
     height: 100%;
     padding: 20px;
     display: block;
-    max-width: 500px;    
+    max-width: 500px;
 
     #dragcontainer {
         ::ng-deep .dx-sortable-dragging {
@@ -57,11 +57,17 @@
                 display: none;
             }
             .inplace-container {
-                width:320px;
+                min-width:320px;
+                max-width: 400px;
+                width: 100%;
+
+                .inplace-edit-edit-mode {
+                    max-width: 93%;
+                }
             }
         }
     }
-    
+
     .mat-dialog-actions {
         justify-content: center;
     }
