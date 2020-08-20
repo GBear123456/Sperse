@@ -226,7 +226,7 @@
             </dx-scroll-view>
         </mat-tab>
         <mat-tab [label]="ls.l('Checklist')" [hidden]="!checklistLeadDataSource[0]?.items?.length && !checklistOrderDataSource[0]?.items?.length">
-            <dx-scroll-view showScrollbar="onHover" [height]="getTabContentHeight(50)" *ngIf="selectedTabIndex == CHECKLIST_TAB_INDEX">
+            <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight(50)" *ngIf="selectedTabIndex == CHECKLIST_TAB_INDEX">
                 <div class="lead-checklist">
                     <dx-select-box
                         valueExpr="Id"
