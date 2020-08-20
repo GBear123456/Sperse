@@ -994,8 +994,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return true;
                 }
             });
-            if (isUpdated)
-                this.refresh(stage.id);
         });
     }
 

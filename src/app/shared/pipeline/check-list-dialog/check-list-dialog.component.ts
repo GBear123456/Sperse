@@ -5,7 +5,7 @@ import { Component, OnInit, Inject, AfterViewInit, ElementRef, ViewChild } from 
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { finalize, first, skip } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -26,7 +26,6 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
     private slider: any;
-    private isUpdated = false;
     dataSource: any[] = [];
 
     validationRules = [
@@ -92,7 +91,6 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                 })).pipe(
                     finalize(() => this.finishLoading())
                 ).subscribe(() => {
-                    this.isUpdated = true;
                     this.dataSource[cell.rowIndex].name = value;
                     this.reloadStageConfig();
                 });
@@ -108,7 +106,6 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
                 })).pipe(
                     finalize(() => this.finishLoading())
                 ).subscribe((res: any) => {
-                    this.isUpdated = true;
                     cell.data.id = res.id;
                     cell.data.sortOrder = res.sortOrder;
                     this.reloadStageConfig();
@@ -123,7 +120,6 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         this.checklistProxy.deletePoint(cell.data.id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
-            this.isUpdated = true;
             this.reloadStageConfig();
             this.dataSource.some((item, index) => {
                 if (item.id == cell.data.id) {
@@ -160,23 +156,29 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     }
 
     reloadStageConfig() {
-        this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
-        this.store$.pipe(select(PipelinesStoreSelectors.getSortedPipeline({
-            purpose: this.dialogData.pipelinePurposeId,
-            contactGroupId: this.dialogData.contactGroupId
-        })), skip(1), first()).subscribe((pipeline: any) => {
-            pipeline.stages.some(stage => {
-                if (this.dialogData.stage.id == stage.id) {
-                    this.dialogData.stage.checklistPoints =
-                    this.dataSource = cloneDeep(stage.checklistPoints);
-                    this.dataGrid.instance.refresh();
-                    return true;
-                }
+        this.checklistProxy.getPoints(this.dialogData.stage.id).subscribe(res => {
+            this.store$.pipe(
+                select(PipelinesStoreSelectors.getPipelines(undefined)), first(),
+            ).subscribe((pipelines: any[]) => {
+                pipelines.some(pipeline => {
+                    if (pipeline.purpose == this.dialogData.pipelinePurposeId) {
+                        pipeline.stages.some(stage => {
+                            if (this.dialogData.stage.id == stage.id) {
+                                stage.checklistPoints = res;
+                                return true;
+                            }
+                        });
+                        return true;
+                    }
+                });
+                this.store$.dispatch(new PipelinesStoreActions.LoadSuccessAction(pipelines));
             });
+            this.dialogData.stage.checklistPoints = this.dataSource = res;
+            this.dataGrid.instance.refresh();
         });
     }
 
     close() {
-        this.dialogRef.close(this.isUpdated);
+        this.dialogRef.close();
     }
 }
