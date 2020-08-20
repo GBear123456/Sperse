@@ -475,9 +475,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             dataSource[0].progress += (event.itemData.selected ? 1 : -1);
             this.loadChecklistPoints(
                 dataSource, isOrder
-            ).subscribe(() => {
-                event.component.repaint();
-            });
+            ).subscribe();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }

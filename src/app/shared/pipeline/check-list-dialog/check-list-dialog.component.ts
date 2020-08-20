@@ -5,14 +5,15 @@ import { Component, OnInit, Inject, AfterViewInit, ElementRef, ViewChild } from 
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, switchMap } from 'rxjs/operators';
+import { zip, of } from 'rxjs';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
 import { CrmStore, PipelinesStoreActions, PipelinesStoreSelectors } from '@app/crm/store';
 import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStageChecklistPointSortOrderInput,
-    RenameStageChecklistPointInput } from '@shared/service-proxies/service-proxies';
+    RenameStageChecklistPointInput, StageChecklistPointDto, PipelineDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
@@ -155,25 +156,24 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         });
     }
 
-    reloadStageConfig() {
-        this.checklistProxy.getPoints(this.dialogData.stage.id).subscribe(res => {
-            this.store$.pipe(
-                select(PipelinesStoreSelectors.getPipelines(undefined)), first(),
-            ).subscribe((pipelines: any[]) => {
-                pipelines.some(pipeline => {
-                    if (pipeline.purpose == this.dialogData.pipelinePurposeId) {
-                        pipeline.stages.some(stage => {
-                            if (this.dialogData.stage.id == stage.id) {
-                                stage.checklistPoints = res;
-                                return true;
-                            }
-                        });
-                        return true;
-                    }
-                });
-                this.store$.dispatch(new PipelinesStoreActions.LoadSuccessAction(pipelines));
+    reloadStageConfig() {        
+        this.store$.pipe(
+            select(PipelinesStoreSelectors.getPipelines(undefined)), first(),
+            switchMap((pipelines: PipelineDto[]) => zip(of(pipelines), this.checklistProxy.getPoints(this.dialogData.stage.id)))
+        ).subscribe(([pipelines, checklist]: [PipelineDto[], StageChecklistPointDto[]]) => {
+            pipelines.some(pipeline => {
+                if (pipeline.purpose == this.dialogData.pipelinePurposeId) {
+                    pipeline.stages.some(stage => {
+                        if (this.dialogData.stage.id == stage.id) {
+                            stage.checklistPoints = checklist;
+                            return true;
+                        }
+                    });
+                    return true;
+                }
             });
-            this.dialogData.stage.checklistPoints = this.dataSource = res;
+            this.store$.dispatch(new PipelinesStoreActions.LoadSuccessAction(pipelines));
+            this.dialogData.stage.checklistPoints = this.dataSource = checklist;
             this.dataGrid.instance.refresh();
         });
     }
