@@ -93,10 +93,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistLeadId: number;
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactsService.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => contactInfo.id),
+        map((contactInfo: ContactInfoDto) => contactInfo),
         distinctUntilChanged(),
-        switchMap((id: number) => this.contactProxy.getSourceContactInfo(null, id))
-    );
+        switchMap((contactInfo: ContactInfoDto) => this.contactProxy.getSourceContactInfo(contactInfo.groupId, contactInfo.id)
+    ));
 
     constructor(
         private route: ActivatedRoute,

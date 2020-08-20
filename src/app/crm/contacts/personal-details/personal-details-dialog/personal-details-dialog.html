@@ -35,7 +35,7 @@
                             </mat-expansion-panel-header>
 
                             <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
-                                <div *ngIf="sourceContactInfo.sourceContactInfo as sourceContactInfo" class="field">
+                                <div *ngIf="sourceContactInfo.sourceContactLevel1 as sourceContactInfo" class="field">
                                     <label>{{ ls.l('PersonalSettings.Contact1') }}:</label>
                                     <div>
                                         <div class="thumbnail">
@@ -58,7 +58,7 @@
 
                                 <div
                                     *ngIf="(appService.isHostTenant || (appSession.tenant && appSession.tenant.tenancyName === 'BankCode' || appSession.tenant.tenancyName === 'performancepartners'))
-                                            && sourceContactInfo.sourceContactOfSourceContactInfo as sourceContactOfSourceContactInfo"
+                                            && sourceContactInfo.sourceContactLevel2 as sourceContactOfSourceContactInfo"
                                     class="field">
                                     <label>{{ ls.l('PersonalSettings.Contact2') }}:</label>
                                     <div>
