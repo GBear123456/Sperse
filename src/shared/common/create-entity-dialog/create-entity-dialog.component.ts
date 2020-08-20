@@ -325,7 +325,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         saveButton.disabled = true;
         const createModel = this.data.createModel || CreateOrUpdateContactInput;
         let createContactInput = createModel.fromJS(dataObj);
-        createContactInput.statusId = this.data.isInLeadMode ? ContactStatus.Prospective : ContactStatus.Active;
+        createContactInput.statusId = this.data.isInLeadMode && !this.data.parentId ? ContactStatus.Prospective : ContactStatus.Active;
         const createMethod = this.data.createMethod || this.contactProxy.createOrUpdateContact.bind(this.contactProxy);
         createMethod(createContactInput).pipe(
             finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); })
