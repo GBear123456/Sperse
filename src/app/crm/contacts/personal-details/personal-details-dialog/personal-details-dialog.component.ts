@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, ViewChild, Inject, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
