@@ -1958,6 +1958,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     openEntityChecklistDialog() {
+        this.dialog.closeAll();
         let lead = this.actionEvent.data || this.actionEvent;
         this.dialog.open(EntityCheckListDialogComponent, {
             panelClass: ['slider'],

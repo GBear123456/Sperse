@@ -977,6 +977,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showChecklistConfigDialog(stage) {
+        this.dialog.closeAll();
         this.currentTooltip.hide();
         this.dialog.open(CheckListDialogComponent, {
             panelClass: ['slider'],
@@ -998,6 +999,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     showChecklistEntityDialog(event, entity) {
+        this.dialog.closeAll();
         this.dialog.open(EntityCheckListDialogComponent, {
             panelClass: ['slider'],
             hasBackdrop: false,
