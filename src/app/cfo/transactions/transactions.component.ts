@@ -131,6 +131,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private readonly dataSourceURI = 'Transaction';
     private readonly countDataSourceURI = 'Transaction/$count';
     private readonly totalDataSourceURI = 'TransactionTotal';
+    private readonly reportSourceURI = 'TransactionReport';
     private readonly cacheKey = this.getCacheKey('dataGridState', this.dataSourceURI);
     private filters: FilterModel[];
     private rootComponent: any;
@@ -1587,9 +1588,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     downloadExcelReport() {
-        let url = super.getODataUrl(this.dataSourceURI, this.filterQuery);
-        var params = url.split('?')[1];
-        url = AppConsts.remoteServiceBaseUrl + '/api/services/CFO/TransactionReport/Get?' + params;
+        let url = super.getODataUrl(this.reportSourceURI, this.filterQuery);
+        let businessEntityValues: number[] = this.businessEntityFilter.items.element.value;
+        if (url.indexOf('?') == -1) url += '?';
+
+        let dateFrom = this.dateFilter.items.from.value ? new Date(this.dateFilter.items.from.value) : undefined;
+        let dateTo = this.dateFilter.items.to.value ? new Date(this.dateFilter.items.to.value) : undefined;
+        if (dateFrom)
+            url += '&fromDate=' + DateHelper.removeTimezoneOffset(dateFrom, false, 'from').toJSON();
+        if (dateTo)
+            url += '&toDate=' + DateHelper.removeTimezoneOffset(dateTo, false, 'to').toJSON();
+        if (businessEntityValues)
+            businessEntityValues.map(v => url += '&businessEntityIds=' + v);
+        console.log(url);
         document.location.href = url;
     }
 
