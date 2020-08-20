@@ -249,6 +249,7 @@
                                 [elementAttr]="{'lead-checklist': true}"
                                 [focusStateEnabled]="false"
                                 [hoverStateEnabled]="false"
+                                hint="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})"
                                 value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})">
                             </dx-text-box>
                         </div>
@@ -259,7 +260,7 @@
                             <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
                                 class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                         </svg>
-                        <span>{{data.total}} / {{data.progress}}</span>
+                        <span>{{data.progress}} / {{data.total}}</span>
                     </div>
                     <dx-tree-view *ngIf="checklistLeadDataSource && checklistLeadDataSource[0]?.items?.length"
                         [height]="'100%'"
@@ -295,7 +296,8 @@
                                 [elementAttr]="{'lead-checklist': true}"
                                 [focusStateEnabled]="false"
                                 [hoverStateEnabled]="false"
-                                value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})">
+                                hint="{{cell?.Number}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})"
+                                value="{{cell?.Number}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})">
                             </dx-text-box>
                         </div>
                     </dx-select-box>
@@ -305,7 +307,7 @@
                             <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
                                 class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                         </svg>
-                        <span>{{data.total}} / {{data.progress}}</span>
+                        <span>{{data.progress}} / {{data.total}}</span>
                     </div>
                     <dx-tree-view *ngIf="checklistOrderId"
                         [height]="'100%'"

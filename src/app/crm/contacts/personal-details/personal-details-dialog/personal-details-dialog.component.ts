@@ -9,7 +9,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { map, first, finalize, switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { map, takeUntil, first, finalize, switchMap, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -264,7 +264,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.params.$select = ['Id',  'Name', 'Stage', 'OrderDate'];
+                        request.params.$select = ['Id',  'Number', 'Name', 'Stage', 'OrderDate'];
                         request.params.$filter = 'ContactId eq ' + this.contactInfo.id;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
@@ -291,7 +291,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }, dataSource = [rootItem];
         this.pipelineService.getPipelineDefinitionObservable(
             purposeId, AppConsts.PipelinePurposeIds.lead == purposeId ? this.contactInfo.groupId : undefined
-        ).pipe(first()).subscribe((pipeline: PipelineDto) => {
+        ).pipe(takeUntil(this.dialogRef.beforeClosed())).subscribe((pipeline: PipelineDto) => {
+            rootItem.items = [];
             pipeline.stages.forEach((stage: StageDto) => {
                 if (stage.checklistPoints)
                     rootItem.items.push({

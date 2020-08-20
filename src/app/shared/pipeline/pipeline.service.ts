@@ -124,7 +124,7 @@ export class PipelineService {
                             return stage.sortOrder;
                         });
                     return pipelineDefinition;
-                }), publishReplay(), refCount()
+                }), publishReplay(1), refCount()
             ) as Observable<PipelineDto>;
         }
     }
