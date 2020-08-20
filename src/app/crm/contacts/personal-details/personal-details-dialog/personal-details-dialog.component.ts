@@ -54,10 +54,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     };
 
     private slider: any;
-    private readonly CHECKLIST_TAB_INDEX = 1;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
     private readonly ident = 'PersonalDetailsDialog';
     private contactXref: ReplaySubject<string> = new ReplaySubject(1);
+    public readonly CHECKLIST_TAB_INDEX = 1;
     affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
         map((affiliateCode: string) => (affiliateCode || '').trim())
     );
