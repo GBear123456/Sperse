@@ -24,7 +24,9 @@ import { AppService } from '@app/app.service';
     host: {
         '(document:click)': 'hideFilterDialog($event)',
         '(mouseover)': 'preventFilterDisable()',
-        '(mouseout)': 'checkFilterDisable($event)'
+        '(mouseout)': 'checkFilterDisable($event)',
+        '(mousedown)': 'mouseDown($event)',
+        '(document:mouseup)': 'mouseUp()'
     }
 })
 export class SideBarComponent implements OnDestroy {
@@ -35,6 +37,7 @@ export class SideBarComponent implements OnDestroy {
     destroy$: Subject<null> = new Subject<null>();
     tooltipVisible = false;
     toolbarIsHidden$: Observable<boolean> = this.appService.toolbarIsHidden$;
+    isScrolling = false;
 
     constructor(
         private eref: ElementRef,
@@ -126,8 +129,9 @@ export class SideBarComponent implements OnDestroy {
     }
 
     checkFilterDisable(event) {
-        if (!this.filtersService.fixed &&
-            event.composedPath().every(el => el.localName != 'filter')
+        if (!this.filtersService.fixed
+            && !this.isScrolling
+            && event.composedPath().every(el => el.localName != 'filter')
         ) {
             this.filtersService.disable(() => {
                 this.activeFilter = undefined;
@@ -151,6 +155,16 @@ export class SideBarComponent implements OnDestroy {
     clearFilterGroup(filter: FilterModel) {
         filter.clearFilterItems();
         this.filtersService.change([filter]);
+    }
+
+    mouseDown(event) {
+        if (event.target.closest('.dx-scrollable-scrollbar')) {
+            this.isScrolling = true;
+        }
+    }
+
+    mouseUp() {
+        this.isScrolling = false;
     }
 
     ngOnDestroy() {
