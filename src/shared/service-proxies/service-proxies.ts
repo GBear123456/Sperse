@@ -7749,13 +7749,18 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @return Success
      */
-    getSourceContactInfo(contactId: number | null | undefined): Observable<GetSourceContactInfoOutput> {
+    getSourceContactInfo(contactGroupId: string, contactId: number): Observable<GetSourceContactInfoOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContactInfo?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -46574,13 +46579,13 @@ export interface IGetContactInfoForMergeOutput {
     targetContactLeadInfo: LeadInfoForMerge | undefined;
 }
 
-export class SourceContactInfoOutput implements ISourceContactInfoOutput {
+export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     id!: number | undefined;
     name!: string | undefined;
     affiliateCode!: string | undefined;
     photoPublicId!: string | undefined;
 
-    constructor(data?: ISourceContactInfoOutput) {
+    constructor(data?: ISourceContactLevelInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46598,9 +46603,9 @@ export class SourceContactInfoOutput implements ISourceContactInfoOutput {
         }
     }
 
-    static fromJS(data: any): SourceContactInfoOutput {
+    static fromJS(data: any): SourceContactLevelInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new SourceContactInfoOutput();
+        let result = new SourceContactLevelInfo();
         result.init(data);
         return result;
     }
@@ -46615,7 +46620,7 @@ export class SourceContactInfoOutput implements ISourceContactInfoOutput {
     }
 }
 
-export interface ISourceContactInfoOutput {
+export interface ISourceContactLevelInfo {
     id: number | undefined;
     name: string | undefined;
     affiliateCode: string | undefined;
@@ -46623,8 +46628,8 @@ export interface ISourceContactInfoOutput {
 }
 
 export class GetSourceContactInfoOutput implements IGetSourceContactInfoOutput {
-    sourceContactInfo!: SourceContactInfoOutput | undefined;
-    sourceContactOfSourceContactInfo!: SourceContactInfoOutput | undefined;
+    sourceContactLevel1!: SourceContactLevelInfo | undefined;
+    sourceContactLevel2!: SourceContactLevelInfo | undefined;
 
     constructor(data?: IGetSourceContactInfoOutput) {
         if (data) {
@@ -46637,8 +46642,8 @@ export class GetSourceContactInfoOutput implements IGetSourceContactInfoOutput {
 
     init(data?: any) {
         if (data) {
-            this.sourceContactInfo = data["sourceContactInfo"] ? SourceContactInfoOutput.fromJS(data["sourceContactInfo"]) : <any>undefined;
-            this.sourceContactOfSourceContactInfo = data["sourceContactOfSourceContactInfo"] ? SourceContactInfoOutput.fromJS(data["sourceContactOfSourceContactInfo"]) : <any>undefined;
+            this.sourceContactLevel1 = data["sourceContactLevel1"] ? SourceContactLevelInfo.fromJS(data["sourceContactLevel1"]) : <any>undefined;
+            this.sourceContactLevel2 = data["sourceContactLevel2"] ? SourceContactLevelInfo.fromJS(data["sourceContactLevel2"]) : <any>undefined;
         }
     }
 
@@ -46651,15 +46656,15 @@ export class GetSourceContactInfoOutput implements IGetSourceContactInfoOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["sourceContactInfo"] = this.sourceContactInfo ? this.sourceContactInfo.toJSON() : <any>undefined;
-        data["sourceContactOfSourceContactInfo"] = this.sourceContactOfSourceContactInfo ? this.sourceContactOfSourceContactInfo.toJSON() : <any>undefined;
+        data["sourceContactLevel1"] = this.sourceContactLevel1 ? this.sourceContactLevel1.toJSON() : <any>undefined;
+        data["sourceContactLevel2"] = this.sourceContactLevel2 ? this.sourceContactLevel2.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IGetSourceContactInfoOutput {
-    sourceContactInfo: SourceContactInfoOutput | undefined;
-    sourceContactOfSourceContactInfo: SourceContactInfoOutput | undefined;
+    sourceContactLevel1: SourceContactLevelInfo | undefined;
+    sourceContactLevel2: SourceContactLevelInfo | undefined;
 }
 
 export class SubmitQuestionnaireDto implements ISubmitQuestionnaireDto {
