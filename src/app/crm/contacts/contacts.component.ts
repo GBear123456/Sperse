@@ -664,8 +664,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     closeEditDialogs(event) {
-        if (document.body.contains(event.target) &&
-            !event.target.closest('.mat-dialog-container, .dx-popup-wrapper, .swal-modal')
+        if (document.body.contains(event.target)
+            && !event.target.closest('.mat-dialog-container, .dx-popup-wrapper, .swal-modal')
+            && event.target.tagName !== 'BODY'
         ) {
             this.dialog.openDialogs.forEach((dialog: MatDialogRef<any>) => {
                 if (!dialog.disableClose) {
