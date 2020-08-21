@@ -294,10 +294,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
                 route: 'user-information'
             },
-            { 
-                name: 'user-inbox', 
-                label: this.l('CommunicationHistory'), 
-                route: 'user-inbox', 
+            {
+                name: 'user-inbox',
+                label: this.l('CommunicationHistory'),
+                route: 'user-inbox',
                 hidden: !this.isCommunicationHistoryAllowed
             },
             { name: 'documents', label: this.l('Documents'), route: 'documents' },
@@ -401,6 +401,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             contactId = params['contactId'],
             leadId = params['leadId'],
             companyId = params['companyId'];
+        this.contactsService.contactId.next(contactId);
         this.params = params;
         this.userService['data'] = {
             userId: userId, user: null, roles: null
@@ -693,6 +694,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden();
         this.rootComponent.pageHeaderFixed(true);
         this.contactsService.unsubscribe();
+        this.contactsService.contactId.next(null);
         super.ngOnDestroy();
     }
 

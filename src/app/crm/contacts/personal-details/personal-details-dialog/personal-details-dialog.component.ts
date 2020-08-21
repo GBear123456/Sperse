@@ -94,19 +94,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactOrdersDataSource: DataSource;
     checklistLeadId: number;
     checklistOrderId: number;
-    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = combineLatest(
-        this.contactsService.leadInfo$.pipe(
-            filter(Boolean),
-            map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
-            distinctUntilChanged()
-        ),
-        this.contactsService.contactInfo$.pipe(
-            map((contactInfo: ContactInfoDto) => contactInfo.id),
-            distinctUntilChanged()
-        )
-    ).pipe(
-        switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
-    ));
+    sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
 
     constructor(
         private route: ActivatedRoute,
@@ -158,7 +146,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.initContactOrdersDataSource();
                 this.initChecklistByLead(leadInfo).subscribe();
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
-                this.sourceContactInfo$.subscribe();
             }
         }, this.ident);
 
@@ -183,6 +170,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             top: '155px',
             right: '-100vw'
         });
+
+        this.sourceContactInfo$ = combineLatest(
+            this.contactsService.leadInfo$.pipe(
+                filter(Boolean),
+                map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
+                distinctUntilChanged()
+            ),
+            this.contactsService.contactId$
+        ).pipe(
+            switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
+        ));
     }
 
     ngAfterViewInit() {
