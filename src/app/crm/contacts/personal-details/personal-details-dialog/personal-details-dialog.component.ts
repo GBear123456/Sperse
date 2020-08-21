@@ -333,7 +333,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     getTabContentHeight(subtract = 0) {
-        return innerHeight - 324 - subtract + 'px';
+        return innerHeight - 290 - subtract + 'px';
     }
 
     initVerificationChecklist(): void {
