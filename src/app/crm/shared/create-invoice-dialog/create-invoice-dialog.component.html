@@ -57,9 +57,10 @@
                             <i *ngIf="selectedBillingAddress" class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
                             <i *ngIf="selectedBillingAddress" class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
                         </ng-template>
-                        <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>
+                        <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>                        
                         <a (click)="clearClient()" [hidden]="!contactId || disabledForUpdate || data?.contactInfo">{{ls.l('Change') + ' ' + ls.l('Client')}}</a>
                     </label>
+                    <span *ngIf="!selectedBillingAddress && selectedContact">{{selectedContact?.name}}</span>
                     <dx-select-box #contact
                         name="customer"
                         width="220px"
@@ -117,6 +118,7 @@
                             <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
                         </ng-template>
                     </label>
+                    <span *ngIf="!selectedShippingAddress && selectedContact">{{selectedContact?.name}}</span>
                     <dx-select-box #shippingAddress
                         name="shippingAddress"
                         width="220px"
