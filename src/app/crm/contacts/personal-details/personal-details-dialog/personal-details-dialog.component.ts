@@ -8,7 +8,7 @@ import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, ReplaySubject, BehaviorSubject } from 'rxjs';
+import { Observable, ReplaySubject, BehaviorSubject, zip } from 'rxjs';
 import { map, takeUntil, first, finalize, switchMap, distinctUntilChanged } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
@@ -94,10 +94,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactOrdersDataSource: DataSource;
     checklistLeadId: number;
     checklistOrderId: number;
-    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = this.contactsService.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => contactInfo),
+    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = zip(
+        this.contactsService.leadInfo$.pipe(map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId)),
+        this.contactsService.contactInfo$.pipe(map((contactInfo: ContactInfoDto) => contactInfo.id))
+    ).pipe(
+        first(),
         distinctUntilChanged(),
-        switchMap((contactInfo: ContactInfoDto) => this.contactProxy.getSourceContactInfo(contactInfo.groupId, contactInfo.id)
+        switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
     ));
 
     constructor(
@@ -150,6 +153,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.initContactOrdersDataSource();
                 this.initChecklistByLead(leadInfo).subscribe();
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
+                this.sourceContactInfo$.subscribe();
             }
         }, this.ident);
 
@@ -174,7 +178,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             top: '155px',
             right: '-100vw'
         });
-        this.sourceContactInfo$.subscribe();
     }
 
     ngAfterViewInit() {
