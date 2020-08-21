@@ -1600,7 +1600,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             url += '&toDate=' + DateHelper.removeTimezoneOffset(dateTo, false, 'to').toJSON();
         if (businessEntityValues)
             businessEntityValues.map(v => url += '&businessEntityIds=' + v);
-        console.log(url);
+        url += '&currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
         document.location.href = url;
     }
 
