@@ -125,7 +125,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
     private queryWithSearch: any = [];
     private params: any = [];
-    private readonly DEFAULT_PAGE_COUNT = 5;
+    private readonly DEFAULT_PAGE_COUNT = 10;
     private readonly COMPACT_VIEW_PAGE_COUNT = 10;
     compactView: boolean;
     private stagePageCount;
