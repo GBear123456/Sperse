@@ -2679,10 +2679,13 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @aiGeneratedOnly (optional) 
      * @return Success
      */
-    getSystemTotals(): Observable<GetSystemTotalsOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetSystemTotals";
+    getSystemTotals(aiGeneratedOnly: boolean | null | undefined): Observable<GetSystemTotalsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetSystemTotals?";
+        if (aiGeneratedOnly !== undefined)
+            url_ += "aiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2731,10 +2734,13 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @aiGeneratedOnly (optional) 
      * @return Success
      */
-    getLeaderBoard(): Observable<GetLeaderBoardOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetLeaderBoard";
+    getLeaderBoard(aiGeneratedOnly: boolean | null | undefined): Observable<GetLeaderBoardOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetLeaderBoard?";
+        if (aiGeneratedOnly !== undefined)
+            url_ += "aiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2783,10 +2789,13 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @aiGeneratedOnly (optional) 
      * @return Success
      */
-    getUserRank(): Observable<GetUserRankOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetUserRank";
+    getUserRank(aiGeneratedOnly: boolean | null | undefined): Observable<GetUserRankOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetUserRank?";
+        if (aiGeneratedOnly !== undefined)
+            url_ += "aiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2835,10 +2844,13 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @aiGeneratedOnly (optional) 
      * @return Success
      */
-    getRecentlyAddedContacts(): Observable<RecentlyAddedContact[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetRecentlyAddedContacts";
+    getRecentlyAddedContacts(aiGeneratedOnly: boolean | null | undefined): Observable<RecentlyAddedContact[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetRecentlyAddedContacts?";
+        if (aiGeneratedOnly !== undefined)
+            url_ += "aiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

@@ -34,36 +34,36 @@
     <div class="toggle-button-container" [ngClass]="toggleButtonPosition" *ngIf="showHeadlineMenuToggleButton">
         <button class="toggle-button" title="Toggle toolbar" (click)="toggleHeadlineButtons()"></button>
         <ul *ngIf="showHeadlineButtons" class="buttons">
-            <li *ngIf="showReloadButton && !showRefreshButtonSeparately">
-                <div><span class="icon reload" (click)="reload($event)"></span></div>
+            <li *ngIf="showReloadButton && !showRefreshButtonSeparately" (click)="reload($event)">
+                <div><span class="icon reload"></span></div>
                 <span class="text">{{ ls.l('ReloadTheCurrentPage') }}</span>
             </li>
-            <li *ngIf="showToggleToolbarButton">
-                <div><span class="icon toggleToolbar" (click)="toggleToolbar()"></span></div>
+            <li *ngIf="showToggleToolbarButton" (click)="toggleToolbar()">
+                <div><span class="icon toggleToolbar"></span></div>
                 <span class="text">{{ toolbarMenuToggleButtonText$ | async }}</span>
             </li>
-            <li *ngIf="showToggleTotalsButton">
-                <div><span class="icon toggleTotals" (click)="toggleTotals()"></span></div>
+            <li *ngIf="showToggleTotalsButton" (click)="toggleTotals()">
+                <div><span class="icon toggleTotals"></span></div>
                 <span class="text">{{ showTotals ? ls.l('HideTotals') : ls.l('ShowTotals') }}</span>
             </li>
-            <li *ngIf="showToggleCompactViewButton">
-                <div><span class="icon toggleCompactView" (click)="toggleCompactView()"></span></div>
+            <li *ngIf="showToggleCompactViewButton" (click)="toggleCompactView()">
+                <div><span class="icon toggleCompactView"></span></div>
                 <span class="text">{{ showCompactView ? ls.l('HideCompactView') : ls.l('ShowCompactView') }}</span>
             </li>
-            <li *ngIf="showToggleFullScreenButton">
-                <div><span class="icon toggleFullScreenView" (click)="toggleFullScreen()"></span></div>
+            <li *ngIf="showToggleFullScreenButton" (click)="toggleFullScreen()">
+                <div><span class="icon toggleFullScreenView"></span></div>
                 <span class="text">{{ fullScreenButtonText$ | async }}</span>
             </li>
-            <li *ngIf="showToggleColumnSelectorButton">
-                <div><span class="icon toggleColumnSelector" (click)="toggleColumnSelector()"></span></div>
+            <li *ngIf="showToggleColumnSelectorButton" (click)="toggleColumnSelector()">
+                <div><span class="icon toggleColumnSelector"></span></div>
                 <span class="text">{{ ls.l('ColumnSelector') }}</span>
             </li>
-            <li *ngIf="showPrintButton">
-                <div><span class="icon print" (click)="print()"></span></div>
+            <li *ngIf="showPrintButton" (click)="print()">
+                <div><span class="icon print"></span></div>
                 <span class="text">{{ ls.l('PrintResultsPage') }}</span>
             </li>
-            <li *ngIf="showToggleLeftMenuButton">
-                <div><i class="icon left-menu" [ngClass]="toggleLeftMenuButtonIconClass$ | async" (click)="toggleLeftMenu()"></i></div>
+            <li *ngIf="showToggleLeftMenuButton" (click)="toggleLeftMenu()">
+                <div><i class="icon left-menu" [ngClass]="toggleLeftMenuButtonIconClass$ | async"></i></div>
                 <span class="text">{{ toggleLeftMenuButtonText$ | async }}</span>
             </li>
         </ul>
