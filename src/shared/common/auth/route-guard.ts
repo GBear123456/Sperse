@@ -95,6 +95,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
                 this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.appMemberPortalUrl;
+                return null;
             } else {
                 if (tenant.customLayoutType == LayoutType.BankCode)
                     return '/code-breaker';
