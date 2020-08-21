@@ -624,6 +624,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.contactService.getContactInfo(result.id)
                     .pipe(finalize(() => this.finishLoading(true)))
                     .subscribe((contactInfo) => {
+                        this.itemDetailsService.clearItemsSource();
                         let orgContactInfo = contactInfo['organizationContactInfo'] = this.contactInfo['organizationContactInfo'];
                         this.customerId = contactInfo.id;
                         this.fillContactDetails(contactInfo);
