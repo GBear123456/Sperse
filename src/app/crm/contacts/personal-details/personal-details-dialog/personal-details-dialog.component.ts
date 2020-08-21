@@ -8,8 +8,8 @@ import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, ReplaySubject, BehaviorSubject, zip } from 'rxjs';
-import { map, takeUntil, first, finalize, switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
@@ -94,12 +94,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactOrdersDataSource: DataSource;
     checklistLeadId: number;
     checklistOrderId: number;
-    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = zip(
-        this.contactsService.leadInfo$.pipe(map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId)),
-        this.contactsService.contactInfo$.pipe(map((contactInfo: ContactInfoDto) => contactInfo.id))
+    sourceContactInfo$: Observable<GetSourceContactInfoOutput> = combineLatest(
+        this.contactsService.leadInfo$.pipe(
+            filter(Boolean),
+            map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
+            distinctUntilChanged()
+        ),
+        this.contactsService.contactInfo$.pipe(
+            map((contactInfo: ContactInfoDto) => contactInfo.id),
+            distinctUntilChanged()
+        )
     ).pipe(
-        first(),
-        distinctUntilChanged(),
         switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
     ));
 
