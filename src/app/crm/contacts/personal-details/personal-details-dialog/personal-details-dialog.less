@@ -4,37 +4,33 @@
 :host {
     display: block;
     min-width: 400px;
-    padding: 20px;
+    padding: 0 20px 20px;
     height: calc(~"100vh - 250px");
+    position: relative;
 
-    h2 {
-        position: relative;
-        padding-left: 10px;
-
-        .close {
+    .close {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 13px;
+        right: 20px;
+        cursor: pointer;
+        display: block;
+        background-color: #FFF;
+        &:after, &:before {
             position: absolute;
-            width: 20px;
+            top: 0;
+            left: 9px;
+            content: ' ';
             height: 20px;
-            top: 5px;
-            right: 15px;
-            cursor: pointer;
-            display: block;
-            background-color: #FFF;
-            &:after, &:before {
-                position: absolute;
-                top: 0;
-                left: 9px;
-                content: ' ';
-                height: 20px;
-                width: 2px;
-                background-color: #202b35;
-            }
-            &:before {
-                transform: rotate(45deg);
-            }
-            &:after {
-                transform: rotate(-45deg);
-            }
+            width: 2px;
+            background-color: #202b35;
+        }
+        &:before {
+            transform: rotate(45deg);
+        }
+        &:after {
+            transform: rotate(-45deg);
         }
     }
 
