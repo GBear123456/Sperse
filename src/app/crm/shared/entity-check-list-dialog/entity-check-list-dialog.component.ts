@@ -45,7 +45,7 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
         this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
-            top: '210px',
+            top: '75px',
             right: '-100vw'
         });
     }
@@ -56,7 +56,7 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
             this.dialogRef.updateSize(undefined, '100vh');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
-                    top: '210px',
+                    top: '75px',
                     right: '0px'
                 });
             }, 100);
