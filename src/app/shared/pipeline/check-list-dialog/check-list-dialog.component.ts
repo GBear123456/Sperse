@@ -156,10 +156,10 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
         });
     }
 
-    reloadStageConfig() {        
-        this.store$.pipe(
-            select(PipelinesStoreSelectors.getPipelines(undefined)), first(),
-            switchMap((pipelines: PipelineDto[]) => zip(of(pipelines), this.checklistProxy.getPoints(this.dialogData.stage.id)))
+    reloadStageConfig() {
+        zip(
+            this.store$.pipe(select(PipelinesStoreSelectors.getPipelines(undefined)), first()),
+            this.checklistProxy.getPoints(this.dialogData.stage.id)
         ).subscribe(([pipelines, checklist]: [PipelineDto[], StageChecklistPointDto[]]) => {
             pipelines.some(pipeline => {
                 if (pipeline.purpose == this.dialogData.pipelinePurposeId) {
