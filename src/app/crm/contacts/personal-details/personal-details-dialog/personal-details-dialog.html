@@ -142,7 +142,7 @@
                                 <mat-panel-title>{{ ls.l('ContactDetails') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="field" *ngIf="leadInfo?.stage as stage">
-                                <label>{{ ls.l('Status') }}</label>
+                                <label>{{ ls.l('LeadStage') }}</label>
                                 <span><span *ngIf="stageColor" class="status-icon" [ngStyle]="{ backgroundColor: stageColor }"></span>{{ stage }}</span>
                             </div>
                             <hr/>
