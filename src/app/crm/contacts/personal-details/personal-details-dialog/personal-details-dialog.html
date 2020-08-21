@@ -225,9 +225,9 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab [label]="ls.l('Checklist')" [hidden]="!checklistLeadDataSource[0]?.items?.length && !checklistOrderDataSource[0]?.items?.length">
+        <mat-tab [label]="ls.l('Checklist')" [disabled]="!checklistLeadDataSource[0]?.items?.length && !checklistOrderDataSource[0]?.items?.length">
             <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()" *ngIf="selectedTabIndex == CHECKLIST_TAB_INDEX">
-                <div class="lead-checklist">
+                <div class="lead-checklist" *ngIf="!checklistLeadDataSource.length || checklistLeadDataSource[0]?.items?.length">
                     <dx-select-box
                         valueExpr="Id"
                         displayExpr="Name"
@@ -274,7 +274,7 @@
                         </div>
                     </dx-tree-view>
                 </div>
-                <div class="order-chacklist">
+                <div class="order-chacklist" *ngIf="!contactOrdersDataSource.length || contactOrdersDataSource[0]?.items?.length">
                     <dx-select-box *ngIf="checklistOrderId !== null"
                         valueExpr="Id"
                         displayExpr="Name"
