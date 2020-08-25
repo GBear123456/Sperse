@@ -1907,7 +1907,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this._router.navigate([], {
                 queryParamsHandling: 'merge',
                 relativeTo: this._activatedRoute,
-                queryParams: {contactGroup: event.value}
+                queryParams: {
+                    contactGroup: event.value,
+                    dataLayoutType: this.dataLayoutType.value
+                }
             });
 
             this.headlineButtons[0].label = this.getHeadlineButtonName();
