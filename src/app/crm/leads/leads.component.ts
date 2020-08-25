@@ -952,6 +952,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.cacheService.exists(this.cacheKey)) {
             this.selectedContactGroup = this.cacheService.get(this.cacheKey);
             this.contactGroupId.next(ContactGroup[this.selectedContactGroup]);
+            this.headlineButtons[0].label = this.getHeadlineButtonName();
             this.createButtonEnabledSet();
         }
     }
@@ -1898,8 +1899,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.actionEvent = null;
     }
 
-    getHeadlineButtonName() {
-        return this.l('CreateNew') + ' ' + this.getUserGroup(this.selectedContactGroup).slice(0, -1);
+    getHeadlineButtonName(contactGroup?: string) {
+        return this.l('CreateNew') + ' ' +
+            this.getUserGroup(contactGroup ? contactGroup : this.selectedContactGroup).slice(0, -1);
     }
 
     onContactGroupChanged(event) {
@@ -1912,8 +1914,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     dataLayoutType: this.dataLayoutType.value
                 }
             });
-
-            this.headlineButtons[0].label = this.getHeadlineButtonName();
+            this.headlineButtons[0].label = this.getHeadlineButtonName(event.value);
             this.cacheService.set(this.cacheKey, event.value);
             this.createButtonEnabledSet();
             this.initToolbarConfig();
