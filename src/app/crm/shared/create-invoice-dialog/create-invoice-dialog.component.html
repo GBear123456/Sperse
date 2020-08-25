@@ -57,16 +57,19 @@
                             <i *ngIf="selectedBillingAddress" class="edit fa fa-pencil" (click)="showEditAddressDialog($event, 'selectedBillingAddress')"></i>
                             <i *ngIf="selectedBillingAddress" class="remove fa fa-remove" (click)="selectedBillingAddress = undefined"></i>
                         </ng-template>
-                        <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>                        
+                        <a (click)="createClient()" [hidden]="contactId || disabledForUpdate || data?.contactInfo">+ {{ls.l('New') + ' ' + ls.l('Client')}}</a>
                         <a (click)="clearClient()" [hidden]="!contactId || disabledForUpdate || data?.contactInfo">{{ls.l('Change') + ' ' + ls.l('Client')}}</a>
                     </label>
-                    <span *ngIf="!selectedBillingAddress && selectedContact">{{selectedContact?.name}}</span>
+                    <span *ngIf="!selectedBillingAddress && selectedContact">
+                        {{selectedContact?.name || selectedContact?.email}}
+                    </span>
                     <dx-select-box #contact
                         name="customer"
                         width="220px"
                         height="40px"
                         displayExpr="name"
                         valueExpr="name"
+                        itemTemplate="customerTemplate"
                         [visible]="!contactId"
                         [disabled]="data?.invoice || data?.contactInfo"
                         [acceptCustomValue]="true"
@@ -78,6 +81,9 @@
                         (onFocusIn)="onFieldFocusIn($event)"
                         (onInput)="customerLookupItems($event)"
                         (onSelectionChanged)="selectContact($event)">
+                        <div *dxTemplate="let cellData of 'customerTemplate'">
+                            {{cellData.name ? cellData.name : cellData.email }}
+                        </div>
                     </dx-select-box>
                     <dx-select-box #billingAddress
                         name="billingAddress"
@@ -118,7 +124,9 @@
                             <i class="remove fa fa-remove" (click)="selectedShippingAddress = undefined"></i>
                         </ng-template>
                     </label>
-                    <span *ngIf="!selectedShippingAddress && selectedContact">{{selectedContact?.name}}</span>
+                    <span *ngIf="!selectedShippingAddress && selectedContact">
+                        {{selectedContact?.name || selectedContact?.email}}
+                    </span>
                     <dx-select-box #shippingAddress
                         name="shippingAddress"
                         width="220px"
