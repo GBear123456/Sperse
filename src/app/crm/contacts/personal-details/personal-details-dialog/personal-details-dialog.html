@@ -1,7 +1,3 @@
-<source-contact-list
-    [leadId]="leadInfo?.id"
-    [selectedKey]="leadInfo?.sourceContactId">
-</source-contact-list>
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
     <mat-tab-group [(selectedIndex)]="selectedTabIndex">
@@ -14,7 +10,7 @@
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="field">
-                                <inplace-edit [id]="contactInfo.id"
+                                <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
                                               [value]="affiliateCode$ | async"
@@ -23,7 +19,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
                                               [validationRules]="affiliateValidationRules"
-                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
                                               (valueChanged)="updateAffiliateCode($event)"
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
@@ -81,7 +77,7 @@
                                 <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(contactInfo.assignedUserPicturePublicId)"/>
+                                        <img [src]="getThumbnailSrc(contactInfo?.assignedUserPicturePublicId)"/>
                                     </div>
                                     <div class="field-info">
                                         <span>{{assignedUserName}}
@@ -158,7 +154,7 @@
                             <hr/>
                             <div class="field">
                                 <label>{{ ls.l('Xref') }}:</label>
-                                <inplace-edit [id]="contactInfo.id"
+                                <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('Xref')"
                                               [value]="contactXref$ | async"
@@ -168,7 +164,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
                                               [validationRules]="xrefValidationRules"
-                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
                                               (valueChanged)="updateXref($event)"
                                               (itemDeleted)="deleteItem(ls.l('Xref'))">
                                 </inplace-edit>
@@ -186,7 +182,7 @@
                                                   [isDeleteEnabled]="true"
                                                   [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
                                                   [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                                  [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                                  [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
                                                   (valueChanged)="updateCustomField($event, 'customField' + n)"
                                                   (itemDeleted)="updateCustomField(null, 'customField' + n)">
                                     </inplace-edit>
