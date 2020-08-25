@@ -266,7 +266,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initContactOrdersDataSource() {
-        if (this.contactInfo.id)
+        if (this.contactInfo.id) {
             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
                 orderId = params['orderId'] && parseInt(params['orderId']);
             if (orderId)
@@ -293,6 +293,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     }
                 })
             });
+        }
     }
 
     initChecklistDataSource(purposeId, rootName, stageName) {
