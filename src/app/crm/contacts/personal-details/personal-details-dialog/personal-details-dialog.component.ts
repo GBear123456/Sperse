@@ -267,6 +267,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     initContactOrdersDataSource() {
         if (this.contactInfo.id)
+            let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
+                orderId = params['orderId'] && parseInt(params['orderId']);
+            if (orderId)
+                this.initChecklistByOrder({Id: orderId}).subscribe();
             this.contactOrdersDataSource = new DataSource({
                 paginate: false,
                 requireTotalCount: true,
@@ -282,9 +286,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     },
                     onLoaded: (data: any) => {
                         if (data.length) {
-                            let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
-                                orderId = params['orderId'] && parseInt(params['orderId']);
-                            this.initChecklistByOrder(data.filter(item => item.Id == orderId)[0] || data[0]).subscribe();
+                            let order = data.filter(item => item.Id == this.checklistOrderId)[0];
+                            this.initChecklistByOrder(order || data[0]).subscribe();
                         } else
                             this.checklistOrderId = null;
                     }
