@@ -95,6 +95,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistLeadId: number;
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
+    checklistSources = [];
 
     constructor(
         private route: ActivatedRoute,
@@ -144,7 +145,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.leadInfo = leadInfo;
                 this.initContactLeadsDataSource();
                 this.initContactOrdersDataSource();
-                this.initChecklistByLead(leadInfo).subscribe();
+                this.initChecklistByLead(leadInfo).subscribe(
+                    () => this.initChecklistSources());
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
             }
         }, this.ident);
@@ -270,7 +272,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
                 orderId = params['orderId'] && parseInt(params['orderId']);
             if (orderId)
-                this.initChecklistByOrder({Id: orderId}).subscribe();
+                this.initChecklistByOrder({Id: orderId}).subscribe(
+                    () => this.initChecklistSources());
             this.contactOrdersDataSource = new DataSource({
                 paginate: false,
                 requireTotalCount: true,
@@ -287,7 +290,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     onLoaded: (data: any) => {
                         if (data.length) {
                             let order = data.filter(item => item.Id == this.checklistOrderId)[0];
-                            this.initChecklistByOrder(order || data[0]).subscribe();
+                            this.initChecklistByOrder(order || data[0]).subscribe(
+                                () => this.initChecklistSources());
                         } else
                             this.checklistOrderId = null;
                     }
@@ -467,7 +471,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     onChecklistChanged(event, isOrder = false) {
         this.startLoading();
-        (isOrder ?  this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput({
+        let top = this.checklistScroll.instance.scrollTop();
+        (isOrder ? this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput({
                 pointId: event.itemData.id,
                 orderId: this.checklistOrderId,
                 isDone: event.itemData.selected
@@ -485,7 +490,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             dataSource[0].progress += (event.itemData.selected ? 1 : -1);
             this.loadChecklistPoints(
                 dataSource, isOrder
-            ).subscribe();
+            ).subscribe(() => {
+                this.initChecklistSources();
+                setTimeout(() => {
+                    this.checklistScroll.instance.scrollTo(top);
+                });
+            });
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }
@@ -495,7 +505,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         if (event.selectedItem.Id != this.checklistLeadId) {
             this.startLoading();
             this.initChecklistByLead(event.selectedItem).pipe(
-                finalize(() => this.finishLoading())).subscribe();
+                finalize(() => this.finishLoading())).subscribe(
+                    () => this.initChecklistSources());
         }
     }
 
@@ -510,11 +521,26 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             this.initChecklistByOrder(event.selectedItem).pipe(
                 finalize(() => this.finishLoading())
             ).subscribe(() => {
+                this.initChecklistSources();
                 setTimeout(() => {
                     this.checklistScroll.instance.scrollTo(top);
                 });
             });
         }
+    }
+
+    initChecklistSources() {
+        this.checklistSources = [{
+            checklistId: this.checklistLeadId,
+            onChange: this.onLeadChanged.bind(this),
+            checklistDataSource: this.checklistLeadDataSource,
+            contactDataSource: this.contactLeadsDataSource
+        }, {
+            checklistId: this.checklistOrderId,
+            onChange: this.onOrderChanged.bind(this),
+            checklistDataSource: this.checklistOrderDataSource,
+            contactDataSource: this.contactOrdersDataSource
+        }];
     }
 
     ngOnDestroy() {
