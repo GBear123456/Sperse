@@ -66,7 +66,7 @@
                                      'user-notification-item-clickable': notification.url,
                                      'user-notification-item-unread': notification.isUnread
                                  }"
-                                 (click)="gotoUrl(notification.url)">
+                                 (click)="onNotificationClick(notification)">
                                 <span class="m-list-timeline__badge m-list-timeline__badge--success"></span>
                                 <span class="m-list-timeline__icon {{notification.icon}}"></span>
                                 <span class="m-list-timeline__text">

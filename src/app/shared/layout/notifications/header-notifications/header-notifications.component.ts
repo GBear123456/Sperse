@@ -122,6 +122,8 @@ export class HeaderNotificationsComponent implements OnInit {
                 this.notifications.push(this.userNotificationHelper.format(<any>item));
             });
         });
+
+        setTimeout(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
     }
 
     registerToEvents() {
@@ -158,11 +160,13 @@ export class HeaderNotificationsComponent implements OnInit {
         this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
-    gotoUrl(url: string): void {
-        if (url) {
-            this.router.navigateByUrl(url);
-            this.hideDropDown();
+    onNotificationClick(notification: any): void {
+        if (notification.entityId) {
+            this.router.navigate(['app/crm/contact', notification.entityId]);
+        } else if (notification.url) {
+            this.router.navigateByUrl(notification.url);
         }
+        this.hideDropDown();
     }
 
     subscriptionStatusBarVisible(): boolean {
