@@ -61845,7 +61845,7 @@ export class TenantNotificationDto implements ITenantNotificationDto {
     notificationName!: string | undefined;
     data!: NotificationData | undefined;
     entityTypeName!: string | undefined;
-    entityId!: number | undefined;
+    entityId!: string | undefined;
     severity!: NotificationSeverity | undefined;
     creationTime!: moment.Moment | undefined;
 
@@ -61898,7 +61898,7 @@ export interface ITenantNotificationDto {
     notificationName: string | undefined;
     data: NotificationData | undefined;
     entityTypeName: string | undefined;
-    entityId: number | undefined;
+    entityId: string | undefined;
     severity: NotificationSeverity | undefined;
     creationTime: moment.Moment | undefined;
 }
