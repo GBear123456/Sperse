@@ -147,6 +147,7 @@ export class StaticListComponent {
             else
                 filterElement.value = [data.id];
         }
+        this.dxList.instance.repaint();
         this.filtersService.change([this.filterModel]);
         event.stopPropagation();
     }

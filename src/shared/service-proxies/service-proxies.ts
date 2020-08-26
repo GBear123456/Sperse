@@ -46593,6 +46593,7 @@ export interface IGetContactInfoForMergeOutput {
 
 export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     id!: number | undefined;
+    groupId!: string | undefined;
     name!: string | undefined;
     affiliateCode!: string | undefined;
     photoPublicId!: string | undefined;
@@ -46609,6 +46610,7 @@ export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.groupId = data["groupId"];
             this.name = data["name"];
             this.affiliateCode = data["affiliateCode"];
             this.photoPublicId = data["photoPublicId"];
@@ -46625,6 +46627,7 @@ export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["groupId"] = this.groupId;
         data["name"] = this.name;
         data["affiliateCode"] = this.affiliateCode;
         data["photoPublicId"] = this.photoPublicId;
@@ -46634,6 +46637,7 @@ export class SourceContactLevelInfo implements ISourceContactLevelInfo {
 
 export interface ISourceContactLevelInfo {
     id: number | undefined;
+    groupId: string | undefined;
     name: string | undefined;
     affiliateCode: string | undefined;
     photoPublicId: string | undefined;
@@ -64161,7 +64165,6 @@ export interface IUpdateOrderStagePointInput {
 export class ProcessOrderInfo implements IProcessOrderInfo {
     id!: number;
     sortOrder!: number | undefined;
-    stageId!: number | undefined;
     ignoreChecklist!: boolean | undefined;
 
     constructor(data?: IProcessOrderInfo) {
@@ -64177,7 +64180,6 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
         if (data) {
             this.id = data["id"];
             this.sortOrder = data["sortOrder"];
-            this.stageId = data["stageId"];
             this.ignoreChecklist = data["ignoreChecklist"];
         }
     }
@@ -64193,7 +64195,6 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["sortOrder"] = this.sortOrder;
-        data["stageId"] = this.stageId;
         data["ignoreChecklist"] = this.ignoreChecklist;
         return data; 
     }
@@ -64202,7 +64203,6 @@ export class ProcessOrderInfo implements IProcessOrderInfo {
 export interface IProcessOrderInfo {
     id: number;
     sortOrder: number | undefined;
-    stageId: number | undefined;
     ignoreChecklist: boolean | undefined;
 }
 
@@ -64210,7 +64210,6 @@ export class CancelOrderInfo implements ICancelOrderInfo {
     orderId!: number;
     comment!: string;
     sortOrder!: number | undefined;
-    stageId!: number | undefined;
 
     constructor(data?: ICancelOrderInfo) {
         if (data) {
@@ -64226,7 +64225,6 @@ export class CancelOrderInfo implements ICancelOrderInfo {
             this.orderId = data["orderId"];
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
-            this.stageId = data["stageId"];
         }
     }
 
@@ -64242,7 +64240,6 @@ export class CancelOrderInfo implements ICancelOrderInfo {
         data["orderId"] = this.orderId;
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
-        data["stageId"] = this.stageId;
         return data; 
     }
 }
@@ -64251,7 +64248,6 @@ export interface ICancelOrderInfo {
     orderId: number;
     comment: string;
     sortOrder: number | undefined;
-    stageId: number | undefined;
 }
 
 export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto {
@@ -68996,6 +68992,7 @@ export enum LayoutType {
     AdvicePeriod = "AdvicePeriod", 
     BankCode = "BankCode", 
     Rapid = "Rapid", 
+    HOA = "HOA", 
 }
 
 export class FaviconDto implements IFaviconDto {
