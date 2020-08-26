@@ -40,6 +40,7 @@
         <app-static-list #stageList
                 width="210px"
                 [title]="l('Stages')"
+                [selectionMode]="'single'"
                 [selectedKeys]="selectedClientKeys"
                 [filterModel]="filterModelStages"
                 [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"

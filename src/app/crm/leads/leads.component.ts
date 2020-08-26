@@ -1716,7 +1716,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.pipelinePurposeId,
                 this.selectedLeads,
                 $event.name
-            ).subscribe((declinedList) => {
+            ).subscribe(declinedList => {
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
@@ -1921,9 +1921,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    onOwnerFilterApply(event) {
+    onOwnerFilterApply(event?) {
         let filter = this.filterModelOrgUnit.items.element.value;
-        this.filterModelOrgUnit.items.element.value = filter && filter[0] == event.id ? [] : [event.id];
+        this.filterModelOrgUnit.items.element.value = filter && (!event || filter[0] == event.id) ? [] : [event.id];
         this.filtersService.change([this.filterModelOrgUnit]);
     }
 

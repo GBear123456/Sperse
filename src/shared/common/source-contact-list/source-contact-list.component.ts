@@ -168,16 +168,16 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
             setTimeout(() => this.sourceComponent.dxTooltip.instance.repaint());
     }
 
-    onContactFilterApply(contact) {
+    onContactFilterApply(contact?) {
         let filterElement = this.filterModel.items.element;
-        if (filterElement['contact'] && filterElement['contact'].id == contact.id)
+        if (filterElement['contact'] && (!contact || filterElement['contact'].id == contact.id))
             filterElement['contact'] = undefined;
         else
             filterElement['contact'] = contact;
         this.toggle();
     }
 
-    onOwnerFilter(event) {
+    onOwnerFilter(event?) {
         this.onOwnerFilterApply.emit(event);
         this.toggle();
     }
@@ -199,9 +199,10 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     }
 
     toggle() {
-        this.showContacts = true;
         if (this.sourceComponent.toggle())
             setTimeout(() => this.loadSourceContacts());
+        else if (!this.showContacts)
+            this.toggleContacts();
         this.changeDetectorRef.markForCheck();
     }
 

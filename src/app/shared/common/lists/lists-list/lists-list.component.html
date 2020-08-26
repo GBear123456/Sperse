@@ -5,8 +5,9 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Lists')}}</span>
+                <span class="filter-clear" [hidden]="!filterModel?.items?.element?.value?.length" (click)="clearFilterIfSelected()">{{l('ClearFilter')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode">
-                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{l('Remove')}}</span>
                     <span class="filter-apply" [class.disabled]="!isManageAllowed()" (click)="apply()">{{l('Apply')}}</span>
                 </div>
                 <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">

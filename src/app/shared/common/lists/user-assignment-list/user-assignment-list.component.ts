@@ -241,12 +241,12 @@ export class UserAssignmentComponent implements OnDestroy {
         }
     }
 
-    applyFilter(event, data) {
+    applyFilter(event, data?) {
         event.stopPropagation();
         this.clearFiltersHighlight();
 
         let modelItems = this.filterModel.items.element.value;
-        if (modelItems.length == 1 && modelItems[0] == data.id)
+        if (modelItems.length == 1 && (!data || modelItems[0] == data.id))
             this.filterModel.items.element.value = [];
         else {
             this.filterModel.items.element.value = [data.id];

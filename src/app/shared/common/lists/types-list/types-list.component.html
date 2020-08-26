@@ -5,12 +5,13 @@
         <div class="tags-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{ls.l('Types')}}</span>
+                <span class="filter-clear" [hidden]="!filterModel?.items?.element?.value?.length" (click)="clearFilterIfSelected()">{{ls.l('ClearFilter')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode">
-                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Remove')}}</span>
                     <span class="filter-apply" [class.disabled]="!isManageAllowed()" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
                 <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="apply(true)">{{ls.l('Clear')}}</span>
+                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="apply(true)">{{ls.l('Remove')}}</span>
                     <span class="filter-apply" [class.disabled]="!isManageAllowed() || !typeslist.selectedRowKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>

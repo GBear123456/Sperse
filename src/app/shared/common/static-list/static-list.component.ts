@@ -136,13 +136,13 @@ export class StaticListComponent {
         }
     }
 
-    applyFilter(event, data) {
+    applyFilter(event, data?) {
         let filterElement = this.filterModel.items.element;
         this.clearFiltersHighlight();
         if (this.onFilterApply.observers.length)
             this.onFilterApply.emit(data);
         else {
-            if (filterElement.value == data.id)
+            if (!data || filterElement.value == data.id)
                 filterElement.value = [];
             else
                 filterElement.value = [data.id];
@@ -152,10 +152,13 @@ export class StaticListComponent {
         event.stopPropagation();
     }
 
-    isFilteredItem(data) {
+    isFilteredItem(data?) {
         let value = this.filterModel && this.filterModel.items.element.value;
         if (value)
-            return value.some ? value.some(item => item.value == data.id) : data.id == value;
+            return value.some ? value.some(item => {
+                let value = typeof(item) == 'string' ? item : item.value;
+                return data ? value == data.id : !!value;
+            }) : (data ? data.id == value : !!value);
     }
 
     onContentReady() {
