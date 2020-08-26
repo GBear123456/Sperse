@@ -48846,6 +48846,7 @@ export class MessageDto implements IMessageDto {
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageStatus | undefined;
     hasChildren!: boolean | undefined;
+    isInbound!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageDto) {
@@ -48879,6 +48880,7 @@ export class MessageDto implements IMessageDto {
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
             this.hasChildren = data["hasChildren"];
+            this.isInbound = data["isInbound"];
             this.id = data["id"];
         }
     }
@@ -48912,6 +48914,7 @@ export class MessageDto implements IMessageDto {
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
         data["hasChildren"] = this.hasChildren;
+        data["isInbound"] = this.isInbound;
         data["id"] = this.id;
         return data; 
     }
@@ -48934,6 +48937,7 @@ export interface IMessageDto {
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageStatus | undefined;
     hasChildren: boolean | undefined;
+    isInbound: boolean | undefined;
     id: number | undefined;
 }
 
@@ -48952,6 +48956,7 @@ export class MessageListDto implements IMessageListDto {
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageStatus | undefined;
     hasChildren!: boolean | undefined;
+    isInbound!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageListDto) {
@@ -48979,6 +48984,7 @@ export class MessageListDto implements IMessageListDto {
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
             this.hasChildren = data["hasChildren"];
+            this.isInbound = data["isInbound"];
             this.id = data["id"];
         }
     }
@@ -49006,6 +49012,7 @@ export class MessageListDto implements IMessageListDto {
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
         data["hasChildren"] = this.hasChildren;
+        data["isInbound"] = this.isInbound;
         data["id"] = this.id;
         return data; 
     }
@@ -49026,6 +49033,7 @@ export interface IMessageListDto {
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageStatus | undefined;
     hasChildren: boolean | undefined;
+    isInbound: boolean | undefined;
     id: number | undefined;
 }
 
@@ -55775,6 +55783,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     userName!: string | undefined;
     password!: string | undefined;
     from!: string | undefined;
+    inboundSmsKey!: string | undefined;
 
     constructor(data?: IYTelSettingsEditDto) {
         if (data) {
@@ -55791,6 +55800,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
             this.userName = data["userName"];
             this.password = data["password"];
             this.from = data["from"];
+            this.inboundSmsKey = data["inboundSmsKey"];
         }
     }
 
@@ -55807,6 +55817,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
         data["userName"] = this.userName;
         data["password"] = this.password;
         data["from"] = this.from;
+        data["inboundSmsKey"] = this.inboundSmsKey;
         return data; 
     }
 }
@@ -55816,6 +55827,7 @@ export interface IYTelSettingsEditDto {
     userName: string | undefined;
     password: string | undefined;
     from: string | undefined;
+    inboundSmsKey: string | undefined;
 }
 
 export class SendTestEmailInput implements ISendTestEmailInput {
