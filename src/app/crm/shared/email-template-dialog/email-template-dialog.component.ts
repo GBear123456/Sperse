@@ -20,8 +20,15 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-import { EmailTemplateServiceProxy, GetTemplatesResponse, CreateEmailTemplateRequest,
-    ContactCommunicationServiceProxy, UpdateEmailTemplateRequest, GetTemplateReponse, ContactServiceProxy
+import {
+    EmailTemplateServiceProxy,
+    GetTemplatesResponse,
+    CreateEmailTemplateRequest,
+    ContactCommunicationServiceProxy,
+    UpdateEmailTemplateRequest,
+    GetTemplateReponse,
+    ContactServiceProxy,
+    GetEmailDataOutput
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -104,7 +111,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             data.suggestionEmails = [];
 
         if (!this.data.tags && this.data.contact)
-            this.communicationProxy.getEmailData(undefined, this.data.contact.id).subscribe(res => {
+            this.communicationProxy.getEmailData(undefined, this.data.contact.id).subscribe((res: GetEmailDataOutput) => {
                 this.data.tags = res.tags;
             });
     }
