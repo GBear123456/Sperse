@@ -145,8 +145,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.leadInfo = leadInfo;
                 this.initContactLeadsDataSource();
                 this.initContactOrdersDataSource();
-                this.initChecklistByLead(leadInfo).subscribe(
-                    () => this.initChecklistSources());
+                this.initChecklistSources();
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
             }
         }, this.ident);
@@ -249,10 +248,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initContactLeadsDataSource() {
-        if (this.contactInfo.id)
+        if (this.contactInfo.id && !this.contactLeadsDataSource)
             this.contactLeadsDataSource = new DataSource({
                 paginate: false,
-                requireTotalCount: true,
+                requireTotalCount: false,
                 store: new ODataStore({
                     key: 'Id',
                     url: this.oDataService.getODataUrl('Lead'),
@@ -262,13 +261,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate'];
                         request.params.$filter = 'CustomerId eq ' + this.contactInfo.id;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    onLoaded: (data: any) => {
+                        this.initChecklistByLead(this.leadInfo).subscribe(
+                            () => this.initChecklistSources());
                     }
                 })
             });
     }
 
     initContactOrdersDataSource() {
-        if (this.contactInfo.id) {
+        if (this.contactInfo.id && !this.contactOrdersDataSource) {
             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
                 orderId = params['orderId'] && parseInt(params['orderId']);
             if (orderId)
@@ -276,7 +279,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     () => this.initChecklistSources());
             this.contactOrdersDataSource = new DataSource({
                 paginate: false,
-                requireTotalCount: true,
+                requireTotalCount: false,
                 store: new ODataStore({
                     key: 'Id',
                     url: this.oDataService.getODataUrl('Order'),
@@ -530,17 +533,23 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initChecklistSources() {
-        this.checklistSources = [{
-            checklistId: this.checklistLeadId,
-            onChange: this.onLeadChanged.bind(this),
-            checklistDataSource: this.checklistLeadDataSource,
-            contactDataSource: this.contactLeadsDataSource
-        }, {
-            checklistId: this.checklistOrderId,
-            onChange: this.onOrderChanged.bind(this),
-            checklistDataSource: this.checklistOrderDataSource,
-            contactDataSource: this.contactOrdersDataSource
-        }];
+        if (this.checklistSources.length)
+            this.checklistSources.forEach((source, isOrder) => {
+                source.checklistId = isOrder ? this.checklistOrderId : this.checklistLeadId;
+                source.checklistDataSource = isOrder ? this.checklistOrderDataSource : this.checklistLeadDataSource;
+            });
+        else
+            this.checklistSources.push({
+                checklistId: this.checklistLeadId,
+                onChange: this.onLeadChanged.bind(this),
+                checklistDataSource: this.checklistLeadDataSource,
+                contactDataSource: this.contactLeadsDataSource
+            }, {
+                checklistId: this.checklistOrderId,
+                onChange: this.onOrderChanged.bind(this),
+                checklistDataSource: this.checklistOrderDataSource,
+                contactDataSource: this.contactOrdersDataSource
+            });
     }
 
     ngOnDestroy() {

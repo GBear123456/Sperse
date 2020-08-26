@@ -221,10 +221,10 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab [label]="ls.l('Checklist')" [disabled]="!checklistLeadDataSource[0]?.total && !checklistOrderDataSource[0]?.total">
-            <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()" *ngIf="selectedTabIndex == CHECKLIST_TAB_INDEX">
+        <mat-tab [label]="ls.l('Checklist')" [disabled]="!!checklistSources.length && !checklistLeadDataSource[0]?.total && !checklistOrderDataSource[0]?.total">
+            <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()">
                 <div *ngFor="let source of checklistSources; let i = index" [hidden]="!source?.checklistId || !source?.checklistDataSource[0]?.total">
-                    <dx-select-box *ngIf="source?.checklistId && source?.contactDataSource"
+                    <dx-select-box *ngIf="source?.contactDataSource"
                         valueExpr="Id"
                         displayExpr="Name"
                         [width]="'370px'"
@@ -245,8 +245,8 @@
                                 [elementAttr]="{'lead-checklist': true}"
                                 [focusStateEnabled]="false"
                                 [hoverStateEnabled]="false"
-                                hint="{{cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})"
-                                value="{{cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})">
+                                hint="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})"
+                                value="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})">
                             </dx-text-box>
                         </div>
                     </dx-select-box>
