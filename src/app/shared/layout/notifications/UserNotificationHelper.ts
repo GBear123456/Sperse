@@ -12,7 +12,8 @@ import { GuidEntityDto, NotificationServiceProxy } from '@shared/service-proxies
 import { NotificationSettingsModalComponent } from './notification-settings-modal/notification-settings-modal.component';
 
 export interface IFormattedUserNotification {
-    entityId: number;
+    entityId: string;
+    entityTypeName: string; 
     userNotificationId: string;
     text: string;
     time: string;
@@ -67,6 +68,7 @@ export class UserNotificationHelper {
         let formatted: IFormattedUserNotification = {
             userNotificationId: userNotification.id,
             entityId: userNotification.notification.entityId,
+            entityTypeName: userNotification.notification.entityTypeName,
             text: abp.notifications.getFormattedMessageFromUserNotification(userNotification),
             time: moment(userNotification.notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
             creationTime: userNotification.notification.creationTime,
