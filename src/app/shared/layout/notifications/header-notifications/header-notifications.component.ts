@@ -57,6 +57,8 @@ export class HeaderNotificationsComponent implements OnInit {
         this.registerToEvents();
         this.getCurrentLoginInformations();
 
+        setTimeout(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
+
         if (this.appService.moduleSubscriptions$) {
             this.appService.subscribeModuleChange((config: ConfigInterface) => this.getSubscriptionInfo(config.name));
             this.appService.moduleSubscriptions$.subscribe(() => this.getSubscriptionInfo());
@@ -124,8 +126,6 @@ export class HeaderNotificationsComponent implements OnInit {
                 this.notifications.push(this.userNotificationHelper.format(<any>item));
             });
         });
-
-        setTimeout(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
     }
 
     registerToEvents() {
