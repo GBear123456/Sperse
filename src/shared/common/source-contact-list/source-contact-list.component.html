@@ -27,9 +27,9 @@
         </div>
         <div custom-content>
             <organization-units-tree
-                selectionMode="single" 
+                selectionMode="single"
                 [showFilterButton]="true"
-                [showCheckBoxesMode]="hasBulkUpdatePermission && selectedKeys?.length ? 'normal' : 'none'" 
+                [showCheckBoxesMode]="hasBulkUpdatePermission && selectedKeys?.length ? 'normal' : 'none'"
                 [hidden]="!showOrgUnits || showContacts"
                 (onFilterApplied)="onOwnerFilter($event)">
             </organization-units-tree>
