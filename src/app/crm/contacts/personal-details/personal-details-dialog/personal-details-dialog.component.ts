@@ -36,6 +36,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -541,12 +542,15 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 onChange: this.onLeadChanged.bind(this),
                 checklistDataSource: this.checklistLeadDataSource,
                 contactDataSource: this.contactLeadsDataSource
-            }, {
-                checklistId: this.checklistOrderId,
-                onChange: this.onOrderChanged.bind(this),
-                checklistDataSource: this.checklistOrderDataSource,
-                contactDataSource: this.contactOrdersDataSource
             });
+
+            if (this.permissionChecker.isGranted(AppPermissions.CRMOrders))
+                this.checklistSources.push({
+                    checklistId: this.checklistOrderId,
+                    onChange: this.onOrderChanged.bind(this),
+                    checklistDataSource: this.checklistOrderDataSource,
+                    contactDataSource: this.contactOrdersDataSource
+                });
     }
 
     ngOnDestroy() {
