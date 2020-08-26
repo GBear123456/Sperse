@@ -117,10 +117,29 @@
                             </dxo-editing>
                             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                            <dxi-column [dataField]="leadFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" sortOrder="desc"></dxi-column>
-                            <dxi-column [dataField]="leadFields.CustomerId" [caption]="l('ContactId')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                            <dxi-column [dataField]="leadFields.UserId" [caption]="l('UserId')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                            <dxi-column [dataField]="leadFields.SourceOrganizationUnitId" [renderAsync]="true" [calculateDisplayValue]="getOrganizationUnitName" [caption]="l('Abp.Organizations.OrganizationUnit')" cssClass="tabular clipboard-holder" [visible]="false"></dxi-column>
+                            <dxi-column [dataField]="leadFields.Id"
+                                        [caption]="l('Id')"
+                                        cssClass="tabular clipboard-holder"
+                                        [visible]="false"
+                                        sortOrder="desc">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.CustomerId"
+                                        [caption]="l('ContactId')"
+                                        cssClass="clipboard-holder"
+                                        [visible]="false">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.UserId"
+                                        [caption]="l('UserId')"
+                                        cssClass="clipboard-holder"
+                                        [visible]="false">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.SourceOrganizationUnitId"
+                                        [renderAsync]="true"
+                                        [calculateDisplayValue]="getOrganizationUnitName"
+                                        [caption]="l('Abp.Organizations.OrganizationUnit')"
+                                        cssClass="tabular clipboard-holder"
+                                        [visible]="false">
+                            </dxi-column>
                             <dxi-column [dataField]="leadFields.PhotoPublicId"
                                         caption=""
                                         cellTemplate="photoTemplate"
@@ -133,13 +152,37 @@
                             <div *dxTemplate="let data of 'photoTemplate'">
                                 <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                             </div>
-                            <dxi-column [dataField]="leadFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                            <dxi-column [dataField]="leadFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [dataField]="leadFields.Name"
+                                        [caption]="l('Customer.Name')"
+                                        cssClass="clipboard-holder">
+
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.CompanyName"
+                                        [caption]="l('Customer.CompanyName')"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.Email"
+                                        [caption]="l('Contact.Email')"
+                                        cssClass="clipboard-holder">
+
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.Phone"
+                                        [caption]="l('Contact.Phone')"
+                                        cellTemplate="phoneCell"
+                                        cssClass="tabular">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.City"
+                                        [caption]="l('Contact.City')"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.State"
+                                        [caption]="l('State')"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.Stage"
+                                        [caption]="l('Stage')"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
                             <ng-container *ngIf="tenantHasBankCodeFeature">
                                 <dxi-column dataField="BankCode"
                                             cellTemplate="bankCodeCell"
@@ -149,23 +192,87 @@
                                             [showInColumnChooser]="tenantHasBankCodeFeature">
                                 </dxi-column>
                             </ng-container>
-
-                            <dxi-column [dataField]="leadFields.LeadDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                            <dxi-column [dataField]="leadFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.SourceCampaignCode" [caption]="l('CampaignCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.SourceChannelCode" [caption]="l('ChannelCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.EntryUrl" [caption]="l('EntryUrl')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.LastModificationTime" [caption]="l('ModificationDate')" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                            <dxi-column [dataField]="leadFields.SourceCode" [caption]="l('SourceCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.ZipCode" [caption]="l('Contact.Zip')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.Website" [caption]="l('Website')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.PhoneExtension" [caption]="l('Contact.PhoneExtension')" [visible]="false" cssClass="tabular clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.Title" [caption]="l('Title')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.ContactXref" [caption]="l('ContactXref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.ContactAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.SourceContactName" [caption]="l('SourceContactName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="leadFields.AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                            <dxi-column [dataField]="leadFields.LeadDate"
+                                        [caption]="l('Created')"
+                                        cellTemplate="dateCell"
+                                        cssClass="tabular">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.SourceAffiliateCode"
+                                        [caption]="l('SourceAffiliateCode')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.SourceCampaignCode"
+                                        [caption]="l('CampaignCode')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.SourceChannelCode"
+                                        [caption]="l('ChannelCode')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.EntryUrl"
+                                        [caption]="l('EntryUrl')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.LastModificationTime"
+                                        [caption]="l('ModificationDate')"
+                                        [visible]="false"
+                                        cellTemplate="dateCell"
+                                        cssClass="tabular">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.SourceCode"
+                                        [caption]="l('SourceCode')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.StreetAddress"
+                                        [caption]="l('Contact.StreetAddress')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.ZipCode"
+                                        [caption]="l('Contact.Zip')"
+                                        [visible]="false"
+                                        cssClass="tabular clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.Website"
+                                        [caption]="l('Website')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.PhoneExtension"
+                                        [caption]="l('Contact.PhoneExtension')"
+                                        [visible]="false"
+                                        cssClass="tabular clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.Title"
+                                        [caption]="l('Title')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.ContactXref"
+                                        [caption]="l('ContactXref')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.ContactAffiliateCode"
+                                        [caption]="l('ContactAffiliateCode')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.SourceContactName"
+                                        [caption]="l('SourceContactName')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.AssignedUserName"
+                                        [caption]="l('Contact.AssignedUserName')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                                 {{cellData.value | phone}}
                             </div>

@@ -67,7 +67,6 @@ import {
     ContactServiceProxy,
     ContactStatusDto,
     LayoutType,
-    OrganizationUnitDto,
     PartnerServiceProxy,
     PartnerTypeServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -80,7 +79,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
+import { OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
@@ -171,7 +170,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    private organizationUnits: OrganizationUnitDto[];
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -575,7 +573,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
         this.getStatuses();
         this.getPartnerTypes();
-        this.getOrganizationUnits();
         this.activate();
         this.handleModuleChange();
         this.handleTotalCountUpdate();
@@ -1532,16 +1529,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.store$.pipe(select(StatusesStoreSelectors.getStatuses)).subscribe(
             statuses => this.statuses = statuses
         );
-    }
-
-    private getOrganizationUnits() {
-        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-        this.store$.pipe(
-            select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
-            takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
-            this.organizationUnits = organizationUnits;
-        });
     }
 
     private getPartnerTypes() {

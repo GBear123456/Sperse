@@ -9,7 +9,7 @@
             height="40px"
             displayExpr="name"
             valueExpr="id"
-            [placeholder]="ls.l('Template')"
+            [placeholder]="ls.l('SelectTemplate')"
             [disabled]="onTemplateCreate.observers.length && !data.contact"
             [(value)]="data.templateId"
             [showClearButton]="templateEditMode"
@@ -23,7 +23,10 @@
                 <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Template'))"></dxi-validation-rule>
             </dx-validator>
         </dx-select-box>
-        <i class="createTemplate" *ngIf="data.contact && onTemplateCreate.observers.length" (click)="onTemplateCreate.emit()"></i>
+        <i *ngIf="data.contact && onTemplateCreate.observers.length"
+           class="createTemplate fa fa-pencil"
+           (click)="onTemplateCreate.emit()">
+        </i>
     </ng-container>
 
     <div class="form-content">
@@ -35,7 +38,6 @@
                         name="from"
                         width="calc(50% - 52px)"
                         height="40px"
-                        noDataText=""
                         placeholder=""
                         [(value)]="data.from"
                         [disabled]="templateEditMode">

@@ -75,7 +75,6 @@ import {
     ContactStatusDto,
     CreateContactEmailInput,
     LayoutType,
-    OrganizationUnitDto,
     ServiceTypeInfo
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -90,7 +89,6 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import {
-    OrganizationUnitsStoreActions,
     OrganizationUnitsStoreSelectors,
     SubscriptionsStoreActions,
     SubscriptionsStoreSelectors
@@ -161,7 +159,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    private organizationUnits: OrganizationUnitDto[];
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
 
@@ -655,7 +652,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.handleChartUpdate();
         this.handleMapUpdate();
         this.handleStageChange();
-        this.getOrganizationUnits();
         this.activate();
         this.handleModuleChange();
         this.handleDataLayoutTypeInQuery();
@@ -817,16 +813,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         ).subscribe((dataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
-        });
-    }
-
-    private getOrganizationUnits() {
-        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-        this.store$.pipe(
-            select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
-            takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe((organizationUnits: OrganizationUnitDto[]) => {
-            this.organizationUnits = organizationUnits;
         });
     }
 
