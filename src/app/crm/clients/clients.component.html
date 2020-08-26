@@ -30,6 +30,7 @@
                 [title]="l('Status')"
                 [showConfirmation]="false"
                 [selectedKeys]="selectedClientKeys"
+                [highlightSelected]="true"
                 [hideButtons]="true"
                 [filterModel]="filterModelStatus"
                 targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
@@ -60,9 +61,9 @@
                                   [renderAsync]="true"
                                   [rowDragging]="{
                                       cursorOffset: {x: 30},
-                                      allowDropInsideItem: isMergeAllowed, 
-                                      showDragIcons: false, 
-                                      onDragEnd: onDragEnd 
+                                      allowDropInsideItem: isMergeAllowed,
+                                      showDragIcons: false,
+                                      onDragEnd: onDragEnd
                                   }"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
