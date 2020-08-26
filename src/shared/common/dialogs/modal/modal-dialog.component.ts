@@ -20,6 +20,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { CacheService } from '@node_modules/ng2-cache-service';
+import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
+import { DxContextMenuComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'modal-dialog',
@@ -34,6 +37,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild('titleComponent', { static: false }) titleComponent: DxTextBoxComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) contextMenu: DxContextMenuComponent;
 
     @Input() title: string;
     @Input() editTitle = false;
@@ -44,6 +48,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() options: IDialogOption[];
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
+    @Output() onContextItemChanged: EventEmitter<any> = new EventEmitter<any>();
     public slider: any;
 
     constructor(
@@ -51,9 +56,9 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         public dialogRef: MatDialogRef<ModalDialogComponent>,
         public ls: AppLocalizationService,
         private elementRef: ElementRef,
-        private loadingService: LoadingService
+        private loadingService: LoadingService,
+        private cacheService: CacheService
     ) {}
-
     private fork(callback, timeout = 0) {
         setTimeout(callback.bind(this), timeout);
     }
@@ -67,6 +72,12 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
             this.dialogRef.updatePosition({
                 right: '-100vw'
             });
+        }
+        const buttonWithContextItems = this.buttons.find((button: IDialogButton) => {
+            return !!button.contextMenuItems;
+        });
+        if (buttonWithContextItems) {
+            this.contextOptionsInit(buttonWithContextItems);
         }
     }
 
@@ -126,4 +137,41 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         if (event.key == 'Escape')
             this.close(true);
     }
+
+    contextMenuItemChanged(e, button: IDialogButton) {
+        const contextItem = e.addedItems.pop()
+            || e.removedItems.pop()
+            || button.contextMenuItems[button.contextMenuDefaultIndex];
+        let selectedContextItemIndex: number = 0;
+        button.contextMenuItems.forEach((item: ContextMenuItem, index: number) => {
+            item.selected = contextItem.text === item.text;
+            if (item.selected) {
+                selectedContextItemIndex = index;
+            }
+        });
+        button.title = contextItem.text;
+        if (button.contextMenuCacheKey) {
+            this.cacheService.set(
+                button.contextMenuCacheKey,
+                selectedContextItemIndex.toString()
+            );
+        }
+        this.onContextItemChanged.next(e);
+    }
+
+    contextOptionsInit(button: IDialogButton) {
+        let contextItemIndex: number = 0;
+        if (button.contextMenuCacheKey && this.cacheService.exists(button.contextMenuCacheKey))
+            contextItemIndex = this.cacheService.get(button.contextMenuCacheKey);
+        button.contextMenuItems[contextItemIndex].selected = true;
+        button.title = button.contextMenuItems[contextItemIndex].text;
+    }
+
+    buttonClick(e, button: IDialogButton) {
+        if (e && e.offsetX > 195)
+            return this.contextMenu.instance.option('visible', true);
+
+        button.action(e);
+    }
+
 }

@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { AngularGooglePlaceService } from 'angular-google-place';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
@@ -93,7 +92,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
     @ViewChildren('addressInput') addressInputs: QueryList<ElementRef>;
     @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea;
     @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
@@ -110,18 +108,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersSubscription: Subscription;
     private similarCustomersTimeout: any;
-    private readonly cacheKey = this.cacheHelper.getCacheKey(
-        this.SAVE_OPTION_CACHE_KEY, 'CreateEntityDialog');
+    private readonly cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, 'CreateEntityDialog');
     stages: any[] = [];
     stageId: number;
     defaultStageSortOrder = 0;
     partnerTypes: any[] = [];
     saveButtonId = 'saveClientOptions';
-    saveContextMenuItems = [
-        { text: this.ls.l('SaveAndAddNew'), selected: false },
-        { text: this.ls.l('SaveAndExtend'), selected: false, visible: !this.data.hideSaveAndExtend },
-        { text: this.ls.l('SaveAndClose'), selected: false }
-    ];
     masks = AppConsts.masks;
     emailRegEx = AppConsts.regexPatterns.email;
     urlRegEx = AppConsts.regexPatterns.url;
@@ -168,7 +160,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             id: this.saveButtonId,
             title: this.ls.l('Save'),
             class: 'primary menu',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            contextMenuItems: [
+                { text: this.ls.l('SaveAndAddNew'), selected: false },
+                { text: this.ls.l('SaveAndExtend'), selected: false, visible: !this.data.hideSaveAndExtend },
+                { text: this.ls.l('SaveAndClose'), selected: false }
+            ],
+            contextMenuDefaultIndex: this.SAVE_OPTION_DEFAULT,
+            contextMenuCacheKey: this.cacheKey
         }
     ];
     contactGroups = ContactGroup;
@@ -237,28 +236,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.linkTypesLoad();
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
-        this.saveOptionsInit();
     }
 
     ngAfterViewInit() {
         if (this.sourceComponent)
             this.sourceComponent.loadSourceContacts();
-    }
-
-    saveOptionsInit() {
-        let selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this.cacheService.exists(this.cacheKey))
-            selectedIndex = this.cacheService.get(this.cacheKey);
-        this.saveContextMenuItems[selectedIndex].selected = true;
-        this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    updateSaveOption(option) {
-        this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheKey,
-            this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-        this.changeDetectorRef.detectChanges();
     }
 
     getCountryCode(name: string): string {
@@ -339,11 +321,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     private afterSave(data): void {
         if (!this.data.refreshParent) {
             this.close(data);
-        } else if (this.saveContextMenuItems[0].selected) {
+        } else if (this.buttons[0].contextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
-        } else if (this.saveContextMenuItems[1].selected) {
+        } else if (this.buttons[0].contextMenuItems[1].selected) {
             this.redirectToClientDetails(data.id, data.leadId);
             this.data.refreshParent(true, this.stageId);
         } else {
@@ -352,10 +334,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         }
     }
 
-    save(event?): void {
-        if (event && event.offsetX > 195)
-            return this.saveContextComponent.instance.option('visible', true);
-
+    save(): void {
         if (!this.person.firstName && !this.person.lastName && !this.hideCompanyField && !this.company) {
             this.isTitleValid = false;
             return this.notifyService.error(this.ls.l('FullNameIsRequired'));
@@ -893,13 +872,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             });
     }
 
-    onSaveOptionSelectionChanged($event) {
-        let option = $event.addedItems.pop() || $event.removedItems.pop() ||
-            this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        this.saveContextMenuItems.forEach((item) => {
-            item.selected = option.text === item.text;
-        });
-        this.updateSaveOption(option);
+    onSaveOptionSelectionChanged() {
         this.save();
     }
 

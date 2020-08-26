@@ -25,17 +25,25 @@
             </ng-template>
         </div>
         <div class="mat-dialog-buttons" *ngIf="buttons">
-            <ng-template ngFor let-button [ngForOf]="buttons" let-i="index">
+            <ng-container *ngFor="let button of buttons; let i = index">
                 <button mat-button
                         [id]="button?.id"
                         [disabled]="button?.disabled"
                         [title]="button.hint ? button.hint : ''"
                         class="button-layout button-{{button.class}}"
-                        (click)="button.action($event)">
+                        (click)="buttonClick($event, button)">
                     <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>
                     <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
                 </button>
-            </ng-template>
+                <dx-context-menu
+                        [selectByClick]="true"
+                        selectionMode="single"
+                        [dataSource]="button.contextMenuItems"
+                        [position]="{ my: 'top right', at: 'bottom right' }"
+                        (onSelectionChanged)="contextMenuItemChanged($event, button)"
+                        target="#{{button?.id}}">
+                </dx-context-menu>
+            </ng-container>
         </div>
     </mat-dialog-actions>
 </div>

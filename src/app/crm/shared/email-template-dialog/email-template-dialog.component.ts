@@ -78,7 +78,8 @@ export class EmailTemplateDialogComponent implements OnInit {
             title: this.ls.l('Cancel'),
             class: 'default',
             action: () => this.close()
-        }, {
+        },
+        {
             id: 'saveTemplateOptions',
             title: this.data.saveTitle,
             class: 'primary',

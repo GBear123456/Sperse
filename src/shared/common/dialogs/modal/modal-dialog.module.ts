@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 
 /** Application imports */
 import { ModalDialogComponent } from './modal-dialog.component';
@@ -15,7 +16,8 @@ import { ModalDialogComponent } from './modal-dialog.component';
         CommonModule,
         MatDialogModule,
         DxTextBoxModule,
-        DxCheckBoxModule
+        DxCheckBoxModule,
+        DxContextMenuModule
     ],
     exports: [ ModalDialogComponent ],
     declarations: [ ModalDialogComponent ],

@@ -372,7 +372,7 @@ export class ContactsService {
             dialogComponent.onTemplateCreate.subscribe((templateId: number) => {
                 this.showEmailTemplateDialog(templateId).subscribe(data => {
                     dialogComponent.data.templateId = data.templateId;
-                    dialogComponent.onTemplateChanged({value: data.templateId});
+                    dialogComponent.onTemplateChanged({ value: data.templateId });
                     dialogComponent.initTemplateList();
                 });
             });

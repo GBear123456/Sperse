@@ -1,11 +1,3 @@
-<dx-context-menu
-    [selectByClick]="true"
-    selectionMode="single"
-    [dataSource]="saveContextMenuItems"
-    [position]="{ my: 'top right', at: 'bottom right' }"
-    (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
-    target="#{{saveButtonId}}">
-</dx-context-menu>
 <ng-container *ngIf="!hideToolbar">
     <app-static-list #stagesList
                      width="210px"
@@ -60,7 +52,8 @@
               [isTitleValid]="isTitleValid"
               [titleClearButton]="true"
               [placeholder]="ls.l('Contact.FullName')"
-              (onTitleKeyUp)="onFullNameKeyUp($event)">
+              (onTitleKeyUp)="onFullNameKeyUp($event)"
+              (onContextItemChanged)="onSaveOptionSelectionChanged()">
     <div *ngIf="!hidePhotoArea"
          class="photo-area"
          [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"
