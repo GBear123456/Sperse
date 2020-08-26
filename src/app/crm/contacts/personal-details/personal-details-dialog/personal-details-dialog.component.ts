@@ -178,7 +178,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
                 distinctUntilChanged()
             ),
-            this.contactsService.contactId$
+            this.contactsService.contactId$.pipe(distinctUntilChanged())
         ).pipe(
             switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
         ));
