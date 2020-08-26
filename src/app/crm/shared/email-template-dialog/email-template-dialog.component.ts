@@ -68,9 +68,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Input() tagsList = [];
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onTemplateCreate: EventEmitter<any> = new EventEmitter<number>();
-    @Output() onTemplateChange: EventEmitter<any> = new EventEmitter<number>();
-    @Output() onTagItemClick: EventEmitter<any> = new EventEmitter<number>();
+    @Output() onTemplateCreate: EventEmitter<number> = new EventEmitter<number>();
+    @Output() onTemplateChange: EventEmitter<number> = new EventEmitter<number>();
+    @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
 
     buttons: IDialogButton[] = [
         {
@@ -496,6 +496,14 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
             xhr.send(formData);
         });
+    }
+
+    createTemplate() {
+        this.onTemplateCreate.emit();
+    }
+
+    editTemplate(templateId: number) {
+        this.onTemplateCreate.emit(templateId);
     }
 
     close() {

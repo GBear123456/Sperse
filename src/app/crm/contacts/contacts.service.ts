@@ -325,14 +325,15 @@ export class ContactsService {
         }
     }
 
-    showEmailTemplateDialog() {
+    showEmailTemplateDialog(templateId?: number) {
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                title: this.ls.l('Edit Template'),
+                title: templateId ? this.ls.l('Edit Template') : this.ls.l('Add Template'),
                 templateType: 'Contact',
+                templateId: templateId,
                 saveTitle: this.ls.l('Save')
             }
         }).componentInstance;
@@ -368,8 +369,8 @@ export class ContactsService {
         }).componentInstance;
 
         if (emailData.templateType == EmailTemplateType.Contact)
-            dialogComponent.onTemplateCreate.subscribe(() => {
-                this.showEmailTemplateDialog().subscribe(data => {
+            dialogComponent.onTemplateCreate.subscribe((templateId: number) => {
+                this.showEmailTemplateDialog(templateId).subscribe(data => {
                     dialogComponent.data.templateId = data.templateId;
                     dialogComponent.onTemplateChanged({value: data.templateId});
                     dialogComponent.initTemplateList();

@@ -22,17 +22,35 @@
         .title-wrapper {
             width: 100%;
             justify-content: space-between;
-        }
-        i.createTemplate {
             position: relative;
-            &:before {
-                color: #00aeef;
-                font-size: 17px;
-                position: absolute;
-                right: 40px;
-                bottom: -8px;
-                cursor: pointer;
-                font-style: normal;
+        }
+        .buttons {
+            position: absolute;
+            right: 38px;
+            display: flex;
+            align-items: center;
+            i {
+                position: relative;
+                &:before {
+                    color: #00aeef;
+                    cursor: pointer;
+                    font-style: normal;
+                }
+                &.create-template {
+                    font: 20px/1 DXIcons;
+                    &:before {
+                        content: '+';
+                        font-size: 27px;
+                        font-weight: 600;
+                        line-height: 15px;
+                    }
+                }
+                &.edit-template {
+                    margin-left: 13px;
+                    &:before {
+                        font-size: 17px;
+                    }
+                }
             }
         }
         label.template {
@@ -57,7 +75,7 @@
                 color: #424c56;
             }
             input {
-                padding-right: 60px;
+                padding-right: 90px;
             }
             .dx-icon-clear:before {
                 content: '+';

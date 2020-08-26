@@ -23,10 +23,10 @@
                 <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Template'))"></dxi-validation-rule>
             </dx-validator>
         </dx-select-box>
-        <i *ngIf="data.contact && onTemplateCreate.observers.length"
-           class="createTemplate fa fa-pencil"
-           (click)="onTemplateCreate.emit()">
-        </i>
+        <div class="buttons" *ngIf="data.contact && onTemplateCreate.observers.length">
+            <i class="create-template" (click)="createTemplate()"></i>
+            <i *ngIf="data.templateId" class="edit-template fa fa-pencil" (click)="editTemplate(data.templateId)"></i>
+        </div>
     </ng-container>
 
     <div class="form-content">
