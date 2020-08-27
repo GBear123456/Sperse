@@ -71,7 +71,7 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="message-wrapper">
                         <div [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(activeMessage?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar small"></div>
-                        <div class="body from date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | date: formatting.inboxDate : userTimezone"></div>
+                        <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | date: formatting.inboxDate : userTimezone"></div>
                     </div>
                     <div *ngIf="!isActiveEmilType">
                         <div *ngFor="let child of activeMessage?.items; let i = index" class="message-wrapper">
