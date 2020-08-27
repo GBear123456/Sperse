@@ -51,6 +51,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     @Input() columnsConfig: any = {};
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
+    @Input() validateFieldsValues: any = {};
     @Input() showLeftMenuToggleButton = false;
     @Input() set fields(list: any[]) {
         this.lookupFields = list.map((field) => {
@@ -87,7 +88,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'countryId',
         'stateId',
         'rating',
-        'gender'
+        'gender',
+        'stage'
     ];
     private excludeCCValidation = ['UK'];
     private similarFieldsIndex: any = {};
@@ -837,6 +839,9 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             return !isNaN(value) && value >= 1 && value <= 10;
         else if (key == 'gender')
             return ['f', 'm', 'female', 'male', '0', '1'].indexOf(value.toLowerCase()) >= 0;
+        else if (key == 'stage')
+            return this.validateFieldsValues.stages.some(
+                item => item.name.toLowerCase() == value.toLowerCase());
         else
             return AppConsts.regexPatterns[key].test(value);
     }
