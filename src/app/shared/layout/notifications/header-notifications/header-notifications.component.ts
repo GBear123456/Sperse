@@ -38,6 +38,8 @@ export class HeaderNotificationsComponent implements OnInit {
     subscriptionInfoText: string;
     subscriptionExpiringDayCount = null;
 
+    private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
+
     constructor(
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
@@ -54,6 +56,8 @@ export class HeaderNotificationsComponent implements OnInit {
         this.loadNotifications();
         this.registerToEvents();
         this.getCurrentLoginInformations();
+
+        setInterval(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
 
         if (this.appService.moduleSubscriptions$) {
             this.appService.subscribeModuleChange((config: ConfigInterface) => this.getSubscriptionInfo(config.name));
@@ -158,9 +162,12 @@ export class HeaderNotificationsComponent implements OnInit {
         this.userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
-    gotoUrl(url: string): void {
-        if (url) {
-            this.router.navigateByUrl(url);
+    onNotificationClick(notification: any): void {
+        if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE && notification.entityId) {
+            this.router.navigate(['app/crm/contact', notification.entityId]);
+            this.hideDropDown();
+        } else if (notification.url) {
+            this.router.navigateByUrl(notification.url);
             this.hideDropDown();
         }
     }

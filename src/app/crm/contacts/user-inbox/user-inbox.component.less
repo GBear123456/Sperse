@@ -8,9 +8,29 @@
         overflow: hidden;
         height: 100%;
 
+        .message-wrapper {
+            position: relative;
+        }
+
+        .children-wrapper {
+            display: flex;
+            flex-flow: column;
+        }
+
         .avatar {
             width: 49px;
             height: 49px;
+            &.small {
+                width: 26px;
+                height: 26px;
+                position: absolute;
+                bottom: 30px;
+                left: 15px;
+                &.to {
+                    left: auto;
+                    right: 15px;
+                }
+            }
         }
 
         .inbox-list {
@@ -196,6 +216,7 @@
                             font-size: 11px;
                             line-height: 2.18;
                             letter-spacing: 0.22px;
+                            white-space: nowrap;
                             color: #677380;
                         }
                     }
@@ -375,7 +396,7 @@
                 }
             }            
             .body {
-                display: block;
+                display: inline-block;
                 position: relative;
                 padding: 20px;
                 font-size: 14px;
@@ -386,7 +407,8 @@
                 letter-spacing: 0.28px;
                 text-align: left;
                 color: #424c56;
-                width: 70%;
+                max-width: 70%;
+                min-width: 120px;
                 border-radius: 10px;
                 margin-bottom: 5px;
                 &.from {
@@ -400,6 +422,7 @@
                     background: rgba(0, 174, 239, 0.1);
                     margin-right: 50px;
                     margin-left: auto;
+                    float: right;
                 }
             }
         }

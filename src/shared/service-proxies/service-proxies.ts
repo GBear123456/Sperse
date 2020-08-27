@@ -39520,6 +39520,7 @@ export class LeaderInfo implements ILeaderInfo {
     rank!: number | undefined;
     fullName!: string | undefined;
     publicPhotoId!: string | undefined;
+    bankCode!: string | undefined;
     codesCracked!: number | undefined;
 
     constructor(data?: ILeaderInfo) {
@@ -39536,6 +39537,7 @@ export class LeaderInfo implements ILeaderInfo {
             this.rank = data["rank"];
             this.fullName = data["fullName"];
             this.publicPhotoId = data["publicPhotoId"];
+            this.bankCode = data["bankCode"];
             this.codesCracked = data["codesCracked"];
         }
     }
@@ -39552,6 +39554,7 @@ export class LeaderInfo implements ILeaderInfo {
         data["rank"] = this.rank;
         data["fullName"] = this.fullName;
         data["publicPhotoId"] = this.publicPhotoId;
+        data["bankCode"] = this.bankCode;
         data["codesCracked"] = this.codesCracked;
         return data; 
     }
@@ -39561,6 +39564,7 @@ export interface ILeaderInfo {
     rank: number | undefined;
     fullName: string | undefined;
     publicPhotoId: string | undefined;
+    bankCode: string | undefined;
     codesCracked: number | undefined;
 }
 
@@ -48831,7 +48835,7 @@ export class MessageDto implements IMessageDto {
     parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
-    fromUserThumbnailId!: string | undefined;
+    fromUserContactPhotoPublicId!: string | undefined;
     from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
@@ -48842,6 +48846,7 @@ export class MessageDto implements IMessageDto {
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageStatus | undefined;
     hasChildren!: boolean | undefined;
+    isInbound!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageDto) {
@@ -48864,7 +48869,7 @@ export class MessageDto implements IMessageDto {
             this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
-            this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.fromUserContactPhotoPublicId = data["fromUserContactPhotoPublicId"];
             this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
@@ -48875,6 +48880,7 @@ export class MessageDto implements IMessageDto {
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
             this.hasChildren = data["hasChildren"];
+            this.isInbound = data["isInbound"];
             this.id = data["id"];
         }
     }
@@ -48897,7 +48903,7 @@ export class MessageDto implements IMessageDto {
         data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
-        data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["fromUserContactPhotoPublicId"] = this.fromUserContactPhotoPublicId;
         data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
@@ -48908,6 +48914,7 @@ export class MessageDto implements IMessageDto {
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
         data["hasChildren"] = this.hasChildren;
+        data["isInbound"] = this.isInbound;
         data["id"] = this.id;
         return data; 
     }
@@ -48919,7 +48926,7 @@ export interface IMessageDto {
     parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
-    fromUserThumbnailId: string | undefined;
+    fromUserContactPhotoPublicId: string | undefined;
     from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
@@ -48930,6 +48937,7 @@ export interface IMessageDto {
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageStatus | undefined;
     hasChildren: boolean | undefined;
+    isInbound: boolean | undefined;
     id: number | undefined;
 }
 
@@ -48937,7 +48945,7 @@ export class MessageListDto implements IMessageListDto {
     parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
-    fromUserThumbnailId!: string | undefined;
+    fromUserContactPhotoPublicId!: string | undefined;
     from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
@@ -48948,6 +48956,7 @@ export class MessageListDto implements IMessageListDto {
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageStatus | undefined;
     hasChildren!: boolean | undefined;
+    isInbound!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageListDto) {
@@ -48964,7 +48973,7 @@ export class MessageListDto implements IMessageListDto {
             this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
-            this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.fromUserContactPhotoPublicId = data["fromUserContactPhotoPublicId"];
             this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
@@ -48975,6 +48984,7 @@ export class MessageListDto implements IMessageListDto {
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
             this.hasChildren = data["hasChildren"];
+            this.isInbound = data["isInbound"];
             this.id = data["id"];
         }
     }
@@ -48991,7 +49001,7 @@ export class MessageListDto implements IMessageListDto {
         data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
-        data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["fromUserContactPhotoPublicId"] = this.fromUserContactPhotoPublicId;
         data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
@@ -49002,6 +49012,7 @@ export class MessageListDto implements IMessageListDto {
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
         data["hasChildren"] = this.hasChildren;
+        data["isInbound"] = this.isInbound;
         data["id"] = this.id;
         return data; 
     }
@@ -49011,7 +49022,7 @@ export interface IMessageListDto {
     parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
-    fromUserThumbnailId: string | undefined;
+    fromUserContactPhotoPublicId: string | undefined;
     from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
@@ -49022,6 +49033,7 @@ export interface IMessageListDto {
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageStatus | undefined;
     hasChildren: boolean | undefined;
+    isInbound: boolean | undefined;
     id: number | undefined;
 }
 
@@ -55771,6 +55783,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     userName!: string | undefined;
     password!: string | undefined;
     from!: string | undefined;
+    inboundSmsKey!: string | undefined;
 
     constructor(data?: IYTelSettingsEditDto) {
         if (data) {
@@ -55787,6 +55800,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
             this.userName = data["userName"];
             this.password = data["password"];
             this.from = data["from"];
+            this.inboundSmsKey = data["inboundSmsKey"];
         }
     }
 
@@ -55803,6 +55817,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
         data["userName"] = this.userName;
         data["password"] = this.password;
         data["from"] = this.from;
+        data["inboundSmsKey"] = this.inboundSmsKey;
         return data; 
     }
 }
@@ -55812,6 +55827,7 @@ export interface IYTelSettingsEditDto {
     userName: string | undefined;
     password: string | undefined;
     from: string | undefined;
+    inboundSmsKey: string | undefined;
 }
 
 export class SendTestEmailInput implements ISendTestEmailInput {
@@ -61841,7 +61857,7 @@ export class TenantNotificationDto implements ITenantNotificationDto {
     notificationName!: string | undefined;
     data!: NotificationData | undefined;
     entityTypeName!: string | undefined;
-    entityId!: any | undefined;
+    entityId!: string | undefined;
     severity!: NotificationSeverity | undefined;
     creationTime!: moment.Moment | undefined;
 
@@ -61861,13 +61877,7 @@ export class TenantNotificationDto implements ITenantNotificationDto {
             this.notificationName = data["notificationName"];
             this.data = data["data"] ? NotificationData.fromJS(data["data"]) : <any>undefined;
             this.entityTypeName = data["entityTypeName"];
-            if (data["entityId"]) {
-                this.entityId = {};
-                for (let key in data["entityId"]) {
-                    if (data["entityId"].hasOwnProperty(key))
-                        this.entityId[key] = data["entityId"][key];
-                }
-            }
+            this.entityId = data["entityId"];
             this.severity = data["severity"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
@@ -61887,13 +61897,7 @@ export class TenantNotificationDto implements ITenantNotificationDto {
         data["notificationName"] = this.notificationName;
         data["data"] = this.data ? this.data.toJSON() : <any>undefined;
         data["entityTypeName"] = this.entityTypeName;
-        if (this.entityId) {
-            data["entityId"] = {};
-            for (let key in this.entityId) {
-                if (this.entityId.hasOwnProperty(key))
-                    data["entityId"][key] = this.entityId[key];
-            }
-        }
+        data["entityId"] = this.entityId;
         data["severity"] = this.severity;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
@@ -61906,7 +61910,7 @@ export interface ITenantNotificationDto {
     notificationName: string | undefined;
     data: NotificationData | undefined;
     entityTypeName: string | undefined;
-    entityId: any | undefined;
+    entityId: string | undefined;
     severity: NotificationSeverity | undefined;
     creationTime: moment.Moment | undefined;
 }
@@ -62056,6 +62060,7 @@ export class NotificationSubscriptionWithDisplayNameDto implements INotification
     description!: string | undefined;
     name!: string;
     isSubscribed!: boolean | undefined;
+    group!: string | undefined;
 
     constructor(data?: INotificationSubscriptionWithDisplayNameDto) {
         if (data) {
@@ -62072,6 +62077,7 @@ export class NotificationSubscriptionWithDisplayNameDto implements INotification
             this.description = data["description"];
             this.name = data["name"];
             this.isSubscribed = data["isSubscribed"];
+            this.group = data["group"];
         }
     }
 
@@ -62088,6 +62094,7 @@ export class NotificationSubscriptionWithDisplayNameDto implements INotification
         data["description"] = this.description;
         data["name"] = this.name;
         data["isSubscribed"] = this.isSubscribed;
+        data["group"] = this.group;
         return data; 
     }
 }
@@ -62097,6 +62104,7 @@ export interface INotificationSubscriptionWithDisplayNameDto {
     description: string | undefined;
     name: string;
     isSubscribed: boolean | undefined;
+    group: string | undefined;
 }
 
 export class GetNotificationSettingsOutput implements IGetNotificationSettingsOutput {
@@ -62150,6 +62158,7 @@ export interface IGetNotificationSettingsOutput {
 export class NotificationSubscriptionDto implements INotificationSubscriptionDto {
     name!: string;
     isSubscribed!: boolean | undefined;
+    group!: string | undefined;
 
     constructor(data?: INotificationSubscriptionDto) {
         if (data) {
@@ -62164,6 +62173,7 @@ export class NotificationSubscriptionDto implements INotificationSubscriptionDto
         if (data) {
             this.name = data["name"];
             this.isSubscribed = data["isSubscribed"];
+            this.group = data["group"];
         }
     }
 
@@ -62178,6 +62188,7 @@ export class NotificationSubscriptionDto implements INotificationSubscriptionDto
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["isSubscribed"] = this.isSubscribed;
+        data["group"] = this.group;
         return data; 
     }
 }
@@ -62185,6 +62196,7 @@ export class NotificationSubscriptionDto implements INotificationSubscriptionDto
 export interface INotificationSubscriptionDto {
     name: string;
     isSubscribed: boolean | undefined;
+    group: string | undefined;
 }
 
 export class UpdateNotificationSettingsInput implements IUpdateNotificationSettingsInput {

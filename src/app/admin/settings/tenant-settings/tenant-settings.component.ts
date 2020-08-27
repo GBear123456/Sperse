@@ -379,4 +379,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let key = this.sendGridSettings.webhookKey || '{webhook_key}';
         return AppConsts.remoteServiceBaseUrl + `/api/SendGrid/ProcessWebHook?key=${key}`;
     }
+
+    getYtelInboundSMSUrl(): string {
+        let key = this.yTelSettings.inboundSmsKey || '{inbound_sms_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/YTel/ProcessInboundSms?tenantId=${this.appSessionService.tenantId}&key=${key}`;
+    }
 }

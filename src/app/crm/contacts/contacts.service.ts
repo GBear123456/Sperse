@@ -156,7 +156,7 @@ export class ContactsService {
         return this.subscribe(this.contactInfo.asObservable().subscribe(callback), ident);
     }
 
-    contactInfoUpdate(contactInfo: ContactInfoDto) {
+    contactInfoUpdate(contactInfo?: ContactInfoDto) {
         this.contactInfo.next(contactInfo);
     }
 
@@ -217,6 +217,12 @@ export class ContactsService {
             });
             list.length = 0;
         }
+    }
+
+    cleanLastContact() {
+        this.contactId.next(null);
+        this.contactInfoUpdate();
+        this.leadInfoUpdate();
     }
 
     addCompanyDialog(event, contactInfo, shiftX?, shiftY?): Observable<CreatePersonOrgRelationOutput> {

@@ -102,7 +102,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         }, this.ident);
 
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
-            if (!this.contactId || data.id != this.contactId) {
+            if (data && (!this.contactId || data.id != this.contactId)) {
                 this.contactId = data.id;
                 this.dataSource = this.getDataSource();
             }

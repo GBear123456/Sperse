@@ -693,8 +693,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.dialog.closeAll();
         this.rootComponent.overflowHidden();
         this.rootComponent.pageHeaderFixed(true);
+        this.contactsService.cleanLastContact();
         this.contactsService.unsubscribe();
-        this.contactsService.contactId.next(null);
         super.ngOnDestroy();
     }
 

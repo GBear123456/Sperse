@@ -1,7 +1,3 @@
-<source-contact-list
-    [leadId]="leadInfo?.id"
-    [selectedKey]="leadInfo?.sourceContactId">
-</source-contact-list>
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
     <mat-tab-group [(selectedIndex)]="selectedTabIndex">
@@ -14,7 +10,7 @@
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="field">
-                                <inplace-edit [id]="contactInfo.id"
+                                <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
                                               [value]="affiliateCode$ | async"
@@ -23,7 +19,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
                                               [validationRules]="affiliateValidationRules"
-                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
                                               (valueChanged)="updateAffiliateCode($event)"
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
@@ -81,7 +77,7 @@
                                 <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(contactInfo.assignedUserPicturePublicId)"/>
+                                        <img [src]="getThumbnailSrc(contactInfo?.assignedUserPicturePublicId)"/>
                                     </div>
                                     <div class="field-info">
                                         <span>{{assignedUserName}}
@@ -158,7 +154,7 @@
                             <hr/>
                             <div class="field">
                                 <label>{{ ls.l('Xref') }}:</label>
-                                <inplace-edit [id]="contactInfo.id"
+                                <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('Xref')"
                                               [value]="contactXref$ | async"
@@ -168,7 +164,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
                                               [validationRules]="xrefValidationRules"
-                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
                                               (valueChanged)="updateXref($event)"
                                               (itemDeleted)="deleteItem(ls.l('Xref'))">
                                 </inplace-edit>
@@ -186,7 +182,7 @@
                                                   [isDeleteEnabled]="true"
                                                   [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
                                                   [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                                  [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo.groupId)"
+                                                  [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
                                                   (valueChanged)="updateCustomField($event, 'customField' + n)"
                                                   (itemDeleted)="updateCustomField(null, 'customField' + n)">
                                     </inplace-edit>
@@ -225,36 +221,36 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab [label]="ls.l('Checklist')" [disabled]="!checklistLeadDataSource[0]?.items?.length && !checklistOrderDataSource[0]?.items?.length">
-            <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()" *ngIf="selectedTabIndex == CHECKLIST_TAB_INDEX">
-                <div class="lead-checklist" *ngIf="!checklistLeadDataSource.length || checklistLeadDataSource[0]?.items?.length">
-                    <dx-select-box
+        <mat-tab [label]="ls.l('Checklist')" [disabled]="!!checklistSources.length && !checklistLeadDataSource[0]?.total && !checklistOrderDataSource[0]?.total">
+            <dx-scroll-view showScrollbar="onHover" #checklistScroll [height]="getTabContentHeight()">
+                <div *ngFor="let source of checklistSources; let i = index" [hidden]="!source?.checklistId || !source?.checklistDataSource[0]?.total">
+                    <dx-select-box *ngIf="source?.contactDataSource"
                         valueExpr="Id"
                         displayExpr="Name"
                         [width]="'370px'"
                         [placeholder]="''"
-                        [value]="checklistLeadId"
+                        [value]="source?.checklistId"
                         [itemTemplate]="'cell'"
                         [fieldTemplate]="'cell'"
                         [deferRendering]="false"
                         [focusStateEnabled]="false"
                         [hoverStateEnabled]="false"
                         [activeStateEnabled]="false"
-                        (onSelectionChanged)="onLeadChanged($event)"
+                        (onSelectionChanged)="source?.onChange($event)"
                         (onInitialized)="onSelectInitialized($event)"
-                        [dataSource]="contactLeadsDataSource">
+                        [dataSource]="source?.contactDataSource">
                         <div *dxTemplate="let cell of 'cell'">
                             <dx-text-box
                                 [readOnly]="true"
                                 [elementAttr]="{'lead-checklist': true}"
                                 [focusStateEnabled]="false"
                                 [hoverStateEnabled]="false"
-                                hint="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})"
-                                value="{{cell?.Id}}, {{cell?.Stage}} ({{cell?.LeadDate | date}})">
+                                hint="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})"
+                                value="{{cell?.Number || cell?.Id}}, {{cell?.Stage}} ({{(cell?.LeadDate || cell?.OrderDate) | date}})">
                             </dx-text-box>
                         </div>
                     </dx-select-box>
-                    <div class="progress-wrapper" *ngIf="checklistLeadDataSource && checklistLeadDataSource[0] as data">
+                    <div class="progress-wrapper" *ngIf="source?.checklistDataSource && source?.checklistDataSource[0] as data">
                         <svg width="28" height="28" class="progress">
                             <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
                             <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
@@ -262,60 +258,13 @@
                         </svg>
                         <span>{{data.progress}} / {{data.total}}</span>
                     </div>
-                    <dx-tree-view *ngIf="checklistLeadDataSource && checklistLeadDataSource[0]?.items?.length"
+                    <dx-tree-view *ngIf="source?.checklistDataSource && source?.checklistDataSource[0]?.total"
                         [height]="'100%'"
                         itemTemplate="cell"
                         showCheckBoxesMode="normal"
                         [selectNodesRecursive]="false"
-                        [dataSource]="checklistLeadDataSource"
-                        (onItemSelectionChanged)="onChecklistChanged($event)">
-                        <div *dxTemplate="let cell of 'cell'" class="data-item">
-                            <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
-                        </div>
-                    </dx-tree-view>
-                </div>
-                <div class="order-chacklist" *ngIf="!contactOrdersDataSource.length || contactOrdersDataSource[0]?.items?.length">
-                    <dx-select-box *ngIf="checklistOrderId !== null"
-                        valueExpr="Id"
-                        displayExpr="Name"
-                        [width]="'370px'"
-                        [placeholder]="''"
-                        [value]="checklistOrderId"
-                        [itemTemplate]="'cell'"
-                        [fieldTemplate]="'cell'"
-                        [deferRendering]="false"
-                        [focusStateEnabled]="false"
-                        [hoverStateEnabled]="false"
-                        [activeStateEnabled]="false"
-                        (onSelectionChanged)="onOrderChanged($event)"
-                        (onInitialized)="onSelectInitialized($event)"
-                        [dataSource]="contactOrdersDataSource">
-                        <div *dxTemplate="let cell of 'cell'">
-                            <dx-text-box
-                                [readOnly]="true"
-                                [elementAttr]="{'lead-checklist': true}"
-                                [focusStateEnabled]="false"
-                                [hoverStateEnabled]="false"
-                                hint="{{cell?.Number}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})"
-                                value="{{cell?.Number}}, {{cell?.Stage}} ({{cell?.OrderDate | date}})">
-                            </dx-text-box>
-                        </div>
-                    </dx-select-box>
-                    <div class="progress-wrapper" *ngIf="checklistOrderDataSource && checklistOrderDataSource[0] as data">
-                        <svg width="28" height="28" class="progress">
-                            <circle stroke="#e5e9ec" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
-                            <circle [ngStyle]="{'stroke-dashoffset': 76 - data?.progress / data?.total * 76}"
-                                class="ring" stroke="#37d749" stroke-width="3" fill="transparent" r="12" cx="14" cy="14"/>
-                        </svg>
-                        <span>{{data.progress}} / {{data.total}}</span>
-                    </div>
-                    <dx-tree-view *ngIf="checklistOrderId"
-                        [height]="'100%'"
-                        itemTemplate="cell"
-                        showCheckBoxesMode="normal"
-                        [selectNodesRecursive]="false"
-                        [dataSource]="checklistOrderDataSource"
-                        (onItemSelectionChanged)="onChecklistChanged($event, true)">
+                        [dataSource]="source?.checklistDataSource"
+                        (onItemSelectionChanged)="onChecklistChanged($event, i)">
                         <div *dxTemplate="let cell of 'cell'" class="data-item">
                             <span>{{cell.text}}</span><span class="time-ago" *ngIf="cell.date">{{cell.date | timeAgo}}</span>
                         </div>

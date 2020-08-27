@@ -36,6 +36,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -95,6 +96,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistLeadId: number;
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
+    checklistSources = [];
 
     constructor(
         private route: ActivatedRoute,
@@ -144,7 +146,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.leadInfo = leadInfo;
                 this.initContactLeadsDataSource();
                 this.initContactOrdersDataSource();
-                this.initChecklistByLead(leadInfo).subscribe();
+                this.initChecklistSources();
                 this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
             }
         }, this.ident);
@@ -177,7 +179,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
                 distinctUntilChanged()
             ),
-            this.contactsService.contactId$
+            this.contactsService.contactId$.pipe(distinctUntilChanged())
         ).pipe(
             switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
         ));
@@ -247,10 +249,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initContactLeadsDataSource() {
-        if (this.contactInfo.id)
+        if (this.contactInfo.id && !this.contactLeadsDataSource)
             this.contactLeadsDataSource = new DataSource({
                 paginate: false,
-                requireTotalCount: true,
+                requireTotalCount: false,
                 store: new ODataStore({
                     key: 'Id',
                     url: this.oDataService.getODataUrl('Lead'),
@@ -260,16 +262,20 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         request.params.$select = ['Id',  'Name', 'Stage', 'LeadDate'];
                         request.params.$filter = 'CustomerId eq ' + this.contactInfo.id;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    onLoaded: (data: any) => {
+                        this.initChecklistByLead(this.leadInfo).subscribe(
+                            () => this.initChecklistSources());
                     }
                 })
             });
     }
 
     initContactOrdersDataSource() {
-        if (this.contactInfo.id)
+        if (this.contactInfo.id && !this.contactOrdersDataSource) {
             this.contactOrdersDataSource = new DataSource({
                 paginate: false,
-                requireTotalCount: true,
+                requireTotalCount: false,
                 store: new ODataStore({
                     key: 'Id',
                     url: this.oDataService.getODataUrl('Order'),
@@ -283,13 +289,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     onLoaded: (data: any) => {
                         if (data.length) {
                             let params = (this.route.queryParams as BehaviorSubject<Params>).getValue(),
-                                orderId = params['orderId'] && parseInt(params['orderId']);
-                            this.initChecklistByOrder(data.filter(item => item.Id == orderId)[0] || data[0]).subscribe();
+                            orderId = params && params['orderId'] && parseInt(params['orderId']),
+                            order = orderId ? data.filter(item => item.Id == orderId)[0] : data[0];
+                            this.initChecklistByOrder(order).subscribe(
+                                () => this.initChecklistSources());
                         } else
                             this.checklistOrderId = null;
                     }
                 })
             });
+        }
     }
 
     initChecklistDataSource(purposeId, rootName, stageName) {
@@ -463,7 +472,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     onChecklistChanged(event, isOrder = false) {
         this.startLoading();
-        (isOrder ?  this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput({
+        let top = this.checklistScroll.instance.scrollTop();
+        (isOrder ? this.orderProxy.updateStagePoint(new UpdateOrderStagePointInput({
                 pointId: event.itemData.id,
                 orderId: this.checklistOrderId,
                 isDone: event.itemData.selected
@@ -481,7 +491,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             dataSource[0].progress += (event.itemData.selected ? 1 : -1);
             this.loadChecklistPoints(
                 dataSource, isOrder
-            ).subscribe();
+            ).subscribe(() => {
+                this.initChecklistSources();
+                setTimeout(() => {
+                    this.checklistScroll.instance.scrollTo(top);
+                });
+            });
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }
@@ -491,7 +506,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         if (event.selectedItem.Id != this.checklistLeadId) {
             this.startLoading();
             this.initChecklistByLead(event.selectedItem).pipe(
-                finalize(() => this.finishLoading())).subscribe();
+                finalize(() => this.finishLoading())).subscribe(
+                    () => this.initChecklistSources());
         }
     }
 
@@ -506,11 +522,35 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             this.initChecklistByOrder(event.selectedItem).pipe(
                 finalize(() => this.finishLoading())
             ).subscribe(() => {
+                this.initChecklistSources();
                 setTimeout(() => {
                     this.checklistScroll.instance.scrollTo(top);
                 });
             });
         }
+    }
+
+    initChecklistSources() {
+        if (this.checklistSources.length)
+            this.checklistSources.forEach((source, isOrder) => {
+                source.checklistId = isOrder ? this.checklistOrderId : this.checklistLeadId;
+                source.checklistDataSource = isOrder ? this.checklistOrderDataSource : this.checklistLeadDataSource;
+            });
+        else
+            this.checklistSources.push({
+                checklistId: this.checklistLeadId,
+                onChange: this.onLeadChanged.bind(this),
+                checklistDataSource: this.checklistLeadDataSource,
+                contactDataSource: this.contactLeadsDataSource
+            });
+
+            if (this.permissionChecker.isGranted(AppPermissions.CRMOrders))
+                this.checklistSources.push({
+                    checklistId: this.checklistOrderId,
+                    onChange: this.onOrderChanged.bind(this),
+                    checklistDataSource: this.checklistOrderDataSource,
+                    contactDataSource: this.contactOrdersDataSource
+                });
     }
 
     ngOnDestroy() {
