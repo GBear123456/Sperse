@@ -8,9 +8,24 @@
         overflow: hidden;
         height: 100%;
 
+        .message-wrapper {
+            position: relative;
+        }
+
         .avatar {
             width: 49px;
             height: 49px;
+            &.small {
+                width: 26px;
+                height: 26px;
+                position: absolute;
+                bottom: 5px;
+                left: 15px;
+                &.to {
+                    left: auto;
+                    right: 15px;
+                }
+            }
         }
 
         .inbox-list {
