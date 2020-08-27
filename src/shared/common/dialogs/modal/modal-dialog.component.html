@@ -32,16 +32,18 @@
                         [title]="button.hint ? button.hint : ''"
                         class="button-layout button-{{button.class}}"
                         (click)="buttonClick($event, button)">
-                    <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>
+                    <span *ngIf="!!button.title">{{ ls.l(button.title) }}</span>
                     <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
                 </button>
                 <dx-context-menu
+                        *ngIf="button.contextMenu"
                         [selectByClick]="true"
                         selectionMode="single"
-                        [dataSource]="button.contextMenuItems"
+                        [dataSource]="button.contextMenu.items"
                         [position]="{ my: 'top right', at: 'bottom right' }"
+                        target="#{{button?.id}}"
                         (onSelectionChanged)="contextMenuItemChanged($event, button)"
-                        target="#{{button?.id}}">
+                        (onItemClick)="onContextMenuItemClick($event)">
                 </dx-context-menu>
             </ng-container>
         </div>

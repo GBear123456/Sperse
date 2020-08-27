@@ -58,11 +58,7 @@ export class CreateActivityDialogComponent implements OnInit {
     @ViewChild('startDateRef', { static: false }) startDateComponent: DxDateBoxComponent;
     @ViewChild('endDateRef', { static: false }) endDateComponent: DxDateBoxComponent;
 
-    private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
-    private readonly cacheKey = this.cacheHelper.getCacheKey(
-        this.SAVE_OPTION_CACHE_KEY, 'CreateActivityDialog');
     private readonly LOOKUP_RECORDS_COUNT = 20;
-    private readonly SAVE_OPTION_DEFAULT = 1;
     private lookupTimeout: any;
     private latestSearchPhrase = '';
     private listFilterTimeout: any;
@@ -74,14 +70,8 @@ export class CreateActivityDialogComponent implements OnInit {
     contacts: any = [];
 
     saveButtonId = 'saveActivityOptions';
-    saveContextMenuItems = [
-        { text: this.ls.l('SaveAndAddNew'), selected: false },
-        { text: this.ls.l('SaveAndClose'), selected: false }
-    ];
-
     toolbarConfig = [];
     isAllDay = false;
-
     startDate: Date;
     endDate: Date;
 
@@ -98,7 +88,15 @@ export class CreateActivityDialogComponent implements OnInit {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
             class: 'primary menu',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            contextMenu: {
+                items: [
+                    { text: this.ls.l('SaveAndAddNew'), selected: false },
+                    { text: this.ls.l('SaveAndClose'), selected: false }
+                ],
+                cacheKey: this.cacheHelper.getCacheKey('save_option_active_index', 'CreateActivityDialog'),
+                defaultIndex: 1
+            }
         }
     ];
     permissions = AppPermissions;
@@ -119,14 +117,8 @@ export class CreateActivityDialogComponent implements OnInit {
         public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
-        private contactsProxy: ContactServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.saveContextMenuItems = [
-            { text: this.ls.l('SaveAndAddNew'), selected: false },
-            { text: this.ls.l('SaveAndClose'), selected: false }
-        ];
-
         if (this.appointment && this.appointment.Id) {
             this.isAllDay = Boolean(this.appointment.AllDay);
             if (this.appointment.StartDate)
@@ -185,7 +177,6 @@ export class CreateActivityDialogComponent implements OnInit {
         this.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
         this.title = this.appointment.Title ? this.appointment.Title : '';
         this.initToolbarConfig();
-        this.saveOptionsInit();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -301,22 +292,6 @@ export class CreateActivityDialogComponent implements OnInit {
         this.initToolbarConfig();
     }
 
-    saveOptionsInit() {
-        let selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this.cacheService.exists(this.cacheKey))
-            selectedIndex = this.cacheService.get(this.cacheKey);
-        this.saveContextMenuItems[selectedIndex].selected = true;
-        this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    updateSaveOption(option) {
-        this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheKey,
-            this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-        this.changeDetectorRef.detectChanges();
-    }
-
     private createEntity(): void {
         this.modalDialog.startLoading();
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -372,8 +347,8 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     private afterSave(): void {
-        if (this.saveContextMenuItems.length &&
-            this.saveContextMenuItems[0].selected) {
+        if (this.buttons[0].contextMenu.items.length &&
+            this.buttons[0].contextMenu.items[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true,
@@ -494,13 +469,7 @@ export class CreateActivityDialogComponent implements OnInit {
             });
     }
 
-    onSaveOptionSelectionChanged($event) {
-        let option = $event.addedItems.pop() || $event.removedItems.pop() ||
-            this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        option.selected = true;
-        $event.component.option('selectedItem', option);
-
-        this.updateSaveOption(option);
+    onSaveOptionSelectionChanged() {
         this.save();
     }
 

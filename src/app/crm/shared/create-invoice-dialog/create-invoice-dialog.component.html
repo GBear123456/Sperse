@@ -1,19 +1,10 @@
-<dx-context-menu
-    [selectByClick]="true"
-    [selectionMode]="'single'"
-    [dataSource]="saveContextMenuItems"
-    [position]="{ my: 'top right', at: 'bottom right' }"
-    (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
-    (onItemClick)="onSaveItemClick($event)"
-    target="#{{saveButtonId}}">
-</dx-context-menu>
-
 <modal-dialog [title]="ls.l('INVOICE')"
               [titleClearButton]="false"
               [buttons]="buttons"
               [isTitleValid]="isTitleValid"
               [editTitle]="false"
-              [placeholder]="ls.l('Invoice #')">
+              [placeholder]="ls.l('Invoice #')"
+              (onContextItemChanged)="onSaveOptionSelectionChanged()">
     <ng-container headerContent>
         <label>#</label>
         <dx-text-box #invoice

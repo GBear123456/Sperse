@@ -36,8 +36,8 @@
               [buttons]="buttons"
               [placeholder]="ls.l('FullNamePlaceholder')"
               (onTitleKeyUp)="onFullNameKeyUp($event)"
-              (titleChange)="onFullNameKeyUp($event)">
-
+              (titleChange)="onFullNameKeyUp($event)"
+              (onContextItemChanged)="onSaveOptionSelectionChanged()">
     <dx-toolbar (onItemRendered)="toolbarService.onItemRendered($event)">
         <dxi-item location="before" template="userRoles"></dxi-item>
         <div *dxTemplate="let data of 'userRoles'">

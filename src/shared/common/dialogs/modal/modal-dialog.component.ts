@@ -13,16 +13,16 @@ import {
 
 /** Third party imports */
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { CacheService } from '@node_modules/ng2-cache-service';
 import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
-import { DxContextMenuComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'modal-dialog',
@@ -59,6 +59,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         private loadingService: LoadingService,
         private cacheService: CacheService
     ) {}
+
     private fork(callback, timeout = 0) {
         setTimeout(callback.bind(this), timeout);
     }
@@ -74,7 +75,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
             });
         }
         const buttonWithContextItems = this.buttons.find((button: IDialogButton) => {
-            return !!button.contextMenuItems;
+            return !!button.contextMenu;
         });
         if (buttonWithContextItems) {
             this.contextOptionsInit(buttonWithContextItems);
@@ -141,34 +142,42 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     contextMenuItemChanged(e, button: IDialogButton) {
         const contextItem = e.addedItems.pop()
             || e.removedItems.pop()
-            || button.contextMenuItems[button.contextMenuDefaultIndex];
+            || button.contextMenu.items[button.contextMenu.defaultIndex];
         let selectedContextItemIndex: number = 0;
-        button.contextMenuItems.forEach((item: ContextMenuItem, index: number) => {
+        button.contextMenu.items.forEach((item: ContextMenuItem, index: number) => {
             item.selected = contextItem.text === item.text;
             if (item.selected) {
                 selectedContextItemIndex = index;
             }
         });
         button.title = contextItem.text;
-        if (button.contextMenuCacheKey) {
+        if (button.contextMenu.cacheKey) {
             this.cacheService.set(
-                button.contextMenuCacheKey,
+                button.contextMenu.cacheKey,
                 selectedContextItemIndex.toString()
             );
         }
         this.onContextItemChanged.next(e);
     }
 
+    onContextMenuItemClick(e) {
+        e.event.stopPropagation();
+        e.event.preventDefault();
+    }
+
     contextOptionsInit(button: IDialogButton) {
         let contextItemIndex: number = 0;
-        if (button.contextMenuCacheKey && this.cacheService.exists(button.contextMenuCacheKey))
-            contextItemIndex = this.cacheService.get(button.contextMenuCacheKey);
-        button.contextMenuItems[contextItemIndex].selected = true;
-        button.title = button.contextMenuItems[contextItemIndex].text;
+        if (button.contextMenu.selectedIndex !== undefined) {
+            contextItemIndex = button.contextMenu.selectedIndex;
+        } else if (button.contextMenu.cacheKey && this.cacheService.exists(button.contextMenu.cacheKey)) {
+            contextItemIndex = this.cacheService.get(button.contextMenu.cacheKey);
+        }
+        button.contextMenu.items[contextItemIndex].selected = true;
+        button.title = button.contextMenu.items[contextItemIndex].text;
     }
 
     buttonClick(e, button: IDialogButton) {
-        if (e && e.offsetX > 195)
+        if (e && e.offsetX > e.target.closest('button').offsetWidth - 32)
             return this.contextMenu.instance.option('visible', true);
 
         button.action(e);

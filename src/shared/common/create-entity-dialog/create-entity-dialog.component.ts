@@ -161,13 +161,15 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             title: this.ls.l('Save'),
             class: 'primary menu',
             action: this.save.bind(this),
-            contextMenuItems: [
-                { text: this.ls.l('SaveAndAddNew'), selected: false },
-                { text: this.ls.l('SaveAndExtend'), selected: false, visible: !this.data.hideSaveAndExtend },
-                { text: this.ls.l('SaveAndClose'), selected: false }
-            ],
-            contextMenuDefaultIndex: this.SAVE_OPTION_DEFAULT,
-            contextMenuCacheKey: this.cacheKey
+            contextMenu: {
+                items: [
+                    { text: this.ls.l('SaveAndAddNew'), selected: false },
+                    { text: this.ls.l('SaveAndExtend'), selected: false, visible: !this.data.hideSaveAndExtend },
+                    { text: this.ls.l('SaveAndClose'), selected: false }
+                ],
+                defaultIndex: this.SAVE_OPTION_DEFAULT,
+                cacheKey: this.cacheKey
+            }
         }
     ];
     contactGroups = ContactGroup;
@@ -321,11 +323,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     private afterSave(data): void {
         if (!this.data.refreshParent) {
             this.close(data);
-        } else if (this.buttons[0].contextMenuItems[0].selected) {
+        } else if (this.buttons[0].contextMenu.items[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
-        } else if (this.buttons[0].contextMenuItems[1].selected) {
+        } else if (this.buttons[0].contextMenu.items[1].selected) {
             this.redirectToClientDetails(data.id, data.leadId);
             this.data.refreshParent(true, this.stageId);
         } else {

@@ -1,4 +1,4 @@
-import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
+import { ContextMenu } from '@shared/common/dialogs/modal/context-menu.interface';
 
 export interface IDialogButton {
     id?: string;
@@ -8,7 +8,5 @@ export interface IDialogButton {
     hint?: string;
     iconName?: string;
     action?: (e: any) => void;
-    contextMenuItems?: ContextMenuItem[];
-    contextMenuDefaultIndex?: number;
-    contextMenuCacheKey?: string;
+    contextMenu?: ContextMenu;
 }

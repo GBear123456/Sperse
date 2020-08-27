@@ -74,14 +74,10 @@ export class CreateUserDialogComponent implements OnInit {
 
     private orgUnits: any = [];
 
-    private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private readonly CACHE_PREFIX = 'CreateUserDialog';
-    private readonly cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.CACHE_PREFIX);
 
     saveButtonId = 'saveUserOptions';
-    saveContextMenuItems = [];
-
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
@@ -96,7 +92,15 @@ export class CreateUserDialogComponent implements OnInit {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
             class: 'primary menu',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            contextMenu: {
+                defaultIndex: 1,
+                cacheKey: this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.CACHE_PREFIX),
+                items: [
+                    { text: this.ls.l('SaveAndAddNew'), selected: false },
+                    { text: this.ls.l('SaveAndClose'), selected: false }
+                ]
+            }
         }
     ];
 
@@ -117,17 +121,12 @@ export class CreateUserDialogComponent implements OnInit {
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        this.saveContextMenuItems = [
-            { text: this.ls.l('SaveAndAddNew'), selected: false },
-            { text: this.ls.l('SaveAndClose'), selected: false }
-        ];
         if (this.data.userGroup)
             this.userGroup = this.data.userGroup;
     }
 
     ngOnInit() {
         this.userDataInit();
-        this.saveOptionsInit();
     }
 
     userDataInit() {
@@ -191,22 +190,8 @@ export class CreateUserDialogComponent implements OnInit {
         this.passwordComplexityInfo += '</ul>';
     }
 
-    saveOptionsInit() {
-        let selectedIndex = this.SAVE_OPTION_DEFAULT;
-        if (this.cacheService.exists(this.cacheKey))
-            selectedIndex = this.cacheService.get(this.cacheKey);
-        this.saveContextMenuItems[selectedIndex].selected = true;
-        this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
-    }
-
-    updateSaveOption(option) {
-        this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheKey,
-            this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-    }
-
     private afterSave(): void {
-        if (this.saveContextMenuItems[0].selected) {
+        if (this.buttons[0].contextMenu.items[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true);
@@ -336,13 +321,7 @@ export class CreateUserDialogComponent implements OnInit {
             });
     }
 
-    onSaveOptionSelectionChanged($event) {
-        let option = $event.addedItems.pop() || $event.removedItems.pop() ||
-            this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        option.selected = true;
-        $event.component.option('selectedItem', option);
-
-        this.updateSaveOption(option);
+    onSaveOptionSelectionChanged() {
         this.save();
     }
 

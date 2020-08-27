@@ -3,16 +3,9 @@
               [editTitle]="true"
               [titleClearButton]="true"
               [placeholder]="ls.l('Title')"
-              (onTitleKeyUp)="titleChanged($event)">
+              (onTitleKeyUp)="titleChanged($event)"
+              (onContextItemChanged)="onSaveOptionSelectionChanged()">
     <dx-scroll-view showScrollbar="onHover">
-        <dx-context-menu
-            [selectByClick]="true"
-            [selectionMode]="'single'"
-            [dataSource]="saveContextMenuItems"
-            [position]="{ my: 'top right', at: 'bottom right' }"
-            (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
-            target="#{{saveButtonId}}">
-        </dx-context-menu>
         <app-toolbar [config]="toolbarConfig"></app-toolbar>
         <app-static-list #stagesList
                          [width]="'210px'"

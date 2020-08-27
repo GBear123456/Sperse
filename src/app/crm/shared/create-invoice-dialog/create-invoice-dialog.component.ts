@@ -7,7 +7,6 @@ import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angula
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { finalize, first, switchMap } from 'rxjs/operators';
@@ -58,6 +57,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { StatesService } from '@root/store/states-store/states.service';
+import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -83,14 +83,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdown: OrderDropdownComponent;
 
     private lookupTimeout;
-
-    private readonly SAVE_OPTION_DEFAULT = 0;
-    private readonly SAVE_OPTION_DRAFT   = 1;
-    private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
-    private readonly cacheKey = this.cacheHelper.getCacheKey(
-        this.SAVE_OPTION_CACHE_KEY, 'CreateInvoiceDialog'
-    );
-
     invoiceNo;
     orderId: number;
     invoiceId: number;
@@ -100,11 +92,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     startCase = startCase;
 
     saveButtonId = 'saveInvoiceOptions';
-    saveContextMenuItems = [];
     invoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    selectedOption: any;
+    selectedOption: ContextMenuItem;
     selectedContact: any;
     selectedBillingAddress: InvoiceAddressInput;
     selectedShippingAddress: InvoiceAddressInput;
@@ -134,7 +125,44 @@ export class CreateInvoiceDialogComponent implements OnInit {
             title: this.ls.l('Save'),
             class: 'primary menu',
             action: this.save.bind(this),
-            disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+            disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+            contextMenu: {
+                items: [
+                    {
+                        text: this.ls.l('Save'),
+                        selected: false,
+                        disabled: this.disabledForUpdate,
+                        data: {
+                            status: InvoiceStatus.Final,
+                        }
+                    },
+                    {
+                        text: this.ls.l('Invoice_SaveAsDraft'),
+                        selected: false,
+                        disabled: this.disabledForUpdate,
+                        data: {
+                            status: InvoiceStatus.Draft
+                        }
+                    },
+                    {
+                        text: this.ls.l('Invoice_SaveAndSend'),
+                        selected: false,
+                        disabled: this.disabledForUpdate,
+                        data: {
+                            status: InvoiceStatus.Final,
+                            email: true
+                        }
+                    },
+                    {
+                        text: this.ls.l('Invoice_SaveAndMarkSent'),
+                        selected: false,
+                        disabled: true
+                    }
+                ],
+                defaultIndex: 0,
+                selectedIndex: this.data.saveAsDraft ? 1 : undefined,
+                cacheKey: this.cacheHelper.getCacheKey('save_option_active_index', 'CreateInvoiceDialog')
+            }
         }
     ];
 
@@ -178,7 +206,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }
             this.changeDetectorRef.detectChanges();
         });
-
         this.initInvoiceData();
     }
 
@@ -255,13 +282,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     initContextMenuItems() {
-        this.buttons.forEach(item => item.disabled = this.disabledForUpdate);
-        this.saveContextMenuItems = [
-            {text: this.ls.l('Save'), selected: false, status: InvoiceStatus.Final, disabled: this.disabledForUpdate},
-            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.disabledForUpdate, status: InvoiceStatus.Draft},
-            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, status: InvoiceStatus.Final, email: true, disabled: this.disabledForUpdate},
-            {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
-        ];
+        this.buttons.forEach((item: IDialogButton) => {
+            item.disabled = this.disabledForUpdate;
+            item.contextMenu.items.forEach((contextMenuItem: ContextMenuItem, index: number) => {
+                if (index !== 3) {
+                    contextMenuItem.disabled = this.disabledForUpdate;
+                }
+            });
+        });
         this.saveOptionsInit();
     }
 
@@ -304,35 +332,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     saveOptionsInit() {
-        this.selectedOption = this.saveContextMenuItems[
-            this.data.saveAsDraft
-                ? this.SAVE_OPTION_DRAFT : this.cacheService.exists(this.cacheKey)
-                ? this.cacheService.get(this.cacheKey) : this.SAVE_OPTION_DEFAULT
-        ];
-        this.selectedOption.selected = true;
-        this.buttons[0].title = this.selectedOption.text;
-        this.status = this.selectedOption.status;
+        this.selectedOption = this.buttons[0].contextMenu.items.find((item: ContextMenuItem) => item.selected);
+        this.status = this.selectedOption.data.status;
     }
 
-    onSaveItemClick(event) {
-        event.event.stopPropagation();
-        event.event.preventDefault();
-    }
-
-    onSaveOptionSelectionChanged(event) {
-        this.selectedOption = event.addedItems.pop() || event.removedItems.pop() ||
-            this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        this.selectedOption.selected = true;
-        event.component.option('selectedItem', this.selectedOption);
-        this.updateSaveOption(this.selectedOption);
-        this.status = this.selectedOption.status;
+    onSaveOptionSelectionChanged() {
+        this.selectedOption = this.buttons[0].contextMenu.items.find((item: ContextMenuItem) => item.selected);
+        this.status = this.selectedOption.data.status;
         this.save();
-    }
-
-    updateSaveOption(option) {
-        this.buttons[0].title = option.text;
-        this.cacheService.set(this.cacheKey,
-            this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
     private setRequestCommonFields(data) {
@@ -444,7 +451,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (this.status != InvoiceStatus.Draft && (!contact || contact.statusId == ContactStatus.Prospective))
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
 
-        if (this.selectedOption.email)
+        if (this.selectedOption.data.email)
             setTimeout(() => this.showNewEmailDialog());
         else {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
@@ -472,10 +479,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         return value || this.notifyService.error(this.ls.l('RequiredField', caption));
     }
 
-    save(event?): void {
-        if (event && event.offsetX > event.target.closest('button').offsetWidth - 32)
-            return this.saveContextComponent.instance.option('visible', true);
-
+    save(): void {
         if (!this.invoiceNo)
             return this.invoiceNoComponent.instance.option('isValid', false);
 
