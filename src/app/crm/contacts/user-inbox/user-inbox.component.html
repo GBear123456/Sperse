@@ -73,7 +73,7 @@
                         <div [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
                         <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | date: formatting.inboxDate : userTimezone"></div>
                     </div>
-                    <div *ngIf="!isActiveEmilType">
+                    <div *ngIf="!isActiveEmilType" class="children-wrapper">
                         <div *ngFor="let child of activeMessage?.items; let i = index" class="message-wrapper">
                             <div *ngIf="!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound" [ngClass]="{to: child.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(child?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
                             <div class="body" [ngClass]="{from: !child.isInbound, to: child.isInbound, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound}" [attr.date]="child.creationTime | date: formatting.inboxDate : userTimezone">
