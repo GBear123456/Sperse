@@ -48835,7 +48835,7 @@ export class MessageDto implements IMessageDto {
     parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
-    fromUserThumbnailId!: string | undefined;
+    fromUserContactPhotoPublicId!: string | undefined;
     from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
@@ -48869,7 +48869,7 @@ export class MessageDto implements IMessageDto {
             this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
-            this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.fromUserContactPhotoPublicId = data["fromUserContactPhotoPublicId"];
             this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
@@ -48903,7 +48903,7 @@ export class MessageDto implements IMessageDto {
         data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
-        data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["fromUserContactPhotoPublicId"] = this.fromUserContactPhotoPublicId;
         data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
@@ -48926,7 +48926,7 @@ export interface IMessageDto {
     parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
-    fromUserThumbnailId: string | undefined;
+    fromUserContactPhotoPublicId: string | undefined;
     from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;
@@ -48945,7 +48945,7 @@ export class MessageListDto implements IMessageListDto {
     parentId!: number | undefined;
     fromUserId!: number | undefined;
     fromUserName!: string | undefined;
-    fromUserThumbnailId!: string | undefined;
+    fromUserContactPhotoPublicId!: string | undefined;
     from!: string | undefined;
     to!: string | undefined;
     replyTo!: string | undefined;
@@ -48973,7 +48973,7 @@ export class MessageListDto implements IMessageListDto {
             this.parentId = data["parentId"];
             this.fromUserId = data["fromUserId"];
             this.fromUserName = data["fromUserName"];
-            this.fromUserThumbnailId = data["fromUserThumbnailId"];
+            this.fromUserContactPhotoPublicId = data["fromUserContactPhotoPublicId"];
             this.from = data["from"];
             this.to = data["to"];
             this.replyTo = data["replyTo"];
@@ -49001,7 +49001,7 @@ export class MessageListDto implements IMessageListDto {
         data["parentId"] = this.parentId;
         data["fromUserId"] = this.fromUserId;
         data["fromUserName"] = this.fromUserName;
-        data["fromUserThumbnailId"] = this.fromUserThumbnailId;
+        data["fromUserContactPhotoPublicId"] = this.fromUserContactPhotoPublicId;
         data["from"] = this.from;
         data["to"] = this.to;
         data["replyTo"] = this.replyTo;
@@ -49022,7 +49022,7 @@ export interface IMessageListDto {
     parentId: number | undefined;
     fromUserId: number | undefined;
     fromUserName: string | undefined;
-    fromUserThumbnailId: string | undefined;
+    fromUserContactPhotoPublicId: string | undefined;
     from: string | undefined;
     to: string | undefined;
     replyTo: string | undefined;

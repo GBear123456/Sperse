@@ -144,4 +144,9 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             }
         });
     }
+
+    getYtelInboundSMSUrl(): string {
+        let key = this.yTelSettings.inboundSmsKey || '{inbound_sms_key}';
+        return AppConsts.remoteServiceBaseUrl + `/api/YTel/ProcessInboundSms?tenantId=&key=${key}`;
+    }
 }

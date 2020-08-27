@@ -424,6 +424,10 @@
                             <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
                         </div>
                     </div>
+                    <p>
+                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span>
+                        <br /><b>{{getYtelInboundSMSUrl()}}</b><br /><br />
+                    </p>
                 </dx-scroll-view>
             </mat-tab>
         </mat-tab-group>
