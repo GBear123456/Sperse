@@ -31,12 +31,13 @@
                         [disabled]="button?.disabled"
                         [title]="button.hint ? button.hint : ''"
                         class="button-layout button-{{button.class}}"
+                        [ngClass]="{ menu: showContextMenu(button) }"
                         (click)="buttonClick($event, button)">
                     <span *ngIf="!!button.title">{{ ls.l(button.title) }}</span>
                     <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
                 </button>
                 <dx-context-menu
-                        *ngIf="button.contextMenu"
+                        *ngIf="showContextMenu(button)"
                         [selectByClick]="true"
                         selectionMode="single"
                         [dataSource]="button.contextMenu.items"

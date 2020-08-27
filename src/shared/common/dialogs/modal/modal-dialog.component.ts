@@ -75,7 +75,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
             });
         }
         const buttonWithContextItems = this.buttons.find((button: IDialogButton) => {
-            return !!button.contextMenu;
+            return this.showContextMenu(button);
         });
         if (buttonWithContextItems) {
             this.contextOptionsInit(buttonWithContextItems);
@@ -181,6 +181,10 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
             return this.contextMenu.instance.option('visible', true);
 
         button.action(e);
+    }
+
+    showContextMenu(button: IDialogButton): boolean {
+        return button.contextMenu && !button.contextMenu.hidden;
     }
 
 }

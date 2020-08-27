@@ -11,7 +11,7 @@
             valueExpr="id"
             [placeholder]="ls.l('SelectTemplate')"
             [disabled]="onTemplateCreate.observers.length && !data.contact"
-            [(value)]="data.templateId"
+            [value]="data.templateId"
             [showClearButton]="templateEditMode"
             [dataSource]="templates$ | async"
             [acceptCustomValue]="templateEditMode"
@@ -25,7 +25,7 @@
         </dx-select-box>
         <div class="buttons" *ngIf="data.contact && onTemplateCreate.observers.length">
             <i class="create-template" (click)="createTemplate()"></i>
-            <i *ngIf="data.templateId" class="edit-template fa fa-pencil" (click)="editTemplate(data.templateId)"></i>
+            <i *ngIf="data.templateId" class="edit-template fa fa-pencil" (click)="editTemplate(data)"></i>
         </div>
     </ng-container>
 

@@ -159,7 +159,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
-            class: 'primary menu',
+            class: 'primary',
             action: this.save.bind(this),
             contextMenu: {
                 items: [

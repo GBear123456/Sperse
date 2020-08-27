@@ -123,7 +123,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
-            class: 'primary menu',
+            class: 'primary',
             action: this.save.bind(this),
             disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage),
             contextMenu: {

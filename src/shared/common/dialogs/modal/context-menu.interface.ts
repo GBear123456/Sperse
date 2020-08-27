@@ -5,4 +5,5 @@ export interface ContextMenu {
     defaultIndex?: number;
     selectedIndex?: number;
     cacheKey?: string;
+    hidden?: boolean;
 }

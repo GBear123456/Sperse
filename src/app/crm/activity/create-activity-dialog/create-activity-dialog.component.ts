@@ -87,7 +87,7 @@ export class CreateActivityDialogComponent implements OnInit {
         {
             id: this.saveButtonId,
             title: this.ls.l('Save'),
-            class: 'primary menu',
+            class: 'primary',
             action: this.save.bind(this),
             contextMenu: {
                 items: [

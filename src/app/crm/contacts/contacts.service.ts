@@ -45,9 +45,10 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CacheService } from 'ng2-cache-service';
 import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interface';
 import { AppPermissions } from '@shared/AppPermissions';
-import { ContactGroup, ContactStatus } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { EmailTags } from './contacts.const';
+import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 
 @Injectable()
 export class ContactsService {
@@ -295,7 +296,7 @@ export class ContactsService {
         });
     }
 
-    getContactInfo(contactId): Observable<any> {
+    getContactInfo(contactId): Observable<ContactInfoDto> {
         let contactInfo = this.contactProxy['data'] &&
             this.contactProxy['data'].contactInfo;
         return contactInfo && contactInfo.id == contactId ? of(contactInfo)
@@ -325,16 +326,19 @@ export class ContactsService {
         }
     }
 
-    showEmailTemplateDialog(templateId?: number) {
+    showEmailTemplateDialog(templateData?: EmailTemplateData): Observable<any> {
+        const addMode = !(templateData && templateData.templateId);
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                title: templateId ? this.ls.l('Edit Template') : this.ls.l('Add Template'),
+                ...templateData,
+                title: addMode ? this.ls.l('Add Template') : this.ls.l('Edit Template'),
                 templateType: 'Contact',
-                templateId: templateId,
-                saveTitle: this.ls.l('Save')
+                saveTitle: this.ls.l('Save'),
+                hideContextMenu: addMode,
+                addMode: addMode
             }
         }).componentInstance;
         this.initEmailDialogTagsList(dialogComponent);
@@ -345,9 +349,10 @@ export class ContactsService {
     }
 
     showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>): Observable<number> {
-        let emailData: any = {
+        let emailData: EmailTemplateData = {
             saveTitle: this.ls.l('Send'),
             title: this.ls.l(title),
+            hideContextMenu: true,
             ...data
         };
 
@@ -355,9 +360,9 @@ export class ContactsService {
             emailData.templateType = EmailTemplateType.Contact;
         if (emailData.contact)
             this.initSuggestionEmails(emailData);
-        else if (emailData.contactId)
-            this.getContactInfo(emailData.contactId).subscribe(res => {
-                emailData.contact = res;
+        else if (emailData['contactId'])
+            this.getContactInfo(emailData['contactId']).subscribe((contactInfo: ContactInfoDto) => {
+                emailData.contact = contactInfo;
                 this.initSuggestionEmails(emailData);
             });
 
@@ -369,8 +374,8 @@ export class ContactsService {
         }).componentInstance;
 
         if (emailData.templateType == EmailTemplateType.Contact)
-            dialogComponent.onTemplateCreate.subscribe((templateId: number) => {
-                this.showEmailTemplateDialog(templateId).subscribe(data => {
+            dialogComponent.onTemplateCreate.subscribe((templateData: EmailTemplateData) => {
+                this.showEmailTemplateDialog(templateData).subscribe(data => {
                     dialogComponent.data.templateId = data.templateId;
                     dialogComponent.onTemplateChanged({ value: data.templateId });
                     dialogComponent.initTemplateList();
@@ -378,12 +383,14 @@ export class ContactsService {
             });
 
         dialogComponent.onTemplateChange.pipe(
-            switchMap(tmpId => {
+            switchMap((templateId: number) => {
                 dialogComponent.startLoading();
-                return (onTemplateChange ? onTemplateChange(tmpId, emailData) :
-                    this.communicationProxy.getEmailData(tmpId, emailData.contactId).pipe(map(data => {
-                        Object.assign(emailData, data);
-                    }))
+                return (onTemplateChange ? onTemplateChange(templateId, emailData) :
+                    this.communicationProxy.getEmailData(templateId, emailData['contactId']).pipe(
+                        map((data: GetEmailDataOutput) => {
+                            Object.assign(emailData, data);
+                        })
+                    )
                 ).pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );

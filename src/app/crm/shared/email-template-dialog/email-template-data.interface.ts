@@ -18,4 +18,6 @@ export interface EmailTemplateData {
     templateType: EmailTemplateType;
     switchTemplate: EmailTemplateType;
     tags: { [key: string]: string; } | undefined;
+    hideContextMenu?: boolean;
+    addMode?: boolean;
 }

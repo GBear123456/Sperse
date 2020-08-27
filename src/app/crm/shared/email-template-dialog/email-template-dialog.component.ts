@@ -68,7 +68,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Input() tagsList = [];
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onTemplateCreate: EventEmitter<number> = new EventEmitter<number>();
+    @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
 
@@ -83,7 +83,15 @@ export class EmailTemplateDialogComponent implements OnInit {
             id: 'saveTemplateOptions',
             title: this.data.saveTitle,
             class: 'primary',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            contextMenu: {
+                hidden: this.data.hideContextMenu,
+                items: [
+                    { text: this.ls.l('Save'), selected: false },
+                    { text: this.ls.l('SaveAsNew'), selected: false }
+                ],
+                defaultIndex: 0
+            }
         }
     ];
     templates$: Observable<GetTemplatesResponse[]>;
@@ -184,11 +192,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         };
 
         this.startLoading();
-        let request$: Observable<any> = this.data.templateId ?
-            this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data)) :
-            this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
+        let request$: Observable<any> = this.data.templateId
+            && this.buttons[1].contextMenu.items[0].selected
+            && !this.data.addMode
+            ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
+            : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
 
-        request$.pipe(finalize(() => this.finishLoading())).subscribe(id => {
+        request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
             if (id)
                 this.data.templateId = id;
             this.onSave.emit(this.data);
@@ -242,6 +252,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onTemplateChanged(event) {
         if (event.value) {
+            this.data.templateId = event.value;
             if (this.templateEditMode || this.data.switchTemplate) {
                 this.startLoading();
                 this.emailTemplateProxy.getTemplate(event.value).pipe(
@@ -503,8 +514,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.onTemplateCreate.emit();
     }
 
-    editTemplate(templateId: number) {
-        this.onTemplateCreate.emit(templateId);
+    editTemplate(data: EmailTemplateData) {
+        this.onTemplateCreate.emit(data);
     }
 
     close() {
