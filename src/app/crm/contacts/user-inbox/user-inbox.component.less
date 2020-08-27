@@ -19,11 +19,12 @@
                 width: 26px;
                 height: 26px;
                 position: absolute;
-                bottom: 5px;
+                bottom: 30px;
                 left: 15px;
                 &.to {
                     left: auto;
                     right: 15px;
+                    bottom: -60px;
                 }
             }
         }
@@ -390,7 +391,7 @@
                 }
             }            
             .body {
-                display: block;
+                display: inline-block;
                 position: relative;
                 padding: 20px;
                 font-size: 14px;
@@ -401,7 +402,7 @@
                 letter-spacing: 0.28px;
                 text-align: left;
                 color: #424c56;
-                width: 70%;
+                max-width: 70%;
                 border-radius: 10px;
                 margin-bottom: 5px;
                 &.from {
@@ -415,6 +416,7 @@
                     background: rgba(0, 174, 239, 0.1);
                     margin-right: 50px;
                     margin-left: auto;
+                    float: right;
                 }
             }
         }

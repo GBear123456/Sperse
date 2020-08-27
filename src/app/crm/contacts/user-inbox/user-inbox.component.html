@@ -75,8 +75,8 @@
                     </div>
                     <div *ngIf="!isActiveEmilType">
                         <div *ngFor="let child of activeMessage?.items; let i = index" class="message-wrapper">
-                            <div *ngIf="!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].from != child.from" [ngClass]="{to: child.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(child?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar small"></div>
-                            <div class="body" [ngClass]="{from: !child.isInbound, to: child.isInbound, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].from != child.from}" [attr.date]="child.creationTime | date: formatting.inboxDate : userTimezone">
+                            <div *ngIf="!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound" [ngClass]="{to: child.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getProfilePictureUrl(child?.fromUserThumbnailId, noPhotoUrl) + ')'}" class="img-circle avatar small"></div>
+                            <div class="body" [ngClass]="{from: !child.isInbound, to: child.isInbound, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound}" [attr.date]="child.creationTime | date: formatting.inboxDate : userTimezone">
                                 <div [innerHtml]="child.body || child.subject"></div>
                                 <div class="body-attachments">
                                     <div *ngFor="let attachment of child?.attachments" class="attachment">
