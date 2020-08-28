@@ -25,6 +25,15 @@
                 target=".dx-state-hover .dx-link.dx-link-edit"
                 (onItemClick)="onMenuItemClick($event)">
         </action-menu>
+        <source-contact-list #sourceList
+            targetSelector=".dx-button[aria-label=Source]"
+            [showOrgUnits]="true"
+            [filterModel]="filterModelSource"
+            [selectedLeads]="[]"
+            [filterModelOrgUnit]="filterModelOrgUnit"
+            [selectedKeys]="[]"
+            (onOwnerFilterApply)="onOwnerFilterApply($event)">
+        </source-contact-list>
         <app-static-list
                 [width]="'180px'"
                 [title]="l('Status')"

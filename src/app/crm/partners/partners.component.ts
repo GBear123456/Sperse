@@ -99,6 +99,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '@shared/filters/states/filter-states.service';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
@@ -132,6 +133,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent, { static: false }) typesComponent: TypesListComponent;
+    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
@@ -274,6 +276,30 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelTypes: FilterModel;
+    filterModelSource: FilterModel = new FilterModel({
+        component: FilterSourceComponent,
+        hidden: this.appSession.userIsMember,
+        caption: 'Source',
+        items: {
+            element: new SourceFilterModel({
+                ls: this.localizationService
+            })
+        }
+    });
+    filterModelOrgUnit: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'SourceOrganizationUnitId',
+        hidden: this.appSession.userIsMember,
+        field: 'SourceOrganizationUnitId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                    nameField: 'displayName',
+                    keyExpr: 'id'
+                })
+        }
+    });
     filterCountryStates: FilterModel = new FilterModel({
         component: FilterStatesComponent,
         caption: 'states',
@@ -950,30 +976,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         })
                 }
             }),
-            new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'SourceOrganizationUnitId',
-                hidden: this.appSession.userIsMember,
-                field: 'SourceOrganizationUnitId',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                            nameField: 'displayName',
-                            keyExpr: 'id'
-                        })
-                }
-            }),
-            new FilterModel({
-                component: FilterSourceComponent,
-                hidden: this.appSession.userIsMember,
-                caption: 'Source',
-                items: {
-                    element: new SourceFilterModel({
-                        ls: this.localizationService
-                    })
-                }
-            }),
+            this.filterModelOrgUnit,
+            this.filterModelSource,
             this.filterModelLists = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'List',
@@ -1094,6 +1098,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                        }
+                    },
+                    {
+                        name: 'archive',
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        options: {
+                            text: this.l('Source'),
+                            hint: this.l('Source')
+                        },
+                        action: this.toggleSource.bind(this),
+                        attr: {
+                            'filter-selected': !!this.filterModelSource.items.element['contact']
+                                || !!this.filterModelOrgUnit.items.element.value.length
                         }
                     },
                     {
@@ -1228,7 +1245,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     disabled: this.selectedPartnerKeys.length < 1,
                                     visible: this.appSession.isPerformancePartnerTenant,
                                     action: () => {
-                                        this.message.confirm("", this.l('ReferralPartnersSendEmailConfirmation', this.selectedPartnerKeys.length), (res) => {
+                                        this.message.confirm('', this.l('ReferralPartnersSendEmailConfirmation', this.selectedPartnerKeys.length), (res) => {
                                             if (res) {
                                                 abp.ui.setBusy();
                                                 this.contactProxy
@@ -1337,10 +1354,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'pipeline',
                         action: () => {
-                            //!! should be uncommented when API will be changed accordingly 
+                            //!! should be uncommented when API will be changed accordingly
                             //this.toggleDataLayout.bind(this, DataLayoutType.Pipeline);
-                            this._router.navigate(['app/crm/leads'], { queryParams: { 
-                                contactGroup: 'Partner' 
+                            this._router.navigate(['app/crm/leads'], { queryParams: {
+                                contactGroup: 'Partner'
                             } });
                         },
                         options: {
@@ -1374,6 +1391,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             }
         ];
+    }
+
+    toggleSource() {
+        this.sourceComponent.toggle();
     }
 
     toggleColumnChooser() {
@@ -1615,6 +1636,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     return true;
                 }
             });
+    }
+
+    onOwnerFilterApply(event) {
+        let filter = this.filterModelOrgUnit.items.element.value;
+        this.filterModelOrgUnit.items.element.value = filter &&
+            (!event || filter[0] == event.id) ? [] : [event.id];
+        this.filtersService.change([this.filterModelOrgUnit]);
     }
 
     onDragEnd = e => {

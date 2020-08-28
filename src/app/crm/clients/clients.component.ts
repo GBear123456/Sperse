@@ -68,6 +68,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/filter-multiline-input.component';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import {
     ContactEmailServiceProxy,
@@ -106,13 +107,13 @@ import { MapArea } from '@app/shared/common/slice/map/map-area.enum';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterStatesService } from '@shared/filters/states/filter-states.service';
-import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
@@ -143,6 +144,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
+    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
@@ -169,6 +171,30 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
+    filterModelOrgUnit: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'SourceOrganizationUnitId',
+        hidden: this.appSession.userIsMember,
+        field: 'SourceOrganizationUnitId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                    nameField: 'displayName',
+                    keyExpr: 'id'
+                })
+        }
+    });
+    filterModelSource: FilterModel = new FilterModel({
+        component: FilterSourceComponent,
+        caption: 'Source',
+        hidden: this.appSession.userIsMember,
+        items: {
+            element: new SourceFilterModel({
+                ls: this.localizationService
+            })
+        }
+    });
     filterModelLists: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'List',
@@ -599,6 +625,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+/*
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
                         [
@@ -610,6 +637,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.Phone
                         ]
                     );
+*/
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -1005,30 +1033,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 items: { ZipCode: new FilterItemModel() }
             }),
             this.filterModelAssignment,
-            new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'SourceOrganizationUnitId',
-                hidden: this.appSession.userIsMember,
-                field: 'SourceOrganizationUnitId',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                            nameField: 'displayName',
-                            keyExpr: 'id'
-                        })
-                }
-            }),
-            new FilterModel({
-                component: FilterSourceComponent,
-                caption: 'Source',
-                hidden: this.appSession.userIsMember,
-                items: {
-                    element: new SourceFilterModel({
-                        ls: this.localizationService
-                    })
-                }
-            }),
+            this.filterModelOrgUnit,
+            this.filterModelSource,
             this.filterModelLists,
             this.filterModelTags,
             this.filterModelRating,
@@ -1097,6 +1103,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                        }
+                    },
+                    {
+                        name: 'archive',
+                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        options: {
+                            text: this.l('Source'),
+                            hint: this.l('Source')
+                        },
+                        action: this.toggleSource.bind(this),
+                        attr: {
+                            'filter-selected': !!this.filterModelSource.items.element['contact']
+                                || !!this.filterModelOrgUnit.items.element.value.length
                         }
                     },
                     {
@@ -1334,6 +1353,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         ];
         return this.toolbarConfig;
+    }
+
+    toggleSource() {
+        this.sourceComponent.toggle();
     }
 
     toggleColumnChooser() {
@@ -1595,6 +1618,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
+    }
+
+    onOwnerFilterApply(event) {
+        let filter = this.filterModelOrgUnit.items.element.value;
+        this.filterModelOrgUnit.items.element.value = filter &&
+            (!event || filter[0] == event.id) ? [] : [event.id];
+        this.filtersService.change([this.filterModelOrgUnit]);
     }
 
     onDragEnd = e => {
