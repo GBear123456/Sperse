@@ -38,7 +38,8 @@ export class HeaderNotificationsComponent implements OnInit {
     subscriptionInfoText: string;
     subscriptionExpiringDayCount = null;
 
-    private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
+    private readonly CONTACT_ENTITY_TYPE  = 'Sperse.CRM.Contacts.Entities.Contact';
+    private readonly USER_REGISTERED_TYPE = 'App.NewUserRegistered';
 
     constructor(
         private dialog: MatDialog,
@@ -163,9 +164,14 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     onNotificationClick(notification: any): void {
-        if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE && notification.entityId) {
-            this.router.navigate(['app/crm/contact', notification.entityId]);
-            this.hideDropDown();
+        if (notification.entityId) {
+            if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE) {
+                this.router.navigate(['app/crm/contact', notification.entityId]);
+                this.hideDropDown();
+            } else if (notification.entityTypeName = this.USER_REGISTERED_TYPE) {
+                this.router.navigate(['app/admin/user', notification.entityId, 'user-information']);
+                this.hideDropDown();
+            }
         } else if (notification.url) {
             this.router.navigateByUrl(notification.url);
             this.hideDropDown();
