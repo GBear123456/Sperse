@@ -18,6 +18,6 @@ export const OrderFields: KeysEnum<OrderDto> = {
     OrderDate: 'OrderDate',
     PersonalAffiliateCode: 'PersonalAffiliateCode',
     SourceAffiliateCode: 'SourceAffiliateCode',
-    EntryUrl: 'EntryUrl',
+    SourceEntryUrl: 'SourceEntryUrl',
     DateProcessed: 'DateProcessed'
 };
