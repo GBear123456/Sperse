@@ -41,6 +41,7 @@ class EmailAttachment extends AttachmentDto {
 export class UserInboxComponent implements OnDestroy {
     @ViewChild(DxListComponent, { static: false }) listComponent: DxListComponent;
     @ViewChild(DxButtonGroupComponent, { static: false }) buttonGroupComponent: DxButtonGroupComponent;
+    @ViewChild('emailContent', { static: false }) emailContent: ElementRef;
     @ViewChild('contentView', { static: false }) contentView: ElementRef;
 
     contactId: number;
@@ -316,8 +317,22 @@ export class UserInboxComponent implements OnDestroy {
                     component[(item.expanded ? 'expand' : 'collapse') + 'Group'](index)
                 );
             }
+            if (this.isActiveEmilType)
+                this.showEmailContent();
             this.initContentToolbar();
         }
+    }
+
+    showEmailContent() {
+        setTimeout(() => {
+            if (this.activeMessage && this.emailContent) {
+                let window = this.emailContent.
+                    nativeElement.contentWindow;
+                window.document.open();
+                window.document.write(this.activeMessage.body);
+                window.document.close();
+            }
+        });
     }
 
     onContentReady(event) {
