@@ -15,6 +15,6 @@ export interface OrderDto {
     OrderDate: string;
     PersonalAffiliateCode: string;
     SourceAffiliateCode: string;
-    EntryUrl: string;
+    SourceEntryUrl: string;
     DateProcessed: string;
 }
