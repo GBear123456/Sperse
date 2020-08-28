@@ -47,14 +47,16 @@ export class SourceFilterModel extends FilterItemModel {
             {
                 property: 'refererUrl',
                 label: this.ls.l('RefererUrl'),
+                operator: 'contains',
                 name: 'SourceRefererUrl',
                 value: this.refererUrl
             },
             {
                 property: 'entryUrl',
                 label: this.ls.l('EntryUrl'),
+                operator: 'contains',
                 name: 'SourceEntryUrl',
-                value: this.refererUrl
+                value: this.entryUrl
             }
         ];
     }

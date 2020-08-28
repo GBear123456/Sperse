@@ -108,10 +108,10 @@ export class FilterHelpers {
     static filterBySource(filter: FilterModel) {
         let filterValues = { 'and': [] };
         let data = filter.items.element.value;
-        data.forEach((dataItem) => {
-            if (dataItem.value) {
-                filterValues.and.push({ [dataItem.name]: dataItem.value });
-            }
+        data.forEach(dataItem => {
+            if (dataItem.value)
+                filterValues.and.push({ [dataItem.name]: dataItem.operator ?
+                    {[dataItem.operator]: dataItem.value} : dataItem.value });
         });
         return filterValues;
     }
