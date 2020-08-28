@@ -81,14 +81,6 @@
     </dx-toolbar>
 
     <dx-scroll-view showScrollbar="onHover">
-        <dx-context-menu
-            [selectByClick]="true"
-            [selectionMode]="'single'"
-            [dataSource]="saveContextMenuItems"
-            [position]="{ my: 'top right', at: 'bottom right' }"
-            (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
-            target="#{{saveButtonId}}">
-        </dx-context-menu>
         <div class="tab-content">
             <form #userForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
                 <div class="form-group field">
