@@ -442,7 +442,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 area: 'filter',
-                dataField: 'EntryUrl'
+                dataField: 'SourceEntryUrl'
             },
             {
                 area: 'filter',
