@@ -36,4 +36,18 @@
                      [(value)]="items.element.channelCode">
         </dx-text-box>
     </div>
+    <div class="field">
+        <label for="filterRefererUrl">{{ ls.l('RefererUrl') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterRefererUrl' }"
+                     [(value)]="items.element.refererUrl">
+        </dx-text-box>
+    </div>
+    <div class="field">
+        <label for="filterEntryUrl">{{ ls.l('EntryUrl') }}</label>
+        <dx-text-box [placeholder]="ls.l('EnterValue')"
+                     [elementAttr]="{ id: 'filterEntryUrl' }"
+                     [(value)]="items.element.entryUrl">
+        </dx-text-box>
+    </div>     
 </div>

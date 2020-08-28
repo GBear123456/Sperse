@@ -10,6 +10,8 @@ export class SourceFilterModel extends FilterItemModel {
     affiliateCode: string;
     campaignCode: string;
     channelCode: string;
+    refererUrl: string;
+    entryUrl: string;
 
     public constructor(init?: Partial<SourceFilterModel>) {
         super(init, true);
@@ -41,6 +43,18 @@ export class SourceFilterModel extends FilterItemModel {
                 label: this.ls.l('Channel'),
                 name: 'SourceChannelCode',
                 value: this.channelCode
+            },
+            {
+                property: 'refererUrl',
+                label: this.ls.l('RefererUrl'),
+                name: 'SourceRefererUrl',
+                value: this.refererUrl
+            },
+            {
+                property: 'entryUrl',
+                label: this.ls.l('EntryUrl'),
+                name: 'SourceEntryUrl',
+                value: this.refererUrl
             }
         ];
     }
