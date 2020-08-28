@@ -15,7 +15,8 @@ export interface LeadDto {
     SourceAffiliateCode: string;
     SourceCampaignCode: string;
     SourceChannelCode: string;
-    EntryUrl: string;
+    SourceRefererUrl: string;
+    SourceEntryUrl: string;
     LastModificationTime: string;
     SourceCode: string;
     StreetAddress: string;
@@ -29,6 +30,5 @@ export interface LeadDto {
     SourceContactName: string;
     AssignedUserName: string;
     BankCode: string;
-    RefererUrl: string;
     StageChecklistPointDoneCount: number;
 }

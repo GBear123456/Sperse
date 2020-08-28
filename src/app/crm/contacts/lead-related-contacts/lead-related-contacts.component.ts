@@ -238,7 +238,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                                 this.leadFields.SourceContactName,
                                 this.leadFields.SourceCampaignCode,
                                 this.leadFields.SourceChannelCode,
-                                this.leadFields.RefererUrl
+                                this.leadFields.SourceRefererUrl
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;

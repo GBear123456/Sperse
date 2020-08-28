@@ -21,5 +21,5 @@ export interface SubscriptionDto {
     StatusName: string;
     OrderAmount: string;
     SourceAffiliateCode: string;
-    EntryUrl: string;
+    SourceEntryUrl: string;
 }

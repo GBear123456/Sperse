@@ -18,7 +18,8 @@ export const LeadFields: KeysEnum<LeadDto> = {
     SourceAffiliateCode: 'SourceAffiliateCode',
     SourceCampaignCode: 'SourceCampaignCode',
     SourceChannelCode: 'SourceChannelCode',
-    EntryUrl: 'EntryUrl',
+    SourceRefererUrl: 'SourceRefererUrl',
+    SourceEntryUrl: 'SourceEntryUrl',
     LastModificationTime: 'LastModificationTime',
     SourceCode: 'SourceCode',
     StreetAddress: 'StreetAddress',
@@ -32,6 +33,5 @@ export const LeadFields: KeysEnum<LeadDto> = {
     SourceContactName: 'SourceContactName',
     AssignedUserName: 'AssignedUserName',
     BankCode: 'BankCode',
-    RefererUrl: 'RefererUrl',
     StageChecklistPointDoneCount: 'StageChecklistPointDoneCount'
 };
