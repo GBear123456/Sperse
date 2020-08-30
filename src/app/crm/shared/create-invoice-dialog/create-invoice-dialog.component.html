@@ -93,7 +93,11 @@
                             <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
-                    <a *ngIf="contactId && !selectedBillingAddress" (click)="showEditAddressDialog($event, 'selectedBillingAddress')">{{ls.l('+ Add New Address')}}</a>
+                    <a *ngIf="contactId && !selectedBillingAddress"
+                       [ngClass]="{'disabled': isAddressDialogOpened}"
+                       (click)="showEditAddressDialog($event, 'selectedBillingAddress')">
+                        {{ls.l('+ Add New Address')}}
+                    </a>
                     <div class="selected-contact-info" *ngIf="selectedBillingAddress">
                         <div *ngIf="selectedBillingAddress?.company as company">{{ company }}</div>
                         <div *ngIf="[selectedBillingAddress?.firstName, selectedBillingAddress?.lastName].filter(filterBoolean).join(' ') as customer">{{ customer }}</div>
@@ -135,7 +139,9 @@
                             <span class="address-item-text">{{ cellData.display }}</span>
                         </div>
                     </dx-select-box>
-                    <a *ngIf="contactId && !selectedShippingAddress" (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
+                    <a *ngIf="contactId && !selectedShippingAddress"
+                       [ngClass]="{'disabled': isAddressDialogOpened}"
+                       (click)="showEditAddressDialog($event, 'selectedShippingAddress')">{{ls.l('+ Add New Address')}}</a>
                     <div class="selected-contact-info" *ngIf="selectedShippingAddress">
                         <div *ngIf="selectedShippingAddress?.company as company">{{ company }}</div>
                         <div *ngIf="[selectedShippingAddress?.firstName, selectedShippingAddress?.lastName].filter(filterBoolean).join(' ') as customer">{{ customer }}</div>

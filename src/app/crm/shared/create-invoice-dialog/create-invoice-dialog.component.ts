@@ -107,6 +107,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     lastProductPhrase: string;
     date = new Date();
     dueDate;
+    isAddressDialogOpened = false;
 
     description = '';
     notes = '';
@@ -831,6 +832,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         dialogData['addrType'] = field.match(/[A-Z][a-z]+/g).shift();
         dialogData['contactId'] = dialogData['contactId'] || this.contactId;
         if (event) {
+            this.isAddressDialogOpened = true;
             this.dialog.open(InvoiceAddressDialog, {
                 id: field,
                 data: dialogData,
@@ -844,8 +846,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }).afterClosed().subscribe(result => {
                 if (result) {
                     this[field] = new InvoiceAddressInput(dialogData);
-                    this.changeDetectorRef.detectChanges();
                 }
+                this.isAddressDialogOpened = false;
+                this.changeDetectorRef.detectChanges();
             });
             event.stopPropagation();
             event.preventDefault();
