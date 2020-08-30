@@ -19,6 +19,7 @@ import { AdvicePeriodForgotPasswordComponent } from './layouts/advice-period/adv
 import { BankCodeForgotPasswordComponent } from './layouts/bank-code/bank-code-forgot-password.component';
 import { HostForgotPasswordComponent } from '@root/account/password/layouts/host/host-forgot-password.component';
 import { RapidForgotPasswordComponent } from "@root/account/password/layouts/rapid/rapid-forgot-password.component";
+import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
 
 @Directive({
     selector: '[ad-forgot-password-host]'
@@ -57,6 +58,8 @@ export class ForgotPasswordComponent implements OnInit {
                 return BankCodeForgotPasswordComponent;
             case LayoutType.Rapid:
                 return RapidForgotPasswordComponent;
+            case LayoutType.HOA:
+                return HoaForgotPasswordComponent;
             default:
                 return HostForgotPasswordComponent;
         }

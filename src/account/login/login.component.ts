@@ -19,6 +19,7 @@ import { BankCodeLoginComponent } from './layouts/bank-code/bank-code-login.comp
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { TitleService } from '@shared/common/title/title.service';
 import { RapidLoginComponent } from '@root/account/login/layouts/rapid/rapid-login.component';
+import { HoaLoginComponent } from '@root/account/login/layouts/hoa/hoa-login.component';
 
 @Directive({
     selector: '[ad-login-host]'
@@ -56,6 +57,8 @@ export class LoginComponent implements OnInit {
                 return BankCodeLoginComponent;
             case LayoutType.Rapid:
                 return RapidLoginComponent;
+            case LayoutType.HOA:
+                return HoaLoginComponent;
             default:
                 return HostLoginComponent;
         }

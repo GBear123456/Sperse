@@ -24,6 +24,7 @@ import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advi
 import { BankCodeResetPasswordComponent } from './layouts/bank-code/bank-code-reset-password.component';
 import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
 import { RapidResetPasswordComponent } from "@root/account/password/layouts/rapid/rapid-reset-password.component";
+import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/hoa-reset-password.component";
 
 @Directive({
     selector: '[ad-reset-password-host]'
@@ -69,6 +70,8 @@ export class ResetPasswordComponent implements OnInit {
                 return BankCodeResetPasswordComponent;
             case LayoutType.Rapid:
                 return RapidResetPasswordComponent;
+            case LayoutType.HOA:
+                return HoaResetPasswordComponent;
             default:
                 return HostResetPasswordComponent;
         }

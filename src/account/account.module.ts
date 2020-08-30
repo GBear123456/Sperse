@@ -49,6 +49,11 @@ import { RapidLoginComponent } from "@root/account/login/layouts/rapid/rapid-log
 import { RapidResetPasswordComponent } from "@root/account/password/layouts/rapid/rapid-reset-password.component";
 import { RapidForgotPasswordComponent } from "@root/account/password/layouts/rapid/rapid-forgot-password.component";
 import { RapidAutoLoginComponent } from "@root/account/auto-login/layouts/rapid/rapid-auto-login.component";
+import { HoaLayoutComponent } from '@root/account/layouts/hoa/hoa-layout.component';
+import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
+import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
+import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/hoa-reset-password.component";
+import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
 
 
 @NgModule({
@@ -110,7 +115,13 @@ import { RapidAutoLoginComponent } from "@root/account/auto-login/layouts/rapid/
         RapidLoginComponent,
         RapidResetPasswordComponent,
         RapidForgotPasswordComponent,
-        RapidAutoLoginComponent
+        RapidAutoLoginComponent,
+
+        HoaLayoutComponent,
+        HoaLoginComponent,
+        HoaAutoLoginComponent,
+        HoaResetPasswordComponent,
+        HoaForgotPasswordComponent
     ],
     entryComponents: [
         HostLayoutComponent,
@@ -138,7 +149,13 @@ import { RapidAutoLoginComponent } from "@root/account/auto-login/layouts/rapid/
         RapidLoginComponent,
         RapidResetPasswordComponent,
         RapidForgotPasswordComponent,
-        RapidAutoLoginComponent
+        RapidAutoLoginComponent,
+
+        HoaLayoutComponent,
+        HoaLoginComponent,
+        HoaAutoLoginComponent,
+        HoaResetPasswordComponent,
+        HoaForgotPasswordComponent
     ],
     providers: [
         LoginService,

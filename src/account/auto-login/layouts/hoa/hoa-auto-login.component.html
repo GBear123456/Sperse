@@ -1,0 +1,32 @@
+<div class="container-fluid h-100" [@routerTransition]>
+    <div class="row h-100 justify-content-center">
+        <div class="align-self-center col-lg-8 col xs-12 text-center">
+            <h1 class="title">{{tenantName}} {{ls.l("Auto Login")}}</h1>
+
+            <form #loginForm="ngForm" class="rapid-login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+                <div class="form-group clearfix">
+                    <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></p>
+                    <div *ngIf="!isLinkSent && detectedTenancies.length > 1">
+                        <p>{{ls.l('SelectTenant_Information')}}</p>
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item-action" *ngFor="let tenant of detectedTenancies" (click)="sendloginLink(tenant.id)">
+                                <h5 class="mb-1">{{tenant.name}}</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit" [hidden]="isLinkSent || detectedTenancies.length > 1">
+                        {{ls.l("Auto Login")}}
+                        <!--<img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">-->
+                    </button>
+                </div>
+
+                <!--<p class="agree-rights">By continuing I agree to
+                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
+                    <a (click)="openConditionsDialog(conditions.Policies)">Policies</a></p>-->
+            </form>
+        </div>
+    </div>
+</div>

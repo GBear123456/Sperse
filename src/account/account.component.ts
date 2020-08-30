@@ -7,6 +7,7 @@ import { AdvicePeriodLayoutComponent } from './layouts/advice-period/advice-peri
 import { BankCodeLayoutComponent } from './layouts/bank-code/bank-code-layout.component';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { RapidLayoutComponent } from "@root/account/layouts/rapid/rapid-layout.component";
+import { HoaLayoutComponent } from "@root/account/layouts/hoa/hoa-layout.component";
 
 @Directive({
     selector: '[ad-account-host]'
@@ -45,6 +46,8 @@ export class AccountComponent implements OnInit {
                 return BankCodeLayoutComponent;
             case LayoutType.Rapid:
                 return RapidLayoutComponent;
+            case LayoutType.HOA:
+                return HoaLayoutComponent;
             default:
                 return HostLayoutComponent;
         }
