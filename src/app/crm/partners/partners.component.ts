@@ -1357,8 +1357,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             //!! should be uncommented when API will be changed accordingly
                             //this.toggleDataLayout.bind(this, DataLayoutType.Pipeline);
                             this._router.navigate(['app/crm/leads'], { queryParams: {
-                                contactGroup: 'Partner'
-                            } });
+                                contactGroup: 'Partner',
+                                dataLayoutType: 0
+                            }});
                         },
                         options: {
                             checkPressed: () => this.showPipeline
