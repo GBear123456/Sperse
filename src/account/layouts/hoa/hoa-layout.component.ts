@@ -15,7 +15,7 @@ export class HoaLayoutComponent implements OnInit {
     originUrl = location.origin;
 
     constructor(
-        private appSession: AppSessionService
+        public appSession: AppSessionService
     ) {}
 
     ngOnInit(): void {

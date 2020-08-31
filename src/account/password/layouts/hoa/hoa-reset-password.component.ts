@@ -13,4 +13,10 @@ import { HostResetPasswordComponent } from '../host/host-reset-password.componen
     ],
     animations: [accountModuleAnimation()]
 })
-export class HoaResetPasswordComponent extends HostResetPasswordComponent { }
+export class HoaResetPasswordComponent extends HostResetPasswordComponent {
+    showHidePass(input) {
+        let native = input.valueAccessor._elementRef.nativeElement,
+            visible = native.type == 'text';
+        native.type = visible ? 'password' : 'text';
+    }
+}
