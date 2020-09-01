@@ -69,7 +69,8 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
             switchMap(([period, refresh]: [PeriodModel, null]) => this.dashboardServiceProxy.getContactsByRegion(
                 period && period.from,
-                period && period.to
+                period && period.to,
+                undefined
             ).pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

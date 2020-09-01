@@ -242,7 +242,8 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         return this.dashboardServiceProxy.getCustomerAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
             period.amount,
-            isCumulative
+            isCumulative,
+            undefined
         );
     }
 

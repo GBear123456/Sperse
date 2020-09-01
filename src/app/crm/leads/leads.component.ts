@@ -647,7 +647,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.handleMapUpdate();
         this.handleModuleChange();
         this.activate();
-        this.handleQueryParams();
         this.handleFiltersPining();
     }
 
@@ -1844,6 +1843,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super.activate();
         this.initFilterConfig();
         this.initToolbarConfig();
+        this.handleQueryParams();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.showHostElement(() => {
@@ -1938,7 +1938,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             leadIds: this.selectedLeads.map(lead => lead.Id),
                             sourceContactId: contacts[0].id,
                             applyCurrentAffiliateCode: applyCode
-                        })).subscribe(res => {
+                        })).subscribe(() => {
                             this.selectedLeads = [];
                             if (this.dataGrid && this.dataGrid.instance)
                                 this.dataGrid.instance.deselectAll();
