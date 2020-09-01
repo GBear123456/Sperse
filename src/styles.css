@@ -210,3 +210,19 @@ i.save-to-clipboard {
 .pac-container {
     z-index: 1002;
 }
+
+.dx-item .email-templates-select-box.dx-item-content {
+    display: flex;
+}
+
+.email-templates-select-box .fa-times {
+    display: none;
+    margin-left: auto;
+    color: red;
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.dx-item:hover .email-templates-select-box .fa-times {
+    display: inline-block;
+}

@@ -29,7 +29,8 @@ import {
     PersonContactInfoDto,
     GetContactInfoForMergeOutput,
     LeadServiceProxy,
-    EmailTemplateType
+    EmailTemplateType,
+    GetTemplatesResponse
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -332,7 +333,7 @@ export class ContactsService {
         }
     }
 
-    showEmailTemplateDialog(templateData?: EmailTemplateData): Observable<any> {
+    showEmailTemplateDialog(templateData?: EmailTemplateData): EmailTemplateDialogComponent {
         const addMode = !(templateData && templateData.templateId);
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             panelClass: 'slider',
@@ -349,9 +350,10 @@ export class ContactsService {
         }).componentInstance;
         this.initEmailDialogTagsList(dialogComponent);
         dialogComponent.templateEditMode = true;
-        return dialogComponent.onSave.pipe(tap(() => {
+        dialogComponent.onSave.subscribe(() => {
             dialogComponent.close();
-        }));
+        });
+        return dialogComponent;
     }
 
     showEmailDialog(data: any = {}, title = 'Email', onTemplateChange?: (templateId: number, emailData: any) => Observable<void>): Observable<number> {
@@ -381,11 +383,19 @@ export class ContactsService {
 
         if (emailData.templateType == EmailTemplateType.Contact)
             dialogComponent.onTemplateCreate.subscribe((templateData: EmailTemplateData) => {
-                this.showEmailTemplateDialog(templateData).subscribe(data => {
+                const emailTemplateDialog = this.showEmailTemplateDialog(templateData)
+                emailTemplateDialog.onSave.subscribe((data: EmailTemplateData) => {
                     dialogComponent.data.templateId = data.templateId;
                     dialogComponent.onTemplateChanged({ value: data.templateId });
                     dialogComponent.refresh();
                 });
+                emailTemplateDialog.onTemplateDelete.subscribe((templateId: number) => {
+                    if (dialogComponent.data.templateId === templateId) {
+                        dialogComponent.data.templateId = null;
+                        dialogComponent.reset();
+                        dialogComponent.invalidate();
+                    }
+                })
             });
 
         dialogComponent.onTemplateChange.pipe(
@@ -413,7 +423,7 @@ export class ContactsService {
                     finalize(() => dialogComponent.finishLoading())
                 );
             }),
-            tap(res => {
+            tap((res: number) => {
                 if (!isNaN(res)) {
                     this.notifyService.info(this.ls.l('MailSent'));
                     dialogComponent.close();
@@ -422,7 +432,7 @@ export class ContactsService {
         );
     }
 
-    sendEmail(input: ISendEmailInput) {
+    sendEmail(input: ISendEmailInput): Observable<number> {
         return this.communicationProxy.sendEmail(new SendEmailInput(input)).pipe(
             catchError(error => of(error))
         );

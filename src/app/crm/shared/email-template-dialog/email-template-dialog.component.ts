@@ -69,10 +69,11 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     @Input() tagsList = [];
     @Input() templateEditMode = false;
-    @Output() onSave: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
+    @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     buttons: IDialogButton[] = [
         {
@@ -339,14 +340,19 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onTemplateOptionChanged(event) {
         if (event.name == 'selectedItem' && !event.value) {
-            this.data.cc = this.data.bcc = [];
-            this.data.subject = this.data.body = '';
+            this.reset();
+            this.changeDetectorRef.detectChanges();
             setTimeout(() => {
-                this.onTemplateCreate.emit();
                 event.component.option('isValid', true);
                 event.component.focus();
+                this.invalidate();
             });
         }
+    }
+
+    reset() {
+        this.data.cc = this.data.bcc = [];
+        this.data.subject = this.data.body = '';
     }
 
     onCKReady(event) {
@@ -538,6 +544,22 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     editTemplate(data: EmailTemplateData) {
         this.onTemplateCreate.emit(data);
+    }
+
+    deleteTemplate(e, templateId: number) {
+        this.startLoading();
+        this.emailTemplateProxy.delete(templateId)
+            .pipe(finalize(() => this.finishLoading()))
+            .subscribe(() => {
+                this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                this.refresh();
+                if (this.data.templateId === templateId) {
+                    this.data.templateId = null;
+                }
+                this.onTemplateDelete.emit(templateId);
+            });
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     close() {

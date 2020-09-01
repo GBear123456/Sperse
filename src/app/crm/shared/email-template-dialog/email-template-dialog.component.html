@@ -15,19 +15,23 @@
             [showClearButton]="templateEditMode"
             [dataSource]="templates$ | async"
             [acceptCustomValue]="templateEditMode"
+            itemTemplate="itemTemplate"
             (onOptionChanged)="onTemplateOptionChanged($event)"
             (onCustomItemCreating)="onNewTemplate($event)"
             (onValueChanged)="onTemplateChanged($event)">
             <dx-validator (onInitialized)="extendDefaultValidator($event)">
                 <dxi-validation-rule type="required" [message]="ls.l('RequiredField', ls.l('Template'))"></dxi-validation-rule>
             </dx-validator>
+            <div *dxTemplate="let item of 'itemTemplate'" class="email-templates-select-box">
+                {{ item.name }}
+                <i class="delete fa fa-times" (click)="deleteTemplate($event, item.id)"></i>
+            </div>
         </dx-select-box>
         <div class="buttons" *ngIf="data.contact && onTemplateCreate.observers.length">
             <i class="create-template" (click)="createTemplate()"></i>
             <i *ngIf="data.templateId" class="edit-template fa fa-pencil" (click)="editTemplate(data)"></i>
         </div>
     </ng-container>
-
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
             <div class="row">
@@ -143,7 +147,12 @@
                     </dx-tooltip>
                     <a #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
                     <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
-                    <ckeditor [hidden]="insertAsHTML || isComplexTemplate" [editor]="Editor" (ready)="onCKReady($event)" (config)="{allowedContent: true}" (change)="updateDataLength()"></ckeditor>
+                    <ckeditor [hidden]="insertAsHTML || isComplexTemplate"
+                              [editor]="Editor"
+                              (ready)="onCKReady($event)"
+                              (config)="{ allowedContent: true }"
+                              (change)="updateDataLength()">
+                    </ckeditor>
                     <iframe #preview [hidden]="insertAsHTML || !isComplexTemplate" frameborder="0" width="100%"></iframe>
                     <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
                     <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
