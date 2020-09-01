@@ -23,7 +23,7 @@
                 height="350"
                 [searchEnabled]="true"
                 searchExpr="name"
-                [selectionMode]="multiSelection || (bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single')"
+                [selectionMode]="selectionMode || multiSelection || (bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single')"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"
