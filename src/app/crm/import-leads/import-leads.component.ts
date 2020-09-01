@@ -287,19 +287,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importTypeIndex = 0;
     importType = ImportTypeInput.Lead;
     contactGroupId = ContactGroup.Client;
-    manageCGPermision = '';
+    manageCGPermission = '';
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
-
-    userId: any;
     sendWelcomeEmail = false;
     emailInvitation = false;
-    isUserSelected = true;
+    isUserSelected = false;
     isListsSelected = false;
     isTagsSelected = false;
     isStarSelected = false;
     toolbarConfig: ToolbarGroupModel[] = [];
-    selectedClientKeys: any = [];
+    selectedClientKeys: number[] = [];
     selectedStageId: number;
     selectedPartnerTypeName: string;
     ratingValue;
@@ -383,8 +381,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         super(injector);
         this.updateMappingFields();
         this.initFieldsConfig();
-        this.userId = abp.session.userId;
-        this.selectedClientKeys.push(this.userId);
     }
 
     private importTypeChanged(event) {
@@ -644,13 +640,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
     }
 
-
     createLeadsInput(data: any): ImportInput {
         let result = ImportInput.fromJS({
             fileName: this.wizard.fileName,
             fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,
-            assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
+            assignedUserId: this.userAssignmentComponent.selectedItemKey,
             ratingId: this.ratingValue,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
@@ -900,7 +895,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private initToolbarConfig() {
-        this.manageCGPermision = this.permission.getCGPermissionKey(this.contactGroupId, 'Manage');
+        this.manageCGPermission = this.permission.getCGPermissionKey(this.contactGroupId, 'Manage');
         let disabledManage = !this.permission.checkCGPermission(this.contactGroupId);
         this.toolbarConfig = [
             {
@@ -1035,8 +1030,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.selectedStageId = null;
         this.selectedPartnerTypeName = null;
         this.starsListComponent.selectedItemKey = undefined;
-        this.userAssignmentComponent.selectedItemKey = this.userId;
-        this.userAssignmentComponent.selectedKeys = [this.userId];
+        this.userAssignmentComponent.selectedItemKey = null;
+        this.userAssignmentComponent.selectedKeys = [];
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingValue = undefined;

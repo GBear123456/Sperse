@@ -53,6 +53,7 @@ export class UserAssignmentComponent implements OnDestroy {
             this.refreshList(value);
         }
     }
+    @Input() selectionMode: 'none' | 'single' | 'multiple';
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     selectedItemKeys = [];
