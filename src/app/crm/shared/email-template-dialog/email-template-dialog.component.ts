@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
+import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 import * as ClassicEditor from 'ckeditor5-custom';
@@ -47,6 +48,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxTextAreaComponent, { static: false }) htmlComponent: DxTextAreaComponent;
+    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
     @ViewChild('preview', { static: false }) preview: ElementRef;
 
@@ -98,6 +100,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
     uniqId = Math.random().toString().slice(-7);
     charCount: number;
+    forceValidationBypass = true;
 
     constructor(
         private phonePipe: PhoneFormatPipe,
@@ -181,28 +184,34 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     saveTemplateData() {
-        let data = {
-            id: this.data.templateId,
-            name: this.getTemplateName(),
-            type: this.data.templateType,
-            subject: this.data.subject,
-            cc: this.data.cc,
-            bcc: this.data.bcc,
-            body: this.data.body
-        };
+        this.forceValidationBypass = false;
+        if (this.validator.instance.validate().isValid) {
+            let data = {
+                id: this.data.templateId,
+                name: this.getTemplateName(),
+                type: this.data.templateType,
+                subject: this.data.subject,
+                cc: this.data.cc,
+                bcc: this.data.bcc,
+                body: this.data.body
+            };
 
-        this.startLoading();
-        let request$: Observable<any> = this.data.templateId
+            this.startLoading();
+            let request$: Observable<any> = this.data.templateId
             && this.buttons[1].contextMenu.items[0].selected
             && !this.data.addMode
-            ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
-            : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
+                ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
+                : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
 
-        request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
-            if (id)
-                this.data.templateId = id;
-            this.onSave.emit(this.data);
-        });
+            request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
+                if (id)
+                    this.data.templateId = id;
+                this.onSave.emit(this.data);
+            });
+        } else {
+            this.templateComponent.instance.option('isValid', false);
+        }
+        this.forceValidationBypass = true;
     }
 
     getTemplateName() {
@@ -248,6 +257,10 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     finishLoading() {
         this.modalDialog.finishLoading();
+    }
+
+    bypassValidation = () => {
+        return this.forceValidationBypass;
     }
 
     onTemplateChanged(event) {
@@ -309,10 +322,6 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onNewTemplate(event) {
         event.customItem = { name: event.text, id: undefined };
-    }
-
-    onTemplateFocusOut(event) {
-        event.component.option('isValid', !this.templateEditMode || Boolean(this.getTemplateName()));
     }
 
     onTemplateOptionChanged(event) {
