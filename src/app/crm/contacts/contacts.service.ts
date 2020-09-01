@@ -415,7 +415,7 @@ export class ContactsService {
 
         this.initEmailDialogTagsList(dialogComponent);
         return dialogComponent.onSave.pipe(
-            switchMap(res => {
+            switchMap((res: any) => {
                 dialogComponent.startLoading();
                 if (res.attachments)
                     res.attachments = res.attachments.map(item => item.id);
