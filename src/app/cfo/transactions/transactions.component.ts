@@ -81,6 +81,7 @@ import { TransactionDto } from '@app/cfo/transactions/transaction-dto.interface'
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { TransactionFields } from '@app/cfo/transactions/transaction-fields.enum';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
+import { RequestHelper } from '../../../shared/helpers/RequestHelper';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -789,6 +790,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: this.exportToGoogleSheetReport.bind(this),
+                                    text: this.l('Export to Google Sheets Report'),
                                     icon: 'sheet'
                                 },
                                 {
@@ -1587,7 +1593,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    downloadExcelReport() {
+    getDownloadExcelReportUrl() : string {
         let url = super.getODataUrl(this.reportSourceURI, this.filterQuery);
         let businessEntityValues: number[] = this.businessEntityFilter.items.element.value;
         if (url.indexOf('?') == -1) url += '?';
@@ -1601,7 +1607,21 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (businessEntityValues)
             businessEntityValues.map(v => url += '&businessEntityIds=' + v);
         url += '&currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
+        return url;
+    }
+
+    downloadExcelReport() {
+        let url = this.getDownloadExcelReportUrl();
         document.location.href = url;
+    }
+
+    exportToGoogleSheetReport() {
+        let url = this.getDownloadExcelReportUrl();
+        abp.ui.setBusy();
+        RequestHelper.downloadFileBlob(url, (blob) => {
+            this.exportService.exportBlobToGoogleSheet(blob, this.exportService.getFileName(null, 'Report'))
+                .then(() => abp.ui.clearBusy());
+        }, true);
     }
 
     private moveDropdownsToHost() {

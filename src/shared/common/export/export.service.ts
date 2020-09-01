@@ -111,6 +111,10 @@ export class ExportService {
         return this.exportTo(option, 'GoogleSheets', dataGrid, prefix);
     }
 
+    exportBlobToGoogleSheet(blob: Blob, sheetName: string): Promise<any> {
+        return this.exportGoogleSheetService.exportBlob(blob, sheetName);
+    }
+
     moveItemsToCSV(data, dataGrid, prefix?: string) {
         if (data) {
             setTimeout(() => {
