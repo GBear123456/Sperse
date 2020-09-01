@@ -4,8 +4,8 @@ import { Component, ChangeDetectionStrategy, ViewChild, OnInit, ElementRef,
 import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { finalize, startWith, switchMap } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
@@ -96,7 +96,12 @@ export class EmailTemplateDialogComponent implements OnInit {
             }
         }
     ];
-    templates$: Observable<GetTemplatesResponse[]>;
+    _refresh: Subject<null> = new Subject<null>();
+    refresh$: Observable<null> = this._refresh.asObservable();
+    templates$: Observable<GetTemplatesResponse[]> = this.refresh$.pipe(
+        startWith(null),
+        switchMap(() => this.emailTemplateProxy.getTemplates(this.data.templateType))
+    );
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
     uniqId = Math.random().toString().slice(-7);
     charCount: number;
@@ -117,7 +122,6 @@ export class EmailTemplateDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
-        this.initTemplateList();
         data.from = sessionService.user.emailAddress;
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
@@ -218,9 +222,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         return this.templateComponent.instance.field()['value'];
     }
 
-    initTemplateList() {
-        this.templates$ = this.emailTemplateProxy.getTemplates(this.data.templateType);
-        this.changeDetectorRef.markForCheck();
+    refresh() {
+        this._refresh.next(null);
     }
 
     emailInputFocusIn(event) {

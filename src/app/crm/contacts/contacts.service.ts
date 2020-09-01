@@ -384,7 +384,7 @@ export class ContactsService {
                 this.showEmailTemplateDialog(templateData).subscribe(data => {
                     dialogComponent.data.templateId = data.templateId;
                     dialogComponent.onTemplateChanged({ value: data.templateId });
-                    dialogComponent.initTemplateList();
+                    dialogComponent.refresh();
                 });
             });
 
