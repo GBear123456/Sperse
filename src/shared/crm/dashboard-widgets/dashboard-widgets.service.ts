@@ -82,7 +82,8 @@ export class DashboardWidgetsService  {
             tap(() => this.totalsDataLoading.next(true)),
             switchMap(([period, refresh]: [PeriodModel, null]) => this.dashboardServiceProxy.getTotals(
                 period && period.from,
-                period && period.to
+                period && period.to,
+                undefined
             ).pipe(
                 catchError(() => of(new GetTotalsOutput())),
                 finalize(() => this.totalsDataLoading.next(false))
