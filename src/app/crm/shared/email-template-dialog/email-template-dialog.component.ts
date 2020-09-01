@@ -259,8 +259,18 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.modalDialog.finishLoading();
     }
 
-    bypassValidation = () => {
-        return this.forceValidationBypass;
+    extendDefaultValidator(e) {
+        const defaultAdapter = e.component.option("adapter");
+        const forceValidationBypass = this.forceValidationBypass;
+        const newAdapter = $.extend(
+            {},
+            defaultAdapter,
+            {
+                bypass: function() {
+                    return forceValidationBypass || this.editor.option("disabled");
+                }
+            })
+        e.component.option("adapter", newAdapter);
     }
 
     onTemplateChanged(event) {
