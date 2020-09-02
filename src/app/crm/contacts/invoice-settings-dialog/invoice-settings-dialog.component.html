@@ -7,23 +7,21 @@
     <ng-container templateSettings>
         <div class="settings-wrapper">
             <div class="left-side">
-                <h3 >{{ls.l('Company Info')}}<a (click)="showBankSettingsDialog()" href="javascript:void(0)">{{ls.l('InvoiceEmail_BankTransferSettings')}}</a></h3>
+                <h3 >{{ls.l('Company Info')}}</h3>
                 <dx-text-box 
                     [placeholder]="ls.l('LegalName')"
                     [(value)]="settings.legalName"
                     [maxLength]="150">
                 </dx-text-box>
                 <dx-text-area 
-                    height="135px"
+                    height="90px"
                     [placeholder]="ls.l('Address')"
                     [(value)]="settings.address"
                     [maxLength]="500">
                 </dx-text-area>
-                <dx-text-box 
-                    [placeholder]="ls.l('Tax/VatNo')"
-                    [(value)]="settings.taxVatNo"
-                    [maxLength]="20">
-                </dx-text-box>    
+                <dx-text-area [placeholder]="ls.l('Invoice_DefaultNote')"
+                              [(value)]="settings.defaultNote">
+                </dx-text-area>
             </div>
             <div class="right-side">
                 <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
@@ -35,11 +33,7 @@
                     [(value)]="settings.currency"
                     [dataSource]="currencies">
                 </dx-select-box>
-                <dx-text-area 
-                    height="135px"
-                    [placeholder]="ls.l('Invoice_DefaultNote')"
-                    [(value)]="settings.defaultNote">
-                </dx-text-area>
+                <a (click)="showBankSettingsDialog()" href="javascript:void(0)">{{ls.l('InvoiceEmail_BankTransferSettings')}}</a>
                 <dx-check-box
                     [text]="ls.l('InvoiceEmail_ShowShippingAddress')"
                     [(value)]="settings.showShippingAddress">
@@ -48,6 +42,11 @@
                     [text]="ls.l('InvoiceEmail_AttachPDF')"
                     [(value)]="settings.attachPDF">
                 </dx-check-box>
+                <dx-text-box
+                        [placeholder]="ls.l('Tax/VatNo')"
+                        [(value)]="settings.taxVatNo"
+                        [maxLength]="20">
+                </dx-text-box>
             </div>
         </div>
     </ng-container>
