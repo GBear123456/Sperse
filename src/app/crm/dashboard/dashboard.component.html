@@ -9,7 +9,10 @@
     <calendar-button></calendar-button>
 </app-headline>
 <div [@routerTransition]>
-  <crm-left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></crm-left-menu>
+  <crm-left-menu [showIntroductionTour]="true"
+                 (openIntro)="openDialog()"
+                 (openPaymentWizard)="openPaymentWizardDialog()">
+  </crm-left-menu>
   <div class="widgets-wrapper" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
       <div class="wrapper">
           <div class="dashboard-stub" *ngIf="showWelcomeSection$ | async">

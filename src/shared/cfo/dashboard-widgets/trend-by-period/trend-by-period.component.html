@@ -6,7 +6,6 @@
                        [value]="selectedChartType$ | async"
                        (onSelectionChanged)="changeSelectedChartType($event)">
         </dx-select-box>
-
         <ng-container *ngIf="trendData$ | async as trendData">
             <div class="legend" [hidden]="!trendData || !trendData.length">
                 <ng-container *ngIf="selectedChartType.value !== chartType.CashBalancesTrends">

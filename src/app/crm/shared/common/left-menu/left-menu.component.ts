@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
 
 /** Third party imports */
 
@@ -18,54 +18,65 @@ import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interf
     selector: 'crm-left-menu',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LeftMenuComponent {
+export class LeftMenuComponent implements OnInit {
     @Input() selectedItemIndex: number;
+    @Input() showIntroductionTour = false;
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     get showIntroTour(): boolean {
         let tenant = this.appSessionService.tenant;
         return !tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default;
     }
-    leftMenuItems: LeftMenuItem[] = [
-        {
-            caption: this.ls.l('CRMDashboardMenu_ManageClients'),
-            component: '/clients',
-            showPlus: true,
-            visible: this.permission.isGranted(AppPermissions.CRMCustomers),
-            iconSrc: 'assets/common/icons/person.svg'
-        },
-        {
-            caption: this.ls.l('CRMDashboardMenu_ManageLeads'),
-            component: '/leads',
-            showPlus: true,
-            visible: this.permission.isGranted(AppPermissions.CRMCustomers),
-            iconSrc: 'assets/common/icons/setup-chart.svg'
-        },
-        {
-            caption: this.ls.l('CRMDashboardMenu_ImportYourList'),
-            component: '/import-list',
-            visible: this.permission.isGranted(AppPermissions.CRMBulkImport),
-            iconSrc: 'assets/common/icons/document.svg'
-        },
-        {
-            caption: this.ls.l('CRMDashboardMenu_CustomizeSettings'),
-            component: '/editions',
-            disabled: true,
-            iconSrc: 'assets/common/icons/setup.svg'
-        },
-        {
-            caption: this.ls.l('CRMDashboardMenu_IntroductionTour'),
-            visible: this.showIntroTour,
-            iconSrc: 'assets/common/icons/introduction-tour.svg',
-            onClick: () => this.openIntro.emit()
-        }
-    ];
+    leftMenuItems: LeftMenuItem[];
     constructor(
         private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
         public appService: AppService,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.leftMenuItems = [
+            {
+                caption: this.ls.l('CRMDashboardMenu_ManageClients'),
+                component: '/clients',
+                showPlus: true,
+                visible: this.permission.isGranted(AppPermissions.CRMCustomers),
+                iconSrc: 'assets/common/icons/person.svg'
+            },
+            {
+                caption: this.ls.l('CRMDashboardMenu_ManageLeads'),
+                component: '/leads',
+                showPlus: true,
+                visible: this.permission.isGranted(AppPermissions.CRMCustomers),
+                iconSrc: 'assets/common/icons/setup-chart.svg'
+            },
+            {
+                caption: this.ls.l('CRMDashboardMenu_ImportYourList'),
+                component: '/import-list',
+                visible: this.permission.isGranted(AppPermissions.CRMBulkImport),
+                iconSrc: 'assets/common/icons/document.svg'
+            },
+            {
+                caption: this.ls.l('CRMDashboardMenu_CustomizeSettings'),
+                component: '/editions',
+                disabled: true,
+                iconSrc: 'assets/common/icons/setup.svg'
+            },
+            {
+                caption: this.ls.l('CRMDashboardMenu_IntroductionTour'),
+                visible: this.showIntroTour && this.showIntroductionTour,
+                iconSrc: 'assets/common/icons/introduction-tour.svg',
+                onClick: () => this.openIntro.emit()
+            },
+            {
+                caption: this.ls.l('CRMDashboardMenu_Dashboard'),
+                component: '/dashboard',
+                visible: !this.showIntroductionTour,
+                iconSrc: './assets/common/icons/statistics.svg'
+            }
+        ];
+    }
     //
     // onClick(event, elem) {
     //     if (event.clientX < 260)
