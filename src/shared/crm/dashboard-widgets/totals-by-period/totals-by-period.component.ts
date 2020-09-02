@@ -4,7 +4,6 @@ import {
     Component,
     DoCheck,
     OnInit,
-    Injector,
     Inject,
     OnDestroy,
     ChangeDetectorRef,
@@ -133,7 +132,6 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     private destroy$: Observable<void> = this.destroy.asObservable();
 
     constructor(
-        injector: Injector,
         private dashboardServiceProxy: DashboardServiceProxy,
         private dashboardWidgetsService: DashboardWidgetsService,
         private changeDetectorRef: ChangeDetectorRef,
