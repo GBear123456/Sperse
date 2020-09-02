@@ -9,7 +9,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, zip } from 'rxjs';
-import { filter, first, finalize, takeUntil, map, skip, switchMap } from 'rxjs/operators';
+import { filter, first, finalize, takeUntil, map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -104,9 +104,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.selectedOrganizationId$
     ).pipe(
         map(([personContactInfo, selectedRelationId]: [PersonContactInfoDto, number]) => {
-           return personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
-                   return orgRelation.id === selectedRelationId;
-               });
+           return  personContactInfo.orgRelations && personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+               return orgRelation.id === selectedRelationId;
+           });
         })
     );
     personJobTitleInSelectedOrganization$: Observable<string> = this.selectedOrganizationInfo$.pipe(

@@ -4,14 +4,11 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Injectable()
 export class AppUrlService {
-
     static tenancyNamePlaceHolder = '{TENANCY_NAME}';
 
     constructor(
         private readonly _appSessionService: AppSessionService
-    ) {
-
-    }
+    ) {}
 
     get appRootUrl(): string {
         if (this._appSessionService.tenant) {

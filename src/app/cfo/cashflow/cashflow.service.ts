@@ -830,7 +830,6 @@ export class CashflowService {
         let key = null;
         transactionObj['levels'] = {};
         this.categorization.every((level) => {
-
             if (
                 transactionObj[level.statsKeyName]
                 || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)

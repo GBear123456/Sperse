@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { ClipboardService } from 'ngx-clipboard';
@@ -37,6 +37,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -60,7 +61,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
     private readonly ident = 'PersonalDetailsDialog';
     private contactXref: ReplaySubject<string> = new ReplaySubject(1);
-    public readonly CHECKLIST_TAB_INDEX = 1;
     affiliateCode$: Observable<string> = this.affiliateCode.asObservable().pipe(
         map((affiliateCode: string) => (affiliateCode || '').trim())
     );
@@ -100,6 +100,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private leadProxy: LeadServiceProxy,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
@@ -113,6 +114,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private oDataService: ODataService,
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
+        private itemDetailsService: ItemDetailsService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -135,7 +137,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.contactXref.next(contactInfo.personContactInfo.xref);
                 this.contactProxy.getContactLastModificationInfo(
                     contactInfo.id
-                ).subscribe(lastModificationInfo => {
+                ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
                     this.lastModificationInfo = lastModificationInfo;
                 });
             }
@@ -501,7 +503,6 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-
     onLeadChanged(event) {
         if (event.selectedItem.Id != this.checklistLeadId) {
             this.startLoading();
@@ -551,6 +552,20 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     checklistDataSource: this.checklistOrderDataSource,
                     contactDataSource: this.contactOrdersDataSource
                 });
+    }
+
+    openContactDetails(contactId: number) {
+        if (contactId) {
+            /** Clear data source to avoid wrong navigating after opening the contact */
+            this.itemDetailsService.setItemsSource(
+                this.contactsService.getCurrentItemType(this.route.snapshot.queryParams),
+                null
+            );
+            setTimeout(() => this.router.navigate(
+                ['app/crm/contact', contactId],
+                { queryParams: this.route.snapshot.queryParams }
+            ));
+        }
     }
 
     ngOnDestroy() {

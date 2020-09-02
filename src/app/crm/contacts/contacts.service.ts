@@ -1,7 +1,7 @@
 /** Core imports */
 import { Injectable, Injector } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -50,6 +50,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { EmailTags } from './contacts.const';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 
 @Injectable()
 export class ContactsService {
@@ -550,5 +551,42 @@ export class ContactsService {
             if (success && callback)
                 callback();
         });
+    }
+
+    getSection(queryParams: Params, contactGroupId?: string): string {
+        if (queryParams) {
+            if (queryParams.subId)
+                return 'subscriptions';
+            else if (queryParams.referrer)
+                return queryParams.referrer.split('/').pop();
+        }
+        return contactGroupId && contactGroupId === ContactGroup.Partner ? 'partners' : 'clients';
+    }
+
+    getCurrentItemType(queryParams: Params, contactGroupId?: string): ItemTypeEnum {
+        let dataSourceURI: ItemTypeEnum;
+        switch (this.getSection(queryParams, contactGroupId)) {
+            case 'leads':
+                dataSourceURI = ItemTypeEnum.Lead;
+                break;
+            case 'clients':
+                dataSourceURI = ItemTypeEnum.Customer;
+                break;
+            case 'partners':
+                dataSourceURI = ItemTypeEnum.Partner;
+                break;
+            case 'users':
+                dataSourceURI = ItemTypeEnum.User;
+                break;
+            case 'orders':
+                dataSourceURI = ItemTypeEnum.Order;
+                break;
+            case 'subscriptions':
+                dataSourceURI = ItemTypeEnum.Subscription;
+                break;
+            default:
+                break;
+        }
+        return dataSourceURI;
     }
 }

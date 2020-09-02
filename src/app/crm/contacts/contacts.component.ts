@@ -1,11 +1,11 @@
 /** Core imports */
 import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { ActivationEnd, Params, Event, NavigationEnd } from '@angular/router';
+import { ActivationEnd, Event, NavigationEnd, Params } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, forkJoin, of } from 'rxjs';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { select, Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
 import {
     buffer,
     debounceTime,
@@ -23,29 +23,29 @@ import * as _ from 'underscore';
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppStore, PartnerTypesStoreSelectors, ContactAssignedUsersStoreSelectors } from '@app/store';
+import { AppStore, ContactAssignedUsersStoreSelectors, PartnerTypesStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactServiceProxy,
     ContactInfoDto,
-    UpdateContactStatusInput,
-    LeadServiceProxy,
-    LeadInfoDto,
-    PartnerServiceProxy,
-    PartnerInfoDto,
-    UpdatePartnerTypeInput,
-    UserServiceProxy,
+    ContactServiceProxy,
     CustomerServiceProxy,
-    PersonContactInfoDto,
+    LeadInfoDto,
+    LeadServiceProxy,
+    OrganizationContactInfoDto,
     OrganizationContactServiceProxy,
-    OrganizationContactInfoDto
+    PartnerInfoDto,
+    PartnerServiceProxy,
+    PersonContactInfoDto,
+    UpdateContactStatusInput,
+    UpdatePartnerTypeInput,
+    UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
 import { AppStoreService } from '@app/store/app-store.service';
-import { RP_DEFAULT_ID, RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts.const';
+import { RP_CONTACT_INFO_ID, RP_DEFAULT_ID, RP_LEAD_INFO_ID, RP_USER_INFO_ID } from './contacts.const';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -56,9 +56,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
-import { MatDialogRef } from '@angular/material/dialog';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -101,7 +99,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     showToolbar;
     currentItemId;
-    dataSourceURI = 'Customer';
+    dataSourceURI: ItemTypeEnum = ItemTypeEnum.Customer;
     targetDirections = TargetDirectionEnum;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
@@ -172,42 +170,30 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initNavigatorProperties() {
-        switch (this.getSection()) {
-            case 'leads':
-                this.dataSourceURI = 'Lead';
-                this.currentItemId = this.params.leadId;
-                break;
-            case 'clients':
-                this.dataSourceURI = 'Customer';
-                this.currentItemId = this.params.contactId;
-                break;
-            case 'partners':
-                this.dataSourceURI = 'Partner';
-                this.currentItemId = this.params.contactId;
-                break;
-            case 'users':
-                this.dataSourceURI = 'User';
-                this.currentItemId = this.params.userId;
-                break;
-            case 'orders':
-                this.dataSourceURI = 'Order';
-                this.currentItemId = this.queryParams.orderId;
-                break;
-            case 'subscriptions':
-                this.dataSourceURI = 'Subscription';
-                this.currentItemId = this.queryParams.subId;
-                break;
-            default:
-                break;
+        this.dataSourceURI = this.contactsService.getCurrentItemType(this.queryParams, this.contactGroupId.value);
+        this.currentItemId = this.getCurrentItemId();
+    }
+
+    private getCurrentItemId(): string {
+        let currentItemId: string;
+        switch (this.contactsService.getSection(this.queryParams, this.contactGroupId.value)) {
+            case 'leads': currentItemId = this.params.leadId; break;
+            case 'clients': currentItemId = this.params.contactId; break;
+            case 'partners': currentItemId = this.params.contactId; break;
+            case 'users': currentItemId = this.params.userId; break;
+            case 'orders': currentItemId = this.queryParams.orderId; break;
+            case 'subscriptions': currentItemId = this.queryParams.subId; break;
+            default: break;
         }
+        return currentItemId;
     }
 
     initNavButtons() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
         this.initNavigatorProperties();
-        const itemKeyField = this.dataSourceURI == 'User' ? 'id' : 'Id',
-              itemDistinctField = ['Order', 'Subscription'].indexOf(this.dataSourceURI) >= 0 ? 'LeadId' : itemKeyField;
+        const itemKeyField = this.dataSourceURI == ItemTypeEnum.User ? 'id' : 'Id',
+              itemDistinctField = [ItemTypeEnum.Order, ItemTypeEnum.Subscription].indexOf(this.dataSourceURI) >= 0 ? 'LeadId' : itemKeyField;
         let subscription = this.targetEntity$.pipe(
             /** To avoid fast next/prev clicking */
             takeUntil(this.destroy$),
@@ -219,7 +205,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.startLoading(true);
             }),
             switchMap((direction: TargetDirectionEnum) => this.itemDetailsService.getItemFullInfo(
-                this.dataSourceURI as ItemTypeEnum,
+                this.dataSourceURI,
                 this.currentItemId,
                 direction,
                 itemKeyField,
@@ -242,18 +228,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    private getSection() {
-        if (this.queryParams) {
-            if (this.queryParams.subId)
-                return 'subscriptions';
-            else if (this.queryParams.referrer)
-                return this.queryParams.referrer.split('/').pop();
-        }
-        return this.contactGroupId.value == ContactGroup.Partner ? 'partners' : 'clients';
-    }
-
     private updateLocation(itemFullInfo) {
-        switch (this.getSection()) {
+        switch (this.contactsService.getSection(this.queryParams)) {
             case 'leads':
                 this.contactsService.updateLocation(
                     itemFullInfo.itemData.CustomerId,
@@ -650,15 +626,16 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             let compare = JSON.stringify(<any>data);
             refresh = this.initialData != compare;
         }
+        let queryParams = { ... this.queryParams };
+        if (queryParams.referrer) {
+            delete queryParams.referrer;
+        }
         this._router.navigate(
-            [this.queryParams.referrer || 'app/crm/clients'],
+            [(this.queryParams && this.queryParams.referrer) || 'app/crm/clients'],
             {
                 queryParams: _.extend(
-                    _.mapObject(
-                        this.queryParams,
-                        (val, key) => key == 'referrer' ? '' : val
-                    ),
-                    refresh ? {refresh: Date.now()} : {}
+                    queryParams,
+                    refresh ? { refresh: Date.now() } : {}
                 )
             }
         );

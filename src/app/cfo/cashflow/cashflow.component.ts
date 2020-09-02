@@ -3514,7 +3514,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                     .pipe(
                         map(transactions => {
-                            copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData, isHorizontalCopying) : null;
+                            copyItemsModels = transactions && transactions.length
+                                ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData, isHorizontalCopying)
+                                : null;
                             return copyItemsModels;
                         }),
                         mergeMap(forecastModels => this.copyForecasts(forecastModels))

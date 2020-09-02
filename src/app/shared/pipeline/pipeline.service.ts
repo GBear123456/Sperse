@@ -130,7 +130,8 @@ export class PipelineService {
     }
 
     getStages(pipelinePurposeId: string): StageDto[] {
-        return this.getPipeline(pipelinePurposeId).stages;
+        const pipeline = this.getPipeline(pipelinePurposeId);
+        return pipeline && pipeline.stages;
     }
 
     getPipeline(pipelinePurposeId: string): PipelineDto {

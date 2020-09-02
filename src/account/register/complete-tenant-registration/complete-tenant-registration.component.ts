@@ -10,7 +10,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { LoginService } from '../../login/login.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
@@ -25,16 +24,15 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     constructor(
         injector: Injector,
-        private _appUrlService: AppUrlService,
         public loginService: LoginService,
-        private _tenantSubscriptionService: TenantSubscriptionServiceProxy,
-        private _authService: AppAuthService
+        private tenantSubscriptionService: TenantSubscriptionServiceProxy,
+        private authService: AppAuthService
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        this._authService.logout(false);
+        this.authService.logout(false);
         abp.multiTenancy.setTenantIdCookie(null);
         this.model.requestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
         this.registerTenant();
@@ -47,7 +45,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
     registerTenant(): void {
         this.model.adminPassword = this.generatePassword();
         this.startLoading(true);
-        this._tenantSubscriptionService.completeTenantRegistration(this.model)
+        this.tenantSubscriptionService.completeTenantRegistration(this.model)
             .pipe(finalize(() => { this.finishLoading(true); }))
             .subscribe((result: CompleteTenantRegistrationOutput) => {
                 this.notify.success(this.l('SuccessfullyRegistered'));
@@ -66,7 +64,6 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     generatePassword(): string {
         let number = Math.random();
-        let result = number.toString(36).substring(6);
-        return result;
+        return number.toString(36).substring(6);
     }
 }

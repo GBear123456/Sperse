@@ -9,7 +9,7 @@ import { ContactsService } from '../contacts.service';
 import { ContactServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PersonalDetailsService } from '../personal-details/personal-details.service';
-import { LifecycleSubjectsService } from '../../../../shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'contact-information',
