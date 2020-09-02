@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, UrlMatcher } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { ContactsComponent } from './contacts.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { UserInformationComponent } from './user-information/user-information.component';
 import { UserInboxComponent } from './user-inbox/user-inbox.component';
-import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
+import { LoginAttemptsComponent } from './login-attempts/login-attempts.component';
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { ApplicationStatusComponent } from './application-status/application-status.component';
@@ -19,8 +19,6 @@ import { OrdersComponent } from './orders/orders.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
-import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts.const';
-
 
 @NgModule({
     imports: [
@@ -37,7 +35,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
                     { path: 'user-information', component: UserInformationComponent },
-                    { path: 'login-attemps', component: LoginAttempsComponent },
+                    { path: 'login-attempts', component: LoginAttemptsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
                     { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
@@ -61,7 +59,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
                     { path: 'user-information', component: UserInformationComponent },
-                    { path: 'login-attemps', component: LoginAttempsComponent },
+                    { path: 'login-attempts', component: LoginAttemptsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
                     { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
@@ -85,7 +83,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
                     { path: 'user-information', component: UserInformationComponent },
-                    { path: 'login-attemps', component: LoginAttempsComponent },
+                    { path: 'login-attempts', component: LoginAttemptsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
                     { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
@@ -108,7 +106,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
                     { path: 'user-information', component: UserInformationComponent },
-                    { path: 'login-attemps', component: LoginAttempsComponent },
+                    { path: 'login-attempts', component: LoginAttemptsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
                     { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },
@@ -132,7 +130,7 @@ import { RP_USER_INFO_ID, RP_LEAD_INFO_ID, RP_CONTACT_INFO_ID } from './contacts
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
                     { path: 'user-information', component: UserInformationComponent },
-                    { path: 'login-attemps', component: LoginAttempsComponent },
+                    { path: 'login-attempts', component: LoginAttemptsComponent },
                     { path: 'lead-information', component: LeadInformationComponent },
                     { path: 'lead-related-contacts', component: LeadRelatedContactsComponent },
                     { path: 'questionnaire', component: QuestionnaireComponent },

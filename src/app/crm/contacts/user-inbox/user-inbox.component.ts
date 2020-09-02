@@ -53,7 +53,6 @@ export class UserInboxComponent implements OnDestroy {
     contactInfo: ContactInfoDto;
     formatting = AppConsts.formatting;
     status: CommunicationMessageStatus;
-    noPhotoUrl = AppConsts.imageUrls.noPhoto;
     statuses = Object.keys(CommunicationMessageStatus).map(item => {
         return {
             id: CommunicationMessageStatus[item],
@@ -329,7 +328,10 @@ export class UserInboxComponent implements OnDestroy {
                 let window = this.emailContent.
                     nativeElement.contentWindow;
                 window.document.open();
-                window.document.write(this.activeMessage.body);
+                window.document.write(this.activeMessage.body == null
+                    ? this.ls.l('EmailContentExternalMailer')
+                    : this.activeMessage.body
+                );
                 window.document.close();
             }
         });
