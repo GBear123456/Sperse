@@ -72,7 +72,7 @@ import { VerificationChecklistComponent } from './verification-checklist/verific
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { UserInformationComponent } from './user-information/user-information.component';
 import { ResetPasswordDialog } from './user-information/reset-password-dialog/reset-password-dialog.component';
-import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
+import { LoginAttemptsComponent } from './login-attempts/login-attempts.component';
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { ApplicationStatusComponent } from './application-status/application-status.component';
@@ -160,7 +160,7 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         CreditLinesComponent,
         ContactInformationComponent,
         UserInformationComponent,
-        LoginAttempsComponent,
+        LoginAttemptsComponent,
         LeadInformationComponent,
         QuestionnaireComponent,
         RequiredDocumentsComponent,

@@ -4,13 +4,13 @@ import { UserServiceProxy, UserLoginServiceProxy, UserLoginAttemptDto } from '@s
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
-    selector: 'login-attemps',
-    templateUrl: './login-attemps.component.html',
-    styleUrls: ['./login-attemps.component.less']
+    selector: 'login-attempts',
+    templateUrl: './login-attempts.component.html',
+    styleUrls: ['./login-attempts.component.less']
 })
-export class LoginAttempsComponent implements OnInit, OnDestroy {
+export class LoginAttemptsComponent implements OnInit, OnDestroy {
     userLoginAttempts: UserLoginAttemptDto[];
-    private readonly ident = 'LoginAttemps';
+    private readonly ident = 'LoginAttempts';
 
     constructor(
         private userService: UserServiceProxy,
