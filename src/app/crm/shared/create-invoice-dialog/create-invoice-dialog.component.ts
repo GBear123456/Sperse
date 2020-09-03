@@ -51,7 +51,8 @@ import {
     EntityContactInfo,
     ContactInfoDto,
     ContactInfoDetailsDto,
-    PersonContactInfoDto
+    PersonContactInfoDto,
+    EntityAddressInfo
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -70,6 +71,7 @@ import { StatesService } from '@root/store/states-store/states.service';
 import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
+import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog-data.interface';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -107,12 +109,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: ContextMenuItem;
-    selectedContact: any;/** @todo add type to avoid bug with different Dto */
+    selectedContact: EntityContactInfo;
     selectedBillingAddress: InvoiceAddressInput;
     selectedShippingAddress: InvoiceAddressInput;
     customer: string;
     contactId: number;
-    customers: EntityContactInfo[] = [];
     products = [];
     descriptions = [];
     lastProductPhrase: string;
@@ -204,7 +205,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: CreateInvoiceDialogData
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
@@ -248,7 +249,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.invoiceNo = invoice.InvoiceNumber;
                 this.status = invoice.InvoiceStatus;
                 this.disabledForUpdate = [InvoiceStatus.Draft, InvoiceStatus.Final].indexOf(this.status) < 0;
-                this.date = invoice.Date;
+                this.date = this.getDate(invoice.Date);
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
@@ -284,8 +285,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 });
         } else {
             this.resetNoteDefault();
-            if (!this.data.contactInfo)
-                this.customerLookupRequest();
         }
 
         this.initNewInvoiceInfo();
@@ -325,20 +324,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address: ContactAddressDto = details.addresses[0];
-            this.selectedContact = {
+            this.selectedContact = EntityContactInfo.fromJS({
                 id: contact.id,
                 name: this.customer,
                 email: emailAddress,
-                address: address ? {
+                address: EntityAddressInfo.fromJS(address ? {
                     streetAddress: address.streetAddress,
                     city: address.city,
                     stateId: address.stateId,
                     stateName: address.stateName,
                     country: address.country,
                     zip: address.zip
-                } : {},
+                } : {}),
                 isActive: true
-            };
+            });
             this.productsLookupRequest();
         }
     }
@@ -392,7 +391,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.id = this.invoiceId;
             data.grandTotal = this.total;
             data.status = InvoiceStatus[this.status];
-            data.lines = this.lines.map((row, index) => {
+            data.lines = this.lines.map((row, index: number) => {
                 return new UpdateInvoiceLineInput({
                     id: row['id'],
                     quantity: row['quantity'],
@@ -409,8 +408,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new CreateInvoiceInput();
             this.setRequestCommonFields(data);
             data.contactId = this.contactId;
-            if (!this.orderNumber && this.data && this.data.contactInfo && this.data.contactInfo.leadId) {
-                data.leadId = this.data.contactInfo.leadId;
+            if (!this.orderNumber && this.data && this.data.contactInfo && this.data.contactInfo['leadId']) {
+                data.leadId = this.data.contactInfo['leadId'];
             }
             data.orderId = this.orderId;
             data.grandTotal = this.total;
@@ -444,7 +443,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     updateStatus(status?: InvoiceStatus, emailId?: number) {
         if (status)
             this.status = status;
-        if (this.status != this.data.status) {
+        /** @todo Check why there is no status in data anywhere  */
+        // if (this.status != this.data.status) {
             status || this.modalDialog.startLoading();
             this.invoicesService.updateStatus(this.invoiceId, this.status, emailId)
                 .pipe(finalize(() => status || this.modalDialog.finishLoading()))
@@ -454,7 +454,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     else
                         this.afterSave();
                 });
-        }
+        //}
     }
 
     private afterSave(): void {
@@ -580,37 +580,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    customerLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10, undefined, undefined, true)
-            .subscribe((res: EntityContactInfo[]) => {
-                if (!phrase || phrase == this.customer) {
-                    this.customers = res;
-                    callback && callback(res);
-                    this.changeDetectorRef.markForCheck();
-                }
-            });
-    }
-
-    customerLookupItems($event) {
-        let search = this.customer = $event.event.target.value;
-        if (this.customers.length)
-            this.customers = [];
-
-        $event.component.option('opened', true);
-        $event.component.option('noDataText', this.ls.l('LookingForItems'));
-
-        clearTimeout(this.lookupTimeout);
-        this.lookupTimeout = setTimeout(() => {
-            $event.component.option('opened', true);
-            $event.component.option('noDataText', this.ls.l('LookingForItems'));
-
-            this.customerLookupRequest(search, res => {
-                if (!res['length'])
-                    $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-            });
-        }, 500);
-    }
-
     productsLookupRequest(phrase = '', callback?) {
         this.invoiceProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
@@ -715,9 +684,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     openContactListDialog(event) {
         this.dialog.open(CustomerListDialogComponent, {
-            data: {
-                contactList: this.customers
-            },
             minWidth: 350,
             position: this.dialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe((customer: EntityContactInfo) => {
@@ -840,7 +806,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             address = this.selectedContact.address;
         this.nameParser.parseIntoPerson(this.customer, person);
         let dialogData: any = Object.assign({}, this[field]) || {
-            countryId: address.countryCode,
+            /*countryId: address.countryCode,*/
             stateId: address.stateId,
             stateName: address.stateName,
             country: address.country,

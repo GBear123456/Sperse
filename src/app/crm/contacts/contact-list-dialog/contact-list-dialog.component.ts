@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, Inject, TemplateRef, ContentChild, Input } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Inject,
+    TemplateRef,
+    ContentChild,
+    Input,
+    Output,
+    EventEmitter
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
@@ -11,18 +20,19 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 })
 export class ContactListDialogComponent {
     @ContentChild(TemplateRef, { static: false })
-    @Input() contactLayoutTemplate: TemplateRef<any> = this.data.contactLayoutTemplate;
-    @Input()title = this.ls.l('RelatedContacts');
-    displayList: any[] = this.data && this.data.contactList || [];
-    addNewTitle = this.ls.l('AddRelatedContact');
-    manageAllowed = false;
-    photoType;
+    @Input() contactLayoutTemplate: TemplateRef<any>;
+    @Input() title = this.ls.l('RelatedContacts');
+    @Input() displayList: any[];
+    @Input() addNewTitle = this.ls.l('AddRelatedContact');
+    @Input() photoType: string;
+    @Input() manageAllowed = false;
+    @Output() onSearch: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: any,
         public profileService: ProfileService,
         public dialogRef: MatDialogRef<ContactListDialogComponent>,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: any,
     ) {}
 
     selectContact(contact): void {
@@ -33,11 +43,13 @@ export class ContactListDialogComponent {
         this.dialogRef.close('addContact');
     }
 
-    filterList(event?) {
-        this.displayList = this.filter(event && event.target.value.toLowerCase() || '');
+    search(event?) {
+        this.onSearch.emit(event && event.target.value.toLowerCase() || '')
     }
 
-    filter(search?) {
-        return [];
+    getPhotoSrc(contact): string {
+        return contact.photoPublicId
+                ? this.profileService.getContactPhotoUrl(contact.photoPublicId)
+                : this.profileService.getPhoto(contact.thumbnail, this.photoType);
     }
 }
