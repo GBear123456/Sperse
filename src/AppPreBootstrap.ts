@@ -49,7 +49,7 @@ export class AppPreBootstrap {
 
     private static processRegularBootstrap(queryStringObj, callback) {
         let tenantId = queryStringObj.tenantId;
-        if (tenantId && !queryStringObj['user-key']) {
+        if (tenantId && !queryStringObj['user-key'] && !queryStringObj['switchAccountToken']) {
             if (tenantId != abp.session.tenantId) {
                 window['generalInfo'] = undefined;
                 abp.auth.clearToken();
