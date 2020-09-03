@@ -769,32 +769,32 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                     action: (option) => {
                                         this.exportService.exportToPDF(option, this.dataGrid);
                                     },
-                                    text: this.l('Save as PDF'),
+                                    text: this.l('SaveAsPDF'),
                                     icon: 'pdf',
                                 },
                                 {
                                     action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
+                                    text: this.l('ExportToExcel'),
                                     icon: 'xls',
                                 },
                                 {
                                     action: this.downloadExcelReport.bind(this),
-                                    text: this.l('Export to Excel Report'),
+                                    text: this.l('ExportToExcelReport'),
                                     icon: 'xls'
                                 },
                                 {
                                     action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
+                                    text: this.l('ExportToCSV'),
                                     icon: 'sheet'
                                 },
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
+                                    text: this.l('ExportToGoogleSheets'),
                                     icon: 'sheet'
                                 },
                                 {
                                     action: this.exportToGoogleSheetReport.bind(this),
-                                    text: this.l('Export to Google Sheets Report'),
+                                    text: this.l('ExportToGoogleSheetsReport'),
                                     icon: 'sheet'
                                 },
                                 {
