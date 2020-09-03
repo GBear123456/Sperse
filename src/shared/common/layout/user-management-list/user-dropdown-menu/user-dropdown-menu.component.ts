@@ -121,7 +121,11 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
             if (!this.userManagementService.recentlyLinkedUsers) {
                 this.userManagementService.getRecentlyLinkedUsers().subscribe((recentlyLinkedUsers: LinkedUserDto[]) => {
                     this.userManagementService.recentlyLinkedUsers = recentlyLinkedUsers;
-                    this.dropdownMenuItems[1].submenuItems.items = this.userManagementService.recentlyLinkedUsers;
+                    let linkedAccountsMenu = this.dropdownMenuItems[1];
+                    linkedAccountsMenu.submenuItems.items = this.userManagementService.recentlyLinkedUsers;
+                    linkedAccountsMenu.disabled = !linkedAccountsMenu.visible;
+                    linkedAccountsMenu.visible = !!recentlyLinkedUsers &&
+                        !!recentlyLinkedUsers.length || linkedAccountsMenu.visible;
                     this.changeDetectorRef.detectChanges();
                 });
             }
