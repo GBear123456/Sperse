@@ -230,8 +230,6 @@
                     padding: 0 7px;
                 }
 
-
-
                 .alr {
                     ::ng-deep .dx-texteditor-input {
                         text-align: right !important;
@@ -726,6 +724,18 @@
                 padding-left: 0 !important;
                 padding-right: 0 !important;
             }
+        }
+    }
+
+    button.select-contacts {
+        background: none;
+        border: none;
+        outline: none;
+        color: #424c56;
+        cursor: pointer;
+        &.disabled {
+            opacity: .4;
+            pointer-events: none;
         }
     }
 }

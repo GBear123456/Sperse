@@ -54,28 +54,13 @@
                     <span *ngIf="!selectedBillingAddress && selectedContact">
                         {{selectedContact?.name || selectedContact?.email}}
                     </span>
-                    <dx-select-box #contact
-                        name="customer"
-                        width="220px"
-                        height="40px"
-                        displayExpr="name"
-                        valueExpr="name"
-                        itemTemplate="customerTemplate"
-                        [visible]="!contactId"
-                        [disabled]="data?.invoice || data?.contactInfo"
-                        [acceptCustomValue]="true"
-                        [placeholder]="ls.lr('Select Client')"
-                        [(value)]="customer"
-                        [dataSource]="customers"
-                        [searchEnabled]="true"
-                        [searchTimeout]="0"
-                        (onFocusIn)="onFieldFocusIn($event)"
-                        (onInput)="customerLookupItems($event)"
-                        (onSelectionChanged)="selectContact($event)">
-                        <div *dxTemplate="let cellData of 'customerTemplate'">
-                            {{cellData.name ? cellData.name : cellData.email }}
-                        </div>
-                    </dx-select-box>
+                    <button *ngIf="!contactId"
+                            class="select-contacts"
+                            [ngClass]="{ disabled: data?.invoice || data?.contactInfo }"
+                            (click)="openContactListDialog($event)">
+                        {{ ls.l('Select Client') }}*
+                    </button>
+
                     <dx-select-box #billingAddress
                         name="billingAddress"
                         width="220px"

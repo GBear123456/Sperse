@@ -11,9 +11,9 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 })
 export class ContactListDialogComponent {
     @ContentChild(TemplateRef, { static: false })
-    @Input() contactLayoutTemplate: TemplateRef<any>;
-    displayList: any[];
-    title = this.ls.l('RelatedContacts');
+    @Input() contactLayoutTemplate: TemplateRef<any> = this.data.contactLayoutTemplate;
+    @Input()title = this.ls.l('RelatedContacts');
+    displayList: any[] = this.data && this.data.contactList || [];
     addNewTitle = this.ls.l('AddRelatedContact');
     manageAllowed = false;
     photoType;

@@ -1,12 +1,18 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    OnInit,
+    ViewChild,
+    Inject,
+    ChangeDetectorRef
+} from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
-import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { finalize, first, switchMap } from 'rxjs/operators';
@@ -41,7 +47,11 @@ import {
     GetNewInvoiceInfoOutput,
     ContactServiceProxy,
     InvoiceAddressInfo,
-    ContactAddressDto
+    ContactAddressDto,
+    EntityContactInfo,
+    ContactInfoDto,
+    ContactInfoDetailsDto,
+    PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -58,6 +68,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { StatesService } from '@root/store/states-store/states.service';
 import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.interface';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -79,7 +91,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild('dueDateComponent', { static: false }) dueDateComponent: DxDateBoxComponent;
     @ViewChild('dateComponent', { static: false }) dateComponent: DxDateBoxComponent;
     @ViewChild('invoice', { static: false }) invoiceNoComponent: DxTextBoxComponent;
-    @ViewChild('contact', { static: false }) contactComponent: DxSelectBoxComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdown: OrderDropdownComponent;
 
     private lookupTimeout;
@@ -96,12 +107,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     selectedOption: ContextMenuItem;
-    selectedContact: any;
+    selectedContact: any;/** @todo add type to avoid bug with different Dto */
     selectedBillingAddress: InvoiceAddressInput;
     selectedShippingAddress: InvoiceAddressInput;
-    customer: any;
+    customer: string;
     contactId: number;
-    customers = [];
+    customers: EntityContactInfo[] = [];
     products = [];
     descriptions = [];
     lastProductPhrase: string;
@@ -189,6 +200,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
+        private dialogService: DialogService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -304,15 +316,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    initContactInfo(contact) {
+    initContactInfo(contact: ContactInfoDto) {
         if (contact) {
             this.contactId = contact.id;
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(contact.id);
             this.customer = contact.personContactInfo.fullName;
             let details = contact.personContactInfo.details,
-                emailAddress = details.emails.length ?
-                    details.emails[0].emailAddress : undefined,
+                emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address: ContactAddressDto = details.addresses[0];
             this.selectedContact = {
                 id: contact.id,
@@ -486,7 +497,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         if (isNaN(this.contactId)) {
             this.notifyService.error(this.ls.l('RequiredField', this.ls.l('Client')));
-            return this.contactComponent.instance.option('isValid', false);
+            return;
         }
 
         if (!this.validateField(this.ls.l('Date'), this.date))
@@ -551,7 +562,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     private sortAddresses(addresses: InvoiceAddressInfo[], usageTypeId: 'B' | 'S') {
         const dateProperty = usageTypeId === 'B' ? 'lastBillingDate' : 'lastShippingDate';
         return cloneDeep(addresses).sort((addressA: InvoiceAddressInfo, addressB: InvoiceAddressInfo) => {
-            let result = 0;
+            let result: number;
             if (addressA[dateProperty] && addressB[dateProperty]) {
                 result = moment(addressA[dateProperty]).diff(moment(addressB[dateProperty])) > 0 ? -1 : 1;
             } else if (addressA[dateProperty] && !addressB[dateProperty]) {
@@ -570,13 +581,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     customerLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10, undefined, undefined, true).subscribe(res => {
-            if (!phrase || phrase == this.customer) {
-                this.customers = res;
-                callback && callback(res);
-                this.changeDetectorRef.markForCheck();
-            }
-        });
+        this.contactProxy.getAllByPhrase(phrase, 10, undefined, undefined, true)
+            .subscribe((res: EntityContactInfo[]) => {
+                if (!phrase || phrase == this.customer) {
+                    this.customers = res;
+                    callback && callback(res);
+                    this.changeDetectorRef.markForCheck();
+                }
+            });
     }
 
     customerLookupItems($event) {
@@ -685,11 +697,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    selectContact(event) {
-        let contactId = event.selectedItem && event.selectedItem.id;
-        if (contactId != this.contactId) {
-            this.contactId = contactId;
-            this.selectedContact = event.selectedItem;
+    selectContact(contact: EntityContactInfo) {
+        if (contact.id != this.contactId) {
+            this.customer = contact.name;
+            this.contactId = contact.id;
+            this.selectedContact = contact;
             if (this.orderId && !this.data.invoice) {
                 this.orderId = undefined;
                 this.orderNumber = undefined;
@@ -699,6 +711,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.initContactAddresses(this.contactId);
             this.changeDetectorRef.detectChanges();
         }
+    }
+
+    openContactListDialog(event) {
+        this.dialog.open(CustomerListDialogComponent, {
+            data: {
+                contactList: this.customers
+            },
+            minWidth: 350,
+            position: this.dialogService.calculateDialogPosition(event, event.target)
+        }).afterClosed().subscribe((customer: EntityContactInfo) => {
+            if (customer) {
+                this.selectContact(customer);
+            }
+        });
     }
 
     clearClient() {
@@ -778,16 +804,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 }
             }).afterClosed().subscribe(data => {
                 if (data) {
-                    this.initContactInfo({
+                    this.initContactInfo(ContactInfoDto.fromJS({
                         id: data.id,
-                        personContactInfo: {
+                        personContactInfo: PersonContactInfoDto.fromJS({
                             fullName: [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' '),
-                            details: {
+                            details: ContactInfoDetailsDto.fromJS({
                                 addresses: data.addresses,
                                 emails: data.emailAddresses
-                            }
-                        }
-                    });
+                            })
+                        })
+                    }));
                     this.changeDetectorRef.detectChanges();
                 }
             });

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit, ViewChild } from '@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PersonShortInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'contact-persons-dialog',
@@ -19,7 +20,7 @@ export class ContactPersonsDialogComponent implements OnInit {
 
     ngOnInit() {
         this.contactList.filter = (search?) => {
-            return this.data['organizationContactInfo'].contactPersons.filter((person) => {
+            return this.data['organizationContactInfo'].contactPersons.filter((person: PersonShortInfoDto) => {
                 return (person.id != this.data.personContactInfo.id)
                     && (!search || person.fullName.toLowerCase().indexOf(search) > -1);
             });

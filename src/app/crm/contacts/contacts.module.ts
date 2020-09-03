@@ -142,6 +142,7 @@ import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organ
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
+import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 
 @NgModule({
     declarations: [
@@ -201,7 +202,8 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         MarkAsPaidDialogComponent,
         CreateInvoiceDialogComponent,
         LeadRelatedContactsComponent,
-        AddServiceProductDialogComponent
+        AddServiceProductDialogComponent,
+        CustomerListDialogComponent
     ],
     imports: [
         FormsModule,
@@ -286,7 +288,8 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
-        AddServiceProductDialogComponent
+        AddServiceProductDialogComponent,
+        CustomerListDialogComponent
     ],
     providers: [
         DialogService,
