@@ -46,7 +46,7 @@ import {
     ContactServiceProxy, CreateOrUpdateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
-    PersonInfoDto, CreateContactLinkInput, TrackingInfo, CountryStateDto
+    PersonInfoDto, CreateContactLinkInput, TrackingInfo, CountryStateDto, OrganizationShortInfo
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarEntitiesDialogComponent } from './similar-entities-dialog/similar-entities-dialog.component';
@@ -117,11 +117,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     masks = AppConsts.masks;
     emailRegEx = AppConsts.regexPatterns.email;
     urlRegEx = AppConsts.regexPatterns.url;
-    companies = [];
+    companies: OrganizationShortInfo[] = [];
     company: string;
     notes = '';
     ratingValue;
     sourceContactId: number;
+    companyValidators: any = [];
     emailValidators: any = [];
     phoneValidators: any = [];
     linkValidators: any = [];
@@ -194,6 +195,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
+    companyNameIsValid = true;
 
     constructor(
         public dialog: MatDialog,
@@ -349,6 +351,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         if (!this.validateMultiple(this.emailValidators) ||
             !this.validateMultiple(this.phoneValidators) ||
+            (!this.hideCompanyField && !this.validateMultiple(this.companyValidators)) ||
             (!this.hideLinksField && !this.validateMultiple(this.linkValidators))
         )
             return;
@@ -366,9 +369,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     private validateMultiple(validators): boolean {
-        let result = true;
-        validators.forEach((v) => { result = result && v.validate().isValid; });
-        return result;
+        return validators.every((v) => {
+            v.reset();
+            return v.validate().isValid;
+        });
     }
 
     getEmailContactInput() {
@@ -659,9 +663,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.checkValidTimeout = setTimeout(() => {
             let field = 'addresses';
             this.checkSimilarEntities(field, index);
-            this.addButtonVisible[field] =
-                this.checkEveryContactValid(field) &&
-                    !this.checkDuplicateContact(field);
+            this.addButtonVisible[field] = this.checkEveryContactValid(field) && !this.checkDuplicateContact(field);
+            if (this.addButtonVisible[field]) {
+                this.validateCompanyName();
+            }
             this.changeDetectorRef.detectChanges();
         }, 300);
     }
@@ -719,6 +724,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};
             this.addButtonVisible[field] = false;
         }
+        this.validateCompanyName();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -745,10 +751,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     onFieldChanged($event, field, i) {
         let value = this.getInputElementValue($event);
-        this.addButtonVisible[field] =
-            this.checkFieldValid(field, value) &&
-                !this.checkDuplicateContact(field);
-
+        this.addButtonVisible[field] = this.checkFieldValid(field, value) && !this.checkDuplicateContact(field);
+        if (this.addButtonVisible[field]) {
+            this.validateCompanyName();
+        }
         this.checkSimilarEntities(field, i);
         this.changeDetectorRef.detectChanges();
     }
@@ -759,9 +765,22 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contacts[field][i].code = component.getCountryCode();
             this.addButtonVisible[field] = !component.isEmpty() &&
                 component.isValid() && !this.checkDuplicateContact(field);
+            if (this.addButtonVisible[field]) {
+                this.validateCompanyName();
+            }
             this.checkSimilarEntities(field, i);
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    /**
+     * Revalidate only if there is an error and conditions changed
+     */
+    private validateCompanyName() {
+        if (this.companyValidators[0] && !this.companyNameIsValid) {
+            this.companyValidators[0].reset();
+            this.companyNameIsValid = this.companyValidators[0].validate().isValid;
+        }
     }
 
     onPhoneKeyUp(event) {
@@ -778,13 +797,27 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            this.orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10).subscribe((res) => {
-                if (search == this.company)
-                    this.companies = res;
-                this.changeDetectorRef.detectChanges();
-                setTimeout(() => this.companyOptionChanged($event, true));
-            });
+            this.orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10)
+                .subscribe((res: OrganizationShortInfo[]) => {
+                    if (search == this.company)
+                        this.companies = res;
+                    this.changeDetectorRef.detectChanges();
+                    setTimeout(() => this.companyOptionChanged($event, true));
+                });
         }, 500);
+    }
+
+    /**
+     * Company name is required if there are some fields related to the company
+     * @param options
+     */
+    companyValidation = (options) => {
+        return this.companyNameIsValid = options.value
+               || (!this.jobTitle
+                  && !this.contacts.emails.some(email => email.type === 'C' && email.email)
+                  && !this.contacts.phones.some(phone => phone.type === 'C' && phone.number)
+                  && !this.contacts.addresses.some(address => address.type === 'C' && address.address)
+               );
     }
 
     companyOptionChanged($event, forced = false) {
