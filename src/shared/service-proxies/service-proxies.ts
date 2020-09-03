@@ -9232,7 +9232,7 @@ export class ContactCommunicationServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getMessages(contactId: number, parentId: number | null | undefined, userId: number | null | undefined, filter: string | null | undefined, deliveryType: CommunicationMessageDeliveryType | null | undefined, status: CommunicationMessageStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
+    getMessages(contactId: number, parentId: number | null | undefined, userId: number | null | undefined, filter: string | null | undefined, deliveryType: CommunicationMessageDeliveryType | null | undefined, status: CommunicationMessageSendingStatus | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<MessageListDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetMessages?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
@@ -47949,8 +47949,9 @@ export interface ISourceContactInfo {
 export class EntityAddressInfo implements IEntityAddressInfo {
     streetAddress!: string | undefined;
     city!: string | undefined;
-    state!: string | undefined;
-    countryCode!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    country!: string | undefined;
     zip!: string | undefined;
 
     constructor(data?: IEntityAddressInfo) {
@@ -47966,8 +47967,9 @@ export class EntityAddressInfo implements IEntityAddressInfo {
         if (data) {
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
-            this.state = data["state"];
-            this.countryCode = data["countryCode"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.country = data["country"];
             this.zip = data["zip"];
         }
     }
@@ -47983,8 +47985,9 @@ export class EntityAddressInfo implements IEntityAddressInfo {
         data = typeof data === 'object' ? data : {};
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
-        data["state"] = this.state;
-        data["countryCode"] = this.countryCode;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["country"] = this.country;
         data["zip"] = this.zip;
         return data; 
     }
@@ -47993,8 +47996,9 @@ export class EntityAddressInfo implements IEntityAddressInfo {
 export interface IEntityAddressInfo {
     streetAddress: string | undefined;
     city: string | undefined;
-    state: string | undefined;
-    countryCode: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    country: string | undefined;
     zip: string | undefined;
 }
 
@@ -48007,6 +48011,7 @@ export class EntityContactInfo implements IEntityContactInfo {
     isActive!: boolean | undefined;
     statusId!: string | undefined;
     groupId!: string | undefined;
+    photoPublicId!: string | undefined;
 
     constructor(data?: IEntityContactInfo) {
         if (data) {
@@ -48027,6 +48032,7 @@ export class EntityContactInfo implements IEntityContactInfo {
             this.isActive = data["isActive"];
             this.statusId = data["statusId"];
             this.groupId = data["groupId"];
+            this.photoPublicId = data["photoPublicId"];
         }
     }
 
@@ -48047,6 +48053,7 @@ export class EntityContactInfo implements IEntityContactInfo {
         data["isActive"] = this.isActive;
         data["statusId"] = this.statusId;
         data["groupId"] = this.groupId;
+        data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
 }
@@ -48060,6 +48067,7 @@ export interface IEntityContactInfo {
     isActive: boolean | undefined;
     statusId: string | undefined;
     groupId: string | undefined;
+    photoPublicId: string | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
@@ -48905,12 +48913,11 @@ export enum CommunicationMessageDeliveryType {
     SMS = "SMS", 
 }
 
-export enum CommunicationMessageStatus {
+export enum CommunicationMessageSendingStatus {
     Draft = "Draft", 
     Pending = "Pending", 
     Failed = "Failed", 
     Sent = "Sent", 
-    Delivered = "Delivered", 
 }
 
 export class MessageDto implements IMessageDto {
@@ -48928,7 +48935,7 @@ export class MessageDto implements IMessageDto {
     subject!: string | undefined;
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
-    status!: CommunicationMessageStatus | undefined;
+    status!: CommunicationMessageSendingStatus | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -49019,7 +49026,7 @@ export interface IMessageDto {
     subject: string | undefined;
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
-    status: CommunicationMessageStatus | undefined;
+    status: CommunicationMessageSendingStatus | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
@@ -49038,7 +49045,7 @@ export class MessageListDto implements IMessageListDto {
     subject!: string | undefined;
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
-    status!: CommunicationMessageStatus | undefined;
+    status!: CommunicationMessageSendingStatus | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -49115,7 +49122,7 @@ export interface IMessageListDto {
     subject: string | undefined;
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
-    status: CommunicationMessageStatus | undefined;
+    status: CommunicationMessageSendingStatus | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
