@@ -160,35 +160,43 @@
     </div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
-            <div *ngIf="!hideCompanyField" class="field">
-                <label class="company-label">{{ls.l('Company')}}</label>
-                <dx-select-box #companyComponent
-                    name="company"
-                    width="270px"
-                    displayExpr="name"
-                    valueExpr="name"
-                    [acceptCustomValue]="true"
-                    [placeholder]="ls.l('CompanyName')"
-                    [(value)]="company"
-                    [dataSource]="companies"
-                    [searchEnabled]="true"
-                    [searchTimeout]="0"
-                    (onInput)="companyLookupItems($event)"
-                    (onOptionChanged)="companyOptionChanged($event)"
-                    (onCustomItemCreating)="onCustomCompanyCreate($event)">
-                </dx-select-box>
-                <dx-text-box #jobTitleComponent
-                    name="jobTitle"
-                    [placeholder]="ls.l('Job title')"
-                    [valueChangeEvent]="'keyup'"
-                    width="270px"
-                    [(value)]="jobTitle">
-                </dx-text-box>
-                <span [class]="(company || jobTitle) && 'clear-contact' || 'hidden'"
-                      (click)="company = jobTitle = ''">
+            <dx-validation-group *ngIf="!hideCompanyField" (onInitialized)="initValidationGroup($event, 'companyValidators')">
+                <div class="field">
+                    <label class="company-label">{{ls.l('Company')}}</label>
+                    <dx-select-box #companyComponent
+                                   name="company"
+                                   width="270px"
+                                   displayExpr="name"
+                                   valueExpr="name"
+                                   [acceptCustomValue]="true"
+                                   [placeholder]="ls.l('CompanyName')"
+                                   [(value)]="company"
+                                   [dataSource]="companies"
+                                   [searchEnabled]="true"
+                                   [searchTimeout]="0"
+                                   (onInput)="companyLookupItems($event)"
+                                   (onOptionChanged)="companyOptionChanged($event)"
+                                   (onCustomItemCreating)="onCustomCompanyCreate($event)">
+                        <dx-validator>
+                            <dxi-validation-rule type="custom"
+                                                 [message]="ls.l('CompanyInfoWillNotBeSaved')"
+                                                 [validationCallback]="companyValidation">
+                            </dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                    <dx-text-box #jobTitleComponent
+                                 name="jobTitle"
+                                 [placeholder]="ls.l('Job title')"
+                                 [valueChangeEvent]="'keyup'"
+                                 width="270px"
+                                 [(value)]="jobTitle">
+                    </dx-text-box>
+                    <span [class]="(company || jobTitle) && 'clear-contact' || 'hidden'"
+                          (click)="company = jobTitle = ''">
                     <i class="minus-icon"></i>
                 </span>
-            </div>
+                </div>
+            </dx-validation-group>
             <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
                 <div class="field email">
                     <label class="email-label">{{ls.l('Email')}}</label>
@@ -203,7 +211,8 @@
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="email.type"
-                                    [itemTemplate]="'emailTypeItemTemplate'">
+                                    [itemTemplate]="'emailTypeItemTemplate'"
+                                    (onValueChanged)="validateCompanyName()">
                                     <div *dxTemplate="let data of 'emailTypeItemTemplate'">
                                         <div class="usage-type-item"><span>{{data.name}}</span><span>{{ls.l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
                                     </div>
@@ -244,7 +253,8 @@
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="phone.type"
-                                    [itemTemplate]="'phoneTypeItemTemplate'">
+                                    [itemTemplate]="'phoneTypeItemTemplate'"
+                                    (onValueChanged)="validateCompanyName()">
                                     <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
                                         <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
                                     </div>
@@ -268,7 +278,10 @@
                                     <dxi-validation-rule type="stringLength" [max]="5" message="{{ls.l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
                                 </dx-validator>
                             </dx-number-box>
-                            <span [class]="(i || phone.number || phone.ext) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('phones', i)"><i class="minus-icon"></i></span>
+                            <span [class]="(i || phone.number || phone.ext) && 'clear-contact' || 'hidden'"
+                                  (click)="emptyOrRemoveInput('phones', i)">
+                                <i class="minus-icon"></i>
+                            </span>
                         </div>
                         <div *ngIf="!disallowMultipleItems"
                              class="add-new-button"
@@ -352,7 +365,8 @@
                                         displayExpr="name"
                                         valueExpr="id"
                                         [(value)]="address['type']"
-                                        [itemTemplate]="'addressTypeItemTemplate'">
+                                        [itemTemplate]="'addressTypeItemTemplate'"
+                                        (onValueChanged)="validateCompanyName()">
                                         <div *dxTemplate="let data of 'addressTypeItemTemplate'">
                                             <div class="usage-type-item"><span>{{data.name}}</span><span>{{ls.l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
                                         </div>

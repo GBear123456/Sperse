@@ -1618,8 +1618,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     exportToGoogleSheetReport() {
         let url = this.getDownloadExcelReportUrl();
         abp.ui.setBusy();
-        RequestHelper.downloadFileBlob(url, (blob) => {
-            this.exportService.exportBlobToGoogleSheet(blob, this.exportService.getFileName(null, 'Report'))
+        RequestHelper.downloadFileBlob(url, (blob, fileName) => {
+            this.exportService.exportBlobToGoogleSheet(blob, fileName || this.exportService.getFileName(null, 'Report'))
                 .then(() => abp.ui.clearBusy());
         }, true);
     }

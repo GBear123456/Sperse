@@ -4,7 +4,7 @@ export class RequestHelper {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200)
-                callback(this.response);
+                callback(this.response, RequestHelper.getFileName(this));
         };
 
         xhr.open('GET', url);
@@ -16,5 +16,18 @@ export class RequestHelper {
             xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
 
         xhr.send();
+    }
+
+    private static getFileName(xhr: XMLHttpRequest): string {
+        let disposition = xhr.getResponseHeader('Content-Disposition');
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+            let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            let matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) {
+                return matches[1].replace(/['"]/g, '');
+            }
+        }
+
+        return null;
     }
 }
