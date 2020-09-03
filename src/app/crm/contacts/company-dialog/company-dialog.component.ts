@@ -32,6 +32,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { CompanyDialogData } from '@app/crm/contacts/company-dialog/company-dialog-data.interface';
 
 @Component({
     selector: 'company-dialog',
@@ -102,11 +103,10 @@ export class CompanyDialogComponent implements OnInit {
         private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) private data: CompanyDialogData
     ) {}
 
     ngOnInit() {
-        this.modalDialog.buttons = this.buttons;
         const company: OrganizationContactInfoDto = this.data.company;
         this.manageAllowed = this.manageAllowed && company.isUpdatable;
         this.title = this.company.fullName = company.fullName;
@@ -117,7 +117,6 @@ export class CompanyDialogComponent implements OnInit {
             this.company.sizeId = size ? size.id : null;
         }
         this.company.primaryPhoto = company.primaryPhoto;
-        this.data.placeholder = this.ls.l('Customer.CompanyName');
         this.loadOrganizationTypes();
         this.loadCountries();
         this.initButtons();
@@ -141,6 +140,7 @@ export class CompanyDialogComponent implements OnInit {
                 disabled: !this.manageAllowed
             }
         ];
+        this.changeDetectorRef.detectChanges();
     }
 
     save() {
