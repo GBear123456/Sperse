@@ -110,6 +110,7 @@ import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -1523,7 +1524,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         CrmService.setDataSourceToComponent(this.chartDataSource, chartInstance);
     }
 
-    updatePartnerStatuses(status) {
+    updatePartnerStatuses(status: Status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         this.clientService.updateContactStatuses(
             selectedIds,

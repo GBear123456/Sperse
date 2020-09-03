@@ -25,7 +25,7 @@
             [highlightSelected]="true"
             [selectedKeys]="[contactInfo?.statusId]"
             targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
-            [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
+            [list]="statuses"
             (onItemSelected)="updateStatus($event)">
         </app-static-list>
         <!--<app-static-list-->

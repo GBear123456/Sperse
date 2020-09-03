@@ -57,6 +57,8 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -554,13 +556,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.contactInfo.personContactInfo.fullName;
     }
 
-    private showConfirmationDialog(status) {
-        this.message.confirm(
-            this.l('ClientUpdateStatusWarningMessage'),
+    private showConfirmationDialog(status: Status) {
+        ContactsHelper.showConfirmMessage(
             this.l('ClientStatusUpdateConfirmationTitle'),
-            isConfirmed => {
+            this.l('SendCancellationEmail'),
+            (isConfirmed: boolean, notifyUser: boolean) => {
                 if (isConfirmed) {
-                    this.updateStatusInternal(status.id)
+                    this.updateStatusInternal(status.id, notifyUser)
                         .subscribe(() => {
                             this.contactInfo.statusId = status.id;
                             let userData = this.userService['data'];
@@ -573,15 +575,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 } else {
                     this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
                 }
-            }
-        );
+            },
+            status.id === 'I',
+            this.l('ClientUpdateStatusWarningMessage')
+        )
     }
 
-    private updateStatusInternal(statusId: string) {
+    private updateStatusInternal(statusId: string, notifyUser: boolean) {
         return this.contactService.updateContactStatus(new UpdateContactStatusInput({
             contactId: this.contactInfo.id,
             statusId: statusId,
-            notifyUser: false
+            notifyUser: notifyUser
         }));
     }
 
@@ -681,8 +685,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.deleteContact(this.getCustomerName(), this.contactGroupId.value, id, () => this.close(), isLead);
     }
 
-    updateStatus(statusId: string) {
-        this.showConfirmationDialog(statusId);
+    updateStatus(status: Status) {
+        this.showConfirmationDialog(status);
     }
 
     updateRating(ratingId: number) {

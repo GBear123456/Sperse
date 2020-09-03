@@ -2,9 +2,13 @@ import swal from 'sweetalert';
 import extend from 'lodash/extend';
 
 export class ContactsHelper {
-    static showConfirmMessage(text: string, actionText: string,
+    static showConfirmMessage(
+        text: string,
+        actionText: string,
         callback: (confirmed: boolean, force: boolean) => void,
-        canForceAction: boolean, title?: string) {
+        canForceAction: boolean,
+        title?: string
+    ) {
         let content, input;
         if (canForceAction) {
             content = document.createElement('div');

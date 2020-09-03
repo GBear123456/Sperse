@@ -36,6 +36,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
 import { UserManagementService } from '../../../../shared/common/layout/user-management-list/user-management.service';
 import { AppConsts } from '@shared/AppConsts';
+import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 
 @Component({
     selector: 'operations-widget',
@@ -91,7 +92,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
-    @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateStatus: EventEmitter<Status> = new EventEmitter();
     @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
     @Output() prev: EventEmitter<any> = new EventEmitter();
     @Output() next: EventEmitter<any> = new EventEmitter();
@@ -124,6 +125,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     isPfmAvailable = false;
     isApiAvailable = false;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    statuses: Status[] = [
+        { id: 'A', name: this.l('Active') },
+        { id: 'I', name: this.l('Inactive') }
+    ];
 
     constructor(
         injector: Injector,

@@ -122,6 +122,7 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -1485,7 +1486,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     }
 
-    updateClientStatuses(status) {
+    updateClientStatuses(status: Status) {
         if (this.permission.checkCGPermission(ContactGroup.Client)) {
             let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
             this.clientService.updateContactStatuses(

@@ -7,6 +7,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ContactServiceProxy, UpdateContactStatusesInput } from '@shared/service-proxies/service-proxies';
 import { AppPermissions} from '@shared/AppPermissions';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Injectable()
 export class ClientService {
@@ -16,6 +17,7 @@ export class ClientService {
     private message: MessageService;
     private contactServiceProxy: ContactServiceProxy;
     private crmLocalizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+    private ls: AppLocalizationService;
 
     constructor(injector: Injector) {
         this.permission = injector.get(AppPermissionService);
@@ -23,9 +25,10 @@ export class ClientService {
         this.appLocalizationService = injector.get(AppLocalizationService);
         this.message = injector.get(MessageService);
         this.contactServiceProxy = injector.get(ContactServiceProxy);
+        this.ls = injector.get(AppLocalizationService);
     }
 
-    updateContactStatuses(contactIds: number[], groupId: string, statusId: string, callback: (() => void)) {
+    updateContactStatuses(contactIds: number[], groupId: string, statusId: 'A' | 'I', callback: (() => void)) {
         if (this.permission.isGranted(AppPermissions.CRMBulkUpdates)) {
             if (contactIds && contactIds.length) {
                 this.showUpdateContactStatusConfirmationDialog(contactIds, groupId, statusId, callback);
@@ -36,21 +39,23 @@ export class ClientService {
     }
     private showUpdateContactStatusConfirmationDialog(contactIds: number[], groupId: string, statusId: string, callback: (() => void)) {
         let contactGroup = groupId == ContactGroup.Partner ? 'Partner' : 'Client';
-        this.message.confirm(
-            this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`),
+        ContactsHelper.showConfirmMessage(
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}StatusUpdateConfirmationTitle`),
-            isConfirmed => {
+            this.ls.l('SendCancellationEmailPlural'),
+            (isConfirmed: boolean, notifyUsers: boolean) => {
                 if (isConfirmed)
-                    this.updateContactStatusesInternal(contactIds, statusId, callback);
-            }
+                    this.updateContactStatusesInternal(contactIds, statusId, callback, notifyUsers);
+            },
+            statusId === 'I',
+            this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`)
         );
     }
 
-    private updateContactStatusesInternal(contactIds: number[], statusId: string, callback: (() => void)) {
+    private updateContactStatusesInternal(contactIds: number[], statusId: string, callback: (() => void), notifyUsers: boolean) {
         this.contactServiceProxy.updateContactStatuses(new UpdateContactStatusesInput({
             contactIds: contactIds,
             statusId: statusId,
-            notifyUsers: false
+            notifyUsers: notifyUsers
         })).subscribe(() => {
             this.notify.success(this.appLocalizationService.ls(this.crmLocalizationSourceName, 'StatusSuccessfullyUpdated'));
             callback();
