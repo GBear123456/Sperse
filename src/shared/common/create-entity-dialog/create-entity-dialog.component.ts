@@ -20,6 +20,7 @@ import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
 import { finalize, filter, first } from 'rxjs/operators';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 /** Application imports */
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
@@ -93,6 +94,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChildren('addressInput') addressInputs: QueryList<ElementRef>;
+    @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
     @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea;
     @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
 
@@ -789,6 +791,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.addButtonVisible['phones'] = false;
             this.changeDetectorRef.detectChanges();
         }
+    }
+
+    onLinkTypeChanged(event, linkIndex: number) {
+        event.component.close();
+        this.linkComponents.toArray()[linkIndex].instance.focus();
+        this.validateCompanyName();
     }
 
     companyLookupItems($event) {

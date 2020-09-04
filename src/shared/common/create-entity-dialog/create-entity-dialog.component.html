@@ -307,7 +307,7 @@
                                     accessKey="link-type-dialog"
                                     [value]="link.type"
                                     [dataSource]="linkTypes"
-                                    (onValueChanged)="validateCompanyName()">
+                                    (onValueChanged)="onLinkTypeChanged($event, i)">
                                     <div *dxTemplate="let contentData of 'content'" style="display:flex;">
                                         <div>
                                             <mat-sidenav mode="side" opened="true" position="start" style="height:50px;width:100%;">
