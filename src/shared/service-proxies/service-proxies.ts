@@ -45852,9 +45852,11 @@ export class ContactInfoDto implements IContactInfoDto {
     typeId!: string | undefined;
     statusId!: string | undefined;
     groupId!: string | undefined;
+    assignedContactId!: number | undefined;
     assignedUserId!: number | undefined;
     assignedUserName!: string | undefined;
     assignedUserPicturePublicId!: string | undefined;
+    creatorContactId!: number | undefined;
     creatorUserId!: number | undefined;
     creatorUserName!: string | undefined;
     creatorUserPicturePublicId!: string | undefined;
@@ -45884,9 +45886,11 @@ export class ContactInfoDto implements IContactInfoDto {
             this.typeId = data["typeId"];
             this.statusId = data["statusId"];
             this.groupId = data["groupId"];
+            this.assignedContactId = data["assignedContactId"];
             this.assignedUserId = data["assignedUserId"];
             this.assignedUserName = data["assignedUserName"];
             this.assignedUserPicturePublicId = data["assignedUserPicturePublicId"];
+            this.creatorContactId = data["creatorContactId"];
             this.creatorUserId = data["creatorUserId"];
             this.creatorUserName = data["creatorUserName"];
             this.creatorUserPicturePublicId = data["creatorUserPicturePublicId"];
@@ -45924,9 +45928,11 @@ export class ContactInfoDto implements IContactInfoDto {
         data["typeId"] = this.typeId;
         data["statusId"] = this.statusId;
         data["groupId"] = this.groupId;
+        data["assignedContactId"] = this.assignedContactId;
         data["assignedUserId"] = this.assignedUserId;
         data["assignedUserName"] = this.assignedUserName;
         data["assignedUserPicturePublicId"] = this.assignedUserPicturePublicId;
+        data["creatorContactId"] = this.creatorContactId;
         data["creatorUserId"] = this.creatorUserId;
         data["creatorUserName"] = this.creatorUserName;
         data["creatorUserPicturePublicId"] = this.creatorUserPicturePublicId;
@@ -45957,9 +45963,11 @@ export interface IContactInfoDto {
     typeId: string | undefined;
     statusId: string | undefined;
     groupId: string | undefined;
+    assignedContactId: number | undefined;
     assignedUserId: number | undefined;
     assignedUserName: string | undefined;
     assignedUserPicturePublicId: string | undefined;
+    creatorContactId: number | undefined;
     creatorUserId: number | undefined;
     creatorUserName: string | undefined;
     creatorUserPicturePublicId: string | undefined;
@@ -45977,6 +45985,7 @@ export interface IContactInfoDto {
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
     date!: moment.Moment | undefined;
+    contactId!: number | undefined;
     userId!: number | undefined;
     userName!: string | undefined;
     photoPublicId!: string | undefined;
@@ -45993,6 +46002,7 @@ export class ContactLastModificationInfoDto implements IContactLastModificationI
     init(data?: any) {
         if (data) {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.contactId = data["contactId"];
             this.userId = data["userId"];
             this.userName = data["userName"];
             this.photoPublicId = data["photoPublicId"];
@@ -46009,6 +46019,7 @@ export class ContactLastModificationInfoDto implements IContactLastModificationI
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["contactId"] = this.contactId;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
         data["photoPublicId"] = this.photoPublicId;
@@ -46018,6 +46029,7 @@ export class ContactLastModificationInfoDto implements IContactLastModificationI
 
 export interface IContactLastModificationInfoDto {
     date: moment.Moment | undefined;
+    contactId: number | undefined;
     userId: number | undefined;
     userName: string | undefined;
     photoPublicId: string | undefined;
