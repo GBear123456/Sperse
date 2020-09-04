@@ -39,7 +39,7 @@
                                         <div class="field-info">
                                             <a *ngIf="sourceContactLevel1.name" (click)="openContactDetails(sourceContactLevel1.id)">{{ sourceContactLevel1.name }}
                                                 <i class="save-to-clipboard"
-                                                   (click)="saveToClipboard(sourceContactLevel1.name)">
+                                                   (click)="saveToClipboard($event, sourceContactLevel1.name)">
                                                 </i>
                                             </a>
                                             <div *ngIf="sourceContactLevel1.affiliateCode as affiliateCode" class="additional-info">
@@ -61,7 +61,7 @@
                                         <div class="field-info">
                                             <a *ngIf="sourceContactLevel2.name" (click)="openContactDetails(sourceContactLevel2.id)">{{ sourceContactLevel2.name }}
                                                 <i class="save-to-clipboard"
-                                                   (click)="saveToClipboard(sourceContactLevel2.name)">
+                                                   (click)="saveToClipboard($event, sourceContactLevel2.name)">
                                                 </i>
                                             </a>
                                             <hr/>
@@ -76,12 +76,11 @@
                                         <img [src]="getThumbnailSrc(contactInfo?.assignedUserPicturePublicId)"/>
                                     </div>
                                     <div class="field-info">
-                                        <span>{{assignedUserName}}
-                                            <i
-                                               class="save-to-clipboard"
-                                               (click)="saveToClipboard(assignedUserName)">
+                                        <a (click)="openContactDetails(contactInfo?.assignedContactId)">{{assignedUserName}}
+                                            <i class="save-to-clipboard"
+                                               (click)="saveToClipboard($event, assignedUserName)">
                                             </i>
-                                        </span>
+                                        </a>
                                         <hr/>
                                     </div>
                                 </div>
@@ -93,12 +92,11 @@
                                         <img [src]="getThumbnailSrc(contactInfo?.creatorUserPicturePublicId)"/>
                                     </div>
                                     <div class="field-info">
-                                        <span *ngIf="contactInfo?.creatorUserName as creatorUserName">
-                                            {{creatorUserName}}
+                                        <a *ngIf="contactInfo?.creatorUserName as creatorUserName" (click)="openContactDetails(contactInfo?.creatorContactId)">{{creatorUserName}}
                                             <i class="save-to-clipboard"
-                                               (click)="saveToClipboard(creatorUserName)">
+                                               (click)="saveToClipboard($event, creatorUserName)">
                                             </i>
-                                        </span>
+                                        </a>
                                         <div class="additional-info">
                                             <ng-container *ngIf="leadInfo?.channelCode as channelCode">
                                                 <span class="channel-code">{{leadInfo?.channelCode}}</span>, on
@@ -116,11 +114,11 @@
                                         <img [src]="getThumbnailSrc(lastModificationInfo.photoPublicId)"/>
                                     </div>
                                     <div class="field-info">
-                                        <span *ngIf="lastModificationInfo.userName">{{lastModificationInfo.userName}}
+                                        <a *ngIf="lastModificationInfo.userName as updatedByUserName" (click)="openContactDetails(lastModificationInfo?.contactId)">{{updatedByUserName}}
                                             <i class="save-to-clipboard"
-                                               (click)="saveToClipboard(lastModificationInfo.userName)">
+                                               (click)="saveToClipboard($event, updatedByUserName)">
                                             </i>
-                                        </span>
+                                        </a>
                                         <div *ngIf="lastModificationInfo.date as lastModificationTime" class="additional-info">
                                             <span>on {{lastModificationTime | date: formatting.dateTime : userTimezone}} </span>
                                             <span class="date-ago">({{ lastModificationTime | timeAgo}})</span>
@@ -140,12 +138,12 @@
                             <hr/>
                             <div class="field">
                                 <label>{{ ls.l('ContactID') }}:</label>
-                                <span>{{contactInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard(contactInfo?.id)"></i></span>
+                                <span>{{contactInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard($event, contactInfo?.id)"></i></span>
                             </div>
                             <hr/>
                             <div class="field">
                                 <label>{{ ls.l('RecentLeadID') }}:</label>
-                                <span>{{leadInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard(leadInfo?.id)"></i></span>
+                                <span>{{leadInfo?.id}}<i class="save-to-clipboard" (click)="saveToClipboard($event, leadInfo?.id)"></i></span>
                             </div>
                             <hr/>
                             <div class="field">
