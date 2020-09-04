@@ -447,7 +447,7 @@ export class ContactsService {
 
     showInvoiceEmailDialog(invoiceId: number, data: any = {}) {
         data.templateType = EmailTemplateType.Invoice;
-        return this.showEmailDialog(data, 'Email', (tmpId, emailData) => {
+        return this.showEmailDialog(data, 'Email', (tmpId: number, emailData) => {
             return this.invoiceProxy.getEmailData(tmpId, invoiceId).pipe(
                 map((email: GetEmailDataOutput) => {
                     Object.assign(emailData, email);

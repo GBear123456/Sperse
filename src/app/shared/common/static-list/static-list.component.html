@@ -28,7 +28,7 @@
                      [ngClass]="{
                         'funnel-styling': funnelStyling,
                         'highlightSelected': highlightSelected,
-                        'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions()),
+                        'unclicked': selectionDisabled,
                         'disableHindmost': disableHindmost
                      }"
                      [searchEnabled]="searchEnabled && !customSearchEnabled"

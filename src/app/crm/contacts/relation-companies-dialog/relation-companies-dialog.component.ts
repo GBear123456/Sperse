@@ -25,7 +25,8 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 })
 export class RelationCompaniesDialogComponent implements OnInit {
     @ViewChild(ContactListDialogComponent, { static: true }) contactList: ContactListDialogComponent;
-    manageAllowed = false;
+    manageAllowed: boolean = this.permissionService.checkCGPermission(this.data.groupId);
+    displayList: PersonOrgRelationShortInfo[] = this.search();
 
     constructor(
         private relationsServiceProxy: PersonOrgRelationServiceProxy,
@@ -38,20 +39,20 @@ export class RelationCompaniesDialogComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.contactList.title = this.ls.l('Related Companies');
-        this.contactList.addNewTitle = this.ls.l('Add Contact');
-        this.contactList.photoType = 'Organization';
         this.contactList.data = this.data;
-        this.contactList.manageAllowed = this.manageAllowed = this.permissionService.checkCGPermission(this.data.groupId);
-        this.contactList.filter = (search?) => {
-            return this.data.personContactInfo.orgRelations.map((item: PersonOrgRelationShortInfo) => {
+    }
+
+    search(search?: string) {
+        this.displayList = this.data.personContactInfo.orgRelations
+            .map((item: PersonOrgRelationShortInfo) => {
                 let contact = item.organization;
                 contact['relation'] = item;
                 return (contact.id != this.data['organizationContactInfo'].id)
-                    && (contact.name.toLowerCase().indexOf(search) >= 0) ? contact : null;
-            }).filter(Boolean).sort((item: OrganizationShortInfo) => (item.id == this.data.primaryOrganizationContactId ? -1 : 1));
-        };
-        this.contactList.filterList();
+                    && (!search || contact.name.toLowerCase().indexOf(search) >= 0) ? contact : null;
+            })
+            .filter(Boolean)
+            .sort((item: OrganizationShortInfo) => (item.id == this.data.primaryOrganizationContactId ? -1 : 1));
+        return this.displayList;
     }
 
     setPrimary(event, contact) {

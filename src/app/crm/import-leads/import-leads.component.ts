@@ -866,6 +866,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     onStagesChanged(event) {
         this.selectedStageId = event.id;
+        this.stagesComponent.tooltipVisible = false;
         this.initToolbarConfig();
     }
 

@@ -18,7 +18,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto,
-    CommunicationMessageStatus, MessageDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
+    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
@@ -52,10 +52,10 @@ export class UserInboxComponent implements OnDestroy {
     instantMessageAttachments = [];
     contactInfo: ContactInfoDto;
     formatting = AppConsts.formatting;
-    status: CommunicationMessageStatus;
-    statuses = Object.keys(CommunicationMessageStatus).map(item => {
+    status: CommunicationMessageSendingStatus;
+    statuses = Object.keys(CommunicationMessageSendingStatus).map(item => {
         return {
-            id: CommunicationMessageStatus[item],
+            id: CommunicationMessageSendingStatus[item],
             name: this.ls.l(item)
         };
     });

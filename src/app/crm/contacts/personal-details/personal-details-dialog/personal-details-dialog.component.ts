@@ -451,9 +451,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         })).subscribe(null, () => this.contactInfo.personContactInfo[property] = initialValue);
     }
 
-    saveToClipboard(value) {
+    saveToClipboard(event, value) {
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
+        event.stopPropagation();
     }
 
     close() {

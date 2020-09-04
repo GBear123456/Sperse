@@ -1,4 +1,9 @@
-<contact-list-dialog>
+<contact-list-dialog [title]="ls.l('Related Companies')"
+                     [addNewTitle]="ls.l('Add Contact')"
+                     photoType="Organization"
+                     [manageAllowed]="manageAllowed"
+                     [displayList]="displayList"
+                     (onSearch)="search($event)">
     <ng-template #contactLayoutTemplate let-contact="contact" let-info="info">
         <div [ngClass]="{ primary: info.primaryOrganizationContactId == contact.id }">
             <div class="full-name">

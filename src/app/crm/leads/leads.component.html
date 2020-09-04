@@ -32,7 +32,7 @@
             [filterModel]="filterModelSource"
             [selectedLeads]="selectedLeads"
             [filterModelOrgUnit]="filterModelOrgUnit"
-            [selectedKeys]="hasBulkPermission ? selectedClientKeys : []"
+            [relatedItemsKeys]="hasBulkPermission ? selectedClientKeys : []"
             [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
             (onOwnerFilterApply)="onOwnerFilterApply($event)"
             (onApply)="onSourceApply($event)">
@@ -41,7 +41,7 @@
                 width="210px"
                 [title]="l('Stages')"
                 [selectionMode]="'single'"
-                [selectedKeys]="selectedClientKeys"
+                [relatedItemsKeys]="selectedClientKeys"
                 [filterModel]="filterModelStages"
                 [bulkUpdatePermissionKey]="permissions.CRMBulkUpdates"
                 [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
@@ -51,8 +51,16 @@
                 [list]="stages"
                 (onItemSelected)="updateLeadsStage($event)">
         </app-static-list>
-        <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags" [managePermission]="manageCGPermision"></tags-list>
-        <lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" [managePermission]="manageCGPermision"></lists-list>
+        <tags-list [selectedKeys]="selectedClientKeys"
+                   [bulkUpdateMode]="true"
+                   [filterModel]="filterModelTags"
+                   [managePermission]="manageCGPermision">
+        </tags-list>
+        <lists-list [selectedKeys]="selectedClientKeys"
+                    [bulkUpdateMode]="true"
+                    [filterModel]="filterModelLists"
+                    [managePermission]="manageCGPermision">
+        </lists-list>
         <user-assignment-list [selectedKeys]="selectedClientKeys"
             [bulkUpdateMode]="true"
             [filterModel]="filterModelAssignment"
@@ -60,7 +68,11 @@
             [permissionKey]="permissions.CRMCustomersManageAssignments"
             [assignedUsersSelector]="assignedUsersSelector">
         </user-assignment-list>
-        <rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating" [managePermission]="manageCGPermision"></rating>
+        <rating [selectedKeys]="selectedClientKeys"
+                [bulkUpdateMode]="true"
+                [filterModel]="filterModelRating"
+                [managePermission]="manageCGPermision">
+        </rating>
         <crm-stars-list [selectedKeys]="selectedClientKeys"
                         [bulkUpdateMode]="true"
                         [filterModel]="filterModelStar"

@@ -104,7 +104,7 @@ export class PlatformSelectComponent {
                         AppConsts.appMemberPortalUrl
                         && !appService.isHostTenant
                         && module.name === 'MemberPortal'
-                        && this.appSessionService.tenant.customLayoutType == LayoutType.Rapid
+                        && (this.appSessionService.tenant.customLayoutType == LayoutType.Rapid || this.appSessionService.tenant.customLayoutType == LayoutType.HOA)
                     ) {
                         this.modules.footerItems.push(module);
                     }

@@ -543,7 +543,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                         contactInfo: this.data,
                         refreshParent: () => {
                             this.contactsService.invalidate('invoices');
-                        },
+                        }
                     }
                 });
             });

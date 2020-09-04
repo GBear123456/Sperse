@@ -5,6 +5,7 @@ export class UserDropdownMenuItemModel {
     name?: string;
     type?: UserDropdownMenuItemType;
     visible?: boolean;
+    disabled?: boolean;
     id?: string;
     iconSrc?: string;
     iconClass?: string;

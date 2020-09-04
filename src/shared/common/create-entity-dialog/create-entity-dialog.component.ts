@@ -195,7 +195,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
-    companyNameIsValid = true;
 
     constructor(
         public dialog: MatDialog,
@@ -351,7 +350,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         if (!this.validateMultiple(this.emailValidators) ||
             !this.validateMultiple(this.phoneValidators) ||
-            (!this.hideCompanyField && !this.validateMultiple(this.companyValidators)) ||
+            (!this.hideCompanyField && !this.validateCompanyName()) ||
             (!this.hideLinksField && !this.validateMultiple(this.linkValidators))
         )
             return;
@@ -370,7 +369,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     private validateMultiple(validators): boolean {
         return validators.every((v) => {
-            v.reset();
             return v.validate().isValid;
         });
     }
@@ -774,13 +772,16 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     /**
-     * Revalidate only if there is an error and conditions changed
+     * If user hasn't entered company name - validate to check if he's entered fields related to company
+     * (through dx-validation companyValidation method)
      */
-    private validateCompanyName() {
-        if (this.companyValidators[0] && !this.companyNameIsValid) {
+    private validateCompanyName(): boolean {
+        let companyNameIsValid = true;
+        if (!this.company && this.companyValidators[0]) {
             this.companyValidators[0].reset();
-            this.companyNameIsValid = this.companyValidators[0].validate().isValid;
+            companyNameIsValid = this.companyValidators[0].validate().isValid;
         }
+        return companyNameIsValid;
     }
 
     onPhoneKeyUp(event) {
@@ -812,10 +813,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
      * @param options
      */
     companyValidation = (options) => {
-        return this.companyNameIsValid = options.value
+        return options.value
                || (!this.jobTitle
                   && !this.contacts.emails.some(email => email.type === 'C' && email.email)
-                  && !this.contacts.phones.some(phone => phone.type === 'C' && phone.number)
+                  && !this.contacts.phones.some(phone => phone.type === 'C' && phone.number && phone.number !== phone.code)
+                  && !this.contacts.links.some(link => link.isCompany && link.url)
                   && !this.contacts.addresses.some(address => address.type === 'C' && address.address)
                );
     }

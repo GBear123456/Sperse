@@ -1,4 +1,4 @@
-<contact-list-dialog title="">
+<contact-list-dialog title="" [displayList]="displayItems$ | async" (onSearch)="search($event)">
     <ng-template #contactLayoutTemplate let-contact="contact" let-info="info">
         <div class="full-name">
             <h1>{{ contact.name || contact.email }}</h1>

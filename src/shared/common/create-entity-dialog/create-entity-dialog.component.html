@@ -179,7 +179,7 @@
                                    (onCustomItemCreating)="onCustomCompanyCreate($event)">
                         <dx-validator>
                             <dxi-validation-rule type="custom"
-                                                 [message]="ls.l('Company info will not be saved due to Company name being empty')"
+                                                 [message]="ls.l('CompanyInfoWillNotBeSaved')"
                                                  [validationCallback]="companyValidation">
                             </dxi-validation-rule>
                         </dx-validator>
@@ -189,7 +189,8 @@
                                  [placeholder]="ls.l('Job title')"
                                  [valueChangeEvent]="'keyup'"
                                  width="270px"
-                                 [(value)]="jobTitle">
+                                 [(value)]="jobTitle"
+                                 (onValueChanged)="validateCompanyName()">
                     </dx-text-box>
                     <span [class]="(company || jobTitle) && 'clear-contact' || 'hidden'"
                           (click)="company = jobTitle = ''">
@@ -305,7 +306,8 @@
                                     valueExpr="id"
                                     accessKey="link-type-dialog"
                                     [value]="link.type"
-                                    [dataSource]="linkTypes">
+                                    [dataSource]="linkTypes"
+                                    (onValueChanged)="validateCompanyName()">
                                     <div *dxTemplate="let contentData of 'content'" style="display:flex;">
                                         <div>
                                             <mat-sidenav mode="side" opened="true" position="start" style="height:50px;width:100%;">
