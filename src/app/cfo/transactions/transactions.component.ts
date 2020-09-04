@@ -1593,8 +1593,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    getDownloadExcelReportUrl() : string {
-        let url = super.getODataUrl(this.reportSourceURI, this.filterQuery);
+    getDownloadExcelReportUrl(option, dataGrid): string {
+        dataGrid = dataGrid || this.dataGrid;
+        let filterQuery = [...<any[]>this.filterQuery];
+        if (option != 'all') {
+            let ids: number[] = dataGrid.instance.getSelectedRowKeys();
+            filterQuery.push(`Id in (${ids.join(',')})`);
+        }
+
+        let url = super.getODataUrl(this.reportSourceURI, filterQuery);
         let businessEntityValues: number[] = this.businessEntityFilter.items.element.value;
         if (url.indexOf('?') == -1) url += '?';
 
@@ -1607,15 +1614,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (businessEntityValues)
             businessEntityValues.map(v => url += '&businessEntityIds=' + v);
         url += '&currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
+
         return url;
     }
 
-    downloadExcelReport() {
-        document.location.href = this.getDownloadExcelReportUrl();
+    downloadExcelReport(option, dataGrid) {
+        document.location.href = this.getDownloadExcelReportUrl(option, dataGrid);
     }
 
-    exportToGoogleSheetReport() {
-        let url = this.getDownloadExcelReportUrl();
+    exportToGoogleSheetReport(option, dataGrid) {
+        let url = this.getDownloadExcelReportUrl(option, dataGrid);
         abp.ui.setBusy();
         RequestHelper.downloadFileBlob(url, (blob, fileName) => {
             this.exportService.exportBlobToGoogleSheet(blob, fileName || this.exportService.getFileName(null, 'Report'))
