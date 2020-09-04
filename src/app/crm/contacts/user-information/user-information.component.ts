@@ -46,7 +46,7 @@ import { MessageService } from '@abp/message/message.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppStoreService } from '@app/store/app-store.service';
-import { LifecycleSubjectsService } from '../../../../shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'user-information',
@@ -484,9 +484,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     this.dialog.open(OrganizationUnitsDialogComponent, {
                         id: 'user-organization-units-dialog',
                         panelClass: ['slider'],
-                        disableClose: true,
+                        disableClose: false,
                         hasBackdrop: false,
-                        closeOnNavigation: false,
+                        closeOnNavigation: true,
                         data: {
                             title: this.ls.l('OrganizationUnits'),
                             selectionMode: 'multiple'
