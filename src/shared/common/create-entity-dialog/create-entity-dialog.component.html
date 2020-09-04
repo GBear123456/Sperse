@@ -189,7 +189,8 @@
                                  [placeholder]="ls.l('Job title')"
                                  [valueChangeEvent]="'keyup'"
                                  width="270px"
-                                 [(value)]="jobTitle">
+                                 [(value)]="jobTitle"
+                                 (onValueChanged)="validateCompanyName()">
                     </dx-text-box>
                     <span [class]="(company || jobTitle) && 'clear-contact' || 'hidden'"
                           (click)="company = jobTitle = ''">
