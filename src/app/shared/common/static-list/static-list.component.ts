@@ -35,7 +35,8 @@ export class StaticListComponent {
     @Input() accessKey: string;
     @Input() title: string;
     @Input() filterModel: any;
-    @Input() selectedKeys: any;
+    @Input() selectedKeys: any[];
+    @Input() relatedItemsKeys: any[];
     @Input() targetSelector: string;
     @Input() showConfirmation = true;
     @Input() updateConfirmationTitle: string;
@@ -70,6 +71,10 @@ export class StaticListComponent {
     @HostBinding('class.funnel-styling') @Input() funnelStyling = false;
     whiteSpaceRegExp = /\s/gim;
     private _list: any[];
+    get selectionDisabled() {
+        return (this.relatedItemsKeys && !this.relatedItemsKeys.length)
+            || (!this.highlightSelected && !this.isBulkUpdateAvailable());
+    };
 
     constructor(
         private filtersService: FiltersService,
@@ -91,18 +96,16 @@ export class StaticListComponent {
     }
 
     changeItems(selectedData = this.selectedItems[0]) {
-        if (this.selectedKeys && this.selectedKeys.length) {
-            if (this.showConfirmation && this.checkPermissions())
-                this.messageService.confirm(
-                    this.updateConfirmationMessage || this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
-                    this.updateConfirmationTitle || null,
-                    isConfirmed => {
-                        isConfirmed && this.onItemSelected.emit(selectedData);
-                    }
-                );
-            else
-                this.onItemSelected.emit(selectedData);
+        if (this.relatedItemsKeys && this.relatedItemsKeys.length && this.showConfirmation && this.isBulkUpdateAvailable()) {
+            this.messageService.confirm(
+                this.updateConfirmationMessage || this.ls.l('BulkUpdateConfirmation', this.relatedItemsKeys.length),
+                this.updateConfirmationTitle || null,
+                isConfirmed => {
+                    isConfirmed && this.onItemSelected.emit(selectedData);
+                }
+            );
         }
+        this.onItemSelected.emit(selectedData);
     }
 
     onInitialized($event) {
@@ -169,14 +172,16 @@ export class StaticListComponent {
     }
 
     onItemClick(event) {
-        if (event.itemData.action) {
-            event.itemData['action'](event);
-        } else if (event.itemData.id) {
-            this.changeItems(event.itemData);
+        if (!this.selectionDisabled) {
+            if (event.itemData.action) {
+                event.itemData['action'](event);
+            } else if (event.itemData.id) {
+                this.changeItems(event.itemData);
+            }
         }
     }
 
-    checkPermissions() {
+    isBulkUpdateAvailable() {
         return this.permissionCheckerService.isGranted(this.bulkUpdatePermissionKey);
     }
 

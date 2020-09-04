@@ -7,6 +7,7 @@
     [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && !!selectedKeys?.length"
     [hideButtons]="!hasBulkUpdatePermission || (!selectedKeys || !selectedKeys?.length) || !!selectedKey"
     [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
+    [relatedItemsKeys]="relatedItemsKeys"
     [showConfirmation]="false"
     [highlightSelected]="true"
     [searchEnabled]="true"
