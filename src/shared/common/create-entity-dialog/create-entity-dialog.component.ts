@@ -817,6 +817,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                || (!this.jobTitle
                   && !this.contacts.emails.some(email => email.type === 'C' && email.email)
                   && !this.contacts.phones.some(phone => phone.type === 'C' && phone.number && phone.number !== phone.code)
+                  && !this.contacts.links.some(link => link.isCompany && link.url)
                   && !this.contacts.addresses.some(address => address.type === 'C' && address.address)
                );
     }
