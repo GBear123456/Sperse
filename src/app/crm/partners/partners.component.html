@@ -37,18 +37,27 @@
                          [width]="'180px'"
                          [title]="l('Status')"
                          [showConfirmation]="false"
-                         [selectedKeys]="selectedPartnerKeys"
+                         [relatedItemsKeys]="selectedPartnerKeys"
                          [hideButtons]="true"
                          [filterModel]="filterModelStatus"
                          targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
                          [list]="statuses"
                          (onItemSelected)="updatePartnerStatuses($event)">
         </app-static-list>
-
-        <types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></types-list>
-        <tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags" [managePermission]="permissions.CRMPartnersManage"></tags-list>
-        <lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" [managePermission]="permissions.CRMPartnersManage"></lists-list>
-
+        <types-list [selectedKeys]="selectedPartnerKeys"
+                    [bulkUpdateMode]="true"
+                    [filterModel]="filterModelTypes">
+        </types-list>
+        <tags-list [selectedKeys]="selectedPartnerKeys"
+                   [bulkUpdateMode]="true"
+                   [filterModel]="filterModelTags"
+                   [managePermission]="permissions.CRMPartnersManage">
+        </tags-list>
+        <lists-list [selectedKeys]="selectedPartnerKeys"
+                    [bulkUpdateMode]="true"
+                    [filterModel]="filterModelLists"
+                    [managePermission]="permissions.CRMPartnersManage">
+        </lists-list>
         <user-assignment-list [selectedKeys]="selectedPartnerKeys"
                                   [bulkUpdateMode]="true"
                                   [filterModel]="filterModelAssignment"

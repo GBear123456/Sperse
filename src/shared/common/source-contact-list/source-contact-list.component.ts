@@ -42,6 +42,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Input() targetSelector = '#PartnersSource';
     @Input() selectedKeys: number[];
+    @Input() relatedItemsKeys: number[];
     @Input() selectedLeads: any[];
     @Input() bulkUpdatePermissionKey;
     @Input() filterModel: FilterModel;

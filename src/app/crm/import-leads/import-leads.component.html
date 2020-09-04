@@ -57,7 +57,6 @@
     [highlightSelected]="true"
     [showConfirmation]="false"
     [title]="l('Stages')"
-    [selectedKeys]="selectedClientKeys"
     targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
     [hideButtons]="true"
     [disableHindmost]="false"
@@ -85,11 +84,13 @@
 <lists-list [selectedKeys]="selectedClientKeys"
             [bulkUpdateMode]="true"
             [hideButtons]="true"
+            [showSelection]="true"
             (onSelectionChanged)="onListsChanged($event)"
             [managePermission]="manageCGPermission">
 </lists-list>
 <tags-list [selectedKeys]="selectedClientKeys"
            [bulkUpdateMode]="true"
+           [showSelection]="true"
            [hideButtons]="true"
            (onSelectedChanged)="onTagsChanged($event)"
            [managePermission]="manageCGPermission">
