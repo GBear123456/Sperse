@@ -1611,8 +1611,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     downloadExcelReport() {
-        let url = this.getDownloadExcelReportUrl();
-        document.location.href = url;
+        document.location.href = this.getDownloadExcelReportUrl();
     }
 
     exportToGoogleSheetReport() {

@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
@@ -14,7 +14,8 @@ declare const gapi: any;
 
 @Injectable()
 export class ExportGoogleSheetService {
-    private gAPISubject = new ReplaySubject<any>(1);
+    private gAPI: ReplaySubject<any> = new ReplaySubject<any>(1);
+    gAPI$: Observable<any> = this.gAPI.asObservable();
     private readonly GoogleSheetMimeType = 'application/vnd.google-apps.spreadsheet';
 
     constructor() {
@@ -26,7 +27,7 @@ export class ExportGoogleSheetService {
                         scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file',
                         discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4', 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
                     });
-                    this.gAPISubject.next(gapi);
+                    this.gAPI.next(gapi);
                 });
         });
     }
@@ -37,16 +38,19 @@ export class ExportGoogleSheetService {
     }
 
     private signIn(callback: (gAPI, auth) => void) {
-        this.gAPISubject.asObservable().pipe(first()).subscribe(gAPI => {
+        this.gAPI$.pipe(first()).subscribe(gAPI => {
             let auth = gAPI.auth2.getAuthInstance();
             if (auth.isSignedIn.get())
                 callback(gAPI, auth);
             else
-                auth.signIn().then(() => callback(gAPI, auth));
+                auth.signIn().then(
+                    () => callback(gAPI, auth),
+                    () => abp.ui.clearBusy()
+                );
         });
     }
 
-    exportBlob(blob: any, sheetName: string) : Promise<any> {
+    exportBlob(blob: Blob, sheetName: string) : Promise<any> {
         return new Promise<any>(resolve => {
             this.signIn((_gApi, auth) => {
                 this.uploadToGoogleDrive(this.getAuthToken(auth), this.GoogleSheetMimeType, blob, sheetName).then(x => resolve(x));
