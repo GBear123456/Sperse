@@ -76,7 +76,7 @@
                 <div class="col-md-4">
                     <span>{{ls.l('Roles')}}:</span>
                     <ul class="items-list">
-                        <li *ngFor="let role of roles">
+                        <li *ngFor="let role of roles" [title]="role.displayName">
                             <dx-check-box [disabled]="!isInviteAllowed"
                                         [text]="role.displayName"
                                         [value]="isPartner() && roleIsCheckedByDefault(role.name)"

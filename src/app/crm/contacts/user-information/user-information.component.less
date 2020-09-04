@@ -69,10 +69,8 @@
         padding: 30px 0 20px;
         display: block;
 
-        .invite-user-info {
-            .dx-checkbox {
-                margin: 15px 0;
-            }
+        .invite-user-info .dx-checkbox {
+            margin: 15px 0;
         }
 
         button {
@@ -86,14 +84,13 @@
             display: flex;
             flex-wrap: wrap;
             padding-top: 20px;
-
             li {
                 margin-top: 12px;
-                margin-right: 12px;
-            }
-
-            ::ng-deep dx-check-box {
-                width: 150px;
+                width: 50%;
+                ::ng-deep .dx-checkbox-container {
+                    width: 100%;
+                    padding-right: 5px;
+                }
             }
         }
     }
