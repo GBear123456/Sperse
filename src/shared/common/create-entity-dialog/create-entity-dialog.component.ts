@@ -775,7 +775,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
      * If user hasn't entered company name - validate to check if he's entered fields related to company
      * (through dx-validation companyValidation method)
      */
-    private validateCompanyName(): boolean {
+    validateCompanyName(): boolean {
         let companyNameIsValid = true;
         if (!this.company && this.companyValidators[0]) {
             this.companyValidators[0].reset();
