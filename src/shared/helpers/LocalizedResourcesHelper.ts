@@ -22,7 +22,7 @@ export class LocalizedResourcesHelper {
     static loadLocalizedStylesForTheme(theme: string, isRtl: boolean): JQueryPromise<any> {
         let cssPostfix = isRtl ? '-rtl' : '';
         if (abp.session.userId) {
-            /** @todo remove after changing Languages and other admin sections to devexttreme */
+            /** @todo remove after changing Languages and other admin sections to devextreme */
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
         }
 
