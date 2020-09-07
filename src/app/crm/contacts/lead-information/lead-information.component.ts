@@ -5,8 +5,7 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, filter, switchMap, takeUntil, first, skip } from 'rxjs/operators';
+import { finalize, filter, takeUntil, first } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
@@ -19,11 +18,9 @@ import {
     ApplicationServiceProxy, LeadServiceProxy, LeadInfoDto, UpdateLeadSourceOrganizationUnitInput, InvoiceSettings,
     ContactInfoDto, ContactServiceProxy, UpdateLeadInfoInput, OrganizationUnitShortDto, UpdateLeadSourceContactInput
 } from '@shared/service-proxies/service-proxies';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
-import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -37,6 +34,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
+import { LayoutSection } from '@app/crm/contacts/lead-information/layout-section.interface';
 
 @Component({
     selector: 'lead-information',
@@ -80,76 +78,73 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
     sources: any[];
     sourceContacts: SourceContact[] = [];
     sourceContactName: string;
-    layoutColumns: any[] = [
-        {
-            sections: [
-                {
-                    name: 'Status',
-                    icon: 'c-info',
-                    items: [
-                        { name: 'stage', readonly: true },
-                        { name: 'amount', readonly: true },
-                        { name: 'creationDate', readonly: true },
-                        { name: 'modificationDate', readonly: true }
-                    ]
-                },
+    layoutColumns: LayoutSection[][] = [
+        [
+            {
+                name: 'Status',
+                icon: 'c-info',
+                items: [
+                    { name: 'stage', readonly: true },
+                    { name: 'amount', readonly: true },
+                    { name: 'creationDate', readonly: true },
+                    { name: 'modificationDate', readonly: true }
+                ]
+            },
 /*
-                {
-                    name: 'LeadSource',
-                    icon: 'goal',
-                    items: [ { name: 'sourceCode' } ]
-                },
+            {
+                name: 'LeadSource',
+                icon: 'goal',
+                items: [ { name: 'sourceCode' } ]
+            },
 */
-                {
-                    name: 'CustomFields',
-                    icon: 'single-content',
-                    items: [
-                        { name: 'customField1', lname: 'Request_CustomField1', readonly: true },
-                        { name: 'customField2', lname: 'Request_CustomField2', readonly: true },
-                        { name: 'customField3', lname: 'Request_CustomField3', readonly: true },
-                        { name: 'customField4', lname: 'Request_CustomField4', readonly: true },
-                        { name: 'customField5', lname: 'Request_CustomField5', readonly: true }
-                    ]
-                }
-            ]
-        },
-        {
-            sections: [
-                {
-                    name: 'Source',
-                    icon: 'c-info',
-                    items: [
-                        { name: 'affiliateCode', lname: 'LeadInformation_SourceAffiliateCode' },
-                        { name: 'contact', lname: 'SourceContact' },
-                        { name: 'campaignCode' },
-                        { name: 'channelCode' }
-                    ]
-                },
-                {
-                    name: 'TrackingInfo',
-                    icon: 'single-content',
-                    items: [
-                        { name: 'applicantId', readonly: true, action: this.showApplications.bind(this) },
-                        { name: 'applicationId', readonly: true, action: this.showApplications.bind(this) },
-                        { name: 'clickId', readonly: true },
-                        { name: 'siteId', readonly: true },
-                        { name: 'siteUrl', readonly: true, wide: true },
-                        { name: 'refererUrl', readonly: true, wide: true },
-                        { name: 'entryUrl', readonly: true, wide: true },
-                        { name: 'clientIp', readonly: true },
-                        { name: 'userAgent', readonly: true, wide: true },
-                    ]
-                }
-            ]
-        }, {
-            sections: [
-                {
-                    name: 'Comments',
-                    icon: 'f-chat',
-                    items: [ { name: 'comments', hideLabel: true } ]
-                }
-            ]
-        }
+            {
+                name: 'CustomFields',
+                icon: 'single-content',
+                items: [
+                    { name: 'customField1', lname: 'Request_CustomField1', readonly: true },
+                    { name: 'customField2', lname: 'Request_CustomField2', readonly: true },
+                    { name: 'customField3', lname: 'Request_CustomField3', readonly: true },
+                    { name: 'customField4', lname: 'Request_CustomField4', readonly: true },
+                    { name: 'customField5', lname: 'Request_CustomField5', readonly: true }
+                ]
+            }
+        ],
+        [
+            {
+                name: 'Source',
+                icon: 'c-info',
+                items: [
+                    { name: 'affiliateCode', lname: 'LeadInformation_SourceAffiliateCode' },
+                    { name: 'contact', lname: 'SourceContact' },
+                    { name: 'campaignCode' },
+                    { name: 'channelCode' }
+                ]
+            },
+            {
+                name: 'TrackingInfo',
+                icon: 'single-content',
+                items: [
+                    { name: 'applicantId', readonly: true, action: this.showApplications.bind(this) },
+                    { name: 'applicationId', readonly: true, action: this.showApplications.bind(this) },
+                    { name: 'clickId', readonly: true },
+                    { name: 'siteId', readonly: true },
+                    { name: 'siteUrl', readonly: true, wide: true },
+                    { name: 'refererUrl', readonly: true, wide: true },
+                    { name: 'entryUrl', readonly: true, wide: true },
+                    { name: 'clientIp', readonly: true },
+                    { name: 'userAgent', readonly: true, wide: true },
+                ]
+            }
+        ],
+        [
+            {
+                name: 'Comments',
+                icon: 'f-chat',
+                items: [
+                    { name: 'comments', hideLabel: true }
+                ]
+            }
+        ]
     ];
     capitalize = capitalize;
 
