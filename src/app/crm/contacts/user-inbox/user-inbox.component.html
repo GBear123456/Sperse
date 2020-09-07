@@ -110,6 +110,7 @@
                             [placeholder]="ls.l('Type your message here...')"
                             [stylingMode]="'outlined'"
                             [(value)]="instantMessageText"
+                            [disabled]="!isSendSmsAndEmailAllowed"
                             (onEnterKey)="instantMessageSend()">
                         </dx-text-box>
                         <img src="assets/common/icons/send-blue.svg" class="send" [ngClass]="{disabled: !instantMessageText}" (click)="instantMessageSend()">

@@ -129,6 +129,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     total = 0;
     balance = 0;
 
+    isSendEmailAllowed = false;
     disabledForUpdate = false;
     title: string;
     isTitleValid = true;
@@ -160,7 +161,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     {
                         text: this.ls.l('Invoice_SaveAndSend'),
                         selected: false,
-                        disabled: this.disabledForUpdate,
+                        disabled: !this.isSendEmailAllowed || this.disabledForUpdate,
                         data: {
                             status: InvoiceStatus.Final,
                             email: true
@@ -321,6 +322,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(contact.id);
             this.customer = contact.personContactInfo.fullName;
+            this.isSendEmailAllowed = this.permission.checkCGPermission(
+                contact.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address: ContactAddressDto = details.addresses[0];
@@ -671,6 +674,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.customer = contact.name;
             this.contactId = contact.id;
             this.selectedContact = contact;
+            this.isSendEmailAllowed = this.permission.checkCGPermission(
+                contact.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
             if (this.orderId && !this.data.invoice) {
                 this.orderId = undefined;
                 this.orderNumber = undefined;

@@ -69,6 +69,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     previewDisabled = false;
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
+    isSendEmailAllowed = false;    
 
     private readonly ident = 'Invoices';
 
@@ -104,6 +105,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
             if (data && (!this.contactId || data.id != this.contactId)) {
                 this.contactId = data.id;
+                this.isSendEmailAllowed = this.permission.checkCGPermission(
+                    data.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.dataSource = this.getDataSource();
             }
         }, this.ident);
@@ -203,7 +206,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(invoice.InvoiceStatus) < 0;
-                    this.resendInvoiceDisabled = isOrder || [
+                    this.resendInvoiceDisabled = !this.isSendEmailAllowed || isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled, InvoiceStatus.Sent
                     ].indexOf(invoice.InvoiceStatus) < 0;
                     this.markAsCancelledDisabled = isOrder || invoice.InvoiceStatus != InvoiceStatus.Sent;
