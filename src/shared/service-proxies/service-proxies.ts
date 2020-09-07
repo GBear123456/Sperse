@@ -70589,16 +70589,18 @@ export interface ITenantEditEditionDto {
 }
 
 export class CreateTenantInput implements ICreateTenantInput {
-    tenancyName!: string;
-    name!: string;
     adminEmailAddress!: string;
     adminPassword!: string | undefined;
+    adminFirstName!: string | undefined;
+    adminLastName!: string | undefined;
+    shouldChangePasswordOnNextLogin!: boolean | undefined;
+    sendActivationEmail!: boolean | undefined;
+    tenancyName!: string;
+    name!: string;
     connectionString!: string | undefined;
     crmConnectionString!: string | undefined;
     memberDbConnectionString!: string | undefined;
     cfoConnectionString!: string | undefined;
-    shouldChangePasswordOnNextLogin!: boolean | undefined;
-    sendActivationEmail!: boolean | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
 
@@ -70613,16 +70615,18 @@ export class CreateTenantInput implements ICreateTenantInput {
 
     init(data?: any) {
         if (data) {
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
             this.adminEmailAddress = data["adminEmailAddress"];
             this.adminPassword = data["adminPassword"];
+            this.adminFirstName = data["adminFirstName"];
+            this.adminLastName = data["adminLastName"];
+            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
+            this.sendActivationEmail = data["sendActivationEmail"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
             this.connectionString = data["connectionString"];
             this.crmConnectionString = data["crmConnectionString"];
             this.memberDbConnectionString = data["memberDbConnectionString"];
             this.cfoConnectionString = data["cfoConnectionString"];
-            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
-            this.sendActivationEmail = data["sendActivationEmail"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -70641,16 +70645,18 @@ export class CreateTenantInput implements ICreateTenantInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
         data["adminEmailAddress"] = this.adminEmailAddress;
         data["adminPassword"] = this.adminPassword;
+        data["adminFirstName"] = this.adminFirstName;
+        data["adminLastName"] = this.adminLastName;
+        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
+        data["sendActivationEmail"] = this.sendActivationEmail;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
         data["connectionString"] = this.connectionString;
         data["crmConnectionString"] = this.crmConnectionString;
         data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["cfoConnectionString"] = this.cfoConnectionString;
-        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
-        data["sendActivationEmail"] = this.sendActivationEmail;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -70662,21 +70668,24 @@ export class CreateTenantInput implements ICreateTenantInput {
 }
 
 export interface ICreateTenantInput {
-    tenancyName: string;
-    name: string;
     adminEmailAddress: string;
     adminPassword: string | undefined;
+    adminFirstName: string | undefined;
+    adminLastName: string | undefined;
+    shouldChangePasswordOnNextLogin: boolean | undefined;
+    sendActivationEmail: boolean | undefined;
+    tenancyName: string;
+    name: string;
     connectionString: string | undefined;
     crmConnectionString: string | undefined;
     memberDbConnectionString: string | undefined;
     cfoConnectionString: string | undefined;
-    shouldChangePasswordOnNextLogin: boolean | undefined;
-    sendActivationEmail: boolean | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
 }
 
 export class TenantEditDto implements ITenantEditDto {
+    id!: number;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
@@ -70685,7 +70694,6 @@ export class TenantEditDto implements ITenantEditDto {
     cfoConnectionString!: string | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
-    id!: number | undefined;
 
     constructor(data?: ITenantEditDto) {
         if (data) {
@@ -70698,6 +70706,7 @@ export class TenantEditDto implements ITenantEditDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
@@ -70710,7 +70719,6 @@ export class TenantEditDto implements ITenantEditDto {
                     this.editions.push(TenantEditEditionDto.fromJS(item));
             }
             this.isActive = data["isActive"];
-            this.id = data["id"];
         }
     }
 
@@ -70723,6 +70731,7 @@ export class TenantEditDto implements ITenantEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -70735,12 +70744,12 @@ export class TenantEditDto implements ITenantEditDto {
                 data["editions"].push(item.toJSON());
         }
         data["isActive"] = this.isActive;
-        data["id"] = this.id;
         return data; 
     }
 }
 
 export interface ITenantEditDto {
+    id: number;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
@@ -70749,7 +70758,6 @@ export interface ITenantEditDto {
     cfoConnectionString: string | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
-    id: number | undefined;
 }
 
 export class GetTenantFeaturesEditOutput implements IGetTenantFeaturesEditOutput {

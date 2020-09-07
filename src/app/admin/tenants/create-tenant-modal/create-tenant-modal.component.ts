@@ -2,7 +2,6 @@
 import {
     Component,
     ChangeDetectionStrategy,
-    ElementRef,
     EventEmitter,
     Output,
     OnInit,
@@ -18,7 +17,6 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    CommonLookupServiceProxy,
     CreateTenantInput,
     PasswordComplexitySetting,
     ProfileServiceProxy,
@@ -67,7 +65,6 @@ export class CreateTenantModalComponent implements OnInit {
 
     constructor(
         private tenantService: TenantServiceProxy,
-        private commonLookupService: CommonLookupServiceProxy,
         private profileService: ProfileServiceProxy,
         private tenantsService: TenantsService,
         private notifyService: NotifyService,
