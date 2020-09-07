@@ -1336,7 +1336,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     text: this.l('Delete'),
                                     disabled: this.selectedLeads.length > 1 && !this.isGranted(AppPermissions.CRMBulkUpdates),
-                                    action: this.deleteLeads.bind(this)
+                                    action: this.deleteLeads.bind(this, undefined)
                                 },
                                 {
                                     text: this.l('Toolbar_Merge'),
