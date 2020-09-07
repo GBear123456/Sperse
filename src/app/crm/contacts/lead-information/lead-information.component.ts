@@ -107,6 +107,13 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     { name: 'customField4', lname: 'Request_CustomField4', readonly: true },
                     { name: 'customField5', lname: 'Request_CustomField5', readonly: true }
                 ]
+            },
+            {
+                name: 'Comments',
+                icon: 'f-chat',
+                items: [
+                    { name: 'comments', hideLabel: true }
+                ]
             }
         ],
         [
@@ -133,15 +140,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     { name: 'entryUrl', readonly: true, wide: true },
                     { name: 'clientIp', readonly: true },
                     { name: 'userAgent', readonly: true, wide: true },
-                ]
-            }
-        ],
-        [
-            {
-                name: 'Comments',
-                icon: 'f-chat',
-                items: [
-                    { name: 'comments', hideLabel: true }
                 ]
             }
         ]
