@@ -225,7 +225,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l(this.isCfoAvailable ? 'CFO' : 'ClientDetails_RequestVerification'),
-                                    visible: this.canImpersonate && this.cfoLinkOrVerifyEnabled,
+                                    visible: this.cfoLinkOrVerifyEnabled,
                                     icon: !this.isCfoAvailable ? 'verify-icon' : '',
                                     class: this.isCfoAvailable ? 'icon cfo-icon' : '',
                                     action: () => {
