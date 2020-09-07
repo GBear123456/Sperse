@@ -41,12 +41,11 @@ export class ClientService {
         let contactGroup = groupId == ContactGroup.Partner ? 'Partner' : 'Client';
         ContactsHelper.showConfirmMessage(
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}StatusUpdateConfirmationTitle`),
-            this.ls.l('SendCancellationEmailPlural'),
-            (isConfirmed: boolean, notifyUsers: boolean) => {
+            (isConfirmed: boolean, [ notifyUsers ]: boolean[]) => {
                 if (isConfirmed)
                     this.updateContactStatusesInternal(contactIds, statusId, callback, notifyUsers);
             },
-            statusId === 'I',
+            [ { text: this.ls.l('SendCancellationEmailPlural'), visible: statusId === 'I' } ],
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`)
         );
     }

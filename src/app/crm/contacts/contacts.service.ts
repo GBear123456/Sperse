@@ -508,28 +508,36 @@ export class ContactsService {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (isLead) {
-            ContactsHelper.showConfirmMessage(text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
-                if (isConfirmed) {
-                    this.leadService.deleteLead(entityId, forceDelete).subscribe(() => {
-                        abp.notify.success(this.ls.l('SuccessfullyDeleted'));
-                        this.contactProxy['data']['deleted'] = true;
-                        callback && callback();
-                    });
-                }
-            },
-            canForceDelete);
+            ContactsHelper.showConfirmMessage(
+                text,
+                (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
+                    if (isConfirmed) {
+                        this.leadService.deleteLead(entityId, forceDelete).subscribe(() => {
+                            abp.notify.success(this.ls.l('SuccessfullyDeleted'));
+                            this.contactProxy['data']['deleted'] = true;
+                            callback && callback();
+                        });
+                    }
+                },
+                [ { text: this.ls.l('ForceDelete'), visible: canForceDelete }]
+            );
         } else {
             let text = contactGroup == ContactGroup.Partner ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
             ContactsHelper.showConfirmMessage(
-                text, this.ls.l('ForceDelete'), (isConfirmed, forceDelete) => {
+                text,
+                (isConfirmed: boolean, [ forceDelete, notifyUser ]: boolean[]) => {
                     if (isConfirmed) {
-                        this.contactProxy.deleteContact(entityId, forceDelete).subscribe(() => {
+                        this.contactProxy.deleteContact(entityId, forceDelete, notifyUser).subscribe(() => {
                             abp.notify.success(this.ls.l('SuccessfullyDeleted'));
                             callback && callback();
                         });
                     }
                 },
-                canForceDelete);
+                [
+                    { text: this.ls.l('ForceDelete'), visible: canForceDelete },
+                    { text: this.ls.l('SendCancellationEmail'), visible: true }
+                ]
+            );
         }
     }
 

@@ -134,21 +134,24 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         if (this.selectedOrgUnits && this.selectedOrgUnits.length) {
             this.toggle();
             ContactsHelper.showConfirmMessage(
-                this.ls.l('UpdateForSelected', this.ls.l('Owner'), this.ls.l('Leads')), '',
-            isConfirmed => {
-                if (isConfirmed) {
-                    abp.ui.setBusy();
-                    this.leadProxy.updateSourceOrganizationUnits(new UpdateLeadSourceOrganizationUnitsInput({
-                        leadIds: this.selectedLeads.map(item => item.Id),
-                        sourceOrganizationUnitId: this.selectedOrgUnits[0]
-                    })).pipe(
-                        finalize(() => abp.ui.clearBusy())
-                    ).subscribe(() => {
-                        this.selectedOrgUnits = undefined;
-                        this.notifyService.info(this.ls.l('SavedSuccessfully'));
-                    });
-                }
-            }, false, this.ls.l('SourceUpdateConfirmation', 'Leads'));
+                this.ls.l('UpdateForSelected', this.ls.l('Owner'), this.ls.l('Leads')),
+                (isConfirmed: boolean) => {
+                    if (isConfirmed) {
+                        abp.ui.setBusy();
+                        this.leadProxy.updateSourceOrganizationUnits(new UpdateLeadSourceOrganizationUnitsInput({
+                            leadIds: this.selectedLeads.map(item => item.Id),
+                            sourceOrganizationUnitId: this.selectedOrgUnits[0]
+                        })).pipe(
+                            finalize(() => abp.ui.clearBusy())
+                        ).subscribe(() => {
+                            this.selectedOrgUnits = undefined;
+                            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                        });
+                    }
+                },
+                null,
+                this.ls.l('SourceUpdateConfirmation', 'Leads')
+            );
         }
     }
 

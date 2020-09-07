@@ -1332,12 +1332,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     deleteOrders() {
-        ContactsHelper.showConfirmMessage(this.l('OrdersDeleteWarningMessage'), this.l('ForceDelete'), (isConfirmed, forceDelete) => {
-            if (isConfirmed) {
-                this.deleteOrdersInternal(forceDelete);
-            }
-        },
-        this.permission.isGranted(AppPermissions.CRMForceDeleteEntites));
+        ContactsHelper.showConfirmMessage(
+            this.l('OrdersDeleteWarningMessage'),
+            (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
+                if (isConfirmed) {
+                    this.deleteOrdersInternal(forceDelete);
+                }
+            },
+            [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites)}]
+        );
     }
 
     private deleteOrdersInternal(forceDelete: boolean) {

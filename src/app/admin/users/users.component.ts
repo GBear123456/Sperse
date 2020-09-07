@@ -47,6 +47,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './users.component.html',
@@ -529,19 +530,20 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             return;
         }
 
-        this.message.confirm(
+        ContactsHelper.showConfirmMessage(
             this.l('UserDeleteWarningMessage', user.userName),
-            this.l('AreYouSure'),
-            (isConfirmed) => {
+            (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                 if (isConfirmed) {
-                    this.userServiceProxy.deleteUser(user.id)
+                    this.userServiceProxy.deleteUser(user.id, notifyUser)
                         .subscribe(() => {
                             this.invalidate();
                             this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
                             this.notify.success(this.l('SuccessfullyDeleted'));
                         });
                 }
-            }
+            },
+            [ { text: this.l('SendCancellationEmail'), visible: true }],
+            this.l('AreYouSure')
         );
     }
 

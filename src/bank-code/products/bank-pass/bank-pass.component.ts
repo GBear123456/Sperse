@@ -355,10 +355,9 @@ export class BankPassComponent implements OnInit, OnDestroy {
     deleteContact(contact: ContactDto) {
         ContactsHelper.showConfirmMessage(
             this.ls.l('BankCodeLeadDeleteWarningMessage'),
-            this.ls.l('ForceDelete'),
-            (isConfirmed: boolean, forceDelete: boolean) => {
+            (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
                 if (isConfirmed) {
-                    this.contactServiceProxy.deleteContact(contact.Id, forceDelete).subscribe(() => {
+                    this.contactServiceProxy.deleteContact(contact.Id, forceDelete, false).subscribe(() => {
                         this.refresh();
                         if (this.dataGrid && this.dataGrid.instance) {
                             this.dataGrid.instance.deselectAll();
@@ -367,7 +366,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
                     });
                 }
             },
-            this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites)
+            [{
+                text: this.ls.l('ForceDelete'),
+                visible: this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites)
+            }]
         );
     }
 

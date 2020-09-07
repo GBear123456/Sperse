@@ -1805,8 +1805,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let selectedIds: number[] = leadIds || this.selectedLeads.map(lead => lead.Id);
         ContactsHelper.showConfirmMessage(
             this.l('LeadsDeleteWarningMessage'),
-            this.l('ForceDelete'),
-            (isConfirmed: boolean, forceDelete: boolean) => {
+            (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
                 if (isConfirmed) {
                     let request = this.getDeleteMethod(selectedIds, forceDelete);
                     request.subscribe(() => {
@@ -1819,7 +1818,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     });
                 }
             },
-        this.permission.isGranted(AppPermissions.CRMForceDeleteEntites));
+            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites) } ]
+        );
     }
 
     private getDeleteMethod(selectedIds: number[], forceDelete): Observable<void> {
@@ -1931,8 +1931,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
        if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
             ContactsHelper.showConfirmMessage(
                 this.l('UpdateForSelected', this.l('SourceContactName'), this.l('ContactGroup_' + this.selectedContactGroup)),
-                this.l('ApplyCurrentFrom', this.l('SourceContactName'), this.l('AffiliateCode')),
-                (confirmed: boolean, applyCode: boolean) => {
+                (confirmed: boolean, [ applyCode ]: boolean[]) => {
                     if (confirmed)
                         this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
                             leadIds: this.selectedLeads.map(lead => lead.Id),
@@ -1945,7 +1944,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.processFilterInternal();
                             this.notify.success(this.l('AppliedSuccessfully'));
                         });
-                }, true, this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
+                },
+                [{
+                    text: this.l('ApplyCurrentFrom', this.l('SourceContactName'), this.l('AffiliateCode')),
+                    visible: true
+                }],
+                this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
             );
         }
     }

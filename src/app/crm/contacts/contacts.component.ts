@@ -558,9 +558,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private showConfirmationDialog(status: Status) {
         ContactsHelper.showConfirmMessage(
-            this.l('ClientStatusUpdateConfirmationTitle'),
-            this.l('SendCancellationEmail'),
-            (isConfirmed: boolean, notifyUser: boolean) => {
+            this.l('ClientUpdateStatusWarningMessage'),
+            (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                 if (isConfirmed) {
                     this.updateStatusInternal(status.id, notifyUser)
                         .subscribe(() => {
@@ -576,8 +575,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
                 }
             },
-            status.id === 'I',
-            this.l('ClientUpdateStatusWarningMessage')
+            [ { text: this.l('SendCancellationEmail'), visible: status.id === 'I' } ],
+            this.l('ClientStatusUpdateConfirmationTitle')
         )
     }
 

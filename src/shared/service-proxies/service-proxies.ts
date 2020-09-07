@@ -7931,14 +7931,17 @@ export class ContactServiceProxy {
     /**
      * @id (optional) 
      * @forceDelete (optional) 
+     * @notifyUser (optional) 
      * @return Success
      */
-    deleteContact(id: number | null | undefined, forceDelete: boolean | null | undefined): Observable<void> {
+    deleteContact(id: number | null | undefined, forceDelete: boolean | null | undefined, notifyUser: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/DeleteContact?";
         if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (forceDelete !== undefined)
-            url_ += "forceDelete=" + encodeURIComponent("" + forceDelete) + "&"; 
+            url_ += "ForceDelete=" + encodeURIComponent("" + forceDelete) + "&"; 
+        if (notifyUser !== undefined)
+            url_ += "NotifyUser=" + encodeURIComponent("" + notifyUser) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -34120,12 +34123,15 @@ export class UserServiceProxy {
 
     /**
      * @id (optional) 
+     * @notifyUser (optional) 
      * @return Success
      */
-    deleteUser(id: number | null | undefined): Observable<void> {
+    deleteUser(id: number | null | undefined, notifyUser: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/User/DeleteUser?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (notifyUser !== undefined)
+            url_ += "NotifyUser=" + encodeURIComponent("" + notifyUser) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
