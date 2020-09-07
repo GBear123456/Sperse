@@ -90,16 +90,18 @@ export class UserInboxComponent implements OnDestroy {
         contactsService.invalidateSubscribe(
             () => this.invalidate(), this.ident
         );
-        contactsService.contactInfoSubscribe(res => {
-            let contactId = this.contactId;
-            this.contactInfo = res;
-            this.contactId = res.id;
-            this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-                res.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
-            if (!this.dataSource || contactId != this.contactId)
-                this.initDataSource();
-            else
-                this.initMainToolbar();
+        contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
+            if (contactInfo) {
+                let contactId = this.contactId;
+                this.contactInfo = contactInfo;
+                this.contactId = contactInfo.id;
+                this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
+                    contactInfo.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
+                if (!this.dataSource || contactId != this.contactId)
+                    this.initDataSource();
+                else
+                    this.initMainToolbar();
+            }
         }, this.ident);
     }
 

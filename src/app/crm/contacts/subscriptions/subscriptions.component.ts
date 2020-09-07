@@ -77,11 +77,13 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.contactsService.contactInfoSubscribe(contactInfo => {
-            this.manageAllowed = this.permission.isGranted(AppPermissions.CRMOrdersManage)
-                && this.permission.checkCGPermission(contactInfo.groupId);
-            this.data = this.contactService['data'];
-            this.refreshData();
+        this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
+            if (contactInfo) {
+                this.manageAllowed = this.permission.isGranted(AppPermissions.CRMOrdersManage)
+                    && this.permission.checkCGPermission(contactInfo.groupId);
+                this.data = this.contactService['data'];
+                this.refreshData();
+            }
         }, this.ident);
     }
 
@@ -102,20 +104,19 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     refreshData(forced = false) {
         let subData = this.orderSubscriptionService['data'],
-            groupId = this.data.contactInfo.id;
-        if (!forced && subData && subData.groupId == groupId)
+            contactId = this.data.contactInfo.id;
+        if (!forced && subData && subData.contactId == contactId)
             this.setDataSource(subData.source);
         else
             this.orderSubscriptionService
-                .getSubscriptionHistory(groupId)
+                .getSubscriptionHistory(contactId)
                 /** Filter draft subscriptions */
                 .pipe(map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')))
                 .subscribe(result => {
                     this.orderSubscriptionService['data'] = {
-                        groupId: groupId,
+                        contactId: contactId,
                         source: result
                     };
-
                     this.setDataSource(result);
                 });
     }

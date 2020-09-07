@@ -112,14 +112,16 @@ export class PersonalDetailsComponent implements OnDestroy {
     ) {
         this.getStates(this.person && this.person.citizenship);
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
-            this.personContactInfo = contactInfo.personContactInfo;
-            this.person = contactInfo.personContactInfo.person;
-            this.getStates(this.person && this.person.citizenship);
-            this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
-            setTimeout(() => this.updateToolbar());
-            if (this.contactsService.settingsDialogOpened.value)
-                this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
-            this.changeDetector.markForCheck();
+            if (contactInfo) {
+                this.personContactInfo = contactInfo.personContactInfo;
+                this.person = contactInfo.personContactInfo.person;
+                this.getStates(this.person && this.person.citizenship);
+                this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
+                setTimeout(() => this.updateToolbar());
+                if (this.contactsService.settingsDialogOpened.value)
+                    this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
+                this.changeDetector.markForCheck();
+            }
         }, this.ident);
 
         this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res) => {

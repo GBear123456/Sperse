@@ -183,16 +183,18 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             this.data.leadInfo = leadInfo;
             this.updateSourceContactName();
         }, this.ident);
-        this.contactsService.contactInfoSubscribe(contactInfo => {
-            this.data.contactInfo = contactInfo;
-            this.initToolbarInfo();
-            if (this.contactsService.settingsDialogOpened.value)
-                this.toggleOrgUnitsDialog(false);
-            this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
-            this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
-                contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
-            this.updateSourceContactName();
-            this.loadOrganizationUnits();
+        this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
+            if (contactInfo) {
+                this.data.contactInfo = contactInfo;
+                this.initToolbarInfo();
+                if (this.contactsService.settingsDialogOpened.value)
+                    this.toggleOrgUnitsDialog(false);
+                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+                this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
+                    contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
+                this.updateSourceContactName();
+                this.loadOrganizationUnits();
+            }
         }, this.ident);
         this.invoicesService.settings$.pipe(first()).subscribe(settings => {
             this.invoiceSettings = settings;

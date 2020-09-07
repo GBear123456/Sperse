@@ -141,7 +141,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.onResize();
         this.contactInfoData = this.contactService['data'];
-        this.contactsService.userSubscribe(userId => {
+        this.contactsService.userSubscribe((userId: number) => {
             this.data = this.userService['data'];
             if (this.data.userId = userId)
                 this.loadData();
@@ -254,14 +254,16 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         }
     }
 
-    initUserForEdit(contactInfo) {
-        this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
-            .pipe(
-                finalize(() => {
-                    this.dataIsloading = false;
-                    this.loadingService.finishLoading();
-                })
-            ).subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput));
+    initUserForEdit(contactInfo: ContactInfoDto) {
+        if (contactInfo) {
+            this.userService.getUserForEdit(contactInfo.personContactInfo.userId || undefined)
+                .pipe(
+                    finalize(() => {
+                        this.dataIsloading = false;
+                        this.loadingService.finishLoading();
+                    })
+                ).subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput));
+        }
     }
 
     isPartner() {

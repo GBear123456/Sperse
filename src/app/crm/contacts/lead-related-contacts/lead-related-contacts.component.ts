@@ -117,11 +117,13 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.data.leadInfo = leadInfo;
         }, this.ident);
-        this.contactsService.contactInfoSubscribe(contactInfo => {
-            this.data.contactInfo = contactInfo;
-            this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
-            this.initActionMenuItems();
-            this.initQueryParams();
+        this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
+            if (contactInfo) {
+                this.data.contactInfo = contactInfo;
+                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+                this.initActionMenuItems();
+                this.initQueryParams();
+            }
         }, this.ident);
     }
 

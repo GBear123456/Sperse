@@ -130,7 +130,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             });
         });
 
-        contactsService.contactInfoSubscribe(contactInfo => {
+        contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
                 this.contactInfo = contactInfo;
                 this.affiliateCode.next(contactInfo.affiliateCode);
