@@ -4,8 +4,8 @@
     accessKey="sourceContactList"
     [targetSelector]="targetSelector"
     [title]="showOrgUnits ? '' : ls.l('SourceContact')"
-    [showSelectionControls]="hasBulkUpdatePermission && selectedKeys && !!selectedKeys?.length"
-    [hideButtons]="!hasBulkUpdatePermission || (!selectedKeys || !selectedKeys?.length) || !!selectedKey"
+    [showSelectionControls]="hasBulkUpdatePermission && relatedItemsKeys && !!relatedItemsKeys?.length"
+    [hideButtons]="!hasBulkUpdatePermission || (!relatedItemsKeys || !relatedItemsKeys?.length) || !!selectedKey"
     [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
     [relatedItemsKeys]="relatedItemsKeys"
     [showConfirmation]="false"
@@ -31,7 +31,7 @@
             <organization-units-tree
                 selectionMode="single"
                 [showFilterButton]="true"
-                [showCheckBoxesMode]="hasBulkUpdatePermission && selectedKeys?.length ? 'normal' : 'none'"
+                [showCheckBoxesMode]="hasBulkUpdatePermission && relatedItemsKeys?.length ? 'normal' : 'none'"
                 [hidden]="!showOrgUnits || showContacts"
                 (onFilterApplied)="onOwnerFilter($event)">
             </organization-units-tree>
