@@ -46441,6 +46441,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     jobTitle!: string | undefined;
     assignedToUserId!: number | undefined;
     assignedToUserName!: string | undefined;
+    bankCode!: string | undefined;
     orderCount!: number | undefined;
 
     constructor(data?: IContactInfoForMerge) {
@@ -46489,6 +46490,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.jobTitle = data["jobTitle"];
             this.assignedToUserId = data["assignedToUserId"];
             this.assignedToUserName = data["assignedToUserName"];
+            this.bankCode = data["bankCode"];
             this.orderCount = data["orderCount"];
         }
     }
@@ -46537,6 +46539,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["jobTitle"] = this.jobTitle;
         data["assignedToUserId"] = this.assignedToUserId;
         data["assignedToUserName"] = this.assignedToUserName;
+        data["bankCode"] = this.bankCode;
         data["orderCount"] = this.orderCount;
         return data; 
     }
@@ -46566,6 +46569,7 @@ export interface IContactInfoForMerge {
     jobTitle: string | undefined;
     assignedToUserId: number | undefined;
     assignedToUserName: string | undefined;
+    bankCode: string | undefined;
     orderCount: number | undefined;
 }
 
@@ -47588,6 +47592,7 @@ export interface ICreateOrUpdateContactOutput {
 export enum PreferredProperties {
     _1 = 1, 
     _2 = 2, 
+    _4 = 4, 
 }
 
 export class ContactMergeOptions implements IContactMergeOptions {
@@ -56375,6 +56380,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
     companyGooglePlusUrl!: string | undefined;
     companyCrunchbaseUrl!: string | undefined;
     companyBBBUrl!: string | undefined;
+    companyPinterestUrl!: string | undefined;
+    companyDomainUrl!: string | undefined;
+    companyAlexaUrl!: string | undefined;
+    companyOpenCorporatesUrl!: string | undefined;
+    companyGlassDoorUrl!: string | undefined;
+    companyTrustpilotUrl!: string | undefined;
+    companyFollowersUrl!: string | undefined;
+    companyYoutubeUrl!: string | undefined;
+    companyYelpUrl!: string | undefined;
+    companyRSSUrl!: string | undefined;
+    companyNavUrl!: string | undefined;
+    companyAngelListUrl!: string | undefined;
+    companyCalendlyUrl!: string | undefined;
+    companyOtherLinkUrl!: string | undefined;
     companyLogoUrl!: string | undefined;
     workPhone1!: string | undefined;
     workPhone1Ext!: string | undefined;
@@ -56420,6 +56439,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.companyGooglePlusUrl = data["companyGooglePlusUrl"];
             this.companyCrunchbaseUrl = data["companyCrunchbaseUrl"];
             this.companyBBBUrl = data["companyBBBUrl"];
+            this.companyPinterestUrl = data["companyPinterestUrl"];
+            this.companyDomainUrl = data["companyDomainUrl"];
+            this.companyAlexaUrl = data["companyAlexaUrl"];
+            this.companyOpenCorporatesUrl = data["companyOpenCorporatesUrl"];
+            this.companyGlassDoorUrl = data["companyGlassDoorUrl"];
+            this.companyTrustpilotUrl = data["companyTrustpilotUrl"];
+            this.companyFollowersUrl = data["companyFollowersUrl"];
+            this.companyYoutubeUrl = data["companyYoutubeUrl"];
+            this.companyYelpUrl = data["companyYelpUrl"];
+            this.companyRSSUrl = data["companyRSSUrl"];
+            this.companyNavUrl = data["companyNavUrl"];
+            this.companyAngelListUrl = data["companyAngelListUrl"];
+            this.companyCalendlyUrl = data["companyCalendlyUrl"];
+            this.companyOtherLinkUrl = data["companyOtherLinkUrl"];
             this.companyLogoUrl = data["companyLogoUrl"];
             this.workPhone1 = data["workPhone1"];
             this.workPhone1Ext = data["workPhone1Ext"];
@@ -56465,6 +56498,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["companyGooglePlusUrl"] = this.companyGooglePlusUrl;
         data["companyCrunchbaseUrl"] = this.companyCrunchbaseUrl;
         data["companyBBBUrl"] = this.companyBBBUrl;
+        data["companyPinterestUrl"] = this.companyPinterestUrl;
+        data["companyDomainUrl"] = this.companyDomainUrl;
+        data["companyAlexaUrl"] = this.companyAlexaUrl;
+        data["companyOpenCorporatesUrl"] = this.companyOpenCorporatesUrl;
+        data["companyGlassDoorUrl"] = this.companyGlassDoorUrl;
+        data["companyTrustpilotUrl"] = this.companyTrustpilotUrl;
+        data["companyFollowersUrl"] = this.companyFollowersUrl;
+        data["companyYoutubeUrl"] = this.companyYoutubeUrl;
+        data["companyYelpUrl"] = this.companyYelpUrl;
+        data["companyRSSUrl"] = this.companyRSSUrl;
+        data["companyNavUrl"] = this.companyNavUrl;
+        data["companyAngelListUrl"] = this.companyAngelListUrl;
+        data["companyCalendlyUrl"] = this.companyCalendlyUrl;
+        data["companyOtherLinkUrl"] = this.companyOtherLinkUrl;
         data["companyLogoUrl"] = this.companyLogoUrl;
         data["workPhone1"] = this.workPhone1;
         data["workPhone1Ext"] = this.workPhone1Ext;
@@ -56503,6 +56550,20 @@ export interface IImportBusinessInput {
     companyGooglePlusUrl: string | undefined;
     companyCrunchbaseUrl: string | undefined;
     companyBBBUrl: string | undefined;
+    companyPinterestUrl: string | undefined;
+    companyDomainUrl: string | undefined;
+    companyAlexaUrl: string | undefined;
+    companyOpenCorporatesUrl: string | undefined;
+    companyGlassDoorUrl: string | undefined;
+    companyTrustpilotUrl: string | undefined;
+    companyFollowersUrl: string | undefined;
+    companyYoutubeUrl: string | undefined;
+    companyYelpUrl: string | undefined;
+    companyRSSUrl: string | undefined;
+    companyNavUrl: string | undefined;
+    companyAngelListUrl: string | undefined;
+    companyCalendlyUrl: string | undefined;
+    companyOtherLinkUrl: string | undefined;
     companyLogoUrl: string | undefined;
     workPhone1: string | undefined;
     workPhone1Ext: string | undefined;
