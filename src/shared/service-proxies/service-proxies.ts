@@ -48943,6 +48943,62 @@ export enum CommunicationMessageSendingStatus {
     Sent = "Sent", 
 }
 
+export enum CommunicationMessageDeliveryStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+}
+
+export class RecepientInfo implements IRecepientInfo {
+    email!: string | undefined;
+    deliveryStatus!: CommunicationMessageDeliveryStatus | undefined;
+    deliveryDate!: moment.Moment | undefined;
+    openDate!: moment.Moment | undefined;
+
+    constructor(data?: IRecepientInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.email = data["email"];
+            this.deliveryStatus = data["deliveryStatus"];
+            this.deliveryDate = data["deliveryDate"] ? moment(data["deliveryDate"].toString()) : <any>undefined;
+            this.openDate = data["openDate"] ? moment(data["openDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RecepientInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecepientInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["deliveryStatus"] = this.deliveryStatus;
+        data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
+        data["openDate"] = this.openDate ? this.openDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IRecepientInfo {
+    email: string | undefined;
+    deliveryStatus: CommunicationMessageDeliveryStatus | undefined;
+    deliveryDate: moment.Moment | undefined;
+    openDate: moment.Moment | undefined;
+}
+
 export class MessageDto implements IMessageDto {
     body!: string | undefined;
     attachments!: AttachmentDto[] | undefined;
@@ -48959,6 +49015,7 @@ export class MessageDto implements IMessageDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageSendingStatus | undefined;
+    recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -48993,6 +49050,11 @@ export class MessageDto implements IMessageDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            if (data["recepients"] && data["recepients"].constructor === Array) {
+                this.recepients = [];
+                for (let item of data["recepients"])
+                    this.recepients.push(RecepientInfo.fromJS(item));
+            }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
@@ -49027,6 +49089,11 @@ export class MessageDto implements IMessageDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        if (this.recepients && this.recepients.constructor === Array) {
+            data["recepients"] = [];
+            for (let item of this.recepients)
+                data["recepients"].push(item.toJSON());
+        }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
@@ -49050,6 +49117,7 @@ export interface IMessageDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageSendingStatus | undefined;
+    recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
@@ -49069,6 +49137,7 @@ export class MessageListDto implements IMessageListDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageSendingStatus | undefined;
+    recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -49097,6 +49166,11 @@ export class MessageListDto implements IMessageListDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            if (data["recepients"] && data["recepients"].constructor === Array) {
+                this.recepients = [];
+                for (let item of data["recepients"])
+                    this.recepients.push(RecepientInfo.fromJS(item));
+            }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
@@ -49125,6 +49199,11 @@ export class MessageListDto implements IMessageListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        if (this.recepients && this.recepients.constructor === Array) {
+            data["recepients"] = [];
+            for (let item of this.recepients)
+                data["recepients"].push(item.toJSON());
+        }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
@@ -49146,6 +49225,7 @@ export interface IMessageListDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageSendingStatus | undefined;
+    recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
