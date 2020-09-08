@@ -151,12 +151,13 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         this.totalsData$ = combineLatest(
             this.dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
             this.isCumulative$,
+            this.dashboardWidgetsService.contactId$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
-            switchMap(([period, isCumulative, ]: [TotalsByPeriodModel, boolean, null]) => {
-                return this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
+            switchMap(([period, isCumulative, contactId, ]: [TotalsByPeriodModel, boolean, number, null]) => {
+                return this.loadCustomersAndLeadsStats(period, isCumulative, contactId).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading())
                 );
@@ -236,12 +237,12 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         return this.selectedPeriod;
     }
 
-    private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
+    private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean, contactId: number): Observable<GetCustomerAndLeadStatsOutput[]> {
         return this.dashboardServiceProxy.getCustomerAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
             period.amount,
             isCumulative,
-            undefined
+            contactId
         );
     }
 

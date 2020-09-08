@@ -11,14 +11,20 @@ import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, ReplaySubject } from 'rxjs';
 import { filter, first, takeUntil, map } from 'rxjs/operators';
 
 /** Application imports */
+import { AppStore } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
+import {
+    OrganizationUnitsStoreActions,
+    OrganizationUnitsStoreSelectors
+} from '@app/crm/store';
+import { ContactGroup } from '@shared/AppEnums';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
@@ -29,6 +35,15 @@ import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
+import { SourceContactFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
@@ -65,6 +80,33 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     localization = AppConsts.localization.CRMLocalizationSourceName;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
+    filterModelOrgUnit: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'SourceOrganizationUnitId',
+        hidden: this.appSessionService.userIsMember,
+        field: 'SourceOrganizationUnitId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.appStore$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                    nameField: 'displayName',
+                    keyExpr: 'id'
+                })
+        }
+    });
+    filterModelSource: FilterModel = new FilterModel({
+        component: FilterSourceComponent,
+        caption: 'Source',
+        hidden: this.appSessionService.userIsMember,
+        items: {
+            element: new SourceContactFilterModel({
+                ls: this.ls
+            })
+        }
+    });
+
+    private filters: FilterModel[] = this.getFilters();
+
     constructor(
         private router: Router,
         private appService: AppService,
@@ -73,12 +115,14 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private periodService: PeriodService,
         private store$: Store<RootStore.State>,
+        private appStore$: Store<AppStore.State>,
         private reuseService: RouteReuseStrategy,
         private cacheService: CacheService,
         private lifeCycleSubject: LifecycleSubjectsService,
         private dashboardServiceProxy: DashboardServiceProxy,
         private activatedRoute: ActivatedRoute,
         private leftMenuService: LeftMenuService,
+        private filtersService: FiltersService,
         public ui: AppUiCustomizationService,
         public permission: AppPermissionService,
         public cacheHelper: CacheHelper,
@@ -86,6 +130,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         public dialog: MatDialog
     ) {
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
     }
 
     ngOnInit() {
@@ -100,6 +145,48 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     ngAfterViewInit(): void {
         this.activate();
+    }
+
+    private getFilters() {
+        return [
+            new FilterModel({
+                caption: 'ContactGroup',
+                component: FilterRadioGroupComponent,
+                items: {
+                    element: new FilterRadioGroupModel({
+                        value: ContactGroup.Client,
+                        list: Object.keys(ContactGroup).map(item => {
+                            return {
+                                id: ContactGroup[item],
+                                name: this.ls.l('ContactGroup_' + item)
+                            };
+                        })
+                    })
+                }
+
+            }),
+            this.filterModelOrgUnit,
+            this.filterModelSource
+        ];
+    }
+
+    initFilterConfig() {
+        if (this.filters) {
+            this.filtersService.setup(this.filters);
+            this.filtersService.checkIfAnySelected();
+        } else {
+            this.filtersService.setup(
+                this.filters = this.getFilters()
+            );
+        }
+
+        this.filtersService.apply(filters => {
+            filters.forEach(filter => {
+                if (filter.caption == 'Source')
+                    this.dashboardWidgetsService.setContactIdForTotals(
+                        filter.items.element.value[0].value || undefined);
+            });
+        });
     }
 
     refresh(refreshLeadsAndClients = true) {
@@ -167,6 +254,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.subscribeToRefreshParam();
         this.refreshClientsByRegion();
         this.refreshTotalsBySource();
+        this.initFilterConfig();
+        this.ui.overflowHidden(true);
+        this.appService.toolbarIsHidden.next(true);
         this.changeDetectorRef.detectChanges();
     }
 
@@ -201,6 +291,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     deactivate() {
+        this.ui.overflowHidden();
+        this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
     }
 }

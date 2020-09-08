@@ -66,6 +66,10 @@
                 <div><i class="icon left-menu" [ngClass]="toggleLeftMenuButtonIconClass$ | async"></i></div>
                 <span class="text">{{ toggleLeftMenuButtonText$ | async }}</span>
             </li>
+            <li *ngIf="showToggleFilterMenuButton" (click)="toggleLeftFilterDialog($event)">
+                <div><span class="icon left-menu dx-icon-filter"></span></div>
+                <span class="text">{{ toggleFilterMenuButtonText$ | async }}</span>
+            </li>
         </ul>
     </div>
 </ng-template>

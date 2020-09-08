@@ -20,6 +20,7 @@ import { map, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { HeadLineConfigModel } from './headline.model';
+import { FiltersService } from '@shared/filters/filters.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppService } from '@app/app.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
@@ -48,6 +49,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() showToggleFullScreenButton = false;
     @Input() showToggleTotalsButton = false;
     @Input() showToggleColumnSelectorButton = false;
+    @Input() showToggleFilterMenuButton = false;
     @Input() showPrintButton = false;
     @Input() showToggleLeftMenuButton = false;
     @Input() toggleButtonPosition: 'left' | 'right' = 'left';
@@ -69,8 +71,12 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         map((collapsed: boolean) => collapsed ? this.ls.l('ShowLeftSidebar') : this.ls.l('HideLeftSidebar'))
     );
     toggleLeftMenuButtonIconClass$: Observable<string> = this.leftMenuService.collapsed$.pipe(
-        map((collapsed: boolean) => 'dx-icon-' + (collapsed ? 'show' : 'hide') +'panel')
+        map((collapsed: boolean) => 'dx-icon-' + (collapsed ? 'show' : 'hide') + 'panel')
     );
+    toggleFilterMenuButtonText$: Observable<string> = this.filtersService.filterToggle$.pipe(
+        map((collapsed: boolean) => this.ls.l((collapsed ? 'Hide' : 'Show') + 'FilterSidebar'))
+    );
+
     showCompactView = false;
     fullScreenButtonText$ = this.fullScreenService.isFullScreenMode$.pipe(
         map((isFullScreenMode: boolean) => {
@@ -84,6 +90,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     constructor(
         injector: Injector,
         private appService: AppService,
+        private filtersService: FiltersService,
         private fullScreenService: FullScreenService,
         private lifecycleService: LifecycleSubjectsService,
         private leftMenuService: LeftMenuService,
@@ -159,6 +166,12 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     toggleTotals() {
         this.showTotals = !this.showTotals;
         this.onToggleTotals.emit();
+    }
+
+    toggleLeftFilterDialog(event) {
+        this.filtersService.fixed =
+            !this.filtersService.enabled;
+        this.filtersService.toggle();
     }
 
     ngOnDestroy() {

@@ -63,14 +63,15 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.data$ = combineLatest(
             this.dashboardWidgetsService.period$,
-            this.dashboardWidgetsService.refresh$
+            this.dashboardWidgetsService.refresh$,
+            this.dashboardWidgetsService.contactId$
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([period, refresh]: [PeriodModel, null]) => this.dashboardServiceProxy.getContactsByRegion(
+            switchMap(([period, refresh, contactId]: [PeriodModel, null, number]) => this.dashboardServiceProxy.getContactsByRegion(
                 period && period.from,
                 period && period.to,
-                undefined
+                contactId
             ).pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { FilterComponent } from '../models/filter-component';
 import capitalize from 'lodash/capitalize';
+import { FilterComponent } from '../models/filter-component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -12,10 +12,11 @@ export class FilterInputsComponent implements FilterComponent {
     apply: (event) => void;
     capitalize = capitalize;
 
-    constructor(public ls: AppLocalizationService) {}
+    constructor(
+        public ls: AppLocalizationService
+    ) {}
 
     getItems(): string[] {
-      return Object.keys(this.items);
+        return Object.keys(this.items);
     }
-
 }
