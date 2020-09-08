@@ -46441,6 +46441,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     jobTitle!: string | undefined;
     assignedToUserId!: number | undefined;
     assignedToUserName!: string | undefined;
+    bankCode!: string | undefined;
     orderCount!: number | undefined;
 
     constructor(data?: IContactInfoForMerge) {
@@ -46489,6 +46490,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.jobTitle = data["jobTitle"];
             this.assignedToUserId = data["assignedToUserId"];
             this.assignedToUserName = data["assignedToUserName"];
+            this.bankCode = data["bankCode"];
             this.orderCount = data["orderCount"];
         }
     }
@@ -46537,6 +46539,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["jobTitle"] = this.jobTitle;
         data["assignedToUserId"] = this.assignedToUserId;
         data["assignedToUserName"] = this.assignedToUserName;
+        data["bankCode"] = this.bankCode;
         data["orderCount"] = this.orderCount;
         return data; 
     }
@@ -46566,6 +46569,7 @@ export interface IContactInfoForMerge {
     jobTitle: string | undefined;
     assignedToUserId: number | undefined;
     assignedToUserName: string | undefined;
+    bankCode: string | undefined;
     orderCount: number | undefined;
 }
 
@@ -47588,6 +47592,7 @@ export interface ICreateOrUpdateContactOutput {
 export enum PreferredProperties {
     _1 = 1, 
     _2 = 2, 
+    _4 = 4, 
 }
 
 export class ContactMergeOptions implements IContactMergeOptions {
@@ -48938,6 +48943,62 @@ export enum CommunicationMessageSendingStatus {
     Sent = "Sent", 
 }
 
+export enum CommunicationMessageDeliveryStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+}
+
+export class RecepientInfo implements IRecepientInfo {
+    email!: string | undefined;
+    deliveryStatus!: CommunicationMessageDeliveryStatus | undefined;
+    deliveryDate!: moment.Moment | undefined;
+    openDate!: moment.Moment | undefined;
+
+    constructor(data?: IRecepientInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.email = data["email"];
+            this.deliveryStatus = data["deliveryStatus"];
+            this.deliveryDate = data["deliveryDate"] ? moment(data["deliveryDate"].toString()) : <any>undefined;
+            this.openDate = data["openDate"] ? moment(data["openDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RecepientInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecepientInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["deliveryStatus"] = this.deliveryStatus;
+        data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
+        data["openDate"] = this.openDate ? this.openDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IRecepientInfo {
+    email: string | undefined;
+    deliveryStatus: CommunicationMessageDeliveryStatus | undefined;
+    deliveryDate: moment.Moment | undefined;
+    openDate: moment.Moment | undefined;
+}
+
 export class MessageDto implements IMessageDto {
     body!: string | undefined;
     attachments!: AttachmentDto[] | undefined;
@@ -48954,6 +49015,7 @@ export class MessageDto implements IMessageDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageSendingStatus | undefined;
+    recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -48988,6 +49050,11 @@ export class MessageDto implements IMessageDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            if (data["recepients"] && data["recepients"].constructor === Array) {
+                this.recepients = [];
+                for (let item of data["recepients"])
+                    this.recepients.push(RecepientInfo.fromJS(item));
+            }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
@@ -49022,6 +49089,11 @@ export class MessageDto implements IMessageDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        if (this.recepients && this.recepients.constructor === Array) {
+            data["recepients"] = [];
+            for (let item of this.recepients)
+                data["recepients"].push(item.toJSON());
+        }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
@@ -49045,6 +49117,7 @@ export interface IMessageDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageSendingStatus | undefined;
+    recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
@@ -49064,6 +49137,7 @@ export class MessageListDto implements IMessageListDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageSendingStatus | undefined;
+    recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -49092,6 +49166,11 @@ export class MessageListDto implements IMessageListDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            if (data["recepients"] && data["recepients"].constructor === Array) {
+                this.recepients = [];
+                for (let item of data["recepients"])
+                    this.recepients.push(RecepientInfo.fromJS(item));
+            }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
@@ -49120,6 +49199,11 @@ export class MessageListDto implements IMessageListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        if (this.recepients && this.recepients.constructor === Array) {
+            data["recepients"] = [];
+            for (let item of this.recepients)
+                data["recepients"].push(item.toJSON());
+        }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
@@ -49141,6 +49225,7 @@ export interface IMessageListDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageSendingStatus | undefined;
+    recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
@@ -56375,6 +56460,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
     companyGooglePlusUrl!: string | undefined;
     companyCrunchbaseUrl!: string | undefined;
     companyBBBUrl!: string | undefined;
+    companyPinterestUrl!: string | undefined;
+    companyDomainUrl!: string | undefined;
+    companyAlexaUrl!: string | undefined;
+    companyOpenCorporatesUrl!: string | undefined;
+    companyGlassDoorUrl!: string | undefined;
+    companyTrustpilotUrl!: string | undefined;
+    companyFollowersUrl!: string | undefined;
+    companyYoutubeUrl!: string | undefined;
+    companyYelpUrl!: string | undefined;
+    companyRSSUrl!: string | undefined;
+    companyNavUrl!: string | undefined;
+    companyAngelListUrl!: string | undefined;
+    companyCalendlyUrl!: string | undefined;
+    companyOtherLinkUrl!: string | undefined;
     companyLogoUrl!: string | undefined;
     workPhone1!: string | undefined;
     workPhone1Ext!: string | undefined;
@@ -56420,6 +56519,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.companyGooglePlusUrl = data["companyGooglePlusUrl"];
             this.companyCrunchbaseUrl = data["companyCrunchbaseUrl"];
             this.companyBBBUrl = data["companyBBBUrl"];
+            this.companyPinterestUrl = data["companyPinterestUrl"];
+            this.companyDomainUrl = data["companyDomainUrl"];
+            this.companyAlexaUrl = data["companyAlexaUrl"];
+            this.companyOpenCorporatesUrl = data["companyOpenCorporatesUrl"];
+            this.companyGlassDoorUrl = data["companyGlassDoorUrl"];
+            this.companyTrustpilotUrl = data["companyTrustpilotUrl"];
+            this.companyFollowersUrl = data["companyFollowersUrl"];
+            this.companyYoutubeUrl = data["companyYoutubeUrl"];
+            this.companyYelpUrl = data["companyYelpUrl"];
+            this.companyRSSUrl = data["companyRSSUrl"];
+            this.companyNavUrl = data["companyNavUrl"];
+            this.companyAngelListUrl = data["companyAngelListUrl"];
+            this.companyCalendlyUrl = data["companyCalendlyUrl"];
+            this.companyOtherLinkUrl = data["companyOtherLinkUrl"];
             this.companyLogoUrl = data["companyLogoUrl"];
             this.workPhone1 = data["workPhone1"];
             this.workPhone1Ext = data["workPhone1Ext"];
@@ -56465,6 +56578,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["companyGooglePlusUrl"] = this.companyGooglePlusUrl;
         data["companyCrunchbaseUrl"] = this.companyCrunchbaseUrl;
         data["companyBBBUrl"] = this.companyBBBUrl;
+        data["companyPinterestUrl"] = this.companyPinterestUrl;
+        data["companyDomainUrl"] = this.companyDomainUrl;
+        data["companyAlexaUrl"] = this.companyAlexaUrl;
+        data["companyOpenCorporatesUrl"] = this.companyOpenCorporatesUrl;
+        data["companyGlassDoorUrl"] = this.companyGlassDoorUrl;
+        data["companyTrustpilotUrl"] = this.companyTrustpilotUrl;
+        data["companyFollowersUrl"] = this.companyFollowersUrl;
+        data["companyYoutubeUrl"] = this.companyYoutubeUrl;
+        data["companyYelpUrl"] = this.companyYelpUrl;
+        data["companyRSSUrl"] = this.companyRSSUrl;
+        data["companyNavUrl"] = this.companyNavUrl;
+        data["companyAngelListUrl"] = this.companyAngelListUrl;
+        data["companyCalendlyUrl"] = this.companyCalendlyUrl;
+        data["companyOtherLinkUrl"] = this.companyOtherLinkUrl;
         data["companyLogoUrl"] = this.companyLogoUrl;
         data["workPhone1"] = this.workPhone1;
         data["workPhone1Ext"] = this.workPhone1Ext;
@@ -56503,6 +56630,20 @@ export interface IImportBusinessInput {
     companyGooglePlusUrl: string | undefined;
     companyCrunchbaseUrl: string | undefined;
     companyBBBUrl: string | undefined;
+    companyPinterestUrl: string | undefined;
+    companyDomainUrl: string | undefined;
+    companyAlexaUrl: string | undefined;
+    companyOpenCorporatesUrl: string | undefined;
+    companyGlassDoorUrl: string | undefined;
+    companyTrustpilotUrl: string | undefined;
+    companyFollowersUrl: string | undefined;
+    companyYoutubeUrl: string | undefined;
+    companyYelpUrl: string | undefined;
+    companyRSSUrl: string | undefined;
+    companyNavUrl: string | undefined;
+    companyAngelListUrl: string | undefined;
+    companyCalendlyUrl: string | undefined;
+    companyOtherLinkUrl: string | undefined;
     companyLogoUrl: string | undefined;
     workPhone1: string | undefined;
     workPhone1Ext: string | undefined;
@@ -70589,16 +70730,18 @@ export interface ITenantEditEditionDto {
 }
 
 export class CreateTenantInput implements ICreateTenantInput {
-    tenancyName!: string;
-    name!: string;
     adminEmailAddress!: string;
     adminPassword!: string | undefined;
+    adminFirstName!: string | undefined;
+    adminLastName!: string | undefined;
+    shouldChangePasswordOnNextLogin!: boolean | undefined;
+    sendActivationEmail!: boolean | undefined;
+    tenancyName!: string;
+    name!: string;
     connectionString!: string | undefined;
     crmConnectionString!: string | undefined;
     memberDbConnectionString!: string | undefined;
     cfoConnectionString!: string | undefined;
-    shouldChangePasswordOnNextLogin!: boolean | undefined;
-    sendActivationEmail!: boolean | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
 
@@ -70613,16 +70756,18 @@ export class CreateTenantInput implements ICreateTenantInput {
 
     init(data?: any) {
         if (data) {
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
             this.adminEmailAddress = data["adminEmailAddress"];
             this.adminPassword = data["adminPassword"];
+            this.adminFirstName = data["adminFirstName"];
+            this.adminLastName = data["adminLastName"];
+            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
+            this.sendActivationEmail = data["sendActivationEmail"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
             this.connectionString = data["connectionString"];
             this.crmConnectionString = data["crmConnectionString"];
             this.memberDbConnectionString = data["memberDbConnectionString"];
             this.cfoConnectionString = data["cfoConnectionString"];
-            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
-            this.sendActivationEmail = data["sendActivationEmail"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -70641,16 +70786,18 @@ export class CreateTenantInput implements ICreateTenantInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
         data["adminEmailAddress"] = this.adminEmailAddress;
         data["adminPassword"] = this.adminPassword;
+        data["adminFirstName"] = this.adminFirstName;
+        data["adminLastName"] = this.adminLastName;
+        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
+        data["sendActivationEmail"] = this.sendActivationEmail;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
         data["connectionString"] = this.connectionString;
         data["crmConnectionString"] = this.crmConnectionString;
         data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["cfoConnectionString"] = this.cfoConnectionString;
-        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
-        data["sendActivationEmail"] = this.sendActivationEmail;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -70662,21 +70809,24 @@ export class CreateTenantInput implements ICreateTenantInput {
 }
 
 export interface ICreateTenantInput {
-    tenancyName: string;
-    name: string;
     adminEmailAddress: string;
     adminPassword: string | undefined;
+    adminFirstName: string | undefined;
+    adminLastName: string | undefined;
+    shouldChangePasswordOnNextLogin: boolean | undefined;
+    sendActivationEmail: boolean | undefined;
+    tenancyName: string;
+    name: string;
     connectionString: string | undefined;
     crmConnectionString: string | undefined;
     memberDbConnectionString: string | undefined;
     cfoConnectionString: string | undefined;
-    shouldChangePasswordOnNextLogin: boolean | undefined;
-    sendActivationEmail: boolean | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
 }
 
 export class TenantEditDto implements ITenantEditDto {
+    id!: number;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
@@ -70685,7 +70835,6 @@ export class TenantEditDto implements ITenantEditDto {
     cfoConnectionString!: string | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
-    id!: number | undefined;
 
     constructor(data?: ITenantEditDto) {
         if (data) {
@@ -70698,6 +70847,7 @@ export class TenantEditDto implements ITenantEditDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
@@ -70710,7 +70860,6 @@ export class TenantEditDto implements ITenantEditDto {
                     this.editions.push(TenantEditEditionDto.fromJS(item));
             }
             this.isActive = data["isActive"];
-            this.id = data["id"];
         }
     }
 
@@ -70723,6 +70872,7 @@ export class TenantEditDto implements ITenantEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -70735,12 +70885,12 @@ export class TenantEditDto implements ITenantEditDto {
                 data["editions"].push(item.toJSON());
         }
         data["isActive"] = this.isActive;
-        data["id"] = this.id;
         return data; 
     }
 }
 
 export interface ITenantEditDto {
+    id: number;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
@@ -70749,7 +70899,6 @@ export interface ITenantEditDto {
     cfoConnectionString: string | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
-    id: number | undefined;
 }
 
 export class GetTenantFeaturesEditOutput implements IGetTenantFeaturesEditOutput {

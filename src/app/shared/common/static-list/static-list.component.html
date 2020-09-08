@@ -34,7 +34,7 @@
                      [searchEnabled]="searchEnabled && !customSearchEnabled"
                      [searchExpr]="searchExprType"
                      [searchTimeout]="1000"
-                     [selectionMode]="selectionMode || (selectedKeys?.length ? 'single': 'none')"
+                     [selectionMode]="selectionMode || (selectedKeys?.length || !selectionDisabled ? 'single': 'none')"
                      [showSelectionControls]="showSelectionControls"
                      [dataSource]="list"
                      keyExpr="id"
