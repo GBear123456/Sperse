@@ -60,6 +60,11 @@ input:-webkit-autofill:active  {
         @media all and (min-width: 992px) {
             left: 30px;
         }
+
+        @media all and (max-width: 768px) {
+            left: 50%;
+            transform: translateX(-50%);
+        }
     }
 
     .right-side {
@@ -86,7 +91,7 @@ input:-webkit-autofill:active  {
         }
 
         @media all and (max-width: 768px) {
-            padding-bottom: 40px;
+            padding: 40px 15px;
         }
     }
 
@@ -112,6 +117,23 @@ input:-webkit-autofill:active  {
             line-height: 1.26;
             letter-spacing: 0.14px;
             color: @grey-light;
+        }
+
+        @media all and (max-width: 768px) {
+            .title,
+            .subtitle {
+                text-align: center;
+            }
+        }
+
+        @media all and (max-width: 450px) {
+            .title {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                display: none;
+            }
         }
     }
 
@@ -240,6 +262,11 @@ input:-webkit-autofill:active  {
             background-size: 100px 30px;
             background-repeat: no-repeat;
             display: inline-block;
+        }
+
+        @media all and (max-width: 768px) {
+            margin: 0 auto;
+            bottom: 0;
         }
     }
 }
