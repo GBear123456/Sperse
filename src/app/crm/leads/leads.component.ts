@@ -1906,6 +1906,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
+            this.filterModelStages.clearFilterItems();
+            this.filterModelStages.isSelected = false;
+
             this._router.navigate([], {
                 queryParamsHandling: 'merge',
                 relativeTo: this._activatedRoute,
@@ -1914,6 +1917,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     dataLayoutType: this.dataLayoutType.value
                 }
             });
+
             this.headlineButtons[0].label = this.getHeadlineButtonName(event.value);
             this.cacheService.set(this.cacheKey, event.value);
             this.createButtonEnabledSet();
