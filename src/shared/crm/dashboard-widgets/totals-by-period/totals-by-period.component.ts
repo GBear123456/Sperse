@@ -240,6 +240,8 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean, contactId: number): Observable<GetCustomerAndLeadStatsOutput[]> {
         return this.dashboardServiceProxy.getCustomerAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
+            undefined,
+            undefined,
             period.amount,
             isCumulative,
             contactId
