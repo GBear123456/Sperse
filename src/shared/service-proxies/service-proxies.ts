@@ -8873,6 +8873,61 @@ export class ContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    isContactInfoAvailable(contactId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/IsContactInfoAvailable?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsContactInfoAvailable(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsContactInfoAvailable(<any>response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<boolean>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processIsContactInfoAvailable(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(<any>null);
+    }
 }
 
 @Injectable()
@@ -12396,15 +12451,21 @@ export class DashboardServiceProxy {
 
     /**
      * @groupBy (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
      * @periodCount (optional) 
      * @isCumulative (optional) 
      * @sourceContactId (optional) 
      * @return Success
      */
-    getCustomerAndLeadStats(groupBy: GroupByPeriod | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, sourceContactId: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getCustomerAndLeadStats(groupBy: GroupByPeriod | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, sourceContactId: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
         if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
         if (periodCount !== undefined)
             url_ += "PeriodCount=" + encodeURIComponent("" + periodCount) + "&"; 
         if (isCumulative !== undefined)
@@ -46441,6 +46502,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     jobTitle!: string | undefined;
     assignedToUserId!: number | undefined;
     assignedToUserName!: string | undefined;
+    bankCode!: string | undefined;
     orderCount!: number | undefined;
 
     constructor(data?: IContactInfoForMerge) {
@@ -46489,6 +46551,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.jobTitle = data["jobTitle"];
             this.assignedToUserId = data["assignedToUserId"];
             this.assignedToUserName = data["assignedToUserName"];
+            this.bankCode = data["bankCode"];
             this.orderCount = data["orderCount"];
         }
     }
@@ -46537,6 +46600,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["jobTitle"] = this.jobTitle;
         data["assignedToUserId"] = this.assignedToUserId;
         data["assignedToUserName"] = this.assignedToUserName;
+        data["bankCode"] = this.bankCode;
         data["orderCount"] = this.orderCount;
         return data; 
     }
@@ -46566,6 +46630,7 @@ export interface IContactInfoForMerge {
     jobTitle: string | undefined;
     assignedToUserId: number | undefined;
     assignedToUserName: string | undefined;
+    bankCode: string | undefined;
     orderCount: number | undefined;
 }
 
@@ -47588,6 +47653,7 @@ export interface ICreateOrUpdateContactOutput {
 export enum PreferredProperties {
     _1 = 1, 
     _2 = 2, 
+    _4 = 4, 
 }
 
 export class ContactMergeOptions implements IContactMergeOptions {
@@ -48938,6 +49004,62 @@ export enum CommunicationMessageSendingStatus {
     Sent = "Sent", 
 }
 
+export enum CommunicationMessageDeliveryStatus {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+}
+
+export class RecepientInfo implements IRecepientInfo {
+    email!: string | undefined;
+    deliveryStatus!: CommunicationMessageDeliveryStatus | undefined;
+    deliveryDate!: moment.Moment | undefined;
+    openDate!: moment.Moment | undefined;
+
+    constructor(data?: IRecepientInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.email = data["email"];
+            this.deliveryStatus = data["deliveryStatus"];
+            this.deliveryDate = data["deliveryDate"] ? moment(data["deliveryDate"].toString()) : <any>undefined;
+            this.openDate = data["openDate"] ? moment(data["openDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RecepientInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecepientInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["deliveryStatus"] = this.deliveryStatus;
+        data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
+        data["openDate"] = this.openDate ? this.openDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IRecepientInfo {
+    email: string | undefined;
+    deliveryStatus: CommunicationMessageDeliveryStatus | undefined;
+    deliveryDate: moment.Moment | undefined;
+    openDate: moment.Moment | undefined;
+}
+
 export class MessageDto implements IMessageDto {
     body!: string | undefined;
     attachments!: AttachmentDto[] | undefined;
@@ -48954,6 +49076,7 @@ export class MessageDto implements IMessageDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageSendingStatus | undefined;
+    recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -48988,6 +49111,11 @@ export class MessageDto implements IMessageDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            if (data["recepients"] && data["recepients"].constructor === Array) {
+                this.recepients = [];
+                for (let item of data["recepients"])
+                    this.recepients.push(RecepientInfo.fromJS(item));
+            }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
@@ -49022,6 +49150,11 @@ export class MessageDto implements IMessageDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        if (this.recepients && this.recepients.constructor === Array) {
+            data["recepients"] = [];
+            for (let item of this.recepients)
+                data["recepients"].push(item.toJSON());
+        }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
@@ -49045,6 +49178,7 @@ export interface IMessageDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageSendingStatus | undefined;
+    recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
@@ -49064,6 +49198,7 @@ export class MessageListDto implements IMessageListDto {
     creationTime!: moment.Moment | undefined;
     deliveryType!: CommunicationMessageDeliveryType | undefined;
     status!: CommunicationMessageSendingStatus | undefined;
+    recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
@@ -49092,6 +49227,11 @@ export class MessageListDto implements IMessageListDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.deliveryType = data["deliveryType"];
             this.status = data["status"];
+            if (data["recepients"] && data["recepients"].constructor === Array) {
+                this.recepients = [];
+                for (let item of data["recepients"])
+                    this.recepients.push(RecepientInfo.fromJS(item));
+            }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
@@ -49120,6 +49260,11 @@ export class MessageListDto implements IMessageListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["deliveryType"] = this.deliveryType;
         data["status"] = this.status;
+        if (this.recepients && this.recepients.constructor === Array) {
+            data["recepients"] = [];
+            for (let item of this.recepients)
+                data["recepients"].push(item.toJSON());
+        }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
@@ -49141,6 +49286,7 @@ export interface IMessageListDto {
     creationTime: moment.Moment | undefined;
     deliveryType: CommunicationMessageDeliveryType | undefined;
     status: CommunicationMessageSendingStatus | undefined;
+    recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
@@ -56375,6 +56521,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
     companyGooglePlusUrl!: string | undefined;
     companyCrunchbaseUrl!: string | undefined;
     companyBBBUrl!: string | undefined;
+    companyPinterestUrl!: string | undefined;
+    companyDomainUrl!: string | undefined;
+    companyAlexaUrl!: string | undefined;
+    companyOpenCorporatesUrl!: string | undefined;
+    companyGlassDoorUrl!: string | undefined;
+    companyTrustpilotUrl!: string | undefined;
+    companyFollowersUrl!: string | undefined;
+    companyYoutubeUrl!: string | undefined;
+    companyYelpUrl!: string | undefined;
+    companyRSSUrl!: string | undefined;
+    companyNavUrl!: string | undefined;
+    companyAngelListUrl!: string | undefined;
+    companyCalendlyUrl!: string | undefined;
+    companyOtherLinkUrl!: string | undefined;
     companyLogoUrl!: string | undefined;
     workPhone1!: string | undefined;
     workPhone1Ext!: string | undefined;
@@ -56420,6 +56580,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.companyGooglePlusUrl = data["companyGooglePlusUrl"];
             this.companyCrunchbaseUrl = data["companyCrunchbaseUrl"];
             this.companyBBBUrl = data["companyBBBUrl"];
+            this.companyPinterestUrl = data["companyPinterestUrl"];
+            this.companyDomainUrl = data["companyDomainUrl"];
+            this.companyAlexaUrl = data["companyAlexaUrl"];
+            this.companyOpenCorporatesUrl = data["companyOpenCorporatesUrl"];
+            this.companyGlassDoorUrl = data["companyGlassDoorUrl"];
+            this.companyTrustpilotUrl = data["companyTrustpilotUrl"];
+            this.companyFollowersUrl = data["companyFollowersUrl"];
+            this.companyYoutubeUrl = data["companyYoutubeUrl"];
+            this.companyYelpUrl = data["companyYelpUrl"];
+            this.companyRSSUrl = data["companyRSSUrl"];
+            this.companyNavUrl = data["companyNavUrl"];
+            this.companyAngelListUrl = data["companyAngelListUrl"];
+            this.companyCalendlyUrl = data["companyCalendlyUrl"];
+            this.companyOtherLinkUrl = data["companyOtherLinkUrl"];
             this.companyLogoUrl = data["companyLogoUrl"];
             this.workPhone1 = data["workPhone1"];
             this.workPhone1Ext = data["workPhone1Ext"];
@@ -56465,6 +56639,20 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["companyGooglePlusUrl"] = this.companyGooglePlusUrl;
         data["companyCrunchbaseUrl"] = this.companyCrunchbaseUrl;
         data["companyBBBUrl"] = this.companyBBBUrl;
+        data["companyPinterestUrl"] = this.companyPinterestUrl;
+        data["companyDomainUrl"] = this.companyDomainUrl;
+        data["companyAlexaUrl"] = this.companyAlexaUrl;
+        data["companyOpenCorporatesUrl"] = this.companyOpenCorporatesUrl;
+        data["companyGlassDoorUrl"] = this.companyGlassDoorUrl;
+        data["companyTrustpilotUrl"] = this.companyTrustpilotUrl;
+        data["companyFollowersUrl"] = this.companyFollowersUrl;
+        data["companyYoutubeUrl"] = this.companyYoutubeUrl;
+        data["companyYelpUrl"] = this.companyYelpUrl;
+        data["companyRSSUrl"] = this.companyRSSUrl;
+        data["companyNavUrl"] = this.companyNavUrl;
+        data["companyAngelListUrl"] = this.companyAngelListUrl;
+        data["companyCalendlyUrl"] = this.companyCalendlyUrl;
+        data["companyOtherLinkUrl"] = this.companyOtherLinkUrl;
         data["companyLogoUrl"] = this.companyLogoUrl;
         data["workPhone1"] = this.workPhone1;
         data["workPhone1Ext"] = this.workPhone1Ext;
@@ -56503,6 +56691,20 @@ export interface IImportBusinessInput {
     companyGooglePlusUrl: string | undefined;
     companyCrunchbaseUrl: string | undefined;
     companyBBBUrl: string | undefined;
+    companyPinterestUrl: string | undefined;
+    companyDomainUrl: string | undefined;
+    companyAlexaUrl: string | undefined;
+    companyOpenCorporatesUrl: string | undefined;
+    companyGlassDoorUrl: string | undefined;
+    companyTrustpilotUrl: string | undefined;
+    companyFollowersUrl: string | undefined;
+    companyYoutubeUrl: string | undefined;
+    companyYelpUrl: string | undefined;
+    companyRSSUrl: string | undefined;
+    companyNavUrl: string | undefined;
+    companyAngelListUrl: string | undefined;
+    companyCalendlyUrl: string | undefined;
+    companyOtherLinkUrl: string | undefined;
     companyLogoUrl: string | undefined;
     workPhone1: string | undefined;
     workPhone1Ext: string | undefined;

@@ -4,7 +4,7 @@ import { Component, ViewChild } from '@angular/core';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { SourceFilterModel } from './source-filter.model';
+import { SourceFilterModelBase } from './source-filter.model';
 import { SourceContact } from 'shared/common/source-contact-list/source-contact.interface';
 
 @Component({
@@ -15,7 +15,7 @@ import { SourceContact } from 'shared/common/source-contact-list/source-contact.
 export class FilterSourceComponent {
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     items: {
-        element: SourceFilterModel
+        element: SourceFilterModelBase
     };
     apply: (event) => void;
 
@@ -24,13 +24,18 @@ export class FilterSourceComponent {
     ) {}
 
     onSourceContactChanged(sourceContact: SourceContact) {
-        this.items.element.contact = sourceContact;
+        this.items.element['contact'] = sourceContact;
         this.sourceComponent.toggle();
+    }
+
+    hasElementProperty(name: string): Boolean {
+        if (this.items && this.items.element)
+            return this.items.element.value.some(item => item.property == name);
     }
 
     clearContact(e) {
         e.preventDefault();
         e.stopPropagation();
-        this.items.element.contact = null;
+        this.items.element['contact'] = null;
     }
 }

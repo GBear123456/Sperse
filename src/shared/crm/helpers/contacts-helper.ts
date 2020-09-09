@@ -31,13 +31,13 @@ export class ContactsHelper {
             callback && callback(
                 confirmed,
                 checkboxes && checkboxes.map((checkbox: Checkbox, index: number) => {
-                    return checkbox.visible ? inputs[index].checked : false;
+                    return checkbox.visible ? inputs[index] && inputs[index].checked : false;
                 })
             );
         });
     }
 
-    static createCheckbox(containerElement, checkbox: Checkbox, index: number) {
+    static createCheckbox(containerElement, checkbox: Checkbox, index: number): { div: HTMLDivElement, input: HTMLInputElement } {
         let div = document.createElement('div');
         let input = document.createElement('input');
         input.type = 'checkbox';
@@ -51,7 +51,7 @@ export class ContactsHelper {
         div.appendChild(label);
         return {
             div: div,
-            label: label
+            input: input
         };
     }
 }

@@ -384,5 +384,4 @@ export class FiltersService {
         if (filterMethod)
             return filterMethod.call(this, filter);
     }
-
 }

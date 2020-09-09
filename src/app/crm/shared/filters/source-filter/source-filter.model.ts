@@ -2,18 +2,71 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 
-export class SourceFilterModel extends FilterItemModel {
+export class SourceFilterModelBase extends FilterItemModel {
+    public getDisplayElements(): DisplayElement[] {
+        let result: DisplayElement[] = [];
+        this.value.forEach((item) => {
+            if (item.value) {
+                result.push(
+                    <DisplayElement>{
+                        id: item.name,
+                        item: this,
+                        displayValue: item.label + ': ' + (item.displayValue || item.value)
+                    }
+                );
+            }
+        });
+        return result;
+    }
+
+    public clearItem(item) {
+        item.value = item.displayValue = this[item.property] = null;
+    }
+
+    public removeFilterItem(filter: FilterModel, args: any, name: string) {
+        if (name) {
+            let item = filter.items.element.value.find((item) => item.name === name);
+            this.clearItem(item);
+        } else {
+            filter.items.element.value.forEach((item) => {
+                this.clearItem(item);
+            });
+        }
+    }
+}
+
+export class SourceContactFilterModel extends SourceFilterModelBase {
+    contact: SourceContact;
+
+    constructor(init?: Partial<SourceContactFilterModel>) {
+        super(init, true);
+    }
+
+    get value() {
+        return [
+            {
+                property: 'contact',
+                label: this.ls.l('SourceContact'),
+                name: 'SourceContactId',
+                value: this.contact && this.contact.id,
+                displayValue: this.contact && this.contact.name
+            }
+        ];
+    }
+}
+
+export class SourceFilterModel extends SourceFilterModelBase {
     keyExpr: any;
     nameField: string;
-    organizationUnitId: number;
     contact: SourceContact;
+    organizationUnitId: number;
     affiliateCode: string;
     campaignCode: string;
     channelCode: string;
     refererUrl: string;
     entryUrl: string;
 
-    public constructor(init?: Partial<SourceFilterModel>) {
+    constructor(init?: Partial<SourceFilterModel>) {
         super(init, true);
     }
 
@@ -30,7 +83,7 @@ export class SourceFilterModel extends FilterItemModel {
                 label: this.ls.l('SourceAffiliateCode'),
                 name: 'SourceAffiliateCode',
                 value: this.affiliateCode
-            },
+            }, 
             {
                 property: 'contact',
                 label: this.ls.l('SourceContact'),
@@ -59,36 +112,5 @@ export class SourceFilterModel extends FilterItemModel {
                 value: this.entryUrl
             }
         ];
-    }
-
-    getDisplayElements(): DisplayElement[] {
-        let result: DisplayElement[] = [];
-        this.value.forEach((item) => {
-            if (item.value) {
-                result.push(
-                    <DisplayElement>{
-                        id: item.name,
-                        item: this,
-                        displayValue: item.label + ': ' + (item.displayValue || item.value)
-                    }
-                );
-            }
-        });
-        return result;
-    }
-
-    clearItem(item) {
-        item.value = item.displayValue = this[item.property] = null;
-    }
-
-    removeFilterItem(filter: FilterModel, args: any, name: string) {
-        if (name) {
-            let item = filter.items.element.value.find((item) => item.name === name);
-            this.clearItem(item);
-        } else {
-            filter.items.element.value.forEach((item) => {
-                this.clearItem(item);
-            });
-        }
     }
 }

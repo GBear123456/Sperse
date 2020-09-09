@@ -33,14 +33,16 @@ export class RecentClientsComponent implements OnInit {
             message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
-            dataSource: this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, undefined)
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, contactId)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
-            dataSource: this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, undefined)
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId)
         }
     ];
 
@@ -61,10 +63,11 @@ export class RecentClientsComponent implements OnInit {
     ngOnInit() {
         this.recentlyCreatedCustomers$ = combineLatest(
             this.selectedItem$,
+            this.dashboardWidgetsService.contactId$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([selectedItem]) => selectedItem.dataSource.pipe(
+            switchMap(([selectedItem, contactId, ]) => selectedItem.dataSource(contactId).pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ))

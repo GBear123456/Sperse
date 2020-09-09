@@ -558,15 +558,21 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     openContactDetails(contactId: number) {
         if (contactId) {
-            /** Clear data source to avoid wrong navigating after opening the contact */
-            this.itemDetailsService.setItemsSource(
-                this.contactsService.getCurrentItemType(this.route.snapshot.queryParams),
-                null
-            );
-            setTimeout(() => this.router.navigate(
-                CrmService.getEntityDetailsLink(contactId),
-                { queryParams: this.route.snapshot.queryParams }
-            ));
+            this.contactProxy.isContactInfoAvailable(contactId).subscribe((isContactInfoAvailable: boolean) => {
+                if (isContactInfoAvailable) {
+                    /** Clear data source to avoid wrong navigating after opening the contact */
+                    this.itemDetailsService.setItemsSource(
+                        this.contactsService.getCurrentItemType(this.route.snapshot.queryParams),
+                        null
+                    );
+                    setTimeout(() => this.router.navigate(
+                        CrmService.getEntityDetailsLink(contactId),
+                        { queryParams: this.route.snapshot.queryParams }
+                    ));
+                } else {
+                    this.notifyService.error(this.ls.l('NoPermissionError'))
+                }
+            });
         }
     }
 

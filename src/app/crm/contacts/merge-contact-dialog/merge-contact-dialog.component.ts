@@ -30,6 +30,7 @@ import {
     GetContactInfoForMergeOutput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -54,6 +55,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly CONTACT_PHONES_FIELD      = 'contactPhones';
     public readonly CONTACT_EMAILS_FIELD      = 'contactEmails';
     public readonly CONTACT_ADDRESSES_FIELD   = 'contactAddresses';
+    public readonly CONTACT_BANK_CODE         = 'bankCode';
     public readonly LEAD_STAGE_FIELD          = 'stage';
     public readonly LEAD_OWNER_FIELD          = 'sourceOrganizationUnitName';
     public readonly LEAD_REQUEST_DATE_FIELD   = 'leadDate';
@@ -61,6 +63,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     public readonly LEAD_SOURCE_FIELD         = 'sourceContactName';
     public readonly ASSIGNED_USER_EMAIL       = 'userEmailAddress';
 
+    tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isSameContact = this.data.mergeInfo.contactInfo.id == this.data.mergeInfo.targetContactInfo.id;
     keepSource: boolean = this.data.keepSource !== undefined ? this.data.keepSource : true;
     keepTarget: boolean = this.data.keepTarget !== undefined ? this.data.keepTarget : true;
@@ -105,6 +108,11 @@ export class MergeContactDialogComponent implements AfterViewInit {
         [this.ASSIGNED_USER_EMAIL]: {
             caption: this.ls.l('UserInformations'),
             disabled: true
+        },
+        [this.CONTACT_BANK_CODE]: {
+            caption: this.ls.l('BankCode'),
+            hidden: !this.tenantHasBankCodeFeature,
+            disabled: false
         },
         orderCount: {
             caption: this.ls.l('Orders'),
@@ -206,6 +214,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
         private contactProxy: ContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
+        private userManagementService: UserManagementService,
         private dialogRef: MatDialogRef<MergeContactDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
@@ -393,7 +402,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
             return this.onMergeOptionChange(field, value);
 
         let isMultiField = this.isMultiField(field);
-        if (value.selected) {
+        if (value && value.selected) {
             setTimeout(() => {
                 value.selected = false;
                 if (isMultiField && value.hasOwnProperty('id'))
@@ -404,11 +413,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
                 field.result.values.splice(findIndex(field.result.values,
                     (item: any) => item.hasOwnProperty('id') && item.id == value.id || item == value), 1);
             else {
-                let values = field.target.values;
-                if (values[0] == value)
-                    values = field.source.values;
-                values[0].selected = true;
-                field.result.values = [values[0]];
+                let target = field.target.values[0];
+                if (target == value)
+                    target = field.source.values[0];
+                if (target) {
+                    target.selected = true;
+                    field.result.values = [target];
+                } else
+                    field.result.values = [];
             }
         } else {
             if (isMultiField) {
@@ -426,7 +438,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
                 else
                     field.result.values.push(value);
             } else {
-                field.result.values.pop().selected = false;
+                let result = field.result.values.pop();
+                if (result) result.selected = false;
                 field.result.values.push(value);
             }
         }
@@ -513,7 +526,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
 
     getPreferredProperties() {
         return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._1 : 0)
-            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._2 : 0);
+            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._2 : 0)
+            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._4 : 0);
     }
 
     getMergeContactInput() {
@@ -598,11 +612,11 @@ export class MergeContactDialogComponent implements AfterViewInit {
             return targetContact.userLastLoginTime;
         else if (column == this.COLUMN_RESULT_FIELD) {
             if (targetContact.userIsActive && targetContact.userEmailAddress)
-                return targetContact.userLastLoginTime
+                return targetContact.userLastLoginTime;
             else if (sourceContact.userIsActive && sourceContact.userEmailAddress)
-                return sourceContact.userLastLoginTime
+                return sourceContact.userLastLoginTime;
             else
-                return targetContact.userLastLoginTime || sourceContact.userLastLoginTime
+                return targetContact.userLastLoginTime || sourceContact.userLastLoginTime;
         }
     }
 

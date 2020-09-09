@@ -44,7 +44,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() titleClearButton = false;
     @Input() placeholder = null;
     @Input() isTitleValid: boolean;
-    @Input() buttons: IDialogButton[];
+    @Input() buttons: IDialogButton[] = [];
     @Input() options: IDialogOption[];
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
@@ -74,9 +74,11 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
                 right: '-100vw'
             });
         }
-        const buttonWithContextItems = this.buttons.find((button: IDialogButton) => {
+
+        const buttonWithContextItems = this.buttons && this.buttons.find((button: IDialogButton) => {
             return this.showContextMenu(button);
         });
+
         if (buttonWithContextItems) {
             this.contextOptionsInit(buttonWithContextItems);
         }

@@ -15,7 +15,7 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 /*
-	Root App Component (App Selector)
+    Root App Component (App Selector)
 */
 @Component({
     selector: 'app-root',
@@ -81,8 +81,7 @@ export class RootComponent implements OnInit, AfterViewInit {
     }
 
     public overflowHidden(value?: boolean) {
-        this.document.body.classList[
-            value ? 'add' : 'remove']('overflow-hidden');
+        this.uiCustomizationService.overflowHidden(value);
     }
 
     public addScriptLink(src: String, type: String = 'text/javascript', callback = null): void {

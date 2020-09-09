@@ -1,5 +1,6 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 /** Application imports */
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -10,8 +11,14 @@ export class AppUiCustomizationService {
     showReload = !this.appSession.tenant || this.appSession.tenant.customLayoutType != LayoutType.AdvicePeriod;
 
     constructor(
+        @Inject(DOCUMENT) private document,
         public appSession: AppSessionService
     ) {}
+
+    overflowHidden(value?: boolean) {
+        this.document.body.classList[
+            value ? 'add' : 'remove']('overflow-hidden');
+    }
 
     getTheme() {
       return  this.getSetting('App.UiManagement.Theme');
