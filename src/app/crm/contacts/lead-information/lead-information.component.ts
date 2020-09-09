@@ -112,7 +112,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 name: 'Comments',
                 icon: 'f-chat',
                 items: [
-                    { name: 'comments', hideLabel: true }
+                    { name: 'comments', hideLabel: true, readonly: true }
                 ]
             }
         ],
