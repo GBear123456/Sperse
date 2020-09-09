@@ -63,9 +63,6 @@ import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 @Component({
     templateUrl: './contacts.component.html',
     styleUrls: ['./contacts.component.less'],
-    host: {
-        '(document:click)': 'closeEditDialogs($event)'
-    },
     providers: [ AppStoreService, DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
@@ -439,6 +436,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     updateContextType(navLink: NavLink): ContextType {
         let newSelectedContextType: ContextType;
+        this.closeEditDialogs();
         switch (navLink.name) {
             case 'documents': newSelectedContextType = ContextType.AddFiles;  break;
             case 'contact-information': newSelectedContextType = ContextType.AddContact;  break;
@@ -645,17 +643,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         delete data.refresh;
     }
 
-    closeEditDialogs(event) {
-        if (document.body.contains(event.target)
-            && !event.target.closest('.mat-dialog-container, .dx-popup-wrapper, .swal-modal')
-            && event.target.tagName !== 'BODY'
-        ) {
-            this.dialog.openDialogs.forEach((dialog: MatDialogRef<any>) => {
-                if (!dialog.disableClose) {
-                    dialog.close();
-                }
-            });
-        }
+    closeEditDialogs() {
+        this.dialog.openDialogs.forEach((dialog: MatDialogRef<any>) => {
+            if (!dialog.disableClose) {
+                dialog.close();
+            }
+        });
     }
 
     printMainArea() {
