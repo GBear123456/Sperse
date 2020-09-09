@@ -272,7 +272,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             text: this.getUserGroup(group),
             value: group
         }));
-    selectedContactGroup = Object.keys(ContactGroup).shift();
+    private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
+    private readonly cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
+    selectedContactGroup = this._activatedRoute.snapshot.queryParams.contactGroup
+        || this.cacheService.get(this.cacheKey) || Object.keys(ContactGroup).shift();
     contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup[this.selectedContactGroup]);
     contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
     userGroupText$: Observable<string> = this.contactGroupId$.pipe(
@@ -350,6 +353,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
+    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -509,10 +513,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
-
-    private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
-    private readonly cacheKey = this.getCacheKey(
-        this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
     private organizationUnits: OrganizationUnitDto[];
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
@@ -626,7 +626,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             })
         });
-        this.searchValue = '';
         if (this.userManagementService.checkBankCodeFeature()) {
             this.pivotGridDataSource.fields.unshift({
                 area: 'filter',
@@ -788,6 +787,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             )
         ).subscribe((params: Params) => {
             let filtersToChange = [];
+            const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
+            if (searchValueChanged) {
+                this.searchValue = params.searchValue;
+            }
             if (this.crmService.updateCountryStateFilter(params, this.filterCountryStates)) {
                 filtersToChange.push(this.filterCountryStates);
             }
@@ -796,6 +799,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
             if (filtersToChange.length) {
                 this.filtersService.change(filtersToChange);
+            } else if (searchValueChanged) {
+                this.refresh();
             }
         });
     }
@@ -928,8 +933,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
-    private get contactGroup(): string {
-        return invert(ContactGroup)[this.contactGroupId.value.toString()];
+    private getContactGroup(contactGroupId: string = this.contactGroupId.value.toString()): string {
+        return invert(ContactGroup)[contactGroupId];
     }
 
     private getUserGroup(contactGroup: string): string {
@@ -948,17 +953,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     contactGroupOptionInit() {
-        if (this.cacheService.exists(this.cacheKey)) {
-            this.selectedContactGroup = this.cacheService.get(this.cacheKey);
-            this.contactGroupId.next(ContactGroup[this.selectedContactGroup]);
-            this.headlineButtons[0].label = this.getHeadlineButtonName();
-            this.createButtonEnabledSet();
-        }
+        this.headlineButtons[0].label = this.getHeadlineButtonName();
+        this.createButtonEnabledSet();
     }
 
     private createButtonEnabledSet() {
-        this.headlineButtons[0].enabled =
-            this.permission.checkCGPermission(this.contactGroupId.value);
+        this.headlineButtons[0].enabled = this.permission.checkCGPermission(this.contactGroupId.value);
     }
 
     onContentReady(event) {
@@ -1452,7 +1452,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                                 this.exportService.getFileName(
                                                     null,
                                                     'PivotGrid',
-                                                    this.getUserGroup(this.contactGroup)
+                                                    this.getUserGroup(this.getContactGroup())
                                                 )
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
@@ -1460,7 +1460,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                             return this.exportToXLS(
                                                 options,
                                                 null,
-                                                this.getUserGroup(this.contactGroup)
+                                                this.getUserGroup(this.getContactGroup())
                                             );
                                         }
                                     }),
@@ -1472,7 +1472,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToCSV(
                                         options,
                                         null,
-                                        this.getUserGroup(this.contactGroup)
+                                        this.getUserGroup(this.getContactGroup())
                                     )),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
@@ -1482,7 +1482,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(
                                         options,
                                         null,
-                                        this.getUserGroup(this.contactGroup)
+                                        this.getUserGroup(this.getContactGroup())
                                     )),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
@@ -1561,9 +1561,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private exportToImage(format: ImageFormat) {
         if (this.showChart) {
-            this.chartComponent.exportTo(format, this.getUserGroup(this.contactGroup));
+            this.chartComponent.exportTo(format, this.getUserGroup(this.getContactGroup()));
         } else if (this.showMap) {
-            this.mapComponent.exportTo(format, this.getUserGroup(this.contactGroup));
+            this.mapComponent.exportTo(format, this.getUserGroup(this.getContactGroup()));
         }
     }
 
@@ -1746,15 +1746,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             || this.dataGrid.instance.getDataSource(), event.loadMethod);
         setTimeout(() => {
             this._router.navigate(
-                ['app/crm/contact', clientId, 'lead', leadId]
-                    .concat(orgId ? ['company', orgId] : [])
-                    .concat(section ? [ section ] : []),
-                    { queryParams: {
-                        referrer: 'app/crm/leads',
-                        dataLayoutType: this.dataLayoutType.value,
-                        ...queryParams
-                    }}
-                );
+                CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
+                { queryParams: {
+                    referrer: 'app/crm/leads',
+                    dataLayoutType: this.dataLayoutType.value,
+                    ...queryParams
+                }}
+            );
         });
     }
 

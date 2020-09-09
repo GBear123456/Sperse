@@ -64,6 +64,7 @@ import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { OrderStageSummary } from '@app/crm/orders/order-stage-summary.interface';
+import { Params } from '@angular/router';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -331,6 +332,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
+    searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchClear = false;
     ordersDataSource: any = {
         uri: this.ordersDataSourceURI,
         requireTotalCount: true,
@@ -376,7 +379,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     );
     ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
     subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
-    private search: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
     search$: Observable<string> = this.search.asObservable();
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
@@ -547,6 +550,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         )),
     );
+    private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    private activate$: Observable<boolean> = this._activate.asObservable();
+    private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
+        takeUntil(this.destroy$),
+        filter(() => this.componentIsActivated)
+    );
 
     constructor(injector: Injector,
         private orderProxy: OrderServiceProxy,
@@ -597,17 +606,33 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     customizeSubscriptionsTotalFee = () => this.customizeAmountSummary({ value: this.subscriptionsTotalFee });
     customizeSubscriptionsTotalAmount = () => this.customizeAmountSummary({ value: this.subscriptionsTotalOrderAmount });
 
+    private handleQueryParams() {
+        this.queryParams$.pipe(
+            skip(1),
+            /** Wait for activation to update the filters */
+            switchMap((queryParams: Params) => this.activate$.pipe(
+                filter(Boolean),
+                mapTo(queryParams))
+            )
+        ).subscribe((params: Params) => {
+            if (params.searchValue && this.searchValue !== params.searchValue) {
+                this.searchValue = params.searchValue;
+                this.invalidate();
+            }
+        });
+    }
+
     activate() {
         super.activate();
-
+        this.handleQueryParams()
         this.initFilterConfig();
         this.subscribeToFilter();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
         this.showHostElement(() => {
             this.pipelineComponent.detectChanges();
         });
+        this._activate.next(true);
     }
 
     get dataGrid() {
@@ -1252,12 +1277,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             let isOrder = this.selectedOrderType.value === OrderType.Order;
             this.searchClear = false;
             this._router.navigate(
-                [
-                    'app/crm/contact',
-                    entity.ContactId,
-                    ...(entity.LeadId != null ? [ 'lead', entity.LeadId ] : []),
-                    section
-                ], {
+                CrmService.getEntityDetailsLink(entity.ContactId, section, null, entity.LeadId),
+                {
                     queryParams: {
                         ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
                         referrer: 'app/crm/orders',

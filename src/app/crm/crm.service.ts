@@ -74,6 +74,13 @@ export class CrmService {
         private userService: UserServiceProxy
     ) {}
 
+    static getEntityDetailsLink(contactId: string | number, section?: string, leadId?: number, organizationId?: number): any[] {
+        return ['app/crm/contact', contactId]
+            .concat(leadId ? ['lead', leadId] : [])
+            .concat(organizationId ? ['company', organizationId] : [])
+            .concat(section ? [ section ] : [])
+    }
+
     static getModuleNameFromLayoutType(dataLayoutType: DataLayoutType) {
         let moduleName: string;
         switch (dataLayoutType) {

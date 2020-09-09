@@ -870,3 +870,63 @@ body > .blockUI.blockOverlay{
         background-image: url("../../../assets/common/icons/filter-k.svg") !important;
     }
 }
+
+/deep/ [accessKey="global-search-tooltip"] {
+    .group {
+        border-bottom: 1px solid #e5e9ec;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            h4 {
+                font-size: 12px;
+                letter-spacing: 0.6px;
+                color: #424c56;
+                margin-bottom: 0;
+                text-transform: uppercase;
+            }
+            a {
+                font-weight: 300;
+                line-height: 2.92;
+                letter-spacing: 0.26px;
+                color: #00aeef;
+                &:after {
+                    content: url('../../../assets/common/icons/arrow-right-trend-by.svg');
+                    display: inline-block;
+                    margin-left: 5px;
+                    width: 12px;
+                    height: 7px;
+                }
+            }
+        }
+        ul {
+            padding-left: 0;
+            li.entity {
+                display: flex;
+                img {
+                    width: 38px;
+                    height: 38px;
+                    margin-right: 15px;
+                }
+                & > div {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    h5 {
+                        font-size: 15px;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                        margin-bottom: 0;
+                    }
+                    p {
+                        font-size: 13px;
+                        font-weight: 300;
+                        letter-spacing: 0.26px;
+                        color: #424c56;
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}

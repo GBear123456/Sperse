@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -31,7 +31,7 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
     providers: [ CommonUserInfoServiceProxy ]
 })
 export class HeaderComponent implements OnInit {
-
+    @Input() showGlobalSearch: boolean;
     origin = location.origin;
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];

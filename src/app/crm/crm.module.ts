@@ -175,7 +175,8 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         DataSourceService,
         LeftMenuService,
         CalendarService,
-        { provide: 'leftMenuCollapsed', useValue: false }
+        { provide: 'leftMenuCollapsed', useValue: false },
+        { provide: 'showGlobalSearch', useValue: true }
     ],
     entryComponents: [
         BankSettingsDialogComponent,

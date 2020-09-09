@@ -33,5 +33,6 @@ export const LeadFields: KeysEnum<LeadDto> = {
     SourceContactName: 'SourceContactName',
     AssignedUserName: 'AssignedUserName',
     BankCode: 'BankCode',
-    StageChecklistPointDoneCount: 'StageChecklistPointDoneCount'
+    StageChecklistPointDoneCount: 'StageChecklistPointDoneCount',
+    ContactGroupId: 'ContactGroupId',
 };

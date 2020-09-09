@@ -1,0 +1,36 @@
+<dx-text-box mode="search"
+             [width]="35"
+             (onFocusIn)="onFocusIn($event)"
+             (onFocusOut)="onFocusOut($event)"
+             (onEnterKey)="search($event)"
+             (onValueChanged)="valueChanged($event)"
+             [elementAttr]="{ id: 'global-search-textbox' }">
+</dx-text-box>
+<dx-tooltip [(visible)]="isTooltipVisible"
+            accessKey="global-search-tooltip"
+            [closeOnOutsideClick]="true"
+            width="437px"
+            target="#global-search-textbox">
+    <dxo-position my="left top" at="left bottom" of="#global-search-textbox"></dxo-position>
+    <div *dxTemplate="let data = data of 'content'">
+        <div class="global-search-tooltip-container">
+            <ng-container *ngFor="let group of searchGroups">
+                <div class="group" *ngIf="group.count">
+                    <header>
+                        <h4>{{ group.name }}</h4>
+                        <a (click)="showAll($event, group.link, group.linkParams)">{{ ls.l('ShowAll') }} {{ group.count }} {{ group.name.toLowerCase() }}</a>
+                    </header>
+                    <ul *ngFor="let entity of group.entities">
+                        <li class="entity">
+                            <img [src]="getProfilePictureUrl(entity.PhotoPublicId)">
+                            <div>
+                                <a (click)="moveToEntityDetails($event, entity, group.itemType)">{{ entity.Name }}</a>
+                                <p>{{ entity.Email }}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</dx-tooltip>

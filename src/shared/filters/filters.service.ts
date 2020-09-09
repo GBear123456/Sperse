@@ -237,7 +237,7 @@ export class FiltersService {
                     { 'StatusId': { 'eq': ContactStatus.Prospective }}
                 ]
             },
-            { 'ParentId': { 'eq': null }},
+            { 'ParentId': { 'eq': null }}
         ];
     }
 

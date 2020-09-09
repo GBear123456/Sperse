@@ -1,0 +1,111 @@
+:host {
+    align-items: center;
+    display: flex;
+    align-self: center;
+    height: 34px;
+    &.searchWide {
+        border-left: 1px solid #e5e9ec;
+        border-right: 1px solid #e5e9ec;
+        padding: 0 22px 0 12px;
+        margin-right: 24px;
+    }
+    ::ng-deep .spinner {
+        width: 20px !important;
+        height: 20px !important;
+        right: -205px;
+        border-width: 3px;
+    }
+    ::ng-deep .blockOverlay {
+        width: 25px !important;
+        height: 25px !important;
+        right: 0;
+        left: initial !important;
+        top: 4px !important;
+    }
+    ::ng-deep .dx-texteditor-container {
+        align-items: center;
+        .dx-texteditor-buttons-container {
+            position: relative;
+            right: 9px;
+            width: 20px;
+            min-width: 20px;
+            .dx-show-clear-button .dx-clear-button-area {
+                .dx-icon-clear {
+                    width: 20px;
+                    height: 20px;
+                    margin-top: -17px;
+                    padding: 8px 0;
+                }
+            }
+        }
+    }
+    ::ng-deep .dx-searchbox .dx-texteditor-input {
+        border-bottom: none;
+        cursor: pointer;
+    }
+}
+
+.global-search-tooltip-container {
+    padding: 11px 6px;
+    .group {
+        &:not(:last-child) {
+            border-bottom: 1px solid #e5e9ec;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            h4 {
+                font-size: 12px;
+                letter-spacing: 0.6px;
+                color: #424c56;
+                margin-bottom: 0;
+                text-transform: uppercase;
+            }
+            a {
+                font-weight: 300;
+                line-height: 2.92;
+                letter-spacing: 0.26px;
+                color: #00aeef;
+                &:after {
+                    content: url('../../../../../assets/common/icons/arrow-right-trend-by.svg');
+                    display: inline-block;
+                    margin-left: 5px;
+                    width: 12px;
+                    height: 7px;
+                }
+            }
+        }
+        ul {
+            padding-left: 0;
+            li.entity {
+                display: flex;
+                img {
+                    width: 38px;
+                    height: 38px;
+                    margin-right: 15px;
+                }
+                & > div {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    text-align: left;
+                    a {
+                        font-size: 15px;
+                        font-weight: 500;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                        margin-bottom: 2px;
+                    }
+                    p {
+                        font-size: 13px;
+                        font-weight: 300;
+                        letter-spacing: 0.26px;
+                        color: #424c56;
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}

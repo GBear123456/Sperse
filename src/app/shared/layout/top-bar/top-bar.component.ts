@@ -65,21 +65,20 @@ export class TopBarComponent implements OnDestroy {
                 appService.initModule();
             setTimeout(() => {
                 let route = event.urlAfterRedirects.split('?').shift();
-                this.menu.items.forEach((item, i) => {
+                this.menu.items.forEach((item: PanelMenuItem, i: number) => {
                     if (route === item.route || _.contains(item.alterRoutes, route))
                         this.selectedIndex = i;
                 });
             });
         });
-        this.appService.subscribeModuleChange((config) => {
+        this.appService.subscribeModuleChange((config: ConfigInterface) => {
             this.config = config;
             this.menu = new PanelMenu(
                 'MainMenu',
                 'MainMenu',
                 this.initMenu(
                     this.getCheckLayoutMenuConfig(config.navigation, config.code),
-                    config.localizationSource,
-                    0
+                    config.localizationSource
                 )
             );
             const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
@@ -98,7 +97,11 @@ export class TopBarComponent implements OnDestroy {
         });
     }
 
-    initMenu(configNavigation: ConfigNavigation[], localizationSource, level): PanelMenuItem[] {
+    get showGlobalSearch():  boolean {
+        return this.config && this.config.name === 'CRM';
+    };
+
+    initMenu(configNavigation: ConfigNavigation[], localizationSource): PanelMenuItem[] {
         let navList: PanelMenuItem[] = [];
         configNavigation.forEach((navigation: ConfigNavigation) => {
             let item = new PanelMenuItem(

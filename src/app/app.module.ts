@@ -27,6 +27,7 @@ import {
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppStoreService } from '@app/store/app-store.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -68,7 +69,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CashflowServiceProxy,
         UserPreferencesService,
         CfoPreferencesService,
-        CashFlowForecastServiceProxy
+        CashFlowForecastServiceProxy,
+        ItemDetailsService
     ]
 })
 export class AppModule {}

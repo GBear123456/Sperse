@@ -353,6 +353,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
+    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -567,7 +568,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         public contactProxy: ContactServiceProxy
     ) {
         super(injector);
-        this.searchValue = '';
         this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
         this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(this.pipelinePurposeId)).name);
@@ -767,10 +767,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private paramsSubscribe() {
         if (!this.subRouteParams || this.subRouteParams.closed)
             this.subRouteParams = this._activatedRoute.queryParams
+                .pipe(takeUntil(this.deactivate$))
                 .subscribe(params => {
+                    const searchValueChanged = this.searchValue !== params.searchValue;
+                    if (searchValueChanged) {
+                        this.searchValue = params.searchValue;
+                    }
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createPartner());
-                    if (params['refresh']) {
+                    if (params['refresh'] || searchValueChanged) {
                         this.invalidate();
                     }
             });
@@ -822,10 +827,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.searchClear = false;
             setTimeout(() => {
                 this._router.navigate(
-                    ['app/crm/contact', partnerId]
-                        .concat(orgId ? ['company', orgId] : [])
-                        .concat(section ? [ section ] : []),
-                { queryParams: { referrer: 'app/crm/partners', ...queryParams } });
+                    CrmService.getEntityDetailsLink(partnerId, section, null, orgId),
+                    { queryParams: { referrer: 'app/crm/partners', ...queryParams } }
+                );
             });
         }
     }

@@ -38,6 +38,7 @@ import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { CrmService } from '@app/crm/crm.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -563,7 +564,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 null
             );
             setTimeout(() => this.router.navigate(
-                ['app/crm/contact', contactId],
+                CrmService.getEntityDetailsLink(contactId),
                 { queryParams: this.route.snapshot.queryParams }
             ));
         }

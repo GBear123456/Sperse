@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DxMenuModule } from 'devextreme-angular/ui/menu';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -13,6 +14,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
 import { TableModule } from 'primeng/table';
@@ -36,13 +38,15 @@ import 'assets/metronic/src/js/framework/base/app.js';
 import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
 import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel/contact-info-panel.component';
+import { GlobalSearchComponent } from '@app/shared/layout/top-bar/global-search/global-search.component';
 
 let COMPONENTS = [
     PlatformSelectComponent,
     HeaderComponent,
     TopBarComponent,
     SideBarComponent,
-    ContactInfoPanelComponent
+    ContactInfoPanelComponent,
+    GlobalSearchComponent
 ];
 
 @NgModule({
@@ -65,8 +69,10 @@ let COMPONENTS = [
         DxTooltipModule,
         DxNavBarModule,
         DxDropDownBoxModule,
+        DxTextBoxModule,
 
         MatTabsModule,
+        MatDialogModule,
 
         PrimeNgFileUploadModule,
         ProgressBarModule,

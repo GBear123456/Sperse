@@ -1,5 +1,5 @@
-﻿<platform-select></platform-select>
-
+﻿<global-search *ngIf="showGlobalSearch"></global-search>
+<platform-select></platform-select>
 <div class="top-bar-nav" [ngStyle]="{ 'visibility': lastInnerWidth && navbarItems.length ? 'visible' : 'hidden' }">
     <dx-nav-bar
         height="74px"
@@ -22,7 +22,6 @@
         </div>
     </dx-nav-bar>
 </div>
-
 <div class="adaptive-menu" *ngIf="adaptiveMenuItems.length">
     <dx-menu
         accessKey="nav-menu"

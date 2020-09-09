@@ -392,6 +392,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
+    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -670,7 +671,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             })
         });
-        this.searchValue = '';
     }
 
     ngOnInit() {
@@ -848,10 +848,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private paramsSubscribe() {
         if (!this.subRouteParams || this.subRouteParams.closed)
             this.subRouteParams = this._activatedRoute.queryParams
+                .pipe(takeUntil(this.deactivate$))
                 .subscribe(params => {
+                    const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
+                    if (searchValueChanged) {
+                        this.searchValue = params.searchValue || '';
+                    }
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
-                    if (params['refresh']) {
+                    if (params['refresh'] || searchValueChanged) {
                         this.refresh();
                     }
             });
@@ -921,9 +926,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.searchClear = false;
             setTimeout(() => {
                 this._router.navigate(
-                    ['app/crm/contact', clientId]
-                        .concat(orgId ? ['company', orgId] : [])
-                        .concat(section ? [ section ] : []),
+                    CrmService.getEntityDetailsLink(clientId, section, null, orgId),
                     { queryParams: { referrer: 'app/crm/clients', ...queryParams }}
                 );
             });
