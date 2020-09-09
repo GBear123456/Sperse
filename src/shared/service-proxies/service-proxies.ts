@@ -12451,15 +12451,21 @@ export class DashboardServiceProxy {
 
     /**
      * @groupBy (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
      * @periodCount (optional) 
      * @isCumulative (optional) 
      * @sourceContactId (optional) 
      * @return Success
      */
-    getCustomerAndLeadStats(groupBy: GroupByPeriod | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, sourceContactId: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getCustomerAndLeadStats(groupBy: GroupByPeriod | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, sourceContactId: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
         if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
         if (periodCount !== undefined)
             url_ += "PeriodCount=" + encodeURIComponent("" + periodCount) + "&"; 
         if (isCumulative !== undefined)
