@@ -8878,8 +8878,8 @@ export class ContactServiceProxy {
      * @contactId (optional) 
      * @return Success
      */
-    isContactInfoAvailable(contactId: number | null | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/IsContactInfoAvailable?";
+    isAccessible(contactId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/IsAccessible?";
         if (contactId !== undefined)
             url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -8894,11 +8894,11 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processIsContactInfoAvailable(response_);
+            return this.processIsAccessible(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processIsContactInfoAvailable(<any>response_);
+                    return this.processIsAccessible(<any>response_);
                 } catch (e) {
                     return <Observable<boolean>><any>_observableThrow(e);
                 }
@@ -8907,7 +8907,7 @@ export class ContactServiceProxy {
         }));
     }
 
-    protected processIsContactInfoAvailable(response: HttpResponseBase): Observable<boolean> {
+    protected processIsAccessible(response: HttpResponseBase): Observable<boolean> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -46570,6 +46570,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     assignedToUserId!: number | undefined;
     assignedToUserName!: string | undefined;
     bankCode!: string | undefined;
+    bankCodeDate!: moment.Moment | undefined;
     orderCount!: number | undefined;
 
     constructor(data?: IContactInfoForMerge) {
@@ -46619,6 +46620,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.assignedToUserId = data["assignedToUserId"];
             this.assignedToUserName = data["assignedToUserName"];
             this.bankCode = data["bankCode"];
+            this.bankCodeDate = data["bankCodeDate"] ? moment(data["bankCodeDate"].toString()) : <any>undefined;
             this.orderCount = data["orderCount"];
         }
     }
@@ -46668,6 +46670,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["assignedToUserId"] = this.assignedToUserId;
         data["assignedToUserName"] = this.assignedToUserName;
         data["bankCode"] = this.bankCode;
+        data["bankCodeDate"] = this.bankCodeDate ? this.bankCodeDate.toISOString() : <any>undefined;
         data["orderCount"] = this.orderCount;
         return data; 
     }
@@ -46698,6 +46701,7 @@ export interface IContactInfoForMerge {
     assignedToUserId: number | undefined;
     assignedToUserName: string | undefined;
     bankCode: string | undefined;
+    bankCodeDate: moment.Moment | undefined;
     orderCount: number | undefined;
 }
 
