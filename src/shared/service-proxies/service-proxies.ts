@@ -12590,8 +12590,12 @@ export class DashboardServiceProxy {
      * @sourceContactId (optional) 
      * @return Success
      */
-    getRecentlyCreatedLeads(topCount: number | null | undefined, sourceContactId: number | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
+    getRecentlyCreatedLeads(contactGroupId: string, topCount: number | null | undefined, sourceContactId: number | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedLeads?";
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
         if (sourceContactId !== undefined)
@@ -53044,6 +53048,9 @@ export interface IGetRecentlyCreatedCustomersOutput {
 }
 
 export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOutput {
+    email!: string | undefined;
+    phone!: string | undefined;
+    bankCode!: string | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
     creationTime!: moment.Moment | undefined;
@@ -53059,6 +53066,9 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
     init(data?: any) {
         if (data) {
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.bankCode = data["bankCode"];
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
@@ -53074,6 +53084,9 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["bankCode"] = this.bankCode;
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
@@ -53082,6 +53095,9 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 }
 
 export interface IGetRecentlyCreatedLeadsOutput {
+    email: string | undefined;
+    phone: string | undefined;
+    bankCode: string | undefined;
     id: number | undefined;
     fullName: string | undefined;
     creationTime: moment.Moment | undefined;

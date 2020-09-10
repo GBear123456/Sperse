@@ -135,6 +135,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     stageColumnWidths: string[] = Object.keys(StageWidth);
     private readonly COLUMN_WIDTHS_CACHE_KEY = 'COLUMN_WIDTHS';
     searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchClear = false;
 
     constructor(
         injector: Injector,

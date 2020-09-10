@@ -1,7 +1,7 @@
 <dx-text-box mode="search"
-             [width]="35"
-             (onFocusIn)="onFocusIn($event)"
-             (onFocusOut)="onFocusOut($event)"
+             [width]="200"
+             [placeholder]="ls.l('GlobalSearch')"
+             (onFocusIn)="onFocusIn()"
              (onEnterKey)="search($event)"
              (onValueChanged)="valueChanged($event)"
              [elementAttr]="{ id: 'global-search-textbox' }">
@@ -18,7 +18,10 @@
                 <div class="group" *ngIf="group.count">
                     <header>
                         <h4>{{ group.name }}</h4>
-                        <a (click)="showAll($event, group.link, group.linkParams)">{{ ls.l('ShowAll') }} {{ group.count }} {{ group.name.toLowerCase() }}</a>
+                        <a *ngIf="group.count > 1"
+                           (click)="showAll($event, group.link, group.linkParams)">
+                            {{ ls.l('ShowAll') }} <ng-container *ngIf="group.count < 22">{{ group.count }} {{ group.name.toLowerCase() }}</ng-container>
+                        </a>
                     </header>
                     <ul *ngFor="let entity of group.entities">
                         <li class="entity">
