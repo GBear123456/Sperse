@@ -46570,6 +46570,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     assignedToUserId!: number | undefined;
     assignedToUserName!: string | undefined;
     bankCode!: string | undefined;
+    bankCodeDate!: moment.Moment | undefined;
     orderCount!: number | undefined;
 
     constructor(data?: IContactInfoForMerge) {
@@ -46619,6 +46620,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.assignedToUserId = data["assignedToUserId"];
             this.assignedToUserName = data["assignedToUserName"];
             this.bankCode = data["bankCode"];
+            this.bankCodeDate = data["bankCodeDate"] ? moment(data["bankCodeDate"].toString()) : <any>undefined;
             this.orderCount = data["orderCount"];
         }
     }
@@ -46668,6 +46670,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["assignedToUserId"] = this.assignedToUserId;
         data["assignedToUserName"] = this.assignedToUserName;
         data["bankCode"] = this.bankCode;
+        data["bankCodeDate"] = this.bankCodeDate ? this.bankCodeDate.toISOString() : <any>undefined;
         data["orderCount"] = this.orderCount;
         return data; 
     }
@@ -46698,6 +46701,7 @@ export interface IContactInfoForMerge {
     assignedToUserId: number | undefined;
     assignedToUserName: string | undefined;
     bankCode: string | undefined;
+    bankCodeDate: moment.Moment | undefined;
     orderCount: number | undefined;
 }
 
