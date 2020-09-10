@@ -236,18 +236,9 @@ export class GlobalSearchComponent implements OnInit {
         };
     }
     
-    onFocusIn(e) {
-        this.searchWide = true;
-        e.component.option('width', 200);
+    onFocusIn() {
         if (this.itemsFound) {
             this.isTooltipVisible = true;
-        }
-    }
-    
-    onFocusOut(e) {
-        if (!e.component.option('value')) {
-            e.component.option('width', 35);
-            this.searchWide = false;
         }
     }
 

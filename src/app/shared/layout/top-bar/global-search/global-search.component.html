@@ -1,7 +1,7 @@
 <dx-text-box mode="search"
-             [width]="35"
-             (onFocusIn)="onFocusIn($event)"
-             (onFocusOut)="onFocusOut($event)"
+             [width]="200"
+             [placeholder]="ls.l('GlobalSearch')"
+             (onFocusIn)="onFocusIn()"
              (onEnterKey)="search($event)"
              (onValueChanged)="valueChanged($event)"
              [elementAttr]="{ id: 'global-search-textbox' }">

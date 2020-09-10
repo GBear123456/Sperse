@@ -34,7 +34,7 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AddServiceProductDialogComponent } from './add-service-product-dialog/add-service-product-dialog.component';
-import { AppPermissionService } from '../../../../../shared/common/auth/permission.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
