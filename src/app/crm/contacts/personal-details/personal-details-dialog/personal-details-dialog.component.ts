@@ -558,8 +558,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     openContactDetails(contactId: number) {
         if (contactId) {
-            this.contactProxy.isContactInfoAvailable(contactId).subscribe((isContactInfoAvailable: boolean) => {
-                if (isContactInfoAvailable) {
+            this.contactProxy.isAccessible(contactId).subscribe((isAccessible: boolean) => {
+                if (isAccessible) {
                     /** Clear data source to avoid wrong navigating after opening the contact */
                     this.itemDetailsService.setItemsSource(
                         this.contactsService.getCurrentItemType(this.route.snapshot.queryParams),
