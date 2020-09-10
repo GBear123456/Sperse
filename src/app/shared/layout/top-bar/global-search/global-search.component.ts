@@ -46,7 +46,7 @@ export class GlobalSearchComponent implements OnInit {
                 this.getClientsGroup(search),
                 this.getPartnersGroup(search),
                 this.getLeadGroup(search, this.ls.l('ClientLeads'), 'Client'),
-                this.getLeadGroup(search, this.ls.l('ClientPartners'), 'Partner'),
+                this.getLeadGroup(search, this.ls.l('PartnerLeads'), 'Partner'),
                 this.getLeadGroup(search, this.ls.l('Employees'), 'UserProfile'),
                 this.getLeadGroup(search, this.ls.l('Investors'), 'Investor'),
                 this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
@@ -250,7 +250,6 @@ export class GlobalSearchComponent implements OnInit {
     search(e) {
         const value = e.component.option('value');
         if (value) {
-            console.log(value);
             this._search.next(value);
         }
     }
