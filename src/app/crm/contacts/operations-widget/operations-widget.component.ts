@@ -34,7 +34,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
-import { UserManagementService } from '../../../../shared/common/layout/user-management-list/user-management.service';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppConsts } from '@shared/AppConsts';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 

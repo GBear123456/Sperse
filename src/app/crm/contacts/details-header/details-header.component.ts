@@ -386,7 +386,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             .pipe(filter(result => result))
             .subscribe(result => {
                 let dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
-
                 if (result.clearPhoto) {
                     this.contactPhotoServiceProxy.clearContactPhoto(this.data[dataField].id)
                         .subscribe(() => {
@@ -420,7 +419,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
             data: this.data,
-            hasBackdrop: false,
             position: this.dialogService.calculateDialogPosition(
                 event, event.target.closest('div'), 200, -12)
         });
