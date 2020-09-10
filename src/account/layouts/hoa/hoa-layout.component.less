@@ -33,6 +33,12 @@ input:-webkit-autofill:active  {
     width: 100vw;
     overflow: hidden;
 
+    @media all and (max-width: 600px) {
+        height: auto;
+        min-height: 100vh;
+        overflow: auto;
+    }
+
     ::ng-deep .has-danger .form-control-feedback {
         color: @primary;
     }
@@ -65,6 +71,14 @@ input:-webkit-autofill:active  {
             left: 50%;
             transform: translateX(-50%);
         }
+
+        @media all and (max-width: 600px) {
+            position: relative;
+            top: 15px;
+            left: 0;
+            text-align: center;
+            transform: translateX(0);
+        }
     }
 
     .right-side {
@@ -92,6 +106,10 @@ input:-webkit-autofill:active  {
 
         @media all and (max-width: 768px) {
             padding: 40px 15px;
+        }
+
+        @media all and (max-width: 600px) {
+            padding: 0 15px 20px;
         }
     }
 
