@@ -18,7 +18,10 @@
                 <div class="group" *ngIf="group.count">
                     <header>
                         <h4>{{ group.name }}</h4>
-                        <a (click)="showAll($event, group.link, group.linkParams)">{{ ls.l('ShowAll') }} {{ group.count }} {{ group.name.toLowerCase() }}</a>
+                        <a *ngIf="group.count > 1"
+                           (click)="showAll($event, group.link, group.linkParams)">
+                            {{ ls.l('ShowAll') }} <ng-container *ngIf="group.count < 22">{{ group.count }} {{ group.name.toLowerCase() }}</ng-container>
+                        </a>
                     </header>
                     <ul *ngFor="let entity of group.entities">
                         <li class="entity">
