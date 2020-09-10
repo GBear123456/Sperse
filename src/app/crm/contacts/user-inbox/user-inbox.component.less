@@ -19,6 +19,21 @@
             width: 100%;
         }
 
+        .status {
+            &.sent {
+                color: #54ad03;
+            }
+            &.draft {
+                color: #5f6267;
+            }
+            &.pending {
+                color: #1e0fff;
+            }
+            &.failed {
+                color: #f52222;
+            }
+        }
+
         .avatar {
             width: 49px;
             height: 49px;
@@ -183,6 +198,13 @@
                         text-align: left;
                         color: #677380;
                     }
+                    .status {
+                        display: inline-block;
+                        position: absolute;
+                        height: 20px;
+                        right: 10px;
+                        top: 37px;
+                    }
                 }
             }
         }
@@ -342,13 +364,27 @@
                 display: flex;
                 margin: 20px;
                 min-height: 100px;
+                position: relative;
                 border-bottom: 1px solid #dfdfdf;
-                padding-bottom: 20px;
+                padding-bottom: 20px;                
                 &.sms {
                     min-height: auto;
                     .details {
                         height: 45px;
                     }
+                }
+                .info {
+                    vertical-align: middle;
+                    padding: 0 5px;
+                }
+                .status {
+                    display: inline-block;
+                    position: absolute;
+                    height: 20px;
+                    right: 0px;
+                    top: 0px;
+                    font-size: 16px;
+                    font-weight: 600;
                 }
                 .details {
                     display: flex;
@@ -371,10 +407,12 @@
                         font-weight: 300;
                         font-style: normal;
                         font-stretch: normal;
+                        width: fit-content;
                         line-height: 1.54;
                         letter-spacing: 0.26px;
                         text-align: left;
                         color: #677380;
+                        cursor: pointer;
                     }
                     .subject {
                         font-size: 15px;
@@ -471,6 +509,49 @@
 
             .dx-icon {
                 color: #00aeef;
+            }
+        }
+    }
+}
+
+::ng-deep dx-data-grid#inbox-delivery-statuses {
+    .delivery-status {
+        &::before {
+            content: '';
+            display: inline-block;
+            margin-right: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+        }
+        &.delivered {
+            color: #54ad03;
+            &::before {
+                background-color: #54ad03;
+            }
+        }
+        .bounce {
+            color: #d014e6;
+            &::before {
+                background-color: #d014e6;
+            }
+        }
+        .blocked {
+            color: #5f6267;
+            &::before {
+                background-color: #5f6267;
+            }
+        }
+        .dropped {
+            color: #1e0fff;
+            &::before {
+                background-color: #1e0fff;
+            }
+        }
+        .failed {
+            color: #f52222;
+            &::before {
+                background-color: #f52222;
             }
         }
     }

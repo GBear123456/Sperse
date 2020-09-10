@@ -27,6 +27,7 @@
                             <span class="subject">{{item.subject}}</span>
                         </div>
                         <div class="date">{{item.creationTime | date: formatting.monthDay : userTimezone}}</div>
+                        <div class="status {{item.status | lowercase}}">{{item.status}}</div>
                     </div>
                 </div>
                 <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
@@ -43,6 +44,28 @@
     </div>
     <div #contentView class="content-view">
         <div class="inbox-content" *ngIf="activeMessage">
+            <dx-tooltip width="670px"
+                        [target]="'span.to'" 
+                        showEvent="mouseenter"
+                        hideEvent="dxhoverend"
+                        [disabled]="!activeMessage?.recepients?.length"
+                        position="bottom">
+                <div *dxTemplate="let data of 'content'">
+                    <dx-data-grid [dataSource]="activeMessage?.recepients" id="inbox-delivery-statuses">
+                        <dxi-column dataField="email" width="200px"></dxi-column>
+                        <dxi-column dataField="deliveryStatus" [caption]="ls.l('Status')" width="100px" cellTemplate="statusCell"></dxi-column>
+                        <dxi-column dataField="deliveryDate" width="170px" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="openDate" width="170px" cellTemplate="dateCell"></dxi-column>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: formatting.inboxDate : userTimezone }}
+                        </div>
+                        <div *dxTemplate="let cellData of 'statusCell'">
+                            <span class="delivery-status {{cellData.value | lowercase}}">{{cellData.value}}</span>
+                        </div>
+                    </dx-data-grid>
+                </div>
+            </dx-tooltip>
+
             <app-toolbar [config]="contentToolbar"></app-toolbar>
             <ng-container [ngSwitch]="activeMessage.deliveryType">
                 <ng-container *ngSwitchCase="'SMS'">                
@@ -53,6 +76,7 @@
                             <span class="to">{{activeMessage?.to}}</span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
+                        <div class="status {{activeMessage?.status | lowercase}}">{{activeMessage?.status}}</div>
                     </div>                
                 </ng-container>
                 <ng-container *ngSwitchCase="'Email'">
@@ -61,9 +85,10 @@
                         <div class="details">
                             <span class="from">{{activeMessage?.fromUserName}}&nbsp;<small *ngIf="activeMessage?.from">&lt;{{activeMessage?.from}}&gt;</small></span>
                             <span class="subject">{{activeMessage?.subject}}</span>
-                            <span class="to">{{ls.l('to')}} {{activeMessage?.to}}</span>
+                            <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}} {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
+                        <div class="status {{activeMessage?.status | lowercase}}">{{activeMessage?.status}}</div>
                     </div>
                 </ng-container>
             </ng-container>

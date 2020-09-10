@@ -13,6 +13,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
@@ -56,7 +57,8 @@ export class UserInboxComponent implements OnDestroy {
     statuses = Object.keys(CommunicationMessageSendingStatus).map(item => {
         return {
             id: CommunicationMessageSendingStatus[item],
-            name: this.ls.l(item)
+            name: this.ls.l(item),
+            hint: this.ls.l(item)
         };
     });
     get isActiveEmilType(): boolean {
@@ -73,7 +75,7 @@ export class UserInboxComponent implements OnDestroy {
             icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o'
         };
     });
-    userTimezone = '0000';
+    userTimezone = DateHelper.getUserTimezone();
     private readonly ident = 'UserInbox';
 
     constructor(
