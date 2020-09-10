@@ -34,7 +34,7 @@ export class RecentClientsComponent implements OnInit {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, contactId)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads('C', this.recordsCount, contactId)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
