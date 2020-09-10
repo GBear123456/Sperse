@@ -22,13 +22,13 @@ export class AppPermissionService {
         });
     }
 
-    getCGPermissionKey(contactGroup: ContactGroup, permission = ''): string {
+    getCGPermissionKey(contactGroupKey: ContactGroup, permission = ''): string {
         return ContactGroupPermission[
-            this.CONTACT_GROUP_KEYS[contactGroup ? contactGroup.toString() : undefined]
+            this.CONTACT_GROUP_KEYS[contactGroupKey ? contactGroupKey.toString() : undefined]
             ] + (permission ? '.' : '') + permission;
     }
 
-    checkCGPermission(contactGroup: ContactGroup, permission = 'Manage') {
-        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroup, permission) as AppPermissions);
+    checkCGPermission(contactGroupKey: ContactGroup, permission = 'Manage') {
+        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroupKey, permission) as AppPermissions);
     }
 }

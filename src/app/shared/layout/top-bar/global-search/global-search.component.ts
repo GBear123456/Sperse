@@ -5,7 +5,7 @@ import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, Observable, ReplaySubject } from 'rxjs';
+import { combineLatest, Observable, ReplaySubject, of } from 'rxjs';
 import { finalize, first, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 
 /** Application imports */
@@ -24,6 +24,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { CrmService } from '@app/crm/crm.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { AppPermissions } from '@shared/AppPermissions';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     selector: 'global-search',
@@ -71,7 +73,8 @@ export class GlobalSearchComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        private permissionService: AppPermissionService
     ) {}
 
     ngOnInit() {
@@ -89,27 +92,30 @@ export class GlobalSearchComponent implements OnInit {
     }
     
     private getClientsGroup(search: string): Observable<GlobalSearchGroup> {
-        return this.http.get(
-            this.oDataService.getODataUrl('Contact', [
-                { 'StatusId': { 'eq': 'A' }},
-                { 'ParentId': { 'eq': null }},
-                { 'GroupId': { 'eq': 'C' } }
-            ]),
-            this.getOptions(search, {
-                select$: [
-                    ClientFields.Id,
-                    ClientFields.Name,
-                    ClientFields.Email,
-                    ClientFields.PhotoPublicId
-                ].join(',')
-            })
+        return (this.permissionService.isGranted(AppPermissions.CRMCustomers)
+            ? this.http.get(
+                this.oDataService.getODataUrl('Contact', [
+                    { 'StatusId': { 'eq': 'A' }},
+                    { 'ParentId': { 'eq': null }},
+                    { 'GroupId': { 'eq': 'C' } }
+                ]),
+                this.getOptions(search, {
+                    select$: [
+                        ClientFields.Id,
+                        ClientFields.Name,
+                        ClientFields.Email,
+                        ClientFields.PhotoPublicId
+                    ].join(',')
+                })
+            )
+            : of(null)
         ).pipe(
             startWith({ value: [], ['@odata.count']: 0 }),
             map((clients: any) => {
                 return {
                     name: this.ls.l('Customers'),
-                    entities: clients.value,
-                    count: clients['@odata.count'],
+                    entities: clients ? clients.value : [],
+                    count: clients ? clients['@odata.count'] : 0,
                     link: 'app/crm/clients',
                     itemType: ItemTypeEnum.Customer
                 }
@@ -119,27 +125,30 @@ export class GlobalSearchComponent implements OnInit {
     }
     
     private getPartnersGroup(search: string): Observable<any> {
-        return this.http.get(
-            this.oDataService.getODataUrl('Contact', [
-                { 'StatusId': { 'eq': 'A' }},
-                { 'ParentId': { 'eq': null }},
-                { 'GroupId': { 'eq': 'P' } }
-            ]),
-            this.getOptions(search, {
-                select$: [
-                    PartnerFields.Id,
-                    PartnerFields.Name,
-                    PartnerFields.Email,
-                    PartnerFields.PhotoPublicId
-                ].join(',')
-            })
+        return (this.permissionService.isGranted(AppPermissions.CRMPartners)
+            ? this.http.get(
+                this.oDataService.getODataUrl('Contact', [
+                    { 'StatusId': { 'eq': 'A' }},
+                    { 'ParentId': { 'eq': null }},
+                    { 'GroupId': { 'eq': 'P' } }
+                ]),
+                this.getOptions(search, {
+                    select$: [
+                        PartnerFields.Id,
+                        PartnerFields.Name,
+                        PartnerFields.Email,
+                        PartnerFields.PhotoPublicId
+                    ].join(',')
+                })
+            )
+            : of(null)
         ).pipe(
             startWith({ value: [], ['@odata.count']: 0 }),
             map((partners: any) => {
                 return {
                     name: this.ls.l('Partners'),
-                    entities: partners.value,
-                    count: partners['@odata.count'],
+                    entities: partners ? partners.value : [],
+                    count: partners ? partners['@odata.count'] : 0,
                     link: 'app/crm/partners',
                     itemType: ItemTypeEnum.Partner
                 };
@@ -149,26 +158,29 @@ export class GlobalSearchComponent implements OnInit {
     }
     
     private getLeadGroup(search: string, name: string, contactGroup: string) {
-        return this.http.get(
-            this.oDataService.getODataUrl('Lead'),
-            this.getOptions(search, {
-                $select: [
-                    LeadFields.Id,
-                    LeadFields.Name,
-                    LeadFields.Email,
-                    LeadFields.PhotoPublicId,
-                    LeadFields.SourceChannelCode,
-                    LeadFields.CustomerId
-                ].join(','),
-                contactGroupId: ContactGroup[contactGroup]
-            })
+        return (this.permissionService.checkCGPermission(ContactGroup[contactGroup])
+            ? this.http.get(
+                this.oDataService.getODataUrl('Lead'),
+                this.getOptions(search, {
+                    $select: [
+                        LeadFields.Id,
+                        LeadFields.Name,
+                        LeadFields.Email,
+                        LeadFields.PhotoPublicId,
+                        LeadFields.SourceChannelCode,
+                        LeadFields.CustomerId
+                    ].join(','),
+                    contactGroupId: ContactGroup[contactGroup]
+                })
+            )
+            : of(null)
         ).pipe(
             startWith({ value: [], ['@odata.count']: 0 }),
             map((leads: any) => {
                 return {
                     name: name,
-                    entities: leads.value,
-                    count: leads['@odata.count'],
+                    entities: leads ? leads.value : [],
+                    count: leads ? leads['@odata.count'] : 0,
                     link: 'app/crm/leads',
                     itemType: ItemTypeEnum.Lead,
                     linkParams: {

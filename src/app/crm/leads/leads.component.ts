@@ -354,6 +354,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchClear = false;
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
