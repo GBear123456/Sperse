@@ -26,11 +26,12 @@ export class DashboardWidgetsService  {
     public period$: Observable<PeriodModel> = this.calendarService.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return {
-                    from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
-                    to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to')
-                } as PeriodModel;
-            }
-        )
+                from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
+                to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to'),
+                period: dateRange.period,
+                name: dateRange.period
+            };
+        })
     );
     private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
     totalsData$: Observable<GetTotalsOutput> = this._totalsData.asObservable();
