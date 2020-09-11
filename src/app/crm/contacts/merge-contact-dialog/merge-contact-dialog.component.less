@@ -204,7 +204,7 @@
                     left: 40px;
                     width: 18px;
                     height: 18px;
-                    top: 0px;
+                    top: 10px;
 
                     &.dt {
                         background: url(../../../../assets/common/icons/contact-icon.svg) no-repeat center;
@@ -313,13 +313,21 @@
                 }
             }
         }
+        .bank-code-date {
+            display: inline-block;
+        }
         ::ng-deep dx-check-box {
             margin: 10px 15px;
+            display: inline-block;
             &.dx-state-disabled {
                 .dx-checkbox-icon,
                 .dx-checkbox-text {
                     opacity: 1;
                 }
+            }
+            &.bankCode {
+                display: inline-block;
+                margin: 10px 0 10px 15px;                
             }
             &.contactAddresses,
             &.contactEmails,
