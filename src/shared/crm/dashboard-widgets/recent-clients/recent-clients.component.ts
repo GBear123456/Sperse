@@ -37,10 +37,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     selectItems: IRecentClientsSelectItem[] = [
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
-                this.recordsCount,
-                this.ls.l('ContactGroup_Client').toLowerCase()
-            ]),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_Client').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
@@ -48,7 +45,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
+            message: this.ls.l('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
@@ -56,10 +53,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Partner')),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
-                this.recordsCount,
-                this.ls.l('ContactGroup_Partner').toLowerCase()
-            ]),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_Partner').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Partner' },
@@ -68,10 +62,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_UserProfile')),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
-                this.recordsCount,
-                this.ls.l('ContactGroup_UserProfile').toLowerCase()
-            ]),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_UserProfile').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'UserProfile' },
@@ -80,10 +71,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Investor')),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
-                this.recordsCount,
-                this.ls.l('ContactGroup_Investor').toLowerCase()
-            ]),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Investor').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Investor' },
@@ -92,10 +80,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Vendor')),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
-                this.recordsCount,
-                this.ls.l('ContactGroup_Vendor').toLowerCase()
-            ]),
+            message: this.ls.l('CRM', 'CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Vendor').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Vendor' },
