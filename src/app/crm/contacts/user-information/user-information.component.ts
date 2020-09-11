@@ -272,6 +272,7 @@ export class UserInformationComponent implements OnInit, OnDestroy {
     }
 
     fillUserData(data) {
+        this.selectedOrgUnits = [];
         data.memberedOrganizationUnits.forEach((organizationUnitCode: string) => {
             const organizationUnit = data.allOrganizationUnits.find(organizationUnit => organizationUnit.code === organizationUnitCode);
             if (organizationUnit) {

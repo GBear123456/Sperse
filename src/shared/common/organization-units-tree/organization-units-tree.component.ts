@@ -115,13 +115,11 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], selectedOrgUnits: number[]) {
         this.organizationUnitsData = orgUnits;
-
-        this.organizationUnitsData.forEach((item) => {
+        this.organizationUnitsData.forEach((item: OrganizationUnitDto) => {
             if (item['selected'] = includes(selectedOrgUnits, item.id))
                 this.lastSelectedItemId = item.id;
             item['expanded'] = true;
         });
-
         this.oranizationUnitsDataSource = new DataSource(this.organizationUnitsData);
         this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
     }
