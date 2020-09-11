@@ -210,7 +210,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus(undefined).subscribe((status: GetCRMStatusOutput) => {
+        this.dashboardServiceProxy.getStatus(undefined, undefined, undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });

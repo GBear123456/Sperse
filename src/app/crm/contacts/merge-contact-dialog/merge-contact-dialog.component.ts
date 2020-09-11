@@ -306,7 +306,14 @@ export class MergeContactDialogComponent implements AfterViewInit {
 
     getResultFieldValues(field: string, sourceValues, targetValues) {
         let isMultiField = this.isMultiField(this.fieldsConfig[field]);
-        return targetValues.concat(sourceValues.map(item => {
+        return targetValues.filter(value => {
+            if (field == this.CONTACT_BANK_CODE) {
+                let sourceContact = this.data.mergeInfo.contactInfo,
+                    targetContact = this.data.mergeInfo.targetContactInfo;
+                return targetContact.bankCodeDate > sourceContact.bankCodeDate;
+            } else
+                return !!value;
+        }).concat(sourceValues.map(item => {
             if (isMultiField) {
                 if (targetValues.some(source => source.text == item.text))
                     return null;
@@ -321,9 +328,12 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     checkSingleField(field, targetValues) {
-        if (field == this.ASSIGNED_USER_EMAIL) {
-            let data = this.data.mergeInfo;
+        if (field == this.ASSIGNED_USER_EMAIL)
             return targetValues.length;
+        else if (field == this.CONTACT_BANK_CODE) {
+            let sourceContact = this.data.mergeInfo.contactInfo,
+                targetContact = this.data.mergeInfo.targetContactInfo;
+            return sourceContact.bankCodeDate < targetContact.bankCodeDate;
         } else
             return (targetValues.length || !this.keepSource);
     }
@@ -521,7 +531,8 @@ export class MergeContactDialogComponent implements AfterViewInit {
 
     isFieldSelected(field, source, index = 0) {
         let data = this.fieldsConfig[field][source];
-        return data && data.values[index].selected;
+        return data && data.values[index]
+            && data.values[index].selected;
     }
 
     getPreferredProperties() {
@@ -617,6 +628,27 @@ export class MergeContactDialogComponent implements AfterViewInit {
                 return sourceContact.userLastLoginTime;
             else
                 return targetContact.userLastLoginTime || sourceContact.userLastLoginTime;
+        }
+    }
+
+    getBankCodeDate(column) {
+        let sourceContact = this.data.mergeInfo.contactInfo,
+            targetContact = this.data.mergeInfo.targetContactInfo;
+        if (column == this.COLUMN_SOURCE_FIELD)
+            return sourceContact.bankCodeDate;
+        else if (column == this.COLUMN_TARGET_FIELD)
+            return targetContact.bankCodeDate;
+        else if (column == this.COLUMN_RESULT_FIELD) {
+            if (this.isFieldSelected('bankCode', 'target'))
+                return targetContact.bankCodeDate;
+            else if (this.isFieldSelected('bankCode', 'source'))
+                return sourceContact.bankCodeDate;
+            else if (targetContact.bankCodeDate > sourceContact.bankCodeDate)
+                return targetContact.bankCodeDate;
+            else  if (sourceContact.bankCodeDate > targetContact.bankCodeDate)
+                return sourceContact.bankCodeDate;
+            else
+                return targetContact.bankCodeDate || sourceContact.bankCodeDate;
         }
     }
 
