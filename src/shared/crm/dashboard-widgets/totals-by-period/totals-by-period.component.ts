@@ -244,7 +244,8 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             undefined,
             period.amount,
             isCumulative,
-            contactId
+            contactId,
+            undefined
         );
     }
 

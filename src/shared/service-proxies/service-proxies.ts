@@ -12391,17 +12391,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getTotals(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<GetTotalsOutput> {
+    getTotals(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetTotalsOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetTotals?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12456,9 +12462,10 @@ export class DashboardServiceProxy {
      * @periodCount (optional) 
      * @isCumulative (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getCustomerAndLeadStats(groupBy: GroupByPeriod | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, sourceContactId: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getCustomerAndLeadStats(groupBy: GroupByPeriod | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
         if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
@@ -12472,6 +12479,8 @@ export class DashboardServiceProxy {
             url_ += "IsCumulative=" + encodeURIComponent("" + isCumulative) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12526,14 +12535,17 @@ export class DashboardServiceProxy {
     /**
      * @topCount (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getRecentlyCreatedCustomers(topCount: number | null | undefined, sourceContactId: number | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
+    getRecentlyCreatedCustomers(topCount: number | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12588,9 +12600,10 @@ export class DashboardServiceProxy {
     /**
      * @topCount (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getRecentlyCreatedLeads(contactGroupId: string, topCount: number | null | undefined, sourceContactId: number | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
+    getRecentlyCreatedLeads(contactGroupId: string, topCount: number | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedLeads?";
         if (contactGroupId === undefined || contactGroupId === null)
             throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
@@ -12600,6 +12613,8 @@ export class DashboardServiceProxy {
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12654,17 +12669,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactsByCompanySize(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<GetContactsByCompanySizeOutput[]> {
+    getContactsByCompanySize(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetContactsByCompanySizeOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByCompanySize?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12719,17 +12740,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<GetContactsByRegionOutput[]> {
+    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetContactsByRegionOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByRegion?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12784,17 +12811,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<LeadAgeRangeGetCountOutput[]> {
+    getLeadsCountByAge(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<LeadAgeRangeGetCountOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByAge?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12849,17 +12882,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getLeadsCountByStage(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<GetCountOutput[]> {
+    getLeadsCountByStage(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCountOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetLeadsCountByStage?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12914,17 +12953,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactsByRating(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<GetCountOutput[]> {
+    getContactsByRating(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCountOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByRating?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12979,17 +13024,23 @@ export class DashboardServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactsByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, sourceContactId: number | null | undefined): Observable<GetCountByStarOutput[]> {
+    getContactsByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCountByStarOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByStar?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -13042,13 +13093,19 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getStatus(sourceContactId: number | null | undefined): Observable<GetCRMStatusOutput> {
+    getStatus(contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCRMStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetStatus?";
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
-            url_ += "sourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
