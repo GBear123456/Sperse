@@ -15,6 +15,7 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'recent-clients',
@@ -34,7 +35,7 @@ export class RecentClientsComponent implements OnInit {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads('C', this.recordsCount, contactId)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Client, this.recordsCount, contactId, undefined)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
@@ -42,7 +43,7 @@ export class RecentClientsComponent implements OnInit {
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
             dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId)
+                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId, undefined)
         }
     ];
 

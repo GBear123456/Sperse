@@ -67,14 +67,14 @@ export class GlobalSearchComponent implements OnInit {
         private oDataService: ODataService,
         private dialogService: DialogService,
         private dialog: MatDialog,
-        private ls: AppLocalizationService,
         private router: Router,
         private profileService: ProfileService,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
         private itemDetailsService: ItemDetailsService,
-        private permissionService: AppPermissionService
+        private permissionService: AppPermissionService,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
