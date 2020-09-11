@@ -41,7 +41,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Client, this.recordsCount, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
@@ -49,7 +49,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Partner')),
@@ -58,7 +58,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Partner' },
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Partner, this.recordsCount, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Partner, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_UserProfile')),
@@ -67,7 +67,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'UserProfile' },
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.UserProfile, this.recordsCount, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.UserProfile, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Investor')),
@@ -76,7 +76,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Investor' },
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Investor, this.recordsCount, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Investor, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Vendor')),
@@ -85,7 +85,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Vendor' },
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Vendor, this.recordsCount, contactId, orgUnitIds)
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Vendor, contactId, orgUnitIds)
         }
     ];
     selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);

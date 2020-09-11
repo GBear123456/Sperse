@@ -12534,14 +12534,17 @@ export class DashboardServiceProxy {
 
     /**
      * @topCount (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
      * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getRecentlyCreatedCustomers(topCount: number | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
+    getRecentlyCreatedCustomers(topCount: number | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetRecentlyCreatedCustomersOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
         if (sourceOrganizationUnitIds !== undefined)
@@ -12599,18 +12602,17 @@ export class DashboardServiceProxy {
 
     /**
      * @topCount (optional) 
+     * @contactGroupId (optional) 
      * @sourceContactId (optional) 
      * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getRecentlyCreatedLeads(contactGroupId: string, topCount: number | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
+    getRecentlyCreatedLeads(topCount: number | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetRecentlyCreatedLeadsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedLeads?";
-        if (contactGroupId === undefined || contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
-        else
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
         if (sourceOrganizationUnitIds !== undefined)
@@ -13095,17 +13097,14 @@ export class DashboardServiceProxy {
     /**
      * @contactGroupId (optional) 
      * @sourceContactId (optional) 
-     * @sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getStatus(contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCRMStatusOutput> {
+    getStatus(contactGroupId: string | null | undefined, sourceContactId: number | null | undefined): Observable<GetCRMStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetStatus?";
         if (contactGroupId !== undefined)
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (sourceContactId !== undefined)
             url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
-        if (sourceOrganizationUnitIds !== undefined)
-            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
