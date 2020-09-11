@@ -83,6 +83,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         {
             key: GroupByPeriod.Monthly,
             name: 'Monthly'
+        },
+        {
+            key: GroupByPeriod.Yearly,
+            name: 'Yearly'
         }
     ];
     selectItems = [
@@ -220,12 +224,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
 
     private savePeriod(period: PeriodModel): TotalsByPeriodModel {
         if (period) {
-            if ([Period.Yesterday, Period.Today,
-                Period.Last7Days, Period.Last30Days,
-                Period.ThisWeek, Period.LastWeek,
-                Period.LastMonth, Period.ThisMonth
-            ].indexOf(period.period) >= 0) {
+            if (moment(period.to).diff(moment(period.from), 'days') < 90 ) {
                 this.selectedPeriod = { ...this.periods[0] };
+            } else if(moment(period.to).diff(moment(period.from), 'years') > 3) {
+                this.selectedPeriod = { ...this.periods[3] };
             } else {
                 this.selectedPeriod = { ...this.periods[2] };
             }
@@ -343,6 +345,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     }
 
     /** Factory for method that customize axis */
+
+    getYearlyBottomAxisCustomizer(elem) {
+        return elem.value.getUTCFullYear().toString();
+    }
 
     getMonthlyBottomAxisCustomizer(elem) {
         return `${elem.value.toUTCString().split(' ')[2].toUpperCase()}<br/><div class="yearArgument">${elem.value.getUTCFullYear().toString().substr(-2)}</div>`;
