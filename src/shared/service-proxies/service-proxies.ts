@@ -12533,6 +12533,86 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @groupBy (optional) 
+     * @periodCount (optional) 
+     * @isCumulative (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @contactGroupId (optional) 
+     * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
+    getContactAndLeadStats(groupBy: GroupByPeriod | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactAndLeadStats?";
+        if (groupBy !== undefined)
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
+        if (periodCount !== undefined)
+            url_ += "PeriodCount=" + encodeURIComponent("" + periodCount) + "&"; 
+        if (isCumulative !== undefined)
+            url_ += "IsCumulative=" + encodeURIComponent("" + isCumulative) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactAndLeadStats(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactAndLeadStats(<any>response_);
+                } catch (e) {
+                    return <Observable<GetCustomerAndLeadStatsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetCustomerAndLeadStatsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactAndLeadStats(response: HttpResponseBase): Observable<GetCustomerAndLeadStatsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetCustomerAndLeadStatsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetCustomerAndLeadStatsOutput[]>(<any>null);
+    }
+
+    /**
      * @topCount (optional) 
      * @sourceContactId (optional) 
      * @sourceOrganizationUnitIds (optional) 
