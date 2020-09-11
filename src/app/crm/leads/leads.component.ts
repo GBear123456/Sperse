@@ -1839,6 +1839,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     activate() {
+        this.searchClear = false;
         super.activate();
         this.initFilterConfig();
         this.initToolbarConfig();

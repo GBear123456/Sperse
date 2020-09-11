@@ -80,7 +80,7 @@ export class GlobalSearchComponent implements OnInit {
     ngOnInit() {
         this.searchGroups$.subscribe((searchGroups: GlobalSearchGroup[]) => {
             this.searchGroups = searchGroups;
-            this.isTooltipVisible = this.itemsFound;
+            this.isTooltipVisible = true;
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -271,8 +271,8 @@ export class GlobalSearchComponent implements OnInit {
         e.preventDefault();
     }
 
-    getProfilePictureUrl(pictureId: string): string {
-        return this.profileService.getProfilePictureUrl(pictureId);
+    getContactPhotoUrl(pictureId: string): string {
+        return this.profileService.getContactPhotoUrl(pictureId);
     }
 
     moveToEntityDetails(e, entity: GlobalSearchGroupEntity, groupItemType: ItemTypeEnum) {

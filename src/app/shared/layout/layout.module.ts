@@ -39,6 +39,7 @@ import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
 import { ContactInfoPanelComponent } from '@app/shared/common/contact-info-panel/contact-info-panel.component';
 import { GlobalSearchComponent } from '@app/shared/layout/top-bar/global-search/global-search.component';
+import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 let COMPONENTS = [
     PlatformSelectComponent,
@@ -78,7 +79,8 @@ let COMPONENTS = [
         ProgressBarModule,
         TableModule,
         PaginatorModule,
-        UserManagementModule
+        UserManagementModule,
+        NoDataModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
