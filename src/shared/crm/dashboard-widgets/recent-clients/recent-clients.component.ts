@@ -34,16 +34,16 @@ export class RecentClientsComponent implements OnInit {
             message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
-            dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Client, this.recordsCount, contactId, undefined)
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Client, this.recordsCount, contactId, orgUnitIds)
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.ls('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
-            dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
-                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId, undefined)
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId, orgUnitIds)
         }
     ];
 
@@ -65,10 +65,11 @@ export class RecentClientsComponent implements OnInit {
         this.recentlyCreatedCustomers$ = combineLatest(
             this.selectedItem$,
             this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([selectedItem, contactId, ]) => selectedItem.dataSource(contactId).pipe(
+            switchMap(([selectedItem, contactId, orgUnitIds, ]) => selectedItem.dataSource(contactId, orgUnitIds).pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ))

@@ -19,6 +19,7 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Injectable()
 export class DashboardWidgetsService  {
@@ -67,6 +68,10 @@ export class DashboardWidgetsService  {
     refresh$: Observable<null> = this._refresh.asObservable();
     private _contactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
     contactId$: Observable<number> = this._contactId.asObservable();
+    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>('');
+    contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable();
+    private _sourceOrgUnitIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
+    sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
 
     constructor(
         private permissionService: AppPermissionService,
@@ -79,20 +84,24 @@ export class DashboardWidgetsService  {
     ) {
         combineLatest(
             this.period$,
-            this.refresh$,
-            this.contactId$
+            this.contactId$,
+            this.contactGroupId$,
+            this.sourceOrgUnitIds$,
+            this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period, refresh, contactId]: [PeriodModel, null, number]) => this.dashboardServiceProxy.getTotals(
-                period && period.from,
-                period && period.to,
-                undefined,
-                contactId,
-                undefined
-            ).pipe(
-                catchError(() => of(new GetTotalsOutput())),
-                finalize(() => this.totalsDataLoading.next(false))
-            )),
+            switchMap(([period, contactId, groupId, orgUnitIds, ]: [PeriodModel, number, ContactGroup, number[], null]) =>
+                this.dashboardServiceProxy.getTotals(
+                    period && period.from,
+                    period && period.to,
+                    String(groupId) || undefined,
+                    contactId,
+                    orgUnitIds
+                ).pipe(
+                    catchError(() => of(new GetTotalsOutput())),
+                    finalize(() => this.totalsDataLoading.next(false))
+                )
+            )
         ).subscribe((totalData: GetTotalsOutput) => {
             this._totalsData.next(totalData);
         });
@@ -105,6 +114,14 @@ export class DashboardWidgetsService  {
 
     setContactIdForTotals(contactId?: number) {
         this._contactId.next(contactId);
+    }
+
+    setGroupIdForTotals(groupId?: ContactGroup) {
+        this._contactGroupId.next(groupId);
+    }
+
+    setOrgUnitIdsForTotals(orgUnitIds?: number[]) {
+        this._sourceOrgUnitIds.next(orgUnitIds);
     }
 
     getPercentage(value, total) {

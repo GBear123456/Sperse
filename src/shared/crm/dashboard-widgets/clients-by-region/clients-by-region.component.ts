@@ -63,21 +63,25 @@ export class ClientsByRegionComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.data$ = combineLatest(
             this.dashboardWidgetsService.period$,
-            this.dashboardWidgetsService.refresh$,
-            this.dashboardWidgetsService.contactId$
+            this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.contactGroupId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
+            this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([period, refresh, contactId]: [PeriodModel, null, number]) => this.dashboardServiceProxy.getContactsByRegion(
-                period && period.from,
-                period && period.to,
-                undefined,
-                contactId,
-                undefined
-            ).pipe(
-                catchError(() => of([])),
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-            )),
+            switchMap(([period, contactId, groupId, orgUnitIds, ]: [PeriodModel, number, ContactGroup, number[], null]) => 
+                this.dashboardServiceProxy.getContactsByRegion(
+                    period && period.from,
+                    period && period.to,
+                    String(groupId),
+                    contactId,
+                    orgUnitIds
+                ).pipe(
+                    catchError(() => of([])),
+                    finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                )
+            ),
             map((contactsByRegion: GetContactsByRegionOutput[]) => {
                 let data = {};
                 contactsByRegion.forEach((val: GetContactsByRegionOutput) => {

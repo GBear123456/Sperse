@@ -154,13 +154,15 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 component: FilterRadioGroupComponent,
                 items: {
                     element: new FilterRadioGroupModel({
-                        value: ContactGroup.Client,
-                        list: Object.keys(ContactGroup).map(item => {
-                            return {
-                                id: ContactGroup[item],
-                                name: this.ls.l('ContactGroup_' + item)
-                            };
-                        })
+                        value: '',
+                        list: [{id: '', name: this.ls.l('All')}].concat(
+                            Object.keys(ContactGroup).map(item => {
+                                return {
+                                    id: ContactGroup[item],
+                                    name: this.ls.l('ContactGroup_' + item)
+                                };
+                            })
+                        )
                     })
                 }
 
@@ -185,6 +187,12 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 if (filter.caption == 'Source')
                     this.dashboardWidgetsService.setContactIdForTotals(
                         filter.items.element.value[0].value || undefined);
+                else if (filter.field == 'SourceOrganizationUnitId')
+                    this.dashboardWidgetsService.setOrgUnitIdsForTotals(
+                        filter.items.element.value);
+                else if (filter.caption == 'ContactGroup') 
+                    this.dashboardWidgetsService.setGroupIdForTotals(
+                        filter.items.element.value || undefined);
             });
         });
     }
