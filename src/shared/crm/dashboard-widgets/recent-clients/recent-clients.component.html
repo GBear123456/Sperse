@@ -8,7 +8,11 @@
                 (onSelectionChanged)="onSelectionChanged($event)">
             </dx-select-box>
             <span>{{selectedItem.value.message}}</span>
-            <a [routerLink]="selectedItem.value.allRecordsLink">{{ls.l('CRMDashboard_SeeAllRecords')}}<i class="fa fa-angle-right"></i></a>
+            <a [routerLink]="selectedItem.value.allRecordsLink"
+               [queryParams]="selectedItem.value.linkParams">
+                {{ls.l('CRMDashboard_SeeAllRecords')}}
+                <i class="fa fa-angle-right"></i>
+            </a>
         </h2>
     </header>
 
@@ -19,10 +23,9 @@
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                           (onCellClick)="onCellClick($event)">
                 <dxi-column dataField="fullName" [caption]="ls.l('Customer.Name')"></dxi-column>
-                <dxi-column dataField="creationTime" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                <div *dxTemplate="let cellData of 'dateCell'">
-                    {{cellData.value | date: formatting.dateTime : userTimezone}}
-                </div>
+                <dxi-column dataField="bankCode" [caption]="ls.l('BankCode')" [visible]="hasBankCodeFeature"></dxi-column>
+                <dxi-column dataField="email" [caption]="ls.l('Contact.Email')"></dxi-column>
+                <dxi-column dataField="phone" [caption]="ls.l('Contact.Phone')"></dxi-column>
                 <dxo-paging [pageSize]="10"></dxo-paging>
             </dx-data-grid>
         </div>

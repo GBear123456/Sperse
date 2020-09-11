@@ -7,7 +7,11 @@ import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { catchError, finalize, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
-import { DashboardServiceProxy, GetRecentlyCreatedCustomersOutput } from '@shared/service-proxies/service-proxies';
+import {
+    DashboardServiceProxy,
+    GetRecentlyCreatedCustomersOutput,
+    GetRecentlyCreatedLeadsOutput
+} from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -16,6 +20,7 @@ import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard
 import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients-select-item.interface';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     selector: 'recent-clients',
@@ -30,11 +35,14 @@ export class RecentClientsComponent implements OnInit {
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
     selectItems: IRecentClientsSelectItem[] = [
         {
-            name: this.ls.l('CRMDashboard_RecentLeads'),
-            message: this.ls.ls('CRM', 'CRMDashboard_LastNLeadsRecords',  [this.recordsCount]),
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
+                this.recordsCount,
+                this.ls.l('ContactGroup_Client').toLowerCase()
+            ]),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
-            dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Client, this.recordsCount, contactId)
         },
         {
@@ -44,12 +52,60 @@ export class RecentClientsComponent implements OnInit {
             allRecordsLink: '/app/crm/clients',
             dataSource: (contactId: number): Observable<GetRecentlyCreatedCustomersOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, contactId)
+        },
+        {
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Partner')),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
+                this.recordsCount,
+                this.ls.l('ContactGroup_Partner').toLowerCase()
+            ]),
+            dataLink: '',
+            allRecordsLink: '/app/crm/leads',
+            linkParams: { contactGroup: 'Partner' },
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedLeadsOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Partner, this.recordsCount, contactId)
+        },
+        {
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_UserProfile')),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
+                this.recordsCount,
+                this.ls.l('ContactGroup_UserProfile').toLowerCase()
+            ]),
+            dataLink: '',
+            allRecordsLink: '/app/crm/leads',
+            linkParams: { contactGroup: 'UserProfile' },
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedLeadsOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.UserProfile, this.recordsCount, contactId)
+        },
+        {
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Investor')),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
+                this.recordsCount,
+                this.ls.l('ContactGroup_Investor').toLowerCase()
+            ]),
+            dataLink: '',
+            allRecordsLink: '/app/crm/leads',
+            linkParams: { contactGroup: 'Investor' },
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedLeadsOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Investor, this.recordsCount, contactId)
+        },
+        {
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Vendor')),
+            message: this.ls.ls('CRM', 'CRMDashboard_LastNEntitiesRecords',  [
+                this.recordsCount,
+                this.ls.l('ContactGroup_Vendor').toLowerCase()
+            ]),
+            dataLink: '',
+            allRecordsLink: '/app/crm/leads',
+            linkParams: { contactGroup: 'Vendor' },
+            dataSource: (contactId: number): Observable<GetRecentlyCreatedLeadsOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(ContactGroup.Vendor, this.recordsCount, contactId)
         }
     ];
-
     selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);
     selectedItem$: Observable<IRecentClientsSelectItem> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
     userTimezone = DateHelper.getUserTimezone();
+    hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
 
     constructor(
         private dashboardServiceProxy: DashboardServiceProxy,
@@ -57,6 +113,7 @@ export class RecentClientsComponent implements OnInit {
         private loadingService: LoadingService,
         private router: Router,
         private elementRef: ElementRef,
+        private userManagementService: UserManagementService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor
     ) {}
@@ -79,7 +136,7 @@ export class RecentClientsComponent implements OnInit {
         if (this.selectedItem.value && this.selectedItem.value.dataLink) {
             $event.row && this.router.navigate(
                 [this.selectedItem.value.dataLink, $event.row.data.id],
-                { queryParams: {referrer: this.router.url} }
+                { queryParams: { referrer: this.router.url } }
             );
         }
     }
