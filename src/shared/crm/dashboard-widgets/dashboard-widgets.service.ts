@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, map, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, map, tap, distinctUntilChanged } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -68,8 +68,9 @@ export class DashboardWidgetsService  {
     refresh$: Observable<null> = this._refresh.asObservable();
     private _contactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
     contactId$: Observable<number> = this._contactId.asObservable();
-    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>('');
-    contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable();
+    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>(ContactGroup.Client);
+    contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable().pipe(
+        map((value:ContactGroup) => value || ContactGroup.Client), distinctUntilChanged());
     private _sourceOrgUnitIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
 
@@ -94,7 +95,7 @@ export class DashboardWidgetsService  {
                 this.dashboardServiceProxy.getTotals(
                     period && period.from,
                     period && period.to,
-                    String(groupId) || undefined,
+                    String(groupId),
                     contactId,
                     orgUnitIds
                 ).pipe(

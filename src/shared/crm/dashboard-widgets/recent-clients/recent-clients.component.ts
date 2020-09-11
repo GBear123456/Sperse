@@ -1,10 +1,10 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -21,15 +21,16 @@ import { IRecentClientsSelectItem } from '@shared/crm/dashboard-widgets/recent-c
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'recent-clients',
     templateUrl: './recent-clients.component.html',
     styleUrls: ['./recent-clients.component.less'],
-    providers: [ DashboardServiceProxy ],
+    providers: [ DashboardServiceProxy, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecentClientsComponent implements OnInit {
+export class RecentClientsComponent implements OnInit, OnDestroy {
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
@@ -114,11 +115,13 @@ export class RecentClientsComponent implements OnInit {
         private router: Router,
         private elementRef: ElementRef,
         private userManagementService: UserManagementService,
+        private lifeCycleSubject: LifecycleSubjectsService,
         public ls: AppLocalizationService,
         public httpInterceptor: AppHttpInterceptor
     ) {}
 
     ngOnInit() {
+        this.lifeCycleSubject.activate.next();
         this.recentlyCreatedCustomers$ = combineLatest(
             this.selectedItem$,
             this.dashboardWidgetsService.contactId$,
@@ -131,6 +134,21 @@ export class RecentClientsComponent implements OnInit {
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ))
         );
+        this.dashboardWidgetsService.contactGroupId$.pipe(
+            takeUntil(this.lifeCycleSubject.deactivate$)
+        ).subscribe((groupId: ContactGroup) => {
+            if (groupId == ContactGroup.Client)
+                this.selectedItem.next(this.selectItems[0]); 
+            else {
+                let selectedList = this.selectItems.filter(item => {
+                    return item.linkParams && ContactGroup[item.linkParams.contactGroup] == groupId;
+                });
+                if (selectedList.length)
+                    this.selectedItem.next(selectedList[0]); 
+                else
+                    this.selectedItem.next(this.selectItems[0]); 
+            }
+        });
     }
 
     onCellClick($event) {
@@ -144,5 +162,9 @@ export class RecentClientsComponent implements OnInit {
 
     onSelectionChanged($event) {
         this.selectedItem.next($event.selectedItem);
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleSubject.deactivate.next();
     }
 }
