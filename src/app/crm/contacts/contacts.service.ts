@@ -5,7 +5,7 @@ import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, ReplaySubject, Subject, of, BehaviorSubject } from 'rxjs';
+import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber } from 'rxjs';
 import { filter, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
@@ -30,7 +30,7 @@ import {
     GetContactInfoForMergeOutput,
     LeadServiceProxy,
     EmailTemplateType,
-    GetTemplatesResponse
+    UpdateContactStatusInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -51,6 +51,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { EmailTags } from './contacts.const';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 
 @Injectable()
 export class ContactsService {
@@ -596,5 +597,38 @@ export class ContactsService {
                 break;
         }
         return dataSourceURI;
+    }
+    
+    updateStatus(entityId: number, status: Status, entity: 'contact' | 'user' = 'contact'): Observable<any> {
+        return new Observable<any>((observer: Subscriber<any>) => {
+            ContactsHelper.showConfirmMessage(
+                this.ls.l('ClientUpdateStatusWarningMessage'),
+                (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
+                    if (isConfirmed) {
+                        this.updateStatusInternal(entityId, status.id, notifyUser, entity).subscribe(
+                            () => observer.next(true),
+                            (error) => observer.error(error)    
+                        );
+                    } else {
+                        observer.next(false);
+                    }
+                },
+                [ { text: this.ls.l('SendCancellationEmail'), visible: status.id === 'I' } ],
+                this.ls.l('ClientStatusUpdateConfirmationTitle')
+            );
+        })
+    }
+
+    private updateStatusInternal(entityId: number, statusId: string, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
+        return entityType === 'contact'
+            ? this.contactProxy.updateContactStatus(new UpdateContactStatusInput({
+                contactId: entityId,
+                statusId: statusId,
+                notifyUser: notifyUser
+            }))
+            : this.userService.updateOptions({
+                id: entityId,
+                notifyUser: notifyUser
+            } as any);
     }
 }
