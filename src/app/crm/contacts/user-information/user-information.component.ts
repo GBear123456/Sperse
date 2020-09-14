@@ -397,19 +397,23 @@ export class UserInformationComponent implements OnInit, OnDestroy {
 
     isActiveChanged(event) {
         if (event.event) {
-            if (this.data.user.isActive)
-                this.update(this.ACTIVE_FIELD, this.data.user.isActive);
-            else
-                this.message.confirm(
-                    this.ls.l('DeactivateUserConfirm'),
-                    this.ls.l('AreYouSure'),
-                    isConfirmed => {
-                        if (isConfirmed)
-                            this.update(this.ACTIVE_FIELD, this.data.user.isActive);
-                        else
-                            this.data.user.isActive = true;
+            const initialValue = !this.data.user.isActive;
+            this.contactsService.updateStatus(
+                this.data.user.id,
+                { id: this.data.user.isActive ? 'A' : 'I' },
+                'user'
+            ).subscribe(
+                (confirm: boolean) => {
+                    if (confirm) {
+                        if (this.data.user.isActive == true) {
+                            this.contactService['data'].contactInfo.statusId = ContactStatus.Active;
+                        }
+                    } else {
+                        this.data.user.isActive = initialValue;
                     }
-                );
+                },
+                () => this.data.user.isActive = initialValue
+            );
         }
     }
 
@@ -422,11 +426,8 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             sub = this.userService.updateEmail(UpdateUserEmailDto.fromJS(data));
         else if (fieldName == this.PHONE_FIELD)
             sub = this.userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
-        else if ([this.ACTIVE_FIELD, this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0) {
+        else if ([this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0) {
             sub = this.userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
-            if (fieldName == this.ACTIVE_FIELD && value == true) {
-                this.contactService['data'].contactInfo.statusId = ContactStatus.Active;
-            }
         } else {
             sub = this.userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({
                 user: this.userData.user,

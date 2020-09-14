@@ -555,35 +555,19 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private showConfirmationDialog(status: Status) {
-        ContactsHelper.showConfirmMessage(
-            this.l('ClientUpdateStatusWarningMessage'),
-            (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
-                if (isConfirmed) {
-                    this.updateStatusInternal(status.id, notifyUser)
-                        .subscribe(() => {
-                            this.contactInfo.statusId = status.id;
-                            let userData = this.userService['data'];
-                            if (userData && userData.user) {
-                                userData.user.isActive = status.id == ContactStatus.Active;
-                            }
-                            this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
-                            this.notify.success(this.l('StatusSuccessfullyUpdated'));
-                        });
-                } else {
-                    this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
+        this.contactsService.updateStatus(this.contactInfo.id, status).subscribe((confirm: boolean) => {
+            if (confirm) {
+                this.contactInfo.statusId = status.id;
+                let userData = this.userService['data'];
+                if (userData && userData.user) {
+                    userData.user.isActive = status.id == ContactStatus.Active;
                 }
-            },
-            [ { text: this.l('SendCancellationEmail'), visible: status.id === 'I' } ],
-            this.l('ClientStatusUpdateConfirmationTitle')
-        )
-    }
-
-    private updateStatusInternal(statusId: string, notifyUser: boolean) {
-        return this.contactService.updateContactStatus(new UpdateContactStatusInput({
-            contactId: this.contactInfo.id,
-            statusId: statusId,
-            notifyUser: notifyUser
-        }));
+                this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
+                this.notify.success(this.l('StatusSuccessfullyUpdated'));
+            } else {
+                this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
+            }
+        });
     }
 
     showContactPersons(event) {
