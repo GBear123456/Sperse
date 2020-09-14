@@ -91,7 +91,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Other')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Other').toLowerCase()),
             dataLink: '',
-            allRecordsLink: '/app/crm/other',
+            allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Other' },
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Other, contactId, orgUnitIds)
