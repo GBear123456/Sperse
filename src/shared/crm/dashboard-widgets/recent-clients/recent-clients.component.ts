@@ -45,7 +45,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
-            message: this.ls.l('CRM', 'CRMDashboard_LastNClientsRecords', [this.recordsCount]),
+            message: this.ls.l('CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
@@ -80,12 +80,21 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         },
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Vendor')),
-            message: this.ls.l('CRM', 'CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Vendor').toLowerCase()),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Vendor').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Vendor' },
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Vendor, contactId, orgUnitIds)
+        },
+        {
+            name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Other')),
+            message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Other').toLowerCase()),
+            dataLink: '',
+            allRecordsLink: '/app/crm/leads',
+            linkParams: { contactGroup: 'Other' },
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
+                this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Other, contactId, orgUnitIds)
         }
     ];
     selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);
