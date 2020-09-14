@@ -23,10 +23,18 @@
                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                           (onCellClick)="onCellClick($event)">
                 <dxi-column dataField="fullName" [caption]="ls.l('Customer.Name')"></dxi-column>
-                <dxi-column dataField="bankCode" [caption]="ls.l('BankCode')" [visible]="hasBankCodeFeature"></dxi-column>
+                <dxi-column dataField="bankCode"
+                            [caption]="ls.l('BankCode')"
+                            cellTemplate="bankCodeCell"
+                            [width]="125"
+                            [visible]="hasBankCodeFeature">
+                </dxi-column>
                 <dxi-column dataField="email" [caption]="ls.l('Contact.Email')"></dxi-column>
                 <dxi-column dataField="phone" [caption]="ls.l('Contact.Phone')"></dxi-column>
                 <dxo-paging [pageSize]="10"></dxo-paging>
+                <div *dxTemplate="let cellData of 'bankCodeCell'">
+                    <bank-code-letters [bankCode]="cellData.value"></bank-code-letters>
+                </div>
             </dx-data-grid>
         </div>
     </ng-container>

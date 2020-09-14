@@ -29,6 +29,7 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { MapModule } from '@app/shared/common/slice/map/map.module';
+import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 
 @NgModule({
     imports: [
@@ -47,7 +48,8 @@ import { MapModule } from '@app/shared/common/slice/map/map.module';
         DxVectorMapModule,
         LoadingSpinnerModule,
         ngCommon.CommonModule,
-        MapModule
+        MapModule,
+        BankCodeLettersModule
     ],
     declarations: [
         ClientsByRegionComponent,
