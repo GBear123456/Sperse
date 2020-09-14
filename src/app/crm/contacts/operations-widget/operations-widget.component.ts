@@ -347,7 +347,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 locateInMenu: 'auto',
                 items: this.optionButtonConfig ? [this.optionButtonConfig] : []
             };
-
             this.toolbarConfig = this._enabled ? [
                 {
                     location: 'before',
