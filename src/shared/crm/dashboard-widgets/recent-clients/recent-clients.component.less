@@ -5,7 +5,6 @@
     header {
         padding-left: 10px;
         padding-top: 15px;
-        display: inline-block;
         width: 100%;
     }
 
@@ -76,12 +75,18 @@
     }
 
     .wrapper {
-        max-height: 520px;
-        overflow: hidden;
         position: relative;
     }
 
+    .grid-wrapper {
+        height: 500px;
+    }
+
     ::ng-deep dx-data-grid {
+        height: 100% !important;
+        .dx-datagrid {
+            width: 100%;
+        }
         .dx-datagrid-headers {
             border: none;
 
@@ -99,7 +104,7 @@
         }
         .dx-datagrid-rowsview {
             border-top: none;
-            .dx-row {
+            .dx-data-row {
                 &:nth-child(odd) {
                     background-color: rgba(243, 247, 250, 0.7);
                 }
