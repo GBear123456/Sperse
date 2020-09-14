@@ -90,7 +90,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: true }) partnerTypesComponent: TypesListComponent;
+    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChildren('addressInput') addressInputs: QueryList<ElementRef>;

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, map, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, map, tap, distinctUntilChanged } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -19,17 +19,19 @@ import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Injectable()
 export class DashboardWidgetsService  {
     public period$: Observable<PeriodModel> = this.calendarService.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return {
-                    from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
-                    to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to')
-                } as PeriodModel;
-            }
-        )
+                from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
+                to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to'),
+                period: dateRange.period,
+                name: dateRange.period
+            };
+        })
     );
     private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
     totalsData$: Observable<GetTotalsOutput> = this._totalsData.asObservable();
@@ -67,6 +69,11 @@ export class DashboardWidgetsService  {
     refresh$: Observable<null> = this._refresh.asObservable();
     private _contactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
     contactId$: Observable<number> = this._contactId.asObservable();
+    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>(ContactGroup.Client);
+    contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable().pipe(
+        map((value:ContactGroup) => value || ContactGroup.Client), distinctUntilChanged());
+    private _sourceOrgUnitIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
+    sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
 
     constructor(
         private permissionService: AppPermissionService,
@@ -79,20 +86,24 @@ export class DashboardWidgetsService  {
     ) {
         combineLatest(
             this.period$,
-            this.refresh$,
-            this.contactId$
+            this.contactId$,
+            this.contactGroupId$,
+            this.sourceOrgUnitIds$,
+            this.refresh$
         ).pipe(
             tap(() => this.totalsDataLoading.next(true)),
-            switchMap(([period, refresh, contactId]: [PeriodModel, null, number]) => this.dashboardServiceProxy.getTotals(
-                period && period.from,
-                period && period.to,
-                undefined,
-                contactId,
-                undefined
-            ).pipe(
-                catchError(() => of(new GetTotalsOutput())),
-                finalize(() => this.totalsDataLoading.next(false))
-            )),
+            switchMap(([period, contactId, groupId, orgUnitIds, ]: [PeriodModel, number, ContactGroup, number[], null]) =>
+                this.dashboardServiceProxy.getTotals(
+                    period && period.from,
+                    period && period.to,
+                    String(groupId),
+                    contactId,
+                    orgUnitIds
+                ).pipe(
+                    catchError(() => of(new GetTotalsOutput())),
+                    finalize(() => this.totalsDataLoading.next(false))
+                )
+            )
         ).subscribe((totalData: GetTotalsOutput) => {
             this._totalsData.next(totalData);
         });
@@ -105,6 +116,14 @@ export class DashboardWidgetsService  {
 
     setContactIdForTotals(contactId?: number) {
         this._contactId.next(contactId);
+    }
+
+    setGroupIdForTotals(groupId?: ContactGroup) {
+        this._contactGroupId.next(groupId);
+    }
+
+    setOrgUnitIdsForTotals(orgUnitIds?: number[]) {
+        this._sourceOrgUnitIds.next(orgUnitIds);
     }
 
     getPercentage(value, total) {

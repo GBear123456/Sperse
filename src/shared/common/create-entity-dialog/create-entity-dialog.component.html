@@ -93,7 +93,7 @@
         </div>
 
         <ng-template #notLead>
-            <dxi-item *ngIf="data.customerType === contactGroups.Client; else partner" location="before" template="status"></dxi-item>
+            <dxi-item *ngIf="data.customerType === contactGroups.Client" location="before" template="status"></dxi-item>
             <div *dxTemplate="let data of 'status'">
                 <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
                            [text]="ls.l('Status')"
@@ -101,19 +101,17 @@
                            [ngClass]="{ 'filter-selected': isStatusSelected }">
                 </dx-button>
             </div>
-
-            <ng-template #partner>
-                <dxi-item location="before" template="type"></dxi-item>
-                <div *dxTemplate="let data of 'type'">
-                    <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
-                               [text]="ls.l('Type')"
-                               id="PartnerTypesList"
-                               [ngClass]="{ 'filter-selected': isPartnerTypeSelected }"
-                               (onClick)="togglePartnerTypes()">
-                    </dx-button>
-                </div>
-            </ng-template>
         </ng-template>
+
+        <dxi-item *ngIf="data.customerType === contactGroups.Partner" location="before" template="type"></dxi-item>
+        <div *dxTemplate="let data of 'type'">
+            <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
+                       [text]="ls.l('Type')"
+                       id="PartnerTypesList"
+                       [ngClass]="{ 'filter-selected': isPartnerTypeSelected }"
+                       (onClick)="togglePartnerTypes()">
+            </dx-button>
+        </div>
 
         <dxi-item location="before" template="lists" [disabled]="isListAndTagsDisabled"></dxi-item>
         <div *dxTemplate="let data of 'lists'">

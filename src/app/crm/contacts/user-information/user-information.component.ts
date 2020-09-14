@@ -428,6 +428,10 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             sub = this.userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
         else if ([this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0) {
             sub = this.userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
+            let contactInfo = this.contactService['data'].contactInfo;
+            if (fieldName == this.ACTIVE_FIELD && value == true &&
+                contactInfo.statusId == ContactStatus.Inactive
+            ) contactInfo.statusId = ContactStatus.Active;
         } else {
             sub = this.userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({
                 user: this.userData.user,
