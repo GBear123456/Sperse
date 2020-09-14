@@ -20,7 +20,7 @@ import {
     refCount
 } from 'rxjs/operators';
 
-/** */
+/** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
 import {

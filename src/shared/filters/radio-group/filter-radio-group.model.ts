@@ -2,9 +2,18 @@ import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-i
 
 export class FilterRadioGroupModel extends FilterItemModel {
     list: any[];
+    showFirstAsDefault: boolean;
 
     public constructor(init?: Partial<FilterRadioGroupModel>) {
         super(init, true);
+    }
+
+    set value(value: any) {
+        this._value = value;
+    }
+
+    get value(): any {
+        return this.showFirstAsDefault && !this._value ? this.list[0].id : this._value;
     }
 
     getDisplayElements(): DisplayElement[] {
@@ -19,6 +28,12 @@ export class FilterRadioGroupModel extends FilterItemModel {
             return !selected;
         });
 
-        return result;
+        if (this.showFirstAsDefault && !result.length)
+            return [<DisplayElement>{
+                item: this,
+                displayValue: this.list[0].displayName || this.list[0].name
+            }];
+        else
+            return result;
     }
 }

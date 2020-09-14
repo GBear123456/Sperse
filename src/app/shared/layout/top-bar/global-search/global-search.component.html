@@ -25,7 +25,7 @@
                     </header>
                     <ul *ngFor="let entity of group.entities">
                         <li class="entity">
-                            <img [src]="getProfilePictureUrl(entity.PhotoPublicId)">
+                            <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
                             <div>
                                 <a (click)="moveToEntityDetails($event, entity, group.itemType)">{{ entity.Name }}</a>
                                 <p>{{ entity.Email }}</p>
@@ -34,6 +34,7 @@
                     </ul>
                 </div>
             </ng-container>
+            <app-no-data *ngIf="!itemsFound"></app-no-data>
         </div>
     </div>
 </dx-tooltip>

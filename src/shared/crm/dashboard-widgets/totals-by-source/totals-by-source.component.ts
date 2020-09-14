@@ -39,6 +39,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StarsHelper } from '@shared/common/stars-helper/stars-helper';
 import { PeriodModel } from '@app/shared/common/period/period.model';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'totals-by-source',
@@ -85,7 +86,8 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                     argumentField: 'key',
                     valueField: 'count',
                     getColor: (item) => {
-                        const stage: StageDto = this.pipelineService.getStageByName('Lead', item.argument);
+                        const stage: StageDto = this.pipelineService.getStageByName(
+                            AppConsts.PipelinePurposeIds.lead, item.argument, this.selectedContactGroupId);
                         return this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
                     }
                 },
@@ -127,13 +129,14 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     ];
     selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
         this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace
-        || this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
+            || this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
         ? this.totalsOptions.find(option => option.key === 'star')
         : this.totalsOptions.find(option => option.key === 'companySize')
     );
     selectedTotal$: Observable<ITotalOption> = this.selectedTotal.asObservable();
     selectedArgumentField$: Observable<string> = this.selectedTotal$.pipe(pluck('argumentField'));
     selectedValueField$: Observable<string> = this.selectedTotal$.pipe(pluck('valueField'));
+    selectedContactGroupId: ContactGroup = ContactGroup.Client;
     loading = false;
 
     constructor(
@@ -150,12 +153,12 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        /** Get pipeline definitions to get colors for stage distributions */
-        this.pipelineService.getPipelineDefinitionObservable('Lead', ContactGroup.Client).subscribe();
         this.data$ = combineLatest(
             this.selectedTotal$,
             this.dashboardWidgetsService.period$,
+            this.dashboardWidgetsService.contactGroupId$,
             this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.lifeCycleService.destroy$),
@@ -163,12 +166,16 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                 this.loading = true;
                 this.loadingService.startLoading(this.elementRef.nativeElement);
             }),
-            switchMap(([selectedTotal, period, contactId, ]: [ITotalOption, PeriodModel, number, null]) => selectedTotal.method.call(
-                this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'), period && period.to || new Date(), contactId).pipe(
+            switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]: [ITotalOption, PeriodModel, string, number, number[], null]) => {
+                this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.selectedContactGroupId = groupId).subscribe();
+                return selectedTotal.method.call(
+                    this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
+                    period && period.to || new Date(), groupId, contactId, orgUnitIds
+                ).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-                )
-            ),
+                );
+            }),
             map((data: any[]) => {
                 this.rawData = data;
                 return (this.selectedTotal.value.sorting ? data.sort(this.selectedTotal.value.sorting) : data)
@@ -201,8 +208,9 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
     }
 
     private getItemColor(item) {
-        return this.selectedTotal.value.getColor ?
-            this.selectedTotal.value.getColor(item) :
+        let total = this.selectedTotal.value;
+        return total &&  total.getColor ?
+            total.getColor(item) :
             this.rangeColors[item.index];
     }
 
