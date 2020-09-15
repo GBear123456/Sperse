@@ -19,7 +19,7 @@ import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dial
     providers: [ ApiKeyServiceProxy ]
 })
 export class IntroductionComponent extends AppComponentBase implements OnInit, OnDestroy {
-    toggleTooltip = true;
+    toggleTooltip = false;
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
     scrollHeight: number = window.innerHeight - 149;
@@ -60,6 +60,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
             .subscribe((apiKeys) => {
                 abp.ui.clearBusy(this.elementForBlocking);
                 this.apiKeys = apiKeys && apiKeys.length ? apiKeys : null;
+                this.showTooltip();
             });
     }
 
