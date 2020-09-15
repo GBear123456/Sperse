@@ -69,7 +69,7 @@ import { Params } from '@angular/router';
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
-    providers: [ PipelineService, OrderServiceProxy, CurrencyPipe ]
+    providers: [ OrderServiceProxy, CurrencyPipe ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;

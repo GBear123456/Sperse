@@ -14,29 +14,31 @@
                 target="#global-search-textbox">
         <dxo-position my="left top" at="left bottom" of="#global-search-textbox"></dxo-position>
         <div *dxTemplate="let data = data of 'content'">
-            <div class="global-search-tooltip-container">
-                <ng-container *ngFor="let group of searchGroups">
-                    <div class="group" *ngIf="group.count">
-                        <header>
-                            <h4>{{ group.name }}</h4>
-                            <a *ngIf="group.count > 1"
-                               (click)="showAll($event, group.link, group.linkParams)">
-                                {{ ls.l('ShowAll') }} <ng-container *ngIf="group.count < 22">{{ group.count }} {{ group.name.toLowerCase() }}</ng-container>
-                            </a>
-                        </header>
-                        <ul *ngFor="let entity of group.entities">
-                            <li class="entity">
-                                <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
-                                <div>
-                                    <a (click)="moveToEntityDetails($event, entity, group.itemType)">{{ entity.Name }}</a>
-                                    <p>{{ entity.Email }}</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </ng-container>
-                <app-no-data *ngIf="!itemsFound"></app-no-data>
-            </div>
+            <dx-scroll-view>
+                <div class="global-search-tooltip-container">
+                    <ng-container *ngFor="let group of searchGroups">
+                        <div class="group" *ngIf="group.count">
+                            <header>
+                                <h4>{{ group.name }}</h4>
+                                <a *ngIf="group.count > 1"
+                                   (click)="showAll($event, group.link, group.linkParams)">
+                                    {{ ls.l('ShowAll') }} <ng-container *ngIf="group.count < 22">{{ group.count }} {{ group.name.toLowerCase() }}</ng-container>
+                                </a>
+                            </header>
+                            <ul *ngFor="let entity of group.entities">
+                                <li class="entity">
+                                    <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
+                                    <div>
+                                        <a (click)="moveToEntityDetails($event, entity, group.itemType)">{{ entity.Name }}</a>
+                                        <p>{{ entity.Email }}</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </ng-container>
+                    <app-no-data *ngIf="!itemsFound"></app-no-data>
+                </div>
+            </dx-scroll-view>
         </div>
     </dx-tooltip>
 </div>

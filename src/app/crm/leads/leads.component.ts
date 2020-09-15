@@ -122,7 +122,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
         '../shared/styles/grouped-action-menu.less',
         './leads.component.less'
     ],
-    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService, MapService],
+    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, MapService],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -832,9 +832,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         queryDataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType == DataLayoutType.DataGrid),
-            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId))
+            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId.value))
         ).subscribe((pipelineDefinition: PipelineDto) => {
-            this.onStagesLoaded({ stages: pipelineDefinition.stages });
+            this.onStagesLoaded(pipelineDefinition);
         });
     }
 
@@ -1390,7 +1390,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     disabled: this.selectedClientKeys.length < 1,
                                     visible: this.appSession.isPerformancePartnerTenant && ContactGroup[this.selectedContactGroup] == ContactGroup.Partner,
                                     action: () => {
-                                        this.message.confirm("", this.l('ReferralPartnersSendEmailConfirmation', this.selectedClientKeys.length), (res) => {
+                                        this.message.confirm('', this.l('ReferralPartnersSendEmailConfirmation', this.selectedClientKeys.length), (res) => {
                                             if (res) {
                                                 abp.ui.setBusy();
                                                 this.contactProxy
@@ -1697,10 +1697,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onStagesLoaded($event) {
+        let pipeline = this.pipelineService.getPipeline(
+            this.pipelinePurposeId, this.contactGroupId.value);
         this.stages = $event.stages.map((stage) => {
             return {
-                id: this.pipelineService.getPipeline(
-                    this.pipelinePurposeId).id + ':' + stage.id,
+                id: pipeline.id + ':' + stage.id,
                 index: stage.sortOrder,
                 name: stage.name
             };

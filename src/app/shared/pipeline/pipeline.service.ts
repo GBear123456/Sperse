@@ -93,12 +93,12 @@ export class PipelineService {
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): Observable<PipelineDto> {
-        let pipeline = this.pipelineObservables[pipelinePurposeId];
-        if (pipeline && pipeline[contactGroupId])
-            return pipeline[contactGroupId];
+        let pipeline = this.pipelineObservables[pipelinePurposeId] || {};
+        if (pipeline[String(contactGroupId)])
+            return pipeline[String(contactGroupId)];
         else {
-            pipeline = this.pipelineObservables[pipelinePurposeId] = {};
-            return pipeline[contactGroupId] = this.store$.pipe(
+            this.pipelineObservables[pipelinePurposeId] = pipeline;
+            return pipeline[String(contactGroupId)] = this.store$.pipe(
                 select(PipelinesStoreSelectors.getSortedPipeline({
                     purpose: pipelinePurposeId,
                     contactGroupId: contactGroupId
