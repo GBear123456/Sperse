@@ -30,7 +30,8 @@ import {
     GetContactInfoForMergeOutput,
     LeadServiceProxy,
     EmailTemplateType,
-    UpdateContactStatusInput
+    UpdateContactStatusInput,
+    UpdateUserOptionsDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -607,7 +608,7 @@ export class ContactsService {
                     if (isConfirmed) {
                         this.updateStatusInternal(entityId, status.id, notifyUser, entity).subscribe(
                             () => observer.next(true),
-                            (error) => observer.error(error)    
+                            (error) => observer.error(error)
                         );
                     } else {
                         observer.next(false);
@@ -626,9 +627,12 @@ export class ContactsService {
                 statusId: statusId,
                 notifyUser: notifyUser
             }))
-            : this.userService.updateOptions({
+            : this.userService.updateOptions(new UpdateUserOptionsDto ({
                 id: entityId,
-                notifyUser: notifyUser
-            } as any);
+                isActive: statusId === 'A',
+                notifyUser: notifyUser,
+                isLockoutEnabled: null,
+                isTwoFactorEnabled: null
+            }));
     }
 }
