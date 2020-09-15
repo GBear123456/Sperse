@@ -262,7 +262,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
             address.stateName,
             address.zip,
             address.countryId
-        ].filter(Boolean).join(', ');
+        ].filter(Boolean).join(', ') + ' ';
     }
 
     getPhoneFieldValue(data) {
