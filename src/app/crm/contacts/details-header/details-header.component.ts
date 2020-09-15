@@ -88,7 +88,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     get isOrgUpdatable(): Boolean {
-        return this.manageAllowed && this.data && this.data['organizationContactInfo'] 
+        return this.manageAllowed && this.data && this.data['organizationContactInfo']
             && this.data['organizationContactInfo'].isUpdatable;
     }
 
@@ -251,7 +251,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 text: this.ls.l('AddInvoice'),
                 selected: false,
                 icon: 'money',
-                visible: !this.data.parentId && 
+                visible: !this.data.parentId &&
                     this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                 contactGroups: this.allContactGroups
             }

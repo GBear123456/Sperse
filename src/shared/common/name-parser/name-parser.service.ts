@@ -12,7 +12,7 @@ export class NameParserService {
     }
 
     parseIntoPerson(value: string, person: PersonInfoDto) {
-        if (value) {
+        if (value && value.split(' ').length > 1) {
             let res = parseFullName.parseFullName(value.trim());
             person.namePrefix = res.title;
             person.firstName = res.first;
@@ -22,7 +22,7 @@ export class NameParserService {
             person.nickName = res.nick;
         } else {
             person.namePrefix = undefined;
-            person.firstName = undefined;
+            person.firstName = value || undefined;
             person.middleName = undefined;
             person.lastName = undefined;
             person.nameSuffix = undefined;
