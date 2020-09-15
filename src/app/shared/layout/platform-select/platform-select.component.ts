@@ -95,16 +95,9 @@ export class PlatformSelectComponent {
                         this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
                         this.modules.footerItems.push(moduleConfig);
                     } else if (
-                        module.name === 'BankCode'
-                        && !appService.isHostTenant
-                        && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode
-                    ) {
-                        this.modules.footerItems.push(moduleConfig);
-                    } else if (
                         AppConsts.appMemberPortalUrl
                         && !appService.isHostTenant
                         && module.name === 'MemberPortal'
-                        && (this.appSessionService.tenant.customLayoutType == LayoutType.Rapid || this.appSessionService.tenant.customLayoutType == LayoutType.HOA)
                     ) {
                         this.modules.footerItems.push(module);
                     }
