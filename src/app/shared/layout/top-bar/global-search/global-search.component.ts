@@ -55,7 +55,11 @@ export class GlobalSearchComponent implements OnInit {
                 this.getLeadGroup(search, this.ls.l('Others'), 'Other'),
                 this.getOrdersGroup(search)
             ).pipe(
-                finalize(() => this.hideSpinner())
+                finalize(() => {
+                    this.hideSpinner();
+                    this.isTooltipVisible = true;
+                    this.changeDetectorRef.detectChanges();
+                })
             );
         })
     );
@@ -80,7 +84,6 @@ export class GlobalSearchComponent implements OnInit {
     ngOnInit() {
         this.searchGroups$.subscribe((searchGroups: GlobalSearchGroup[]) => {
             this.searchGroups = searchGroups;
-            this.isTooltipVisible = true;
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -90,7 +93,7 @@ export class GlobalSearchComponent implements OnInit {
             return searchGroup.entities && searchGroup.entities.length;
         }))
     }
-    
+
     private getClientsGroup(search: string): Observable<GlobalSearchGroup> {
         return (this.permissionService.isGranted(AppPermissions.CRMCustomers)
             ? this.http.get(
