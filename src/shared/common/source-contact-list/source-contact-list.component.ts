@@ -53,6 +53,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     set leadId(value: number) {
         if (value && this._leadId != value) {
             this._leadId = value;
+            this.contacts.length = 0;
             this.loadSourceContacts();
         }
     }

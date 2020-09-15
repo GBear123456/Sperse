@@ -252,7 +252,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initContactLeadsDataSource() {
-        if (this.contactInfo.id && !this.contactLeadsDataSource)
+        if (this.contactInfo && this.contactInfo.id && !this.contactLeadsDataSource)
             this.contactLeadsDataSource = new DataSource({
                 paginate: false,
                 requireTotalCount: false,
@@ -275,7 +275,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     initContactOrdersDataSource() {
-        if (this.contactInfo.id && !this.contactOrdersDataSource) {
+        if (this.contactInfo && this.contactInfo.id && !this.contactOrdersDataSource) {
             this.contactOrdersDataSource = new DataSource({
                 paginate: false,
                 requireTotalCount: false,
