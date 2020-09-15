@@ -45,7 +45,8 @@ export class AppService extends AppServiceBase {
     public toolbarIsHidden$: Observable<boolean> = this.toolbarIsHidden.asObservable();
     public narrowingPageContentWhenFixedFilter = true;
     public hideSubscriptionCallback: Function;
-    public showContactInfoPanel = false;
+    private showContactInfoPanel: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public showContactInfoPanel$: Observable<boolean> = this.showContactInfoPanel.asObservable();
     public contactInfo: any;
 
     private toolbarSubject: Subject<undefined>;
@@ -263,7 +264,7 @@ export class AppService extends AppServiceBase {
             return true;
 
         if (!this.subscriptionBarVisible)
-            this.subscriptionBarVisible = !this.showContactInfoPanel &&
+            this.subscriptionBarVisible = !this.showContactInfoPanel.value &&
                 (this.subscriptionIsExpiringSoon() || this.subscriptionInGracePeriod());
 
         return this.subscriptionBarsClosed[module] || !this.subscriptionBarVisible;
@@ -355,7 +356,7 @@ export class AppService extends AppServiceBase {
     }
 
     setContactInfoVisibility(value: boolean) {
-        this.showContactInfoPanel = value;
+        this.showContactInfoPanel.next(value);
     }
 
     canSendVerificationRequest() {

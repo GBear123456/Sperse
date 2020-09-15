@@ -2,15 +2,33 @@
     align-items: center;
     display: flex;
     align-self: center;
-    height: 34px;
-    border-left: 1px solid #e5e9ec;
-    border-right: 1px solid #e5e9ec;
-    padding: 0 22px 0 12px;
+    padding: 0 12px;
     margin-right: 24px;
+    background-color: #fff;
+    border-radius: 10px;
+    height: 50px;
+    .global-search-container {
+        display: flex;
+        align-items: center;
+        &:before,
+        &:after {
+            content: '';
+            width: 1px;
+            height: 34px;
+        }
+        &:before {
+            border-left: 1px solid #e5e9ec;
+        }
+        &:after {
+            border-right: 1px solid #e5e9ec;
+            display: flex;
+        }
+    }
+
     ::ng-deep .spinner {
         width: 20px !important;
         height: 20px !important;
-        right: -205px;
+        right: -173px;
         border-width: 3px;
     }
     ::ng-deep .blockOverlay {
@@ -29,6 +47,9 @@
             width: 20px;
             height: 20px;
         }
+        .dx-texteditor-input {
+            font-weight: 500;
+        }
         .dx-texteditor-buttons-container {
             position: relative;
             right: 9px;
@@ -45,6 +66,7 @@
         }
     }
     ::ng-deep .dx-searchbox {
+        padding-right: 22px;
         .dx-placeholder {
             font-size: 16px;
             font-weight: 300;

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -31,7 +31,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     },
     providers: [ LifecycleSubjectsService ]
 })
-export class TopBarComponent implements OnDestroy {
+export class TopBarComponent implements OnInit, OnDestroy {
     @ViewChild(DxNavBarComponent, { static: false }) navBar: DxNavBarComponent;
 
     config: ConfigInterface;
@@ -81,7 +81,7 @@ export class TopBarComponent implements OnDestroy {
                     config.localizationSource
                 )
             );
-            const selectedIndex = this.navbarItems.findIndex((navBarItem) => {
+            const selectedIndex = this.navbarItems.findIndex((navBarItem: PanelMenuItem) => {
                 return navBarItem.route === this.router.url.split('?')[0];
             });
             this.navbarItems = this.menu.items;
@@ -94,6 +94,15 @@ export class TopBarComponent implements OnDestroy {
                 });
             }
             this.appService.topMenu = this.menu;
+        });
+    }
+
+    ngOnInit(): void {
+        this.appService.showContactInfoPanel$.pipe(
+            takeUntil(this.lifecycleService.destroy$),
+            filter(Boolean)
+        ).subscribe(() => {
+            this.updateNavMenu(true);
         });
     }
 
@@ -151,7 +160,7 @@ export class TopBarComponent implements OnDestroy {
         }
     }
 
-    updateNavMenu(forced = false) {
+    updateNavMenu(forced: boolean = false) {
         if (forced || (window.innerWidth != this.lastInnerWidth)) {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = setTimeout(() => {

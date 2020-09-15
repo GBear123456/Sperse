@@ -147,14 +147,24 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             this.dashboardWidgetsService.period$,
             this.isCumulative$,
             this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.contactGroupId$,
             this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
-            switchMap(([period, isCumulative, contactId, orgUnitIds, ]: [PeriodModel, boolean, number, number[], null]) => {
+            switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:
+                             [PeriodModel, boolean, number, string, number[], null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
-                return this.loadCustomersAndLeadsStats(totalsByPeriodModel, period.from, period.to, isCumulative, contactId, orgUnitIds).pipe(
+                return this.loadCustomersAndLeadsStats(
+                    totalsByPeriodModel,
+                    period.from,
+                    period.to,
+                    isCumulative,
+                    contactId,
+                    contactGroupId,
+                    orgUnitIds
+                ).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading())
                 );
@@ -240,15 +250,18 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         endDate: Date,
         isCumulative: boolean,
         contactId: number,
+        contactGroupId: string,
         orgUnitIds: number[]
     ): Observable<GetCustomerAndLeadStatsOutput[]> {
+        const momentEndDate = moment(endDate);
+        const today = moment();
         return this.dashboardServiceProxy.getContactAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
             undefined,
             isCumulative,
             moment(startDate),
-            moment(endDate),
-            ContactGroup.Client,
+            momentEndDate.isAfter(today) ? today : momentEndDate,
+            contactGroupId,
             contactId,
             orgUnitIds
         );
