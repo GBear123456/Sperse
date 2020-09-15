@@ -232,12 +232,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 {
                     getText: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage);
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.contactGroupId.value);
                         return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
                     },
                     class: 'checklist',
                     checkVisible: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage);
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.contactGroupId.value);
                         return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
                     },
                     action: () => {
@@ -1839,6 +1839,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     activate() {
+        this.searchClear = false;
         super.activate();
         this.initFilterConfig();
         this.initToolbarConfig();

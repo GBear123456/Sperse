@@ -50,7 +50,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import { Period } from '@app/shared/common/period/period.enum';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
 import { ContactGroup } from '@shared/AppEnums';
@@ -74,23 +73,19 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     periods: TotalsByPeriodModel[] = [
          {
              key: GroupByPeriod.Daily,
-             name: 'Daily',
-             amount: 30
+             name: 'Daily'
          },
          {
              key: GroupByPeriod.Weekly,
-             name: 'Weekly',
-             amount: 15
+             name: 'Weekly'
         },
         {
             key: GroupByPeriod.Monthly,
-            name: 'Monthly',
-            amount: 12
+            name: 'Monthly'
         },
         {
-            key: GroupByPeriod.Monthly,
-            name: 'Monthly',
-            amount: 5
+            key: GroupByPeriod.Yearly,
+            name: 'Yearly'
         }
     ];
     selectItems = [
@@ -149,15 +144,17 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
 
     ngOnInit() {
         this.totalsData$ = combineLatest(
-            this.dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
+            this.dashboardWidgetsService.period$,
             this.isCumulative$,
             this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
             this.dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
-            switchMap(([period, isCumulative, contactId, ]: [TotalsByPeriodModel, boolean, number, null]) => {
-                return this.loadCustomersAndLeadsStats(period, isCumulative, contactId).pipe(
+            switchMap(([period, isCumulative, contactId, orgUnitIds, ]: [PeriodModel, boolean, number, number[], null]) => {
+                const totalsByPeriodModel = this.savePeriod(period);
+                return this.loadCustomersAndLeadsStats(totalsByPeriodModel, period.from, period.to, isCumulative, contactId, orgUnitIds).pipe(
                     catchError(() => of([])),
                     finalize(() => this.loadingService.finishLoading())
                 );
@@ -226,9 +223,9 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
 
     private savePeriod(period: PeriodModel): TotalsByPeriodModel {
         if (period) {
-            if ([Period.Today, Period.Yesterday, Period.ThisWeek, Period.ThisMonth, Period.LastMonth].indexOf(period.period) >= 0)
+            if (moment(period.to).diff(moment(period.from), 'days') < 90 ) {
                 this.selectedPeriod = { ...this.periods[0] };
-            else if (period.name === Period.LastQuarter) {
+            } else if(moment(period.to).diff(moment(period.from), 'years') > 3) {
                 this.selectedPeriod = { ...this.periods[3] };
             } else {
                 this.selectedPeriod = { ...this.periods[2] };
@@ -237,15 +234,23 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
         return this.selectedPeriod;
     }
 
-    private loadCustomersAndLeadsStats(period: TotalsByPeriodModel, isCumulative: boolean, contactId: number): Observable<GetCustomerAndLeadStatsOutput[]> {
-        return this.dashboardServiceProxy.getCustomerAndLeadStats(
+    private loadCustomersAndLeadsStats(
+        period: TotalsByPeriodModel,
+        startDate: Date,
+        endDate: Date,
+        isCumulative: boolean,
+        contactId: number,
+        orgUnitIds: number[]
+    ): Observable<GetCustomerAndLeadStatsOutput[]> {
+        return this.dashboardServiceProxy.getContactAndLeadStats(
             GroupByPeriod[(period.name as GroupByPeriod)],
             undefined,
-            undefined,
-            period.amount,
             isCumulative,
+            moment(startDate),
+            moment(endDate),
+            ContactGroup.Client,
             contactId,
-            undefined
+            orgUnitIds
         );
     }
 
@@ -340,6 +345,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     }
 
     /** Factory for method that customize axis */
+
+    getYearlyBottomAxisCustomizer(elem) {
+        return elem.value.getUTCFullYear().toString();
+    }
 
     getMonthlyBottomAxisCustomizer(elem) {
         return `${elem.value.toUTCString().split(' ')[2].toUpperCase()}<br/><div class="yearArgument">${elem.value.getUTCFullYear().toString().substr(-2)}</div>`;

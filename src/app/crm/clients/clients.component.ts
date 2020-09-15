@@ -559,7 +559,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         })
                     ),
                     dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: 'name',
+                    nameField: this.appService.isHostTenant ? 'name' : 'id',
                     keyExpr: 'id'
                 })
         }

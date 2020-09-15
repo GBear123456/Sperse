@@ -270,7 +270,7 @@
                     width: 16px;
                     height: 16px;
                     right: 8px;
-                    top: 0px;
+                    top: 0;
                     display: none;
                     cursor: pointer;
                     position: absolute;
@@ -293,6 +293,7 @@
         .source, .target, .result {
             .field-wrapper {
                 position: relative;
+                display: flex;
                 & > p {
                     margin-top: 10px;
                     padding-left: 15px;
@@ -313,8 +314,13 @@
                 }
             }
         }
-        .bank-code-date {
-            display: inline-block;
+        .bank-code {
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            .bank-code-date {
+                margin-left: 5px;
+            }
         }
         ::ng-deep dx-check-box {
             margin: 10px 15px;

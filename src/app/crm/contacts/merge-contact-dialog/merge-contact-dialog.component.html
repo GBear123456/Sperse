@@ -72,7 +72,7 @@
                                     </p>
                                     <dx-check-box
                                         [hint]="value.text"
-                                        [text]="value.text"
+                                        [text]="field.name == 'bankCode' ? '' : value.text"
                                         [class]="field.name"
                                         [(value)]="value.selected"
                                         [disabled]="value.disabled"
@@ -80,7 +80,12 @@
                                         [ngClass]="{ primary: value.isPrimary }"
                                         (click)="onSelectChange(field, value)">
                                     </dx-check-box>
-                                    <div class="bank-code-date" *ngIf="field.name == 'bankCode'">({{getBankCodeDate(column) | timeAgo}})</div>
+                                    <div *ngIf="field.name == 'bankCode'" class="bank-code">
+                                        <bank-code-letters [bankCode]="value.text"></bank-code-letters>
+                                        <div class="bank-code-date">
+                                            ({{getBankCodeDate(column) | timeAgo}})
+                                        </div>
+                                    </div>
                                     <i *ngIf="value.hasOwnProperty('usageTypeId')" [class]="value.usageTypeId || 'dt'" [title]="usageTypes[field.name][value.usageTypeId || 'dt']"></i>
                                     <span *ngIf="column == 'result' && value.id && !value.isPrimary" [title]="ls.l('SetAsPrimary')" class="set-primary" (click)="setAsPrimary(field, value)"></span>        
                                 </div>

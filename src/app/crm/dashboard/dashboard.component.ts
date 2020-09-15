@@ -154,16 +154,17 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 component: FilterRadioGroupComponent,
                 items: {
                     element: new FilterRadioGroupModel({
+                        showFirstAsDefault: true,
                         value: ContactGroup.Client,
                         list: Object.keys(ContactGroup).map(item => {
-                            return {
-                                id: ContactGroup[item],
-                                name: this.ls.l('ContactGroup_' + item)
-                            };
-                        })
+                            if (this.permission.checkCGPermission(ContactGroup[item]))
+                                return {
+                                    id: ContactGroup[item],
+                                    name: this.ls.l('ContactGroup_' + item)
+                                };
+                        }).filter(Boolean)
                     })
                 }
-
             }),
             this.filterModelOrgUnit,
             this.filterModelSource
@@ -185,6 +186,12 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 if (filter.caption == 'Source')
                     this.dashboardWidgetsService.setContactIdForTotals(
                         filter.items.element.value[0].value || undefined);
+                else if (filter.field == 'SourceOrganizationUnitId')
+                    this.dashboardWidgetsService.setOrgUnitIdsForTotals(
+                        filter.items.element.value);
+                else if (filter.caption == 'ContactGroup') 
+                    this.dashboardWidgetsService.setGroupIdForTotals(
+                        filter.items.element.value || ContactGroup.Client);
             });
         });
     }
@@ -210,7 +217,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus(undefined, undefined, undefined).subscribe((status: GetCRMStatusOutput) => {
+        this.dashboardServiceProxy.getStatus(undefined, undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });
