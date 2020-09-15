@@ -1,5 +1,5 @@
 <app-header [hidden]="isFullscreenMode"
-            [ngClass]="{ withContactInfo: appService.showContactInfoPanel }">
+            [ngClass]="{ withContactInfo: appService.showContactInfoPanel$ | async }">
 </app-header>
 
 <div class="clearfix"></div>
