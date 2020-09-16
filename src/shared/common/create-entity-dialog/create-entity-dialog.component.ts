@@ -9,7 +9,9 @@ import {
     OnDestroy,
     ChangeDetectorRef,
     ElementRef,
-    QueryList, AfterViewInit, HostBinding
+    QueryList,
+    AfterViewInit,
+    HostBinding
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -19,7 +21,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
-import { finalize, filter, first } from 'rxjs/operators';
+import { finalize, filter, first, map } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 /** Application imports */
@@ -44,10 +46,25 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { ContactStatus } from '@shared/AppEnums';
 import {
-    ContactServiceProxy, CreateOrUpdateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
-    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
-    PersonInfoDto, CreateContactLinkInput, TrackingInfo, CountryStateDto, OrganizationShortInfo
+    ContactServiceProxy,
+    CreateOrUpdateContactInput,
+    ContactAddressServiceProxy,
+    CreateContactEmailInput,
+    CreateContactPhoneInput,
+    ContactPhotoServiceProxy,
+    CreateContactAddressInput,
+    ContactEmailServiceProxy,
+    ContactPhoneServiceProxy,
+    SimilarContactOutput,
+    ContactPhotoInput,
+    OrganizationContactServiceProxy,
+    PersonInfoDto,
+    CreateContactLinkInput,
+    TrackingInfo,
+    CountryStateDto,
+    OrganizationShortInfo,
+    EmailUsageTypeDto,
+    PhoneUsageTypeDto, ContactLinkTypeDto
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarEntitiesDialogComponent } from './similar-entities-dialog/similar-entities-dialog.component';
@@ -133,9 +150,22 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     linksTypeDefault = '-';
     addressesTypeDefault = 'W';
     addressTypes: any = [];
-    phoneTypes: any = [];
-    emailTypes: any = [];
-    linkTypes: any = [];
+    phoneTypes$: Observable<PhoneUsageTypeDto[]> = this.store$.pipe(
+        select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),
+        filter(types => !!types)
+    );
+    emailTypes$: Observable<EmailUsageTypeDto[]> = this.store$.pipe(
+        select(EmailUsageTypesStoreSelectors.getEmailUsageTypes),
+        filter(types => !!types)
+    );
+    linkTypes$: Observable<ContactLinkTypeDto[]> =  this.store$.pipe(
+        select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
+        filter(types => !!types),
+        map((types: ContactLinkTypeDto[]) => types.map((entity: ContactLinkTypeDto) => {
+            entity['uri'] = entity.name.replace(/ /g, '');
+            return entity;
+        }))
+    );
     countries: any;
     googleAutoComplete: boolean = Boolean(window['google']);
     photoOriginalData: string;
@@ -617,38 +647,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     phoneTypesLoad() {
         this.store$.dispatch(new PhoneUsageTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),
-            filter(types => !!types)
-        ).subscribe(types => {
-            this.phoneTypes = types;
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     emailTypesLoad() {
         this.store$.dispatch(new EmailUsageTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(EmailUsageTypesStoreSelectors.getEmailUsageTypes),
-            filter(types => !!types)
-        ).subscribe(types => {
-            this.emailTypes = types;
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     linkTypesLoad() {
         this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
-            filter(types => !!types)
-        ).subscribe(types => {
-            this.linkTypes = types.map((entity) => {
-                entity['uri'] = entity.name.replace(/ /g, '');
-                return entity;
-            });
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     onCountryChange(event, index) {
@@ -663,7 +669,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.checkValidTimeout = setTimeout(() => {
             let field = 'addresses';
             this.checkSimilarEntities(field, index);
-            this.addButtonVisible[field] = this.checkEveryContactValid(field) && !this.checkDuplicateContact(field);
+            this.addButtonVisible[field] = this.checkEveryFieldItemValid(field) && !this.checkDuplicateContact(field);
             if (this.addButtonVisible[field]) {
                 this.validateCompanyName();
             }
@@ -681,7 +687,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     addNewContact(field) {
         if (this.addButtonVisible[field] &&
-            this.checkEveryContactValid(field) &&
+            this.checkEveryFieldItemValid(field) &&
             !this.checkDuplicateContact(field)
         ) {
             this.contacts[field].push({
@@ -706,7 +712,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             return false;
     }
 
-    checkEveryContactValid(field) {
+    checkEveryFieldItemValid(field) {
         return this.contacts[field].every((item) => {
             if (item.type)
                 return this.checkFieldValid(field, item);
@@ -718,7 +724,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     emptyOrRemoveInput(field, index) {
         if (index || this.contacts[field].length > 1) {
             this.contacts[field].splice(index, 1);
-            this.addButtonVisible[field] = this.checkEveryContactValid(field)
+            this.addButtonVisible[field] = this.checkEveryFieldItemValid(field)
                 && !this.checkDuplicateContact(field);
         } else {
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};

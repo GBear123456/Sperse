@@ -206,7 +206,7 @@
                                     width="340px"
                                     name="emailType"
                                     [placeholder]="ls.l('Type')"
-                                    [dataSource]="emailTypes"
+                                    [dataSource]="emailTypes$ | async"
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="email.type"
@@ -248,7 +248,7 @@
                                     width="370px"
                                     name="phoneType"
                                     [placeholder]="ls.l('Type')"
-                                    [dataSource]="phoneTypes"
+                                    [dataSource]="phoneTypes$ | async"
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="phone.type"
@@ -304,7 +304,7 @@
                                     valueExpr="id"
                                     accessKey="link-type-dialog"
                                     [value]="link.type"
-                                    [dataSource]="linkTypes"
+                                    [dataSource]="linkTypes$ | async"
                                     (onValueChanged)="onLinkTypeChanged($event, i)">
                                     <div *dxTemplate="let contentData of 'content'" style="display:flex;">
                                         <div>
@@ -317,7 +317,7 @@
                                             <dx-list
                                                 displayExpr="name"
                                                 keyExpr="id"
-                                                [dataSource]="linkTypes"
+                                                [dataSource]="linkTypes$ | async"
                                                 selectionMode="single"
                                                 [pageLoadMode]="'scrollBottom'"
                                                 (onSelectionChanged)="link.type = $event.addedItems[0].id"

@@ -26,10 +26,10 @@
                                 </a>
                             </header>
                             <ul *ngFor="let entity of group.entities">
-                                <li class="entity">
+                                <li class="entity" (click)="moveToEntityDetails($event, entity, group.itemType)">
                                     <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
                                     <div>
-                                        <a (click)="moveToEntityDetails($event, entity, group.itemType)">{{ entity.Name }}</a>
+                                        <a>{{ entity.Name }}</a>
                                         <p>{{ entity.Email }}</p>
                                     </div>
                                 </li>
