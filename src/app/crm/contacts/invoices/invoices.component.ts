@@ -28,7 +28,7 @@ import {
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
-    InvoiceSettings, PipelineDto
+    InvoiceSettings, PipelineDto, StageDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
@@ -74,7 +74,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private readonly ident = 'Invoices';
 
     contactId: number;
-    stages$ = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).pipe(
+    stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).pipe(
         map((pipeline: PipelineDto) => pipeline.stages)
     );
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;

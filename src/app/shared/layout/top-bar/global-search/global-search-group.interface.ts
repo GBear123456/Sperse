@@ -5,8 +5,6 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 export interface GlobalSearchGroup {
     name: string;
     entities: GlobalSearchGroupEntity[];
-    count: number;
     link: string;
     linkParams?: Params;
-    itemType: ItemTypeEnum;
 }

@@ -23,7 +23,6 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { CrmService } from '@app/crm/crm.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
@@ -116,14 +115,12 @@ export class GlobalSearchComponent implements OnInit {
             )
             : of(null)
         ).pipe(
-            startWith({ value: [], ['@odata.count']: 0 }),
+            startWith({ value: [] }),
             map((clients: any) => {
                 return {
                     name: this.ls.l('Customers'),
                     entities: clients ? clients.value : [],
-                    count: clients ? clients['@odata.count'] : 0,
-                    link: 'app/crm/clients',
-                    itemType: ItemTypeEnum.Customer
+                    link: 'app/crm/clients'
                 }
             }),
             take(2)
@@ -149,14 +146,12 @@ export class GlobalSearchComponent implements OnInit {
             )
             : of(null)
         ).pipe(
-            startWith({ value: [], ['@odata.count']: 0 }),
+            startWith({ value: [] }),
             map((partners: any) => {
                 return {
                     name: this.ls.l('Partners'),
                     entities: partners ? partners.value : [],
-                    count: partners ? partners['@odata.count'] : 0,
-                    link: 'app/crm/partners',
-                    itemType: ItemTypeEnum.Partner
+                    link: 'app/crm/partners'
                 };
             }),
             take(2)
@@ -181,14 +176,12 @@ export class GlobalSearchComponent implements OnInit {
             )
             : of(null)
         ).pipe(
-            startWith({ value: [], ['@odata.count']: 0 }),
+            startWith({ value: [] }),
             map((leads: any) => {
                 return {
                     name: name,
                     entities: leads ? leads.value : [],
-                    count: leads ? leads['@odata.count'] : 0,
                     link: 'app/crm/leads',
-                    itemType: ItemTypeEnum.Lead,
                     linkParams: {
                         contactGroup: contactGroup
                     }
@@ -199,28 +192,30 @@ export class GlobalSearchComponent implements OnInit {
     }
     
     private getOrdersGroup(search: string) {
-        return this.http.get(
-            this.oDataService.getODataUrl('Order'),
-            this.getOptions(search, {
-                $select: [
-                    OrderFields.Id,
-                    OrderFields.Name,
-                    OrderFields.Email,
-                    OrderFields.PhotoPublicId,
-                    OrderFields.LeadId,
-                    OrderFields.ContactId
-                ].join(',')
-            })
+        return (this.permissionService.isGranted(AppPermissions.CRMOrders)
+            ? this.http.get(
+                this.oDataService.getODataUrl('Order'),
+                this.getOptions(search, {
+                    $select: [
+                        OrderFields.Id,
+                        OrderFields.Name,
+                        OrderFields.Email,
+                        OrderFields.PhotoPublicId,
+                        OrderFields.LeadId,
+                        OrderFields.ContactId
+                    ].join(',')
+                }))
+            : of(null)
         ).pipe(
+            startWith({ value: [] }),
             map((orders: any) => {
                 return {
                     name: this.ls.l('Orders'),
                     entities: orders.value,
-                    count: orders['@odata.count'],
-                    link: 'app/crm/orders',
-                    itemType: ItemTypeEnum.Order
+                    link: 'app/crm/orders'
                 };
-            })
+            }),
+            take(2)
         );
     }
 
@@ -232,8 +227,7 @@ export class GlobalSearchComponent implements OnInit {
         return {
             params: {
                 quickSearchString: search,
-                $top: '2',
-                $count: true,
+                $top: '3',
                 ...params
             },
             headers: new HttpHeaders({
@@ -281,13 +275,10 @@ export class GlobalSearchComponent implements OnInit {
         return this.profileService.getContactPhotoUrl(pictureId);
     }
 
-    moveToEntityDetails(e, entity: GlobalSearchGroupEntity, groupItemType: ItemTypeEnum) {
+    moveToEntityDetails(e, entity: GlobalSearchGroupEntity) {
         let isOrder: boolean = !!entity.ContactId;
         const isLead: boolean = !!entity.CustomerId;
-        this.itemDetailsService.setItemsSource(
-            groupItemType,
-            null
-        );
+        this.itemDetailsService.clearItemsSource();
         this.router.navigate(
             CrmService.getEntityDetailsLink(
                 entity.CustomerId || entity.ContactId || entity.Id,

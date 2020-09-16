@@ -17,22 +17,23 @@
             <dx-scroll-view>
                 <div class="global-search-tooltip-container">
                     <ng-container *ngFor="let group of searchGroups">
-                        <div class="group" *ngIf="group.count">
+                        <div class="group" *ngIf="group.entities && group.entities.length">
                             <header>
                                 <h4>{{ group.name }}</h4>
-                                <a *ngIf="group.count > 1"
-                                   (click)="showAll($event, group.link, group.linkParams)">
-                                    {{ ls.l('ShowAll') }} <ng-container *ngIf="group.count < 22">{{ group.count }} {{ group.name.toLowerCase() }}</ng-container>
+                                <a *ngIf="group.entities && group.entities.length > 2" (click)="showAll($event, group.link, group.linkParams)">
+                                    {{ ls.l('ShowAll') }}
                                 </a>
                             </header>
-                            <ul *ngFor="let entity of group.entities">
-                                <li class="entity" (click)="moveToEntityDetails($event, entity, group.itemType)">
-                                    <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
-                                    <div>
-                                        <a>{{ entity.Name }}</a>
-                                        <p>{{ entity.Email }}</p>
-                                    </div>
-                                </li>
+                            <ul *ngFor="let entity of group.entities; let i = index">
+                                <ng-container *ngIf="i <= 1">
+                                    <li class="entity" (click)="moveToEntityDetails($event, entity)">
+                                        <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
+                                        <div>
+                                            <a>{{ entity.Name }}</a>
+                                            <p>{{ entity.Email }}</p>
+                                        </div>
+                                    </li>
+                                </ng-container>
                             </ul>
                         </div>
                     </ng-container>
