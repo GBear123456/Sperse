@@ -84,6 +84,9 @@ export class GlobalSearchComponent implements OnInit {
     ngOnInit() {
         this.searchGroups$.subscribe((searchGroups: GlobalSearchGroup[]) => {
             this.searchGroups = searchGroups;
+            if (this.itemsFound) {
+                this.isTooltipVisible = true;
+            }
             this.changeDetectorRef.detectChanges();
         });
     }
