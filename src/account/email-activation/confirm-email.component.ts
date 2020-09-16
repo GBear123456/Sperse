@@ -22,7 +22,6 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _accountService: AccountServiceProxy,
         private _appSessionService: AppSessionService
-
     ) {
         super(injector);
     }

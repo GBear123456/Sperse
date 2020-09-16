@@ -2,6 +2,7 @@
 import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
+import { Params } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -64,7 +65,6 @@ import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { OrderStageSummary } from '@app/crm/orders/order-stage-summary.interface';
-import { Params } from '@angular/router';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -1277,7 +1277,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             let isOrder = this.selectedOrderType.value === OrderType.Order;
             this.searchClear = false;
             this._router.navigate(
-                CrmService.getEntityDetailsLink(entity.ContactId, section, null, entity.LeadId),
+                CrmService.getEntityDetailsLink(entity.ContactId, section, entity.LeadId),
                 {
                     queryParams: {
                         ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
