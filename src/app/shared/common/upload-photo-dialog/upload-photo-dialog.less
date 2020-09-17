@@ -2,6 +2,13 @@
     position: relative;
     display: block;
     padding-top: 5px;
+
+    @media all and (min-width: 768px) {
+        header {
+            width: 621px;
+        }
+    }
+
     .mat-dialog-title {
         font-family: Montserrat;
         font-size: 22px;
@@ -51,6 +58,7 @@
             .ngx-file-drop__content {
                 height: 100%;
                 overflow: hidden;
+                position: relative;
                 ::ng-deep .cropper-canvas {
                     border: 1px solid #ddd;
                     @media (max-width: 767px) {
@@ -88,6 +96,7 @@
                 color: #ffffff;
                 width: 92px;
                 height: 28px;
+                outline: none;
                 span {
                     font-size: 13px;
                     letter-spacing: 0.3px;
