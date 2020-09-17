@@ -35045,12 +35045,15 @@ export class UserInvoiceServiceProxy {
 
     /**
      * @id (optional) 
+     * @payerOrganizationUnitId (optional) 
      * @return Success
      */
-    generatePdf(id: number | null | undefined): Observable<string> {
+    generatePdf(id: number | null | undefined, payerOrganizationUnitId: number | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GeneratePdf?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (payerOrganizationUnitId !== undefined)
+            url_ += "payerOrganizationUnitId=" + encodeURIComponent("" + payerOrganizationUnitId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -56558,6 +56561,8 @@ export class ImportPersonalInput implements IImportPersonalInput {
     isActive!: boolean | undefined;
     customFields!: CustomFieldsInput | undefined;
     rating!: string | undefined;
+    list!: string | undefined;
+    tag!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -56615,6 +56620,8 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.isActive = data["isActive"];
             this.customFields = data["customFields"] ? CustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
             this.rating = data["rating"];
+            this.list = data["list"];
+            this.tag = data["tag"];
         }
     }
 
@@ -56672,6 +56679,8 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["isActive"] = this.isActive;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
         data["rating"] = this.rating;
+        data["list"] = this.list;
+        data["tag"] = this.tag;
         return data; 
     }
 }
@@ -56718,6 +56727,8 @@ export interface IImportPersonalInput {
     isActive: boolean | undefined;
     customFields: CustomFieldsInput | undefined;
     rating: string | undefined;
+    list: string | undefined;
+    tag: string | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -57004,6 +57015,7 @@ export class ImportItemInput implements IImportItemInput {
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
+    partnerTypeName!: string | undefined;
     leadStageName!: string | undefined;
     leadSource!: string | undefined;
     affiliateCode!: string | undefined;
@@ -57051,6 +57063,7 @@ export class ImportItemInput implements IImportItemInput {
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
+            this.partnerTypeName = data["partnerTypeName"];
             this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
             this.affiliateCode = data["affiliateCode"];
@@ -57098,6 +57111,7 @@ export class ImportItemInput implements IImportItemInput {
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
+        data["partnerTypeName"] = this.partnerTypeName;
         data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
         data["affiliateCode"] = this.affiliateCode;
@@ -57138,6 +57152,7 @@ export interface IImportItemInput {
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
+    partnerTypeName: string | undefined;
     leadStageName: string | undefined;
     leadSource: string | undefined;
     affiliateCode: string | undefined;
@@ -57445,7 +57460,6 @@ export class ImportContactInput implements IImportContactInput {
     rating!: number | undefined;
     star!: string | undefined;
     importType!: ImportTypeInput | undefined;
-    partnerTypeName!: string | undefined;
     ignoreInvalidValues!: boolean | undefined;
     overrideLists!: boolean | undefined;
     contactId!: number | undefined;
@@ -57455,6 +57469,7 @@ export class ImportContactInput implements IImportContactInput {
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
+    partnerTypeName!: string | undefined;
     leadStageName!: string | undefined;
     leadSource!: string | undefined;
     affiliateCode!: string | undefined;
@@ -57511,7 +57526,6 @@ export class ImportContactInput implements IImportContactInput {
             this.rating = data["rating"];
             this.star = data["star"];
             this.importType = data["importType"];
-            this.partnerTypeName = data["partnerTypeName"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.contactId = data["contactId"];
@@ -57521,6 +57535,7 @@ export class ImportContactInput implements IImportContactInput {
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
+            this.partnerTypeName = data["partnerTypeName"];
             this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
             this.affiliateCode = data["affiliateCode"];
@@ -57574,7 +57589,6 @@ export class ImportContactInput implements IImportContactInput {
         data["rating"] = this.rating;
         data["star"] = this.star;
         data["importType"] = this.importType;
-        data["partnerTypeName"] = this.partnerTypeName;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["overrideLists"] = this.overrideLists;
         data["contactId"] = this.contactId;
@@ -57584,6 +57598,7 @@ export class ImportContactInput implements IImportContactInput {
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
+        data["partnerTypeName"] = this.partnerTypeName;
         data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
         data["affiliateCode"] = this.affiliateCode;
@@ -57622,7 +57637,6 @@ export interface IImportContactInput {
     rating: number | undefined;
     star: string | undefined;
     importType: ImportTypeInput | undefined;
-    partnerTypeName: string | undefined;
     ignoreInvalidValues: boolean | undefined;
     overrideLists: boolean | undefined;
     contactId: number | undefined;
@@ -57632,6 +57646,7 @@ export interface IImportContactInput {
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
+    partnerTypeName: string | undefined;
     leadStageName: string | undefined;
     leadSource: string | undefined;
     affiliateCode: string | undefined;
