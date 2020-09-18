@@ -994,7 +994,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     getAssignedUsersSelector() {
         return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {
-            contactGroup: this.partnerTypesComponent && this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
+            contactGroup: this.data.customerType ? this.data.customerType : ContactGroup.Client
         });
     }
 
