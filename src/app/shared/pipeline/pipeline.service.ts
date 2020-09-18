@@ -278,7 +278,8 @@ export class PipelineService {
                     {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             if (!useLastData || !this.lastEntityData$) {
                 this.lastEntityData$ = this.getPipelineDefinitionObservable(
-                    AppConsts.PipelinePurposeIds.order
+                    AppConsts.PipelinePurposeIds.order,
+                    null
                 ).pipe(first(),
                     switchMap(pipeline => {
                         return this.dialog.open(LeadCompleteDialogComponent, {

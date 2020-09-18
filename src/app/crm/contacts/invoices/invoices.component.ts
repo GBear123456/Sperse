@@ -13,9 +13,9 @@ import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { finalize, switchMap, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
-import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -74,7 +74,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     private readonly ident = 'Invoices';
 
     contactId: number;
-    stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).pipe(
+    stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order, null).pipe(
         map((pipeline: PipelineDto) => pipeline.stages)
     );
     readonly invoiceFields: KeysEnum<InvoiceDto> = InvoiceFields;
@@ -101,7 +101,6 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.dataSource = this.getDataSource();
             }
         }, this.ident);
-
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
             if (data && (!this.contactId || data.id != this.contactId)) {
                 this.contactId = data.id;
