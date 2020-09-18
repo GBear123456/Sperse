@@ -186,10 +186,10 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         }
     }
 
-    loadFile(paste = false) {
-        this.loadingService.startLoading();
+    loadFile(paste: boolean = false) {
         /** Load file into the croop */
         if (this.fileUrlFormControl.valid) {
+            this.loadingService.startLoading();
             let image = new Image();
             image.src = this.fileUrlFormControl.value;
             image.crossOrigin = 'Anonymous';
