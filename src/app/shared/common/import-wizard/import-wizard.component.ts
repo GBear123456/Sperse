@@ -716,13 +716,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
             'selection.selectAllMode', $event.itemData.mode);
     }
 
-    onMapCellClick($event) {
-        if (typeof ($event.displayValue) === 'boolean') {
-            $event.component.deselectRows([$event.data.id]);
-            $event.data.mappedField = '';
-        }
-    }
-
     onMapSelectionChanged($event) {
         setTimeout(() => {
             let rowIdsToDeselect = [];
@@ -731,9 +724,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                     rowIdsToDeselect.push(row.id);
             });
 
-            $event.component.deselectRows(rowIdsToDeselect);
+            if (rowIdsToDeselect.length)
+                $event.component.deselectRows(rowIdsToDeselect);
             this.onMappingChanged.emit($event);
-        }, 500);
+        }, 300);
     }
 
     onLookupFieldsContentReady($event, cell) {
