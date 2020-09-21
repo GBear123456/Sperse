@@ -1,4 +1,4 @@
 export enum OrderType {
-    Order,
-    Subscription
+    Order = 1,
+    Subscription = 2
 }

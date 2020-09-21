@@ -60,8 +60,10 @@ export class AppComponent implements OnInit {
                 let moduleName = name.toLowerCase();
                 if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
-                    if (!appService.subscriptionInGracePeriod(moduleName))
+                    if (!appService.subscriptionInGracePeriod(moduleName)) {
+                        this.dialog.closeAll();
                         this.router.navigate(['app/admin/users']);
+                    }
                     paymentDialogTimeout = setTimeout(() => {
                         if (!this.dialog.getDialogById('payment-wizard')) {
                             const sub = appService.getModuleSubscription(name);

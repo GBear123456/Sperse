@@ -208,8 +208,8 @@ export class AppService extends AppServiceBase {
     loadModuleSubscriptions() {
         this.moduleSubscriptions$ = this.tenantSubscriptionProxy.getModuleSubscriptions()
             .pipe(publishReplay(), refCount());
-        this.moduleSubscriptions$.subscribe((res) => {
-            this.moduleSubscriptions = res.sort((left, right) => {
+        this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
+            this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
                 return left.endDate > right.endDate ? -1 : 1;
             });
             this.checkModuleExpired();
@@ -219,10 +219,10 @@ export class AppService extends AppServiceBase {
         );
     }
 
-    getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
+    getModuleSubscription(name?: string, moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
         let module = (name || this.getModule()).toUpperCase();
         if (moduleSubscriptions && ModuleType[module])
-            return _.find(moduleSubscriptions, (subscription) => {
+            return _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
                 return subscription.module.includes(module)
                     || (module === 'CRM' && subscription.module === ModuleType.CFO_Partner);
             }) || { module: module, endDate: moment(new Date(0)) };
@@ -282,7 +282,7 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    checkSubscriptionIsFree(name?: string, moduleSubscriptions = this.moduleSubscriptions): boolean {
+    checkSubscriptionIsFree(name?: string, moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions): boolean {
         let sub = this.getModuleSubscription(name, moduleSubscriptions);
         return sub && !sub.endDate;
     }
