@@ -94,16 +94,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<Status> = new EventEmitter();
     @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
-    @Output() prev: EventEmitter<any> = new EventEmitter();
-    @Output() next: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private initTimeout;
     private _enabled: Boolean;
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
-    isPrevDisabled = false;
-    isNextDisabled = false;
     manageCGPermision = '';
     toolbarConfig = [];
     customToolbarConfig;
@@ -436,12 +432,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 {
                     name: 'prev',
                     action: this.loadPrevItem.bind(this),
-                    disabled: this.isPrevDisabled
+                    disabled: this.contactService.isPrevDisabled
                 },
                 {
                     name: 'next',
                     action: this.loadNextItem.bind(this),
-                    disabled: this.isNextDisabled
+                    disabled: this.contactService.isNextDisabled
                 }
             ]
         };
@@ -505,11 +501,11 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     loadPrevItem() {
-        this.prev.emit(this);
+        this.contactService.prev.next(this);
     }
 
     loadNextItem() {
-        this.next.emit(this);
+        this.contactService.next.next(this);
     }
 
     requestVerification() {
@@ -527,9 +523,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     updateNavButtons(isFirst, isLast) {
-        const updateToolbar = this.isPrevDisabled !== isFirst || this.isNextDisabled !== isLast;
-        this.isPrevDisabled = isFirst;
-        this.isNextDisabled = isLast;
+        const updateToolbar = this.contactService.isPrevDisabled !== isFirst || this.contactService.isNextDisabled !== isLast;
+        this.contactService.isPrevDisabled = isFirst;
+        this.contactService.isNextDisabled = isLast;
         if (updateToolbar) {
             this.initToolbarConfig(0);
         }

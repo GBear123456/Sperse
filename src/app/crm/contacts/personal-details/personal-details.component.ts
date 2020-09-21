@@ -23,6 +23,7 @@ import {
     Gender,
     LayoutType,
     MaritalStatus,
+    NameValueDtoListResultDto,
     PersonContactInfoDto,
     PersonContactServiceProxy,
     PersonInfoDto,
@@ -124,7 +125,7 @@ export class PersonalDetailsComponent implements OnDestroy {
             }
         }, this.ident);
 
-        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res) => {
+        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res: NameValueDtoListResultDto) => {
             this.selectList.timeZone = res.items.map(item => ({ id: item.value, name: item.name }));
             this.changeDetector.markForCheck();
         });
