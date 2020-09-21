@@ -60694,6 +60694,8 @@ export class LeadInfoDto implements ILeadInfoDto {
     customField3!: string | undefined;
     customField4!: string | undefined;
     customField5!: string | undefined;
+    importId!: number | undefined;
+    importFileName!: string | undefined;
 
     constructor(data?: ILeadInfoDto) {
         if (data) {
@@ -60737,6 +60739,8 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.customField3 = data["customField3"];
             this.customField4 = data["customField4"];
             this.customField5 = data["customField5"];
+            this.importId = data["importId"];
+            this.importFileName = data["importFileName"];
         }
     }
 
@@ -60780,6 +60784,8 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["customField3"] = this.customField3;
         data["customField4"] = this.customField4;
         data["customField5"] = this.customField5;
+        data["importId"] = this.importId;
+        data["importFileName"] = this.importFileName;
         return data; 
     }
 }
@@ -60816,6 +60822,8 @@ export interface ILeadInfoDto {
     customField3: string | undefined;
     customField4: string | undefined;
     customField5: string | undefined;
+    importId: number | undefined;
+    importFileName: string | undefined;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
