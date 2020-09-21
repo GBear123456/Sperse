@@ -1,5 +1,7 @@
+import { ContactStatus } from '@root/shared/AppEnums';
+
 export interface Status {
-    id: 'A' | 'I';
+    id: ContactStatus;
     name?: string;
     displayName?: string;
 }

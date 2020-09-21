@@ -557,7 +557,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private showConfirmationDialog(status: Status) {
         this.contactsService.updateStatus(this.contactInfo.id, status).subscribe((confirm: boolean) => {
             if (confirm) {
-                this.contactInfo.statusId = status.id;
+                this.contactInfo.statusId = String(status.id);
                 let userData = this.userService['data'];
                 if (userData && userData.user) {
                     userData.user.isActive = status.id == ContactStatus.Active;
