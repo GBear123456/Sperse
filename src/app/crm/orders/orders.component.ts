@@ -13,6 +13,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
 import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import {
@@ -233,9 +234,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     {
                         dataSource: Object.keys(SubscriptionsStatus).map((status: string) => ({
                             id: SubscriptionsStatus[status],
-                            name: status
+                            name: startCase(status)
                         })),
-                        value: [ SubscriptionsStatus.Current ],
+                        value: [ SubscriptionsStatus.CurrentActive ],
                         nameField: 'name',
                         keyExpr: 'id'
                     })
@@ -624,7 +625,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     activate() {
         super.activate();
-        this.handleQueryParams()
+        this.handleQueryParams();
         this.initFilterConfig();
         this.subscribeToFilter();
         this.rootComponent = this.getRootComponent();
@@ -650,14 +651,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     getODataRequestValues(orderType: OrderType) {
         return concat(
-            this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
+            this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
                 filter(() => this.selectedOrderType.value === orderType),
-                switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+                switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
-        )
+        );
     }
 
     private waitUntil(orderType: OrderType) {
@@ -1182,7 +1183,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     subscribeToFilter() {
-        this.filtersService.apply(() => {
+        this.filtersService.apply(filters => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
             this.processFilterInternal();
@@ -1216,10 +1217,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             grid.instance,
             this.selectedOrderType.value === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
             this.filters,
-            this.filtersService.getCheckCustom,
+            this.getCheckCustomFilter.bind(this),
             null,
             this.getSubscriptionsParams()
         );
+    }
+
+    private getCheckCustomFilter(filter: FilterModel) {
+         if (this.selectedOrderType.value == OrderType.Subscription && filter.caption == 'Status')
+            return FilterHelpers.filterBySubscriptionStatus(filter);
+         else
+            return this.filtersService.getCheckCustom(filter);
     }
 
     private getSubscriptionsParams() {
@@ -1242,7 +1250,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.stages = $event.stages.map((stage) => {
             return {
                 id: this.pipelineService.getPipeline(
-                    this.pipelinePurposeId).id + ':' + stage.id,
+                    this.pipelinePurposeId, null).id + ':' + stage.id,
                 index: stage.sortOrder,
                 name: stage.name,
             };

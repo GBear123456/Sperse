@@ -5,6 +5,7 @@ import * as _ from 'underscore';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { PipelineDto } from '@shared/service-proxies/service-proxies';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
 import { ContactGroup } from '@shared/AppEnums';
 
 export class FilterHelpers {
@@ -77,6 +78,47 @@ export class FilterHelpers {
                 el[filter.field] = x;
                 return el;
             });
+
+            data = {
+                or: filterData
+            };
+        }
+        return data;
+    }
+
+    static filterBySubscriptionStatus(filter: FilterModel) {
+        let data = {};
+        let element = filter.items.element;
+        if (element && element.value) {
+            let filterData = _.map(element.value, item => {
+                let result = {};
+                if (item == SubscriptionsStatus.CurrentActive) {
+                    if (element.value.indexOf(SubscriptionsStatus.CurrentExpired) >= 0)
+                        result[filter.field] = item;
+                    else
+                        result = {
+                            and: {
+                                [filter.field]: item,
+                                or: [
+                                    {EndDate: null},
+                                    {EndDate: {ge: new Date()}}
+                                ]
+                            }
+                        };
+                } else if (item == SubscriptionsStatus.CurrentExpired) {
+                    if (element.value.indexOf(SubscriptionsStatus.CurrentActive) >= 0)
+                        result = undefined;
+                    else
+                        result = {
+                            and: {
+                                [filter.field]: SubscriptionsStatus.CurrentActive,
+                                EndDate: {lt: new Date()}
+                            }
+                        };
+                } else
+                    result[filter.field] = item;
+                return result;
+            }).filter(Boolean);
 
             data = {
                 or: filterData
