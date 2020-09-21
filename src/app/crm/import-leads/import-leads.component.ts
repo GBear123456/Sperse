@@ -32,7 +32,7 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
     ImportSubscriptionInput, CustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
-    GetImportStatusOutput, LayoutType
+    GetImportStatusOutput, LayoutType, ImportClassificationInput
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -103,6 +103,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_IS_ACTIVE_MILITARY_DUTY = 'personalInfo_isActiveMilitaryDuty';
     private readonly PERSONAL_IS_US_CITIZEN = 'personalInfo_isUSCitizen';
     private readonly PERSONAL_IS_ACTIVE = 'personalInfo_isActive';
+    private readonly PERSONAL_INTERESTS = 'personalInfo_interests';
     private readonly BUSINESS_IS_EMPLOYED = 'businessInfo_isEmployed';
     private readonly BUSINESS_AFFILIATE_CODE = 'businessInfo_affiliateCode';
     private readonly BUSINESS_DATE_FOUNDED = 'businessInfo_dateFounded';
@@ -152,6 +153,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly SUBSCRIPTION3_END_DATE = 'subscription3_endDate';
     private readonly SUBSCRIPTION4_END_DATE = 'subscription4_endDate';
     private readonly SUBSCRIPTION5_END_DATE = 'subscription5_endDate';
+    private readonly CLASSIFICATION_INFO_LISTS = 'classificationInfo_lists';
+    private readonly CLASSIFICATION_INFO_TAGS = 'classificationInfo_tags';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -165,6 +168,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_FULL_ADDRESS3_CITY,
         this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
         this.BUSINESS_WORK_FULL_ADDRESS_CITY
+    ];
+
+    private readonly FIELDS_ARRAY = [
+        this.CLASSIFICATION_INFO_LISTS,
+        this.CLASSIFICATION_INFO_TAGS,
+        this.PERSONAL_INTERESTS
     ];
 
     private readonly FIELDS_BOOLEAN = [
@@ -306,7 +315,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
-        personalInfo: ImportPersonalInput.fromJS({}),
+        personalInfo: ImportPersonalInput.fromJS({interests: []}),
         fullName: ImportFullName.fromJS({}),
         fullAddress: ImportAddressInput.fromJS({}),
         fullAddress2: ImportAddressInput.fromJS({}),
@@ -320,7 +329,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         subscription2: ImportSubscriptionInput.fromJS({}),
         subscription3: ImportSubscriptionInput.fromJS({}),
         subscription4: ImportSubscriptionInput.fromJS({}),
-        subscription5: ImportSubscriptionInput.fromJS({})
+        subscription5: ImportSubscriptionInput.fromJS({}),
+        classificationInfo: ImportClassificationInput.fromJS({lists: [], tags: []})
     };
 
     readonly countryFields = {
@@ -667,16 +677,16 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 let path = key.split(ImportWizardComponent.FieldSeparator);
                 if (path.length) {
                     let currentObj = lead;
-
                     for (let i = 0; i < path.length - 1; i++) {
                         if (!currentObj[path[i]]) {
                             currentObj[path[i]] = {};
                         }
-
                         currentObj = currentObj[path[i]];
                     }
 
-                    currentObj[path[path.length - 1]] = row[key];
+                    currentObj[path[path.length - 1]] =
+                        this.FIELDS_ARRAY.indexOf(key) >= 0 ?
+                            row[key].split(',') : row[key];
                 }
             });
 
