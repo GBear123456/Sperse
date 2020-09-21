@@ -400,13 +400,15 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             const initialValue = !this.data.user.isActive;
             this.contactsService.updateStatus(
                 this.data.user.id,
-                { id: this.data.user.isActive ? 'A' : 'I' },
+                { id: this.data.user.isActive ? ContactStatus.Active : ContactStatus.Inactive },
                 'user'
             ).subscribe(
                 (confirm: boolean) => {
                     if (confirm) {
-                        if (this.data.user.isActive == true) {
-                            this.contactService['data'].contactInfo.statusId = ContactStatus.Active;
+                        let contactInfo = this.contactService['data'].contactInfo;
+                        if (this.data.user.isActive && contactInfo.statusId == ContactStatus.Inactive) {
+                            contactInfo.statusId = ContactStatus.Active;
+                            this.updateToolbarOptions();
                         }
                     } else {
                         this.data.user.isActive = initialValue;
@@ -426,13 +428,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
             sub = this.userService.updateEmail(UpdateUserEmailDto.fromJS(data));
         else if (fieldName == this.PHONE_FIELD)
             sub = this.userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
-        else if ([this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0) {
+        else if ([this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0)
             sub = this.userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
-            let contactInfo = this.contactService['data'].contactInfo;
-            if (fieldName == this.ACTIVE_FIELD && value == true &&
-                contactInfo.statusId == ContactStatus.Inactive
-            ) contactInfo.statusId = ContactStatus.Active;
-        } else {
+        else {
             sub = this.userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({
                 user: this.userData.user,
                 setRandomPassword: this.userData.user['setRandomPassword'],

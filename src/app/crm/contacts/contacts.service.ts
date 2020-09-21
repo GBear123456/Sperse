@@ -9,6 +9,7 @@ import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber } f
 import { filter, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
+import { ContactStatus } from '@root/shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import {
@@ -614,22 +615,22 @@ export class ContactsService {
                         observer.next(false);
                     }
                 },
-                [ { text: this.ls.l('SendCancellationEmail'), visible: status.id === 'I' } ],
+                [ { text: this.ls.l('SendCancellationEmail'), visible: status.id === ContactStatus.Inactive } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );
         })
     }
 
-    private updateStatusInternal(entityId: number, statusId: string, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
+    private updateStatusInternal(entityId: number, statusId: ContactStatus, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
         return entityType === 'contact'
             ? this.contactProxy.updateContactStatus(new UpdateContactStatusInput({
                 contactId: entityId,
-                statusId: statusId,
+                statusId: String(statusId),
                 notifyUser: notifyUser
             }))
             : this.userService.updateOptions(new UpdateUserOptionsDto ({
                 id: entityId,
-                isActive: statusId === 'A',
+                isActive: statusId === ContactStatus.Active,
                 notifyUser: notifyUser,
                 isLockoutEnabled: null,
                 isTwoFactorEnabled: null
