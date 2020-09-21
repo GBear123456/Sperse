@@ -37,8 +37,6 @@
             (onUpdateStatus)="updateStatus($event)"
             (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteContact()"
-            (prev)="loadTargetEntity($event, targetDirections.Prev)"
-            (next)="loadTargetEntity($event, targetDirections.Next)"
             [getProxyService]="getProxyService"
             [assignedUsersSelector]="assignedUsersSelector"
             [getAssignmentsPermissionKey]="getAssignmentsPermissionKey">

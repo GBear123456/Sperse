@@ -99,6 +99,7 @@ export class UserInboxComponent implements OnDestroy {
                 this.contactId = contactInfo.id;
                 this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
                     contactInfo.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
+                this.activeMessage = undefined;
                 if (!this.dataSource || contactId != this.contactId)
                     this.initDataSource();
                 else
@@ -164,23 +165,42 @@ export class UserInboxComponent implements OnDestroy {
                         readOnly: true
                     }
                 }]
-            }, {
+            },
+            {
                 location: 'after',
-                items: [{
-                    widget: 'dxButton',
-                    options: {
-                        text: '+ ' + this.ls.l('NewEmail')
+                items: [
+                    {
+                        name: 'prev',
+                        action: (e) => this.contactsService.prev.next(e),
+                        disabled: this.contactsService.isPrevDisabled
                     },
-                    visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
-                    action: () => this.showNewEmailDialog()
-                }, {
-                    widget: 'dxButton',
-                    options: {
-                        text: '+ ' + this.ls.l('NewSms')
+                    {
+                        name: 'next',
+                        action: (e) => this.contactsService.next.next(e),
+                        disabled: this.contactsService.isNextDisabled
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: '+ ' + this.ls.l('NewEmail')
+                        },
+                        visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
+                        action: () => this.showNewEmailDialog()
                     },
-                    visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
-                    action: () => this.showNewSMSDialog()
-                }]
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: '+ ' + this.ls.l('NewSms')
+                        },
+                        visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
+                        action: () => this.showNewSMSDialog()
+                    }
+                ]
             }]});
         });
     }

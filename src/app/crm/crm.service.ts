@@ -6,7 +6,7 @@ import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, combineLatest, fromEvent, of } from 'rxjs';
-import { map, publishReplay, refCount, startWith, switchMap, tap } from 'rxjs/operators';
+import { map, publishReplay, refCount, startWith, switchMap } from 'rxjs/operators';
 import flatten from 'lodash/flatten';
 
 /** Application imports */

@@ -31,7 +31,8 @@ import {
     GetContactInfoForMergeOutput,
     LeadServiceProxy,
     EmailTemplateType,
-    UpdateContactStatusInput,
+    UpdateContactStatusInput,
+
     UpdateUserOptionsDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -85,6 +86,10 @@ export class ContactsService {
     settingsDialogOpened$: Observable<boolean> = this.settingsDialogOpened.asObservable().pipe(
         distinctUntilChanged()
     );
+    isPrevDisabled = false;
+    isNextDisabled = false;
+    prev: Subject<any> = new Subject();
+    next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
         private contactProxy: ContactServiceProxy,
@@ -104,7 +109,7 @@ export class ContactsService {
         public dialog: MatDialog
     ) {}
 
-    private subscribe(sub, ident = 'common') {
+    private subscribe(sub, ident: string = 'common') {
         if (!this.subscribers[ident])
             this.subscribers[ident] = [];
         this.subscribers[ident].push(sub);

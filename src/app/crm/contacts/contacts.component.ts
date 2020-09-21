@@ -146,6 +146,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         contactsService.invalidateSubscribe(area => this.invalidate(area));
         contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
         this.handleContactsOptions();
+        this.contactsService.prev.pipe(takeUntil(this.destroy$)).subscribe((e) => {
+            this.loadTargetEntity(e, TargetDirectionEnum.Prev);
+        });
+        this.contactsService.next.pipe(takeUntil(this.destroy$)).subscribe((e) => {
+            this.loadTargetEntity(e, TargetDirectionEnum.Next)
+        });
     }
 
     private handleContactsOptions() {
