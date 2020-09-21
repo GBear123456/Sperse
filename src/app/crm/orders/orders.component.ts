@@ -328,7 +328,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             value: OrderType.Subscription
         }
     ];
-    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(OrderType.Order);
+    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
@@ -581,7 +581,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             pluck('refresh'),
             filter(Boolean)
         ).subscribe(() => this.invalidate());
-        this.initOrdersToolbarConfig();
+        this.selectedOrderType.value === OrderType.Order
+            ? this.initOrdersToolbarConfig()
+            : this.initSubscriptionsToolbarConfig();
     }
 
     ngOnInit() {
@@ -598,6 +600,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             if (this.subscriptionsGrid) {
                 this.subscriptionsGrid.instance.repaint();
             }
+        });
+        this.selectedOrderType$.pipe(
+            skip(1),
+            takeUntil(this.destroy$)
+        ).subscribe((selectedOrderType: OrderType) => {
+            this.changeOrderType(selectedOrderType);
         });
     }
 
@@ -617,7 +625,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ).subscribe((params: Params) => {
             if (params.searchValue && this.searchValue !== params.searchValue) {
                 this.searchValue = params.searchValue;
+                if (this.selectedOrderType.value == OrderType.Order)
+                    this.initOrdersToolbarConfig();
+                else
+                    this.initSubscriptionsToolbarConfig();
                 this.invalidate();
+            }
+            if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
+                this.searchClear = false;
+                this.selectedOrderType.next(+params.orderType);
             }
         });
     }
@@ -1169,7 +1185,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     }
 
-    initFilterConfig(hardUpdate = false): void {
+    initFilterConfig(hardUpdate: boolean = false): void {
         if (!hardUpdate && this.filters) {
             this.filtersService.setup(this.filters);
             this.filtersService.checkIfAnySelected();
@@ -1379,22 +1395,28 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderTypeChanged(event) {
-        if (event.previousValue != event.value) {
+        if (event.event && event.previousValue != event.value) {
+            this.searchClear = true;
             this.selectedOrderType.next(event.value);
-            this.totalCount = undefined;
-            this.searchValue = '';
-            this.search.next('');
-            this.filterChanged = true;
-            this.initFilterConfig(true);
-            if (event.value == OrderType.Order)
-                this.initOrdersToolbarConfig();
-            else
-                this.initSubscriptionsToolbarConfig();
-            setTimeout(() => {
-                this.initDataSource();
-                this.processFilterInternal();
-            });
         }
+    }
+
+    private changeOrderType(orderType: OrderType) {
+        this.totalCount = undefined;
+        if (this.searchClear) {
+            this.searchValue = '';
+            this.search.next(this.searchValue);
+        }
+        this.filterChanged = true;
+        this.initFilterConfig(true);
+        if (orderType == OrderType.Order)
+            this.initOrdersToolbarConfig();
+        else
+            this.initSubscriptionsToolbarConfig();
+        setTimeout(() => {
+            this.initDataSource();
+            this.processFilterInternal();
+        });
     }
 
     deactivate() {

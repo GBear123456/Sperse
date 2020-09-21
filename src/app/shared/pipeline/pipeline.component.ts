@@ -51,6 +51,7 @@ import { Param } from '@shared/common/odata/param.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { AppPermissions } from '@shared/AppPermissions';
+import { Params } from '@angular/router';
 
 @Component({
     selector: 'app-pipeline',
@@ -683,7 +684,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    private updateEntityStage(entity, newStage: Stage, oldStage: Stage, complete = null, forced = false) {
+    private updateEntityStage(entity, newStage: Stage, oldStage: Stage, complete = null, forced: boolean = false) {
         if (entity && entity.Id) {
             setTimeout(() => {
                 newStage.isLoading = oldStage.isLoading = true;

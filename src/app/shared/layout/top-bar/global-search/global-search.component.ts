@@ -1,5 +1,12 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    HostBinding,
+    OnInit
+} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Params, Router } from '@angular/router';
 
@@ -25,6 +32,8 @@ import { CrmService } from '@app/crm/crm.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
+import { OrderType } from '@app/crm/orders/order-type.enum';
 
 @Component({
     selector: 'global-search',
@@ -52,7 +61,8 @@ export class GlobalSearchComponent implements OnInit {
                 this.getLeadGroup(search, this.ls.l('Investors'), 'Investor'),
                 this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
                 this.getLeadGroup(search, this.ls.l('Others'), 'Other'),
-                this.getOrdersGroup(search)
+                this.getOrdersGroup(search),
+                this.getSubscriptionsGroup(search)
             ).pipe(
                 finalize(() => {
                     this.hideSpinner();
@@ -97,126 +107,131 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     private getClientsGroup(search: string): Observable<GlobalSearchGroup> {
-        return (this.permissionService.isGranted(AppPermissions.CRMCustomers)
-            ? this.http.get(
-                this.oDataService.getODataUrl('Contact', [
-                    { 'StatusId': { 'eq': 'A' }},
-                    { 'ParentId': { 'eq': null }},
-                    { 'GroupId': { 'eq': 'C' } }
-                ]),
-                this.getOptions(search, {
-                    select$: [
-                        ClientFields.Id,
-                        ClientFields.Name,
-                        ClientFields.Email,
-                        ClientFields.PhotoPublicId
-                    ].join(',')
-                })
-            )
-            : of(null)
-        ).pipe(
-            startWith({ value: [] }),
-            map((clients: any) => {
-                return {
-                    name: this.ls.l('Customers'),
-                    entities: clients ? clients.value : [],
-                    link: 'app/crm/clients'
-                }
-            }),
-            take(2)
+        return this.getGlobalSearchGroup(
+            this.oDataService.getODataUrl('Contact', [
+                { 'StatusId': { 'eq': 'A' }},
+                { 'ParentId': { 'eq': null }},
+                { 'GroupId': { 'eq': 'C' }}
+            ]),
+            this.ls.l('Customers'),
+            'app/crm/clients',
+            search,
+            AppPermissions.CRMCustomers,
+            [
+                ClientFields.Id,
+                ClientFields.Name,
+                ClientFields.Email,
+                ClientFields.PhotoPublicId
+            ]
         );
     }
     
-    private getPartnersGroup(search: string): Observable<any> {
-        return (this.permissionService.isGranted(AppPermissions.CRMPartners)
-            ? this.http.get(
-                this.oDataService.getODataUrl('Contact', [
-                    { 'StatusId': { 'eq': 'A' }},
-                    { 'ParentId': { 'eq': null }},
-                    { 'GroupId': { 'eq': 'P' } }
-                ]),
-                this.getOptions(search, {
-                    select$: [
-                        PartnerFields.Id,
-                        PartnerFields.Name,
-                        PartnerFields.Email,
-                        PartnerFields.PhotoPublicId
-                    ].join(',')
-                })
-            )
-            : of(null)
-        ).pipe(
-            startWith({ value: [] }),
-            map((partners: any) => {
-                return {
-                    name: this.ls.l('Partners'),
-                    entities: partners ? partners.value : [],
-                    link: 'app/crm/partners'
-                };
-            }),
-            take(2)
+    private getPartnersGroup(search: string): Observable<GlobalSearchGroup> {
+        return this.getGlobalSearchGroup(
+            this.oDataService.getODataUrl('Contact', [
+                { 'StatusId': { 'eq': 'A' }},
+                { 'ParentId': { 'eq': null }},
+                { 'GroupId': { 'eq': 'P' }}
+            ]),
+            this.ls.l('Partners'),
+            'app/crm/partners',
+            search,
+            AppPermissions.CRMPartners,
+            [
+                PartnerFields.Id,
+                PartnerFields.Name,
+                PartnerFields.Email,
+                PartnerFields.PhotoPublicId
+            ]
         );
     }
     
-    private getLeadGroup(search: string, name: string, contactGroup: string) {
-        return (this.permissionService.checkCGPermission(ContactGroup[contactGroup])
-            ? this.http.get(
-                this.oDataService.getODataUrl('Lead'),
-                this.getOptions(search, {
-                    $select: [
-                        LeadFields.Id,
-                        LeadFields.Name,
-                        LeadFields.Email,
-                        LeadFields.PhotoPublicId,
-                        LeadFields.SourceChannelCode,
-                        LeadFields.CustomerId
-                    ].join(','),
-                    contactGroupId: ContactGroup[contactGroup]
-                })
-            )
-            : of(null)
+    private getLeadGroup(search: string, name: string, contactGroup: string): Observable<GlobalSearchGroup> {
+        return this.getGlobalSearchGroup(
+            this.oDataService.getODataUrl('Lead'),
+            name,
+            'app/crm/leads',
+            search,
+            AppPermissions.CRMOrders,
+            [
+                LeadFields.Id,
+                LeadFields.Name,
+                LeadFields.Email,
+                LeadFields.PhotoPublicId,
+                LeadFields.SourceChannelCode,
+                LeadFields.CustomerId
+            ],
+            { contactGroup: contactGroup }
+        );
+    }
+    
+    private getOrdersGroup(search: string): Observable<GlobalSearchGroup> {
+        return this.getGlobalSearchGroup(
+            this.oDataService.getODataUrl('Order'),
+            this.ls.l('Orders'),
+            'app/crm/orders',
+            search,
+            AppPermissions.CRMOrders,
+            [
+                OrderFields.Id,
+                OrderFields.Name,
+                OrderFields.Email,
+                OrderFields.PhotoPublicId,
+                OrderFields.LeadId,
+                OrderFields.ContactId
+            ],
+            { orderType: OrderType.Order }
+        );
+    }
+
+    private getSubscriptionsGroup(search): Observable<GlobalSearchGroup> {
+        return this.getGlobalSearchGroup(
+            this.oDataService.getODataUrl('Subscription'),
+            this.ls.l('Subscriptions'),
+            'app/crm/orders',
+            search,
+            AppPermissions.CRMOrders,
+            [
+                SubscriptionFields.Id,
+                SubscriptionFields.FirstName,
+                SubscriptionFields.LastName,
+                SubscriptionFields.EmailAddress,
+                SubscriptionFields.PhotoPublicId,
+                SubscriptionFields.LeadId,
+                SubscriptionFields.ContactId
+            ],
+            { orderType: OrderType.Subscription }
+        )
+    }
+
+    private getGlobalSearchGroup(
+        odataUrl: string,
+        name: string,
+        link: string,
+        search: string,
+        permission: AppPermissions,
+        selectFields: string[],
+        linkParams?: Params
+    ): Observable<GlobalSearchGroup> {
+        return (this.permissionService.isGranted(permission)
+                ? this.http.get(
+                    odataUrl,
+                    this.getOptions(search, {
+                        $select: selectFields.join(',')
+                    }))
+                : of(null)
         ).pipe(
             startWith({ value: [] }),
-            map((leads: any) => {
+            map((entities: any) => {
                 return {
                     name: name,
-                    entities: leads ? leads.value : [],
-                    link: 'app/crm/leads',
-                    linkParams: {
-                        contactGroup: contactGroup
-                    }
+                    entities: entities.value,
+                    link: link,
+                    linkParams: linkParams
                 };
             }),
             take(2)
-        );
-    }
-    
-    private getOrdersGroup(search: string) {
-        return (this.permissionService.isGranted(AppPermissions.CRMOrders)
-            ? this.http.get(
-                this.oDataService.getODataUrl('Order'),
-                this.getOptions(search, {
-                    $select: [
-                        OrderFields.Id,
-                        OrderFields.Name,
-                        OrderFields.Email,
-                        OrderFields.PhotoPublicId,
-                        OrderFields.LeadId,
-                        OrderFields.ContactId
-                    ].join(',')
-                }))
-            : of(null)
-        ).pipe(
-            startWith({ value: [] }),
-            map((orders: any) => {
-                return {
-                    name: this.ls.l('Orders'),
-                    entities: orders.value,
-                    link: 'app/crm/orders'
-                };
-            }),
-            take(2)
-        );
+        )
     }
 
     private hideSpinner() {

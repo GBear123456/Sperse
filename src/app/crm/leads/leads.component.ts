@@ -791,6 +791,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
             if (searchValueChanged) {
                 this.searchValue = params.searchValue;
+                this.initToolbarConfig();
             }
             if (this.crmService.updateCountryStateFilter(params, this.filterCountryStates)) {
                 filtersToChange.push(this.filterCountryStates);
