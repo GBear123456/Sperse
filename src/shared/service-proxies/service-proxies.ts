@@ -56560,9 +56560,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
     affiliateCode!: string | undefined;
     isActive!: boolean | undefined;
     customFields!: CustomFieldsInput | undefined;
-    rating!: string | undefined;
-    list!: string | undefined;
-    tag!: string | undefined;
 
     constructor(data?: IImportPersonalInput) {
         if (data) {
@@ -56619,9 +56616,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.affiliateCode = data["affiliateCode"];
             this.isActive = data["isActive"];
             this.customFields = data["customFields"] ? CustomFieldsInput.fromJS(data["customFields"]) : <any>undefined;
-            this.rating = data["rating"];
-            this.list = data["list"];
-            this.tag = data["tag"];
         }
     }
 
@@ -56678,9 +56672,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["affiliateCode"] = this.affiliateCode;
         data["isActive"] = this.isActive;
         data["customFields"] = this.customFields ? this.customFields.toJSON() : <any>undefined;
-        data["rating"] = this.rating;
-        data["list"] = this.list;
-        data["tag"] = this.tag;
         return data; 
     }
 }
@@ -56726,9 +56717,6 @@ export interface IImportPersonalInput {
     affiliateCode: string | undefined;
     isActive: boolean | undefined;
     customFields: CustomFieldsInput | undefined;
-    rating: string | undefined;
-    list: string | undefined;
-    tag: string | undefined;
 }
 
 export class ImportBusinessInput implements IImportBusinessInput {
@@ -57007,6 +56995,70 @@ export interface IImportSubscriptionInput {
     amount: number | undefined;
 }
 
+export class ImportClassificationInput implements IImportClassificationInput {
+    rating!: string | undefined;
+    lists!: string[] | undefined;
+    tags!: string[] | undefined;
+    partnerTypeName!: string | undefined;
+
+    constructor(data?: IImportClassificationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.rating = data["rating"];
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(item);
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(item);
+            }
+            this.partnerTypeName = data["partnerTypeName"];
+        }
+    }
+
+    static fromJS(data: any): ImportClassificationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportClassificationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["rating"] = this.rating;
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item);
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        data["partnerTypeName"] = this.partnerTypeName;
+        return data; 
+    }
+}
+
+export interface IImportClassificationInput {
+    rating: string | undefined;
+    lists: string[] | undefined;
+    tags: string[] | undefined;
+    partnerTypeName: string | undefined;
+}
+
 export class ImportItemInput implements IImportItemInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
@@ -57015,7 +57067,6 @@ export class ImportItemInput implements IImportItemInput {
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
-    partnerTypeName!: string | undefined;
     leadStageName!: string | undefined;
     leadSource!: string | undefined;
     affiliateCode!: string | undefined;
@@ -57044,6 +57095,7 @@ export class ImportItemInput implements IImportItemInput {
     subscription3!: ImportSubscriptionInput | undefined;
     subscription4!: ImportSubscriptionInput | undefined;
     subscription5!: ImportSubscriptionInput | undefined;
+    classificationInfo!: ImportClassificationInput | undefined;
 
     constructor(data?: IImportItemInput) {
         if (data) {
@@ -57063,7 +57115,6 @@ export class ImportItemInput implements IImportItemInput {
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
-            this.partnerTypeName = data["partnerTypeName"];
             this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
             this.affiliateCode = data["affiliateCode"];
@@ -57092,6 +57143,7 @@ export class ImportItemInput implements IImportItemInput {
             this.subscription3 = data["subscription3"] ? ImportSubscriptionInput.fromJS(data["subscription3"]) : <any>undefined;
             this.subscription4 = data["subscription4"] ? ImportSubscriptionInput.fromJS(data["subscription4"]) : <any>undefined;
             this.subscription5 = data["subscription5"] ? ImportSubscriptionInput.fromJS(data["subscription5"]) : <any>undefined;
+            this.classificationInfo = data["classificationInfo"] ? ImportClassificationInput.fromJS(data["classificationInfo"]) : <any>undefined;
         }
     }
 
@@ -57111,7 +57163,6 @@ export class ImportItemInput implements IImportItemInput {
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
-        data["partnerTypeName"] = this.partnerTypeName;
         data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
         data["affiliateCode"] = this.affiliateCode;
@@ -57140,6 +57191,7 @@ export class ImportItemInput implements IImportItemInput {
         data["subscription3"] = this.subscription3 ? this.subscription3.toJSON() : <any>undefined;
         data["subscription4"] = this.subscription4 ? this.subscription4.toJSON() : <any>undefined;
         data["subscription5"] = this.subscription5 ? this.subscription5.toJSON() : <any>undefined;
+        data["classificationInfo"] = this.classificationInfo ? this.classificationInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -57152,7 +57204,6 @@ export interface IImportItemInput {
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
-    partnerTypeName: string | undefined;
     leadStageName: string | undefined;
     leadSource: string | undefined;
     affiliateCode: string | undefined;
@@ -57181,6 +57232,7 @@ export interface IImportItemInput {
     subscription3: ImportSubscriptionInput | undefined;
     subscription4: ImportSubscriptionInput | undefined;
     subscription5: ImportSubscriptionInput | undefined;
+    classificationInfo: ImportClassificationInput | undefined;
 }
 
 export class ImportFieldInfoDto implements IImportFieldInfoDto {
@@ -57455,9 +57507,6 @@ export interface IGetFileUrlOutput {
 }
 
 export class ImportContactInput implements IImportContactInput {
-    lists!: string[] | undefined;
-    tags!: string[] | undefined;
-    rating!: number | undefined;
     star!: string | undefined;
     importType!: ImportTypeInput | undefined;
     ignoreInvalidValues!: boolean | undefined;
@@ -57469,7 +57518,6 @@ export class ImportContactInput implements IImportContactInput {
     businessInfo!: ImportBusinessInput | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
-    partnerTypeName!: string | undefined;
     leadStageName!: string | undefined;
     leadSource!: string | undefined;
     affiliateCode!: string | undefined;
@@ -57498,6 +57546,7 @@ export class ImportContactInput implements IImportContactInput {
     subscription3!: ImportSubscriptionInput | undefined;
     subscription4!: ImportSubscriptionInput | undefined;
     subscription5!: ImportSubscriptionInput | undefined;
+    classificationInfo!: ImportClassificationInput | undefined;
 
     constructor(data?: IImportContactInput) {
         if (data) {
@@ -57513,17 +57562,6 @@ export class ImportContactInput implements IImportContactInput {
 
     init(data?: any) {
         if (data) {
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(item);
-            }
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(item);
-            }
-            this.rating = data["rating"];
             this.star = data["star"];
             this.importType = data["importType"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
@@ -57535,7 +57573,6 @@ export class ImportContactInput implements IImportContactInput {
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
-            this.partnerTypeName = data["partnerTypeName"];
             this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
             this.affiliateCode = data["affiliateCode"];
@@ -57564,6 +57601,7 @@ export class ImportContactInput implements IImportContactInput {
             this.subscription3 = data["subscription3"] ? ImportSubscriptionInput.fromJS(data["subscription3"]) : <any>undefined;
             this.subscription4 = data["subscription4"] ? ImportSubscriptionInput.fromJS(data["subscription4"]) : <any>undefined;
             this.subscription5 = data["subscription5"] ? ImportSubscriptionInput.fromJS(data["subscription5"]) : <any>undefined;
+            this.classificationInfo = data["classificationInfo"] ? ImportClassificationInput.fromJS(data["classificationInfo"]) : <any>undefined;
         }
     }
 
@@ -57576,17 +57614,6 @@ export class ImportContactInput implements IImportContactInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item);
-        }
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item);
-        }
-        data["rating"] = this.rating;
         data["star"] = this.star;
         data["importType"] = this.importType;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
@@ -57598,7 +57625,6 @@ export class ImportContactInput implements IImportContactInput {
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
-        data["partnerTypeName"] = this.partnerTypeName;
         data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
         data["affiliateCode"] = this.affiliateCode;
@@ -57627,14 +57653,12 @@ export class ImportContactInput implements IImportContactInput {
         data["subscription3"] = this.subscription3 ? this.subscription3.toJSON() : <any>undefined;
         data["subscription4"] = this.subscription4 ? this.subscription4.toJSON() : <any>undefined;
         data["subscription5"] = this.subscription5 ? this.subscription5.toJSON() : <any>undefined;
+        data["classificationInfo"] = this.classificationInfo ? this.classificationInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IImportContactInput {
-    lists: string[] | undefined;
-    tags: string[] | undefined;
-    rating: number | undefined;
     star: string | undefined;
     importType: ImportTypeInput | undefined;
     ignoreInvalidValues: boolean | undefined;
@@ -57646,7 +57670,6 @@ export interface IImportContactInput {
     businessInfo: ImportBusinessInput | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
-    partnerTypeName: string | undefined;
     leadStageName: string | undefined;
     leadSource: string | undefined;
     affiliateCode: string | undefined;
@@ -57675,6 +57698,7 @@ export interface IImportContactInput {
     subscription3: ImportSubscriptionInput | undefined;
     subscription4: ImportSubscriptionInput | undefined;
     subscription5: ImportSubscriptionInput | undefined;
+    classificationInfo: ImportClassificationInput | undefined;
 }
 
 export enum InstanceType {
