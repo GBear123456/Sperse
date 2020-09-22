@@ -8,7 +8,7 @@ import {
     OnInit
 } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +23,6 @@ import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { OrderFields } from '@app/crm/orders/order-fields.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { PartnerFields } from '@app/crm/partners/partner-fields.enum';
-import { ContactGroup } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GlobalSearchGroupEntity } from '@app/shared/layout/top-bar/global-search/global-search-group-item.interface';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
@@ -80,6 +79,7 @@ export class GlobalSearchComponent implements OnInit {
         private oDataService: ODataService,
         private dialogService: DialogService,
         private dialog: MatDialog,
+        private route: ActivatedRoute,
         private router: Router,
         private profileService: ProfileService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -290,7 +290,7 @@ export class GlobalSearchComponent implements OnInit {
         return this.profileService.getContactPhotoUrl(pictureId);
     }
 
-    moveToEntityDetails(e, entity: GlobalSearchGroupEntity) {
+    moveToEntityDetails(e, entity: GlobalSearchGroupEntity, itemsLink: string) {
         let isOrder: boolean = !!entity.ContactId;
         const isLead: boolean = !!entity.CustomerId;
         this.itemDetailsService.clearItemsSource();
@@ -299,7 +299,8 @@ export class GlobalSearchComponent implements OnInit {
                 entity.CustomerId || entity.ContactId || entity.Id,
                 isOrder ? 'invoices' : 'contact-information',
                 isLead ? entity.Id : entity.LeadId
-            )
+            ),
+            { queryParams: { referrer: itemsLink }}
         ).then(() => {
             this.isTooltipVisible = false;
         });

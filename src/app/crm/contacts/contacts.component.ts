@@ -38,7 +38,6 @@ import {
     PartnerInfoDto,
     PartnerServiceProxy,
     PersonContactInfoDto,
-    UpdateContactStatusInput,
     UpdatePartnerTypeInput,
     UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -57,7 +56,6 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 
 @Component({
@@ -609,7 +607,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
     }
 
-    close(force = false) {
+    close(force: boolean = false) {
         this.dialog.closeAll();
         let data = this.contactService['data'],
             refresh = data.refresh;
@@ -761,7 +759,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             if (isSubContact)
                 this.contactsService.invalidate('sub-contacts');
             else
-                this.orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result) => {
+                this.orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result: OrganizationContactInfoDto) => {
                     this.contactInfo['organizationContactInfo'] = result;
                 });
         });

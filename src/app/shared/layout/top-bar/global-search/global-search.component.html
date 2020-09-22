@@ -26,7 +26,7 @@
                             </header>
                             <ul *ngFor="let entity of group.entities; let i = index">
                                 <ng-container *ngIf="i <= 1">
-                                    <li class="entity" (click)="moveToEntityDetails($event, entity)">
+                                    <li class="entity" (click)="moveToEntityDetails($event, entity, group.link)">
                                         <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
                                         <div>
                                             <a>{{ entity.Name || ( entity.FirstName + ' ' + this.entity.LastName )}}</a>
