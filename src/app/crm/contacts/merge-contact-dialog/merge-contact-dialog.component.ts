@@ -37,6 +37,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     templateUrl: 'merge-contact-dialog.component.html',
@@ -568,7 +569,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getStageColorByName(stageName: string) {
-        return this.pipelineService.getStageColorByName(stageName);
+        return this.pipelineService.getStageColorByName(stageName, ContactGroup.Client);
     }
 
     setAsPrimary(field, value) {

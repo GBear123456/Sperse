@@ -628,7 +628,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     activityStagesLoad() {
-        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity)
+        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity, null)
             .subscribe((result: PipelineDto) => {
                 this.stages = result.stages.map((stage) => {
                     return {

@@ -832,7 +832,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private handleStageChange() {
         this.pipelineService.stageChange$.subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead, ContactGroup.Client)).name);
         });
     }
 

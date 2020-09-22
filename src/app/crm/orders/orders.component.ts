@@ -1349,7 +1349,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
                 this.selectedOrders,
-                $event.name
+                $event.name,
+                null
             ).subscribe((declinedList) => {
                 this.filterChanged = true;
                 if (this.showOrdersPipeline)

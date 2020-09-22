@@ -92,7 +92,7 @@ export class PipelineService {
         this.compactView.next(!this.compactView.value);
     }
 
-    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): Observable<PipelineDto> {
+    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup): Observable<PipelineDto> {
         let pipeline = this.pipelineObservables[pipelinePurposeId] || {};
         if (pipeline[String(contactGroupId)])
             return pipeline[String(contactGroupId)];
@@ -132,17 +132,17 @@ export class PipelineService {
         }
     }
 
-    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): StageDto[] {
+    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup): StageDto[] {
         const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId);
         return pipeline && pipeline.stages;
     }
 
-    getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): PipelineDto {
+    getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup): PipelineDto {
         let pipelines = this.pipelineDefinitions[pipelinePurposeId];
         return pipelines && pipelines[String(contactGroupId)];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup = ContactGroup.Client): Stage {
+    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup): Stage {
         return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId), {name: stageName});
     }
 
@@ -178,7 +178,7 @@ export class PipelineService {
             complete && complete();
     }
 
-    updateEntitiesStage(pipelineId, entities, targetStageName: string, contactGroupId: ContactGroup = ContactGroup.Client) {
+    updateEntitiesStage(pipelineId: string, entities, targetStageName: string, contactGroupId: ContactGroup): Observable<any> {
         let subject = new Subject<any>();
 
         this.updateEntitiesStageInternal(
@@ -194,7 +194,7 @@ export class PipelineService {
         return subject.asObservable();
     }
 
-    private updateEntitiesStageInternal(pipelineId, contactGroupId: ContactGroup,
+    private updateEntitiesStageInternal(pipelineId: string, contactGroupId: ContactGroup,
         entities, targetStageName: string, data, complete, declinedList
     ) {
         let entity = entities.pop();
@@ -532,7 +532,7 @@ export class PipelineService {
             complete && complete();
     }
 
-    getStageColorByName(stageName: string, contactGroupId: ContactGroup = ContactGroup.Client): string {
+    getStageColorByName(stageName: string, contactGroupId: ContactGroup): string {
         const stage = this.getStageByName(AppConsts.PipelinePurposeIds.lead, stageName, contactGroupId);
         return this.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder);
     }

@@ -333,14 +333,18 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.startLoading(true);
         const invoice: InvoiceDto = event.data;
         this.pipelineService.updateEntitiesStage(
-            AppConsts.PipelinePurposeIds.order, [{
+            AppConsts.PipelinePurposeIds.order,
+            [{
                 Id: invoice.OrderId,
                 ContactId: invoice.ContactId,
                 CreationTime: invoice.Date,
                 Stage: invoice.OrderStage
-            }], event.value
+            }],
+            event.value,
+            null
+        ).pipe(
+            finalize(() => this.finishLoading(true))
         ).subscribe(declinedList => {
-            this.finishLoading(true);
             if (declinedList.length)
                 event.value = invoice.OrderStage;
             else {
