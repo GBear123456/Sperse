@@ -37,6 +37,7 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
             if (this.contactsService.settingsDialogOpened.value)
                 this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
             setTimeout(() => this.updateToolbar());
+            this.dialog.closeAll();
         }, this.ident);
     }
 
