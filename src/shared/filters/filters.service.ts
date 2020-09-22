@@ -364,7 +364,7 @@ export class FiltersService {
         this.hasFilterSelected = false;
         _.forEach(this.filters, (x) => {
             if (x.items) {
-                x.isSelected = _.any(x.items, y => {
+                x.isSelected = !x.hidden && _.any(x.items, y => {
                     if (y && y.value && (!_.isArray(y.value)
                         || (y.value.length && y.value[0].hasOwnProperty && y.value[0].hasOwnProperty('value')
                               ? y.value.some(val => val.value)
