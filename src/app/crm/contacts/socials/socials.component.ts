@@ -12,7 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import {
     ContactInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
-    OrganizationContactServiceProxy
+    OrganizationContactServiceProxy, ContactLinkTypeDto
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -21,6 +21,7 @@ import { ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors } from '@a
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { LinkType } from '@shared/AppEnums';
 
 @Component({
     selector: 'socials',
@@ -59,7 +60,7 @@ export class SocialsComponent {
         this.linkTypesLoad();
         contactsService.organizationContactInfo$.pipe(filter(orgInfo => {
             return this.isCompany && orgInfo.id && !orgInfo.isUpdatable;
-        }), first()).subscribe(orgInfo => {
+        }), first()).subscribe(() => {
             this.isEditAllowed = false;
         });
     }
@@ -70,7 +71,7 @@ export class SocialsComponent {
             select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
             filter(types => !!types)
         ).subscribe(types => {
-            types.forEach((entity) => {
+            types.forEach((entity: ContactLinkTypeDto) => {
                 this.LINK_TYPES[entity.id] = entity.name.replace(/ /g, '');
             });
         });
@@ -115,7 +116,9 @@ export class SocialsComponent {
             contactId: data && data.contactId
             || this.contactInfoData && this.contactInfoData.contactId,
             url: data && data.url,
-            usageTypeId: data && data.linkTypeId ? data.linkTypeId : AppConsts.otherLinkTypeId,
+            usageTypeId: data && data.linkTypeId
+                ? data.linkTypeId
+                : (this.isCompany ? LinkType.Website : LinkType.Facebook),
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,

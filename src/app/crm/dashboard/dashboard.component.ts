@@ -301,5 +301,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.ui.overflowHidden();
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
+        this.dialog.closeAll();
     }
 }

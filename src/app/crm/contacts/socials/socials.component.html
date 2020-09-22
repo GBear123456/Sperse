@@ -2,7 +2,7 @@
     <div class="social">
         <ul>
             <li *ngFor="let social of contactInfoData?.links; let i = index">
-                <a href="{{social.url}}" target="_blank">
+                <a [href]="social.url" target="_blank">
                     <!-- i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i -->
                     <img *ngIf="LINK_TYPES[social.linkTypeId] as iconName"
                          src="./assets/common/icons/social/{{ iconName }}.svg"
