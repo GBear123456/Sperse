@@ -20,7 +20,8 @@
                         <div class="group" *ngIf="group.entities && group.entities.length">
                             <header>
                                 <h4>{{ group.name }}</h4>
-                                <a *ngIf="group.entities && group.entities.length > 2" (click)="showAll($event, group.link, group.linkParams)">
+                                <a *ngIf="group.entities && group.entities.length > 2"
+                                   (click)="showAll($event, group.link, group.linkParams)">
                                     {{ ls.l('ShowAll') }}
                                 </a>
                             </header>

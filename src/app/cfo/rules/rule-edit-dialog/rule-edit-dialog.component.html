@@ -58,7 +58,7 @@
                          (onRowValidating)="onRowValidating($event)"
                          (onEditorPreparing)="onEditorPreparing($event)"
                          (onEditingStart)="onEditingStart($event)"
-                         (onContentReady)="onAttributesContentReady($event)">
+                         (onContentReady)="onAttributesContentReady()">
                          <dxo-editing
                              mode="row"
                              [allowUpdating]="true"
@@ -129,7 +129,7 @@
                                     [noDataText]="''"
                                     [dropDownButtonTemplate]="''"
                                     [dataSource]="keyAttributeValuesDataSource"
-                                    (onOptionChanged)="onAttributeOptionChanged($event, cell)"
+                                    (onOptionChanged)="onAttributeOptionChanged($event)"
                                     (onCustomItemCreating)="onCustomAttributeCreating($event, cell)"
                                     (onKeyDown)="onAttributeKeyEnter($event, cell)"
                                     (onValueChanged)="attributeValueValueChanged($event, cell)"

@@ -20,6 +20,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'rule-dialog',
@@ -120,6 +121,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     }).bind(this);
 
     attributeValue: string;
+    userTimezone = DateHelper.getUserTimezone();
 
     ngOnInit() {
         this.formats = _.values(CashFlowAmountFormat).map((value) => {
@@ -609,7 +611,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         return this.keyAttributeValues[0] && this.keyAttributeValues[0].key == key;
     }
 
-    onAttributesContentReady($event) {
+    onAttributesContentReady() {
         if (this.attributeEditData)
             return ;
 
