@@ -125,7 +125,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     { name: 'contact', lname: 'SourceContact' },
                     { name: 'campaignCode' },
                     { name: 'channelCode' },
-                    { name: 'ImportFileName', lname: 'FileName', readonly: true, hideEmpty: true }
+                    { name: 'importFileName', lname: 'FileName', readonly: true, hideEmpty: true }
                 ]
             },
             {
