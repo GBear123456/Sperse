@@ -208,8 +208,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
             this._totalDataSource = undefined;
             if (!this.refreshTimeout) {
-                this.filterModelStages.items.element.value = [];
-                this.filtersService.change([this.filterModelStages]);
+                /** If there is stage filter - clear it and update */
+                if (this.filterModelStages) {
+                    this.filterModelStages.items.element.value = [];
+                    this.filtersService.change([this.filterModelStages]);
+                } else {
+                    /** Else - load the data */
+                    this.loadData(
+                        0,
+                        this.stageId && this.stages.findIndex(obj => obj.id == this.stageId),
+                        Boolean(this.stageId)
+                    );
+                }
                 this.refreshTimeout = null;
             }
         }));
