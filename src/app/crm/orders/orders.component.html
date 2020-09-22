@@ -10,11 +10,13 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <types-dropdown [items]="orderTypes"
+        <orders-header-dropdown
                         [totalCount]="totalCount"
-                        [value]="selectedOrderType$ | async"
-                        (onValueChanged)="onOrderTypeChanged($event)">
-        </types-dropdown>
+                        [contactGroup]="selectedContactGroup$ | async"
+                        [orderType]="selectedOrderType$ | async"
+                        (onOrderTypeChanged)="onOrderTypeChanged($event)"
+                        (onContactGroupChanged)="onContactGroupChanged($event)">
+        </orders-header-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <div [hidden]="selectedOrderType.value !== orderTypesEnum.Order">
@@ -151,7 +153,7 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId']"
                                 dateField="OrderDate"
                                 [contactGroupId]="null"
                                 [pipelinePurposeId]="pipelinePurposeId"

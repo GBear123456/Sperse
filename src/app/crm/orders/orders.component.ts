@@ -24,6 +24,7 @@ import {
     SubscriptionsStoreActions,
     SubscriptionsStoreSelectors
 } from '@app/crm/store';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -106,6 +107,29 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
     private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
+    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || ContactGroup.Client);
+    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
+    selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
+    private contactGroupFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'ContactGroup',
+        field: 'ContactGroupId',
+        hidden: true,
+        items: {
+            ContactGroupId: new FilterCheckBoxesModel({
+                selectedKeys$: this.selectedContactGroup$,
+                dataSource: Object.keys(ContactGroup).filter(
+                    (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
+                ).map((group: string) => ({
+                    id: ContactGroup[group],
+                    name: this.l('ContactGroup_' + group)
+                })),
+                nameField: 'name',
+                keyExpr: 'id'
+            }),
+        }
+    });
     private sourceFilter: FilterModel = new FilterModel({
         component: FilterSourceComponent,
         caption: 'Source',
@@ -117,6 +141,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     });
     private ordersFilters: FilterModel[] = [
+        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
@@ -200,6 +225,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         })
     ];
     private subscriptionsFilters: FilterModel[] = [
+        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
@@ -319,18 +345,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
-    orderTypes = [
-        {
-            text: this.l('Orders'),
-            value: OrderType.Order
-        },
-        {
-            text: this.l('Subscriptions'),
-            value: OrderType.Subscription
-        }
-    ];
-    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
@@ -348,7 +362,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(
                     this.ordersGrid,
-                    [ this.orderFields.Id, this.orderFields.ContactId, this.orderFields.LeadId ]
+                    [
+                        this.orderFields.Id,
+                        this.orderFields.LeadId,
+                        this.orderFields.ContactId,
+                        this.orderFields.ContactGroupId
+                    ]
                 );
             }
         }
@@ -364,7 +383,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(
                     this.subscriptionsGrid,
-                    [ this.subscriptionFields.Id, this.subscriptionFields.ContactId, this.subscriptionFields.LeadId ]
+                    [
+                        this.subscriptionFields.Id,
+                        this.subscriptionFields.LeadId,
+                        this.subscriptionFields.ContactId,
+                        this.subscriptionFields.ContactGroupId
+                    ]
                 );
             }
         })
@@ -1403,9 +1427,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderTypeChanged(event) {
-        if (event.event && event.previousValue != event.value) {
+        if (event.value != this.selectedOrderType.value) {
             this.searchClear = true;
             this.selectedOrderType.next(event.value);
+        }
+    }
+
+    onContactGroupChanged(event) {
+        if (event.itemData.value != this.selectedContactGroup.value) {
+            this.selectedContactGroup.next(event.itemData.value);
+            this.filtersService.change([this.contactGroupFilter]);
         }
     }
 
