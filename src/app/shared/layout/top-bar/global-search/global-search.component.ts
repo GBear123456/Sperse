@@ -33,6 +33,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { OrderType } from '@app/crm/orders/order-type.enum';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'global-search',
@@ -54,12 +55,12 @@ export class GlobalSearchComponent implements OnInit {
             return combineLatest(
                 this.getClientsGroup(search),
                 this.getPartnersGroup(search),
-                this.getLeadGroup(search, this.ls.l('ClientLeads'), 'Client'),
-                this.getLeadGroup(search, this.ls.l('PartnerLeads'), 'Partner'),
-                this.getLeadGroup(search, this.ls.l('Employees'), 'UserProfile'),
-                this.getLeadGroup(search, this.ls.l('Investors'), 'Investor'),
-                this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
-                this.getLeadGroup(search, this.ls.l('Others'), 'Other'),
+                this.getLeadGroup(search, this.ls.l('ClientLeads'), ContactGroup.Client),
+                this.getLeadGroup(search, this.ls.l('PartnerLeads'), ContactGroup.Partner),
+                this.getLeadGroup(search, this.ls.l('Employees'), ContactGroup.UserProfile),
+                this.getLeadGroup(search, this.ls.l('Investors'), ContactGroup.Investor),
+                this.getLeadGroup(search, this.ls.l('Vendors'), ContactGroup.Vendor),
+                this.getLeadGroup(search, this.ls.l('Others'), ContactGroup.Other),
                 this.getOrdersGroup(search),
                 this.getSubscriptionsGroup(search)
             ).pipe(
@@ -146,7 +147,7 @@ export class GlobalSearchComponent implements OnInit {
         );
     }
     
-    private getLeadGroup(search: string, name: string, contactGroup: string): Observable<GlobalSearchGroup> {
+    private getLeadGroup(search: string, name: string, contactGroupId: ContactGroup): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Lead'),
             name,
@@ -161,7 +162,7 @@ export class GlobalSearchComponent implements OnInit {
                 LeadFields.SourceChannelCode,
                 LeadFields.CustomerId
             ],
-            { contactGroup: contactGroup }
+            { contactGroupId: contactGroupId }
         );
     }
     
@@ -200,6 +201,7 @@ export class GlobalSearchComponent implements OnInit {
                 SubscriptionFields.LeadId,
                 SubscriptionFields.ContactId
             ],
+            null,
             { orderType: OrderType.Subscription }
         )
     }
@@ -211,13 +213,15 @@ export class GlobalSearchComponent implements OnInit {
         search: string,
         permission: AppPermissions,
         selectFields: string[],
+        params?: Params,
         linkParams?: Params
     ): Observable<GlobalSearchGroup> {
         return (this.permissionService.isGranted(permission)
                 ? this.http.get(
                     odataUrl,
                     this.getOptions(search, {
-                        $select: selectFields.join(',')
+                        $select: selectFields.join(','),
+                        ...params
                     }))
                 : of(null)
         ).pipe(
