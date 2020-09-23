@@ -111,6 +111,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
+    contactGroupDataSource = Object.keys(ContactGroup).filter(
+        (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
+    ).map((group: string) => ({
+        id: ContactGroup[group],
+        name: this.l('ContactGroup_' + group)
+    }));
     private contactGroupFilter: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'ContactGroup',
@@ -119,12 +125,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         items: {
             ContactGroupId: new FilterCheckBoxesModel({
                 selectedKeys$: this.selectedContactGroup$,
-                dataSource: Object.keys(ContactGroup).filter(
-                    (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
-                ).map((group: string) => ({
-                    id: ContactGroup[group],
-                    name: this.l('ContactGroup_' + group)
-                })),
+                dataSource: this.contactGroupDataSource,
                 nameField: 'name',
                 keyExpr: 'id'
             }),
