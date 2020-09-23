@@ -29,7 +29,6 @@ export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
         super(injector);
 
         this.orderStages = this.data.stages.filter((item) => !item['isFinal']);
-        this.orderStageId = _.findWhere(this.orderStages, {sortOrder: 0}).id;
         this.dialogRef['_overlayRef'].hostElement.classList.add('lead-complete');
         invoicesService.settings$.pipe(first()).subscribe(res =>
             this.currency = getCurrencySymbol(res.currency, 'wide'));
