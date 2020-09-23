@@ -108,7 +108,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filters: FilterModel[];
     private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || ContactGroup.Client);
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
     private contactGroupFilter: FilterModel = new FilterModel({
@@ -402,8 +402,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
-    subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
+    oDataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues();
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
     search$: Observable<string> = this.search.asObservable();
     private subscriptionsPivotGridDataSource = {
@@ -508,7 +507,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     };
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
-        this.ordersODataRequestValues$,
+        this.oDataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
@@ -541,7 +540,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
-        this.subscriptionsODataRequestValues$,
+        this.oDataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
@@ -689,11 +688,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         || this.selectedOrderType.value === OrderType.Subscription;
     }
 
-    getODataRequestValues(orderType: OrderType) {
+    getODataRequestValues() {
         return concat(
             this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
-                filter(() => this.selectedOrderType.value === orderType),
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(

@@ -33,9 +33,10 @@ export class OrdersHeaderDropdownComponent {
     ];
 
     contactGroupKeys = invert(ContactGroup);
-    contactGroups = Object.keys(ContactGroup)
-        .filter((group: string) => this.permission.checkCGPermission(ContactGroup[group], ''))
-        .map((group: string) => ({
+    contactGroups = ['All'].concat(Object.keys(ContactGroup))
+        .filter((group: string) => !ContactGroup[group] ||
+            this.permission.checkCGPermission(ContactGroup[group], '')
+        ).map((group: string) => ({
             text: this.ls.l('ContactGroup_' + group),
             value: ContactGroup[group]
         }));
