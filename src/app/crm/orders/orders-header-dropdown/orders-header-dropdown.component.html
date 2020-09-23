@@ -18,7 +18,7 @@
     </div>
     <div *dxTemplate="let data of 'field'">
         <dx-text-box #title
-            value="{{ls.l('ContactGroup_' + contactGroupKeys[contactGroup])}} {{orderTypes[orderType - 1].text}} ({{ totalCount | number }})"
+            value="{{contactGroupKeys[contactGroup] ? ls.l('ContactGroup_' + contactGroupKeys[contactGroup]) : ''}} {{orderTypes[orderType - 1].text}} ({{ totalCount | number }})"
             [width]="getTitleWidth(title.instance)"
             [readOnly]="true">
         </dx-text-box>

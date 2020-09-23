@@ -118,7 +118,7 @@ export class SocialsComponent {
             url: data && data.url,
             usageTypeId: data && data.linkTypeId
                 ? data.linkTypeId
-                : (this.isCompany ? LinkType.Website : LinkType.Facebook),
+                : AppConsts.otherLinkTypeId,
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,
