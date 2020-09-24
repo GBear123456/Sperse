@@ -22655,6 +22655,58 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    cancelAll(body: CancelAllInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/CancelAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelAll(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelAll(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @isCaptured (optional) 
      * @return Success
      */
@@ -25929,6 +25981,62 @@ export class RapidServiceProxy {
     /**
      * @return Success
      */
+    getClients(): Observable<GetRapidClientsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetClients";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetClients(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetClients(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRapidClientsOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRapidClientsOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetClients(response: HttpResponseBase): Observable<GetRapidClientsOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetRapidClientsOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRapidClientsOutput[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getTokenForCurrentUser(): Observable<GetRapidTokenOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetTokenForCurrentUser";
         url_ = url_.replace(/[?&]$/, "");
@@ -25979,13 +26087,13 @@ export class RapidServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
+     * @contactIds (optional) 
      * @return Success
      */
-    getTokenForContact(contactId: number | null | undefined): Observable<GetRapidTokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetTokenForContact?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+    getTokenForContacts(contactIds: number[] | null | undefined): Observable<GetRapidTokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetTokenForContacts?";
+        if (contactIds !== undefined)
+            contactIds && contactIds.forEach(item => { url_ += "contactIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -25998,11 +26106,11 @@ export class RapidServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTokenForContact(response_);
+            return this.processGetTokenForContacts(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetTokenForContact(<any>response_);
+                    return this.processGetTokenForContacts(<any>response_);
                 } catch (e) {
                     return <Observable<GetRapidTokenOutput>><any>_observableThrow(e);
                 }
@@ -26011,7 +26119,7 @@ export class RapidServiceProxy {
         }));
     }
 
-    protected processGetTokenForContact(response: HttpResponseBase): Observable<GetRapidTokenOutput> {
+    protected processGetTokenForContacts(response: HttpResponseBase): Observable<GetRapidTokenOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -65174,6 +65282,58 @@ export interface ICancelOrderSubscriptionInput {
     cancelationReason: string | undefined;
 }
 
+export class CancelAllInput implements ICancelAllInput {
+    contactId!: number;
+    serviceProductCodes!: string[] | undefined;
+    cancelationReason!: string | undefined;
+
+    constructor(data?: ICancelAllInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            if (data["serviceProductCodes"] && data["serviceProductCodes"].constructor === Array) {
+                this.serviceProductCodes = [];
+                for (let item of data["serviceProductCodes"])
+                    this.serviceProductCodes.push(item);
+            }
+            this.cancelationReason = data["cancelationReason"];
+        }
+    }
+
+    static fromJS(data: any): CancelAllInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelAllInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        if (this.serviceProductCodes && this.serviceProductCodes.constructor === Array) {
+            data["serviceProductCodes"] = [];
+            for (let item of this.serviceProductCodes)
+                data["serviceProductCodes"].push(item);
+        }
+        data["cancelationReason"] = this.cancelationReason;
+        return data; 
+    }
+}
+
+export interface ICancelAllInput {
+    contactId: number;
+    serviceProductCodes: string[] | undefined;
+    cancelationReason: string | undefined;
+}
+
 export class ServiceTypeInfo implements IServiceTypeInfo {
     id!: string | undefined;
     name!: string | undefined;
@@ -68640,6 +68800,54 @@ export class SubmitQuestionsAndAnswersDto implements ISubmitQuestionsAndAnswersD
 export interface ISubmitQuestionsAndAnswersDto {
     questionnaire: SubmitQuestionnaireDto | undefined;
     questionsAndAnswers: SubmitQuestionAndAnswersDto[] | undefined;
+}
+
+export class GetRapidClientsOutput implements IGetRapidClientsOutput {
+    contactId!: number | undefined;
+    name!: string | undefined;
+    companyName!: string | undefined;
+    email!: string | undefined;
+
+    constructor(data?: IGetRapidClientsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.name = data["name"];
+            this.companyName = data["companyName"];
+            this.email = data["email"];
+        }
+    }
+
+    static fromJS(data: any): GetRapidClientsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRapidClientsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["name"] = this.name;
+        data["companyName"] = this.companyName;
+        data["email"] = this.email;
+        return data; 
+    }
+}
+
+export interface IGetRapidClientsOutput {
+    contactId: number | undefined;
+    name: string | undefined;
+    companyName: string | undefined;
+    email: string | undefined;
 }
 
 export class GetRapidTokenOutput implements IGetRapidTokenOutput {
