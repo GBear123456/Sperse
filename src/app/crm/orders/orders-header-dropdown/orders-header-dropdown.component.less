@@ -18,14 +18,18 @@
     display: flex;
     flex-flow: column;
     .orders-list {
+        display: flex;
+        justify-content: space-around;
         line-height: 40px;
         border-bottom: 1px solid #dedede;
         span {
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 500;
             padding: 0 10px;
+            opacity: 0.5;
             &.selected {
+                opacity: 1;
                 color: #000;
                 cursor: default;
                 font-weight: 600;
