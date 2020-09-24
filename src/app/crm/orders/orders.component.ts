@@ -332,7 +332,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
-    private formatting = AppConsts.formatting;
+    formatting = AppConsts.formatting;
     headlineButtons: HeadlineButton[] = [
         {
             enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
