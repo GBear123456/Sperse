@@ -570,7 +570,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
         this.pipelineService.stageChange$.subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(this.pipelinePurposeId)).name);
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(this.pipelinePurposeId, ContactGroup.Client)).name);
         });
         if (this.userManagementService.checkBankCodeFeature()) {
             this.pivotGridDataSource.fields.unshift({

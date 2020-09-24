@@ -5,4 +5,5 @@ export interface SectionItem {
     wide?: boolean;
     action?: () => void;
     hideLabel?: boolean;
+    hideEmpty?: boolean;
 }

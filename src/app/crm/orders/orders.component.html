@@ -10,11 +10,13 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <types-dropdown [items]="orderTypes"
+        <orders-header-dropdown
                         [totalCount]="totalCount"
-                        [value]="selectedOrderType$ | async"
-                        (onValueChanged)="onOrderTypeChanged($event)">
-        </types-dropdown>
+                        [contactGroup]="selectedContactGroup$ | async"
+                        [orderType]="selectedOrderType$ | async"
+                        (onOrderTypeChanged)="onOrderTypeChanged($event)"
+                        (onContactGroupChanged)="onContactGroupChanged($event)">
+        </orders-header-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <div [hidden]="selectedOrderType.value !== orderTypesEnum.Order">
@@ -107,6 +109,9 @@
                                 <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
+                                <dxi-column [dataField]="orderFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false" >
+                                    <dxo-lookup [dataSource]="contactGroupDataSource" valueExpr="id" displayExpr="name"></dxo-lookup>
+                                </dxi-column>
                                 <dxo-sorting mode="multiple"></dxo-sorting>
                                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                                 <dxo-paging [pageSize]="20"></dxo-paging>
@@ -151,7 +156,7 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId']"
                                 dateField="OrderDate"
                                 [contactGroupId]="null"
                                 [pipelinePurposeId]="pipelinePurposeId"
@@ -228,7 +233,11 @@
                     <dxi-column [dataField]="subscriptionFields.StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.OrderAmount" [width]="190" cssClass="padding-right" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>  
+                    <dxi-column [dataField]="subscriptionFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false" >
+                        <dxo-lookup [dataSource]="contactGroupDataSource" valueExpr="id" displayExpr="name"></dxo-lookup>
+                    </dxi-column>
+  
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>

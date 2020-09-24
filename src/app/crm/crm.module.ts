@@ -55,6 +55,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
+import { OrdersHeaderDropdownComponent } from './orders/orders-header-dropdown/orders-header-dropdown.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
@@ -167,7 +168,8 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         CrmIntroComponent,
         ActivityComponent,
         TypesDropdownComponent,
-        EntityCheckListDialogComponent
+        EntityCheckListDialogComponent,
+        OrdersHeaderDropdownComponent
     ],
     providers: [
         ImportServiceProxy,

@@ -56553,6 +56553,8 @@ export class ImportPersonalInput implements IImportPersonalInput {
     twitterUrl!: string | undefined;
     googlePlusUrl!: string | undefined;
     angelListUrl!: string | undefined;
+    zoomUrl!: string | undefined;
+    otherLinkUrl!: string | undefined;
     photoUrl!: string | undefined;
     experience!: string | undefined;
     profileSummary!: string | undefined;
@@ -56605,6 +56607,8 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.twitterUrl = data["twitterUrl"];
             this.googlePlusUrl = data["googlePlusUrl"];
             this.angelListUrl = data["angelListUrl"];
+            this.zoomUrl = data["zoomUrl"];
+            this.otherLinkUrl = data["otherLinkUrl"];
             this.photoUrl = data["photoUrl"];
             this.experience = data["experience"];
             this.profileSummary = data["profileSummary"];
@@ -56661,6 +56665,8 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["twitterUrl"] = this.twitterUrl;
         data["googlePlusUrl"] = this.googlePlusUrl;
         data["angelListUrl"] = this.angelListUrl;
+        data["zoomUrl"] = this.zoomUrl;
+        data["otherLinkUrl"] = this.otherLinkUrl;
         data["photoUrl"] = this.photoUrl;
         data["experience"] = this.experience;
         data["profileSummary"] = this.profileSummary;
@@ -56710,6 +56716,8 @@ export interface IImportPersonalInput {
     twitterUrl: string | undefined;
     googlePlusUrl: string | undefined;
     angelListUrl: string | undefined;
+    zoomUrl: string | undefined;
+    otherLinkUrl: string | undefined;
     photoUrl: string | undefined;
     experience: string | undefined;
     profileSummary: string | undefined;
@@ -56756,6 +56764,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
     companyNavUrl!: string | undefined;
     companyAngelListUrl!: string | undefined;
     companyCalendlyUrl!: string | undefined;
+    companyZoomUrl!: string | undefined;
     companyOtherLinkUrl!: string | undefined;
     companyLogoUrl!: string | undefined;
     workPhone1!: string | undefined;
@@ -56815,6 +56824,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.companyNavUrl = data["companyNavUrl"];
             this.companyAngelListUrl = data["companyAngelListUrl"];
             this.companyCalendlyUrl = data["companyCalendlyUrl"];
+            this.companyZoomUrl = data["companyZoomUrl"];
             this.companyOtherLinkUrl = data["companyOtherLinkUrl"];
             this.companyLogoUrl = data["companyLogoUrl"];
             this.workPhone1 = data["workPhone1"];
@@ -56874,6 +56884,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["companyNavUrl"] = this.companyNavUrl;
         data["companyAngelListUrl"] = this.companyAngelListUrl;
         data["companyCalendlyUrl"] = this.companyCalendlyUrl;
+        data["companyZoomUrl"] = this.companyZoomUrl;
         data["companyOtherLinkUrl"] = this.companyOtherLinkUrl;
         data["companyLogoUrl"] = this.companyLogoUrl;
         data["workPhone1"] = this.workPhone1;
@@ -56926,6 +56937,7 @@ export interface IImportBusinessInput {
     companyNavUrl: string | undefined;
     companyAngelListUrl: string | undefined;
     companyCalendlyUrl: string | undefined;
+    companyZoomUrl: string | undefined;
     companyOtherLinkUrl: string | undefined;
     companyLogoUrl: string | undefined;
     workPhone1: string | undefined;

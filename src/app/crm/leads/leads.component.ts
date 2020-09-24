@@ -1717,7 +1717,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
                 this.selectedLeads,
-                $event.name
+                $event.name,
+                this.contactGroupId.value
             ).subscribe(declinedList => {
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
