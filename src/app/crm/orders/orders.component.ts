@@ -11,7 +11,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
-import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil, debounceTime } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 
@@ -512,10 +512,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.search$,
         this.refresh$
     ).pipe(
-        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid),
+        debounceTime(600),
         takeUntil(this.destroy$),
-        switchMap(this.waitUntil(OrderType.Order)),
-        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
+        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid && this.selectedOrderType.value == OrderType.Order),
+        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
             return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -545,9 +545,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.search$,
         this.refresh$
     ).pipe(
+        debounceTime(600),
         takeUntil(this.destroy$),
-        switchMap(this.waitUntil(OrderType.Subscription)),
-        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
+        filter(() => this.selectedOrderType.value == OrderType.Subscription),
+        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
             return this.getODataUrl(
                 'SubscriptionSlice',
                 oDataRequestValues.filter,
@@ -697,14 +698,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             ),
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
-        );
-    }
-
-    private waitUntil(orderType: OrderType) {
-        return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
-            filter((dataOrderType: OrderType) => dataOrderType === orderType),
-            first(),
-            mapTo(data)
         );
     }
 
@@ -1454,7 +1447,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.initSubscriptionsToolbarConfig();
         setTimeout(() => {
             this.initDataSource();
-            this.processFilterInternal();
+            this.filtersService.change([this.contactGroupFilter]);
         });
     }
 
