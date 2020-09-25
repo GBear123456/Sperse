@@ -145,7 +145,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         const contextItem = e.addedItems.pop()
             || e.removedItems.pop()
             || button.contextMenu.items[button.contextMenu.defaultIndex];
-        let selectedContextItemIndex: number = 0;
+        let selectedContextItemIndex = 0;
         button.contextMenu.items.forEach((item: ContextMenuItem, index: number) => {
             item.selected = contextItem.text === item.text;
             if (item.selected) {
@@ -168,12 +168,13 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     }
 
     contextOptionsInit(button: IDialogButton) {
-        let contextItemIndex: number = 0;
+        let contextItemIndex = 0;
         if (button.contextMenu.selectedIndex !== undefined) {
             contextItemIndex = button.contextMenu.selectedIndex;
         } else if (button.contextMenu.cacheKey && this.cacheService.exists(button.contextMenu.cacheKey)) {
             contextItemIndex = this.cacheService.get(button.contextMenu.cacheKey);
-        }
+        } else
+            contextItemIndex = button.contextMenu.defaultIndex;
         button.contextMenu.items[contextItemIndex].selected = true;
         button.title = button.contextMenu.items[contextItemIndex].text;
     }
