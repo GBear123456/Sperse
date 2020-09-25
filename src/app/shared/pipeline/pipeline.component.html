@@ -108,7 +108,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="full-name">
-                            <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email || entity?.CompanyName) as name; else noName">
+                            <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email || entity?.Phone || entity?.CompanyName) as name; else noName">
                                 <span [title]="name" class="name">{{ name }}</span>
                             </ng-container>
                             <ng-template #noName>
@@ -137,7 +137,7 @@
                             </dx-tooltip>
                         </div>
                     </div>
-                    <div class="row" *ngIf="entity?.Name || entity?.Title || entity?.Email">
+                    <div class="row" *ngIf="entity?.Name || entity?.Title || entity?.Email || entity?.Phone">
                         <div class="company-name">
                             <span [title]="companyName">{{ entity?.CompanyName || entity?.Description }}</span>
                         </div>
