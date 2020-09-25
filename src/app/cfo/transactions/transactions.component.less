@@ -248,19 +248,16 @@
                     font-size: 13.5px !important;
                     &.category {
                         padding-left: 15px;
-                        position: relative;
                     }
                     .uncategorized {
+                        vertical-align: text-top;
                         &:before {
                             content: "";
-                            background: #f8a126;
                             width: 8px;
                             height: 8px;
                             border-radius: 50%;
-                            display: block;
-                            position: absolute;
-                            left: 0;
-                            top: 50%;
+                            background: #f8a126;
+                            display: inline-block;
                             transform: translateY(-50%);
                         }
                     }
@@ -442,9 +439,9 @@
             }
         }
 
-        .uncategorized {
+        tr.uncategorized {
+            background-color: #FFFBF5;
             td {
-                background-color: #FFFBF5;
                 color: #757B7F;
             }
         }
