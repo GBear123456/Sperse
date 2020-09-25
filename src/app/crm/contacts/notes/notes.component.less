@@ -54,6 +54,106 @@
                 }
             }
         }
+
+        .chat-view {
+            width: 100%;
+            padding: 20px 0;
+            .messages-wrapper {
+                display: flex;
+                flex-flow: column;
+                width: 100%;
+            }
+
+            .message-wrapper {
+                padding-top: 30px;
+                position: relative;
+                min-height: 90px;
+                &:before {
+                    content: attr(fullname);
+                    display: inline-block;
+                    position: absolute;
+                    top: 0px;
+                    left: 55px;
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+
+                &.another {
+                    &:before {
+                        left: auto;
+                        right: 55px;
+                    }
+
+                    .body {
+                        background: rgba(0, 174, 239, 0.1);
+                        margin-right: 50px;
+                        margin-left: auto;
+                        float: right;
+                    }
+
+                    .small {
+                        left: auto;
+                        right: 15px;
+                    }
+                }
+
+                &.current {
+                    .body {
+                        background: #f3f7fa;
+                        margin-left: 50px;
+                        &.date:after {
+                            right: 0px;
+                        }
+                    }
+                }
+            }
+
+            .avatar {
+                width: 49px;
+                height: 49px;
+                &.small {
+                    width: 26px;
+                    height: 26px;
+                    position: absolute;
+                    top: 0px;
+                    left: 15px;
+                }
+            }
+
+            .date {
+                margin-bottom: 25px;
+                &:after {
+                    content: attr(date);
+                    position: absolute;
+                    display: block;
+                    bottom: -25px;
+                    font-weight: normal;
+                    font-size: 11px;
+                    line-height: 2.18;
+                    letter-spacing: 0.22px;
+                    white-space: nowrap;
+                    color: #677380;
+                }
+            }
+
+            .body {
+                display: inline-block;
+                position: relative;
+                padding: 20px;
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.57;
+                letter-spacing: 0.28px;
+                text-align: left;
+                color: #424c56;
+                max-width: 70%;
+                min-width: 120px;
+                border-radius: 10px;
+                margin-bottom: 5px;
+            }
+        }
     }
 
     .add-note {

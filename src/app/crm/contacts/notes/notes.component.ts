@@ -12,6 +12,7 @@ import { first, publishReplay, refCount, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactServiceProxy,
@@ -34,13 +35,18 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
 
+    private formatting = AppConsts.formatting;
+    private readonly ident = 'Notes';
+
     public data: {
         contactInfo: ContactInfoDto
     };
-    private formatting = AppConsts.formatting;
-    private readonly ident = 'Notes';
-    public actionRecordData: any;
+
+    public userTimezone = DateHelper.getUserTimezone();
     public actionMenuItems: ActionMenuItem[];
+    public userId = abp.session.userId;
+    public actionRecordData: any;
+    public showGridView = false;
 
     constructor(injector: Injector,
         private clientService: ContactsService,
@@ -59,6 +65,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             this.loadData().subscribe(
                 (notes: NoteInfoDto[]) => this.dataSource = notes
             );
+            this.updateToolbar();
         }, this.ident);
     }
 
@@ -76,6 +83,16 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             }
         });
         this.initActionMenuItems();
+    }
+
+    private updateToolbar() {
+        this.clientService.toolbarUpdate({
+            optionButton: {
+                name: 'dataGrid',
+                options: { checkPressed: () => this.showGridView },
+                action: () => { this.showGridView = !this.showGridView; }
+            }
+        });
     }
 
     private initActionMenuItems() {
