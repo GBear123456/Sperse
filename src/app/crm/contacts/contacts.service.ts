@@ -476,9 +476,9 @@ export class ContactsService {
 
     showNoteAddDialog(noteData?) {
         forkJoin(
-            this.contactInfo$.pipe(first()),
-            this.personContactInfo$.pipe(first()),
-            this.organizationContactInfo$.pipe(first())
+            this.contactInfo$.pipe(filter(Boolean), first()),
+            this.personContactInfo$.pipe(filter(Boolean), first()),
+            this.organizationContactInfo$.pipe(filter(Boolean), first())
         ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
             this.dialog.open(NoteAddDialogComponent, {
                 panelClass: ['slider'],
