@@ -1,5 +1,6 @@
 /** Core imports */
-import { OnInit, AfterViewInit, Component, Inject, Injector, ViewChild, ElementRef } from '@angular/core';
+import { Output, EventEmitter, OnInit, AfterViewInit,
+    Component, Inject, Injector, ViewChild, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -31,7 +32,6 @@ import {
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.type';
@@ -51,6 +51,7 @@ class PhoneNumber {
 export class NoteAddDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @ViewChild('followUpDateBox', { static: false }) followUpDateBox: DxDateBoxComponent;
     @ViewChild('currentDateBox', { static: false }) currentDateBox: DxDateBoxComponent;
+    @Output() onSaved: EventEmitter<any> = new EventEmitter<any>();
 
     private slider: any;
     private _contactInfo: ContactInfoDto;
@@ -89,7 +90,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private userService: UserServiceProxy,
         private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
-        private clientService: ContactsService,
         public dialogRef: MatDialogRef<NoteAddDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -227,7 +227,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.resetFields();
                 this.validator.reset();
                 this.notify.info(this.l('SavedSuccessfully'));
-                this.clientService.invalidate('notes');
+                this.onSaved.emit();
             });
         }
     }

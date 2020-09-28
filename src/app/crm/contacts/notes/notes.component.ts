@@ -23,7 +23,7 @@ import {
     OrganizationContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
-import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
+//import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 
@@ -79,7 +79,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             if (this.componentIsActivated) {
                 this.dataSource = notes;
                 if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
-                    setTimeout(() => this.openNoteAddDialog());
+                    setTimeout(() => this.clientService.showNoteAddDialog());
             }
         });
         this.initActionMenuItems();
@@ -144,25 +144,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         return notes$;
     }
 
-    openNoteAddDialog(noteData?) {
-        /** When every piece of data is loaded - open note add dialog */
-        forkJoin(
-            this.clientService.contactInfo$.pipe(first()),
-            this.clientService.personContactInfo$.pipe(first()),
-            this.clientService.organizationContactInfo$.pipe(first())
-        ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
-            this.dialog.open(NoteAddDialogComponent, {
-                panelClass: ['slider'],
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    note: noteData,
-                    contactInfo: contactInfo
-                }
-            });
-        });
-    }
-
     onToolbarPreparing($event) {
         let toolbarItems = $event.toolbarOptions.items;
         toolbarItems.push({
@@ -186,7 +167,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     editNote(data?) {
-        this.openNoteAddDialog(data || this.actionRecordData);
+        this.clientService.showNoteAddDialog(data || this.actionRecordData);
     }
 
     deleteNote() {

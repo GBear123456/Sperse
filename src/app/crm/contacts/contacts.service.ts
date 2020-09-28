@@ -5,8 +5,8 @@ import { Params, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber } from 'rxjs';
-import { filter, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber, forkJoin } from 'rxjs';
+import { filter, first, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactStatus } from '@root/shared/AppEnums';
@@ -52,6 +52,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup } from '@shared/AppEnums';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { EmailTags } from './contacts.const';
+import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
@@ -392,7 +393,7 @@ export class ContactsService {
 
         if (emailData.templateType == EmailTemplateType.Contact)
             dialogComponent.onTemplateCreate.subscribe((templateData: EmailTemplateData) => {
-                const emailTemplateDialog = this.showEmailTemplateDialog(templateData)
+                const emailTemplateDialog = this.showEmailTemplateDialog(templateData);
                 emailTemplateDialog.onSave.subscribe((data: EmailTemplateData) => {
                     dialogComponent.data.templateId = data.templateId;
                     dialogComponent.onTemplateChanged({ value: data.templateId });
@@ -404,7 +405,7 @@ export class ContactsService {
                         dialogComponent.reset();
                         dialogComponent.invalidate();
                     }
-                })
+                });
             });
 
         dialogComponent.onTemplateChange.pipe(
@@ -471,6 +472,26 @@ export class ContactsService {
             closeOnNavigation: false,
             data: {}
         }).afterClosed();
+    }
+
+    showNoteAddDialog(noteData?) {
+        forkJoin(
+            this.contactInfo$.pipe(first()),
+            this.personContactInfo$.pipe(first()),
+            this.organizationContactInfo$.pipe(first())
+        ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
+            this.dialog.open(NoteAddDialogComponent, {
+                panelClass: ['slider'],
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    note: noteData,
+                    contactInfo: contactInfo
+                }
+            }).componentInstance.onSaved.subscribe(() => {
+                this.invalidate('notes');
+            });
+        });
     }
 
     showSMSDialog(data: SmsDialogData) {
@@ -605,7 +626,7 @@ export class ContactsService {
         }
         return dataSourceURI;
     }
-    
+
     updateStatus(entityId: number, status: Status, entity: 'contact' | 'user' = 'contact'): Observable<any> {
         return new Observable<any>((observer: Subscriber<any>) => {
             ContactsHelper.showConfirmMessage(
@@ -623,7 +644,7 @@ export class ContactsService {
                 [ { text: this.ls.l('SendCancellationEmail'), visible: status.id === ContactStatus.Inactive } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );
-        })
+        });
     }
 
     private updateStatusInternal(entityId: number, statusId: ContactStatus, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {

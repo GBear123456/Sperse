@@ -148,7 +148,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.loadTargetEntity(e, TargetDirectionEnum.Prev);
         });
         this.contactsService.next.pipe(takeUntil(this.destroy$)).subscribe((e) => {
-            this.loadTargetEntity(e, TargetDirectionEnum.Next)
+            this.loadTargetEntity(e, TargetDirectionEnum.Next);
         });
     }
 

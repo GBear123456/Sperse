@@ -1,4 +1,4 @@
-<div class="wrapper" *ngIf="dataSource.length; else noData">
+<div class="wrapper" *ngIf="dataSource && dataSource.length; else noData">
     <action-menu width="150px"
         [items]="actionMenuItems"
         target=""
@@ -75,7 +75,7 @@
         <dx-scroll-view showScrollbar="onHover">                    
             <div class="messages-wrapper">
                 <div *ngFor="let message of dataSource; let i = index" class="message-wrapper" [ngClass]="{current: message.addedByUserId == userId, another: message.addedByUserId != userId}" [attr.fullname]="message.addedByUserName">
-                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(message?.contactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(message?.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
                     <div class="body date" [attr.date]="message.dateTime | date: formatting.inboxDate : userTimezone">
                         <div [innerHtml]="message.text"></div>
                     </div>
