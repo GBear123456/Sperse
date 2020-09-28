@@ -75,8 +75,7 @@ import {
     ContactServiceProxy,
     ContactStatusDto,
     CreateContactEmailInput,
-    LayoutType,
-    ServiceTypeInfo
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
@@ -546,21 +545,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     dataSource$: this.store$.pipe(
                         select(SubscriptionsStoreSelectors.getSubscriptions),
-                        filter(Boolean),
-                        map((subscriptions: ServiceTypeInfo[]) => {
-                            return subscriptions.map((subscription: ServiceTypeInfo) => {
-                                return {
-                                    ...subscription,
-                                    current: null,
-                                    past: null,
-                                    never: null
-                                };
-                            });
-                        })
+                        filter(Boolean)
                     ),
                     dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: this.appService.isHostTenant ? 'name' : 'id',
-                    keyExpr: 'id'
+                    nameField: this.appService.isHostTenant ? 'name' : 'code',
+                    keyExpr: 'code'
                 })
         }
     });

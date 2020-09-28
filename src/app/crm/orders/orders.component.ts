@@ -726,7 +726,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         dataSource$: this.store$.pipe(select(SubscriptionsStoreSelectors.getSubscriptions)),
                         dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
                         nameField: 'name',
-                        keyExpr: 'id'
+                        keyExpr: 'code'
                     })
             }
         });

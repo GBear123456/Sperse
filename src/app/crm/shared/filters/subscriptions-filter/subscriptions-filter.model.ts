@@ -4,7 +4,6 @@ import { SubscriptionAvailability } from '@app/crm/shared/filters/subscriptions-
 
 export class SubscriptionsFilterModel extends FilterItemModel {
     keyExpr: any;
-    parentExpr?: any = 'parentId';
     nameField: string;
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
@@ -14,20 +13,43 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     get value() {
         let result = [];
         this.dataSource && this.dataSource
-            .filter(item => item.current || item.past || item.never)
-            .forEach((item, index) => {
+            .filter(item => item.current || item.past || item.never ||
+                item.current == undefined || item.past == undefined ||
+                item.never == undefined
+            ).forEach((item, index) => {
                 result.push(
                     {
-                        name: ['subscriptionFilters[' + index + '].TypeId'],
-                        value: item.id
-                    },
-                    {
-                        name: ['subscriptionFilters[' + index + '].SubscriptionAvailability'],
-                        value: (item.current ? SubscriptionAvailability.Current : 0) |
-                               (item.past ? SubscriptionAvailability.Past : 0) |
-                               (item.never ? SubscriptionAvailability.Never : 0)
+                        name: ['subscriptionFilters[' + index + '].ProductId'],
+                        value: item[this.keyExpr]
                     }
                 );
+
+                if (item.current || item.past || item.never)
+                    result.push(
+                        {
+                            name: ['subscriptionFilters[' + index + '].Availability'],
+                            value: (item.current ? SubscriptionAvailability.Current : 0) |
+                                   (item.past ? SubscriptionAvailability.Past : 0) |
+                                   (item.never ? SubscriptionAvailability.Never : 0)
+                        }
+                    );
+
+                if (item.current == undefined || item.past == undefined || item.never == undefined) {
+                    item.serviceProductLevels.forEach(level => {
+                        result.push(
+                            {
+                                name: ['subscriptionFilters[' + index + '].LevelId'],
+                                value: level[this.keyExpr]
+                            },
+                            {
+                                name: ['subscriptionFilters[' + index + '].Availability'],
+                                value: (level.current ? SubscriptionAvailability.Current : 0) |
+                                       (level.past ? SubscriptionAvailability.Past : 0) |
+                                       (level.never ? SubscriptionAvailability.Never : 0)
+                            }
+                        );
+                    });
+                }
             });
         return result;
     }
