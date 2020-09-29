@@ -7,7 +7,7 @@
     </span>
     <div class="actions {{ buttonsPosition }}">
         <i *ngIf="isEditDialogEnabled" [ngClass]="{ hidden: isReadOnlyField }" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
-        <i *ngIf="showInlineEditButton" [ngClass]="{ hidden: isReadOnlyField }" class="edit fa fa-pencil" aria-hidden="true" (click)="this.showInput(true)"></i>
+        <i *ngIf="showInlineEditButton" [ngClass]="{ hidden: isReadOnlyField }" class="edit fa fa-pencil" aria-hidden="true" (click)="showInput(true)"></i>
         <i *ngIf="isDeleteEnabled && value" [ngClass]="{ hidden: isReadOnlyField }" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
         <i *ngIf="isCopyEnabled && value" class="save-to-clipboard" aria-hidden="true" (click)="copyItem($event)"></i>
     </div>

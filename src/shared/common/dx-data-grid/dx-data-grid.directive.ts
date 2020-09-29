@@ -81,7 +81,7 @@ export class DxDataGridDirective implements AfterViewInit, OnDestroy {
                     }
                 }
             }
-        })
+        });
     }
 
     appendClipboardIcon(elm) {
