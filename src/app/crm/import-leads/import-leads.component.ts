@@ -32,7 +32,7 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
     ImportSubscriptionInput, CustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
-    GetImportStatusOutput, LayoutType, ImportClassificationInput
+    GetImportStatusOutput, LayoutType, ImportClassificationInput, TimeOfDay
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -281,7 +281,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly FIELDS_TO_IGNORE = [
-        this.PERSONAL_PREFERREDTOD,
         this.PERSONAL_CREDITSCORERATING
     ];
 
@@ -535,6 +534,19 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             dataSource[field.mappedField] = 'Male';
         else
             return false;
+        return true;
+    }
+
+    private normalizeTODValue(field, value, dataSource) {
+        value = value.trim().toLowerCase();
+        for (let v in TimeOfDay) {
+            if (v && v.toLowerCase() == value) {
+                dataSource[field.mappedField] = TimeOfDay[v];
+                return true;
+            }
+        }
+
+        dataSource[field.mappedField] = undefined;
         return true;
     }
 
@@ -842,6 +854,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.normalizeBooleanValue(field, sourceValue, reviewDataSource);
         } else if (this.PERSONAL_GENDER == field.mappedField) {
             return this.normalizeGenderValue(field, sourceValue, reviewDataSource);
+        } else if (this.PERSONAL_PREFERREDTOD == field.mappedField) {
+            return this.normalizeTODValue(field, sourceValue, reviewDataSource);
         }
         return false;
     }

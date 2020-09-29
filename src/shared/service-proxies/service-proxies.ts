@@ -56691,7 +56691,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
     phoneExt1!: string | undefined;
     phone2!: string | undefined;
     phoneExt2!: string | undefined;
-    preferredToD!: TimeOfDay | undefined;
     ssn!: string | undefined;
     bankCode!: string | undefined;
     email1!: string | undefined;
@@ -56699,6 +56698,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     email3!: string | undefined;
     email4!: string | undefined;
     email5!: string | undefined;
+    preferredToD!: TimeOfDay | undefined;
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
@@ -56745,7 +56745,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.phoneExt1 = data["phoneExt1"];
             this.phone2 = data["phone2"];
             this.phoneExt2 = data["phoneExt2"];
-            this.preferredToD = data["preferredToD"];
             this.ssn = data["ssn"];
             this.bankCode = data["bankCode"];
             this.email1 = data["email1"];
@@ -56753,6 +56752,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.email3 = data["email3"];
             this.email4 = data["email4"];
             this.email5 = data["email5"];
+            this.preferredToD = data["preferredToD"];
             this.drivingLicense = data["drivingLicense"];
             this.drivingLicenseState = data["drivingLicenseState"];
             this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
@@ -56803,7 +56803,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["phoneExt1"] = this.phoneExt1;
         data["phone2"] = this.phone2;
         data["phoneExt2"] = this.phoneExt2;
-        data["preferredToD"] = this.preferredToD;
         data["ssn"] = this.ssn;
         data["bankCode"] = this.bankCode;
         data["email1"] = this.email1;
@@ -56811,6 +56810,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["email3"] = this.email3;
         data["email4"] = this.email4;
         data["email5"] = this.email5;
+        data["preferredToD"] = this.preferredToD;
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
         data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
@@ -56854,7 +56854,6 @@ export interface IImportPersonalInput {
     phoneExt1: string | undefined;
     phone2: string | undefined;
     phoneExt2: string | undefined;
-    preferredToD: TimeOfDay | undefined;
     ssn: string | undefined;
     bankCode: string | undefined;
     email1: string | undefined;
@@ -56862,6 +56861,7 @@ export interface IImportPersonalInput {
     email3: string | undefined;
     email4: string | undefined;
     email5: string | undefined;
+    preferredToD: TimeOfDay | undefined;
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
