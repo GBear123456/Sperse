@@ -26,16 +26,44 @@ export class SubscriptionsFilterComponent implements FilterComponent {
         if (!event.event)
             return;
 
-        let children = cell.row.node.children;
-        if (children.length)
+        let parent = cell.row.node.parent,
+            children = cell.row.node.children;
+        if (children.length) {
+            this.setProductValue(cell.data.id, type, event.value);
             children.forEach(item => {
                 item.data[type] = event.value;
+                this.setLevelValue(item.data.id, cell.data.id, type, event.value);
             });
-        else if (cell.row.node.parent.data) {
+        } else if (parent.data) {
+            this.setLevelValue(cell.data.id, parent.data.id, type, event.value);
             children = cell.row.node.parent.children;
             let selectedCount = children.filter(item => item.data[type]).length;
-            cell.row.node.parent.data[type] = selectedCount ==
+            parent.data[type] = selectedCount ==
                 children.length || (selectedCount ? undefined : false);
+            this.setProductValue(parent.data.id, type, parent.data[type]);
         }
+    }
+
+    setProductValue(id: number, type: string, value: boolean) {
+        this.items.element.dataSource.some(product => {
+            if (product.id == id) {
+                product[type] = value;
+                return true;
+            }
+        });
+    }
+
+    setLevelValue(id: number, productId: number, type: string, value: boolean) {
+        this.items.element.dataSource.some(product => {
+            if (product.id == productId) {
+                product.serviceProductLevels.some(level => {
+                    if (level.id == id) {
+                        level[type] = value;
+                        return true;
+                    }
+                });
+                return true;
+            }
+        });
     }
 }

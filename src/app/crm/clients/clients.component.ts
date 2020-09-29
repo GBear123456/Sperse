@@ -545,11 +545,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     dataSource$: this.store$.pipe(
                         select(SubscriptionsStoreSelectors.getSubscriptions),
-                        filter(Boolean)
+                        filter(Boolean), first()
                     ),
                     dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: this.appService.isHostTenant ? 'name' : 'code',
-                    keyExpr: 'code'
+                    nameField: this.appService.isHostTenant ? 'name' : 'code'
                 })
         }
     });

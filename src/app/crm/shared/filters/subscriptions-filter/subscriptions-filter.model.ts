@@ -3,7 +3,6 @@ import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-i
 import { SubscriptionAvailability } from '@app/crm/shared/filters/subscriptions-filter/subscription-availability.enum';
 
 export class SubscriptionsFilterModel extends FilterItemModel {
-    keyExpr: any;
     nameField: string;
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
@@ -11,43 +10,49 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     }
 
     get value() {
-        let result = [];
+        let result = [], filterIndex = 0;
         this.dataSource && this.dataSource
             .filter(item => item.current || item.past || item.never ||
                 item.current == undefined || item.past == undefined ||
                 item.never == undefined
-            ).forEach((item, index) => {
-                result.push(
-                    {
-                        name: ['subscriptionFilters[' + index + '].ProductId'],
-                        value: item[this.keyExpr]
-                    }
-                );
-
-                if (item.current || item.past || item.never)
+            ).forEach(item => {
+                if (item.current || item.past || item.never) {
                     result.push(
                         {
-                            name: ['subscriptionFilters[' + index + '].Availability'],
+                            name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
+                            value: item.id
+                        },
+                        {
+                            name: ['subscriptionFilters[' + filterIndex + '].Availability'],
                             value: (item.current ? SubscriptionAvailability.Current : 0) |
                                    (item.past ? SubscriptionAvailability.Past : 0) |
                                    (item.never ? SubscriptionAvailability.Never : 0)
                         }
                     );
+                    filterIndex++;
+                }
 
                 if (item.current == undefined || item.past == undefined || item.never == undefined) {
                     item.serviceProductLevels.forEach(level => {
-                        result.push(
-                            {
-                                name: ['subscriptionFilters[' + index + '].LevelId'],
-                                value: level[this.keyExpr]
-                            },
-                            {
-                                name: ['subscriptionFilters[' + index + '].Availability'],
-                                value: (level.current ? SubscriptionAvailability.Current : 0) |
-                                       (level.past ? SubscriptionAvailability.Past : 0) |
-                                       (level.never ? SubscriptionAvailability.Never : 0)
-                            }
-                        );
+                        if (level.current || level.past || level.never) {
+                            result.push(
+                                {
+                                    name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
+                                    value: item.id
+                                },
+                                {
+                                    name: ['subscriptionFilters[' + filterIndex + '].LevelId'],
+                                    value: level.id
+                                },
+                                {
+                                    name: ['subscriptionFilters[' + filterIndex + '].Availability'],
+                                    value: (level.current ? SubscriptionAvailability.Current : 0) |
+                                           (level.past ? SubscriptionAvailability.Past : 0) |
+                                           (level.never ? SubscriptionAvailability.Never : 0)
+                                }
+                            );
+                            filterIndex++;
+                        }
                     });
                 }
             });
@@ -67,17 +72,30 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         if (this.dataSource) {
             this.dataSource.forEach((item) => {
                 if (item.current || item.past || item.never) {
-                    let subscriptions = [
-                        item.current ? 'Current' : null,
-                        item.past ? 'Past' : null,
-                        item.never ? 'Never' : null
-                    ];
                     result.push(<DisplayElement>{
                         item: this,
                         id: item.id,
-                        displayValue: item.name + ' (' + (subscriptions.filter(Boolean).join(',')) + ')'
+                        displayValue: item.name + ' (' + ([
+                            item.current ? 'Current' : null,
+                            item.past ? 'Past' : null,
+                            item.never ? 'Never' : null
+                        ].filter(Boolean).join(',')) + ')'
                     });
                 }
+                if (item.serviceProductLevels && item.serviceProductLevels.length)
+                    item.serviceProductLevels.forEach(level => {
+                        if (level.current || level.past || level.never) {
+                            result.push(<DisplayElement>{
+                                item: this,
+                                id: level.id,
+                                displayValue: level.name + ' (' + ([
+                                    level.current ? 'Current' : null,
+                                    level.past ? 'Past' : null,
+                                    level.never ? 'Never' : null
+                                ].filter(Boolean).join(',')) + ')'
+                            });
+                        }
+                    });
             });
         }
         return result;
