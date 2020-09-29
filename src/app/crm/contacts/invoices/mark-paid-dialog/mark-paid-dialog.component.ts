@@ -60,6 +60,7 @@ export class MarkAsPaidDialogComponent {
             orderStage: this.stage,
             amount: this.amount,
             gatewayName: undefined,
+            authorizationCode: undefined,
             gatewayTransactionId: undefined,
             bankCardInfo: undefined
         })).pipe(finalize(() => {
