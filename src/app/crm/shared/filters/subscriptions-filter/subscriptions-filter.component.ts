@@ -17,9 +17,10 @@ export class SubscriptionsFilterComponent implements FilterComponent {
         public ls: AppLocalizationService
     ) {}
 
-    checkSetInitialValue(event) {
-        if (event.component.option('value') == undefined)
-            event.component.option('value', false);
+    checkSetInitialValue(event, cell, type) {
+        if (!cell.row.node.children.some(level => level.data[type])
+            && event.component.option('value') == undefined
+        ) event.component.option('value', false);
     }
 
     onValueChanged(event, cell, type) {
@@ -38,8 +39,8 @@ export class SubscriptionsFilterComponent implements FilterComponent {
             this.setLevelValue(cell.data.id, parent.data.id, type, event.value);
             children = cell.row.node.parent.children;
             let selectedCount = children.filter(item => item.data[type]).length;
-            parent.data[type] = selectedCount ==
-                children.length || (selectedCount ? undefined : false);
+            parent.data[type] = selectedCount == children.length
+                || (selectedCount ? undefined : false);
             this.setProductValue(parent.data.id, type, parent.data[type]);
         }
     }

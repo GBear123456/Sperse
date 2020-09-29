@@ -103,12 +103,24 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
     clearItem(item) {
         item.current = item.past = item.never = null;
+        if (item.serviceProductLevels)
+            item.serviceProductLevels.forEach(level => {
+                level.current = level.past = level.never = null;
+            });
     }
 
     removeFilterItem(filter: FilterModel, args: any, id: string) {
         if (id !== undefined) {
-            let item = filter.items.element.dataSource.find((item) => item.id === id);
-            this.clearItem(item);
+            this.clearItem(
+                filter.items.element.dataSource.reduce((result, item) => {
+                    if (result && result.id === id)
+                        return result;
+                    else if (item.id === id)
+                        return item;
+                    else if (item.serviceProductLevels)
+                        return item.serviceProductLevels.find(level => level.id == id);
+                }, null)
+            );
         } else {
             filter.items.element.dataSource.forEach((item) => {
                 this.clearItem(item);
