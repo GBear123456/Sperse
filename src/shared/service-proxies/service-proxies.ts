@@ -17908,6 +17908,58 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateInvoiceCommissions(body: UpdateInvoiceCommissionInput[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/UpdateInvoiceCommissions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateInvoiceCommissions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateInvoiceCommissions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateInvoiceCommissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @contactId (optional) 
      * @return Success
      */
@@ -37662,6 +37714,7 @@ export enum TimeOfDay {
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
+    Night = "Night", 
 }
 
 export enum CreditScoreRating {
@@ -59111,6 +59164,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     amount!: number | undefined;
     gatewayName!: string | undefined;
     gatewayTransactionId!: string | undefined;
+    authorizationCode!: string | undefined;
     bankCardInfo!: BankCardInput | undefined;
 
     constructor(data?: IAddBankCardPaymentInput) {
@@ -59132,6 +59186,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.amount = data["amount"];
             this.gatewayName = data["gatewayName"];
             this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.authorizationCode = data["authorizationCode"];
             this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : <any>undefined;
         }
     }
@@ -59153,6 +59208,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["amount"] = this.amount;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["authorizationCode"] = this.authorizationCode;
         data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
         return data; 
     }
@@ -59167,7 +59223,132 @@ export interface IAddBankCardPaymentInput {
     amount: number | undefined;
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
+    authorizationCode: string | undefined;
     bankCardInfo: BankCardInput | undefined;
+}
+
+export enum CommissionRateType {
+    Percentage = "Percentage", 
+}
+
+export class CommissionInfo implements ICommissionInfo {
+    productName!: string;
+    buyerEmailAddress!: string | undefined;
+    baseValue!: number | undefined;
+    rateType!: CommissionRateType | undefined;
+    rate!: number | undefined;
+    amount!: number;
+    sourceContactId!: number | undefined;
+    affiliateCode!: string;
+    affiliateEmailAddress!: string | undefined;
+
+    constructor(data?: ICommissionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productName = data["productName"];
+            this.buyerEmailAddress = data["buyerEmailAddress"];
+            this.baseValue = data["baseValue"];
+            this.rateType = data["rateType"];
+            this.rate = data["rate"];
+            this.amount = data["amount"];
+            this.sourceContactId = data["sourceContactId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.affiliateEmailAddress = data["affiliateEmailAddress"];
+        }
+    }
+
+    static fromJS(data: any): CommissionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CommissionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productName"] = this.productName;
+        data["buyerEmailAddress"] = this.buyerEmailAddress;
+        data["baseValue"] = this.baseValue;
+        data["rateType"] = this.rateType;
+        data["rate"] = this.rate;
+        data["amount"] = this.amount;
+        data["sourceContactId"] = this.sourceContactId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["affiliateEmailAddress"] = this.affiliateEmailAddress;
+        return data; 
+    }
+}
+
+export interface ICommissionInfo {
+    productName: string;
+    buyerEmailAddress: string | undefined;
+    baseValue: number | undefined;
+    rateType: CommissionRateType | undefined;
+    rate: number | undefined;
+    amount: number;
+    sourceContactId: number | undefined;
+    affiliateCode: string;
+    affiliateEmailAddress: string | undefined;
+}
+
+export class UpdateInvoiceCommissionInput implements IUpdateInvoiceCommissionInput {
+    invoiceId!: number | undefined;
+    invoiceNumber!: string | undefined;
+    gatewayName!: string;
+    gatewayTransactionId!: string;
+    commissionInfo!: CommissionInfo | undefined;
+
+    constructor(data?: IUpdateInvoiceCommissionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.invoiceId = data["invoiceId"];
+            this.invoiceNumber = data["invoiceNumber"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.commissionInfo = data["commissionInfo"] ? CommissionInfo.fromJS(data["commissionInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateInvoiceCommissionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateInvoiceCommissionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceNumber"] = this.invoiceNumber;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["commissionInfo"] = this.commissionInfo ? this.commissionInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateInvoiceCommissionInput {
+    invoiceId: number | undefined;
+    invoiceNumber: string | undefined;
+    gatewayName: string;
+    gatewayTransactionId: string;
+    commissionInfo: CommissionInfo | undefined;
 }
 
 export class ProductInfo implements IProductInfo {
@@ -69600,6 +69781,7 @@ export interface IBankAccountUsers {
 }
 
 export class ServiceProductLevelDto implements IServiceProductLevelDto {
+    id!: number | undefined;
     code!: string;
     name!: string;
     monthlyFee!: number | undefined;
@@ -69617,6 +69799,7 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.code = data["code"];
             this.name = data["name"];
             this.monthlyFee = data["monthlyFee"];
@@ -69634,6 +69817,7 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
         data["monthlyFee"] = this.monthlyFee;
@@ -69644,6 +69828,7 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 }
 
 export interface IServiceProductLevelDto {
+    id: number | undefined;
     code: string;
     name: string;
     monthlyFee: number | undefined;
