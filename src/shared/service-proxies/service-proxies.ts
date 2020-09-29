@@ -8826,6 +8826,58 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updateAffiliateContact(body: UpdateAffiliateContactInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateAffiliateContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAffiliateContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAffiliateContact(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAffiliateContact(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     sendReferralPartnersEmail(body: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/SendReferralPartnersEmail";
         url_ = url_.replace(/[?&]$/, "");
@@ -37714,7 +37766,6 @@ export enum TimeOfDay {
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
-    Night = "Night", 
 }
 
 export enum CreditScoreRating {
@@ -48933,6 +48984,46 @@ export interface IUpdateContactCustomFieldsInput {
     customField3: string | undefined;
     customField4: string | undefined;
     customField5: string | undefined;
+}
+
+export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput {
+    contactId!: number;
+    affiliateContactId!: number | undefined;
+
+    constructor(data?: IUpdateAffiliateContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.affiliateContactId = data["affiliateContactId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateAffiliateContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateAffiliateContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["affiliateContactId"] = this.affiliateContactId;
+        return data; 
+    }
+}
+
+export interface IUpdateAffiliateContactInput {
+    contactId: number;
+    affiliateContactId: number | undefined;
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
@@ -69781,7 +69872,6 @@ export interface IBankAccountUsers {
 }
 
 export class ServiceProductLevelDto implements IServiceProductLevelDto {
-    id!: number | undefined;
     code!: string;
     name!: string;
     monthlyFee!: number | undefined;
@@ -69799,7 +69889,6 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.code = data["code"];
             this.name = data["name"];
             this.monthlyFee = data["monthlyFee"];
@@ -69817,7 +69906,6 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
         data["monthlyFee"] = this.monthlyFee;
@@ -69828,7 +69916,6 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 }
 
 export interface IServiceProductLevelDto {
-    id: number | undefined;
     code: string;
     name: string;
     monthlyFee: number | undefined;
