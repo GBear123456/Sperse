@@ -8,6 +8,6 @@ export interface ActionMenuItem {
     checkVisible?: (itemData: any) => boolean;
     button?: {
         text: string;
-        action: () => void;
-    }
+        action: (event: any) => void;
+    };
 }

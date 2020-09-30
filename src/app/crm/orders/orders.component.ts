@@ -1264,7 +1264,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filters,
             this.getCheckCustomFilter.bind(this),
             null,
-            this.getSubscriptionsParams()
+            this.selectedOrderType.value === OrderType.Order ? this.getSubscriptionsParams() : undefined
         );
     }
 
@@ -1276,12 +1276,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        let productIndex = 0, levelIndex = 0, productId = null, result = [],
+        let productIndex, levelIndex, productId = null, result = [],
             selectedItems = this.subscriptionStatusFilter.items.element['selectedItems'];
         selectedItems && selectedItems.forEach(item => {
             if (productId != item.parentId) {
                 levelIndex = 0;
-                productIndex++;
+                isNaN(productIndex) ? productIndex = 0 : productIndex++;
                 productId = item.parentId || item.id;
                 result.push({
                     name: 'subscriptionFilters[' + productIndex + '].ProductId',
