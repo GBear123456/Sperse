@@ -37,7 +37,6 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
@@ -182,7 +181,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         }
 
         this.filtersService.apply(filters => {
-            filters.forEach(filter => {
+            filters && filters.forEach(filter => {
                 if (filter.caption == 'Source')
                     this.dashboardWidgetsService.setContactIdForTotals(
                         filter.items.element.value[0].value || undefined);
