@@ -46507,7 +46507,7 @@ export class ContactInfoDto implements IContactInfoDto {
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
-    affiliateContactId!: number | undefined;
+    affiliateContactName!: string | undefined;
     affiliateContactThumbnail!: string | undefined;
 
     constructor(data?: IContactInfoDto) {
@@ -46551,7 +46551,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
-            this.affiliateContactId = data["affiliateContactId"];
+            this.affiliateContactName = data["affiliateContactName"];
             this.affiliateContactThumbnail = data["affiliateContactThumbnail"];
         }
     }
@@ -46595,7 +46595,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
-        data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateContactName"] = this.affiliateContactName;
         data["affiliateContactThumbnail"] = this.affiliateContactThumbnail;
         return data; 
     }
@@ -46624,7 +46624,7 @@ export interface IContactInfoDto {
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
-    affiliateContactId: number | undefined;
+    affiliateContactName: string | undefined;
     affiliateContactThumbnail: string | undefined;
 }
 
