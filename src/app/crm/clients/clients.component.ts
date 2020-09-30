@@ -842,7 +842,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (searchValueChanged) {
                         this.searchValue = params.searchValue || '';
                         this.initToolbarConfig();
-                        this.filtersService.clearAllFilters();
+                        setTimeout(() => this.filtersService.clearAllFilters());
                     }
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
