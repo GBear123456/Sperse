@@ -802,6 +802,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (filtersToChange.length) {
                 this.filtersService.change(filtersToChange);
             } else if (searchValueChanged) {
+                this.filtersService.clearAllFilters();
                 this.refresh();
             }
         });
