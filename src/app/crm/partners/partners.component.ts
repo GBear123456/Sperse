@@ -772,6 +772,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     const searchValueChanged = this.searchValue !== params.searchValue;
                     if (searchValueChanged) {
                         this.searchValue = params.searchValue;
+                        setTimeout(() => this.filtersService.clearAllFilters());
                         this.initToolbarConfig();
                     }
                     if ('addNew' == params['action'])

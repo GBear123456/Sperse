@@ -77,7 +77,7 @@ export class DataGridService {
                     if (selectFields.indexOf(columnName) < 0) {
                         selectFields.push(columnName);
                     }
-                })
+                });
             }
         });
         return selectFields;

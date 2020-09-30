@@ -122,7 +122,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                 }, null)
             );
         } else {
-            filter.items.element.dataSource.forEach((item) => {
+            filter.items.element.dataSource && filter.items.element.dataSource.forEach((item) => {
                 this.clearItem(item);
             });
         }

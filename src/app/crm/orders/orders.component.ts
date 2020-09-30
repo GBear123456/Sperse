@@ -655,7 +655,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     this.initOrdersToolbarConfig();
                 else
                     this.initSubscriptionsToolbarConfig();
-                this.invalidate();
+                this.filtersService.clearAllFilters();
+                this.selectedContactGroup.next(undefined);
+                setTimeout(() => this.filtersService.change([this.contactGroupFilter]));
             }
             if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
                 this.searchClear = false;
