@@ -7170,6 +7170,70 @@ export class CommentServiceProxy {
 }
 
 @Injectable()
+export class CommissionServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createOrUpdateCommissions(body: AffiliateCommissionInput[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CreateOrUpdateCommissions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateCommissions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateCommissions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateCommissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class CommonLookupServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -17960,58 +18024,6 @@ export class InvoiceServiceProxy {
     }
 
     /**
-     * @body (optional) 
-     * @return Success
-     */
-    updateInvoiceCommissions(body: UpdateInvoiceCommissionInput[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/UpdateInvoiceCommissions";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateInvoiceCommissions(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateInvoiceCommissions(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateInvoiceCommissions(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
      * @contactId (optional) 
      * @return Success
      */
@@ -22407,6 +22419,58 @@ export class OrderServiceProxy {
     }
 
     protected processUpdateStagePoint(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateAffiliateContact(body: UpdateOrderAffiliateContactInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/UpdateAffiliateContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAffiliateContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAffiliateContact(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAffiliateContact(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -45328,6 +45392,90 @@ export interface ISetResolvedInput {
     isResolved: boolean;
 }
 
+export class AffiliateCommissionInput implements IAffiliateCommissionInput {
+    affiliateContactId!: number | undefined;
+    affiliateCode!: string | undefined;
+    earnedDate!: moment.Moment;
+    buyerInvoiceId!: number | undefined;
+    buyerInvoiceNumber!: string | undefined;
+    productId!: number;
+    productName!: string;
+    productAmount!: number;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string | undefined;
+    commissionValue!: number | undefined;
+    commissionRate!: number | undefined;
+    commissionAmount!: number;
+
+    constructor(data?: IAffiliateCommissionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.affiliateContactId = data["affiliateContactId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.earnedDate = data["earnedDate"] ? moment(data["earnedDate"].toString()) : <any>undefined;
+            this.buyerInvoiceId = data["buyerInvoiceId"];
+            this.buyerInvoiceNumber = data["buyerInvoiceNumber"];
+            this.productId = data["productId"];
+            this.productName = data["productName"];
+            this.productAmount = data["productAmount"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.commissionValue = data["commissionValue"];
+            this.commissionRate = data["commissionRate"];
+            this.commissionAmount = data["commissionAmount"];
+        }
+    }
+
+    static fromJS(data: any): AffiliateCommissionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AffiliateCommissionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["earnedDate"] = this.earnedDate ? this.earnedDate.toISOString() : <any>undefined;
+        data["buyerInvoiceId"] = this.buyerInvoiceId;
+        data["buyerInvoiceNumber"] = this.buyerInvoiceNumber;
+        data["productId"] = this.productId;
+        data["productName"] = this.productName;
+        data["productAmount"] = this.productAmount;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["commissionValue"] = this.commissionValue;
+        data["commissionRate"] = this.commissionRate;
+        data["commissionAmount"] = this.commissionAmount;
+        return data; 
+    }
+}
+
+export interface IAffiliateCommissionInput {
+    affiliateContactId: number | undefined;
+    affiliateCode: string | undefined;
+    earnedDate: moment.Moment;
+    buyerInvoiceId: number | undefined;
+    buyerInvoiceNumber: string | undefined;
+    productId: number;
+    productName: string;
+    productAmount: number;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string | undefined;
+    commissionValue: number | undefined;
+    commissionRate: number | undefined;
+    commissionAmount: number;
+}
+
 export class SubscribableEditionComboboxItemDto implements ISubscribableEditionComboboxItemDto {
     isFree!: boolean | undefined;
     packageName!: string | undefined;
@@ -46359,6 +46507,8 @@ export class ContactInfoDto implements IContactInfoDto {
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
+    affiliateContactId!: number | undefined;
+    affiliateContactThumbnail!: string | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -46401,6 +46551,8 @@ export class ContactInfoDto implements IContactInfoDto {
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
+            this.affiliateContactId = data["affiliateContactId"];
+            this.affiliateContactThumbnail = data["affiliateContactThumbnail"];
         }
     }
 
@@ -46443,6 +46595,8 @@ export class ContactInfoDto implements IContactInfoDto {
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
+        data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateContactThumbnail"] = this.affiliateContactThumbnail;
         return data; 
     }
 }
@@ -46470,6 +46624,8 @@ export interface IContactInfoDto {
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
+    affiliateContactId: number | undefined;
+    affiliateContactThumbnail: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -59318,130 +59474,6 @@ export interface IAddBankCardPaymentInput {
     bankCardInfo: BankCardInput | undefined;
 }
 
-export enum CommissionRateType {
-    Percentage = "Percentage", 
-}
-
-export class CommissionInfo implements ICommissionInfo {
-    productName!: string;
-    buyerEmailAddress!: string | undefined;
-    baseValue!: number | undefined;
-    rateType!: CommissionRateType | undefined;
-    rate!: number | undefined;
-    amount!: number;
-    sourceContactId!: number | undefined;
-    affiliateCode!: string;
-    affiliateEmailAddress!: string | undefined;
-
-    constructor(data?: ICommissionInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.productName = data["productName"];
-            this.buyerEmailAddress = data["buyerEmailAddress"];
-            this.baseValue = data["baseValue"];
-            this.rateType = data["rateType"];
-            this.rate = data["rate"];
-            this.amount = data["amount"];
-            this.sourceContactId = data["sourceContactId"];
-            this.affiliateCode = data["affiliateCode"];
-            this.affiliateEmailAddress = data["affiliateEmailAddress"];
-        }
-    }
-
-    static fromJS(data: any): CommissionInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new CommissionInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["productName"] = this.productName;
-        data["buyerEmailAddress"] = this.buyerEmailAddress;
-        data["baseValue"] = this.baseValue;
-        data["rateType"] = this.rateType;
-        data["rate"] = this.rate;
-        data["amount"] = this.amount;
-        data["sourceContactId"] = this.sourceContactId;
-        data["affiliateCode"] = this.affiliateCode;
-        data["affiliateEmailAddress"] = this.affiliateEmailAddress;
-        return data; 
-    }
-}
-
-export interface ICommissionInfo {
-    productName: string;
-    buyerEmailAddress: string | undefined;
-    baseValue: number | undefined;
-    rateType: CommissionRateType | undefined;
-    rate: number | undefined;
-    amount: number;
-    sourceContactId: number | undefined;
-    affiliateCode: string;
-    affiliateEmailAddress: string | undefined;
-}
-
-export class UpdateInvoiceCommissionInput implements IUpdateInvoiceCommissionInput {
-    invoiceId!: number | undefined;
-    invoiceNumber!: string | undefined;
-    gatewayName!: string;
-    gatewayTransactionId!: string;
-    commissionInfo!: CommissionInfo | undefined;
-
-    constructor(data?: IUpdateInvoiceCommissionInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.invoiceId = data["invoiceId"];
-            this.invoiceNumber = data["invoiceNumber"];
-            this.gatewayName = data["gatewayName"];
-            this.gatewayTransactionId = data["gatewayTransactionId"];
-            this.commissionInfo = data["commissionInfo"] ? CommissionInfo.fromJS(data["commissionInfo"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): UpdateInvoiceCommissionInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateInvoiceCommissionInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["invoiceId"] = this.invoiceId;
-        data["invoiceNumber"] = this.invoiceNumber;
-        data["gatewayName"] = this.gatewayName;
-        data["gatewayTransactionId"] = this.gatewayTransactionId;
-        data["commissionInfo"] = this.commissionInfo ? this.commissionInfo.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IUpdateInvoiceCommissionInput {
-    invoiceId: number | undefined;
-    invoiceNumber: string | undefined;
-    gatewayName: string;
-    gatewayTransactionId: string;
-    commissionInfo: CommissionInfo | undefined;
-}
-
 export class ProductInfo implements IProductInfo {
     description!: string | undefined;
     unitId!: InvoiceLineUnit | undefined;
@@ -65145,6 +65177,46 @@ export interface IUpdateOrderStagePointInput {
     orderId: number;
     pointId: number;
     isDone: boolean;
+}
+
+export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateContactInput {
+    orderId!: number;
+    affiliateContactId!: number | undefined;
+
+    constructor(data?: IUpdateOrderAffiliateContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderId = data["orderId"];
+            this.affiliateContactId = data["affiliateContactId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateOrderAffiliateContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrderAffiliateContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
+        data["affiliateContactId"] = this.affiliateContactId;
+        return data; 
+    }
+}
+
+export interface IUpdateOrderAffiliateContactInput {
+    orderId: number;
+    affiliateContactId: number | undefined;
 }
 
 export class ProcessOrderInfo implements IProcessOrderInfo {
