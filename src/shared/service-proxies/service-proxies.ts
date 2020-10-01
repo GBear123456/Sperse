@@ -7184,6 +7184,58 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    createOrUpdate(body: AffiliateCommissionInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CreateOrUpdate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     createOrUpdateCommissions(body: AffiliateCommissionInput[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Commission/CreateOrUpdateCommissions";
         url_ = url_.replace(/[?&]$/, "");
@@ -37830,6 +37882,7 @@ export enum TimeOfDay {
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
+    Night = "Night", 
 }
 
 export enum CreditScoreRating {
@@ -46508,7 +46561,7 @@ export class ContactInfoDto implements IContactInfoDto {
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
     affiliateContactName!: string | undefined;
-    affiliateContactThumbnail!: string | undefined;
+    affiliateContactPicturePublicId!: string | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -46552,7 +46605,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.affiliateContactName = data["affiliateContactName"];
-            this.affiliateContactThumbnail = data["affiliateContactThumbnail"];
+            this.affiliateContactPicturePublicId = data["affiliateContactPicturePublicId"];
         }
     }
 
@@ -46596,7 +46649,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["affiliateContactName"] = this.affiliateContactName;
-        data["affiliateContactThumbnail"] = this.affiliateContactThumbnail;
+        data["affiliateContactPicturePublicId"] = this.affiliateContactPicturePublicId;
         return data; 
     }
 }
@@ -46625,7 +46678,7 @@ export interface IContactInfoDto {
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
     affiliateContactName: string | undefined;
-    affiliateContactThumbnail: string | undefined;
+    affiliateContactPicturePublicId: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -56938,7 +56991,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
     phoneExt1!: string | undefined;
     phone2!: string | undefined;
     phoneExt2!: string | undefined;
-    preferredToD!: TimeOfDay | undefined;
     ssn!: string | undefined;
     bankCode!: string | undefined;
     email1!: string | undefined;
@@ -56946,6 +56998,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     email3!: string | undefined;
     email4!: string | undefined;
     email5!: string | undefined;
+    preferredToD!: TimeOfDay | undefined;
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
@@ -56992,7 +57045,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.phoneExt1 = data["phoneExt1"];
             this.phone2 = data["phone2"];
             this.phoneExt2 = data["phoneExt2"];
-            this.preferredToD = data["preferredToD"];
             this.ssn = data["ssn"];
             this.bankCode = data["bankCode"];
             this.email1 = data["email1"];
@@ -57000,6 +57052,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.email3 = data["email3"];
             this.email4 = data["email4"];
             this.email5 = data["email5"];
+            this.preferredToD = data["preferredToD"];
             this.drivingLicense = data["drivingLicense"];
             this.drivingLicenseState = data["drivingLicenseState"];
             this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
@@ -57050,7 +57103,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["phoneExt1"] = this.phoneExt1;
         data["phone2"] = this.phone2;
         data["phoneExt2"] = this.phoneExt2;
-        data["preferredToD"] = this.preferredToD;
         data["ssn"] = this.ssn;
         data["bankCode"] = this.bankCode;
         data["email1"] = this.email1;
@@ -57058,6 +57110,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["email3"] = this.email3;
         data["email4"] = this.email4;
         data["email5"] = this.email5;
+        data["preferredToD"] = this.preferredToD;
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
         data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
@@ -57101,7 +57154,6 @@ export interface IImportPersonalInput {
     phoneExt1: string | undefined;
     phone2: string | undefined;
     phoneExt2: string | undefined;
-    preferredToD: TimeOfDay | undefined;
     ssn: string | undefined;
     bankCode: string | undefined;
     email1: string | undefined;
@@ -57109,6 +57161,7 @@ export interface IImportPersonalInput {
     email3: string | undefined;
     email4: string | undefined;
     email5: string | undefined;
+    preferredToD: TimeOfDay | undefined;
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
@@ -69944,6 +69997,7 @@ export interface IBankAccountUsers {
 }
 
 export class ServiceProductLevelDto implements IServiceProductLevelDto {
+    id!: number | undefined;
     code!: string;
     name!: string;
     monthlyFee!: number | undefined;
@@ -69961,6 +70015,7 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.code = data["code"];
             this.name = data["name"];
             this.monthlyFee = data["monthlyFee"];
@@ -69978,6 +70033,7 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
         data["monthlyFee"] = this.monthlyFee;
@@ -69988,6 +70044,7 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 }
 
 export interface IServiceProductLevelDto {
+    id: number | undefined;
     code: string;
     name: string;
     monthlyFee: number | undefined;
