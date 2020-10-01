@@ -69,6 +69,31 @@
                                     </div>
                                 </div>
                             </ng-container>
+                            <div *ngIf="contactInfo?.affiliateContactName" class="field">
+                                <source-contact-list
+                                    [leadId]="leadInfo?.id"
+                                    [selectedKey]="contactInfo?.affiliateContactId"
+                                    [targetSelector]="'#affiliateContactLink'"
+                                    (onItemSelected)="onSourceContactChanged($event)">
+                                </source-contact-list>
+                                <label>{{ ls.l('Affiliate') }} {{ls.l('Contact')}}:</label>
+                                <div>
+                                    <div class="thumbnail">
+                                        <img [src]="getThumbnailSrc(contactInfo?.affiliateContactPicturePublicId)"/>
+                                    </div>
+                                    <div class="field-info">
+                                        <a *ngIf="contactInfo?.affiliateContactName as affiliateContactName" (click)="openContactDetails(contactInfo?.affiliateContactId)">{{affiliateContactName}}
+                                            <i id="affiliateContactLink" class="edit fa fa-pencil"
+                                                (click)="sourceComponent.toggle()">
+                                            </i>
+                                            <i class="save-to-clipboard"
+                                                (click)="saveToClipboard($event, affiliateContactName)">
+                                            </i>
+                                        </a>
+                                        <hr/>
+                                    </div>
+                                </div>
+                            </div>
                             <div *ngIf="contactInfo?.assignedUserName as assignedUserName" class="field">
                                 <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                                 <div>
