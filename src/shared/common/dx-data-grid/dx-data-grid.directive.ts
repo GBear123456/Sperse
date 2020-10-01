@@ -52,7 +52,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 this.checkInitDateCellColumn(event.component);
             }),
             this.component.onOptionChanged.subscribe(event => {
-                if (event.name == 'dataSource')
+                if (event.name == 'dataSource' || event.name == 'summary')
                     setTimeout(() => this.checkInitDateCellColumn(event.component));
             }),
             this.component.onCellHoverChanged.subscribe(event => {
