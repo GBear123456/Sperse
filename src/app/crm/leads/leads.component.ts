@@ -812,7 +812,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (filtersToChange.length) {
                 this.filtersService.change(filtersToChange);
             } else if (searchValueChanged) {
-                this.filtersService.clearAllFilters();
+                setTimeout(() => this.filtersService.clearAllFilters());
                 this.refresh();
             }
         });
@@ -839,7 +839,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         );
-        queryDataLayoutType$.subscribe((dataLayoutType) => {
+        queryDataLayoutType$.subscribe((dataLayoutType: DataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
         queryDataLayoutType$.pipe(

@@ -289,7 +289,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: 'Fee',
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.getSubscriptionsFilter('Subscription'),
+        this.getSubscriptionsFilter('Subscription', true),
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -670,7 +670,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     this.initSubscriptionsToolbarConfig();
                 this.filtersService.clearAllFilters();
                 this.selectedContactGroup.next(undefined);
-                this.filtersService.change([this.contactGroupFilter]);
+                setTimeout(() => this.filtersService.change([this.contactGroupFilter]));
             }
             if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
                 this.searchClear = false;
@@ -730,18 +730,29 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    private getSubscriptionsFilter(caption: string) {
+    private getSubscriptionsFilter(caption: string, oDataFilterMethod = false) {
         return new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: caption,
-            field: 'ServiceTypeId',
+            field: 'ServiceProductId',
+            filterMethod: oDataFilterMethod ? (filter: FilterModel) => {
+                return {or: (filter.items.element['selectedItems'] || []).map(item => {
+                    if (item.parentId)
+                        return {ServiceProductId: item.parentId, ServiceLevelId: item.id};
+                    else
+                        return {ServiceProductId: item.id};
+                })};
+            } : undefined,
             items: {
                 element: new FilterCheckBoxesModel(
                     {
                         dataSource$: this.store$.pipe(select(SubscriptionsStoreSelectors.getSubscriptions)),
                         dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                        recursive: true,
                         nameField: 'name',
-                        keyExpr: 'code'
+                        keyExpr: 'id',
+                        dataStructure: 'tree',
+                        itemsExpr: 'serviceProductLevels'
                     })
             }
         });
@@ -1269,7 +1280,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filters,
             this.getCheckCustomFilter.bind(this),
             null,
-            this.getSubscriptionsParams()
+            this.selectedOrderType.value === OrderType.Order ? this.getSubscriptionsParams() : undefined
         );
     }
 
@@ -1281,11 +1292,27 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        let value = this.subscriptionStatusFilter.items.element.value;
-        return value && value.map(item => ({
-            name: 'serviceTypeIds',
-            value: item
-        }));
+        let productIndex, levelIndex, productId = null, result = [],
+            selectedItems = this.subscriptionStatusFilter.items.element['selectedItems'];
+        selectedItems && selectedItems.forEach(item => {
+            if (productId != item.parentId) {
+                levelIndex = 0;
+                isNaN(productIndex) ? productIndex = 0 : productIndex++;
+                productId = item.parentId || item.id;
+                result.push({
+                    name: 'subscriptionFilters[' + productIndex + '].ProductId',
+                    value: productId
+                });
+            }
+            if (item.parentId) {
+                result.push({
+                    name: 'subscriptionFilters[' + productIndex + '].LevelIds[' + levelIndex + ']',
+                    value: item.id
+                });
+                levelIndex++;
+            }
+        });
+        return result;
     }
 
     searchValueChange(e: object) {

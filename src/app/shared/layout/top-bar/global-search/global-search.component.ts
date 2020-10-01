@@ -55,12 +55,12 @@ export class GlobalSearchComponent implements OnInit {
             return combineLatest(
                 this.getClientsGroup(search),
                 this.getPartnersGroup(search),
-                this.getLeadGroup(search, this.ls.l('ClientLeads'), ContactGroup.Client),
-                this.getLeadGroup(search, this.ls.l('PartnerLeads'), ContactGroup.Partner),
-                this.getLeadGroup(search, this.ls.l('Employees'), ContactGroup.UserProfile),
-                this.getLeadGroup(search, this.ls.l('Investors'), ContactGroup.Investor),
-                this.getLeadGroup(search, this.ls.l('Vendors'), ContactGroup.Vendor),
-                this.getLeadGroup(search, this.ls.l('Others'), ContactGroup.Other),
+                this.getLeadGroup(search, this.ls.l('ClientLeads'), 'Client'),
+                this.getLeadGroup(search, this.ls.l('PartnerLeads'), 'Partner'),
+                this.getLeadGroup(search, this.ls.l('Employees'), 'UserProfile'),
+                this.getLeadGroup(search, this.ls.l('Investors'), 'Investor'),
+                this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
+                this.getLeadGroup(search, this.ls.l('Others'), 'Other'),
                 this.getOrdersGroup(search),
                 this.getSubscriptionsGroup(search)
             ).pipe(
@@ -147,7 +147,7 @@ export class GlobalSearchComponent implements OnInit {
         );
     }
     
-    private getLeadGroup(search: string, name: string, contactGroupId: ContactGroup): Observable<GlobalSearchGroup> {
+    private getLeadGroup(search: string, name: string, contactGroup: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Lead'),
             name,
@@ -162,7 +162,8 @@ export class GlobalSearchComponent implements OnInit {
                 LeadFields.SourceChannelCode,
                 LeadFields.CustomerId
             ],
-            { contactGroupId: contactGroupId }
+            { contactGroupId: ContactGroup[contactGroup] },
+            { contactGroup: contactGroup }
         );
     }
     
