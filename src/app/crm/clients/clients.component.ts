@@ -336,10 +336,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     button: {
                         text: '+' + this.l('Add'),
-                        action: () => {
+                        action: (event) => {
+                            event.stopPropagation();
                             this.showClientDetails(this.actionEvent, 'notes', {
                                 addNew: true
                             });
+                            this.actionEvent = undefined;
                         }
                     }
                 },
@@ -842,7 +844,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (searchValueChanged) {
                         this.searchValue = params.searchValue || '';
                         this.initToolbarConfig();
-                        this.filtersService.clearAllFilters();
+                        setTimeout(() => this.filtersService.clearAllFilters());
                     }
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());

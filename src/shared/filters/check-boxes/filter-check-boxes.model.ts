@@ -5,9 +5,13 @@ import remove from 'lodash/remove';
 
 export class FilterCheckBoxesModel extends FilterItemModel {
     keyExpr: any;
-    parentExpr?: any = 'parentId';
+    itemsExpr?: string;
+    parentExpr = 'parentId';
     nameField: string;
+    dataStructure?: string;
+    recursive?: boolean;
     templateFunc?: (itemData) => string;
+    selectedItems: any[];
 
     public constructor(init?: Partial<FilterCheckBoxesModel>) {
         super(init, true);
@@ -16,14 +20,27 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         let values = this.value && this.value.sort ? this.value.sort() : [ this.value ];
-        values.forEach(x => {
-            let data = this.dataSource && this.dataSource.find((val: any) => val.id == x);
+        values.forEach(id => {
+            let parentId, data = this.dataSource && (this.itemsExpr ?
+                this.dataSource.reduce((result, item) => {
+                    if (result && result[this.keyExpr] === id)
+                        return result;
+                    else if (item[this.keyExpr] === id)
+                        return item;
+                    else if (item[this.itemsExpr]) {
+                        let child = item[this.itemsExpr].find(el => el[this.keyExpr] == id);
+                        if (child) parentId = item[this.keyExpr];
+                        return child;
+                    }
+                }, null) : this.dataSource.find((val: any) => val[this.keyExpr] == id)
+            );
+
             data && result.push(<DisplayElement>{
                 item: this,
                 displayValue: data.name || data.displayName,
-                args: x,
-                parentCode: data[this.parentExpr],
-                sortField: x
+                args: id,
+                parentCode: this.itemsExpr ? parentId : data[this.parentExpr],
+                sortField: id
             });
         });
 
@@ -37,7 +54,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
             if (x.parentCode) {
                 let parent = result.find(y => y.args == x.parentCode);
                 if (!parent) {
-                    let parentName = this.dataSource.find((val: any) => val.id == x.parentCode).name;
+                    let parentName = this.dataSource.find((val: any) => val[this.keyExpr] == x.parentCode).name;
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
                 result.push(x);
