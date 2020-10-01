@@ -1,4 +1,4 @@
-﻿/** Core imports */
+/** Core imports */
 import {
     ChangeDetectionStrategy,
     Component,
@@ -42,6 +42,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() icon: string;
     @Input() iconSrc: string;
     @Input() text: string;
+    @Input() showCompactView = true;
     @Input() buttons: HeadlineButton[];
     @Input() showReloadButton = false;
     @Input() showToggleToolbarButton = false;
@@ -77,7 +78,6 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         map((collapsed: boolean) => this.ls.l((collapsed ? 'Hide' : 'Show') + 'FilterSidebar'))
     );
 
-    showCompactView = false;
     fullScreenButtonText$ = this.fullScreenService.isFullScreenMode$.pipe(
         map((isFullScreenMode: boolean) => {
             return isFullScreenMode ? this.ls.l('CloseFullScreenMode') : this.ls.l('OpenPageInFullScreen');

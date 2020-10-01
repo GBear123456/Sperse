@@ -12,6 +12,7 @@ import { on } from 'devextreme/events';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Directive({
     selector: 'dx-data-grid',
@@ -45,6 +46,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     ngOnInit() {
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
+                setTimeout(() =>
+                    DataGridService.toggleCompactRowsHeight(this.component, true)
+                );
                 this.checkInitDateCellColumn(event.component);
             }),
             this.component.onOptionChanged.subscribe(event => {

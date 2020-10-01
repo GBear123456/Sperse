@@ -42,6 +42,10 @@ export class DataGridService {
         }
     }
 
+    static isCompactView(dataGrid) {
+        return dataGrid.instance.element().classList.contains('grid-compact-view');
+    }
+
     static getGridOption(dataGrid, option: string) {
         return dataGrid && dataGrid.instance && dataGrid.instance.option(option);
     }

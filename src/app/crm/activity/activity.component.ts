@@ -133,11 +133,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     constructor(
         injector: Injector,
         private activityProxy: ActivityServiceProxy,
-        private pipelineService: PipelineService,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
         private permissionCheckerService: PermissionCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
+        public  pipelineService: PipelineService,
         public appService: AppService,
         public dialog: MatDialog
     ) {

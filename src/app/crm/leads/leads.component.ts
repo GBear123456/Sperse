@@ -324,7 +324,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
+    private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    showCompactView$: Observable<Boolean> = combineLatest(
+        this.dataLayoutType$,
+        this.pipelineService.compactView$,
+        this.gridCompactView.asObservable(),
+    ).pipe(
+        map(([layoutType, pipelineCompactView, gridCompactView]: [DataLayoutType, Boolean, Boolean]) => {
+            return layoutType == DataLayoutType.Pipeline ? pipelineCompactView : gridCompactView;
+        })
+    );
     hidePipeline$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.Pipeline;
     }));
@@ -1603,9 +1613,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleCompactView() {
-        this.pipelineService.toggleContactView();
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
+        if (this.showPipeline)
+            this.pipelineService.toggleContactView();
+        else {
+            DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+            this.gridCompactView.next(DataGridService.isCompactView(this.dataGrid));
+        }
     }
 
     searchValueChange(e: object) {

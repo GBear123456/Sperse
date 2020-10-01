@@ -1,12 +1,13 @@
 <div>
     <app-headline icon="briefcase"
                   [buttons]="headlineButtons"
+                  [showCompactView]="showCompactView$ | async"
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
                   [showToggleFullScreenButton]="true"
-                  (onToggleCompactView)="toggleContactView()"
+                  (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
                   (onToggleColumnSelector)="toggleColumnChooser()">

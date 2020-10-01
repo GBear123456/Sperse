@@ -103,12 +103,25 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private rootComponent: any;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
+    private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.showOrdersPipeline ? DataLayoutType.Pipeline : DataLayoutType.DataGrid
+    );
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     private filters: FilterModel[];
     private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
+    showCompactView$: Observable<Boolean> = combineLatest(
+        this.dataLayoutType.asObservable(),
+        this.pipelineService.compactView$,
+        this.gridCompactView.asObservable(),
+    ).pipe(
+        map(([layoutType, pipelineCompactView, gridCompactView]: [DataLayoutType, Boolean, Boolean]) => {
+            return layoutType == DataLayoutType.Pipeline ? pipelineCompactView : gridCompactView;
+        })
+    );
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
     contactGroupDataSource = Object.keys(ContactGroup).filter(
@@ -1176,7 +1189,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     toggleOrdersDataLayout(dataLayoutType: DataLayoutType) {
         this.showOrdersPipeline = dataLayoutType == DataLayoutType.Pipeline;
-        this.ordersDataLayoutType = dataLayoutType;
+        this.dataLayoutType.next(this.ordersDataLayoutType = dataLayoutType);
         this.initDataSource();
         this.initOrdersToolbarConfig();
         if (this.showOrdersPipeline)
@@ -1228,10 +1241,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.stagesComponent.toggle();
     }
 
-    toggleContactView() {
-        this.pipelineService.toggleContactView();
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
+    toggleCompactView() {
+        if (this.showOrdersPipeline)
+            this.pipelineService.toggleContactView();
+        else {
+            DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+            this.gridCompactView.next(DataGridService.isCompactView(this.dataGrid));
+        }
     }
 
     processFilterInternal() {
