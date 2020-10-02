@@ -8942,6 +8942,58 @@ export class ContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updateAffiliateRate(body: UpdateContactAffiliateRateInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateAffiliateRate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAffiliateRate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAffiliateRate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAffiliateRate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     updateXref(body: UpdateContactXrefInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateXref";
         url_ = url_.replace(/[?&]$/, "");
@@ -46723,6 +46775,7 @@ export class ContactInfoDto implements IContactInfoDto {
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
+    affiliateRate!: number | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -46765,6 +46818,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
+            this.affiliateRate = data["affiliateRate"];
         }
     }
 
@@ -46807,6 +46861,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
+        data["affiliateRate"] = this.affiliateRate;
         return data; 
     }
 }
@@ -46834,6 +46889,7 @@ export interface IContactInfoDto {
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
+    affiliateRate: number | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -49252,6 +49308,46 @@ export class UpdateContactAffiliateCodeInput implements IUpdateContactAffiliateC
 export interface IUpdateContactAffiliateCodeInput {
     contactId: number;
     affiliateCode: string | undefined;
+}
+
+export class UpdateContactAffiliateRateInput implements IUpdateContactAffiliateRateInput {
+    contactId!: number;
+    affiliateRate!: number | undefined;
+
+    constructor(data?: IUpdateContactAffiliateRateInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.affiliateRate = data["affiliateRate"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactAffiliateRateInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactAffiliateRateInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["affiliateRate"] = this.affiliateRate;
+        return data; 
+    }
+}
+
+export interface IUpdateContactAffiliateRateInput {
+    contactId: number;
+    affiliateRate: number | undefined;
 }
 
 export class UpdateContactXrefInput implements IUpdateContactXrefInput {
@@ -59459,6 +59555,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     defaultNote!: string | undefined;
     currency!: Currency | undefined;
     showShippingAddress!: boolean | undefined;
+    defaultAffiliateRate!: number | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -59479,6 +59576,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.defaultNote = data["defaultNote"];
             this.currency = data["currency"];
             this.showShippingAddress = data["showShippingAddress"];
+            this.defaultAffiliateRate = data["defaultAffiliateRate"];
         }
     }
 
@@ -59499,6 +59597,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["defaultNote"] = this.defaultNote;
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
+        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
         return data; 
     }
 }
@@ -59512,6 +59611,7 @@ export interface IInvoiceSettings {
     defaultNote: string | undefined;
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
+    defaultAffiliateRate: number | undefined;
 }
 
 export class BankCardInput implements IBankCardInput {
