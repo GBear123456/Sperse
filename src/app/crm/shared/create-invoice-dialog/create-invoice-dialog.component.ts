@@ -403,7 +403,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     unitId: row['unitId'] as InvoiceLineUnit,
                     productCode: '',
                     description: row['description'],
-                    sortOrder: index
+                    sortOrder: index,
+                    commissionableAmount: 0
                 });
             });
             subscription$ = this.invoiceProxy.update(data);
@@ -425,7 +426,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     unitId: row['unitId'] as InvoiceLineUnit,
                     productCode: '',
                     description: row['description'],
-                    sortOrder: index
+                    sortOrder: index,
+                    commissionableAmount: 0
                 });
             });
             subscription$ = this.invoiceProxy.create(data);
