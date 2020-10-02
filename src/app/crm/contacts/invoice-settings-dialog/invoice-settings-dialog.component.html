@@ -22,6 +22,14 @@
                 <dx-text-area [placeholder]="ls.l('Invoice_DefaultNote')"
                               [(value)]="settings.defaultNote">
                 </dx-text-area>
+                <dx-number-box 
+                    [min]="0"
+                    [max]="99"
+                    [mode]="number"
+                    [placeholder]="ls.l('AffiliateRate')"
+                    [(value)]="settings.defaultAffiliateRate"
+                    [showSpinButtons]="true">
+                </dx-number-box>
             </div>
             <div class="right-side">
                 <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>

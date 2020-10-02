@@ -9,12 +9,13 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
+import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { VerificationChecklistItemType, VerificationChecklistItem,
@@ -24,7 +25,7 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput
+    GetSourceContactInfoOutput, InvoiceSettings, UpdateContactAffiliateRateInput
 } from '@shared/service-proxies/service-proxies';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
@@ -99,6 +100,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
     checklistSources = [];
+    manageAllowed = false;
+    affiliateRate;
 
     constructor(
         private route: ActivatedRoute,
@@ -117,6 +120,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        public invoicesService: InvoicesService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -135,6 +139,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
                 this.contactInfo = contactInfo;
+                this.affiliateRate = this.contactInfo.affiliateRate * 100;
+                this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
                 this.contactProxy.getContactLastModificationInfo(
@@ -142,6 +148,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
                     this.lastModificationInfo = lastModificationInfo;
                 });
+                if (!this.affiliateRate)
+                    this.invoicesService.settings$.pipe(
+                        filter(Boolean), first()
+                    ).subscribe((res: InvoiceSettings) => {
+                        this.affiliateRate = res.defaultAffiliateRate * 100;
+                    });
             }
         }, this.ident);
 
@@ -163,6 +175,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             let key = this.cacheHelper.getCacheKey(
                 abp.session.userId.toString(), this.ident
             );
+
             if (this.cacheService.exists(key))
                 this.overviewPanelSetting = this.cacheService.get(key);
         }
@@ -199,6 +212,15 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     right: '0px'
                 });
             }, 100);
+        });
+    }
+
+    saveAffiliateRate() {
+        this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
+            contactId: this.contactInfo.id,
+            affiliateRate: this.affiliateRate / 100
+        })).subscribe(() => {
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }
 
@@ -571,7 +593,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         { queryParams: this.route.snapshot.queryParams }
                     ));
                 } else {
-                    this.notifyService.error(this.ls.l('NoPermissionError'))
+                    this.notifyService.error(this.ls.l('NoPermissionError'));
                 }
             });
         }

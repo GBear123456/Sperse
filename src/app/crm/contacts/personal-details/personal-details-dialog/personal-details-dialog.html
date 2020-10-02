@@ -19,11 +19,32 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
                                               [validationRules]="affiliateValidationRules"
-                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
+                                              [isReadOnlyField]="!manageAllowed"
                                               (valueChanged)="updateAffiliateCode($event)"
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
                             </div>
+                            <div class="field">
+                                <label>{{ ls.l('AffiliateRate') }}:</label>
+                                <dx-number-box 
+                                    [min]="0"
+                                    [max]="99"
+                                    width="80px"
+                                    height="36px"
+                                    [mode]="number"
+                                    [(value)]="affiliateRate"
+                                    [disabled]="!manageAllowed"
+                                    [showSpinButtons]="true">
+                                </dx-number-box>
+                                <dx-button
+                                    icon="check" 
+                                    width="106px"
+                                    height="36px"
+                                    [text]="ls.l('Save')"
+                                    [disabled]="!manageAllowed"
+                                    (onClick)="saveAffiliateRate($event)">
+                                </dx-button>
+                            </div>    
                         </mat-expansion-panel>
                         <mat-expansion-panel class="source-info" [expanded]="true">
                             <mat-expansion-panel-header>
@@ -158,7 +179,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Xref'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Xref').toLowerCase())"
                                               [validationRules]="xrefValidationRules"
-                                              [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
+                                              [isReadOnlyField]="!manageAllowed"
                                               (valueChanged)="updateXref($event)"
                                               (itemDeleted)="deleteItem(ls.l('Xref'))">
                                 </inplace-edit>
@@ -176,7 +197,7 @@
                                                   [isDeleteEnabled]="true"
                                                   [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Contact_CustomField' + n))"
                                                   [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Contact_CustomField' + n))"
-                                                  [isReadOnlyField]="!permissionChecker.checkCGPermission(contactInfo?.groupId)"
+                                                  [isReadOnlyField]="!manageAllowed"
                                                   (valueChanged)="updateCustomField($event, 'customField' + n)"
                                                   (itemDeleted)="updateCustomField(null, 'customField' + n)">
                                     </inplace-edit>

@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
-import { finalize, first } from 'rxjs/operators';
+import { filter, finalize, first } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { NotifyService } from '@abp/notify/notify.service';
 
@@ -52,7 +52,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderCompanyPhone,
         EmailTags.SenderCompanyEmail,
         EmailTags.SenderCompanyWebSite,
-        EmailTags.SenderCalendly, 
+        EmailTags.SenderCalendly,
         EmailTags.SenderAffiliateCode
     ];
 
@@ -66,6 +66,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        this.invoicesService.invalidateSettings();
         data.templateType = EmailTemplateType.Invoice;
         data.title = ls.l('Invoice Settings');
         data.saveTitle = ls.l('Save');
@@ -73,9 +74,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.modalDialog.startLoading();
-        this.invoicesService.settings$.pipe(first(),
+        this.invoicesService.settings$.pipe(filter(Boolean), first(),
             finalize(() => this.modalDialog.finishLoading())
-        ).subscribe(res => {
+        ).subscribe((res: InvoiceSettings) => {
             this.settings = new InvoiceSettings(res);
             this.data.templateId = res.defaultTemplateId;
             this.changeDetectorRef.markForCheck();
@@ -85,6 +86,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     save() {
         this.modalDialog.startLoading();
+        this.settings.defaultAffiliateRate = 
+            this.settings.defaultAffiliateRate / 100;
         this.settings.defaultTemplateId = this.data.templateId;
         this.invoiceProxy.updateSettings(this.settings).pipe(
             finalize(() => this.modalDialog.finishLoading())
