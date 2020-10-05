@@ -1,5 +1,8 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+/** Application imports */
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { LeadsComponent } from './leads/leads.component';
@@ -10,6 +13,7 @@ import { ImportListComponent } from './import-leads/import-list/import-list.comp
 import { ActivityComponent } from './activity/activity.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
+import { CommisionHistoryComponent } from './commision-history/commision-history.component';
 
 @NgModule({
     imports: [
@@ -26,7 +30,8 @@ import { ReportsComponent } from '@app/crm/reports/reports.component';
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
-                    { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } }
+                    { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
+                    { path: 'commition-history', component: CommisionHistoryComponent, data: { permission: AppPermissions.CRM, reuse: true } }
                 ]
             }
         ])

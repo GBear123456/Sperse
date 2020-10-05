@@ -1,0 +1,19 @@
+﻿:host {
+    position: relative;
+    height: 100%;
+    ::ng-deep dx-data-grid {
+        .dx-datagrid-rowsview {
+            .dx-datagrid-focus-overlay.dx-pointer-events-target {
+                display: none;
+            }
+            .dx-column-lines {
+                cursor: pointer;
+                & > td {
+                    span {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}

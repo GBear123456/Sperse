@@ -74,6 +74,12 @@ export class LeftMenuComponent implements OnInit {
                 component: '/dashboard',
                 visible: !this.showIntroductionTour,
                 iconSrc: './assets/common/icons/statistics.svg'
+            },
+            {
+                caption: this.ls.l('CRMDashboardMenu_CommisionHistory'),
+                component: '/commition-history',
+                visible: this.appSessionService.tenant && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode,
+                iconSrc: './assets/common/icons/dollar.svg'
             }
         ];
     }

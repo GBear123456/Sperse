@@ -1,0 +1,322 @@
+<div [@routerTransition]>
+    <app-headline icon="people"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="true"
+                  [showToggleToolbarButton]="true"
+                  [showToggleFullScreenButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleColumnSelectorButton]="true"
+                  (onToggleToolbar)="repaintDataGrid()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="refresh()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+        <types-dropdown [items]="viewTypes"
+                        [totalCount]="totalRowCount > 0 ? totalRowCount : undefined"
+                        [value]="selectedViewType"
+                        (onValueChanged)="onViewTypeChanged($event)">
+        </types-dropdown>
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="main-wrapper">
+        <action-menu [items]="actionMenuGroups"
+                [visible]="!!actionEvent"
+                [grouped]="true"
+                class="grouped-action-menu"
+                width="300px"
+                target=".dx-state-hover .dx-link.dx-link-edit"
+                (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
+        <div class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                <div>                    
+                    <dx-data-grid #commisionDataGrid
+                                  class="main-component-view limitedPagerTotal"
+                                  accesskey="narrowHeaderPanel"
+                                  [visible]="selectedViewType == COMMISION_VIEW"
+                                  [renderAsync]="true"
+                                  [dataSource]="dataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [cacheEnabled]="false"
+                                  [allowColumnResizing]="true"
+                                  [loadPanel]="{ enabled: false }"
+                                  [hoverStateEnabled]="true"
+                                  [columnChooser]="{height: rowsViewHeight}"
+                                  [pager]="defaultGridPagerConfig"
+                                  [twoWayBindingEnabled]="false"
+                                  (onContentReady)="onContentReady($event)"
+                                  (onCellClick)="onCellClick($event)"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
+                                  (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
+                        </dxo-selection>
+                        <dxo-editing mode="popup"
+                            [texts]="{ editRow: '' }"
+                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                            [allowUpdating]="true">
+                        </dxo-editing>
+                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxi-column cssClass="stars"
+                                    [width]="40"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false">
+                        </dxi-column>
+                        <dxi-column dataField="Id"
+                                    [caption]="l('Id')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false"
+                                    sortOrder="desc"
+                                    [sortIndex]="0">
+                        </dxi-column>
+                        <dxi-column dataField="ResellerContactId"
+                                    [caption]="l('ResellerContactId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionId"
+                                    [caption]="l('TransactionId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="BuyerContactId"
+                                    [caption]="l('BuyerContactId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="OrderNumber"
+                                    [caption]="l('OrderNumber')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="OrderDate" 
+                                    [caption]="l('OrderDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="InvoiceDate" 
+                                    [caption]="l('InvoiceDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionDate" 
+                                    [caption]="l('TransactionDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="EarnedDate" 
+                                    [caption]="l('EarnedDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="ProductAmount" 
+                                    [caption]="l('ProductAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionAmount" 
+                                    [caption]="l('CommissionAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionRate" 
+                                    [caption]="l('Rate')"
+                                    dataType="number"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionValue" 
+                                    [caption]="l('CommissionValue')"
+                                    dataType="number"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="Status" 
+                                    [caption]="l('Status')"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="InvoiceStatus" 
+                                    [caption]="l('InvoiceStatus')"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="BuyerName"
+                                    [caption]="l('BuyerName')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="BuyerEmailAddress"
+                                    [caption]="l('BuyerEmailAddress')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="BuyerAffiliateCode"
+                                    [caption]="l('BuyerAffiliateCode')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ResellerName"
+                                    [caption]="l('ResellerName')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ResellerEmailAddress"
+                                    [caption]="l('ResellerEmailAddress')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ResellerAffiliateCode"
+                                    [caption]="l('ResellerAffiliateCode')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionAuthCode"
+                                    [caption]="l('TransactionAuthCode')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionGatewayName"
+                                    [caption]="l('TransactionGatewayName')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ProductName"
+                                    [caption]="l('ProductName')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="ProductCode"
+                                    [caption]="l('ProductCode')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | date: formatting.dateTime : userTimezone }}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
+                            {{cellData.value | currency: currency}}
+                        </div>
+
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-summary>
+                            <dxi-group-item [column]="'Id'"
+                                            summaryType="count"
+                                            [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
+                            </dxi-group-item>
+                        </dxo-summary>
+                    </dx-data-grid>
+                </div>
+                <div>
+                    <dx-data-grid #ledgerDataGrid
+                                  class="main-component-view limitedPagerTotal"
+                                  accesskey="narrowHeaderPanel"
+                                  [visible]="selectedViewType == LEDGER_VIEW"
+                                  [renderAsync]="true"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [cacheEnabled]="false"
+                                  [allowColumnResizing]="true"
+                                  [loadPanel]="{ enabled: false }"
+                                  [hoverStateEnabled]="true"
+                                  [columnChooser]="{height: rowsViewHeight}"
+                                  [pager]="defaultGridPagerConfig"
+                                  [twoWayBindingEnabled]="false"
+                                  (onContentReady)="onContentReady($event)"
+                                  (onCellClick)="onCellClick($event)"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
+                                  (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
+                        </dxo-selection>
+                        <dxo-editing mode="popup"
+                            [texts]="{ editRow: '' }"
+                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                            [allowUpdating]="true">
+                        </dxo-editing>
+                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxi-column cssClass="stars"
+                                    [width]="40"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false">
+                        </dxi-column>
+                        <dxi-column dataField="Id"
+                                    [caption]="l('Id')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false"
+                                    sortOrder="desc"
+                                    [sortIndex]="0">
+                        </dxi-column>
+                        <dxi-column dataField="ContactId"
+                                    [caption]="l('ResellerContactId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column dataField="ContactName"
+                                    [caption]="l('Customer.Name')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="EmailAddress"
+                                    [caption]="l('EmailAddress')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="AffiliateCode"
+                                    [caption]="l('AffiliateCode')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionLedgerEntryType"
+                                    [caption]="l('EntryType')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionLedgerEntryStatus"
+                                    [caption]="l('EntryStatus')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="StartDate" 
+                                    [caption]="l('StartDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="EndDate" 
+                                    [caption]="l('EndDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="EntryDate" 
+                                    [caption]="l('EntryDate')" 
+                                    cellTemplate="dateCell" 
+                                    cssClass="tabular">
+                        </dxi-column>
+                        <dxi-column dataField="TotalAmount" 
+                                    [caption]="l('TotalAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | date: formatting.dateTime : userTimezone }}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
+                            {{cellData.value | currency: currency}}
+                        </div>
+
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-summary>
+                            <dxi-group-item [column]="'Id'"
+                                            summaryType="count"
+                                            [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
+                            </dxi-group-item>
+                        </dxo-summary>
+                    </dx-data-grid>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>
