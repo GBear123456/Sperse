@@ -31,7 +31,7 @@
                                     [max]="99"
                                     width="80px"
                                     height="36px"
-                                    [mode]="number"
+                                    mode="number"
                                     [(value)]="affiliateRate"
                                     [disabled]="!manageAllowed"
                                     [showSpinButtons]="true">
@@ -42,7 +42,7 @@
                                     height="36px"
                                     [text]="ls.l('Save')"
                                     [disabled]="!manageAllowed"
-                                    (onClick)="saveAffiliateRate($event)">
+                                    (onClick)="saveAffiliateRate()">
                                 </dx-button>
                             </div>    
                         </mat-expansion-panel>
