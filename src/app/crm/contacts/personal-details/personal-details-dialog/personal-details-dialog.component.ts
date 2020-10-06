@@ -101,6 +101,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistLeadId: number;
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
+    refreshSourceContactInfo: BehaviorSubject<any> = new BehaviorSubject<any>();
     checklistSources = [];
     manageAllowed = false;
     defaultAffiliateRate;
@@ -149,8 +150,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
                 this.contactInfo = contactInfo;
-                this.affiliateRateInitil = this.affiliateRate = 
-                    this.contactInfo.affiliateRate == null ? undefined 
+                this.affiliateRateInitil = this.affiliateRate =
+                    this.contactInfo.affiliateRate == null ? undefined
                         : this.contactInfo.affiliateRate * 100;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
@@ -202,10 +203,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
                 distinctUntilChanged()
             ),
-            this.contactsService.contactId$.pipe(distinctUntilChanged())
+            this.contactsService.contactId$.pipe(distinctUntilChanged()),
+            this.refreshSourceContactInfo.asObservable()
         ).pipe(
-            switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
-        ));
+            switchMap(([contactGroupId, contactId, ]: [string, number, null]) =>
+                this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
+            )
+        );
     }
 
     ngAfterViewInit() {
@@ -613,6 +617,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 affiliateContactId: contact.id
             })
         ).subscribe(() => {
+            this.refreshSourceContactInfo.next();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
         this.sourceComponent.toggle();

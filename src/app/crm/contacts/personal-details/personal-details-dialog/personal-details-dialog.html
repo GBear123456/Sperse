@@ -54,6 +54,12 @@
                             </mat-expansion-panel-header>
                             <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
                                 <div *ngIf="sourceContactInfo.sourceContactLevel1 as sourceContactLevel1" class="field">
+                                    <source-contact-list
+                                        [leadId]="leadInfo?.id"
+                                        [selectedKey]="sourceContactLevel1?.id"
+                                        [targetSelector]="'#affiliateContactLink'"
+                                        (onItemSelected)="onSourceContactChanged($event)">
+                                    </source-contact-list>
                                     <label>{{ ls.l('PersonalSettings.Contact1') }}:</label>
                                     <div>
                                         <div class="thumbnail">
@@ -61,6 +67,9 @@
                                         </div>
                                         <div class="field-info">
                                             <a *ngIf="sourceContactLevel1.name" (click)="openContactDetails(sourceContactLevel1.id)">{{ sourceContactLevel1.name }}
+                                                <i id="affiliateContactLink" class="edit fa fa-pencil"
+                                                    (click)="$event.stopPropagation();sourceComponent.toggle();">
+                                                </i>
                                                 <i class="save-to-clipboard"
                                                    (click)="saveToClipboard($event, sourceContactLevel1.name)">
                                                 </i>
@@ -92,31 +101,6 @@
                                     </div>
                                 </div>
                             </ng-container>
-                            <div *ngIf="contactInfo?.affiliateContactName" class="field">
-                                <source-contact-list
-                                    [leadId]="leadInfo?.id"
-                                    [selectedKey]="contactInfo?.affiliateContactId"
-                                    [targetSelector]="'#affiliateContactLink'"
-                                    (onItemSelected)="onSourceContactChanged($event)">
-                                </source-contact-list>
-                                <label>{{ ls.l('Affiliate') }} {{ls.l('Contact')}}:</label>
-                                <div>
-                                    <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(contactInfo?.affiliateContactPicturePublicId)"/>
-                                    </div>
-                                    <div class="field-info">
-                                        <a *ngIf="contactInfo?.affiliateContactName as affiliateContactName" (click)="openContactDetails(contactInfo?.affiliateContactId)">{{affiliateContactName}}
-                                            <i id="affiliateContactLink" class="edit fa fa-pencil"
-                                                (click)="sourceComponent.toggle()">
-                                            </i>
-                                            <i class="save-to-clipboard"
-                                                (click)="saveToClipboard($event, affiliateContactName)">
-                                            </i>
-                                        </a>
-                                        <hr/>
-                                    </div>
-                                </div>
-                            </div>
                             <div *ngIf="contactInfo?.assignedUserName as assignedUserName" class="field">
                                 <label>{{ ls.l('PersonalSettings.AssignedTo') }}:</label>
                                 <div>

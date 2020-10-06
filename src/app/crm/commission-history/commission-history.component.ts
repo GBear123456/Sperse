@@ -115,7 +115,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     selectedViewType = this.COMMISION_VIEW;
     viewTypes = [{
         value: this.COMMISION_VIEW,
-        text: this.l('Commision')
+        text: this.l('Commission')
     }, {
         value: this.LEDGER_VIEW,
         text: this.l('Ledger')
