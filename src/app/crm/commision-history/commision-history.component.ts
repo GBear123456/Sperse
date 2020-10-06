@@ -39,6 +39,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     templateUrl: './commision-history.component.html',
@@ -79,6 +80,7 @@ export class CommisionHistoryComponent extends AppComponentBase implements OnIni
             items: []
         }
     ];
+    currency: string;
     permissions = AppPermissions;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
@@ -134,10 +136,16 @@ export class CommisionHistoryComponent extends AppComponentBase implements OnIni
         injector: Injector,
         public appService: AppService,
         private filtersService: FiltersService,
+        private invoicesService: InvoicesService,
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
     ) {
         super(injector);
+
+        this.invoicesService.settings$.pipe(first()).subscribe(
+            res => this.currency = res && res.currency
+        );
+
         this.dataSource = new DataSource({
             requireTotalCount: true,
             store: new ODataStore({
@@ -194,7 +202,8 @@ export class CommisionHistoryComponent extends AppComponentBase implements OnIni
     onContentReady(event) {
         this.finishLoading();
         this.setGridDataLoaded();
-        this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+        if (!this.rowsViewHeight)
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

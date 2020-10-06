@@ -79,11 +79,6 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="TransactionId"
-                                    [caption]="l('TransactionId')"
-                                    cssClass="tabular clipboard-holder"
-                                    [visible]="false">
-                        </dxi-column>
                         <dxi-column dataField="BuyerContactId"
                                     [caption]="l('BuyerContactId')"
                                     cssClass="tabular clipboard-holder"
@@ -96,16 +91,19 @@
                         <dxi-column dataField="OrderDate" 
                                     [caption]="l('OrderDate')" 
                                     cellTemplate="dateCell" 
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column dataField="InvoiceDate" 
                                     [caption]="l('InvoiceDate')" 
                                     cellTemplate="dateCell" 
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column dataField="TransactionDate" 
                                     [caption]="l('TransactionDate')" 
-                                    cellTemplate="dateCell" 
+                                    cellTemplate="dateCell"
+                                    [visible]="false" 
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column dataField="EarnedDate" 
@@ -113,44 +111,8 @@
                                     cellTemplate="dateCell" 
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="ProductAmount" 
-                                    [caption]="l('ProductAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column dataField="CommissionAmount" 
-                                    [caption]="l('CommissionAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column dataField="CommissionRate" 
-                                    [caption]="l('Rate')"
-                                    dataType="number"
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column dataField="CommissionValue" 
-                                    [caption]="l('CommissionValue')"
-                                    dataType="number"
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column dataField="Status" 
-                                    [caption]="l('Status')"
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column dataField="InvoiceStatus" 
-                                    [caption]="l('InvoiceStatus')"
-                                    cssClass="padding-right">
-                        </dxi-column>
                         <dxi-column dataField="BuyerName"
                                     [caption]="l('BuyerName')"
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column dataField="BuyerEmailAddress"
-                                    [caption]="l('BuyerEmailAddress')"
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column dataField="BuyerAffiliateCode"
-                                    [caption]="l('BuyerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="ResellerName"
@@ -165,25 +127,76 @@
                                     [caption]="l('ResellerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="TransactionAuthCode"
-                                    [caption]="l('TransactionAuthCode')"
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column dataField="TransactionGatewayName"
-                                    [caption]="l('TransactionGatewayName')"
+                        <dxi-column dataField="ProductCode"
+                                    [caption]="l('ProductCode')"
+                                    [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="ProductName"
                                     [caption]="l('ProductName')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ProductCode"
-                                    [caption]="l('ProductCode')"
+                        <dxi-column dataField="ProductAmount" 
+                                    [caption]="l('ProductAmount')" 
+                                    cellTemplate="amountCell"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionRate" 
+                                    [caption]="l('Rate')"
+                                    cellTemplate="rateCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionAmount" 
+                                    [caption]="l('CommissionAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="CommissionableAmount" 
+                                    [caption]="l('CommissionableAmount')"
+                                    cellTemplate="amountCell"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionId"
+                                    [caption]="l('TransactionId')"
+                                    cssClass="tabular clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="Status" 
+                                    [caption]="l('Status')"
+                                    [visible]="false" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="InvoiceStatus" 
+                                    [caption]="l('InvoiceStatus')"
+                                    [visible]="false" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column dataField="BuyerEmailAddress"
+                                    [caption]="l('BuyerEmailAddress')"
+                                    [visible]="false" 
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="BuyerAffiliateCode"
+                                    [caption]="l('BuyerAffiliateCode')"
+                                    [visible]="false" 
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionAuthCode"
+                                    [caption]="l('TransactionAuthCode')"
+                                    [visible]="false" 
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionGatewayName"
+                                    [caption]="l('TransactionGatewayName')"
+                                    [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone }}
+                            {{cellData.value | date: formatting.dateTime : userTimezone}}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'rateCell'" class="clipboard-holder">
+                            {{cellData.value | percent}}
                         </div>
 
                         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
@@ -261,14 +274,12 @@
                                     [caption]="l('AffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="CommissionLedgerEntryType"
-                                    [caption]="l('EntryType')"
-                                    [visible]="false"
+                        <dxi-column dataField="Type"
+                                    [caption]="l('Type')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="CommissionLedgerEntryStatus"
-                                    [caption]="l('EntryStatus')"
-                                    [visible]="false"
+                        <dxi-column dataField="Status"
+                                    [caption]="l('Status')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="StartDate" 
