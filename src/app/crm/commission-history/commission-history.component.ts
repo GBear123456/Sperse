@@ -11,6 +11,7 @@ import {
 import { Params } from '@angular/router';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
@@ -34,7 +35,8 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { InvoiceSettings, CommissionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommissionErningsDialogComponent } from '@app/crm/commission-history/commission-ernings-dialog/commission-ernings-dialog.component';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -44,7 +46,8 @@ import { InvoiceSettings } from '@shared/service-proxies/service-proxies';
     ],
     animations: [appModuleAnimation()],
     providers: [
-        LifecycleSubjectsService
+        LifecycleSubjectsService,
+        CommissionServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -56,6 +59,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     private readonly dataSourceURI: string = 'Commission';
     private rootComponent: any;
     private subRouteParams: any;
+    private selectedRecords: any = [];
+    private bulkUpdateAllowed = this.permission
+        .isGranted(AppPermissions.CRMBulkUpdates);
 
     rowsViewHeight: number;
     formatting = AppConsts.formatting;
@@ -132,10 +138,12 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         public appService: AppService,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
         private changeDetectorRef: ChangeDetectorRef,
+        private commissionProxy: CommissionServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
     ) {
         super(injector);
@@ -206,6 +214,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     onSelectionChanged($event) {
+        this.selectedRecords = $event.component.getSelectedRowsData();
         this.initToolbarConfig();
     }
 
@@ -280,6 +289,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 items: [
                     {
                         name: 'search',
+                        disabled: true,
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
@@ -289,6 +299,33 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'actions',
+                        widget: 'dxDropDownMenu',
+                        visible: this.selectedViewType == this.COMMISION_VIEW,
+                        disabled: !this.selectedRecords.length || !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                        options: {
+                            items: [
+                                {
+                                    text: this.l('Earnings'),
+                                    disabled: this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
+                                    action: this.applyEarnings.bind(this)
+                                },
+                                {
+                                    text: this.l('Cancel'),
+                                    action: this.applyCancel.bind(this),
+                                    disabled: this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                        || this.selectedRecords.every(item => item.Status !== 'Pending'),
+                                }
+                            ]
                         }
                     }
                 ]
@@ -331,6 +368,28 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             }
         ];
         return this.toolbarConfig;
+    }
+
+    applyCancel() {
+        if (this.selectedRecords.length)
+            this.commissionProxy.cancelCommissions(
+                this.selectedRecords.filter(
+                    item => item.Status === 'Pending'
+                ).map(item => item.Id)
+            ).subscribe(() => {
+                this.notify.success(this.l('SuccessfullyUpdated'));
+                this.selectedRecords = [];
+            });
+    }
+
+    applyEarnings() {
+        this.dialog.open(CommissionErningsDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                refreshParent: () => this.invalidate()
+            }
+        }).afterClosed().subscribe(() => this.refresh());
     }
 
     toggleColumnChooser() {
@@ -433,10 +492,5 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.selectedViewType = event.value;
             this.setDataGridInstance();
         }
-    }
-
-    onShowingPopup(e) {
-        e.component.option('visible', false);
-        e.component.hide();
     }
 }

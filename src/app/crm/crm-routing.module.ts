@@ -31,7 +31,7 @@ import { CommissionHistoryComponent } from './commission-history/commission-hist
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
-                    { path: 'commition-history', component: CommissionHistoryComponent, data: { permission: AppPermissions.CRM, reuse: true } }
+                    { path: 'commission-history', component: CommissionHistoryComponent, data: { permission: AppPermissions.CRM, reuse: true } }
                 ]
             }
         ])
