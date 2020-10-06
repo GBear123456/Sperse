@@ -25,8 +25,9 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, InvoiceSettings, UpdateContactAffiliateRateInput
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput
 } from '@shared/service-proxies/service-proxies';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -47,6 +48,7 @@ import { ContactGroup } from '@shared/AppEnums';
     styleUrls: ['personal-details-dialog.less']
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll', {static: false}) checklistScroll: DxScrollViewComponent;
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
@@ -597,6 +599,18 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 }
             });
         }
+    }
+
+    onSourceContactChanged(contact) {
+        this.contactProxy.updateAffiliateContact(
+            new UpdateAffiliateContactInput({
+                contactId: this.contactInfo.id,
+                affiliateContactId: contact.id
+            })
+        ).subscribe(() => {
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+        });
+        this.sourceComponent.toggle();
     }
 
     ngOnDestroy() {
