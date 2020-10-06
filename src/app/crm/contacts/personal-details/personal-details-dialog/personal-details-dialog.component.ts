@@ -207,7 +207,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             this.refreshSourceContactInfo.asObservable()
         ).pipe(
             switchMap(([contactGroupId, contactId, ]: [string, number, null]) =>
-                this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
+                this.contactProxy.getSourceContactInfo(contactId)
             )
         );
     }
