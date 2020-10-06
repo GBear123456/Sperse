@@ -53,7 +53,7 @@ import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
-import { CommisionHistoryComponent } from './commision-history/commision-history.component';
+import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { OrdersHeaderDropdownComponent } from './orders/orders-header-dropdown/orders-header-dropdown.component';
@@ -171,7 +171,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         TypesDropdownComponent,
         EntityCheckListDialogComponent,
         OrdersHeaderDropdownComponent,
-        CommisionHistoryComponent
+        CommissionHistoryComponent
     ],
     providers: [
         ImportServiceProxy,

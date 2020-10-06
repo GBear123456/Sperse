@@ -13,7 +13,7 @@ import { ImportListComponent } from './import-leads/import-list/import-list.comp
 import { ActivityComponent } from './activity/activity.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
-import { CommisionHistoryComponent } from './commision-history/commision-history.component';
+import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 
 @NgModule({
     imports: [
@@ -31,7 +31,7 @@ import { CommisionHistoryComponent } from './commision-history/commision-history
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
-                    { path: 'commition-history', component: CommisionHistoryComponent, data: { permission: AppPermissions.CRM, reuse: true } }
+                    { path: 'commition-history', component: CommissionHistoryComponent, data: { permission: AppPermissions.CRM, reuse: true } }
                 ]
             }
         ])

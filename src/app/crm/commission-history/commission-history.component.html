@@ -200,7 +200,7 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: currency}}
+                            {{cellData.value | currency: (currency$ | async)}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -308,7 +308,7 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: currency}}
+                            {{cellData.value | currency: (currency$ | async)}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

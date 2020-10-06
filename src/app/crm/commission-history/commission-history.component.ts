@@ -15,20 +15,14 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
-import { first, finalize, filter, switchMap, takeUntil, skip } from 'rxjs/operators';
+import { first, filter, switchMap, takeUntil, skip, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -40,12 +34,13 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { InvoiceSettings } from '@shared/service-proxies/service-proxies';
 
 @Component({
-    templateUrl: './commision-history.component.html',
+    templateUrl: './commission-history.component.html',
     styleUrls: [
         '../shared/styles/grouped-action-menu.less',
-        './commision-history.component.less'
+        './commission-history.component.less'
     ],
     animations: [appModuleAnimation()],
     providers: [
@@ -53,7 +48,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommisionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('commisionDataGrid', { static: false }) commisionDataGrid: DxDataGridComponent;
     @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
@@ -80,7 +75,6 @@ export class CommisionHistoryComponent extends AppComponentBase implements OnIni
             items: []
         }
     ];
-    currency: string;
     permissions = AppPermissions;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
@@ -127,6 +121,10 @@ export class CommisionHistoryComponent extends AppComponentBase implements OnIni
         text: this.l('Ledger')
     }];
 
+    currency$: Observable<string> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => settings && settings.currency)
+    );
+
     get dataGrid(): DxDataGridComponent {
         return this.selectedViewType == this.COMMISION_VIEW ?
             this.commisionDataGrid : this.ledgerDataGrid;
@@ -141,10 +139,6 @@ export class CommisionHistoryComponent extends AppComponentBase implements OnIni
         private lifeCycleSubjectsService: LifecycleSubjectsService,
     ) {
         super(injector);
-
-        this.invoicesService.settings$.pipe(first()).subscribe(
-            res => this.currency = res && res.currency
-        );
 
         this.dataSource = new DataSource({
             requireTotalCount: true,
