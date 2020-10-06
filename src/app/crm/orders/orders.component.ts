@@ -49,7 +49,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoiceSettings, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
@@ -613,7 +613,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         public dialog: MatDialog,
     ) {
         super(injector);
-        invoicesService.settings$.subscribe(res => this.currency = res.currency);
+        invoicesService.settings$.pipe(
+            filter(Boolean)
+        ).subscribe((res: InvoiceSettings) => this.currency = res.currency);
         this._activatedRoute.queryParams.pipe(
             takeUntil(this.destroy$),
             filter(() => this.componentIsActivated),

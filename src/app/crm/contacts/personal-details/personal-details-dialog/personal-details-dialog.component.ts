@@ -101,7 +101,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistLeadId: number;
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
-    refreshSourceContactInfo: BehaviorSubject<any> = new BehaviorSubject<any>();
+    refreshSourceContactInfo: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     checklistSources = [];
     manageAllowed = false;
     defaultAffiliateRate;
@@ -617,7 +617,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 affiliateContactId: contact.id
             })
         ).subscribe(() => {
-            this.refreshSourceContactInfo.next();
+            this.refreshSourceContactInfo.next(null);
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
         this.sourceComponent.toggle();

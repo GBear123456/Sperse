@@ -14,7 +14,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { finalize, switchMap, first, map } from 'rxjs/operators';
+import { finalize, filter, switchMap, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -110,8 +110,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             }
         }, this.ident);
 
-        this.invoicesService.settings$.pipe(first()).subscribe(res => {
-            this.settings = res;
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
+            this.settings = settings;
         });
     }
 
@@ -139,6 +139,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         [
                             this.invoiceFields.Key,
                             this.invoiceFields.InvoiceId,
+                            this.invoiceFields.InvoiceNumber,
                             this.invoiceFields.InvoiceStatus
                         ],
                         this.fieldsDependencies
