@@ -26,7 +26,8 @@
                     [min]="0"
                     [max]="99"
                     mode="number"
-                    [placeholder]="ls.l('AffiliateRate')"
+                    [showClearButton]="true"
+                    [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
                     [(value)]="settings.defaultAffiliateRate"
                     [showSpinButtons]="true">
                 </dx-number-box>

@@ -25,23 +25,25 @@
                                 </inplace-edit>
                             </div>
                             <div class="field">
-                                <label>{{ ls.l('AffiliateRate') }}:</label>
+                                <label>{{ ls.l('AffiliateRate') }}, %:</label>
                                 <dx-number-box 
                                     [min]="0"
                                     [max]="99"
-                                    width="80px"
+                                    width="140px"
                                     height="36px"
                                     mode="number"
+                                    [showClearButton]="true"
+                                    valueChangeEvent="keyup"
+                                    [placeholder]="defaultAffiliateRate"
                                     [(value)]="affiliateRate"
                                     [disabled]="!manageAllowed"
                                     [showSpinButtons]="true">
                                 </dx-number-box>
                                 <dx-button
                                     icon="check" 
-                                    width="106px"
+                                    width="45px"
                                     height="36px"
-                                    [text]="ls.l('Save')"
-                                    [disabled]="!manageAllowed"
+                                    [disabled]="!manageAllowed || affiliateRate == affiliateRateInitil"
                                     (onClick)="saveAffiliateRate()">
                                 </dx-button>
                             </div>    
