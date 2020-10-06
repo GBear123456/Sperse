@@ -8035,12 +8035,8 @@ export class ContactServiceProxy {
     /**
      * @return Success
      */
-    getSourceContactInfo(contactGroupId: string, contactId: number): Observable<GetSourceContactInfoOutput> {
+    getSourceContactInfo(contactId: number): Observable<GetSourceContactInfoOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContactInfo?";
-        if (contactGroupId === undefined || contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
-        else
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
         else
@@ -46928,12 +46924,11 @@ export class ContactInfoDto implements IContactInfoDto {
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactId!: number | undefined;
     affiliateCode!: string | undefined;
+    affiliateRate!: number | undefined;
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
     affiliateContactName!: string | undefined;
-    affiliateContactPicturePublicId!: string | undefined;
-    affiliateRate!: number | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -46973,12 +46968,11 @@ export class ContactInfoDto implements IContactInfoDto {
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
             this.affiliateCode = data["affiliateCode"];
+            this.affiliateRate = data["affiliateRate"];
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
             this.affiliateContactName = data["affiliateContactName"];
-            this.affiliateContactPicturePublicId = data["affiliateContactPicturePublicId"];
-            this.affiliateRate = data["affiliateRate"];
         }
     }
 
@@ -47018,12 +47012,11 @@ export class ContactInfoDto implements IContactInfoDto {
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
         data["affiliateCode"] = this.affiliateCode;
+        data["affiliateRate"] = this.affiliateRate;
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
         data["affiliateContactName"] = this.affiliateContactName;
-        data["affiliateContactPicturePublicId"] = this.affiliateContactPicturePublicId;
-        data["affiliateRate"] = this.affiliateRate;
         return data; 
     }
 }
@@ -47048,12 +47041,11 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
+    affiliateRate: number | undefined;
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
     affiliateContactName: string | undefined;
-    affiliateContactPicturePublicId: string | undefined;
-    affiliateRate: number | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
