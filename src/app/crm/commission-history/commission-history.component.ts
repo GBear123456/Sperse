@@ -137,10 +137,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     });
     public readonly COMMISSION_VIEW = 0;
-    public readonly LEDGER_VIEW    = 1;
+    public readonly LEDGER_VIEW     = 1;
     selectedViewType = this.COMMISSION_VIEW;
     viewTypes = [{
-        value: this.COMMISION_VIEW,
+        value: this.COMMISSION_VIEW,
         text: this.l('Commissions')
     }, {
         value: this.LEDGER_VIEW,
@@ -437,7 +437,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 {
                                     text: this.l('Cancel'),
                                     action: this.applyCancel.bind(this),
-                                    visible: this.selectedViewType == this.COMMISION_VIEW,
+                                    visible: this.selectedViewType == this.COMMISSION_VIEW,
                                     disabled: !this.selectedRecords.length
                                         || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                         || this.selectedRecords.every(item => item.Status !== 'Pending'),
