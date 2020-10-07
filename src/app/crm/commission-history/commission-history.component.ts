@@ -431,8 +431,15 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 {
                                     text: this.l('AddNewEarnings'),
                                     visible: this.selectedViewType == this.LEDGER_VIEW,
-                                    disabled: this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                                     action: this.applyEarnings.bind(this)
+                                },
+                                {
+                                    text: this.l('ApproveEarning'),
+                                    visible: this.selectedViewType == this.LEDGER_VIEW,
+                                    disabled: !this.selectedRecords.length
+                                        || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                        || this.selectedRecords.every(item => item.Status !== 'Pending'),
+                                    action: this.approveEarnings.bind(this)
                                 },
                                 {
                                     text: this.l('Cancel'),
@@ -513,6 +520,24 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 bulkUpdateAllowed: this.bulkUpdateAllowed
             }
         }).afterClosed().subscribe(() => this.refresh());
+    }
+
+    approveEarnings() {
+        if (this.selectedRecords.length) {
+            this.startLoading();
+            this.commissionProxy.approveEarnings(
+                this.selectedRecords.filter(
+                    item => item.Status === 'Pending'
+                ).map(item => item.Id)
+            ).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(() => {
+                this.notify.success(this.l('SuccessfullyUpdated'));
+                this.dataGrid.instance.clearSelection();
+                this.selectedRecords = [];
+                this.refresh();
+            });
+        }
     }
 
     toggleColumnChooser() {

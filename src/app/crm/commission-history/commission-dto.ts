@@ -5,7 +5,7 @@ export interface CommissionDto {
     BuyerName: string;
     CommissionAmount: number;
     CommissionRate: number;
-    CommissionableAmount: number
+    CommissionableAmount: number;
     EarnedDate: string;
     Id: number;
     InvoiceDate: string;
