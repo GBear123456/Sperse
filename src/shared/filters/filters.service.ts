@@ -157,6 +157,14 @@ export class FiltersService {
         return FiltersService.filterByAmount(filter);
     }
 
+    static filterByCommission(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
+    static filterByTotalAmount(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
     static filterByOrderStages(filter: FilterModel) {
         let data = {};
         if (filter.items.element) {

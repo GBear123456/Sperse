@@ -18,4 +18,7 @@ export interface OrderDto {
     SourceEntryUrl: string;
     DateProcessed: string;
     ContactGroupId: string;
+    ContactXref: string;
+    ServiceProductId: string;
+    SourceOrganizationUnitId: number;
 }

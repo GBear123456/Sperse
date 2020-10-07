@@ -10,7 +10,7 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, forkJoin, Observable } from 'rxjs';
 import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil, debounceTime } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
@@ -109,6 +109,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     );
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
+    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
+    readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     private filters: FilterModel[];
     private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
@@ -133,7 +135,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private contactGroupFilter: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'ContactGroup',
-        field: 'ContactGroupId',
+        field: this.orderFields.ContactGroupId,
         hidden: true,
         items: {
             ContactGroupId: new FilterCheckBoxesModel({
@@ -160,7 +162,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'creation',
-            field: 'OrderDate',
+            field: this.orderFields.OrderDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
@@ -170,7 +172,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({ purpose: AppConsts.PipelinePurposeIds.order }))),
+                        dataSource$: this.store$.pipe(
+                            select(PipelinesStoreSelectors.getPipelineTreeSource(
+                                { purpose: AppConsts.PipelinePurposeIds.order })
+                            )
+                        ),
                         nameField: 'name',
                         parentExpr: 'parentId',
                         keyExpr: 'id'
@@ -181,7 +187,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterInputsComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'Amount',
-            field: 'Amount',
+            field: this.orderFields.Amount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
         this.subscriptionStatusFilter,
@@ -191,7 +197,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'email',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'Email',
+            field: this.orderFields.Email,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -204,7 +210,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.userIsMember,
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'ContactXref',
+            field: this.orderFields.ContactXref,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -216,7 +222,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'PersonalAffiliateCode',
+            field: this.orderFields.PersonalAffiliateCode,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -228,7 +234,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'phone',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'Phone',
+            field: this.orderFields.Phone,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -244,7 +250,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'ContactDate',
-            field: 'ContactDate',
+            field: this.subscriptionFields.ContactDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
@@ -252,7 +258,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'StartDate',
-            field: 'StartDate',
+            field: this.subscriptionFields.StartDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
@@ -260,14 +266,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'EndDate',
-            field: 'EndDate',
+            field: this.subscriptionFields.EndDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'Status',
-            field: 'StatusId',
+            field: this.subscriptionFields.StatusId,
             isSelected: true,
             items: {
                 element: new FilterCheckBoxesModel(
@@ -286,7 +292,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterInputsComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'Fee',
-            field: 'Fee',
+            field: this.subscriptionFields.Fee,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
         this.getSubscriptionsFilter('Subscription', true),
@@ -296,7 +302,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'email',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'EmailAddress',
+            field: this.subscriptionFields.EmailAddress,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -309,7 +315,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.userIsMember,
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'ContactXref',
+            field: this.subscriptionFields.ContactXref,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -321,7 +327,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'PersonalAffiliateCode',
+            field: this.subscriptionFields.PersonalAffiliateCode,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -333,7 +339,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'phone',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'PhoneNumber',
+            field: this.subscriptionFields.PhoneNumber,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -359,8 +365,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
-    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
-    readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
     searchClear = false;
     ordersDataSource: any = {
@@ -736,7 +740,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: caption,
-            field: 'ServiceProductId',
+            field: caption === 'Subscription' ? this.subscriptionFields.ServiceProductId : this.orderFields.ServiceProductId,
             filterMethod: oDataFilterMethod ? (filter: FilterModel) => {
                 return {or: (filter.items.element['selectedItems'] || []).map(item => {
                     if (item.parentId)
@@ -763,9 +767,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private getSourceOrganizationUnitFilter() {
         return new FilterModel({
             component: FilterCheckBoxesComponent,
-            caption: 'SourceOrganizationUnitId',
+            caption: this.subscriptionFields.SourceOrganizationUnitId,
             hidden: this.appSession.userIsMember,
-            field: 'SourceOrganizationUnitId',
+            field: this.orderFields.SourceOrganizationUnitId,
             items: {
                 element: new FilterCheckBoxesModel(
                     {
