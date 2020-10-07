@@ -161,6 +161,10 @@ export class FiltersService {
         return FiltersService.filterByAmount(filter);
     }
 
+    static filterByProductAmount(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
     static filterByTotalAmount(filter) {
         return FiltersService.filterByAmount(filter);
     }
