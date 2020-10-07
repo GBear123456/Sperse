@@ -78,7 +78,7 @@ export class LeftMenuComponent implements OnInit {
             {
                 caption: this.ls.l('CRMDashboardMenu_CommissionHistory'),
                 component: '/commission-history',
-                visible: this.permission.isGranted(AppPermissions.CRMOrdersInvoices) && this.appSessionService.tenant
+                visible: this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) && this.appSessionService.tenant
                     && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode,
                 iconSrc: './assets/common/icons/dollar.svg'
             }
