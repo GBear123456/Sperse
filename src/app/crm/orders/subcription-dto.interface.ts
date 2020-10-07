@@ -18,9 +18,13 @@ export interface SubscriptionDto {
     StartDate: string;
     EndDate: string;
     Fee: string;
+    StatusId: string;
     StatusName: string;
     OrderAmount: string;
     SourceAffiliateCode: string;
     SourceEntryUrl: string;
     ContactGroupId: string;
+    ContactXref: string;
+    ServiceProductId: string;
+    SourceOrganizationUnitId: number;
 }

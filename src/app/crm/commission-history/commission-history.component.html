@@ -31,10 +31,10 @@
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <div>                    
-                    <dx-data-grid #commisionDataGrid
+                    <dx-data-grid #commissionDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
-                                  [visible]="selectedViewType == COMMISION_VIEW"
+                                  [visible]="selectedViewType == COMMISSION_VIEW"
                                   [renderAsync]="true"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
@@ -67,125 +67,125 @@
                                     [showInColumnChooser]="false"
                                     [allowExporting]="false">
                         </dxi-column>
-                        <dxi-column dataField="Id"
+                        <dxi-column [dataField]="commissionFields.Id"
                                     [caption]="l('Id')"
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false"
                                     sortOrder="desc"
                                     [sortIndex]="0">
                         </dxi-column>
-                        <dxi-column dataField="ResellerContactId"
+                        <dxi-column [dataField]="commissionFields.ResellerContactId"
                                     [caption]="l('ResellerContactId')"
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="BuyerContactId"
+                        <dxi-column [dataField]="commissionFields.BuyerContactId"
                                     [caption]="l('BuyerContactId')"
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="OrderNumber"
+                        <dxi-column [dataField]="commissionFields.OrderNumber"
                                     [caption]="l('OrderNumber')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="OrderDate" 
+                        <dxi-column [dataField]="commissionFields.OrderDate"
                                     [caption]="l('OrderDate')" 
                                     cellTemplate="dateCell" 
                                     [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="InvoiceDate" 
+                        <dxi-column [dataField]="commissionFields.InvoiceDate"
                                     [caption]="l('InvoiceDate')" 
                                     cellTemplate="dateCell" 
                                     [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="TransactionDate" 
+                        <dxi-column [dataField]="commissionFields.TransactionDate"
                                     [caption]="l('TransactionDate')" 
                                     cellTemplate="dateCell"
                                     [visible]="false" 
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="EarnedDate" 
+                        <dxi-column [dataField]="commissionFields.EarnedDate"
                                     [caption]="l('EarnedDate')" 
                                     cellTemplate="dateCell" 
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="BuyerName"
+                        <dxi-column [dataField]="commissionFields.BuyerName"
                                     [caption]="l('BuyerName')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ResellerName"
+                        <dxi-column [dataField]="commissionFields.ResellerName"
                                     [caption]="l('ResellerName')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ResellerEmailAddress"
+                        <dxi-column [dataField]="commissionFields.ResellerEmailAddress"
                                     [caption]="l('ResellerEmailAddress')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ResellerAffiliateCode"
+                        <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ProductCode"
+                        <dxi-column [dataField]="commissionFields.ProductCode"
                                     [caption]="l('ProductCode')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ProductName"
+                        <dxi-column [dataField]="commissionFields.ProductName"
                                     [caption]="l('ProductName')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="ProductAmount" 
+                        <dxi-column [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('ProductAmount')" 
                                     cellTemplate="amountCell"
                                     cssClass="padding-right">
                         </dxi-column>
-                        <dxi-column dataField="CommissionRate" 
+                        <dxi-column [dataField]="commissionFields.CommissionRate"
                                     [caption]="l('Rate')"
                                     cellTemplate="rateCell" 
                                     cssClass="padding-right">
                         </dxi-column>
-                        <dxi-column dataField="CommissionAmount" 
+                        <dxi-column [dataField]="commissionFields.CommissionAmount"
                                     [caption]="l('CommissionAmount')" 
                                     cellTemplate="amountCell" 
                                     cssClass="padding-right">
                         </dxi-column>
-                        <dxi-column dataField="CommissionableAmount" 
+                        <dxi-column [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CommissionableAmount')"
                                     cellTemplate="amountCell"
                                     cssClass="padding-right">
                         </dxi-column>
-                        <dxi-column dataField="TransactionId"
+                        <dxi-column [dataField]="commissionFields.TransactionId"
                                     [caption]="l('TransactionId')"
                                     cssClass="tabular clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Status" 
+                        <dxi-column [dataField]="commissionFields.Status"
                                     [caption]="l('Status')"
                                     [visible]="false" 
                                     cssClass="padding-right">
                         </dxi-column>
-                        <dxi-column dataField="InvoiceStatus" 
+                        <dxi-column [dataField]="commissionFields.InvoiceStatus"
                                     [caption]="l('InvoiceStatus')"
                                     [visible]="false" 
                                     cssClass="padding-right">
                         </dxi-column>
-                        <dxi-column dataField="BuyerEmailAddress"
+                        <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
                                     [caption]="l('BuyerEmailAddress')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="BuyerAffiliateCode"
+                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
                                     [caption]="l('BuyerAffiliateCode')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="TransactionAuthCode"
+                        <dxi-column [dataField]="commissionFields.TransactionAuthCode"
                                     [caption]="l('TransactionAuthCode')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="TransactionGatewayName"
+                        <dxi-column [dataField]="commissionFields.TransactionGatewayName"
                                     [caption]="l('TransactionGatewayName')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
@@ -207,7 +207,7 @@
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-summary>
-                            <dxi-group-item [column]="'Id'"
+                            <dxi-group-item [column]="commissionFields.Id"
                                             summaryType="count"
                                             [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
                             </dxi-group-item>
@@ -250,54 +250,54 @@
                                     [showInColumnChooser]="false"
                                     [allowExporting]="false">
                         </dxi-column>
-                        <dxi-column dataField="Id"
+                        <dxi-column [dataField]="ledgerFields.Id"
                                     [caption]="l('Id')"
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false"
                                     sortOrder="desc"
                                     [sortIndex]="0">
                         </dxi-column>
-                        <dxi-column dataField="ContactId"
+                        <dxi-column [dataField]="ledgerFields.ContactId"
                                     [caption]="l('ResellerContactId')"
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="ContactName"
+                        <dxi-column [dataField]="ledgerFields.ContactName"
                                     [caption]="l('Customer.Name')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="EmailAddress"
+                        <dxi-column [dataField]="ledgerFields.EmailAddress"
                                     [caption]="l('EmailAddress')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="AffiliateCode"
+                        <dxi-column [dataField]="ledgerFields.AffiliateCode"
                                     [caption]="l('AffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Type"
+                        <dxi-column [dataField]="ledgerFields.Type"
                                     [caption]="l('Type')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="Status"
+                        <dxi-column [dataField]="ledgerFields.Status"
                                     [caption]="l('Status')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column dataField="StartDate" 
+                        <dxi-column [dataField]="ledgerFields.StartDate"
                                     [caption]="l('StartDate')" 
                                     cellTemplate="dateCell" 
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="EndDate" 
+                        <dxi-column [dataField]="ledgerFields.EndDate"
                                     [caption]="l('EndDate')" 
                                     cellTemplate="dateCell" 
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="EntryDate" 
+                        <dxi-column [dataField]="ledgerFields.EntryDate"
                                     [caption]="l('EntryDate')" 
                                     cellTemplate="dateCell" 
                                     cssClass="tabular">
                         </dxi-column>
-                        <dxi-column dataField="TotalAmount" 
+                        <dxi-column [dataField]="ledgerFields.TotalAmount"
                                     [caption]="l('TotalAmount')" 
                                     cellTemplate="amountCell" 
                                     cssClass="padding-right">
@@ -315,7 +315,7 @@
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-summary>
-                            <dxi-group-item [column]="'Id'"
+                            <dxi-group-item [column]="ledgerFields.Id"
                                             summaryType="count"
                                             [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
                             </dxi-group-item>

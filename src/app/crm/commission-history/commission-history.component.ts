@@ -16,6 +16,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { first, filter, switchMap, takeUntil, skip, map } from 'rxjs/operators';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -35,6 +36,18 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { CommissionDto } from '@app/crm/commission-history/commission-dto';
+import { LedgerDto } from '@app/crm/commission-history/ledger-dto';
+import { LedgerFields } from '@app/crm/commission-history/ledger-fields.enum';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { CommissionStatus } from '@app/crm/commission-history/commission-status.enum';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { LedgerType } from '@app/crm/commission-history/ledger-type.enum';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -49,14 +62,16 @@ import { InvoiceSettings } from '@shared/service-proxies/service-proxies';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('commisionDataGrid', { static: false }) commisionDataGrid: DxDataGridComponent;
+    @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
     @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
-    private readonly dataSourceURI: string = 'Commission';
+    private readonly commissionDataSourceURI: string = 'Commission';
+    private readonly ledgerDataSourceURI: string = 'CommissionLedgerEntry';
     private rootComponent: any;
     private subRouteParams: any;
-
+    readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
+    readonly ledgerFields: KeysEnum<LedgerDto> = LedgerFields;
     rowsViewHeight: number;
     formatting = AppConsts.formatting;
     headlineButtons: HeadlineButton[] = [
@@ -100,21 +115,25 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     public ledgerDataSource = new DataSource({
         requireTotalCount: true,
         store: new ODataStore({
-            key: 'Id',
-            url: this.getODataUrl('CommissionLedgerEntry'),
+            key: this.ledgerFields.Id,
+            url: this.getODataUrl(this.ledgerDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                request.params.$select = DataGridService.getSelectFields(
+                    this.ledgerDataGrid,
+                    [ this.ledgerFields.Id ]
+                );
             }
         })
     });
-    public readonly COMMISION_VIEW = 0;
+    public readonly COMMISSION_VIEW = 0;
     public readonly LEDGER_VIEW    = 1;
-    selectedViewType = this.COMMISION_VIEW;
+    selectedViewType = this.COMMISSION_VIEW;
     viewTypes = [{
-        value: this.COMMISION_VIEW,
+        value: this.COMMISSION_VIEW,
         text: this.l('Commission')
     }, {
         value: this.LEDGER_VIEW,
@@ -126,8 +145,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     );
 
     get dataGrid(): DxDataGridComponent {
-        return this.selectedViewType == this.COMMISION_VIEW ?
-            this.commisionDataGrid : this.ledgerDataGrid;
+        return this.selectedViewType == this.COMMISSION_VIEW ? this.commissionDataGrid : this.ledgerDataGrid;
+    }
+
+    get dataSourceURI(): string {
+        return this.selectedViewType == this.COMMISSION_VIEW ? this.commissionDataSourceURI : this.ledgerDataSourceURI;
     }
 
     constructor(
@@ -143,13 +165,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         this.dataSource = new DataSource({
             requireTotalCount: true,
             store: new ODataStore({
-                key: 'Id',
-                url: this.getODataUrl(this.dataSourceURI),
+                key: this.commissionFields.Id,
+                url: this.getODataUrl(this.commissionDataSourceURI),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.commissionDataGrid,
+                        [ this.commissionFields.Id ]
+                    );
                 }
             })
         });
@@ -230,8 +256,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         );
     }
 
-    initFilterConfig() {
-        if (this.filters) {
+    initFilterConfig(hardUpdate: boolean = false) {
+        if (!hardUpdate && this.filters) {
             this.filtersService.setup(this.filters);
             this.filtersService.checkIfAnySelected();
         } else {
@@ -246,7 +272,96 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     private getFilters() {
-        return [ ];
+        return this.selectedViewType === this.COMMISSION_VIEW
+            ? [
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'earnedDate',
+                    field: this.commissionFields.OrderDate,
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Status',
+                    field: this.commissionFields.Status,
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: Object.keys(CommissionStatus).map((status: string) => ({
+                                    id: CommissionStatus[status],
+                                    name: startCase(status)
+                                })),
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'Commission',
+                    field: this.commissionFields.CommissionAmount,
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'ProductAmount',
+                    field: this.commissionFields.ProductAmount,
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                })
+            ]
+            : [
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Type',
+                    field: this.ledgerFields.Type,
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: Object.keys(LedgerType).map((type: string) => ({
+                                    id: LedgerType[type],
+                                    name: startCase(type)
+                                })),
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Status',
+                    field: this.ledgerFields.Status,
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: Object.keys(CommissionStatus).map((status: string) => ({
+                                    id: CommissionStatus[status],
+                                    name: startCase(status)
+                                })),
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'entryDate',
+                    field: this.ledgerFields.EntryDate,
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'TotalAmount',
+                    field: this.ledgerFields.TotalAmount,
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                })
+            ];
     }
 
     initToolbarConfig() {
@@ -255,7 +370,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        disabled: true,
                         action: () => {
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -285,7 +399,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Customers').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Commissions').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -431,6 +545,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     onViewTypeChanged(event) {
         if (this.selectedViewType != event.value) {
             this.selectedViewType = event.value;
+            this.initFilterConfig(true);
             this.setDataGridInstance();
         }
     }
