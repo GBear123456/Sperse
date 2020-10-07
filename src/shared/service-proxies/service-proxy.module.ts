@@ -41,6 +41,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.PersonContactServiceProxy,
         ApiServiceProxies.MemberSubscriptionServiceProxy,
         ApiServiceProxies.MemberSettingsServiceProxy,
+        ApiServiceProxies.CommissionServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

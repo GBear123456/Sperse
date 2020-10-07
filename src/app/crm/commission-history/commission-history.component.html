@@ -125,10 +125,12 @@
                         </dxi-column>
                         <dxi-column dataField="ResellerEmailAddress"
                                     [caption]="l('ResellerEmailAddress')"
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="CommissionRate" 
@@ -150,15 +152,14 @@
                                     cellTemplate="amountCell" 
                                     cssClass="padding-right">
                         </dxi-column>
+                        <dxi-column dataField="Status" 
+                                    [caption]="l('Status')" 
+                                    cssClass="padding-right">
+                        </dxi-column>
                         <dxi-column dataField="CommissionableAmount" 
                                     [caption]="l('CommissionableAmount')"
                                     cellTemplate="amountCell"
                                     [visible]="false"
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column dataField="Status" 
-                                    [caption]="l('Status')"
-                                    [visible]="false" 
                                     cssClass="padding-right">
                         </dxi-column>
                         <dxi-column dataField="InvoiceStatus" 

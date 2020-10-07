@@ -1,20 +1,20 @@
 <h2 mat-dialog-title>
-    <div>{{ls.l('DoYouWantToFinalize', ls.l('Commission'))}}</div>
+    <div>{{ls.l('AddNewEarnings')}}</div>
 </h2>
 <mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover" height="500px">
         <dx-select-box
-            [placeholder]="ls.l('Contact')"
-            [dataSource]="contacts"
+            [placeholder]="ls.l('AllAffiliates')"
+            [dataSource]="contacts$ | async"
             [displayExpr]="'name'"
             [valueExpr]="'id'"
             [(value)]="contactId"
-            [showClearButton]="false">
+            [showClearButton]="true">
         </dx-select-box>
-        <calendar [values]="dateRange"></calendar>
+        <calendar [values]="dateRange" [options]="calendarOptions"></calendar>
     </dx-scroll-view>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button md-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
-    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Yes')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{ls.l('Add')}}</button>
 </mat-dialog-actions>

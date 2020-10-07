@@ -16,7 +16,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
-import { first, filter, switchMap, takeUntil, skip, map } from 'rxjs/operators';
+import { finalize, first, filter, switchMap, takeUntil, skip, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -46,8 +46,7 @@ import { CommissionErningsDialogComponent } from '@app/crm/commission-history/co
     ],
     animations: [appModuleAnimation()],
     providers: [
-        LifecycleSubjectsService,
-        CommissionServiceProxy
+        LifecycleSubjectsService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -56,7 +55,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
-    private readonly dataSourceURI: string = 'Commission';
+    private readonly commissionDataSourceURI: string = 'Commission';
+    private readonly ledgerDataSourceURI: string = 'CommissionLedgerEntry';
+
     private rootComponent: any;
     private subRouteParams: any;
     private selectedRecords: any = [];
@@ -107,7 +108,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         requireTotalCount: true,
         store: new ODataStore({
             key: 'Id',
-            url: this.getODataUrl('CommissionLedgerEntry'),
+            url: this.getODataUrl(this.ledgerDataSourceURI),
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
@@ -121,7 +122,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     selectedViewType = this.COMMISION_VIEW;
     viewTypes = [{
         value: this.COMMISION_VIEW,
-        text: this.l('Commission')
+        text: this.l('Commissions')
     }, {
         value: this.LEDGER_VIEW,
         text: this.l('Ledger')
@@ -152,7 +153,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             requireTotalCount: true,
             store: new ODataStore({
                 key: 'Id',
-                url: this.getODataUrl(this.dataSourceURI),
+                url: this.getODataUrl(this.commissionDataSourceURI),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
@@ -310,19 +311,21 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        visible: this.selectedViewType == this.COMMISION_VIEW,
-                        disabled: !this.selectedRecords.length || !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                        disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                         options: {
                             items: [
                                 {
-                                    text: this.l('Earnings'),
+                                    text: this.l('AddNewEarnings'),
+                                    visible: this.selectedViewType == this.LEDGER_VIEW,
                                     disabled: this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                                     action: this.applyEarnings.bind(this)
                                 },
                                 {
                                     text: this.l('Cancel'),
                                     action: this.applyCancel.bind(this),
-                                    disabled: this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                    visible: this.selectedViewType == this.COMMISION_VIEW,
+                                    disabled: !this.selectedRecords.length
+                                        || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                         || this.selectedRecords.every(item => item.Status !== 'Pending'),
                                 }
                             ]
@@ -371,15 +374,21 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     applyCancel() {
-        if (this.selectedRecords.length)
+        if (this.selectedRecords.length) {
+            this.startLoading();
             this.commissionProxy.cancelCommissions(
                 this.selectedRecords.filter(
                     item => item.Status === 'Pending'
                 ).map(item => item.Id)
+            ).pipe(
+                finalize(() => this.finishLoading())
             ).subscribe(() => {
                 this.notify.success(this.l('SuccessfullyUpdated'));
+                this.dataGrid.instance.clearSelection();
                 this.selectedRecords = [];
+                this.refresh();
             });
+        }
     }
 
     applyEarnings() {
@@ -387,7 +396,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: () => this.invalidate()
+                bulkUpdateAllowed: this.bulkUpdateAllowed
             }
         }).afterClosed().subscribe(() => this.refresh());
     }
@@ -430,7 +439,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.dataGrid && this.dataGrid.instance) {
             this.processODataFilter(
                 this.dataGrid.instance,
-                this.dataSourceURI,
+                this.selectedViewType == this.LEDGER_VIEW ?
+                    this.ledgerDataSourceURI : this.commissionDataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom
             );
@@ -491,6 +501,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.selectedViewType != event.value) {
             this.selectedViewType = event.value;
             this.setDataGridInstance();
+            this.initToolbarConfig();
         }
     }
 }
