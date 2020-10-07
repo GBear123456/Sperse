@@ -37,7 +37,7 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { InvoiceSettings, CommissionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { CommissionErningsDialogComponent } from '@app/crm/commission-history/commission-ernings-dialog/commission-ernings-dialog.component';
+import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
@@ -513,7 +513,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     applyEarnings() {
-        this.dialog.open(CommissionErningsDialogComponent, {
+        this.dialog.open(CommissionEarningsDialogComponent, {
             disableClose: true,
             closeOnNavigation: false,
             data: {
