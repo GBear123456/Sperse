@@ -212,15 +212,17 @@ export class UserInboxComponent implements OnDestroy {
             items: [
                 {
                     name: 'archive',
+                    visible: false,
                     action: Function()
                 },
                 {
                     name: 'status',
-                    visible: this.isActiveEmilType,
+                    visible: false,
                     action: Function()
                 },
                 {
                     name: 'delete',
+                    visible: false,
                     action: Function()
                 }
             ]
