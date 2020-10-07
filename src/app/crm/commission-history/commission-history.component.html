@@ -56,17 +56,6 @@
                                        showCheckBoxesMode="always"
                                        mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="popup"
-                            [texts]="{ editRow: '' }"
-                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                            [allowUpdating]="true">
-                        </dxo-editing>
-                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-                        <dxi-column cssClass="stars"
-                                    [width]="40"
-                                    [showInColumnChooser]="false"
-                                    [allowExporting]="false">
-                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.Id"
                                     [caption]="l('Id')"
                                     cssClass="tabular clipboard-holder"
@@ -111,6 +100,20 @@
                                     cellTemplate="dateCell" 
                                     cssClass="tabular">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.ProductCode"
+                                    [caption]="l('ProductCode')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.ProductAmount"
+                                    [caption]="l('ProductAmount')"
+                                    cellTemplate="amountCell"
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.ProductName"
+                                    [caption]="l('ProductName')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerName"
                                     [caption]="l('BuyerName')"
                                     cssClass="clipboard-holder">
@@ -127,24 +130,19 @@
                                     [caption]="l('ResellerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductCode"
-                                    [caption]="l('ProductCode')"
-                                    [visible]="false" 
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductName"
-                                    [caption]="l('ProductName')"
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductAmount"
-                                    [caption]="l('ProductAmount')" 
-                                    cellTemplate="amountCell"
-                                    cssClass="padding-right">
-                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionRate"
                                     [caption]="l('Rate')"
                                     cellTemplate="rateCell" 
                                     cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.TransactionId"
+                                    dataType="string"
+                                    [caption]="l('TransactionId')"
+                                    cssClass="tabular clipboard-holder">
+                        </dxi-column>
+                        <dxi-column dataField="TransactionAuthCode"
+                                    [caption]="l('TransactionAuthCode')"
+                                    cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionAmount"
                                     [caption]="l('CommissionAmount')" 
@@ -154,11 +152,8 @@
                         <dxi-column [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CommissionableAmount')"
                                     cellTemplate="amountCell"
+                                    [visible]="false"
                                     cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.TransactionId"
-                                    [caption]="l('TransactionId')"
-                                    cssClass="tabular clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.Status"
                                     [caption]="l('Status')"
@@ -177,11 +172,6 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
                                     [caption]="l('BuyerAffiliateCode')"
-                                    [visible]="false" 
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.TransactionAuthCode"
-                                    [caption]="l('TransactionAuthCode')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
@@ -241,7 +231,7 @@
                         </dxo-selection>
                         <dxo-editing mode="popup"
                             [texts]="{ editRow: '' }"
-                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                            [popup]="{ height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>

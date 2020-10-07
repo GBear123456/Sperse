@@ -91,6 +91,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { ListsModule } from '../shared/common/lists/lists.module';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
+import { CommissionErningsDialogComponent } from '@app/crm/commission-history/commission-ernings-dialog/commission-ernings-dialog.component';
 
 @NgModule({
     imports: [
@@ -171,7 +172,8 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         TypesDropdownComponent,
         EntityCheckListDialogComponent,
         OrdersHeaderDropdownComponent,
-        CommissionHistoryComponent
+        CommissionHistoryComponent,
+        CommissionErningsDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -187,7 +189,8 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         InvoiceAddressDialog,
         CreateActivityDialogComponent,
         CrmIntroComponent,
-        EntityCheckListDialogComponent
+        EntityCheckListDialogComponent,
+        CommissionErningsDialogComponent
     ]
 })
 export class CrmModule {
