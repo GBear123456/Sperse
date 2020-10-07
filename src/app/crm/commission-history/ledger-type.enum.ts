@@ -1,4 +1,4 @@
 export enum LedgerType {
     Earning = 'Earning',
-    Withdrawing = 'Withdrawing'
+    Withdrawal = 'Withdrawal'
 }

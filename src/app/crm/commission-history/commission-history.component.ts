@@ -1,7 +1,5 @@
 /** Core imports */
 import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
     Injector,
     OnDestroy,
@@ -50,6 +48,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { CommissionStatus } from '@app/crm/commission-history/commission-status.enum';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { LedgerType } from '@app/crm/commission-history/ledger-type.enum';
+import { LedgerStatus } from '@app/crm/commission-history/ledger-status.enum';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -60,8 +59,7 @@ import { LedgerType } from '@app/crm/commission-history/ledger-type.enum';
     animations: [appModuleAnimation()],
     providers: [
         LifecycleSubjectsService
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    ]
 })
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
@@ -165,7 +163,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         public appService: AppService,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
-        private changeDetectorRef: ChangeDetectorRef,
         private commissionProxy: CommissionServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
     ) {
@@ -237,7 +234,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             visibleIndex: -1,
             width: 40
         });
-        this.changeDetectorRef.detectChanges();
     }
 
     onSelectionChanged($event) {
@@ -347,8 +343,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource: Object.keys(CommissionStatus).map((status: string) => ({
-                                    id: CommissionStatus[status],
+                                dataSource: Object.keys(LedgerStatus).map((status: string) => ({
+                                    id: LedgerStatus[status],
                                     name: startCase(status)
                                 })),
                                 nameField: 'name',
@@ -438,7 +434,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                     visible: this.selectedViewType == this.LEDGER_VIEW,
                                     disabled: !this.selectedRecords.length
                                         || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                        || this.selectedRecords.every(item => item.Status !== 'Pending'),
+                                        || this.selectedRecords.every(item => item.Status !== LedgerStatus.Pending),
                                     action: this.approveEarnings.bind(this)
                                 },
                                 {
@@ -447,7 +443,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                     visible: this.selectedViewType == this.COMMISSION_VIEW,
                                     disabled: !this.selectedRecords.length
                                         || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                        || this.selectedRecords.every(item => item.Status !== 'Pending'),
+                                        || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
                                 }
                             ]
                         }
@@ -499,7 +495,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.startLoading();
             this.commissionProxy.cancelCommissions(
                 this.selectedRecords.filter(
-                    item => item.Status === 'Pending'
+                    item => item.Status === CommissionStatus.Pending
                 ).map(item => item.Id)
             ).pipe(
                 finalize(() => this.finishLoading())
@@ -527,7 +523,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.startLoading();
             this.commissionProxy.approveEarnings(
                 this.selectedRecords.filter(
-                    item => item.Status === 'Pending'
+                    item => item.Status === LedgerStatus.Pending
                 ).map(item => item.Id)
             ).pipe(
                 finalize(() => this.finishLoading())
@@ -560,7 +556,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             instance.option('dataSource',
                 this.selectedViewType == this.LEDGER_VIEW
                     ? this.ledgerDataSource : this.dataSource);
-            this.changeDetectorRef.detectChanges();
             this.startLoading();
         } else
             this.setGridDataLoaded();
@@ -570,7 +565,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
             this._refresh.next(null);
-            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -627,7 +621,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             const client: any = event.data;
             ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, client);
             this.actionEvent = actionEvent;
-            this.changeDetectorRef.detectChanges();
         });
     }
 
