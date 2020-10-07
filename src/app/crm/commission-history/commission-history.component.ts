@@ -425,7 +425,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        visible: this.selectedViewType == this.COMMISION_VIEW,
+                        visible: this.selectedViewType == this.COMMISSION_VIEW,
                         disabled: !this.selectedRecords.length || !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
                         options: {
                             items: [
