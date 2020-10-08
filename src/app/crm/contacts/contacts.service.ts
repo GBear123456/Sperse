@@ -61,7 +61,7 @@ import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 export class ContactsService {
     private verificationSubject: Subject<any> = new Subject<any>();
     private toolbarSubject: Subject<any> = new Subject<any>();
-    private userId: ReplaySubject<number> = new ReplaySubject(1);
+    private userId: BehaviorSubject<number> = new BehaviorSubject(undefined);
     userId$: Observable<number> = this.userId.asObservable();
     private organizationUnits: ReplaySubject<any> = new ReplaySubject<any>(1);
     private organizationUnitsSave: Subject<any> = new Subject<any>();
@@ -641,7 +641,10 @@ export class ContactsService {
                         observer.next(false);
                     }
                 },
-                [ { text: this.ls.l('SendCancellationEmail'), visible: status.id === ContactStatus.Inactive } ],
+                [ { 
+                    text: this.ls.l('SendCancellationEmail'), 
+                    visible: this.userId.value && status.id === ContactStatus.Inactive 
+                } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );
         });
