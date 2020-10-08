@@ -9,7 +9,7 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div class="field" [ngClass]="{'zero': affiliateRate === 0, 'undefined': affiliateRate === undefined}">
+                            <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate === 0, 'undefined': affiliateRate === null}">
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
@@ -26,26 +26,19 @@
                             </div>
                             <div class="field">
                                 <label>{{ ls.l('AffiliateRate') }}, %:</label>
-                                <dx-number-box 
-                                    [min]="0"
-                                    [max]="99"
-                                    width="140px"
-                                    height="36px"
-                                    mode="number"
-                                    [showClearButton]="true"
-                                    valueChangeEvent="keyup"
-                                    [placeholder]="defaultAffiliateRate"
-                                    [(value)]="affiliateRate"
-                                    [disabled]="!manageAllowed"
-                                    [showSpinButtons]="true">
-                                </dx-number-box>
-                                <dx-button
-                                    icon="check" 
-                                    width="45px"
-                                    height="36px"
-                                    [disabled]="!manageAllowed || affiliateRate == affiliateRateInitil"
-                                    (onClick)="saveAffiliateRate()">
-                                </dx-button>
+                                <inplace-edit [id]="contactInfo?.id"
+                                              lEntityName="Name"
+                                              [editPlaceholder]="defaultAffiliateRate"
+                                              [value]="affiliateRate === null ? '' : affiliateRate + ''"
+                                              [showInlineEditButton]="true"
+                                              [isDeleteEnabled]="true"
+                                              [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateRate'))"
+                                              [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateRate').toLowerCase())"
+                                              [validationRules]="affiliateRateValidationRules"
+                                              [isReadOnlyField]="!manageAllowed"
+                                              (valueChanged)="updateAffiliateRate($event)"
+                                              (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
+                                </inplace-edit>
                             </div>    
                         </mat-expansion-panel>
                         <mat-expansion-panel class="source-info" [expanded]="true">

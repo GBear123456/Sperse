@@ -84,6 +84,18 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
         }
     ];
+    affiliateRateValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateRate,
+            message: this.ls.l('InvalidField', this.ls.l('AffiliateRate'))
+        },
+        {
+            type: 'stringLength',
+            max: AppConsts.maxAffiliateRateLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateRateLength)
+        }
+    ];
     xrefValidationRules = [
     {
         type: 'stringLength',
@@ -151,7 +163,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             if (contactInfo && contactInfo.id) {
                 this.contactInfo = contactInfo;
                 this.affiliateRateInitil = this.affiliateRate =
-                    this.contactInfo.affiliateRate == null ? undefined
+                    this.contactInfo.affiliateRate === null ? null
                         : this.contactInfo.affiliateRate * 100;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
@@ -225,13 +237,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    saveAffiliateRate() {
+    updateAffiliateRate(value?: number) {
+        this.affiliateRate = value == undefined ? null : value;
         this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
             contactId: this.contactInfo.id,
             affiliateRate: this.affiliateRate == null ? null : this.affiliateRate / 100
         })).subscribe(() => {
             this.affiliateRateInitil = this.affiliateRate;
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
+        }, () => {
+            this.affiliateRate = this.affiliateRateInitil;
         });
     }
 
@@ -444,6 +459,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 break;
             case this.ls.l('Xref'):
                 this.updateXref('');
+                break;
+            case this.ls.l('AffiliateRate'):
+                this.updateAffiliateRate();
                 break;
         }
     }

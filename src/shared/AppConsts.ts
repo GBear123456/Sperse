@@ -93,6 +93,7 @@ export class AppConsts {
         url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
         fullName: /^[\w|\s]+$/,
         affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
+        affiliateRate: /^[0-9]{1,2}(\.[0-9]{1,2})*$/,
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
         siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
@@ -137,5 +138,6 @@ export class AppConsts {
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;
 
-    static readonly maxAffiliateCodeLength = 50;
+    static readonly maxAffiliateCodeLength = 50
+    static readonly maxAffiliateRateLength = 5;
 }
