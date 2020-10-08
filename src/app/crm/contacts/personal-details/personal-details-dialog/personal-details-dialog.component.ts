@@ -88,7 +88,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         {
             type: 'pattern',
             pattern: AppConsts.regexPatterns.affiliateRate,
-            message: this.ls.l('InvalidField', this.ls.l('AffiliateRate'))
+            message: this.ls.l('InvalidAffiliateRate')
         },
         {
             type: 'stringLength',
@@ -238,7 +238,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     updateAffiliateRate(value?) {
-        this.affiliateRate = isNaN(value) ? null : parseFloat(value);
+        this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
         this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
             contactId: this.contactInfo.id,
             affiliateRate: this.affiliateRate == null ? null : this.affiliateRate / 100
