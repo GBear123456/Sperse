@@ -1,5 +1,14 @@
+/** Core imports  */
 import { inject, TestBed } from '@angular/core/testing';
+import { CurrencyPipe } from '@angular/common';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { RouterTestingModule } from '@angular/router/testing';
+
+/** Third party imports */
 import * as moment from 'moment-timezone';
+import { CacheService } from 'ng2-cache-service';
+
+/** Application imports */
 import { CashflowService } from './cashflow.service';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import {
@@ -15,16 +24,14 @@ import {
     SessionServiceProxy,
     StatsFilter,
     TenantSubscriptionServiceProxy,
-    TransactionStatsDto,
     TypeDto,
     ReportSectionDto,
-    SectionGroup
+    SectionGroup,
+    CategoryDto
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { HttpClient, HttpHandler } from '@angular/common/http';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
-import { CacheService } from '@node_modules/ng2-cache-service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppService } from '@app/app.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -35,7 +42,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStoreModule } from '@root/store/root-store.module';
-import { CurrencyPipe } from '@angular/common';
 import { SummaryCell } from 'devextreme/ui/pivot_grid/ui.pivot_grid.summary_display_modes.js';
 import { TransactionStatsDtoExtended } from '@app/cfo/cashflow/models/transaction-stats-dto-extended';
 
@@ -45,7 +51,8 @@ describe('CashflowService', () => {
         TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
         TestBed.configureTestingModule({
             imports: [
-                RootStoreModule
+                RootStoreModule,
+                RouterTestingModule
             ],
             providers: [
                 CashflowService,
@@ -131,14 +138,12 @@ describe('CashflowService', () => {
     }));
 
     it('addCategorizationLevels should work', inject([CashflowService], (service: CashflowService) => {
-        const transaction: TransactionStatsDto = new TransactionStatsDto({
+        const transaction: TransactionStatsDtoExtended = new TransactionStatsDtoExtended({
             cashflowTypeId: 'I',
-            accountingTypeId: 2,
             adjustmentType: null,
             accountId: 63,
             amount: 40,
             categoryId: 5566,
-            subCategoryId: 5632,
             count: 0,
             forecastId: 10402,
             transactionDescriptor: 'descriptor',
@@ -149,10 +154,16 @@ describe('CashflowService', () => {
         service.categoryTree = new GetCategoryTreeOutput({
             types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
             accountingTypes: {
-                '2': new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
+                2: new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
             },
-            categories: {}
+            categories: {
+                5566: new CategoryDto({ parentId: 5632, name: 'Child category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null }),
+                5632: new CategoryDto({ parentId: 777, name: 'Middle category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                777: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null })
+            }
         });
+        service.updateStatsCategoryTree([transaction]);
+        service.addCategoriesLevelsToCategorizationConfig();
         service.reportSections = new GetReportTemplateDefinitionOutput({
             sections: {
                 11: new ReportSectionDto({
@@ -161,16 +172,19 @@ describe('CashflowService', () => {
                 })
             },
             categorySectionMap: {
-                5632: 11
+                5566: 11,
+                5632: 11,
+                777: 11
             }
         });
         let levels = service.addCategorizationLevels(transaction).levels;
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'AT2',
-            level2: 'CA5566',
-            level3: 'SC5632',
-            level4: 'TDdescriptor'
+            level2: 'CA777',
+            level3: 'CA5632',
+            level4: 'CA5566',
+            level5: 'TDdescriptor'
         });
         service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
         levels = service.addCategorizationLevels(transaction).levels;
@@ -179,25 +193,90 @@ describe('CashflowService', () => {
             level1: 'RGExpense',
             level2: 'RS11',
             level3: 'AT2',
-            level4: 'CA5566',
-            level5: 'SC5632',
-            level6: 'TDdescriptor'
+            level4: 'CA777',
+            level5: 'CA5632',
+            level6: 'CA5566',
+            level7: 'TDdescriptor'
         });
+    }));
+
+    it('addCategorizationLevels should work (reporting N/A test)', inject([CashflowService], (service: CashflowService) => {
+        const transaction: TransactionStatsDtoExtended = new TransactionStatsDtoExtended({
+            cashflowTypeId: 'I',
+            adjustmentType: null,
+            accountId: null,
+            amount: 40,
+            categoryId: 999,
+            count: 0,
+            forecastId: null,
+            transactionDescriptor: 'descriptor',
+            currencyId: 'USD',
+            date: '2019-07-01T00:00:00Z',
+            comment: ''
+        });
+        service.categoryTree = new GetCategoryTreeOutput({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {},
+            categories: {
+                999: new CategoryDto({
+                    parentId: null,
+                    name: 'Neutral category',
+                    accountingTypeId: null,
+                    coAID: null,
+                    isActive: true,
+                    reportingCategoryId: null
+                })
+            }
+        });
+        service.reportSections = new GetReportTemplateDefinitionOutput({
+            sections: {},
+            categorySectionMap: {}
+        });
+        service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
+        service.updateStatsCategoryTree([transaction]);
+        service.addCategoriesLevelsToCategorizationConfig();
 
         /** Add N/A reporting group if category doesn't belong to some group */
-        transaction.subCategoryId = 777;
-        transaction.accountingTypeId = null;
-        levels = service.addCategorizationLevels(transaction).levels;
+        let levels = service.addCategorizationLevels(transaction).levels;
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGN/A',
-            level2: 'CA5566',
-            level3: 'SC777',
-            level4: 'TDdescriptor'
+            level2: 'CA999',
+            level3: 'TDdescriptor'
         });
-        transaction.categoryId = null;
-        transaction.subCategoryId = null;
-        levels = service.addCategorizationLevels(transaction).levels;
+    }));
+
+    it('addCategorizationLevels should work (empty categories test)', inject([CashflowService], (service: CashflowService) => {
+        const transaction: TransactionStatsDtoExtended = new TransactionStatsDtoExtended({
+            cashflowTypeId: 'I',
+            adjustmentType: null,
+            accountId: null,
+            amount: 40,
+            categoryId: null,
+            count: 0,
+            forecastId: null,
+            transactionDescriptor: 'descriptor',
+            currencyId: 'USD',
+            date: '2019-07-01T00:00:00Z',
+            comment: ''
+        });
+        service.categoryTree = new GetCategoryTreeOutput({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {},
+            categories: {
+                999: new CategoryDto({
+                    parentId: null,
+                    name: 'Neutral category',
+                    accountingTypeId: null,
+                    coAID: null,
+                    isActive: true,
+                    reportingCategoryId: null
+                })
+            }
+        });
+        service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
+        let levels = service.addCategorizationLevels(transaction).levels;
+        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGN/A',
@@ -236,8 +315,8 @@ describe('CashflowService', () => {
     it('getDetailFilterFromCell should return filter from cell', inject([ CashflowService ], (service: CashflowService) => {
         const cellObj = {
             cell: {
-                columnPath: [ '0', '2018', '3', '10' ],
-                rowPath: [ 'CTI', 'RGExpense', 'RS3' ]
+                columnPath: [ '0', moment().format('YYYY'), '3', '10' ],
+                rowPath: [ 'CTI', 'RGExpense', 'RS3', 'CA48', 'CA59', 'CA77' ]
             }
         };
         service.requestFilter = new StatsFilter({
@@ -256,6 +335,7 @@ describe('CashflowService', () => {
         expect(result.cashflowTypeId).toEqual('I');
         expect(result.reportSectionGroup).toEqual('Expense');
         expect(result.reportSectionId).toEqual('3');
+        expect(result.categoryId).toEqual('77');
     }));
 
     it('getStubsCashflowDataForAllPeriods should work properly', inject([CashflowService], (service: CashflowService) => {
@@ -272,7 +352,6 @@ describe('CashflowService', () => {
                 comment: '',
                 accountingTypeId: 1,
                 categoryId: 1,
-                subCategoryId: 2,
                 reportSectionId: 1,
                 transactionDescriptor: '',
                 forecastId: null
@@ -602,7 +681,7 @@ describe('CashflowService', () => {
                 'areaIndex': 1
             }
         };
-        const summaryCell = new SummaryCell(
+        /*const summaryCell = new SummaryCell(
             [
                 {
                     'value': '{"startDate":"2019-03-01T00:00:00.000Z","endDate":"2019-03-03T23:59:59.999Z","weekNumber":9}',
@@ -654,7 +733,7 @@ describe('CashflowService', () => {
             descriptions,
             0,
             fields
-        );
+        );*/
     }));
 
     it('sortReportingGroup should correctly sort two items', inject([ CashflowService ], (service: CashflowService) => {
@@ -681,5 +760,106 @@ describe('CashflowService', () => {
             value: 'CA18'
         };
         expect(CashflowService.sortReportingGroup(firstItem, secondItem)).toBe(0);
+    }));
+
+    it('test calculating of counts', inject([ CashflowService ], (service: CashflowService) => {
+        const transactions: TransactionStatsDtoExtended[] = [
+            new TransactionStatsDtoExtended({ categoryId: 36 }),
+            new TransactionStatsDtoExtended({ categoryId: 49 }),
+            new TransactionStatsDtoExtended({ categoryId: 115 }),
+            new TransactionStatsDtoExtended({ categoryId: 98 }),
+            new TransactionStatsDtoExtended({ categoryId: 59 }),
+            new TransactionStatsDtoExtended({ categoryId: 68 }),
+            new TransactionStatsDtoExtended({ categoryId: 73 })
+        ];
+        service.categoryTree = new GetCategoryTreeOutput({
+            types: {},
+            accountingTypes: {},
+            categories: {
+                '36': new CategoryDto({ parentId: 49, name: 'Business Bank Account', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                '115': new CategoryDto({ parentId: 49, name: 'Checking Account', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                '49': new CategoryDto({ parentId: 98, name: 'Bank', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                '98': new CategoryDto({ parentId: null, name: 'Revenue', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                '59': new CategoryDto({ parentId: null, name: 'Bank', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                '68': new CategoryDto({ parentId: 59, name: 'Business Bank Account', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                '73': new CategoryDto({ parentId: 59, name: 'Business Bank Account', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+            }
+        });
+        service.updateStatsCategoryTree(transactions);
+        expect(service.statsCategoryTree).toEqual({
+            36: 49,
+            49: 98,
+            115: 49,
+            98: null,
+            59: null,
+            68: 59,
+            73: 59
+        });
+        expect(service.statsCategoriesLevelsCount).toBe(3);
+    }));
+
+    it('test getTransactionCategoriesIds method', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryId = 45;
+        const categoryTree = new GetCategoryTreeOutput({
+            types: {},
+            accountingTypes: {},
+            categories: {
+                45: new CategoryDto({ parentId: 67, name: 'Child category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null }),
+                67: new CategoryDto({ parentId: 86, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                86: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null })
+            }
+        });
+        const categoryIds = service.getTransactionCategoriesIds(categoryId, categoryTree);
+        expect(categoryIds).toEqual([86, 67, 45]);
+    }));
+
+    it('getHighestCategoryParentId should work', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryTree: GetCategoryTreeOutput = new GetCategoryTreeOutput ({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                2: new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
+            },
+            categories: {
+                77: new CategoryDto({ parentId: 67, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                67: new CategoryDto({ parentId: 86, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                86: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null })
+            }
+        });
+        const cashflowType = service.getHighestCategoryParentId(77, categoryTree);
+        expect(cashflowType).toEqual(86);
+    }));
+
+    it('getCashFlowTypeByCategory should work', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryTree: GetCategoryTreeOutput = new GetCategoryTreeOutput ({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                2: new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
+            },
+            categories: {
+                77: new CategoryDto({ parentId: 67, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                67: new CategoryDto({ parentId: 86, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                86: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null })
+            }
+        });
+        const cashflowType = service.getCashFlowTypeByCategory(77, categoryTree);
+        expect(cashflowType).toEqual('E');
+    }));
+
+    it('getCategoryFullPath should work', inject([ CashflowService ], (service: CashflowService) => {
+        const category = new CategoryDto({ parentId: 67, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null });
+        const categoryTree: GetCategoryTreeOutput = new GetCategoryTreeOutput ({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                2: new AccountingTypeDto({typeId: 'E', name: 'Expense', isSystem: true})
+            },
+            categories: {
+                77: category,
+                67: new CategoryDto({ parentId: 86, name: 'Child category', accountingTypeId: null, coAID: null, isActive: true, reportingCategoryId: null }),
+                86: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null })
+            }
+        });
+        const categoryFullPath = service.getCategoryFullPath(77, category, categoryTree);
+        console.log(categoryFullPath);
+        expect(categoryFullPath).toEqual([ 'CTE', 'CA86', 'CA67', 'CA77' ]);
     }));
 });

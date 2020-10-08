@@ -5,6 +5,5 @@ export enum CategorizationPrefixes  {
     ReportingSection        = 'RS',
     AccountingType          = 'AT',
     Category                = 'CA',
-    SubCategory             = 'SC',
     TransactionDescriptor   = 'TD'
 }
