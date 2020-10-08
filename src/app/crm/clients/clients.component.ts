@@ -938,6 +938,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.filtersService.apply(() => {
             this.selectedClientKeys = [];
             this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
