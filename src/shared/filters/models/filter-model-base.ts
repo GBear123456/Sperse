@@ -61,7 +61,7 @@ export class FilterModelBase<T extends FilterItemModel> {
 
     clearFilterItems() {
         _.each(this.items, item => {
-            if (item.removeFilterItem)
+            if (item && item.removeFilterItem)
                 item.removeFilterItem(this);
         });
     }
