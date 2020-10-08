@@ -394,16 +394,16 @@ export class CashflowService {
                     let projectedKey;
                     switch (cellInfo.value) {
                         case Projected.PastTotal:
-                        case Projected.FutureTotal:    projectedKey = 'CashflowFields_Total'; break;
-                        case Projected.Forecast:       projectedKey = 'CashflowFields_Projected'; break;
-                        case Projected.Mtd:            projectedKey = 'CashflowFields_Mtd'; break;
-                        case Projected.Today:          projectedKey = 'CashflowFields_Today'; break;
+                        case Projected.FutureTotal: projectedKey = 'CashflowFields_Total'; break;
+                        case Projected.Forecast:    projectedKey = 'CashflowFields_Projected'; break;
+                        case Projected.Mtd:         projectedKey = 'CashflowFields_Mtd'; break;
+                        case Projected.Today:       projectedKey = 'CashflowFields_Today'; break;
                     }
                     return this.ls.l(projectedKey).toUpperCase();
                 },
                 expanded: false,
                 allowExpand: false,
-                visible: true
+                visible: false
             },
             {
                 caption: 'Week',
@@ -1168,7 +1168,7 @@ export class CashflowService {
                 result = Projected.Mtd;
             }
         }
-        return  result;
+        return result;
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2) {

@@ -761,7 +761,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.handleCellsCopying(this.cellsCopyingService.copiedCell, targetCells);
             });
         }
-
         this.hasStaticInstance = this._cfoService.hasStaticInstance;
     }
 
@@ -3402,7 +3401,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         if (!collapseMonth) {
                             cellObj.cancel = true;
                         }
-                        this.collapseCurrentMonthProjectedColums(cellObj.cell.path.slice(), collapseMonth);
+                        this.collapseCurrentMonthProjectedColumns(cellObj.cell.path.slice(), collapseMonth);
                     }
                 }
             }
@@ -3564,7 +3563,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Collapse projected child columns of current month
      * @param {number[]} path
      */
-    collapseCurrentMonthProjectedColums(path: number[], collapseMonth: boolean) {
+    collapseCurrentMonthProjectedColumns(path: number[], collapseMonth: boolean) {
         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Mtd]));
         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Today]));
         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Forecast]));
