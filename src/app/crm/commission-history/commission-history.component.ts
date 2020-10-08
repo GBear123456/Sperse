@@ -1,5 +1,7 @@
 /** Core imports */
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Injector,
     OnDestroy,
@@ -14,7 +16,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
-import { finalize, first, filter, switchMap, takeUntil, skip, map } from 'rxjs/operators';
+import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -34,7 +36,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { InvoiceSettings, CommissionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommissionServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -59,7 +61,8 @@ import { LedgerStatus } from '@app/crm/commission-history/ledger-status.enum';
     animations: [appModuleAnimation()],
     providers: [
         LifecycleSubjectsService
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
@@ -165,6 +168,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private invoicesService: InvoicesService,
         private commissionProxy: CommissionServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
 
@@ -274,6 +278,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
         this.filtersService.apply(() => {
             this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
