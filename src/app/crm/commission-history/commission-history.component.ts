@@ -238,6 +238,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             visibleIndex: -1,
             width: 40
         });
+        this.changeDetectorRef.detectChanges();
     }
 
     onSelectionChanged($event) {
@@ -561,6 +562,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             instance.option('dataSource',
                 this.selectedViewType == this.LEDGER_VIEW
                     ? this.ledgerDataSource : this.dataSource);
+            this.changeDetectorRef.detectChanges();
             this.startLoading();
         } else
             this.setGridDataLoaded();
@@ -570,6 +572,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
             this._refresh.next(null);
+            this.changeDetectorRef.detectChanges();
         }
     }
 
@@ -626,6 +629,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             const client: any = event.data;
             ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, client);
             this.actionEvent = actionEvent;
+            this.changeDetectorRef.detectChanges();
         });
     }
 
