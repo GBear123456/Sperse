@@ -237,8 +237,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    updateAffiliateRate(value?: number) {
-        this.affiliateRate = value == undefined ? null : value;
+    updateAffiliateRate(value?) {
+        this.affiliateRate = isNaN(value) ? null : parseFloat(value);
         this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
             contactId: this.contactInfo.id,
             affiliateRate: this.affiliateRate == null ? null : this.affiliateRate / 100
