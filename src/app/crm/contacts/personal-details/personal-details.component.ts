@@ -1,11 +1,11 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
-import { filter, first, map } from 'rxjs/operators';
+import { filter, first, map, debounceTime, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -46,7 +46,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PersonalDetailsComponent implements OnDestroy {
+export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     person: PersonInfoDto;
     isEditAllowed = false;
     startCase = startCase;
@@ -106,7 +106,7 @@ export class PersonalDetailsComponent implements OnDestroy {
         private dictionaryProxy: DictionaryServiceProxy,
         private clipboardService: ClipboardService,
         private personalDetailsService: PersonalDetailsService,
-        private lifecycleService: LifecycleSubjectsService,
+        private lifeCycleService: LifecycleSubjectsService,
         public dialog: MatDialog,
         private appSessionService: AppSessionService,
         public ls: AppLocalizationService
@@ -119,8 +119,6 @@ export class PersonalDetailsComponent implements OnDestroy {
                 this.getStates(this.person && this.person.citizenship);
                 this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
                 setTimeout(() => this.updateToolbar());
-                if (this.contactsService.settingsDialogOpened.value)
-                    this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
                 this.changeDetector.markForCheck();
             }
         }, this.ident);
@@ -135,6 +133,15 @@ export class PersonalDetailsComponent implements OnDestroy {
         this.loadStates();
     }
 
+    ngAfterViewInit() {
+        this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe(opened => {
+            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, opened);
+        });
+    }
+
     private updateToolbar() {
         this.contactsService.toolbarUpdate({
             optionButton: {
@@ -143,7 +150,7 @@ export class PersonalDetailsComponent implements OnDestroy {
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId);
+                    this.contactsService.toogleSettingsDialog();
                 }
             }
         });
@@ -291,6 +298,6 @@ export class PersonalDetailsComponent implements OnDestroy {
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.ident);
-        this.lifecycleService.destroy.next();
+        this.lifeCycleService.destroy.next();
     }
 }

@@ -163,6 +163,13 @@ export class ContactsService {
         this.settingsDialogOpened.next(false);
     }
 
+    toogleSettingsDialog() {
+        if (this.settingsDialogOpened.value)
+            this.closeSettingsDialog();
+        else 
+            this.openSettingsDialog();
+    }
+
     contactInfoSubscribe(callback, ident?: string) {
         return this.subscribe(this.contactInfo.asObservable().subscribe(callback), ident);
     }
