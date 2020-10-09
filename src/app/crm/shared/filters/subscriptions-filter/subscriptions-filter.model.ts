@@ -34,7 +34,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
                 if (item.current == undefined || item.past == undefined || item.never == undefined) {
                     item.serviceProductLevels.forEach(level => {
-                        if (level.current || level.past || level.never) {
+                        if (level.current && !item.current || level.past && !item.past || level.never && !item.never) {
                             result.push(
                                 {
                                     name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
@@ -71,23 +71,17 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         let result: DisplayElement[] = [];
         if (this.dataSource) {
             this.dataSource.forEach((item) => {
-                if (item.current || item.past || item.never) {
-                    result.push(<DisplayElement>{
-                        item: this,
-                        id: item.id,
-                        displayValue: item.name + ' (' + ([
-                            item.current ? 'Current' : null,
-                            item.past ? 'Past' : null,
-                            item.never ? 'Never' : null
-                        ].filter(Boolean).join(',')) + ')'
-                    });
-                }
+                let initialCount = result.length;
                 if (item.serviceProductLevels && item.serviceProductLevels.length)
                     item.serviceProductLevels.forEach(level => {
-                        if (level.current || level.past || level.never) {
+                        if (level.current && !item.current ||
+                            level.past && !item.past ||
+                            level.never && !item.never
+                        ) {
                             result.push(<DisplayElement>{
                                 item: this,
                                 id: level.id,
+                                parentCode: item.id,
                                 displayValue: level.name + ' (' + ([
                                     level.current ? 'Current' : null,
                                     level.past ? 'Past' : null,
@@ -96,6 +90,20 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                             });
                         }
                     });
+                if (item.current || item.past || item.never || result.length != initialCount) {
+                    let columns = [
+                        item.current ? 'Current' : null,
+                        item.past ? 'Past' : null,
+                        item.never ? 'Never' : null
+                    ].filter(Boolean);
+                    result.splice(initialCount, 0, <DisplayElement>{
+                        item: this,
+                        id: item.id,
+                        displayValue: item.name + (columns.length ?
+                            ' (' +  columns.join(',') + ')' : ''
+                        )
+                    });
+                }
             });
         }
         return result;
