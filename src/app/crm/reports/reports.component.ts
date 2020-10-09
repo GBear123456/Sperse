@@ -7,7 +7,7 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, filter } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -241,6 +241,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.activate();
         this.invoiceService.settings$.pipe(
+            filter(Boolean),
             takeUntil(this.deactivate$),
             map((settings: InvoiceSettings) => settings.currency)
         ).subscribe((currency: Currency) => {

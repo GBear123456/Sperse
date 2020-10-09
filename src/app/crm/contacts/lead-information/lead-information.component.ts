@@ -197,7 +197,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 this.loadOrganizationUnits();
             }
         }, this.ident);
-        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(settings => {
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
             this.invoiceSettings = settings;
         });
     }

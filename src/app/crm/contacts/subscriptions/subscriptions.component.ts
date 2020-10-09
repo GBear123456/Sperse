@@ -5,11 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
-import { map, first } from 'rxjs/operators';
+import { map, first, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import {
+    InvoiceSettings,
     ContactServiceProxy,
     OrderSubscriptionServiceProxy,
     OrderSubscriptionDto,
@@ -73,7 +74,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 this.refreshData(true);
             }
         }, this.ident);
-        invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
+        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
+            (res: InvoiceSettings) => this.currency = res.currency);
     }
 
     ngOnInit() {
