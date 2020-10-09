@@ -163,7 +163,7 @@ export class ContactsService {
         this.settingsDialogOpened.next(false);
     }
 
-    toogleSettingsDialog() {
+    toggleSettingsDialog() {
         if (this.settingsDialogOpened.value)
             this.closeSettingsDialog();
         else 

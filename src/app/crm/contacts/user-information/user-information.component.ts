@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -8,7 +8,7 @@ import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
 import { finalize, filter, takeUntil,
-    first, map, startWith } from 'rxjs/operators';
+    debounceTime, first, map, startWith } from 'rxjs/operators';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
@@ -54,7 +54,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     styleUrls: ['./user-information.component.less'],
     providers: [ PhoneFormatPipe, LifecycleSubjectsService ]
 })
-export class UserInformationComponent implements OnInit, OnDestroy {
+export class UserInformationComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('emailAddress', { static: false }) emailAddressComponent: DxSelectBoxComponent;
     @ViewChild('phoneNumber', { static: false }) phoneNumberComponent: DxSelectBoxComponent;
     @ViewChild('inviteValidationGroup', { static: false }) inviteValidationComponent: DxValidationGroupComponent;
@@ -149,8 +149,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 this.loadOrganizationUnits();
                 this.getPhonesAndEmails();
             }
-            if (this.contactsService.settingsDialogOpened.value)
-                this.toggleOrgUnitsDialog(0, false);
             this.updateToolbarOptions();
         }, this.ident);
 
@@ -179,6 +177,15 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         this.updateInviteDataRoles();
     }
 
+    ngAfterViewInit() {
+        this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifecycleSubjectService.destroy$),
+            debounceTime(300)
+        ).subscribe(opened => {
+            this.toggleOrgUnitsDialog(opened);
+        });
+    }
+
     private loadOrganizationUnits() {
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
         this.store$.pipe(
@@ -200,7 +207,9 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                 options: {
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
-                action: () => this.toggleOrgUnitsDialog()
+                action: () => {
+                    this.contactsService.toggleSettingsDialog(); 
+                }
             }
         }));
     }
@@ -334,8 +343,6 @@ export class UserInformationComponent implements OnInit, OnDestroy {
                     ).subscribe(() => {
                         this.contactsService.invalidate();
                         this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup), true);
-                        if (this.contactsService.settingsDialogOpened.value)
-                            this.toggleOrgUnitsDialog(0, false);
                     });
                 }
             }
@@ -482,31 +489,22 @@ export class UserInformationComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
-    toggleOrgUnitsDialog(timeout = 0, closeIfExists = true): void {
-        setTimeout(
-            () => {
-                const dialog = this.dialog.getDialogById('user-organization-units-dialog');
-                if (!dialog) {
-                    this.dialog.open(OrganizationUnitsDialogComponent, {
-                        id: 'user-organization-units-dialog',
-                        panelClass: ['slider'],
-                        disableClose: false,
-                        hasBackdrop: false,
-                        closeOnNavigation: true,
-                        data: {
-                            title: this.ls.l('OrganizationUnits'),
-                            selectionMode: 'multiple'
-                        }
-                    }).afterClosed().pipe(filter(Boolean)).subscribe(() => {
-                        this.contactsService.closeSettingsDialog();
-                    });
-                    this.contactsService.openSettingsDialog();
-                } else if (closeIfExists) {
-                    this.contactsService.closeSettingsDialog();
+    toggleOrgUnitsDialog(open = true): void {
+        const dialog = this.dialog.getDialogById('user-organization-units-dialog');
+        if (!dialog)
+            open && this.dialog.open(OrganizationUnitsDialogComponent, {
+                id: 'user-organization-units-dialog',
+                panelClass: ['slider'],
+                disableClose: false,
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    title: this.ls.l('OrganizationUnits'),
+                    selectionMode: 'multiple'
                 }
-            },
-            timeout
-        );
+            });
+        else if (!open) 
+            dialog.close();
     }
 
     ngOnDestroy() {

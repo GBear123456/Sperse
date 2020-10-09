@@ -62,7 +62,7 @@ export class ContactInformationComponent implements OnInit, AfterViewInit, OnDes
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.contactsService.toogleSettingsDialog();
+                    this.contactsService.toggleSettingsDialog();
                 }
             }
         });

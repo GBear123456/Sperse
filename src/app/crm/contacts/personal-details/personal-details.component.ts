@@ -150,7 +150,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.contactsService.toogleSettingsDialog();
+                    this.contactsService.toggleSettingsDialog();
                 }
             }
         });
