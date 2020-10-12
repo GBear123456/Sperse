@@ -16,6 +16,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import Form from 'devextreme/ui/form';
@@ -45,7 +46,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { SynchProgressService } from '../helpers/synch-progress.service';
-import { BankAccountProgress, SyncProgressDto } from '../../../service-proxies/service-proxies';
+import { BankAccountProgress, SyncProgressDto } from '@shared/service-proxies/service-proxies';
+import { AutoSyncDialogComponent } from '@shared/cfo/bank-accounts/synch-progress/auto-sync-dialog/auto-sync-dialog.component';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -71,7 +73,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showBusinessEntitiesFilter = true;
     @Input() showStatus = true;
     @Input() showBankAccountsStatus = false;
-    @Input() showStatusText = AppConsts.isMobile ? false : true;
+    @Input() showStatusText = !AppConsts.isMobile;
     @Input() showAddAccountButton = true;
     @Input() searchInputWidth = 279;
     @Input() additionalActionsAllowed = false;
@@ -111,6 +113,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     contextMenuItems = [
         { text: this.l('Edit_Name'), name: 'edit' },
         { text: this.l('Sync_Now'), name: 'sync' },
+        { text: this.l('AutoSync'), name: 'auto-sync' },
         { text: this.l('Resync_All'), name: 'resync' },
         { text: this.l('Reconnect'), name: 'update' },
         { text: this.l('Delete'), name: 'delete' }
@@ -170,6 +173,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         private syncServiceProxy: SyncServiceProxy,
         private syncProgressService: SynchProgressService,
         private changeDetectorRef: ChangeDetectorRef,
+        private dialog: MatDialog,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
@@ -575,7 +579,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             });
     }
 
-    requestSyncForAccounts(fullResync = false) {
+    requestSyncForAccounts(fullResync: boolean = false) {
         this.syncServiceProxy
             .requestSyncForAccounts(this.instanceType, this.instanceId, fullResync, this.syncAccountIds)
             .subscribe(res => {
@@ -586,6 +590,26 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                     this.notify.info(this.l('SyncProblemMessage_TryLater'));
                 }
             });
+    }
+
+    updateAutoSyncTime(title: string, syncAccountsIds: number[], autoSyncTime?: string) {
+        this.dialog.open(AutoSyncDialogComponent, {
+            data: {
+                title: title,
+                syncAccountsIds: syncAccountsIds,
+                autoSyncTime: autoSyncTime
+            }
+        }).afterClosed().subscribe((updatedSuccessfully: string) => {
+            if (updatedSuccessfully) {
+                this.refresh(true);
+            }
+        });
+    }
+
+    getSelectedSyncAccountIds(): number[] {
+        return this.mainDataGrid.instance.getVisibleRows()
+            .filter((row) => row.rowType === 'data' && row.data.selected)
+            .map((row) => row.data.syncAccountId)
     }
 
     renameBankAccount() {
@@ -608,8 +632,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     openActionsMenu(cellObj) {
-        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] = cellObj.data.syncTypeId === 'Q';
-        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'update')]['hide'] = (cellObj.data.syncTypeId != SyncTypeIds.Plaid && cellObj.data.syncTypeId != SyncTypeIds.QuickBook && cellObj.data.syncTypeId != SyncTypeIds.XeroOAuth2);
+        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] =
+            cellObj.data.syncTypeId === 'Q';
+        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'update')]['hide'] =
+            cellObj.data.syncTypeId != SyncTypeIds.Plaid
+            && cellObj.data.syncTypeId != SyncTypeIds.QuickBook
+            && cellObj.data.syncTypeId != SyncTypeIds.XeroOAuth2;
         this.syncAccount = cellObj.data;
         this.syncRef = cellObj.text;
         this.syncAccountId = cellObj.data.syncAccountId;
@@ -623,20 +651,27 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     actionsItemClick(e) {
-        switch (e.itemData.text) {
-            case this.l('Edit_Name'):
+        switch (e.itemData.name) {
+            case 'edit':
                 this.changeBankAccountName();
                 break;
-            case this.l('Sync_Now'):
+            case 'sync':
                 this.requestSyncForAccounts();
                 break;
-            case this.l('Resync_All'):
+            case 'auto-sync':
+                this.updateAutoSyncTime(
+                    this.l('UpdateAccountAutoSyncTime'),
+                    [this.syncAccountId],
+                    this.syncAccount.autoSyncTime || null
+                );
+                break;
+            case 'resync':
                 this.requestSyncForAccounts(true);
                 break;
-            case this.l('Reconnect'):
+            case 'update':
                 this.updateAccountInfo(this.syncAccount);
                 break;
-            case this.l('Delete'):
+            case 'delete':
                 this.removeAccount(this.syncAccountId);
                 break;
         }

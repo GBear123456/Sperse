@@ -29219,6 +29219,64 @@ export class SyncAccountServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    changeAutoSyncTime(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: ChangeAutoSyncInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/ChangeAutoSyncTime?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processChangeAutoSyncTime(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processChangeAutoSyncTime(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processChangeAutoSyncTime(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @syncAccountId (optional) 
      * @return Success
      */
@@ -39832,6 +39890,8 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     syncAccountStatus!: SyncProgressStatus | undefined;
     syncRef!: string | undefined;
     syncTypeId!: string | undefined;
+    autoSyncTime!: string | undefined;
+    autoSyncTimeZone!: string | undefined;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -39858,6 +39918,8 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.syncAccountStatus = data["syncAccountStatus"];
             this.syncRef = data["syncRef"];
             this.syncTypeId = data["syncTypeId"];
+            this.autoSyncTime = data["autoSyncTime"];
+            this.autoSyncTimeZone = data["autoSyncTimeZone"];
         }
     }
 
@@ -39884,6 +39946,8 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["syncAccountStatus"] = this.syncAccountStatus;
         data["syncRef"] = this.syncRef;
         data["syncTypeId"] = this.syncTypeId;
+        data["autoSyncTime"] = this.autoSyncTime;
+        data["autoSyncTimeZone"] = this.autoSyncTimeZone;
         return data; 
     }
 }
@@ -39899,6 +39963,8 @@ export interface ISyncAccountBankDto {
     syncAccountStatus: SyncProgressStatus | undefined;
     syncRef: string | undefined;
     syncTypeId: string | undefined;
+    autoSyncTime: string | undefined;
+    autoSyncTimeZone: string | undefined;
 }
 
 export enum GroupByPeriod {
@@ -71991,6 +72057,54 @@ export class RenameSyncAccountInput implements IRenameSyncAccountInput {
 export interface IRenameSyncAccountInput {
     id: number;
     newName: string;
+}
+
+export class ChangeAutoSyncInput implements IChangeAutoSyncInput {
+    syncAccountIds!: number[] | undefined;
+    autoSyncTime!: string | undefined;
+
+    constructor(data?: IChangeAutoSyncInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["syncAccountIds"] && data["syncAccountIds"].constructor === Array) {
+                this.syncAccountIds = [];
+                for (let item of data["syncAccountIds"])
+                    this.syncAccountIds.push(item);
+            }
+            this.autoSyncTime = data["autoSyncTime"];
+        }
+    }
+
+    static fromJS(data: any): ChangeAutoSyncInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangeAutoSyncInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.syncAccountIds && this.syncAccountIds.constructor === Array) {
+            data["syncAccountIds"] = [];
+            for (let item of this.syncAccountIds)
+                data["syncAccountIds"].push(item);
+        }
+        data["autoSyncTime"] = this.autoSyncTime;
+        return data; 
+    }
+}
+
+export interface IChangeAutoSyncInput {
+    syncAccountIds: number[] | undefined;
+    autoSyncTime: string | undefined;
 }
 
 export class PlaidConfig implements IPlaidConfig {

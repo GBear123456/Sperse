@@ -159,7 +159,7 @@
                     [width]="40"
                     alignment="right"
                     [allowEditing]="false"
-                    [visible]="allowUpdateAccount && contextMenuItems && contextMenuItems.length"
+                    [visible]="!!(allowUpdateAccount && contextMenuItems && contextMenuItems.length)"
                     cellTemplate="actionsTemplate">
         </dxi-column>
         <div *dxTemplate="let syncAccount of 'detail'">

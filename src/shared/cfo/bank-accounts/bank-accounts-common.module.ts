@@ -3,6 +3,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 
 /** Third party imports */
+import { MatDialogModule } from '@angular/material/dialog';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
@@ -23,6 +24,7 @@ import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -31,6 +33,7 @@ import {
     ContactServiceProxy,
     BankAccountsServiceProxy,
     BusinessEntityServiceProxy,
+    SyncAccountServiceProxy,
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from './helpers/bank-accounts.service';
 import { BankAccountsComponent } from './bank-accounts.component';
@@ -46,6 +49,7 @@ import { SearchInputModule } from '@app/shared/common/search-input/search-input.
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
 import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-button.module';
 import { BusinessEntitiesChooserComponent } from './business-entities-chooser/business-entities-chooser.component';
+import { AutoSyncDialogComponent } from '@shared/cfo/bank-accounts/synch-progress/auto-sync-dialog/auto-sync-dialog.component';
 
 @NgModule({
     imports: [
@@ -68,13 +72,15 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         DxListModule,
         DxProgressBarModule,
         DxValidatorModule,
+        MatDialogModule,
         AccountConnectorDialogModule,
         DxValidationSummaryModule,
         DxRadioGroupModule,
         DxTreeViewModule,
         SearchInputModule,
         SortButtonModule,
-        ExpandButtonModule
+        ExpandButtonModule,
+        DxDateBoxModule
     ],
     declarations: [
         BankAccountsComponent,
@@ -85,7 +91,8 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         ChooseAccountComponent,
 
         SelectionFilterComponent,
-        SynchProgressComponent
+        SynchProgressComponent,
+        AutoSyncDialogComponent
     ],
     exports: [
         BankAccountsComponent,
@@ -99,14 +106,16 @@ import { BusinessEntitiesChooserComponent } from './business-entities-chooser/bu
         SynchProgressComponent
     ],
     entryComponents: [
-        ChooseAccountComponent
+        ChooseAccountComponent,
+        AutoSyncDialogComponent
     ],
     providers: [
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,
         SyncServiceProxy,
-        SynchProgressService
+        SynchProgressService,
+        SyncAccountServiceProxy
     ]
 })
 export class BankAccountsCommonModule {

@@ -4,6 +4,10 @@
             (click)="syncAll(true)">
         <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
         {{l('SyncAllAccounts')}}
+        <div class="auto-sync"
+             inlineSVG="assets/common/icons/clock-circle.svg"
+             (click)="openAutoSyncDialog($event)">
+        </div>
     </button>
     <div class="synch-container" *ngIf="showProgress">
         <div class="loader" *ngIf="showLoader">
@@ -33,6 +37,10 @@
                     (click)="syncAll()">
                 <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
                 {{l('SyncAllAccounts')}}
+                <div class="auto-sync"
+                     inlineSVG="assets/common/icons/clock-circle.svg"
+                     (click)="openAutoSyncDialog($event)">
+                </div>
             </button>
         </div>
     </div>

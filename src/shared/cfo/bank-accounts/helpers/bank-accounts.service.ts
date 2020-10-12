@@ -348,8 +348,8 @@ export class BankAccountsService {
         );
 
         this.selectedBankAccountsIds$ = this.selectedBankAccounts$.pipe(
-            map(bankAccounts => {
-                return bankAccounts.map(account => account.id);
+            map((bankAccounts: BankAccountDto[]) => {
+                return bankAccounts.map((account: BankAccountDto) => account.id);
             }),
             distinctUntilChanged(this.arrayDistinct)
         );
@@ -510,7 +510,8 @@ export class BankAccountsService {
             syncAccountsState$,
             searchValue$
         ).pipe(
-            map(([syncAccounts, state, searchValue]) => {
+            map(([syncAccounts, state, searchValue]:
+                 [SyncAccountBankDto[], BankAccountsState, string]) => {
                 return this.filterDataSource(
                     syncAccounts,
                     state.selectedBusinessEntitiesIds,

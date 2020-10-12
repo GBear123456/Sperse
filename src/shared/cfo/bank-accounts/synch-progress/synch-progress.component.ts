@@ -2,6 +2,7 @@
 import { Component, OnInit, Injector, EventEmitter, Input, Output, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { merge } from 'rxjs';
 import { filter, first, takeUntil } from 'rxjs/operators';
@@ -27,6 +28,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @Input() showSyncAccountButton = false;
     @Output() onComplete = new EventEmitter();
     @Output() onSyncStarted = new EventEmitter();
+    @Output() onAutoSyncButtonClicked = new EventEmitter();
     createAccountAvailable: boolean;
     completed = true;
     showProgress = true;
@@ -42,13 +44,14 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     constructor(
         injector: Injector,
+        private dialog: MatDialog,
         private syncProgressService: SynchProgressService,
-        private syncAccountServiceProxy: SyncAccountServiceProxy,
+        private syncAccountServiceProxy: SyncAccountServiceProxy
     ) {
         super(injector);
         this.syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
-            .subscribe((result) => {
-                this.createAccountAvailable = result;
+            .subscribe((createIsAllowed: boolean) => {
+                this.createAccountAvailable = createIsAllowed;
             });
     }
 
@@ -81,7 +84,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.accountProgressTooltipText = message;
     }
 
-    syncAll(toggleComponent = false) {
+    syncAll(toggleComponent: boolean = false) {
         this.showLoader = true;
         if (toggleComponent) this.toggleComponent();
         this.syncProgressService.startSynchronization(true);
@@ -97,6 +100,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 this.onSyncStarted.emit();
             }
         );
+    }
+
+    openAutoSyncDialog(e) {
+        this.onAutoSyncButtonClicked.emit();
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     activate() {
