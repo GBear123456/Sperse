@@ -99,6 +99,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }
     ];
     permissions = AppPermissions;
+    searchValueChanged = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
@@ -406,7 +407,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 items: [
                     {
                         name: 'search',
-                        disabled: true,
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
@@ -562,14 +562,18 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             instance.option('dataSource',
                 this.selectedViewType == this.LEDGER_VIEW
                     ? this.ledgerDataSource : this.dataSource);
-            this.changeDetectorRef.detectChanges();
+            this.processFilterInternal();
             this.startLoading();
+        } else if (this.searchValueChanged) {
+            this.searchValueChanged = false;
+            this.processFilterInternal();            
         } else
             this.setGridDataLoaded();
     }
 
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
+            this.searchValueChanged = true;
             this.searchValue = e['value'];
             this._refresh.next(null);
             this.changeDetectorRef.detectChanges();
@@ -586,9 +590,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 this.filtersService.getCheckCustom
             );
         }
-    }
-
-    onCellClick($event) {
     }
 
     ngOnDestroy() {
@@ -644,6 +645,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.initFilterConfig(true);
             this.setDataGridInstance();
             this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         }
     }
 }
