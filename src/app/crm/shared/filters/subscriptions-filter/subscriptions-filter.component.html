@@ -5,13 +5,14 @@
         <div>{{ ls.l('Never') }}</div>
     </div>
     <dx-tree-list [dataSource]="items.element.dataSource"
-                  [dataStructure]="'tree'"
-                  [keyExpr]="'id'"
-                  [itemsExpr]="'serviceProductLevels'"
+                  dataStructure="tree"
+                  keyExpr="uid"
+                  itemsExpr="serviceProductLevels"
                   [showColumnHeaders]="false"
                   height="calc(100vh - 193px)"
                   [scrolling]="{ preloadEnabled: true }"
-                  [autoExpandAll]="true">
+                  [autoExpandAll]="true"
+                  (onOptionChanged)="onOptionChanged($event)">
         <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
             <div class="name" [title]="cell.data[items.element.nameField]">{{ cell.data[items.element.nameField] }}</div>
