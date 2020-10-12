@@ -13,13 +13,13 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, OrderServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
@@ -61,7 +61,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 }
             }
         }, this.ident);
-        invoicesService.settings$.pipe(first()).subscribe(res => this.currency = res.currency);
+        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
+            (res: InvoiceSettings) => this.currency = res.currency);
     }
 
     ngOnInit(): void {

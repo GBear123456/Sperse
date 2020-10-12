@@ -156,7 +156,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.invoicesService.settings$.pipe(
             filter(Boolean), first()
         ).subscribe((res: InvoiceSettings) => {
-            this.defaultAffiliateRate = res.defaultAffiliateRate * 100;
+            if (res.defaultAffiliateRate !== null)
+                this.defaultAffiliateRate = res.defaultAffiliateRate * 100;
         });
 
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {

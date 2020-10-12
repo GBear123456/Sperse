@@ -15,7 +15,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
-import { finalize, first, switchMap } from 'rxjs/operators';
+import { finalize, first, switchMap, filter } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
@@ -214,7 +214,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.invoicesService.settings$.pipe(first()).subscribe(settings => {
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
                 this.notes = settings.defaultNote;

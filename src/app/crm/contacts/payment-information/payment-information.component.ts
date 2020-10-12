@@ -11,7 +11,8 @@ import {
     map,
     switchMap,
     finalize,
-    first
+    first,
+    filter
 } from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
 import * as moment from 'moment';
@@ -61,7 +62,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
         private loadingService: LoadingService,
         public ls: AppLocalizationService
     ) {
-        invoicesService.settings$.pipe(first()).subscribe(
+        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
             (settings: InvoiceSettings) => this.amountCurrency = settings.currency
         );
     }
