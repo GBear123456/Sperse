@@ -72,6 +72,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     defaultType: string;
     type: string;
     companyContact: boolean;
+    disableSaveButton = true;
 
     types = [];
     users = [];
@@ -146,6 +147,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
         this.applyOrdersFilter();
         this.initNoteData();
+
+        this.disableSaveButton = !this.permission.isGranted(AppPermissions.CRMDeleteNote);
     }
 
     ngOnInit() {

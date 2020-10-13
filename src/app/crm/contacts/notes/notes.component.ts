@@ -42,6 +42,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
 
     public userTimezone = DateHelper.getUserTimezone();
     public actionMenuItems: ActionMenuItem[];
+    public showActonMenu = false;
     public userId = abp.session.userId;
     public actionRecordData: any;
     public showGridView = false;
@@ -65,6 +66,8 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             );
             this.updateToolbar();
         }, this.ident);
+
+        this.showActonMenu = this.permission.isGranted(AppPermissions.CRMDeleteNote);
     }
 
     ngOnInit() {
@@ -103,8 +106,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             {
                 text: this.l('Delete'),
                 class: 'delete',
-                action: this.deleteNote.bind(this),
-                visible: this.permission.isGranted(AppPermissions.CRMDeleteNote)
+                action: this.deleteNote.bind(this)
             }
         ];
     }
