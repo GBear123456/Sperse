@@ -44,6 +44,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommissionServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
+import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
@@ -474,6 +475,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                     action: this.approveEarnings.bind(this)
                                 },
                                 {
+                                    text: this.l('Complete'),
+                                    visible: this.selectedViewType == this.LEDGER_VIEW,
+                                    action: this.applyComplete.bind(this),
+                                    disabled: !this.selectedRecords.length
+                                        || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                        || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal))
+                                },
+                                {
                                     text: this.l('Cancel'),
                                     action: this.applyCancel.bind(this),
                                     disabled: !this.selectedRecords.length
@@ -523,6 +532,19 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             }
         ];
         return this.toolbarConfig;
+    }
+
+    applyComplete() {
+        this.dialog.open(LedgerCompleteDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                entityIds: this.selectedRecords.filter(
+                    item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
+                ).map(item => item.Id),
+                bulkUpdateAllowed: this.bulkUpdateAllowed
+            }
+        }).afterClosed().subscribe(() => this.refresh());
     }
 
     applyCancel() {

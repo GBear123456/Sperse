@@ -16,18 +16,13 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
-    selector: 'commission-earnings-dialog',
-    templateUrl: 'commission-earnings-dialog.component.html',
-    styleUrls: ['commission-earnings-dialog.component.less']
+    selector: 'ledger-complete-dialog',
+    templateUrl: 'ledger-complete-dialog.component.html',
+    styleUrls: ['ledger-complete-dialog.component.less']
 })
-export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
-    contacts$: Observable<PendingCommissionContactInfo[]> = this.commissionProxy.getPendingCommissionContacts();
-    calendarOptions = { allowFutureDates: false };
-    contactId: number;
-    dateRange = {
-        from: { value: DateHelper.addTimezoneOffset(moment().startOf('day').toDate(), true) },
-        to: { value: DateHelper.addTimezoneOffset(moment().endOf('day').toDate(), true) }
-    };
+export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
+    paymentSystems = ['PayQuicker', 'PayPal'];
+    paymentSystem = this.paymentSystems[0];
 
     constructor(
         injector: Injector,
@@ -40,14 +35,10 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
     }
 
     confirm() {
-        if (this.contactId || this.data.bulkUpdateAllowed) {
+        if (this.data.entityIds.length <= 1 || this.data.bulkUpdateAllowed) {
             this.loadingService.startLoading(this.elementRef.nativeElement);
-            this.commissionProxy.recordEarnings(
-                new RecordEarningsInput({
-                    contactId: this.contactId,
-                    startDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.from.value.getTime()), true, 'from'),
-                    endDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.to.value.getTime()), true, 'to')
-                })
+            this.commissionProxy.completeWithdrawals(
+                this.paymentSystem, this.data.entityIds
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ).subscribe(() => {
