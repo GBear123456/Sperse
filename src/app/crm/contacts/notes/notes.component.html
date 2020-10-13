@@ -76,6 +76,7 @@
             <div class="messages-wrapper">
                 <div *ngFor="let message of dataSource; let i = index" class="message-wrapper" [ngClass]="{current: message.addedByUserId == userId, another: message.addedByUserId != userId}" [attr.fullname]="message.addedByUserName">
                     <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(message.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                    <a *ngIf="showActonMenu" class="gear-icon" (click)="toggleActionsMenu(message, $event.target)"></a>
                     <div class="body date" [attr.date]="message.dateTime | date: formatting.inboxDate : userTimezone">
                         <div [innerHtml]="message.text"></div>
                     </div>

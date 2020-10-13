@@ -114,7 +114,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     invalidate() {
         this.data = this.contactService['data'];
         this.loadData().subscribe(
-            (notes: NoteInfoDto[]) => { 
+            (notes: NoteInfoDto[]) => {
                 this.dataSource = notes;
                 this.updateToolbar();
             }
