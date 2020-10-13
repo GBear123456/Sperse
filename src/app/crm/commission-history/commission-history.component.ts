@@ -466,7 +466,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                     action: this.applyEarnings.bind(this)
                                 },
                                 {
-                                    text: this.l('ApproveEarning'),
+                                    text: this.l('ApproveLedger'),
                                     visible: this.selectedViewType == this.LEDGER_VIEW,
                                     disabled: !this.selectedRecords.length
                                         || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
