@@ -571,7 +571,7 @@ export class ContactsService {
                 },
                 [
                     { text: this.ls.l('ForceDelete'), visible: canForceDelete },
-                    { text: this.ls.l('SendCancellationEmail'), visible: true }
+                    { text: this.ls.l('SendCancellationEmail'), visible: !!this.userId.value }
                 ]
             );
         }

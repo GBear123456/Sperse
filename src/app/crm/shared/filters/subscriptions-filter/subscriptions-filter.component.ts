@@ -67,4 +67,14 @@ export class SubscriptionsFilterComponent implements FilterComponent {
             }
         });
     }
+
+    onOptionChanged(event) {
+        if (event.name == 'dataSource')
+            this.items.element.dataSource.forEach(parent => {
+                parent.uid = parent.id;
+                parent.serviceProductLevels.forEach(child => {
+                    child.uid = parent.id + ':' + child.id;
+                });
+            });
+    }
 }

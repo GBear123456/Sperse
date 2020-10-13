@@ -78,15 +78,32 @@
                     font-weight: 500;
                 }
 
+                .gear-icon {
+                    background-image: url(../../../../assets/common/icons/edit-icon.svg);
+                    background-repeat: no-repeat;
+                    width: 18px;
+                    height: 18px;
+                    margin-top: 20px;
+                    margin-left: 20px;
+                    vertical-align: top;
+                    display: inline-block;
+                }
+
                 &.another {
                     &:before {
                         left: auto;
                         right: 55px;
                     }
 
+                    .gear-icon {
+                        float: right;
+                        margin-right: 20px;
+                        margin-left: 0px;
+                    }
+
                     .body {
                         background: rgba(0, 174, 239, 0.1);
-                        margin-right: 50px;
+                        margin-right: 20px;
                         margin-left: auto;
                         float: right;
                     }
@@ -100,7 +117,7 @@
                 &.current {
                     .body {
                         background: #f3f7fa;
-                        margin-left: 50px;
+                        margin-left: 20px;
                         &.date:after {
                             right: 0px;
                         }

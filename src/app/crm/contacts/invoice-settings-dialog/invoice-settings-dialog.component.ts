@@ -78,7 +78,10 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe((res: InvoiceSettings) => {
             this.settings = new InvoiceSettings(res);
-            this.settings.defaultAffiliateRate = this.settings.defaultAffiliateRate * 100;
+            if (this.settings.defaultAffiliateRate !== null)
+                this.settings.defaultAffiliateRate = parseFloat(
+                    (this.settings.defaultAffiliateRate * 100).toFixed(2)
+                );
             this.data.templateId = res.defaultTemplateId;
             this.changeDetectorRef.markForCheck();
         });
@@ -87,7 +90,10 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     save() {
         this.modalDialog.startLoading();
-        this.settings.defaultAffiliateRate = this.settings.defaultAffiliateRate / 100;
+        if (this.settings.defaultAffiliateRate !== null)
+            this.settings.defaultAffiliateRate = parseFloat(
+                (this.settings.defaultAffiliateRate / 100).toFixed(4)
+            );
         this.settings.defaultTemplateId = this.data.templateId;
         this.invoiceProxy.updateSettings(this.settings).pipe(
             finalize(() => this.modalDialog.finishLoading())

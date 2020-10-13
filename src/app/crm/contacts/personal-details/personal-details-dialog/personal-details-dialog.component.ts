@@ -156,7 +156,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.invoicesService.settings$.pipe(
             filter(Boolean), first()
         ).subscribe((res: InvoiceSettings) => {
-            this.defaultAffiliateRate = res.defaultAffiliateRate * 100;
+            if (res.defaultAffiliateRate !== null)
+                this.defaultAffiliateRate = (res.defaultAffiliateRate * 100).toFixed(2);
         });
 
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
@@ -164,7 +165,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.contactInfo = contactInfo;
                 this.affiliateRateInitil = this.affiliateRate =
                     this.contactInfo.affiliateRate === null ? null
-                        : this.contactInfo.affiliateRate * 100;
+                        : (this.contactInfo.affiliateRate * 100).toFixed(2);
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
@@ -241,7 +242,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
         this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
             contactId: this.contactInfo.id,
-            affiliateRate: this.affiliateRate == null ? null : this.affiliateRate / 100
+            affiliateRate: this.affiliateRate == null ? null : parseFloat((this.affiliateRate / 100).toFixed(4))
         })).subscribe(() => {
             this.affiliateRateInitil = this.affiliateRate;
             this.notifyService.info(this.ls.l('SavedSuccessfully'));

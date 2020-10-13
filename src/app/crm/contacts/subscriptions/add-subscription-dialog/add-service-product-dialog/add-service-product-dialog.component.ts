@@ -14,7 +14,7 @@ import { getCurrencySymbol } from '@angular/common';
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -48,7 +48,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
     private slider: any;
     serviceProduct: ServiceProductDto;
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
+        filter(Boolean), map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
 
     constructor(

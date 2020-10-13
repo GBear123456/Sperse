@@ -64,9 +64,11 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return true;
         }
 
-        if ((route.data && route.data['permission'] && route.data['permission'] === 'Detect.Route') || isStateRoot)
-            this.router.navigate([this.selectBestRoute()]);
-        else
+        if ((route.data && route.data['permission'] && route.data['permission'] === 'Detect.Route') || isStateRoot) {
+            let bestRoute = this.selectBestRoute();
+            if (bestRoute)
+                this.router.navigate([bestRoute]);
+        } else
             this.router.navigate(['/app/access-denied']);
 
         return false;

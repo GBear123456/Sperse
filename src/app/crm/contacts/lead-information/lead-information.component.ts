@@ -195,7 +195,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 this.loadOrganizationUnits();
             }
         }, this.ident);
-        this.invoicesService.settings$.pipe(first()).subscribe(settings => {
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
             this.invoiceSettings = settings;
         });
     }

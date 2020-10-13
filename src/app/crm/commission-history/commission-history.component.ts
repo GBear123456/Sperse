@@ -11,6 +11,7 @@ import {
 import { Params } from '@angular/router';
 
 /** Third party imports */
+import { select, Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
@@ -20,6 +21,11 @@ import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/o
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { AppStore } from '@app/store';
+import {
+    SubscriptionsStoreActions,
+    SubscriptionsStoreSelectors
+} from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -99,6 +105,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }
     ];
     permissions = AppPermissions;
+    searchValueChanged = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
@@ -160,10 +167,122 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         return this.selectedViewType == this.COMMISSION_VIEW ? this.commissionDataSourceURI : this.ledgerDataSourceURI;
     }
 
+    commissionFilters = [
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'earnedDate',
+            field: this.commissionFields.OrderDate,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Status',
+            field: this.commissionFields.Status,
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource: Object.keys(CommissionStatus).map((status: string) => ({
+                            id: CommissionStatus[status],
+                            name: startCase(status)
+                        })),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'Commission',
+            field: this.commissionFields.CommissionAmount,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Product',
+            field: this.commissionFields.ProductCode,
+            options: { method: 'filterByFilterElement' },
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.store$.pipe(
+                            select(SubscriptionsStoreSelectors.getSubscriptions),
+                            filter(Boolean), first()
+                        ),
+                        dispatch: () => this.store$.dispatch(
+                            new SubscriptionsStoreActions.LoadRequestAction(false)
+                        ),
+                        nameField: 'name',
+                        keyExpr: 'code'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'ProductAmount',
+            field: this.commissionFields.ProductAmount,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        })
+    ];
+
+    ledgerFilters = [
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Type',
+            field: this.ledgerFields.Type,
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource: Object.keys(LedgerType).map((type: string) => ({
+                            id: LedgerType[type],
+                            name: startCase(type)
+                        })),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Status',
+            field: this.ledgerFields.Status,
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource: Object.keys(LedgerStatus).map((status: string) => ({
+                            id: LedgerStatus[status],
+                            name: startCase(status)
+                        })),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'entryDate',
+            field: this.ledgerFields.EntryDate,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'TotalAmount',
+            field: this.ledgerFields.TotalAmount,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        })
+    ];
+
     constructor(
         injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
+        private store$: Store<AppStore.State>,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
         private commissionProxy: CommissionServiceProxy,
@@ -285,95 +404,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     private getFilters() {
         return this.selectedViewType === this.COMMISSION_VIEW
-            ? [
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'earnedDate',
-                    field: this.commissionFields.OrderDate,
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'Status',
-                    field: this.commissionFields.Status,
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource: Object.keys(CommissionStatus).map((status: string) => ({
-                                    id: CommissionStatus[status],
-                                    name: startCase(status)
-                                })),
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'Commission',
-                    field: this.commissionFields.CommissionAmount,
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'ProductAmount',
-                    field: this.commissionFields.ProductAmount,
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                })
-            ]
-            : [
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'Type',
-                    field: this.ledgerFields.Type,
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource: Object.keys(LedgerType).map((type: string) => ({
-                                    id: LedgerType[type],
-                                    name: startCase(type)
-                                })),
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'Status',
-                    field: this.ledgerFields.Status,
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource: Object.keys(LedgerStatus).map((status: string) => ({
-                                    id: LedgerStatus[status],
-                                    name: startCase(status)
-                                })),
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'entryDate',
-                    field: this.ledgerFields.EntryDate,
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'TotalAmount',
-                    field: this.ledgerFields.TotalAmount,
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                })
-            ];
+            ? this.commissionFilters : this.ledgerFilters;
     }
 
     initToolbarConfig() {
@@ -406,7 +437,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 items: [
                     {
                         name: 'search',
-                        disabled: true,
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
@@ -527,7 +557,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     approveEarnings() {
         if (this.selectedRecords.length) {
             this.startLoading();
-            this.commissionProxy.approveEarnings(
+            this.commissionProxy.approveLedger(
                 this.selectedRecords.filter(
                     item => item.Status === LedgerStatus.Pending
                 ).map(item => item.Id)
@@ -562,14 +592,18 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             instance.option('dataSource',
                 this.selectedViewType == this.LEDGER_VIEW
                     ? this.ledgerDataSource : this.dataSource);
-            this.changeDetectorRef.detectChanges();
+            this.processFilterInternal();
             this.startLoading();
+        } else if (this.searchValueChanged) {
+            this.searchValueChanged = false;
+            this.processFilterInternal();
         } else
             this.setGridDataLoaded();
     }
 
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
+            this.searchValueChanged = true;
             this.searchValue = e['value'];
             this._refresh.next(null);
             this.changeDetectorRef.detectChanges();
@@ -586,9 +620,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 this.filtersService.getCheckCustom
             );
         }
-    }
-
-    onCellClick($event) {
     }
 
     ngOnDestroy() {
@@ -644,6 +675,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.initFilterConfig(true);
             this.setDataGridInstance();
             this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         }
     }
 }
