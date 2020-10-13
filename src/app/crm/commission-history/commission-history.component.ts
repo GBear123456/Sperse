@@ -557,7 +557,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     approveEarnings() {
         if (this.selectedRecords.length) {
             this.startLoading();
-            this.commissionProxy.approveEarnings(
+            this.commissionProxy.approveLedger(
                 this.selectedRecords.filter(
                     item => item.Status === LedgerStatus.Pending
                 ).map(item => item.Id)
