@@ -7497,6 +7497,61 @@ export class CommissionServiceProxy {
     }
 
     /**
+     * @paymentSystem (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    completeWithdrawals(paymentSystem: string | null | undefined, body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CompleteWithdrawals?";
+        if (paymentSystem !== undefined)
+            url_ += "paymentSystem=" + encodeURIComponent("" + paymentSystem) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteWithdrawals(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteWithdrawals(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteWithdrawals(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -7530,6 +7585,58 @@ export class CommissionServiceProxy {
     }
 
     protected processCancelCommissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    cancelLedger(body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CancelLedger";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelLedger(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelLedger(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelLedger(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -29327,6 +29434,64 @@ export class SyncAccountServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    changeAutoSyncTime(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: ChangeAutoSyncInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/ChangeAutoSyncTime?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processChangeAutoSyncTime(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processChangeAutoSyncTime(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processChangeAutoSyncTime(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @syncAccountId (optional) 
      * @return Success
      */
@@ -39991,6 +40156,8 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     syncAccountStatus!: SyncProgressStatus | undefined;
     syncRef!: string | undefined;
     syncTypeId!: string | undefined;
+    autoSyncTime!: string | undefined;
+    autoSyncTimeZone!: string | undefined;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -40017,6 +40184,8 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.syncAccountStatus = data["syncAccountStatus"];
             this.syncRef = data["syncRef"];
             this.syncTypeId = data["syncTypeId"];
+            this.autoSyncTime = data["autoSyncTime"];
+            this.autoSyncTimeZone = data["autoSyncTimeZone"];
         }
     }
 
@@ -40043,6 +40212,8 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["syncAccountStatus"] = this.syncAccountStatus;
         data["syncRef"] = this.syncRef;
         data["syncTypeId"] = this.syncTypeId;
+        data["autoSyncTime"] = this.autoSyncTime;
+        data["autoSyncTimeZone"] = this.autoSyncTimeZone;
         return data; 
     }
 }
@@ -40058,6 +40229,8 @@ export interface ISyncAccountBankDto {
     syncAccountStatus: SyncProgressStatus | undefined;
     syncRef: string | undefined;
     syncTypeId: string | undefined;
+    autoSyncTime: string | undefined;
+    autoSyncTimeZone: string | undefined;
 }
 
 export enum GroupByPeriod {
@@ -72244,6 +72417,54 @@ export interface IRenameSyncAccountInput {
     newName: string;
 }
 
+export class ChangeAutoSyncInput implements IChangeAutoSyncInput {
+    syncAccountIds!: number[] | undefined;
+    autoSyncTime!: string | undefined;
+
+    constructor(data?: IChangeAutoSyncInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["syncAccountIds"] && data["syncAccountIds"].constructor === Array) {
+                this.syncAccountIds = [];
+                for (let item of data["syncAccountIds"])
+                    this.syncAccountIds.push(item);
+            }
+            this.autoSyncTime = data["autoSyncTime"];
+        }
+    }
+
+    static fromJS(data: any): ChangeAutoSyncInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangeAutoSyncInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.syncAccountIds && this.syncAccountIds.constructor === Array) {
+            data["syncAccountIds"] = [];
+            for (let item of this.syncAccountIds)
+                data["syncAccountIds"].push(item);
+        }
+        data["autoSyncTime"] = this.autoSyncTime;
+        return data; 
+    }
+}
+
+export interface IChangeAutoSyncInput {
+    syncAccountIds: number[] | undefined;
+    autoSyncTime: string | undefined;
+}
+
 export class PlaidConfig implements IPlaidConfig {
     clientName!: string | undefined;
     evn!: string | undefined;
@@ -77108,6 +77329,7 @@ export enum CommissionLedgerEntryStatus {
     Pending = "Pending", 
     Approved = "Approved", 
     Completed = "Completed", 
+    Cancelled = "Cancelled", 
 }
 
 export enum CommissionLedgerEntryType {
@@ -77123,6 +77345,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
     status!: CommissionLedgerEntryStatus | undefined;
     type!: CommissionLedgerEntryType | undefined;
     totalAmount!: number | undefined;
+    paymentSystem!: string | undefined;
 
     constructor(data?: ICommissionLedgerEntryInfo) {
         if (data) {
@@ -77142,6 +77365,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
             this.status = data["status"];
             this.type = data["type"];
             this.totalAmount = data["totalAmount"];
+            this.paymentSystem = data["paymentSystem"];
         }
     }
 
@@ -77161,6 +77385,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
         data["status"] = this.status;
         data["type"] = this.type;
         data["totalAmount"] = this.totalAmount;
+        data["paymentSystem"] = this.paymentSystem;
         return data; 
     }
 }
@@ -77173,6 +77398,7 @@ export interface ICommissionLedgerEntryInfo {
     status: CommissionLedgerEntryStatus | undefined;
     type: CommissionLedgerEntryType | undefined;
     totalAmount: number | undefined;
+    paymentSystem: string | undefined;
 }
 
 export class GetLedgerOutput implements IGetLedgerOutput {

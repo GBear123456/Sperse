@@ -107,6 +107,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         this.synchProgress.runSynchProgress().subscribe();
     }
 
+    openAutoSyncDialog() {
+        this.bankAccountsWidget.updateAutoSyncTime(
+            this.l('ChooseDayTimeToRunAutoSync'),
+            this.bankAccountsWidget.getSelectedSyncAccountIds()
+        )
+    }
+
     activate() {
         this.subscribeToObservables();
         /** Load sync accounts */
