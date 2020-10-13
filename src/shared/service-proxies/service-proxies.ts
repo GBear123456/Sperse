@@ -7497,6 +7497,61 @@ export class CommissionServiceProxy {
     }
 
     /**
+     * @paymentSystem (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    completeWithdrawals(paymentSystem: string | null | undefined, body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CompleteWithdrawals?";
+        if (paymentSystem !== undefined)
+            url_ += "paymentSystem=" + encodeURIComponent("" + paymentSystem) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteWithdrawals(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteWithdrawals(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteWithdrawals(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -7530,6 +7585,58 @@ export class CommissionServiceProxy {
     }
 
     protected processCancelCommissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    cancelLedger(body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CancelLedger";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelLedger(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelLedger(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelLedger(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -77222,6 +77329,7 @@ export enum CommissionLedgerEntryStatus {
     Pending = "Pending", 
     Approved = "Approved", 
     Completed = "Completed", 
+    Cancelled = "Cancelled", 
 }
 
 export enum CommissionLedgerEntryType {
@@ -77237,6 +77345,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
     status!: CommissionLedgerEntryStatus | undefined;
     type!: CommissionLedgerEntryType | undefined;
     totalAmount!: number | undefined;
+    paymentSystem!: string | undefined;
 
     constructor(data?: ICommissionLedgerEntryInfo) {
         if (data) {
@@ -77256,6 +77365,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
             this.status = data["status"];
             this.type = data["type"];
             this.totalAmount = data["totalAmount"];
+            this.paymentSystem = data["paymentSystem"];
         }
     }
 
@@ -77275,6 +77385,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
         data["status"] = this.status;
         data["type"] = this.type;
         data["totalAmount"] = this.totalAmount;
+        data["paymentSystem"] = this.paymentSystem;
         return data; 
     }
 }
@@ -77287,6 +77398,7 @@ export interface ICommissionLedgerEntryInfo {
     status: CommissionLedgerEntryStatus | undefined;
     type: CommissionLedgerEntryType | undefined;
     totalAmount: number | undefined;
+    paymentSystem: string | undefined;
 }
 
 export class GetLedgerOutput implements IGetLedgerOutput {
