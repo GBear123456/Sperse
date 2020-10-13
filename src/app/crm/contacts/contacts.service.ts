@@ -166,7 +166,7 @@ export class ContactsService {
     toggleSettingsDialog() {
         if (this.settingsDialogOpened.value)
             this.closeSettingsDialog();
-        else 
+        else
             this.openSettingsDialog();
     }
 
@@ -482,12 +482,20 @@ export class ContactsService {
     }
 
     showNoteAddDialog(noteData?) {
+        let dialogId = 'note' + (noteData && noteData.id || ''),
+            dialog = this.dialog.getDialogById(dialogId);
+        if (dialog && (!noteData || dialog.componentInstance.data.note.id == noteData.id))
+            return ;
+        else
+            this.dialog.closeAll();
+
         forkJoin(
             this.contactInfo$.pipe(filter(Boolean), first()),
             this.personContactInfo$.pipe(filter(Boolean), first()),
             this.organizationContactInfo$.pipe(filter(Boolean), first())
         ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
             this.dialog.open(NoteAddDialogComponent, {
+                id: dialogId,
                 panelClass: ['slider'],
                 hasBackdrop: false,
                 closeOnNavigation: true,
@@ -648,9 +656,9 @@ export class ContactsService {
                         observer.next(false);
                     }
                 },
-                [ { 
-                    text: this.ls.l('SendCancellationEmail'), 
-                    visible: this.userId.value && status.id === ContactStatus.Inactive 
+                [ {
+                    text: this.ls.l('SendCancellationEmail'),
+                    visible: this.userId.value && status.id === ContactStatus.Inactive
                 } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );
