@@ -92,7 +92,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         this.modalDialog.startLoading();
         if (this.settings.defaultAffiliateRate !== null)
             this.settings.defaultAffiliateRate = parseFloat(
-                (this.settings.defaultAffiliateRate / 100).toFixed(2)
+                (this.settings.defaultAffiliateRate / 100).toFixed(4)
             );
         this.settings.defaultTemplateId = this.data.templateId;
         this.invoiceProxy.updateSettings(this.settings).pipe(
