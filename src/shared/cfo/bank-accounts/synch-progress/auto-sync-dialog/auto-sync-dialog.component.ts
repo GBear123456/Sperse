@@ -22,7 +22,7 @@ export class AutoSyncDialogComponent extends CFOComponentBase {
         private syncAccountServiceProxy: SyncAccountServiceProxy,
         private bankAccountsService: BankAccountsService,
         private dialogRef: MatDialogRef<AutoSyncDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) private data: { title: string, syncAccountsIds: number[], autoSyncTime: string }
+        @Inject(MAT_DIALOG_DATA) public data: { title: string, syncAccountsIds: number[], autoSyncTime: string }
     ) {
         super(injector);
         if (this.data.autoSyncTime === null) {
