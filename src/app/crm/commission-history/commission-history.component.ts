@@ -476,7 +476,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 {
                                     text: this.l('Cancel'),
                                     action: this.applyCancel.bind(this),
-                                    visible: this.selectedViewType == this.COMMISSION_VIEW,
                                     disabled: !this.selectedRecords.length
                                         || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                         || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
@@ -528,15 +527,18 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     applyCancel() {
         if (this.selectedRecords.length) {
+            let ids = this.selectedRecords.filter(
+                item => item.Status === CommissionStatus.Pending
+            ).map(item => item.Id);
+
             this.startLoading();
-            this.commissionProxy.cancelCommissions(
-                this.selectedRecords.filter(
-                    item => item.Status === CommissionStatus.Pending
-                ).map(item => item.Id)
+            (this.selectedViewType == this.LEDGER_VIEW ? 
+                this.commissionProxy.approveLedger(ids) :
+                this.commissionProxy.cancelCommissions(ids)
             ).pipe(
                 finalize(() => this.finishLoading())
             ).subscribe(() => {
-                this.notify.success(this.l('SuccessfullyUpdated'));
+                this.notify.success(this.l('AppliedSuccessfully'));
                 this.dataGrid.instance.clearSelection();
                 this.selectedRecords = [];
                 this.refresh();
@@ -564,7 +566,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             ).pipe(
                 finalize(() => this.finishLoading())
             ).subscribe(() => {
-                this.notify.success(this.l('SuccessfullyUpdated'));
+                this.notify.success(this.l('AppliedSuccessfully'));
                 this.dataGrid.instance.clearSelection();
                 this.selectedRecords = [];
                 this.refresh();
