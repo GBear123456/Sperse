@@ -121,11 +121,14 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     checkInitDateCellColumn(component) {
-        component.option('columns').forEach(column => {
-            if (column.cellTemplate == 'dateCell') {
-                this.initDateCellColumn(column, component);
-            }
-        });
+        let columns = component.option('columns');
+        if (columns) {
+            columns.forEach(column => {
+                if (column.cellTemplate == 'dateCell') {
+                    this.initDateCellColumn(column, component);
+                }
+            });
+        }
     }
 
     initDateCellColumn(column, component) {
