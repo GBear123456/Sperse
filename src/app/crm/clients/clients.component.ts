@@ -1178,7 +1178,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             () => {
                                                 this.refresh();
                                                 this.dataGrid.instance.deselectAll();
-                                            }
+                                            }, false, client.UserId
                                         );
                                     }
                                 },
