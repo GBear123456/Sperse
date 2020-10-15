@@ -78,7 +78,8 @@
                     <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(message.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
                     <a *ngIf="showActonMenu" class="gear-icon" (click)="toggleActionsMenu(message, $event.target)"></a>
                     <div class="body date" [attr.date]="message.dateTime | date: formatting.inboxDate : userTimezone">
-                        <div [innerHtml]="message.text"></div>
+                        <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, message.text)"></i>
+                        <div [innerHtml]="message.text"></div>                        
                     </div>
                 </div>
             </div>

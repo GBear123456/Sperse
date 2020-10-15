@@ -4,6 +4,7 @@ import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
+import { ClipboardService } from 'ngx-clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
@@ -51,6 +52,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         private clientService: ContactsService,
         private notesService: NotesServiceProxy,
         private contactService: ContactServiceProxy,
+        private clipboardService: ClipboardService,
         private dialog: MatDialog,
         private route: ActivatedRoute
     ) {
@@ -182,6 +184,13 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             this.invalidate();
             this.notify.success(this.l('SuccessfullyDeleted'));
         });
+    }
+
+    copyToClipbord(event, note) {
+        this.clipboardService.copyFromContent(note);
+        this.notify.info(this.l('SavedToClipboard'));
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     ngOnDestroy() {
