@@ -52,7 +52,8 @@ import {
     ContactInfoDto,
     ContactInfoDetailsDto,
     PersonContactInfoDto,
-    EntityAddressInfo
+    EntityAddressInfo,
+    ProductServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -192,6 +193,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private contactProxy: ContactServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
+        private productProxy: ProductServiceProxy,
         private customerProxy: CustomerServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
@@ -586,7 +588,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     productsLookupRequest(phrase = '', callback?) {
-        this.invoiceProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+        this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.descriptions = (this.products = res).map(item => item.description);
                 this.changeDetectorRef.markForCheck();
