@@ -227,6 +227,13 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             caption: 'ProductAmount',
             field: this.commissionFields.ProductAmount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
+        }),
+        new FilterModel({
+            component: FilterInputsComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'CommissionRate',
+            field: this.commissionFields.CommissionRate,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() }
         })
     ];
 

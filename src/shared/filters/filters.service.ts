@@ -144,11 +144,15 @@ export class FiltersService {
         return data;
     }
 
-    static filterByAmount(filter) {
+    static filterByAmount(filter, filterValueModifier?: (value) => number) {
         let data = {};
         data[filter.field] = {};
         each(filter.items, (item: FilterItemModel, key) => {
-            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+            item && item.value && (data[filter.field][filter.operator[key]] = +(
+                filterValueModifier
+                ? filterValueModifier(item.value)
+                : item.value
+            ));
         });
         return data;
     }
@@ -163,6 +167,10 @@ export class FiltersService {
 
     static filterByProductAmount(filter) {
         return FiltersService.filterByAmount(filter);
+    }
+
+    static filterByCommissionRate(filter) {
+        return FiltersService.filterByAmount(filter, (value) => +value / 100);
     }
 
     static filterByTotalAmount(filter) {
