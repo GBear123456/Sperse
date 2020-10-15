@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
 import { RecordEarningsInput, CommissionServiceProxy, PendingCommissionContactInfo } from '@shared/service-proxies/service-proxies';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
@@ -41,19 +42,26 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
 
     confirm() {
         if (this.contactId || this.data.bulkUpdateAllowed) {
-            this.loadingService.startLoading(this.elementRef.nativeElement);
-            this.commissionProxy.recordEarnings(
-                new RecordEarningsInput({
-                    contactId: this.contactId,
-                    startDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.from.value.getTime()), true, 'from'),
-                    endDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.to.value.getTime()), true, 'to')
-                })
-            ).pipe(
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-            ).subscribe(() => {
-                this.notify.success(this.ls.l('AppliedSuccessfully'));
-                this.dialogRef.close();
-            });
+            ContactsHelper.showConfirmMessage(
+                this.ls.l('SelectedItemsAction', this.ls.l('Earned')),
+                (isConfirmed: boolean) => {
+                    if (isConfirmed) {
+                        this.loadingService.startLoading(this.elementRef.nativeElement);
+                        this.commissionProxy.recordEarnings(
+                            new RecordEarningsInput({
+                                contactId: this.contactId,
+                                startDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.from.value.getTime()), true, 'from'),
+                                endDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.to.value.getTime()), true, 'to')
+                            })
+                        ).pipe(
+                            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                        ).subscribe(() => {
+                            this.notify.success(this.ls.l('AppliedSuccessfully'));
+                            this.dialogRef.close();
+                        });
+                    }
+                }, [ ]
+            );
         } else
             this.notify.error(this.ls.l('AtLeastOneOfThesePermissionsMustBeGranted', AppPermissions.CRMBulkUpdates));
     }

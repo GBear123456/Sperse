@@ -548,7 +548,7 @@ export class ContactsService {
         }));
     }
 
-    deleteContact(customerName, contactGroup, entityId, callback?, isLead = false ) {
+    deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (isLead) {
@@ -579,7 +579,7 @@ export class ContactsService {
                 },
                 [
                     { text: this.ls.l('ForceDelete'), visible: canForceDelete },
-                    { text: this.ls.l('SendCancellationEmail'), visible: !!this.userId.value }
+                    { text: this.ls.l('SendCancellationEmail'), visible: !!(userId === undefined ? this.userId.value : userId) }
                 ]
             );
         }

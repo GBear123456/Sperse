@@ -58,6 +58,7 @@ import { CommissionStatus } from '@app/crm/commission-history/commission-status.
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { LedgerType } from '@app/crm/commission-history/ledger-type.enum';
 import { LedgerStatus } from '@app/crm/commission-history/ledger-status.enum';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -549,22 +550,29 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     applyCancel() {
         if (this.selectedRecords.length) {
-            let ids = this.selectedRecords.filter(
-                item => item.Status === CommissionStatus.Pending
-            ).map(item => item.Id);
+            ContactsHelper.showConfirmMessage(
+                this.l('SelectedItemsAction', this.l('Cancelled')),
+                (isConfirmed: boolean) => {
+                    if (isConfirmed) {
+                        let ids = this.selectedRecords.filter(
+                            item => item.Status === CommissionStatus.Pending
+                        ).map(item => item.Id);
 
-            this.startLoading();
-            (this.selectedViewType == this.LEDGER_VIEW ? 
-                this.commissionProxy.approveLedger(ids) :
-                this.commissionProxy.cancelCommissions(ids)
-            ).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe(() => {
-                this.notify.success(this.l('AppliedSuccessfully'));
-                this.dataGrid.instance.clearSelection();
-                this.selectedRecords = [];
-                this.refresh();
-            });
+                        this.startLoading();
+                        (this.selectedViewType == this.LEDGER_VIEW ?
+                            this.commissionProxy.approveLedger(ids) :
+                            this.commissionProxy.cancelCommissions(ids)
+                        ).pipe(
+                            finalize(() => this.finishLoading())
+                        ).subscribe(() => {
+                            this.notify.success(this.l('AppliedSuccessfully'));
+                            this.dataGrid.instance.clearSelection();
+                            this.selectedRecords = [];
+                            this.refresh();
+                        });
+                    }
+                }, [ ]
+            );
         }
     }
 
@@ -580,19 +588,26 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     approveEarnings() {
         if (this.selectedRecords.length) {
-            this.startLoading();
-            this.commissionProxy.approveLedger(
-                this.selectedRecords.filter(
-                    item => item.Status === LedgerStatus.Pending
-                ).map(item => item.Id)
-            ).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe(() => {
-                this.notify.success(this.l('AppliedSuccessfully'));
-                this.dataGrid.instance.clearSelection();
-                this.selectedRecords = [];
-                this.refresh();
-            });
+            ContactsHelper.showConfirmMessage(
+                this.l('SelectedItemsAction', this.l('Approved')),
+                (isConfirmed: boolean) => {
+                    if (isConfirmed) {
+                        this.startLoading();
+                        this.commissionProxy.approveLedger(
+                            this.selectedRecords.filter(
+                                item => item.Status === LedgerStatus.Pending
+                            ).map(item => item.Id)
+                        ).pipe(
+                            finalize(() => this.finishLoading())
+                        ).subscribe(() => {
+                            this.notify.success(this.l('AppliedSuccessfully'));
+                            this.dataGrid.instance.clearSelection();
+                            this.selectedRecords = [];
+                            this.refresh();
+                        });
+                    }
+                }, [ ]
+            );
         }
     }
 
