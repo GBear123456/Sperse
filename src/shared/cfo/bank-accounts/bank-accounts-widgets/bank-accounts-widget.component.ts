@@ -14,8 +14,10 @@ import {
     HostBinding,
     ChangeDetectorRef
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 /** Third party imports */
+import { ClipboardService } from 'ngx-clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
@@ -53,7 +55,7 @@ import { AutoSyncDialogComponent } from '@shared/cfo/bank-accounts/synch-progres
     selector: 'bank-accounts-widget',
     templateUrl: './bank-accounts-widget.component.html',
     styleUrls: ['./bank-accounts-widget.component.less'],
-    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
+    providers: [ DatePipe, BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) mainDataGrid: DxDataGridComponent;
@@ -167,6 +169,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     constructor(
         injector: Injector,
+        private datePipe: DatePipe,
+        private clipboardService: ClipboardService,
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
         private businessEntityService: BusinessEntityServiceProxy,
         private syncAccountServiceProxy: SyncAccountServiceProxy,
@@ -609,7 +613,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     getSelectedSyncAccountIds(): number[] {
         return this.mainDataGrid.instance.getVisibleRows()
             .filter((row) => row.rowType === 'data' && row.data.selected)
-            .map((row) => row.data.syncAccountId)
+            .map((row) => row.data.syncAccountId);
     }
 
     renameBankAccount() {
@@ -660,7 +664,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 break;
             case 'auto-sync':
                 this.updateAutoSyncTime(
-                    this.l('UpdateAccountAutoSyncTime'),
+                    this.l('UpdateAccountAutoSyncTime', this.bankAccountInfo.newName),
                     [this.syncAccountId],
                     this.syncAccount.autoSyncTime || null
                 );
@@ -723,6 +727,14 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             }
         });
         return syncAccountBalance;
+    }
+
+    copyToClipbord(event, date) {
+        this.clipboardService.copyFromContent(
+            this.datePipe.transform(date, 'MMM d, y HH:mm:ss', this.userTimezone));
+        this.notify.info(this.l('SavedToClipboard'));
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     ngOnDestroy() {

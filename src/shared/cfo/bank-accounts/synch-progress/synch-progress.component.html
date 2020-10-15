@@ -5,8 +5,9 @@
         <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
         {{l('SyncAllAccounts')}}
         <div class="auto-sync"
-             inlineSVG="assets/common/icons/clock-circle.svg"
-             (click)="openAutoSyncDialog($event)">
+            [title]="l('SetAutoSync')"
+            inlineSVG="assets/common/icons/clock-circle.svg"
+            (click)="openAutoSyncDialog($event)">
         </div>
     </button>
     <div class="synch-container" *ngIf="showProgress">
@@ -38,8 +39,9 @@
                 <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
                 {{l('SyncAllAccounts')}}
                 <div class="auto-sync"
-                     inlineSVG="assets/common/icons/clock-circle.svg"
-                     (click)="openAutoSyncDialog($event)">
+                    [title]="l('SetAutoSync')"
+                    inlineSVG="assets/common/icons/clock-circle.svg"
+                    (click)="openAutoSyncDialog($event)">
                 </div>
             </button>
         </div>

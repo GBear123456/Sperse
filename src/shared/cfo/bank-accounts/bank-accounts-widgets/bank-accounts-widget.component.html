@@ -124,9 +124,9 @@
                     cellTemplate="expandTemplate">
         </dxi-column>
         <dxi-column dataField="lastSyncDate"
-                    alignment="right"
+                    alignment="left"
                     [caption]="l('BankAccountsWidget_Last_sync')"
-                    [width]="200"
+                    [width]="180"
                     [allowEditing]="false"
                     cellTemplate="syncDateTemplate"
                     [visible]="showSyncDate">
@@ -378,7 +378,11 @@
         </div>
         <div *dxTemplate="let cell of 'syncDateTemplate'">
             <ng-container *ngIf="(cell.text)">
-                <div class="sync-date clipboard-holder">Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}}</div>
+                <div class="sync-date clipboard-holder" [title]="cell.text | date: 'HH:mm:ss' : userTimezone">
+                    Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}} 
+                    <a [hidden]="!cell.data.autoSyncTime" class="time-icon" [title]="cell.data.autoSyncTime"></a>
+                    <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, cell.text)"></i>
+                </div>
             </ng-container>
         </div>
     </dx-data-grid>

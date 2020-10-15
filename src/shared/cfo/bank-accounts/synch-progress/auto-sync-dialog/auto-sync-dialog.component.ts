@@ -41,9 +41,12 @@ export class AutoSyncDialogComponent extends CFOComponentBase {
 
     setAutoSyncTime() {
         if (this.data.syncAccountsIds && this.data.syncAccountsIds.length) {
-            const autoSyncTime = this.getFormattedTimePart(this.time.getHours()) + ':'
-                + this.getFormattedTimePart(this.time.getMinutes()) + ':'
-                + this.getFormattedTimePart(this.time.getSeconds());
+            let autoSyncTime;
+            if (this.time)
+                autoSyncTime = this.getFormattedTimePart(this.time.getHours()) + ':'
+                    + this.getFormattedTimePart(this.time.getMinutes()) + ':'
+                    + this.getFormattedTimePart(this.time.getSeconds());
+
             this.syncAccountServiceProxy.changeAutoSyncTime(
                 this.instanceType,
                 this.instanceId,
@@ -53,9 +56,14 @@ export class AutoSyncDialogComponent extends CFOComponentBase {
                 })
             ).subscribe(() => {
                 this.dialogRef.close(true);
-                this.notify.success('SavedSuccessfully');
+                this.notify.success('AutoSyncTimeUpdated');
             });
         }
+    }
+
+    discardAutoSyncTime() {
+        this.time = undefined;
+        this.setAutoSyncTime();
     }
 
     private getFormattedTimePart(timePart: number): string {

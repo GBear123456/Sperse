@@ -1,5 +1,12 @@
 <mat-dialog-content>
     <h1>{{ data.title }}</h1>
-    <dx-date-box type="time" [(value)]="time"></dx-date-box>
-    <button (click)="setAutoSyncTime()">{{ l('Save') }}</button>
+    <dx-date-box #dateBox 
+        type="time"
+        width="170px" 
+        [(value)]="time"
+        [showClearButton]="true"
+        (click)="dateBox.instance.option('opened', true)">
+    </dx-date-box>
+    <button class="button-layout button-primary" (click)="setAutoSyncTime()">{{ l('Save') }}</button>
+    <button class="button-layout button-default" (click)="discardAutoSyncTime()">{{ l('Discard') }}</button>
 </mat-dialog-content>
