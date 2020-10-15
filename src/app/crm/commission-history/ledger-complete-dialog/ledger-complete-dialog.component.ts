@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
 import { RecordEarningsInput, CommissionServiceProxy, PendingCommissionContactInfo } from '@shared/service-proxies/service-proxies';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
@@ -36,15 +37,22 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
 
     confirm() {
         if (this.data.entityIds.length <= 1 || this.data.bulkUpdateAllowed) {
-            this.loadingService.startLoading(this.elementRef.nativeElement);
-            this.commissionProxy.completeWithdrawals(
-                this.paymentSystem, this.data.entityIds
-            ).pipe(
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-            ).subscribe(() => {
-                this.notify.success(this.ls.l('AppliedSuccessfully'));
-                this.dialogRef.close();
-            });
+            ContactsHelper.showConfirmMessage(
+                this.ls.l('SelectedItemsAction', this.ls.l('Completed')),
+                (isConfirmed: boolean) => {
+                    if (isConfirmed) {
+                        this.loadingService.startLoading(this.elementRef.nativeElement);
+                        this.commissionProxy.completeWithdrawals(
+                            this.paymentSystem, this.data.entityIds
+                        ).pipe(
+                            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                        ).subscribe(() => {
+                            this.notify.success(this.ls.l('AppliedSuccessfully'));
+                            this.dialogRef.close();
+                        });
+                    }
+                }, [ ]
+            );
         } else
             this.notify.error(this.ls.l('AtLeastOneOfThesePermissionsMustBeGranted', AppPermissions.CRMBulkUpdates));
     }
