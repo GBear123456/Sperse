@@ -81,7 +81,7 @@ import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/c
         '../../contacts/addresses/addresses.styles.less',
         'create-invoice-dialog.component.less'
     ],
-    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy ],
+    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy ],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
