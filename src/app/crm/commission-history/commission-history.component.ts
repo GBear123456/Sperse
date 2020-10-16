@@ -21,11 +21,6 @@ import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/o
 import startCase from 'lodash/startCase';
 
 /** Application imports */
-import { AppStore } from '@app/store';
-import {
-    SubscriptionsStoreActions,
-    SubscriptionsStoreSelectors
-} from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -42,7 +37,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { CommissionServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -68,7 +63,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     ],
     animations: [appModuleAnimation()],
     providers: [
-        LifecycleSubjectsService
+        ProductServiceProxy, LifecycleSubjectsService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -209,13 +204,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource$: this.store$.pipe(
-                            select(SubscriptionsStoreSelectors.getSubscriptions),
-                            filter(Boolean), first()
-                        ),
-                        dispatch: () => this.store$.dispatch(
-                            new SubscriptionsStoreActions.LoadRequestAction(false)
-                        ),
+                        dataSource$: this.productProxy.getProducts(),
                         nameField: 'name',
                         keyExpr: 'code'
                     })
@@ -291,9 +280,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
-        private store$: Store<AppStore.State>,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
+        private productProxy: ProductServiceProxy,
         private commissionProxy: CommissionServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private changeDetectorRef: ChangeDetectorRef
@@ -567,7 +556,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
                         this.startLoading();
                         (this.selectedViewType == this.LEDGER_VIEW ?
-                            this.commissionProxy.approveLedger(ids) :
+                            this.commissionProxy.cancelLedger(ids) :
                             this.commissionProxy.cancelCommissions(ids)
                         ).pipe(
                             finalize(() => this.finishLoading())
