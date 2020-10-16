@@ -560,7 +560,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
                         this.startLoading();
                         (this.selectedViewType == this.LEDGER_VIEW ?
-                            this.commissionProxy.approveLedger(ids) :
+                            this.commissionProxy.cancelLedger(ids) :
                             this.commissionProxy.cancelCommissions(ids)
                         ).pipe(
                             finalize(() => this.finishLoading())
