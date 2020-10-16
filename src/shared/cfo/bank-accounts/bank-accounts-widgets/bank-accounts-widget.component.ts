@@ -731,7 +731,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     copyToClipbord(event, date) {
         this.clipboardService.copyFromContent(
-            this.datePipe.transform(date, 'MMM d, y HH:mm:ss', this.userTimezone));
+            this.datePipe.transform(date, 'MMM d, y hh:mm a', this.userTimezone));
         this.notify.info(this.l('SavedToClipboard'));
         event.stopPropagation();
         event.preventDefault();

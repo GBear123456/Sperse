@@ -56,7 +56,7 @@ export class AutoSyncDialogComponent extends CFOComponentBase {
                 })
             ).subscribe(() => {
                 this.dialogRef.close(true);
-                this.notify.success('AutoSyncTimeUpdated');
+                this.notify.success(this.l('AutoSyncTimeUpdated'));
             });
         }
     }
