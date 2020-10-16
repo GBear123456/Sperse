@@ -11,7 +11,7 @@
                   [showColumnHeaders]="false"
                   height="calc(100vh - 193px)"
                   [scrolling]="{ preloadEnabled: true }"
-                  [autoExpandAll]="true"
+                  [autoExpandAll]="items.element.autoExpandAll"
                   (onOptionChanged)="onOptionChanged($event)">
         <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
