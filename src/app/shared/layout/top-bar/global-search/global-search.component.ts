@@ -295,6 +295,10 @@ export class GlobalSearchComponent implements OnInit {
         return this.profileService.getContactPhotoUrl(pictureId);
     }
 
+    tooltipReady(e) {
+        e.component._$popupContent[0].classList.add('global-search-popup-content');
+    }
+
     moveToEntityDetails(e, entity: GlobalSearchGroupEntity, itemsLink: string) {
         let isOrder: boolean = !!entity.ContactId;
         const isLead: boolean = !!entity.CustomerId;
