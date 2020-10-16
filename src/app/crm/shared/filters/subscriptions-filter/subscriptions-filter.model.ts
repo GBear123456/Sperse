@@ -4,6 +4,7 @@ import { SubscriptionAvailability } from '@app/crm/shared/filters/subscriptions-
 
 export class SubscriptionsFilterModel extends FilterItemModel {
     nameField: string;
+    autoExpandAll = false;
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
