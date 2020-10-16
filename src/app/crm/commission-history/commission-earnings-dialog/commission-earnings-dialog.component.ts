@@ -45,13 +45,15 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('NewEarningsAdd'),
                 (isConfirmed: boolean) => {
-                    if (isConfirmed) {
+                    if (isConfirmed && (this.dateRange.to.value || this.dateRange.from.value)) {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.recordEarnings(
                             new RecordEarningsInput({
                                 contactId: this.contactId,
-                                startDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.from.value.getTime()), true, 'from'),
-                                endDate: DateHelper.removeTimezoneOffset(new Date(this.dateRange.to.value.getTime()), true, 'to')
+                                startDate: DateHelper.removeTimezoneOffset(new Date(
+                                    (this.dateRange.from.value || this.dateRange.to.value).getTime()), true, 'from'),
+                                endDate: DateHelper.removeTimezoneOffset(new Date(
+                                    (this.dateRange.to.value || this.dateRange.from.value).getTime()), true, 'to')
                             })
                         ).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
