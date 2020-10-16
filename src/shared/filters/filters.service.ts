@@ -170,7 +170,7 @@ export class FiltersService {
     }
 
     static filterByCommissionRate(filter) {
-        return FiltersService.filterByAmount(filter, (value) => +value / 100);
+        return FiltersService.filterByAmount(filter, (value) => +(value / 100).toFixed(4));
     }
 
     static filterByTotalAmount(filter) {

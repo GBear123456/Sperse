@@ -191,6 +191,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'Commission',
             field: this.commissionFields.CommissionAmount,
@@ -212,6 +213,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'ProductAmount',
             field: this.commissionFields.ProductAmount,
@@ -219,6 +221,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'CommissionRate',
             field: this.commissionFields.CommissionRate,
@@ -269,6 +272,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'TotalAmount',
             field: this.ledgerFields.TotalAmount,

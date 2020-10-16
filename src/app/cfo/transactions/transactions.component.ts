@@ -532,6 +532,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 */
                 new FilterModel({
                     component: FilterInputsComponent,
+                    options: { type: 'number'},
                     operator: { from: 'ge', to: 'le' },
                     caption: 'Amount',
                     field: 'Amount',
