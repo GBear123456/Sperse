@@ -43,7 +43,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
     confirm() {
         if (this.contactId || this.data.bulkUpdateAllowed) {
             ContactsHelper.showConfirmMessage(
-                this.ls.l('SelectedItemsAction', this.ls.l('Earned')),
+                this.ls.l('NewEarningsAdd'),
                 (isConfirmed: boolean) => {
                     if (isConfirmed) {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
