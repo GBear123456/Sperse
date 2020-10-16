@@ -46,6 +46,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     public userId = abp.session.userId;
     public actionRecordData: any;
     public showGridView = false;
+    notes: NoteInfoDto[];
 
     constructor(injector: Injector,
         private clientService: ContactsService,
@@ -63,7 +64,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         clientService.leadInfoSubscribe(() => {
             this.data = this.contactService['data'];
             this.loadData().subscribe(
-                (notes: NoteInfoDto[]) => this.dataSource = notes
+                (notes: NoteInfoDto[]) => this.notes = notes
             );
             this.updateToolbar();
         }, this.ident);
@@ -77,7 +78,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                             : this.loadData();
         dataSource$.subscribe((notes: NoteInfoDto[]) => {
             if (this.componentIsActivated) {
-                this.dataSource = notes;
+                this.notes = notes;
                 if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
                     setTimeout(() => this.clientService.showNoteAddDialog());
             }
@@ -114,7 +115,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         this.data = this.contactService['data'];
         this.loadData().subscribe(
             (notes: NoteInfoDto[]) => {
-                this.dataSource = notes;
+                this.notes = notes;
                 this.updateToolbar();
             }
         );
@@ -188,6 +189,10 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         this.notify.info(this.l('SavedToClipboard'));
         event.stopPropagation();
         event.preventDefault();
+    }
+
+    showActonMenu(note: NoteInfoDto) {
+        return (note && note.addedByUserId === this.userId) || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
     }
 
     ngOnDestroy() {
