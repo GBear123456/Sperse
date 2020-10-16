@@ -1,4 +1,4 @@
-<div class="wrapper" *ngIf="dataSource && dataSource.length; else noData">
+<div class="wrapper" *ngIf="notes && notes.length; else noData">
     <action-menu width="150px"
         [items]="actionMenuItems"
         target=""
@@ -8,7 +8,7 @@
         <dx-data-grid            
             height="100%"
             class="main-component-view"
-            [dataSource]="dataSource"
+            [dataSource]="notes"
             [pager]="defaultGridPagerConfig"
             [allowColumnReordering]="true"
             [columnAutoWidth]="true"
@@ -21,8 +21,6 @@
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
             <dxi-column alignment="center" width="40px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
-
             <dxi-column dataField="text"
                         [caption]="l('Note')"
                         width="350px"
@@ -54,6 +52,9 @@
                         cssClass="clipboard-holder">
             </dxi-column>
 
+            <div *dxTemplate="let cellData of 'actionsCellTemplate'">
+                <a *ngIf="showActonMenu(cellData.data)" class="dx-link dx-link-edit"></a>
+            </div>
             <div *dxTemplate="let cellData of 'textCell'" class="text-wrap">
                 {{cellData.value}}            
             </div>
@@ -73,13 +74,18 @@
     </div>
     <div class="chat-view" *ngIf="!showGridView">
         <dx-scroll-view showScrollbar="onHover">                    
-            <div class="messages-wrapper">
-                <div *ngFor="let message of dataSource; let i = index" class="message-wrapper" [ngClass]="{current: message.addedByUserId == userId, another: message.addedByUserId != userId}" [attr.fullname]="message.addedByUserName">
-                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(message.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
-                    <a *ngIf="showActonMenu" class="gear-icon" (click)="toggleActionsMenu(message, $event.target)"></a>
-                    <div class="body date" [attr.date]="message.dateTime | date: formatting.inboxDate : userTimezone">
-                        <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, message.text)"></i>
-                        <div [innerHtml]="message.text"></div>                        
+            <div class="notes-wrapper">
+                <div *ngFor="let note of notes; let i = index" class="note-wrapper"
+                     [ngClass]="{
+                        current: note.addedByUserId == userId,
+                        another: note.addedByUserId != userId
+                     }"
+                     [attr.fullname]="note.addedByUserName">
+                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(note.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                    <a *ngIf="showActonMenu(note)" class="gear-icon" (click)="toggleActionsMenu(note, $event.target)"></a>
+                    <div class="body date" [attr.date]="note.dateTime | date: formatting.inboxDate : userTimezone">
+                        <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
+                        <div [innerHtml]="note.text"></div>                        
                     </div>
                 </div>
             </div>

@@ -185,6 +185,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'Amount',
             field: this.orderFields.Amount,
@@ -290,6 +291,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'Fee',
             field: this.subscriptionFields.Fee,
