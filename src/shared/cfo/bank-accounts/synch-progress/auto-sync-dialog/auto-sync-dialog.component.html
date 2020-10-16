@@ -1,5 +1,5 @@
 <mat-dialog-content>
-    <h1>{{ data.title }} <span class="close-icon"></span></h1>
+    <h1>{{ data.title }} <div class="close-icon" (click)="dialogRef.close()"></div></h1>
     <dx-date-box #dateBox 
         type="time"
         width="170px" 
