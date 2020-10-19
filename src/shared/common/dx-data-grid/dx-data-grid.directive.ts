@@ -29,6 +29,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         event.stopPropagation();
         event.preventDefault();
     }
+    exporting = false;
 
     constructor(
         private datePipe: DatePipe,
@@ -65,7 +66,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                                 text = this.renderer.createElement('span');
                                 this.renderer.appendChild(event.cellElement, text);
                             }
-                            text.innerText = this.getDateFormated(event.data[event.column.dataField], false);
+                            text.innerText = this.getDateFormatted(event.data[event.column.dataField], false);
                         }
                         if (event.cellElement.classList.contains('clipboard-holder'))
                             this.appendClipboardIcon(event.cellElement);
@@ -75,7 +76,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                     if (event.eventType == 'mouseout') {
                         if (event.column.name == 'hiddenTime') {
                             let text = event.cellElement.querySelector('span');
-                            text.innerText = event.value ? this.getDateFormated(event.data[event.column.dataField]) : '';
+                            text.innerText = event.value ? this.getDateFormatted(event.data[event.column.dataField]) : '';
                         }
                     }
                 }
@@ -116,6 +117,12 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                         }
                     }
                 }
+            }),
+            this.component.onExporting.subscribe(() => {
+                this.exporting = true;
+            }),
+            this.component.onExported.subscribe(() => {
+                this.exporting = false;
             })
         );
     }
@@ -137,11 +144,11 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         component.columnOption(column.dataField, 'cellTemplate', undefined);
         component.columnOption(column.dataField, 'cssClass', column.cssClass + ' clipboard-holder');
         component.columnOption(column.dataField, 'calculateCellValue', (data) => {
-            return this.getDateFormated(data[column.dataField]);
+            return this.getDateFormatted(data[column.dataField], !this.exporting);
         });
     }
 
-    getDateFormated(value: string, withoutTime = true) {
+    getDateFormatted(value: string, withoutTime = true) {
         let date = value && this.datePipe.transform(
             value, AppConsts.formatting.dateTime, this.timezone);
         if (withoutTime)
