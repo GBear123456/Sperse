@@ -28,15 +28,18 @@ export class AutoSyncDialogComponent extends CFOComponentBase {
         if (this.data.autoSyncTime === null) {
             this.time = undefined;
         } else if (this.data.autoSyncTime) {
-            const [ hours, minutes ] = data.autoSyncTime.split(':');
-            this.time.setHours(+hours);
-            this.time.setMinutes(+minutes);
-            this.time.setSeconds(0);
-        } else {
-            this.time.setHours(0);
-            this.time.setMinutes(0);
-            this.time.setSeconds(0);
-        }
+            let timeParts = data.autoSyncTime.split(' '),
+                isPostMeridiem = timeParts.pop() == 'PM',
+                [ hours, minutes ] = timeParts.pop().split(':')
+                    .map(item => parseInt(item));
+
+            hours = isPostMeridiem ?
+                (hours < 12 ? hours + 12 : hours) :
+                (hours == 12 ? hours - 12 : hours);
+
+            this.time.setHours(hours, minutes, 0);
+        } else
+            this.time.setHours(0, 0, 0);
     }
 
     setAutoSyncTime() {
