@@ -47,6 +47,8 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { CommissionDto } from '@app/crm/commission-history/commission-dto';
 import { LedgerDto } from '@app/crm/commission-history/ledger-dto';
 import { LedgerFields } from '@app/crm/commission-history/ledger-fields.enum';
+import { ResellersDto } from '@app/crm/commission-history/resellers-dto';
+import { ResellersFields } from '@app/crm/commission-history/resellers-fields.enum';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CommissionStatus } from '@app/crm/commission-history/commission-status.enum';
@@ -69,11 +71,13 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 })
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
+    @ViewChild('resellersDataGrid', { static: false }) resellersDataGrid: DxDataGridComponent;
     @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     private readonly commissionDataSourceURI: string = 'Commission';
     private readonly ledgerDataSourceURI: string = 'CommissionLedgerEntry';
+    private readonly resellersDataSourceURI: string = 'ResellerSummaryReport';
 
     private rootComponent: any;
     private subRouteParams: any;
@@ -83,6 +87,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     readonly ledgerFields: KeysEnum<LedgerDto> = LedgerFields;
+    readonly resellersFields: KeysEnum<ResellersDto> = ResellersFields;
     rowsViewHeight: number;
     formatting = AppConsts.formatting;
     headlineButtons: HeadlineButton[] = [
@@ -124,6 +129,24 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         filter(() => this.componentIsActivated)
     );
 
+    public commissionDataSource = new DataSource({
+        requireTotalCount: true,
+        store: new ODataStore({
+            key: this.commissionFields.Id,
+            url: this.getODataUrl(this.commissionDataSourceURI),
+            version: AppConsts.ODataVersion,
+            deserializeDates: false,
+            beforeSend: (request) => {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                request.params.$select = DataGridService.getSelectFields(
+                    this.commissionDataGrid,
+                    [ this.commissionFields.Id ]
+                );
+            }
+        })
+    });
+
     public ledgerDataSource = new DataSource({
         requireTotalCount: true,
         store: new ODataStore({
@@ -141,8 +164,36 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             }
         })
     });
+
+    public resellersDataSource = new DataSource({
+        requireTotalCount: true,
+        store: new ODataStore({
+            key: this.resellersFields.Id,
+            url: this.getODataUrl(this.resellersDataSourceURI),
+            version: AppConsts.ODataVersion,
+            deserializeDates: false,
+            beforeSend: (request) => {
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                request.params.$select = DataGridService.getSelectFields(
+                    this.resellersDataGrid,
+                    [ this.resellersFields.Id ]
+                );
+            }
+        })
+    });
+
+    get dataSource() {
+        return [
+            this.commissionDataSource,
+            this.ledgerDataSource,
+            this.resellersDataSource
+        ][this.selectedViewType];
+    }
+
     public readonly COMMISSION_VIEW = 0;
     public readonly LEDGER_VIEW     = 1;
+    public readonly RESELLERS_VIEW  = 2;
     selectedViewType = this.COMMISSION_VIEW;
     viewTypes = [{
         value: this.COMMISSION_VIEW,
@@ -150,6 +201,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }, {
         value: this.LEDGER_VIEW,
         text: this.l('Ledger')
+    }, {
+        value: this.RESELLERS_VIEW,
+        text: this.l('Resellers')
     }];
 
     currency$: Observable<string> = this.invoicesService.settings$.pipe(
@@ -157,11 +211,19 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     );
 
     get dataGrid(): DxDataGridComponent {
-        return this.selectedViewType == this.COMMISSION_VIEW ? this.commissionDataGrid : this.ledgerDataGrid;
+        return [
+            this.commissionDataGrid,
+            this.ledgerDataGrid,
+            this.resellersDataGrid
+        ][this.selectedViewType];
     }
 
     get dataSourceURI(): string {
-        return this.selectedViewType == this.COMMISSION_VIEW ? this.commissionDataSourceURI : this.ledgerDataSourceURI;
+        return [
+            this.commissionDataSourceURI,
+            this.ledgerDataSourceURI,
+            this.resellersDataSourceURI
+        ][this.selectedViewType];
     }
 
     commissionFilters = [
@@ -292,24 +354,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
-
-        this.dataSource = new DataSource({
-            requireTotalCount: true,
-            store: new ODataStore({
-                key: this.commissionFields.Id,
-                url: this.getODataUrl(this.commissionDataSourceURI),
-                version: AppConsts.ODataVersion,
-                deserializeDates: false,
-                beforeSend: (request) => {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                    request.params.$select = DataGridService.getSelectFields(
-                        this.commissionDataGrid,
-                        [ this.commissionFields.Id ]
-                    );
-                }
-            })
-        });
     }
 
     ngOnInit() {
@@ -415,6 +459,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 location: 'before', items: [
                     {
                         name: 'filters',
+                        disabled: this.selectedViewType == this.RESELLERS_VIEW,
                         action: () => {
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -459,7 +504,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                        disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                            || this.selectedViewType == this.RESELLERS_VIEW,
                         options: {
                             items: [
                                 {
@@ -628,9 +674,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource',
-                this.selectedViewType == this.LEDGER_VIEW
-                    ? this.ledgerDataSource : this.dataSource);
+            instance.option('dataSource', this.dataSource);
             this.processFilterInternal();
             this.startLoading();
         } else if (this.searchValueChanged) {
@@ -653,8 +697,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.dataGrid && this.dataGrid.instance) {
             this.processODataFilter(
                 this.dataGrid.instance,
-                this.selectedViewType == this.LEDGER_VIEW ?
-                    this.ledgerDataSourceURI : this.commissionDataSourceURI,
+                this.dataSourceURI,
                 this.filters,
                 this.filtersService.getCheckCustom
             );

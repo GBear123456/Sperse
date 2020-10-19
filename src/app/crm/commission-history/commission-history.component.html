@@ -36,7 +36,7 @@
                                   accesskey="narrowHeaderPanel"
                                   [visible]="selectedViewType == COMMISSION_VIEW"
                                   [renderAsync]="true"
-                                  [dataSource]="dataSource"
+                                  [dataSource]="commissionDataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [cacheEnabled]="false"
@@ -281,6 +281,51 @@
                                     cellTemplate="amountCell" 
                                     cssClass="padding-right">
                         </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                            {{cellData.value | date: formatting.dateTime : userTimezone }}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
+                            {{cellData.value | currency: (currency$ | async)}}
+                        </div>
+
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-summary>
+                            <dxi-group-item [column]="ledgerFields.Id"
+                                            summaryType="count"
+                                            [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
+                            </dxi-group-item>
+                        </dxo-summary>
+                    </dx-data-grid>
+                </div>
+                <div>
+                    <dx-data-grid #resellersDataGrid
+                                  class="main-component-view limitedPagerTotal"
+                                  accesskey="narrowHeaderPanel"
+                                  [visible]="selectedViewType == RESELLERS_VIEW"
+                                  [renderAsync]="true"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [cacheEnabled]="false"
+                                  [allowColumnResizing]="true"
+                                  [loadPanel]="{ enabled: false }"
+                                  [hoverStateEnabled]="true"
+                                  [columnChooser]="{height: rowsViewHeight}"
+                                  [pager]="defaultGridPagerConfig"
+                                  [twoWayBindingEnabled]="false"
+                                  (onContentReady)="onContentReady($event)"
+                                  (onOptionChanged)="onGridOptionChanged($event)"
+                                  (onEditingStart)="toggleActionsMenu($event)"
+                                  (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
+                        </dxo-selection>
+                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone }}
