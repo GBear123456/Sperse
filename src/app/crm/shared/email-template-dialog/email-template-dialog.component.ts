@@ -61,10 +61,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     tagsTooltipVisible = false;
     insertAsHTML = false;
 
-    get isComplexTemplate(): Boolean {
-        return this.data && this.data.body && this.data.body.indexOf('<html') >= 0;
-    }
-
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
     @Input() tagsList = [];
@@ -131,6 +127,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.communicationProxy.getEmailData(undefined, this.data.contact.id).subscribe((res: GetEmailDataOutput) => {
                 this.data.tags = res.tags;
             });
+        window['t'] = this;
     }
 
     ngOnInit() {
@@ -142,6 +139,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
         this.changeDetectorRef.detectChanges();
+        this.initTemplatePreview();
     }
 
     save() {
@@ -301,12 +299,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     invalidate() {
         this.insertAsHTML = false;
-        if (this.isComplexTemplate)
-            this.initTemplatePreview();
-        else {
-            this.ckEditor.setData(this.data.body);
-            this.updateDataLength();
-        }
+        this.initTemplatePreview();
         this.changeDetectorRef.markForCheck();
     }
 
@@ -353,28 +346,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     reset() {
         this.data.cc = this.data.bcc = [];
         this.data.subject = this.data.body = '';
-    }
-
-    onCKReady(event) {
-        this.ckEditor = event.ui.editor;
-        setTimeout(() => {
-            if (this.data.body)
-                this.ckEditor.setData(this.data.body);
-            if (this.tagsButton) {
-                let root = this.ckEditor.sourceElement.parentNode,
-                    headingElement = root.querySelector('.ck-heading-dropdown');
-                root.querySelector('.ck-toolbar__items').insertBefore(
-                    this.tagsButton.nativeElement, headingElement);
-                headingElement.style.width = '100px';
-            }
-            this.updateDataLength();
-        }, 1000);
-    }
-
-    updateDataLength() {
-        this.data.body = this.ckEditor.getData();
-        this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
-        this.changeDetectorRef.markForCheck();
     }
 
     onTagClick(event) {
@@ -498,20 +469,17 @@ export class EmailTemplateDialogComponent implements OnInit {
             setTimeout(() => this.htmlComponent.instance.focus(), 300);
         } else {
             this.data.body = this.htmlComponent.instance.option('value');
-            if (this.isComplexTemplate)
-                this.initTemplatePreview();
-            else {
-                this.ckEditor.setData(this.data.body);
-                this.updateDataLength();
-            }
+            this.initTemplatePreview();
         }
     }
 
     initTemplatePreview() {
-        let win = this.preview.nativeElement.contentWindow;
-        win.document.open();
-        win.document.write(this.data.body);
-        win.document.close();
+        if (this.data.body) {
+            let win = this.preview.nativeElement.contentWindow;
+            win.document.open();
+            win.document.write(this.data.body);
+            win.document.close();
+        }
     }
 
     sendAttachment(file) {
