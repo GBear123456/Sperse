@@ -34,6 +34,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         let stateUrl = state && state.url.split('?').shift(),
             isStateRoot = stateUrl == '/';
+
         if (state && (UrlHelper.isInstallUrl(stateUrl) || UrlHelper.isAccountModuleUrl(stateUrl) || UrlHelper.isPFMUrl(stateUrl))
             || UrlHelper.isPublicUrl(stateUrl)
         ) {
@@ -79,8 +80,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        return (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
-            this.getBestRouteForTenant() : this.getBestRouteForHost()) || '/app/access-denied';
+        let bestRoute = (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
+            this.getBestRouteForTenant() : this.getBestRouteForHost());
+        return bestRoute === null ? '/app/access-denied' : '';
     }
 
     getBestRouteForTenant(preferedModule = null): string {
@@ -97,7 +99,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
                 this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.appMemberPortalUrl;
-                return null;
+                return '';
             } else {
                 if (tenant.customLayoutType == LayoutType.BankCode)
                     return '/code-breaker';
