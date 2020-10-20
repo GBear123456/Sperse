@@ -38,8 +38,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
             beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                request.params.quickSearchString = this.searchValue;
-                request.params.$filter = '(AvailableBalance gt 0)';
+                request.params.$filter = '(AvailableBalance gt 0)' + 
+                    (this.searchValue ? " and contains(FullName, '" + this.searchValue + "')" : '');
                 request.params.$select = [ 
                     ResellersFields.Id,
                     ResellersFields.FullName,
@@ -89,7 +89,6 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
     }
 
     onKeyUp(event) {
-        console.log(event);
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             let searchValue = event.component.option('value');
