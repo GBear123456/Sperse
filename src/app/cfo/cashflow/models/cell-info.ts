@@ -4,7 +4,6 @@ export class CellInfo {
     fieldCaption: string;
     cashflowTypeId: string;
     categoryId: number;
-    subCategoryId?: number;
     transactionDescriptor?: string;
     accountingTypeId: number;
 }

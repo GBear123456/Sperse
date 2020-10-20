@@ -41917,9 +41917,7 @@ export enum AdjustmentType {
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType!: AdjustmentType | undefined;
     cashflowTypeId!: string | undefined;
-    accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     accountId!: number | undefined;
     currencyId!: string | undefined;
@@ -41942,9 +41940,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
-            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
@@ -41967,9 +41963,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
-        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
@@ -41985,9 +41979,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: AdjustmentType | undefined;
     cashflowTypeId: string | undefined;
-    accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     accountId: number | undefined;
     currencyId: string | undefined;
@@ -42006,7 +41998,6 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
     cashFlowTypeId!: string | undefined;
     accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     accountId!: number | undefined;
     categorization!: { [key: string] : string; } | undefined;
@@ -42029,7 +42020,6 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
             this.cashFlowTypeId = data["cashFlowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             if (data["categorization"]) {
@@ -42058,7 +42048,6 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         if (this.categorization) {
@@ -42080,7 +42069,6 @@ export interface ICashFlowCommentThreadDto {
     cashFlowTypeId: string | undefined;
     accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     accountId: number | undefined;
     categorization: { [key: string] : string; } | undefined;
@@ -42345,7 +42333,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     categoryId!: number | undefined;
     reportSectionGroup!: SectionGroup | undefined;
     reportSectionId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -42371,7 +42358,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             this.categoryId = data["categoryId"];
             this.reportSectionGroup = data["reportSectionGroup"];
             this.reportSectionId = data["reportSectionId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -42405,7 +42391,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         data["categoryId"] = this.categoryId;
         data["reportSectionGroup"] = this.reportSectionGroup;
         data["reportSectionId"] = this.reportSectionId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -42432,7 +42417,6 @@ export interface IStatsDetailFilter {
     categoryId: number | undefined;
     reportSectionGroup: SectionGroup | undefined;
     reportSectionId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -45171,7 +45155,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
     categoryId!: number | undefined;
     reportSectionGroup!: SectionGroup | undefined;
     reportSectionId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -45195,7 +45178,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
             this.categoryId = data["categoryId"];
             this.reportSectionGroup = data["reportSectionGroup"];
             this.reportSectionId = data["reportSectionId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -45227,7 +45209,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
         data["categoryId"] = this.categoryId;
         data["reportSectionGroup"] = this.reportSectionGroup;
         data["reportSectionId"] = this.reportSectionId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -45252,7 +45233,6 @@ export interface IStatsDetailFilterBase {
     categoryId: number | undefined;
     reportSectionGroup: SectionGroup | undefined;
     reportSectionId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -45992,7 +45972,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     categoryId!: number | undefined;
     reportSectionGroup!: SectionGroup | undefined;
     reportSectionId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -46018,7 +45997,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             this.categoryId = data["categoryId"];
             this.reportSectionGroup = data["reportSectionGroup"];
             this.reportSectionId = data["reportSectionId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -46052,7 +46030,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data["categoryId"] = this.categoryId;
         data["reportSectionGroup"] = this.reportSectionGroup;
         data["reportSectionId"] = this.reportSectionId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -46079,7 +46056,6 @@ export interface ICreateCashFlowCommentThreadInput {
     categoryId: number | undefined;
     reportSectionGroup: SectionGroup | undefined;
     reportSectionId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;

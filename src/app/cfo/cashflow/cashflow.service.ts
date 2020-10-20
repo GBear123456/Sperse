@@ -10,6 +10,7 @@ import * as $ from 'jquery';
 import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
 import * as underscore from 'underscore';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 /** Application imports */
 import { CellInfo } from './models/cell-info';
@@ -26,7 +27,8 @@ import {
     GroupByPeriod,
     SectionGroup,
     StatsDetailFilter,
-    StatsFilter
+    StatsFilter,
+    TransactionStatsDto
 } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
 import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
@@ -62,7 +64,6 @@ const PSB   = CategorizationPrefixes.CashflowType + CashflowTypes.StartedBalance
 
 @Injectable()
 export class CashflowService {
-
     modifyingCellInput: NumberBox | TextBox;
     modifyingInputObj: any;
     additionalElements: any[];
@@ -71,7 +72,6 @@ export class CashflowService {
     lastClickTime: Date;
     modifyingCellOldHtml: string;
     valueIsChanging = false;
-
     /**
      *  Categorization settings for creating categorization tree on cashflow
      */
@@ -103,11 +103,6 @@ export class CashflowService {
         {
             prefix                 : CategorizationPrefixes.Category,
             statsKeyName           : 'categoryId',
-            namesSource            : 'categoryTree.categories'
-        },
-        {
-            prefix                 : CategorizationPrefixes.SubCategory,
-            statsKeyName           : 'subCategoryId',
             namesSource            : 'categoryTree.categories'
         },
         {
@@ -149,202 +144,19 @@ export class CashflowService {
     showAllVisible = false;
     showAllDisable = false;
     initialData: CashFlowInitialData;
+    categoryApiField = {
+        caption: 'Category',
+        showTotals: false,
+        area: 'row',
+        sortBy: 'displayText',
+        sortOrder: 'asc',
+        resortable: true,
+        areaIndex: 4,
+        customizeText: this.customizeFieldText.bind(this, this.ls.l('Unclassified'))
+    };
     /** Pivot grid fields settings */
-    apiTableFields: any = [
-        {
-            caption: 'Type',
-            width: 120,
-            area: 'row',
-            expanded: false,
-            allowExpandAll: false,
-            allowExpand: false,
-            sortOrder: 'asc',
-            areaIndex: 0,
-            dataField: 'levels.level0',
-            rowHeaderLayout: 'tree',
-            showTotals: true,
-            sortingMethod: (firstItem, secondItem) => {
-                return this.leftMenuOrder.indexOf(firstItem.value.slice(2)) > this.leftMenuOrder.indexOf(secondItem.value.slice(2)) ? 1 : -1;
-            },
-            customizeText: this.customizeFieldText.bind(this)
-        },
-        {
-            caption: 'Reporting Group',
-            width: 120,
-            area: 'row',
-            dataField: 'levels.level1',
-            areaIndex: 1,
-            sortBy: 'displayText',
-            sortOrder: 'asc',
-            expanded: false,
-            showTotals: true,
-            sortingMethod: (a, b) => CashflowService.sortReportingGroup(a, b),
-            resortable: true,
-            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
-        },
-        {
-            caption: 'Reporting Section',
-            width: 120,
-            area: 'row',
-            dataField: 'levels.level2',
-            areaIndex: 2,
-            sortBy: 'displayText',
-            sortOrder: 'asc',
-            expanded: false,
-            showTotals: true,
-            resortable: true,
-            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
-        },
-        {
-            caption: 'Account Type',
-            width: 120,
-            area: 'row',
-            dataField: 'levels.level3',
-            areaIndex: 3,
-            sortBy: 'displayText',
-            sortOrder: 'asc',
-            expanded: false,
-            showTotals: true,
-            resortable: true,
-            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))(),
-            rowHeaderLayout: 'tree'
-        },
-        {
-            caption: 'Category',
-            showTotals: false,
-            area: 'row',
-            sortBy: 'displayText',
-            sortOrder: 'asc',
-            resortable: true,
-            areaIndex: 4,
-            dataField: 'levels.level4',
-            customizeText: this.customizeFieldText.bind(this)
-        },
-        {
-            caption: 'Sub Category',
-            showTotals: false,
-            area: 'row',
-            sortBy: 'displayText',
-            sortOrder: 'asc',
-            resortable: true,
-            areaIndex: 5,
-            dataField: 'levels.level5',
-            customizeText: this.customizeFieldText.bind(this)
-        },
-        {
-            caption: 'Descriptor',
-            showTotals: false,
-            area: 'row',
-            sortBy: 'displayText',
-            sortOrder: 'asc',
-            resortable: true,
-            areaIndex: 6,
-            dataField: 'levels.level6',
-            customizeText: this.customizeFieldText.bind(this)
-        },
-        {
-            dataField: 'amount',
-            dataType: 'number',
-            summaryType: 'sum',
-            format: value => {
-                return this.formatAsCurrencyWithLocale(value);
-            },
-            area: 'data',
-            showColumnTotals: true,
-            calculateSummaryValue: this.calculateSummaryValue(),
-            summaryDisplayMode: 'percentOfColumnTotal'
-        },
-        {
-            caption: 'Historical',
-            area: 'column',
-            areaIndex: 0,
-            showTotals: false,
-            selector: this.getYearHistoricalSelectorWithCurrent(),
-            customizeText: this.getHistoricalCustomizer.bind(this)(),
-            expanded: true,
-            allowExpand: false,
-            wordWrapEnabled: true,
-            visible: true
-        },
-        {
-            caption: 'Year',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            areaIndex: 1,
-            groupInterval: 'year',
-            showTotals: true,
-            visible: true,
-            summaryDisplayMode: 'percentVariation'
-        },
-        {
-            caption: 'Quarter',
-            dataField: 'date',
-            dataType: 'date',
-            width: 0.01,
-            area: 'column',
-            areaIndex: 2,
-            groupInterval: 'quarter',
-            showTotals: false,
-            customizeText: this.getQuarterHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Month',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            width: 0.01,
-            areaIndex: 3,
-            showTotals: false,
-            groupInterval: 'month',
-            customizeText: this.getMonthHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Projected',
-            area: 'column',
-            showTotals: false,
-            areaIndex: 4,
-            selector: this.projectedSelector,
-            customizeText: cellInfo => {
-                let projectedKey;
-                switch (cellInfo.value) {
-                    case Projected.PastTotal:
-                    case Projected.FutureTotal:    projectedKey = 'CashflowFields_Total'; break;
-                    case Projected.Forecast:       projectedKey = 'CashflowFields_Projected'; break;
-                    case Projected.Mtd:            projectedKey = 'CashflowFields_Mtd'; break;
-                    case Projected.Today:          projectedKey = 'CashflowFields_Today'; break;
-                }
-                return this.ls.l(projectedKey).toUpperCase();
-            },
-            expanded: false,
-            allowExpand: false,
-            visible: true
-        },
-        {
-            caption: 'Week',
-            area: 'column',
-            width: 0.01,
-            areaIndex: 5,
-            showTotals: false,
-            sortBy: 'displayText',
-            selector: this.weekHeaderSelector,
-            sortingMethod: this.weekSorting,
-            customizeText: this.getWeekHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Day',
-            dataField: 'date',
-            dataType: 'date',
-            areaIndex: 6,
-            area: 'column',
-            showTotals: false,
-            groupInterval: 'day',
-            visible: true
-        }
-    ];
+    apiTableFields: BehaviorSubject<any> = new BehaviorSubject(this.getApiTableFields());
+    apiTableFields$: Observable<any> = this.apiTableFields.asObservable();
 
     /** Filter by string */
     filterBy: string;
@@ -363,14 +175,17 @@ export class CashflowService {
     yearsAmount = 0;
 
     reportSections: GetReportTemplateDefinitionOutput;
+    statsCategoryTree = {};
+    statsCategoriesLevelsCount: number = 0;
 
     constructor(
         private cfoPreferencesService: CfoPreferencesService,
         private ls: AppLocalizationService,
         private currencyPipe: CurrencyPipe,
         public userPreferencesService: UserPreferencesService
-    ) {}
-
+    ) {
+        window['s'] = this;
+    }
 
     static addLocalTimezoneOffset(date) {
         if (date) {
@@ -443,40 +258,202 @@ export class CashflowService {
         return row[0] ? row[0].slice(0, 2) : undefined;
     }
 
+    private getApiTableFields(additionalFields: any[] = []) {
+        return [
+            {
+                caption: 'Type',
+                width: 120,
+                area: 'row',
+                expanded: false,
+                allowExpandAll: false,
+                allowExpand: false,
+                sortOrder: 'asc',
+                areaIndex: 0,
+                rowHeaderLayout: 'tree',
+                showTotals: true,
+                sortingMethod: (firstItem, secondItem) => {
+                    return this.leftMenuOrder.indexOf(firstItem.value.slice(2)) > this.leftMenuOrder.indexOf(secondItem.value.slice(2)) ? 1 : -1;
+                },
+                customizeText: this.customizeFieldText.bind(this)
+            },
+            {
+                caption: 'Reporting Group',
+                width: 120,
+                area: 'row',
+                areaIndex: 1,
+                sortBy: 'displayText',
+                sortOrder: 'asc',
+                expanded: false,
+                showTotals: true,
+                sortingMethod: (a, b) => CashflowService.sortReportingGroup(a, b),
+                resortable: true,
+                customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
+            },
+            {
+                caption: 'Reporting Section',
+                width: 120,
+                area: 'row',
+                areaIndex: 2,
+                sortBy: 'displayText',
+                sortOrder: 'asc',
+                expanded: false,
+                showTotals: true,
+                resortable: true,
+                customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))()
+            },
+            {
+                caption: 'Account Type',
+                width: 120,
+                area: 'row',
+                areaIndex: 3,
+                sortBy: 'displayText',
+                sortOrder: 'asc',
+                expanded: false,
+                showTotals: true,
+                resortable: true,
+                customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.ls.l('Unclassified'))(),
+                rowHeaderLayout: 'tree'
+            },
+            ...additionalFields,
+            {
+                caption: 'Descriptor',
+                showTotals: false,
+                area: 'row',
+                sortBy: 'displayText',
+                sortOrder: 'asc',
+                resortable: true,
+                areaIndex: 6,
+                customizeText: this.customizeFieldText.bind(this)
+            },
+            {
+                dataField: 'amount',
+                dataType: 'number',
+                summaryType: 'sum',
+                format: value => {
+                    return this.formatAsCurrencyWithLocale(value);
+                },
+                area: 'data',
+                showColumnTotals: true,
+                calculateSummaryValue: this.calculateSummaryValue(),
+                summaryDisplayMode: 'percentOfColumnTotal'
+            },
+            {
+                caption: 'Historical',
+                area: 'column',
+                areaIndex: 0,
+                showTotals: false,
+                selector: this.getYearHistoricalSelectorWithCurrent(),
+                customizeText: this.getHistoricalCustomizer.bind(this)(),
+                expanded: true,
+                allowExpand: false,
+                wordWrapEnabled: true,
+                visible: true
+            },
+            {
+                caption: 'Year',
+                dataField: 'date',
+                dataType: 'date',
+                area: 'column',
+                areaIndex: 1,
+                groupInterval: 'year',
+                showTotals: true,
+                visible: true,
+                summaryDisplayMode: 'percentVariation'
+            },
+            {
+                caption: 'Quarter',
+                dataField: 'date',
+                dataType: 'date',
+                width: 0.01,
+                area: 'column',
+                areaIndex: 2,
+                groupInterval: 'quarter',
+                showTotals: false,
+                customizeText: this.getQuarterHeaderCustomizer(),
+                visible: true
+            },
+            {
+                caption: 'Month',
+                dataField: 'date',
+                dataType: 'date',
+                area: 'column',
+                width: 0.01,
+                areaIndex: 3,
+                showTotals: false,
+                groupInterval: 'month',
+                customizeText: this.getMonthHeaderCustomizer(),
+                visible: true
+            },
+            {
+                caption: 'Projected',
+                area: 'column',
+                showTotals: false,
+                areaIndex: 4,
+                selector: this.projectedSelector,
+                customizeText: cellInfo => {
+                    let projectedKey;
+                    switch (cellInfo.value) {
+                        case Projected.PastTotal:
+                        case Projected.FutureTotal: projectedKey = 'CashflowFields_Total'; break;
+                        case Projected.Forecast:    projectedKey = 'CashflowFields_Projected'; break;
+                        case Projected.Mtd:         projectedKey = 'CashflowFields_Mtd'; break;
+                        case Projected.Today:       projectedKey = 'CashflowFields_Today'; break;
+                    }
+                    return this.ls.l(projectedKey).toUpperCase();
+                },
+                expanded: false,
+                allowExpand: false,
+                visible: false
+            },
+            {
+                caption: 'Week',
+                area: 'column',
+                width: 0.01,
+                areaIndex: 5,
+                showTotals: false,
+                sortBy: 'displayText',
+                selector: this.weekHeaderSelector,
+                sortingMethod: this.weekSorting,
+                customizeText: this.getWeekHeaderCustomizer(),
+                visible: true
+            },
+            {
+                caption: 'Day',
+                dataField: 'date',
+                dataType: 'date',
+                areaIndex: 6,
+                area: 'column',
+                showTotals: false,
+                groupInterval: 'day',
+                visible: true
+            }
+        ];
+    }
+
     /**
      * Gets categorization properties and their values depend on targets and forecasts data
      * @param {CellInfo} source
      * @param {CellInfo} target
-     * @param {boolean} subCategoryIsCategory
      * @return {{categoryId: number; transactionDescriptor: string}}
      */
-    getCategorizationFromForecastAndTarget(source: CellInfo, target: CellInfo, subCategoryIsCategory = true) {
-
+    getCategorizationFromForecastAndTarget(source: CellInfo, target: CellInfo) {
         let categorization = {};
         if (this.isUnclassified(target)) {
             categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = target.cashflowTypeId;
             categorization['transactionDescriptor'] = target.transactionDescriptor;
             return categorization;
         }
-
         let cashflowTypeId = target.cashflowTypeId != source.cashflowTypeId ? target.cashflowTypeId : source.cashflowTypeId;
-        let accountingTypeId = target.accountingTypeId && target.accountingTypeId != source.accountingTypeId ? target.accountingTypeId : source.accountingTypeId;
-        let subCategoryId;
-        if (target.subCategoryId) {
-            subCategoryId = target.subCategoryId && target.subCategoryId != source.subCategoryId ? target.subCategoryId : source.subCategoryId;
-        }
+        let accountingTypeId = target.accountingTypeId && target.accountingTypeId != source.accountingTypeId
+            ? target.accountingTypeId
+            : source.accountingTypeId;
         let categoryId = target.categoryId && target.categoryId != source.categoryId ? target.categoryId : source.categoryId;
         let transactionDescriptor = target.transactionDescriptor && target.transactionDescriptor != source.transactionDescriptor ? target.transactionDescriptor : source.transactionDescriptor;
         categorization = {
-            categoryId: subCategoryIsCategory && subCategoryId ? subCategoryId : categoryId,
+            categoryId: categoryId,
             transactionDescriptor: transactionDescriptor,
             accountingTypeId: accountingTypeId
         };
-
-        if (!subCategoryIsCategory) {
-            categorization['subCategoryId'] = subCategoryId;
-        }
-
         categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = cashflowTypeId;
         return categorization;
     }
@@ -496,7 +473,7 @@ export class CashflowService {
     }
 
     isUnclassified(cell: CellInfo): boolean {
-        return !cell.accountingTypeId && !cell.categoryId && !cell.subCategoryId;
+        return !cell.accountingTypeId && !cell.categoryId;
     }
 
     isHorizontalCopying(sourceCellObj: any, targetCellObjs: any[]) {
@@ -523,7 +500,8 @@ export class CashflowService {
 
     getCashFlowTypeByCategory(categoryId: number, categoryTree: GetCategoryTreeOutput): string {
         let cashflowType;
-        const accountingTypeId = categoryTree.categories[categoryId] && categoryTree.categories[categoryId].accountingTypeId;
+        const parentCategoryId = this.getHighestCategoryParentId(categoryId, categoryTree);
+        const accountingTypeId = categoryTree.categories[parentCategoryId] && categoryTree.categories[parentCategoryId].accountingTypeId;
         if (accountingTypeId) {
             const accountingType = categoryTree.accountingTypes[accountingTypeId];
             cashflowType = accountingType && accountingType.typeId;
@@ -588,23 +566,22 @@ export class CashflowService {
                cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
     }
 
-    isSubCategory(categoryId: number, categoryTree: GetCategoryTreeOutput): boolean {
-        return categoryId && !!categoryTree.categories[categoryId].parentId;
-    }
-
     getCategoryFullPath(categoryId: number, category: CategoryDto, categoryTree: GetCategoryTreeOutput): string[] {
-        let allCategoriesInPath: string[] = this.getCategoryPath(categoryId, categoryTree);
+        const allCategoriesInPath: string[] = this.getCategoryPath(categoryId, categoryTree);
+        const highestCategory: CategoryDto = categoryTree.categories[allCategoriesInPath[0].slice(2)];
+        const accountingTypeId: number = highestCategory && highestCategory.accountingTypeId;
         return [
-            CategorizationPrefixes.CashflowType + categoryTree.accountingTypes[category.accountingTypeId].typeId,
+            ...(accountingTypeId
+                ? [CategorizationPrefixes.CashflowType + categoryTree.accountingTypes[accountingTypeId].typeId]
+                : []),
             ...allCategoriesInPath
         ];
     }
 
     private getCategoryPath(categoryId: number, categoryTree: GetCategoryTreeOutput): string[] {
-        const parentCategoryId = categoryTree.categories[categoryId].parentId;
-        const prevCategories = parentCategoryId && categoryTree.categories[parentCategoryId] ? this.getCategoryPath(parentCategoryId, categoryTree) : [];
-        const prefix = !!parentCategoryId ? CategorizationPrefixes.SubCategory : CategorizationPrefixes.Category;
-        return [ ...prevCategories, prefix + categoryId ];
+        return this.getTransactionCategoriesIds(categoryId, categoryTree).map((id: number) => {
+            return CategorizationPrefixes.Category + id;
+        });
     }
 
     categoryHasTransactions(treePathes, categoryPath: string[]): boolean {
@@ -612,14 +589,14 @@ export class CashflowService {
     }
 
     isCategoryCell(cellObj, area): boolean {
-        return area === 'row' && !cellObj.isWhiteSpace && cellObj.path && this.hasCategoryOrSubcategoryPrefix(cellObj.path[cellObj.path.length - 1]);
+        return area === 'row' && !cellObj.isWhiteSpace && cellObj.path && this.hasCategoryPrefix(cellObj.path[cellObj.path.length - 1]);
     }
 
-    hasCategoryOrSubcategoryPrefix(item: string): boolean {
+    hasCategoryPrefix(item: string): boolean {
         let result = false;
         if (item) {
             const prefix = item.slice(0, 2);
-            result = prefix === CategorizationPrefixes.Category || prefix === CategorizationPrefixes.SubCategory;
+            result = prefix === CategorizationPrefixes.Category;
         }
         return result;
     }
@@ -765,14 +742,14 @@ export class CashflowService {
      * Please run test after changing or refactoring to avoid regression
      * @param cellData
      */
-    calculateCellValue(cellData, dataArray, onlyStartOfPeriod = false) {
+    calculateCellValue(cellData, dataArray, onlyStartOfPeriod: boolean = false) {
         let currentDateDate = DateHelper.getCurrentUtcDate().date(), cellMoment;
         if (onlyStartOfPeriod) {
             if (cellData.projected) {
                 const weekInterval = JSON.parse(cellData.projected);
                 cellMoment = moment.utc(weekInterval.startDate);
             } else {
-                const filterStartDate = this.requestFilter.startDate;
+                const filterStartDate = this.requestFilter && this.requestFilter.startDate;
                 cellMoment = moment()
                     .set({ year: cellData.year })
                     .startOf('year')
@@ -818,7 +795,7 @@ export class CashflowService {
         return value;
     }
 
-    addCategorizationLevels(transactionObj: any) {
+    addCategorizationLevels(transactionObj: TransactionStatsDtoExtended): TransactionStatsDtoExtended {
         /** Add group and categories numbers to the categorization list and show the names in
          *  customize functions by finding the names with ids
          */
@@ -829,10 +806,10 @@ export class CashflowService {
             transactionObj.cashflowTypeId === NetChange;
         let key = null;
         transactionObj['levels'] = {};
-        this.categorization.every((level) => {
+        this.categorization.every((level: CategorizationModel) => {
             if (
                 transactionObj[level.statsKeyName]
-                || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)
+                || (level.prefix === CategorizationPrefixes.Category && !transactionObj.categoryId)
                 || level.prefix === CategorizationPrefixes.ReportingGroup
                 || level.prefix === CategorizationPrefixes.ReportingSection
             ) {
@@ -846,7 +823,7 @@ export class CashflowService {
 
                 if (level.prefix === CategorizationPrefixes.ReportingGroup || level.prefix === CategorizationPrefixes.ReportingSection) {
                     let reportSectionId;
-                    const categoryId = transactionObj.subCategoryId || transactionObj.categoryId;
+                    const categoryId = transactionObj.categoryId;
                     if (categoryId) {
                         reportSectionId = this.reportSections.categorySectionMap[categoryId];
                         if (reportSectionId) {
@@ -896,16 +873,25 @@ export class CashflowService {
 
                 const isUnclassified = !transactionObj[level.statsKeyName];
                 /**
-                 * If user wants to hide categories and subcategories - avoid adding level for them
+                 * If user wants to hide categories - avoid adding level for them
                  */
                 if (
-                    (level.prefix === CategorizationPrefixes.Category || level.prefix === CategorizationPrefixes.SubCategory || level.prefix === CategorizationPrefixes.TransactionDescriptor)
+                    (level.prefix === CategorizationPrefixes.Category || level.prefix === CategorizationPrefixes.TransactionDescriptor)
                     && !this.userPreferencesService.localPreferences.value.showCategoryTotals
                     && !isUnclassified
                 ) {
                     return true;
                 }
 
+                if (level.prefix === CategorizationPrefixes.Category) {
+                    let transactionCategoriesIds = this.getTransactionCategoriesIds(transactionObj.categoryId, this.categoryTree);
+                    transactionCategoriesIds.forEach((categoryId: number) => {
+                        transactionObj['levels'][`level${levelNumber++}`] = categoryId == null ? null : level.prefix + categoryId;
+                    });
+                    return true;
+                }
+
+                /** Add categorization level to show */
                 key = isUnclassified ? transactionObj[level.statsKeyName] : level.prefix + transactionObj[level.statsKeyName];
                 transactionObj['levels'][`level${levelNumber++}`] = key;
             }
@@ -921,11 +907,72 @@ export class CashflowService {
         return transactionObj;
     }
 
+    getHighestCategoryParentId(categoryId: number, categoryTree: GetCategoryTreeOutput): number {
+        let highestCategoryId = categoryId;
+        const category: CategoryDto = categoryTree.categories[categoryId];
+        if (category.parentId) {
+            highestCategoryId = this.getHighestCategoryParentId(category.parentId, categoryTree);
+        }
+        return highestCategoryId;
+    }
+
+    getTransactionCategoriesIds(categoryId: number, categoryTree: GetCategoryTreeOutput): number[] {
+        let categoryIds = [ categoryId ];
+        if (categoryTree.categories[categoryId] && categoryTree.categories[categoryId].parentId) {
+            categoryIds = [
+                ...this.getTransactionCategoriesIds(categoryTree.categories[categoryId].parentId, categoryTree),
+                ...categoryIds
+            ];
+        }
+        return categoryIds;
+    }
+
+    /** Update stats category tree with category of transaction stats */
+    updateStatsCategoryTree(transactions: TransactionStatsDto[]) {
+        this.statsCategoryTree = {};
+        this.statsCategoriesLevelsCount = 0;
+        transactions.forEach((transaction: TransactionStatsDto) => {
+            this.updateStatsItemCategoryTree(transaction.categoryId, transaction);
+        });
+    }
+
+    updateStatsItemCategoryTree(categoryId: number, transaction: TransactionStatsDto, level: number = 1) {
+        if (categoryId && !this.statsCategoryTree[categoryId]) {
+            if (level > this.statsCategoriesLevelsCount) {
+                 this.statsCategoriesLevelsCount = level;
+            }
+            const parentCategoryId = this.categoryTree.categories[categoryId].parentId;
+            const parentAccountingTypeId = this.categoryTree.categories[categoryId].accountingTypeId;
+            if (parentAccountingTypeId) {
+                transaction['accountingTypeId'] = parentAccountingTypeId;
+            }
+            this.statsCategoryTree[categoryId] = parentCategoryId;
+            if (parentCategoryId && !this.statsCategoryTree[parentCategoryId]) {
+                this.updateStatsItemCategoryTree(parentCategoryId, transaction, level + 1);
+            }
+        }
+    }
+
+    addCategoriesLevelsToCategorizationConfig() {
+        let additionalFields: any[] = [];
+        for (let i = 0; i < this.statsCategoriesLevelsCount; i++) {
+            additionalFields.push(this.categoryApiField);
+        }
+        const apiTableFields = this.getApiTableFields(additionalFields);
+        apiTableFields.forEach((apiTableField, index: number) => {
+            if (apiTableField.area === 'row') {
+                apiTableField.dataField = 'levels.level' + index;
+            }
+        });
+        this.apiTableFields.next(apiTableFields);
+    }
+
     /**
-     * Update pathes for the filtering
+     * Update paths for the filtering
      * @param transactionObj
+     * @param removePath
      */
-    updateTreePathes(transactionObj, removePath = false) {
+    updateTreePathes(transactionObj, removePath: boolean = false) {
         let fullPath = [];
         for (let level in transactionObj['levels']) {
             fullPath.push(transactionObj['levels'][level]);
@@ -997,16 +1044,16 @@ export class CashflowService {
         return this.categorization.find(item => item.prefix === prefix);
     }
 
-    getDescendantPropValue(obj, path) {
-        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    getDescendantPropValue(obj, path: string) {
+        return path.split('.').reduce((acc: string, part: string) => acc && acc[part], obj);
     }
 
     getDetailFilterFromCell(cellObj): StatsDetailFilter {
         const datePeriod = this.formattingDate(cellObj.cell.columnPath);
 
         /** if somehow user click on the cell that is not in the filter date range - return null */
-        if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
-            this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
+        if (this.requestFilter.startDate && datePeriod.endDate.isBefore(this.requestFilter.startDate) ||
+            this.requestFilter.endDate && datePeriod.startDate.isAfter(this.requestFilter.endDate)) {
             return;
         }
 
@@ -1015,8 +1062,12 @@ export class CashflowService {
             [cellObj.cell.rowPath[1].slice(2)] :
             this.requestFilter.accountIds || [];
 
-        let startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
-        let endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
+        let startDate = this.requestFilter.startDate && moment(this.requestFilter.startDate).isAfter(datePeriod.startDate)
+            ? this.requestFilter.startDate
+            : datePeriod.startDate;
+        let endDate = this.requestFilter.endDate && moment(this.requestFilter.endDate).isBefore(datePeriod.endDate)
+            ? this.requestFilter.endDate
+            : datePeriod.endDate;
         let filterParams = {
             startDate: startDate,
             endDate: endDate,
@@ -1033,7 +1084,6 @@ export class CashflowService {
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
-
                 if (key !== CashflowTypeTotal && item !== CategorizationPrefixes.ReportingGroup + 'N/A') {
                     const property = this.getCategoryParams(prefix)['statsKeyName'];
                     filterParams[property] = key;
@@ -1098,7 +1148,7 @@ export class CashflowService {
 
     /** Get all column fields */
     getColumnFields() {
-        return this.apiTableFields.filter(field => field.area === 'column' && field.visible);
+        return this.apiTableFields.value.filter(field => field.area === 'column' && field.visible);
     }
 
     projectedSelector(dataItem) {
@@ -1118,12 +1168,10 @@ export class CashflowService {
                 result = Projected.Mtd;
             }
         }
-        return  result;
+        return result;
     }
 
-    formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
-        if (!locale)
-            locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 1 ? 'tr' : 'en-EN';
+    formatAsCurrencyWithLocale(value: number, fractionDigits = 2) {
         value = value > -0.01 && value < 0.01 ? 0 : value;
         return this.currencyPipe.transform(
             value,
@@ -1133,17 +1181,14 @@ export class CashflowService {
         );
     }
 
-
     /**
      * Method that check if the cell of format CTI (Category Type Income) is fit to the filter
      * It looks all pathes where the cell value is presented and if any of the elements of these pathes
      * contains filter string - return true
-     * @param rowInfo - info of format (CategoryPrefixes + Key)
-     * @param filter - string for which to filter
      * @return {boolean}
      */
     rowFitsToFilter(summaryCell, cellValue) {
-        let result = false;
+        let result: boolean;
         const rowInfo = cellValue || '';
         /** add the rowInfo to cash to avoid checking for every cell */
         if (this.cachedRowsFitsToFilter.has(rowInfo))
@@ -1492,7 +1537,6 @@ export class CashflowService {
             (targetPeriodAccountCell ? targetPeriodAccountCell.value(isCalculatedValue) || 0 : 0);
     }
 
-
     /**
      * Return whether cells are sequence in pivot grid
      * @param current - current cell
@@ -1580,7 +1624,6 @@ export class CashflowService {
         });
     }
 
-
     /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
     cellIsNotHistorical(cellObj): boolean {
         let path = cellObj.cell.path || cellObj.cell.columnPath;
@@ -1590,7 +1633,6 @@ export class CashflowService {
             currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
             (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'));
     }
-
 
     getDataSourceItemByPath(dataSourceItems: any[], path: any[]) {
         let pathValue = path.shift();
@@ -1862,23 +1904,19 @@ export class CashflowService {
         }
     }
 
-
     getCellInfo(cellObj, defaultValues: any = {}): CellInfo {
         const categoryId = this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.Category);
-        const subCategoryId = this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
         return {
             date: this.formattingDate(cellObj.cell.columnPath),
             fieldCaption: this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, this.getColumnFields()),
             cashflowTypeId: this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.CashflowType)
-            || this.getCashFlowTypeByCategory(subCategoryId || categoryId, this.categoryTree)
-            || defaultValues.cashflowTypeId,
+                || this.getCashFlowTypeByCategory(categoryId, this.categoryTree)
+                || defaultValues.cashflowTypeId,
             categoryId: categoryId,
-            subCategoryId: subCategoryId,
             transactionDescriptor: this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor),
             accountingTypeId: this.getCategoryValueByPrefix(cellObj.cell.rowPath, CategorizationPrefixes.AccountingType)
         };
     }
-
 
     getLowestFieldCaptionFromPath(path, columnFields) {
         let lastOpenedColumnIndex = path.length - 1;
@@ -2006,7 +2044,6 @@ export class CashflowService {
         });
     }
 
-
     /**
      * Return index in path for field for a row or column areas
      * @param {string} caption
@@ -2016,7 +2053,7 @@ export class CashflowService {
     getAreaIndexByCaption(caption: string, area: 'row' | 'column') {
         let areaIndex = null;
         caption = caption.toLowerCase();
-        this.apiTableFields.some(field => {
+        this.apiTableFields.value.some(field => {
             if (field.area === area) {
                 if (field.caption.toLowerCase() === caption) {
                     areaIndex = field.areaIndex;
@@ -2026,7 +2063,6 @@ export class CashflowService {
         });
         return areaIndex;
     }
-
 
     /**
      * Gets the mtd or projected 0 or 1 from the path
@@ -2063,14 +2099,13 @@ export class CashflowService {
         }
     }
 
-
     /**
      * for every day that is absent in cashflow data add stub object
      * (hack to show all days, months and quarters for all years in cashflow data page)
      * @param {TransactionStatsDtoExtended[]} cashflowData
      * @return {TransactionStatsDtoExtended[]}
      */
-    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = GroupByPeriod.Monthly) {
+    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period: GroupByPeriod = GroupByPeriod.Monthly) {
         this.allYears = [];
         this.yearsAmount = 0;
         let existingPeriods: string[] = [],
@@ -2111,7 +2146,6 @@ export class CashflowService {
 
         return stubCashflowData;
     }
-
 
     /**
      * Return stubs intervals
@@ -2154,7 +2188,6 @@ export class CashflowService {
         return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
     }
 
-
     createStubsForPeriod(startDate, endDate, groupingPeriod: GroupByPeriod, bankAccountId, existingPeriods = []): TransactionStatsDtoExtended[] {
         let stubs = [];
         let startDateCopy = moment(startDate),
@@ -2178,14 +2211,13 @@ export class CashflowService {
         return stubs;
     }
 
-
     /**
      * Return the stub transaction
      * @param stubObj - the object with own custom data for stub transaction
      * @param path
      * @return {TransactionStatsDto & any}
      */
-    createStubTransaction(stubObj, path: string[] = []) {
+    createStubTransaction(stubObj, path: string[] = []): TransactionStatsDtoExtended {
         let stubTransaction = {
             'adjustmentType': null,
             'accountId': null,
