@@ -285,6 +285,69 @@ describe('CashflowService', () => {
         });
     }));
 
+    it('addCategorizationLevels should work (SC-12069 test comment)', inject([CashflowService], (service: CashflowService) => {
+        const transaction: TransactionStatsDtoExtended = new TransactionStatsDtoExtended({
+            accountId: 88188,
+            adjustmentType: undefined,
+            amount: -54.92,
+            cashflowTypeId: "I",
+            categoryId: 52113,
+            comment: undefined,
+            count: 1,
+            currencyId: "USD",
+            date: "2020-05-01T00:00:00Z",
+            forecastId: undefined,
+            initialDate: "2020-05-01T00:00:00Z",
+            transactionDescriptor: undefined
+        });
+        /** Bug levels: {level0: "CTI", level1: "CA52107", level2: "CA52109", level3: "CA52113"} */
+        service.categoryTree = new GetCategoryTreeOutput({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                5525: new AccountingTypeDto({
+                    isSystem: false,
+                    name: "Income",
+                    typeId: "I"
+                })
+            },
+            categories: {
+                52113: new CategoryDto({
+                    accountingTypeId: 5525,
+                    coAID: null,
+                    isActive: false,
+                    name: "Plants and Soil",
+                    parentId: 52109,
+                    reportingCategoryId: null
+                }),
+                52109: new CategoryDto({
+                    accountingTypeId: 5525,
+                    coAID: null,
+                    isActive: false,
+                    name: "Job Materials",
+                    parentId: 52107,
+                    reportingCategoryId: null
+                }),
+                52107: new CategoryDto({
+                    accountingTypeId: 5525,
+                    coAID: null,
+                    isActive: false,
+                    name: "Landscaping Services",
+                    parentId: null,
+                    reportingCategoryId: null
+                })
+            }
+        });
+        let levels = service.addCategorizationLevels(transaction).levels;
+        console.log(levels);
+        expect(levels).toEqual({
+            level0: 'CTI',
+            level1: 'AT5525',
+            level2: 'CA52107',
+            level3: 'CA52109',
+            level4: 'CA52113'
+        });
+    }));
+
     it('customizeFieldText should return text', inject([ CashflowService ], (service: CashflowService) => {
         service.categoryTree = new GetCategoryTreeOutput({
             types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
