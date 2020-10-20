@@ -327,9 +327,56 @@
                         </dxo-selection>
                         <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
 
-                        <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone }}
-                        </div>
+                        <dxi-column [dataField]="resellersFields.Id"
+                                    [caption]="l('Id')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false"
+                                    sortOrder="desc"
+                                    [sortIndex]="0">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.FullName"
+                                    [caption]="l('Customer.Name')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.EmailAddress"
+                                    [caption]="l('EmailAddress')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.AffiliateCode"
+                                    [caption]="l('ResellerAffiliateCode')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.AvailableBalance"
+                                    [caption]="l('AvailableBalance')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.EarnedAmount"
+                                    [caption]="l('EarnedAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
+                                    [caption]="l('PendingEarningsAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
+                                    [caption]="l('PendingWithdrawalsAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
+                                    [caption]="l('UnaccountedEarningsAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.WithdrawnAmount"
+                                    [caption]="l('WithdrawnAmount')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
 
                         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
                             {{cellData.value | currency: (currency$ | async)}}
