@@ -39,6 +39,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
+import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -509,6 +510,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         options: {
                             items: [
                                 {
+                                    text: this.l('RequestWithdrawal'),
+                                    visible: this.selectedViewType == this.LEDGER_VIEW,
+                                    action: this.requestWithdrawal.bind(this)
+                                },
+                                {
                                     text: this.l('AddNewEarnings'),
                                     visible: this.selectedViewType == this.LEDGER_VIEW,
                                     action: this.applyEarnings.bind(this)
@@ -579,6 +585,16 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             }
         ];
         return this.toolbarConfig;
+    }
+
+    requestWithdrawal() {
+        this.dialog.open(RequestWithdrawalDialogComponent, {
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                bulkUpdateAllowed: this.bulkUpdateAllowed
+            }
+        }).afterClosed().subscribe(() => this.refresh());
     }
 
     applyComplete() {
