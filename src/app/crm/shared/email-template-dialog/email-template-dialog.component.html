@@ -147,7 +147,13 @@
                     </dx-tooltip>
                     <a #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
                     <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
-                    <iframe #preview [hidden]="insertAsHTML" frameborder="0" width="100%"></iframe>
+                    <ckeditor [hidden]="insertAsHTML || isComplexTemplate"
+                              [editor]="Editor"
+                              (ready)="onCKReady($event)"
+                              (config)="{ allowedContent: true }"
+                              (change)="updateDataLength()">
+                    </ckeditor>
+                    <iframe #preview [hidden]="insertAsHTML || !isComplexTemplate" frameborder="0" width="100%"></iframe>
                     <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
                     <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
                     <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
