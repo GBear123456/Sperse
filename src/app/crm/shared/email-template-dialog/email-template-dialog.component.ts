@@ -127,8 +127,12 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
-        if (!this.data.tags && this.data.contact)
-            this.communicationProxy.getEmailData(undefined, this.data.contact.id).subscribe((res: GetEmailDataOutput) => {
+        if (this.data.templateId)
+            this.loadTemplateById(this.data.templateId);
+        else if (!this.data.tags && this.data.contact)
+            this.communicationProxy.getEmailData(
+                undefined, this.data.contact.id
+            ).subscribe((res: GetEmailDataOutput) => {
                 this.data.tags = res.tags;
             });
     }
@@ -256,11 +260,11 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     startLoading() {
-        this.modalDialog.startLoading();
+        this.modalDialog && this.modalDialog.startLoading();
     }
 
     finishLoading() {
-        this.modalDialog.finishLoading();
+        this.modalDialog && this.modalDialog.finishLoading();
     }
 
     extendDefaultValidator(e) {
@@ -280,23 +284,27 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTemplateChanged(event) {
         if (event.value) {
             this.data.templateId = event.value;
-            if (this.templateEditMode || this.data.switchTemplate) {
-                this.startLoading();
-                this.emailTemplateProxy.getTemplate(event.value).pipe(
-                    finalize(() => this.finishLoading())
-                ).subscribe((res: GetTemplateReponse) => {
-                    this.data.bcc = res.bcc;
-                    this.data.body = res.body;
-                    this.data.cc = res.cc;
-                    this.data.subject = res.subject;
-                    this.showCC = Boolean(res.cc && res.cc.length);
-                    this.showBCC = Boolean(res.bcc && res.bcc.length);
-                    this.onTemplateChange.emit(event.value);
-                    this.invalidate();
-                });
-            } else
+            if (this.templateEditMode || this.data.switchTemplate)
+                this.loadTemplateById(event.value);
+            else
                 this.onTemplateChange.emit(event.value);
         }
+    }
+
+    loadTemplateById(templateId) {
+        this.startLoading();
+        this.emailTemplateProxy.getTemplate(templateId).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe((res: GetTemplateReponse) => {
+            this.data.bcc = res.bcc;
+            this.data.body = res.body;
+            this.data.cc = res.cc;
+            this.data.subject = res.subject;
+            this.showCC = Boolean(res.cc && res.cc.length);
+            this.showBCC = Boolean(res.bcc && res.bcc.length);
+            this.onTemplateChange.emit(templateId);
+            this.invalidate();
+        });
     }
 
     invalidate() {
