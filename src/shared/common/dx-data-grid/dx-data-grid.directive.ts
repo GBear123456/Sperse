@@ -57,7 +57,11 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                     setTimeout(() => this.checkInitDateCellColumn(event.component));
             }),
             this.component.onCellHoverChanged.subscribe(event => {
-                if (event.rowType == 'data') {
+                if (event.rowType == 'header') {
+                    if (event.cellElement.classList.contains('dx-command-select'))
+                        event.cellElement.setAttribute('title', this.ls.l(
+                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems')); 
+                } else if (event.rowType == 'data') {
                     if (event.eventType == 'mouseover') {
                         if (event.column.name == 'hiddenTime') {
                             let text = event.cellElement.querySelector('span');

@@ -93,6 +93,7 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
+import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 
 @NgModule({
     imports: [
@@ -175,7 +176,8 @@ import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledge
         OrdersHeaderDropdownComponent,
         CommissionHistoryComponent,
         CommissionEarningsDialogComponent,
-        LedgerCompleteDialogComponent
+        LedgerCompleteDialogComponent,
+        RequestWithdrawalDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -193,7 +195,8 @@ import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledge
         CrmIntroComponent,
         EntityCheckListDialogComponent,
         CommissionEarningsDialogComponent,
-        LedgerCompleteDialogComponent
+        LedgerCompleteDialogComponent,
+        RequestWithdrawalDialogComponent
     ]
 })
 export class CrmModule {

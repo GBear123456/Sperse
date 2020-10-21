@@ -120,8 +120,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     isNextButtonHidden = false;
 
     selectModeItems = [
-        { text: 'Affect on page items', mode: 'page' },
-        { text: 'Affect all pages items', mode: 'allPages' }
+        { text: this.l('AffectOnPageItems'), mode: 'page' },
+        { text: this.l('AffectAllPagesItems'), mode: 'allPages' }
     ];
     formatting = AppConsts.formatting;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;

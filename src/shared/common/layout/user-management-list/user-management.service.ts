@@ -1,10 +1,9 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { filter, pluck } from 'rxjs/operators';
 
 /** Application imports */
@@ -27,6 +26,7 @@ import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-mo
 import { UserHelper } from 'app/shared/helpers/UserHelper';
 import { AppSessionService } from 'shared/common/session/app-session.service';
 import { LinkedAccountService } from 'app/shared/layout/linked-accounts-modal/linked-account.service';
+import { Observable } from '@node_modules/rxjs';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { environment } from 'environments/environment';
@@ -36,6 +36,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { WizardRightSideComponent } from '@shared/offers-wizard/wizard-right-side/wizard-right-side.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { Router } from '@angular/router';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 
