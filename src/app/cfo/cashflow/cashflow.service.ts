@@ -11,6 +11,7 @@ import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
 import * as underscore from 'underscore';
 import { BehaviorSubject, Observable } from 'rxjs';
+import clone from 'lodash/clone';
 
 /** Application imports */
 import { CellInfo } from './models/cell-info';
@@ -152,7 +153,7 @@ export class CashflowService {
         sortOrder: 'asc',
         resortable: true,
         areaIndex: 4,
-        customizeText: this.customizeFieldText.bind(this, this.ls.l('Unclassified'))
+        customizeText: (e) => this.customizeFieldText(e, this.ls.l('Unclassified'))
     };
     /** Pivot grid fields settings */
     apiTableFields: BehaviorSubject<any> = new BehaviorSubject(this.getApiTableFields());
@@ -885,6 +886,16 @@ export class CashflowService {
 
                 if (level.prefix === CategorizationPrefixes.Category) {
                     let transactionCategoriesIds = this.getTransactionCategoriesIds(transactionObj.categoryId, this.categoryTree);
+                    if (this.userPreferencesService.localPreferences.value.showAccountingTypeTotals) {
+                        const highestCategory = transactionCategoriesIds && transactionCategoriesIds[0]
+                            ? this.categoryTree.categories[transactionCategoriesIds[0]]
+                            : null;
+                        if (highestCategory && highestCategory.accountingTypeId
+                            && transactionObj['levels'][`level${levelNumber - 1}`] !== CategorizationPrefixes.AccountingType + highestCategory.accountingTypeId
+                        ) {
+                            transactionObj['levels'][`level${levelNumber++}`] = CategorizationPrefixes.AccountingType + highestCategory.accountingTypeId;
+                        }
+                    }
                     transactionCategoriesIds.forEach((categoryId: number) => {
                         transactionObj['levels'][`level${levelNumber++}`] = categoryId == null ? null : level.prefix + categoryId;
                     });
@@ -956,7 +967,7 @@ export class CashflowService {
     addCategoriesLevelsToCategorizationConfig() {
         let additionalFields: any[] = [];
         for (let i = 0; i < this.statsCategoriesLevelsCount; i++) {
-            additionalFields.push(this.categoryApiField);
+            additionalFields.push(clone(this.categoryApiField));
         }
         const apiTableFields = this.getApiTableFields(additionalFields);
         apiTableFields.forEach((apiTableField, index: number) => {

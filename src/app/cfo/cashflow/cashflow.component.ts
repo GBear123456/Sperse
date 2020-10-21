@@ -3947,7 +3947,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /**
-     * Find if the group has childs by path and fields list
+     * Find if the group has children by path and fields list
      * @param path - the array with the path
      * @return {boolean}
      */
@@ -3974,7 +3974,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /**
      * Method for sorting pivot grid
-     * @param {string} name
+     * @param {any} sortOptions
+     * @param {any} event
      */
     resortPivotGrid(sortOptions: any, event: any) {
         sortOptions.sortOrder = event.itemElement.classList.contains('desc') ? 'asc' : 'desc';
