@@ -264,17 +264,17 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     extendDefaultValidator(e) {
-        const defaultAdapter = e.component.option("adapter");
+        const defaultAdapter = e.component.option('adapter');
         const forceValidationBypass = this.forceValidationBypass;
         const newAdapter = $.extend(
             {},
             defaultAdapter,
             {
                 bypass: function() {
-                    return forceValidationBypass || this.editor.option("disabled");
+                    return forceValidationBypass || this.editor.option('disabled');
                 }
-            })
-        e.component.option("adapter", newAdapter);
+            });
+        e.component.option('adapter', newAdapter);
     }
 
     onTemplateChanged(event) {
@@ -304,7 +304,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.isComplexTemplate)
             this.initTemplatePreview();
         else {
-            this.ckEditor.setData(this.data.body);
+            this.ckEditor.setData(this.data.body || '');
             this.updateDataLength();
         }
         this.changeDetectorRef.markForCheck();
@@ -358,8 +358,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     onCKReady(event) {
         this.ckEditor = event.ui.editor;
         setTimeout(() => {
-            if (this.data.body)
-                this.ckEditor.setData(this.data.body);
+            this.invalidate();
             if (this.tagsButton) {
                 let root = this.ckEditor.sourceElement.parentNode,
                     headingElement = root.querySelector('.ck-heading-dropdown');
@@ -367,7 +366,6 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.tagsButton.nativeElement, headingElement);
                 headingElement.style.width = '100px';
             }
-            this.updateDataLength();
         }, 1000);
     }
 
@@ -510,7 +508,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     initTemplatePreview() {
         let win = this.preview.nativeElement.contentWindow;
         win.document.open();
-        win.document.write(this.data.body);
+        win.document.write(this.data.body || '');
         win.document.close();
     }
 
