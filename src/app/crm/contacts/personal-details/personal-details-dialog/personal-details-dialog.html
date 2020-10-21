@@ -28,7 +28,7 @@
                                 <label>{{ ls.l('AffiliateRate') }}, %:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
-                                              [editPlaceholder]="defaultAffiliateRate"
+                                              [editPlaceholder]="defaultAffiliateRate !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRate : ''"
                                               [value]="affiliateRate === null ? '' : affiliateRate + ''"
                                               [showInlineEditButton]="true"
                                               [isDeleteEnabled]="true"
