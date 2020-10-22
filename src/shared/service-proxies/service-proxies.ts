@@ -40169,7 +40169,6 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     syncRef!: string | undefined;
     syncTypeId!: string | undefined;
     autoSyncTime!: string | undefined;
-    autoSyncTimeZone!: string | undefined;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -40197,7 +40196,6 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.syncRef = data["syncRef"];
             this.syncTypeId = data["syncTypeId"];
             this.autoSyncTime = data["autoSyncTime"];
-            this.autoSyncTimeZone = data["autoSyncTimeZone"];
         }
     }
 
@@ -40225,7 +40223,6 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["syncRef"] = this.syncRef;
         data["syncTypeId"] = this.syncTypeId;
         data["autoSyncTime"] = this.autoSyncTime;
-        data["autoSyncTimeZone"] = this.autoSyncTimeZone;
         return data; 
     }
 }
@@ -40242,7 +40239,6 @@ export interface ISyncAccountBankDto {
     syncRef: string | undefined;
     syncTypeId: string | undefined;
     autoSyncTime: string | undefined;
-    autoSyncTimeZone: string | undefined;
 }
 
 export enum GroupByPeriod {
@@ -66480,7 +66476,7 @@ export interface IUpdateOrderSubscriptionInput {
 }
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
-    orderSubscriptionId!: number;
+    subscriptionId!: number;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelOrderSubscriptionInput) {
@@ -66494,7 +66490,7 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 
     init(data?: any) {
         if (data) {
-            this.orderSubscriptionId = data["orderSubscriptionId"];
+            this.subscriptionId = data["subscriptionId"];
             this.cancelationReason = data["cancelationReason"];
         }
     }
@@ -66508,14 +66504,14 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["orderSubscriptionId"] = this.orderSubscriptionId;
+        data["subscriptionId"] = this.subscriptionId;
         data["cancelationReason"] = this.cancelationReason;
         return data; 
     }
 }
 
 export interface ICancelOrderSubscriptionInput {
-    orderSubscriptionId: number;
+    subscriptionId: number;
     cancelationReason: string | undefined;
 }
 
@@ -71139,6 +71135,7 @@ export enum LayoutType {
     BankCode = "BankCode", 
     Rapid = "Rapid", 
     HOA = "HOA", 
+    Sperser = "Sperser", 
 }
 
 export class FaviconDto implements IFaviconDto {
