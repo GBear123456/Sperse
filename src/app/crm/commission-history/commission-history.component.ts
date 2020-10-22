@@ -38,7 +38,7 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy, 
+import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
     OrderServiceProxy, UpdateOrderAffiliateContactInput } from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
@@ -803,19 +803,20 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     onSourceApply(event) {
         ContactsHelper.showConfirmMessage(
             this.l('ConfirmReassignCommissions'),
-            (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
+            (isConfirmed: boolean, [ assignToBuyerContact ]: boolean[]) => {
                 if (isConfirmed) {
                     forkJoin(
                         this.selectedRecords.map((item, index) => {
-                            if (index == this.selectedRecords.indexOf(item) 
+                            if (index == this.selectedRecords.indexOf(item)
                                 && item.Status == CommissionStatus.Pending
                                 && item.OrderId
                             ) {
                                 return this.orderProxy.updateAffiliateContact(new UpdateOrderAffiliateContactInput({
                                     orderId: item.OrderId,
-                                    affiliateContactId: event[0].id
+                                    affiliateContactId: event[0].id,
+                                    assignToBuyerContact: assignToBuyerContact
                                 }));
-                            }            
+                            }
                         }).filter(Boolean)
                     ).subscribe(() => {
                         this.notify.success(this.l('AppliedSuccessfully'));
