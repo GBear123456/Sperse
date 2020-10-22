@@ -357,7 +357,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                     title: this.ls.l('Owner'),
                     selectionMode: 'single'
                 }
-            });            
+            });
         else if (!open)
             dialog.close();
     }
