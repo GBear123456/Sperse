@@ -85,10 +85,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     private rootComponent: any;
     private subRouteParams: any;
-    private selectedRecords: any = [];
     private bulkUpdateAllowed = this.permission
         .isGranted(AppPermissions.CRMBulkUpdates);
 
+    selectedRecords: any = [];
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
     readonly ledgerFields: KeysEnum<LedgerDto> = LedgerFields;
     readonly resellersFields: KeysEnum<ResellersDto> = ResellersFields;
