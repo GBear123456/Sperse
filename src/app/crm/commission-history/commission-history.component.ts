@@ -145,7 +145,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.commissionDataGrid,
-                    [ this.commissionFields.Id ]
+                    [ this.commissionFields.Id, this.commissionFields.OrderId ]
                 );
             }
         })
@@ -805,7 +805,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.l('ConfirmReassignCommissions'),
             (isConfirmed: boolean, [ assignToBuyerContact ]: boolean[]) => {
                 if (isConfirmed) {
-                    forkJoin(
+                    forkJoin.apply(forkJoin,
                         this.selectedRecords.map((item, index) => {
                             if (index == this.selectedRecords.indexOf(item)
                                 && item.Status == CommissionStatus.Pending
@@ -819,6 +819,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             }
                         }).filter(Boolean)
                     ).subscribe(() => {
+                        this.refresh();
+                        this.selectedRecords = [];
+                        this.dataGrid.instance.clearSelection();
                         this.notify.success(this.l('AppliedSuccessfully'));
                     });
                 }
