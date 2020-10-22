@@ -45,7 +45,7 @@ export class ClientService {
                 if (isConfirmed)
                     this.updateContactStatusesInternal(contactIds, statusId, callback, notifyUsers);
             },
-            [ { text: this.ls.l('SendCancellationEmailPlural'), visible: statusId === ContactStatus.Inactive } ],
+            [ { text: this.ls.l('SendCancellationEmailPlural'), visible: statusId === ContactStatus.Inactive, checked: false } ],
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`)
         );
     }
