@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, concat, Observable } from 'rxjs';
 import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
@@ -37,7 +37,9 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
+import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
+    OrderServiceProxy, UpdateOrderAffiliateContactInput } from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
@@ -73,6 +75,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
     @ViewChild('resellersDataGrid', { static: false }) resellersDataGrid: DxDataGridComponent;
+    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
@@ -347,6 +350,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
+        private orderProxy: OrderServiceProxy,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
@@ -543,6 +547,25 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                         || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
                                 }
                             ]
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            height: '36px',
+                            disabled: !this.selectedRecords.length
+                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
+                            text: this.l('ReassignCommissions'),
+                            onClick: (e) => {
+                                this.sourceComponent.toggle();
+                            }
                         }
                     }
                 ]
@@ -775,5 +798,32 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
         }
+    }
+
+    onSourceApply(event) {
+        ContactsHelper.showConfirmMessage(
+            this.l('ConfirmReassignCommissions'),
+            (isConfirmed: boolean, [ assignToBuyerContact ]: boolean[]) => {
+                if (isConfirmed) {
+                    forkJoin(
+                        this.selectedRecords.map((item, index) => {
+                            if (index == this.selectedRecords.indexOf(item)
+                                && item.Status == CommissionStatus.Pending
+                                && item.OrderId
+                            ) {
+                                return this.orderProxy.updateAffiliateContact(new UpdateOrderAffiliateContactInput({
+                                    orderId: item.OrderId,
+                                    affiliateContactId: event[0].id,
+                                    assignToBuyerContact: assignToBuyerContact
+                                }));
+                            }
+                        }).filter(Boolean)
+                    ).subscribe(() => {
+                        this.notify.success(this.l('AppliedSuccessfully'));
+                    });
+                }
+            },
+            [ { text: this.l('AssignAffiliateContact'), visible: true, checked: true }]
+        );
     }
 }

@@ -340,7 +340,7 @@ export class ContactsService {
     initEmailDialogTagsList(dialogComponent) {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
             dialogComponent.tagsList = [
-                EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName,
+                EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName, EmailTags.DayOfWeek,
                 EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1,
                 EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
                 EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
@@ -563,7 +563,7 @@ export class ContactsService {
                         });
                     }
                 },
-                [ { text: this.ls.l('ForceDelete'), visible: canForceDelete }]
+                [ { text: this.ls.l('ForceDelete'), visible: canForceDelete, checked: false }]
             );
         } else {
             let text = contactGroup == ContactGroup.Partner ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
@@ -578,8 +578,8 @@ export class ContactsService {
                     }
                 },
                 [
-                    { text: this.ls.l('ForceDelete'), visible: canForceDelete },
-                    { text: this.ls.l('SendCancellationEmail'), visible: !!(userId === undefined ? this.userId.value : userId) }
+                    { text: this.ls.l('ForceDelete'), visible: canForceDelete, checked: false },
+                    { text: this.ls.l('SendCancellationEmail'), visible: !!(userId === undefined ? this.userId.value : userId), checked: false }
                 ]
             );
         }
@@ -658,7 +658,8 @@ export class ContactsService {
                 },
                 [ {
                     text: this.ls.l('SendCancellationEmail'),
-                    visible: this.userId.value && status.id === ContactStatus.Inactive
+                    visible: this.userId.value && status.id === ContactStatus.Inactive, 
+                    checked: false
                 } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );

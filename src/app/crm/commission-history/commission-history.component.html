@@ -27,6 +27,13 @@
                 target=".dx-state-hover .dx-link.dx-link-edit"
                 (onItemClick)="onMenuItemClick($event)">
         </action-menu>
+        <source-contact-list #sourceList
+            targetSelector=".dx-button[aria-label^=Reassign]"
+            [selectedLeads]="[]"
+            [selectedKeys]="[]"
+            [relatedItemsKeys]="selectedRecords"
+            (onApply)="onSourceApply($event)">
+        </source-contact-list>
         <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
@@ -60,6 +67,12 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false"
                                     sortOrder="desc"
+                                    [sortIndex]="0">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.OrderId"
+                                    [caption]="l('OrderId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false"
                                     [sortIndex]="0">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerContactId"

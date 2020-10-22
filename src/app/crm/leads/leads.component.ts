@@ -1834,7 +1834,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     });
                 }
             },
-            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites) } ]
+            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites), checked: false } ]
         );
     }
 
@@ -1968,7 +1968,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 [{
                     text: this.l('ApplyCurrentFrom', this.l('SourceContactName'), this.l('AffiliateCode')),
-                    visible: true
+                    visible: true,
+                    checked: false
                 }],
                 this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
             );

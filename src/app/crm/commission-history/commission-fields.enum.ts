@@ -27,5 +27,6 @@ export const CommissionFields: KeysEnum<CommissionDto> = {
     TransactionAuthCode: 'TransactionAuthCode',
     TransactionDate: 'TransactionDate',
     TransactionGatewayName: 'TransactionGatewayName',
-    TransactionId: 'TransactionId'
+    TransactionId: 'TransactionId',
+    OrderId: 'OrderId'
 };

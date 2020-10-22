@@ -6,7 +6,7 @@ export class ContactsHelper {
     static showConfirmMessage(
         text: string,
         callback: (confirmed: boolean, checkboxesValues: boolean[]) => void,
-        checkboxes?: { text: string, visible: boolean }[],
+        checkboxes?: Checkbox[],
         title?: string
     ) {
         let checkboxesContainer, inputs = [];
@@ -42,7 +42,7 @@ export class ContactsHelper {
         let input = document.createElement('input');
         input.type = 'checkbox';
         input.id = 'modal-checkbox-' + index;
-        input.checked = false;
+        input.checked = checkbox.checked;
         div.appendChild(input);
         let label = document.createElement('label');
         label.htmlFor = 'modal-checkbox-' + index;

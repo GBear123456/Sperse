@@ -66071,6 +66071,7 @@ export interface IUpdateOrderStagePointInput {
 export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateContactInput {
     orderId!: number;
     affiliateContactId!: number | undefined;
+    assignToBuyerContact!: boolean | undefined;
 
     constructor(data?: IUpdateOrderAffiliateContactInput) {
         if (data) {
@@ -66085,6 +66086,7 @@ export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateCo
         if (data) {
             this.orderId = data["orderId"];
             this.affiliateContactId = data["affiliateContactId"];
+            this.assignToBuyerContact = data["assignToBuyerContact"];
         }
     }
 
@@ -66099,6 +66101,7 @@ export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateCo
         data = typeof data === 'object' ? data : {};
         data["orderId"] = this.orderId;
         data["affiliateContactId"] = this.affiliateContactId;
+        data["assignToBuyerContact"] = this.assignToBuyerContact;
         return data; 
     }
 }
@@ -66106,6 +66109,7 @@ export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateCo
 export interface IUpdateOrderAffiliateContactInput {
     orderId: number;
     affiliateContactId: number | undefined;
+    assignToBuyerContact: boolean | undefined;
 }
 
 export class ProcessOrderInfo implements IProcessOrderInfo {
