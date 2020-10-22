@@ -36,6 +36,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { CheckListDialogComponent } from './check-list-dialog/check-list-dialog.component';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
@@ -49,7 +50,10 @@ import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { Params } from '@angular/router';
 
@@ -93,7 +97,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._selectedEntities = entities;
         this.selectedEntitiesChange.emit(this._selectedEntities);
     }
-
+    @Input() actionMenuGroups: ActionMenuGroup[];
     @Input() moveDisabled = false;
     @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
@@ -137,6 +141,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private readonly COLUMN_WIDTHS_CACHE_KEY = 'COLUMN_WIDTHS';
     searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
     searchClear = false;
+    actionEvent: any;
 
     constructor(
         injector: Injector,
@@ -148,6 +153,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
+        private contactService: ContactsService,
+        private impersonationService: ImpersonationService,
         public userManagementService: UserManagementService,
         public dialog: MatDialog
     ) {
@@ -1027,5 +1034,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
         event.stopPropagation();
         this.hideStageHighlighting();
+    }
+
+    toggleActionsMenu(event, entity) {
+        event.stopPropagation();
+        this.actionEvent = entity;
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action(this.actionEvent);
+        this.actionEvent = null;
     }
 }
