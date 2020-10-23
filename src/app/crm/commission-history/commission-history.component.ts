@@ -559,6 +559,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         widget: 'dxButton',
                         options: {
                             height: '36px',
+                            visible: this.selectedViewType == this.COMMISSION_VIEW,
                             disabled: !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                 || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
