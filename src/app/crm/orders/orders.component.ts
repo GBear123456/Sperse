@@ -67,10 +67,17 @@ import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { OrderStageSummary } from '@app/crm/orders/order-stage-summary.interface';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 
 @Component({
     templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.less'],
+    styleUrls: [
+        '../shared/styles/grouped-action-menu.less',
+        './orders.component.less'
+    ],
     providers: [ OrderServiceProxy, CurrencyPipe ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -79,6 +86,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
     @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
     @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+
     items: any;
     showOrdersPipeline = true;
     pipelineDataSource: any;
@@ -601,6 +610,118 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
+
+    actionEvent: any;
+    actionMenuGroups: ActionMenuGroup[] = [
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('Call'),
+                    class: 'call',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('SendEmail'),
+                    class: 'email',
+                    action: (data?) => {
+                        this.contactsService.showEmailDialog({
+                            contactId: (data || this.actionEvent.data || this.actionEvent).ContactId
+                        }).subscribe();
+                    }
+                },
+            ]
+        },
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('LoginAsThisUser'),
+                    class: 'login',
+                    disabled: true,
+                    checkVisible: (entity: any) => {
+                        return !!entity.UserId && this.isGranted(AppPermissions.AdministrationUsersImpersonation);
+                    },
+                    action: (data?) => {
+                        //const entity: any = data || this.actionEvent.data || this.actionEvent;
+                        //this.impersonationService.impersonate(entity.UserId, this.appSession.tenantId);
+                    }
+                },
+                {
+                    text: this.l('NotesAndCallLog'),
+                    class: 'notes',
+                    action: (data?) => {
+                        this.showContactDetails({ data: data || this.actionEvent }, 'notes');
+                    },
+                    button: {
+                        text: '+' + this.l('Add'),
+                        action: (data?) => {
+                            this.showContactDetails({ data: data || this.actionEvent }, 'notes', {
+                                addNew: true
+                            });
+                        }
+                    }
+                },
+                {
+                    text: this.l('Appointment'),
+                    class: 'appointment',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('Orders'),
+                    class: 'orders',
+                    action: (data?) => {
+                        this.showContactDetails({ data: data || this.actionEvent }, 'invoices');
+                    }
+                },
+                {
+                    text: this.l('Notifications'),
+                    class: 'notifications',
+                    disabled: true,
+                    action: () => {}
+                }
+/*
+                {
+                    getText: (entity: any) => {
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
+                        return this.l('Checklist') + ' (' + entity.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
+                    },
+                    class: 'checklist',
+                    checkVisible: (entity: any) => {
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
+                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
+                    },
+                    action: (data?) => {
+                        this.openEntityChecklistDialog(data);
+                    }
+                }
+*/
+            ]
+        },
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('Delete'),
+                    class: 'delete',
+                    disabled: false,
+                    action: (data?) => {
+                        this.deleteOrders([(data || this.actionEvent.data || this.actionEvent).Id]);
+                    }
+                },
+                {
+                    text: this.l('EditRow'),
+                    class: 'edit',
+                    action: (data?) => this.showContactDetails({ data: data || this.actionEvent })
+                }
+            ]
+        }
+    ];
 
     constructor(injector: Injector,
         private orderProxy: OrderServiceProxy,
@@ -1356,14 +1477,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             entity: event.data,
             entityStageDataSource: this.dataGrid.instance.getDataSource(),
             loadMethod: null,
+            queryParams: {},
             section: section
         });
     }
 
-    onCardClick({entity, entityStageDataSource, loadMethod, section = 'invoices'}: {
+    onCardClick({entity, entityStageDataSource, loadMethod, queryParams, section = 'invoices'}: {
         entity: OrderDto | SubscriptionDto,
         entityStageDataSource: any,
         loadMethod: () => any,
+        queryParams: Params,
         section: string
     }) {
         if (entity && entity.ContactId) {
@@ -1375,7 +1498,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     queryParams: {
                         ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
                         referrer: 'app/crm/orders',
-                        dataLayoutType: DataLayoutType.Pipeline
+                        dataLayoutType: DataLayoutType.Pipeline,
+                        ...queryParams
                     }
                 }
             );
@@ -1446,22 +1570,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.totalCount = totalCount;
     }
 
-    deleteOrders() {
+    deleteOrders(orderIds?) {
         ContactsHelper.showConfirmMessage(
             this.l('OrdersDeleteWarningMessage'),
             (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
                 if (isConfirmed) {
-                    this.deleteOrdersInternal(forceDelete);
+                    this.deleteOrdersInternal(forceDelete, orderIds);
                 }
             },
             [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites)}]
         );
     }
 
-    private deleteOrdersInternal(forceDelete: boolean) {
+    private deleteOrdersInternal(forceDelete: boolean, orderIds?: number[]) {
         this.startLoading();
         forkJoin(
-            this.selectedOrderKeys.map((v) => this.orderProxy.delete(v, forceDelete))
+            (orderIds || this.selectedOrderKeys).map(id => this.orderProxy.delete(id, forceDelete))
         ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
@@ -1501,6 +1625,51 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         setTimeout(() => {
             this.initDataSource();
             this.filtersService.change([this.contactGroupFilter]);
+        });
+    }
+
+    showContactDetails(event, section?: string, queryParams?: Params) {
+        if (!event.data.LeadId || !event.data.ContactId)
+            return;
+
+        this.searchClear = false;
+        event.component && event.component.cancelEditData();
+
+        this.onCardClick({
+            entity: event.data,
+            entityStageDataSource: event.dataSource
+                || this.ordersGrid.instance.getDataSource(),
+            loadMethod: event.loadMethod,
+            queryParams: queryParams,
+            section: section
+        });
+    }
+
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionRecord => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, event.data);
+            this.actionEvent = actionRecord;
+        });
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action.call(this);
+        this.actionEvent = null;
+        this.actionMenu.hide();
+    }
+
+    openEntityChecklistDialog(data?) {
+        this.dialog.closeAll();
+        let entity = data || this.actionEvent.data || this.actionEvent;
+        this.dialog.open(EntityCheckListDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                entity: entity,
+                pipelinePurposeId: this.pipelinePurposeId,
+                contactGroupId: entity.contactGroupId
+            }
         });
     }
 

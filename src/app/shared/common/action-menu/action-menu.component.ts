@@ -1,5 +1,10 @@
+/** Core imports */
 import { Component, EventEmitter, Output, Input, ViewChild } from '@angular/core';
+
+/** Third party imports */
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+
+/** Application imports */
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 

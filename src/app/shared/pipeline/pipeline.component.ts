@@ -1038,11 +1038,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     toggleActionsMenu(event, entity) {
         event.stopPropagation();
+        ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, entity);
         this.actionEvent = entity;
     }
 
     onMenuItemClick(event) {
         event.itemData.action(this.actionEvent);
         this.actionEvent = null;
+        this.detectChanges();
     }
 }
