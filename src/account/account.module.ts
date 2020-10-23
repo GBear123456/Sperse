@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SperserAutoLoginComponent } from '@root/account/auto-login/layouts/sperser/sperser-auto-login.component';
+import { SperserForgotPasswordComponent } from '@root/account/password/layouts/sperser/sperser-forgot-password.component';
+import { SperserResetPasswordComponent } from '@root/account/password/layouts/sperser/sperser-reset-password.component';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { SignupModule } from './signup/signup.module';
@@ -54,6 +57,13 @@ import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.com
 import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
 import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/hoa-reset-password.component";
 import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
+import { SperserLayoutComponent } from '@root/account/layouts/sperser/sperser-layout.component';
+import { SperserLoginComponent } from '@root/account/login/layouts/sperser/sperser-login.component';
+// import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
+// import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
+// import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/hoa-reset-password.component";
+// import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
+
 
 
 @NgModule({
@@ -121,7 +131,13 @@ import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/h
         HoaLoginComponent,
         HoaAutoLoginComponent,
         HoaResetPasswordComponent,
-        HoaForgotPasswordComponent
+        HoaForgotPasswordComponent,
+
+        SperserLayoutComponent,
+        SperserLoginComponent,
+        SperserForgotPasswordComponent,
+        SperserResetPasswordComponent,
+        SperserAutoLoginComponent
     ],
     entryComponents: [
         HostLayoutComponent,
@@ -155,7 +171,13 @@ import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/h
         HoaLoginComponent,
         HoaAutoLoginComponent,
         HoaResetPasswordComponent,
-        HoaForgotPasswordComponent
+        HoaForgotPasswordComponent,
+
+        SperserLayoutComponent,
+        SperserLoginComponent,
+        SperserForgotPasswordComponent,
+        SperserResetPasswordComponent,
+        SperserAutoLoginComponent
     ],
     providers: [
         LoginService,

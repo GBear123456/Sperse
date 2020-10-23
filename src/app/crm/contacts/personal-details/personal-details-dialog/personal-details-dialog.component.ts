@@ -629,17 +629,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         }
     }
 
-    onSourceContactChanged(contact) {
+    onSourceContactChanged(contact?) {
         this.contactProxy.updateAffiliateContact(
             new UpdateAffiliateContactInput({
                 contactId: this.contactInfo.id,
-                affiliateContactId: contact.id
+                affiliateContactId: contact ? contact.id : null
             })
         ).subscribe(() => {
             this.refreshSourceContactInfo.next(null);
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
         });
-        this.sourceComponent.toggle();
+        contact && this.sourceComponent.toggle();
     }
 
     ngOnDestroy() {
