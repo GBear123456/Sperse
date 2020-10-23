@@ -33,7 +33,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
         requireTotalCount: true,
         store: new ODataStore({
             key: ResellersFields.Id,
-            url: this.oDataService.getODataUrl('ResellerSummaryReport'),
+            url: this.oDataService.getODataUrl('AffiliateSummaryReport'),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();

@@ -642,6 +642,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         contact && this.sourceComponent.toggle();
     }
 
+    openSourceContactList(event) {
+        event.stopPropagation();
+        this.sourceComponent.toggle();
+    }
+
+    removeSourceContact(event) {
+        event.stopPropagation();
+        this.onSourceContactChanged();
+    }
+
     ngOnDestroy() {
         this.contactsService.unsubscribe(this.ident);
     }

@@ -59,16 +59,19 @@
                                             <img [src]="getThumbnailSrc(sourceContactInfo?.sourceContactLevel1?.photoPublicId)"/>
                                         </div>
                                         <div class="field-info">
-                                            <a [ngClass]="{empty: !sourceContactInfo?.sourceContactLevel1}" (click)="openContactDetails(sourceContactInfo?.sourceContactLevel1?.id)">{{ sourceContactInfo?.sourceContactLevel1?.name || (ls.l('Set') + ' ' + ls.l('PersonalSettings.Contact1')) }}
+                                            <a [ngClass]="{empty: !sourceContactInfo?.sourceContactLevel1}" (click)="openContactDetails(sourceContactInfo?.sourceContactLevel1?.id)">
+                                                {{ sourceContactInfo?.sourceContactLevel1?.name || (ls.l('Set') + ' ' + ls.l('PersonalSettings.Contact1')) }}
                                                 <i id="affiliateContactLink" class="edit fa fa-pencil"
-                                                    (click)="$event.stopPropagation();sourceComponent.toggle();">
+                                                    (click)="openSourceContactList($event)">
                                                 </i>
-                                                <i *ngIf="sourceContactInfo?.sourceContactLevel1" class="remove fa fa-times"
-                                                    (click)="$event.stopPropagation();onSourceContactChanged();">
-                                                </i>
-                                                <i *ngIf="sourceContactInfo?.sourceContactLevel1" class="save-to-clipboard"
-                                                    (click)="saveToClipboard($event, sourceContactInfo?.sourceContactLevel1?.name)">
-                                                </i>
+                                                <ng-container *ngIf="sourceContactInfo?.sourceContactLevel1">
+                                                    <i class="remove fa fa-times"
+                                                        (click)="removeSourceContact($event)">
+                                                    </i>
+                                                    <i class="save-to-clipboard"
+                                                        (click)="saveToClipboard($event, sourceContactInfo?.sourceContactLevel1?.name)">
+                                                    </i>
+                                                </ng-container>
                                             </a>
                                             <div *ngIf="sourceContactInfo?.sourceContactLevel1?.affiliateCode as affiliateCode" class="additional-info">
                                                 <span>{{ ls.l('AffiliateCode') }}: </span>
