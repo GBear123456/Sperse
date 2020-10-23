@@ -81,7 +81,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     private readonly commissionDataSourceURI: string = 'Commission';
     private readonly ledgerDataSourceURI: string = 'CommissionLedgerEntry';
-    private readonly resellersDataSourceURI: string = 'ResellerSummaryReport';
+    private readonly resellersDataSourceURI: string = 'AffiliateSummaryReport';
 
     private rootComponent: any;
     private subRouteParams: any;
