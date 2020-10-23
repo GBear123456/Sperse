@@ -9,7 +9,7 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate === 0, 'undefined': affiliateRate === null}">
+                            <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate == 0, 'undefined': affiliateRate === null}">
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
