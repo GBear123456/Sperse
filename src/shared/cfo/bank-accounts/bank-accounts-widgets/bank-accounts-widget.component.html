@@ -124,9 +124,9 @@
                     cellTemplate="expandTemplate">
         </dxi-column>
         <dxi-column dataField="lastSyncDate"
-                    alignment="right"
+                    alignment="left"
                     [caption]="l('BankAccountsWidget_Last_sync')"
-                    [width]="200"
+                    [width]="180"
                     [allowEditing]="false"
                     cellTemplate="syncDateTemplate"
                     [visible]="showSyncDate">
@@ -159,7 +159,7 @@
                     [width]="40"
                     alignment="right"
                     [allowEditing]="false"
-                    [visible]="allowUpdateAccount && contextMenuItems && contextMenuItems.length"
+                    [visible]="!!(allowUpdateAccount && contextMenuItems && contextMenuItems.length)"
                     cellTemplate="actionsTemplate">
         </dxi-column>
         <div *dxTemplate="let syncAccount of 'detail'">
@@ -331,7 +331,7 @@
                     <div *dxTemplate="let cell of 'syncDateTemplate'">
                         <div *ngIf="cell.text"
                              class="sync-date clipboard-holder"
-                             title="Last good sync: {{cell.data.lastGoodSyncDate | date: 'MMM d, y ' : userTimezone}}">
+                             title="Last good sync: {{cell.data.lastGoodSyncDate | date: 'MMM d, y hh:mm a' : userTimezone}}">
                             {{cell.text | date: 'MMM d, y ' : userTimezone}}
                         </div>
                     </div>
@@ -378,7 +378,11 @@
         </div>
         <div *dxTemplate="let cell of 'syncDateTemplate'">
             <ng-container *ngIf="(cell.text)">
-                <div class="sync-date clipboard-holder">Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}}</div>
+                <div class="sync-date clipboard-holder" title="Last good sync: {{cell.text | date: 'MMM d, y hh:mm a' : userTimezone}}">
+                    Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}} 
+                    <a [hidden]="!cell.data.autoSyncTime" class="time-icon" title="Auto-sync at {{cell.data.autoSyncTime}}"></a>
+                    <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, cell.text)"></i>
+                </div>
             </ng-container>
         </div>
     </dx-data-grid>

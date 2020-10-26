@@ -378,6 +378,7 @@
 }
 
 .sync-account-button {
+    width: 190px;
     border-radius: 16px;
     border: 1px solid #e5e9ec;
     background-color: #e9eff4;
@@ -394,5 +395,19 @@
 
     &:hover {
         background: darken(#e9eff4, 5%);
+    }
+
+    .auto-sync {
+        margin-left: 8px;
+        margin-right: 0;
+        display: none;
+        ::ng-deep svg path {
+            fill: #00AEEF;
+        }
+    }
+    &:hover {
+        .auto-sync {
+            display: inline-flex;
+        }
     }
 }

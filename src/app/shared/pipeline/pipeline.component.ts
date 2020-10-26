@@ -208,8 +208,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
             this._totalDataSource = undefined;
             if (!this.refreshTimeout) {
-                this.filterModelStages.items.element.value = [];
-                this.filtersService.change([this.filterModelStages]);
+                /** If there is stage filter - clear it and update */
+                if (this.filterModelStages) {
+                    this.filterModelStages.items.element.value = [];
+                    this.filtersService.change([this.filterModelStages]);
+                } else {
+                    /** Else - load the data */
+                    this.loadData(
+                        0,
+                        this.stageId && this.stages.findIndex(obj => obj.id == this.stageId),
+                        Boolean(this.stageId)
+                    );
+                }
                 this.refreshTimeout = null;
             }
         }));
@@ -690,7 +700,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 newStage.isLoading = oldStage.isLoading = true;
                 if (newStage.name != oldStage.name) {
                     this.pipelineService.updateEntityStage(
-                        this.pipelinePurposeId, entity, oldStage, newStage, complete, forced
+                        this.pipelinePurposeId, this.contactGroupId, entity, oldStage, newStage, complete, forced
                     );
                 } else
                     this.pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);

@@ -34,6 +34,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         let stateUrl = state && state.url.split('?').shift(),
             isStateRoot = stateUrl == '/';
+
         if (state && (UrlHelper.isInstallUrl(stateUrl) || UrlHelper.isAccountModuleUrl(stateUrl) || UrlHelper.isPFMUrl(stateUrl))
             || UrlHelper.isPublicUrl(stateUrl)
         ) {
@@ -64,9 +65,11 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return true;
         }
 
-        if ((route.data && route.data['permission'] && route.data['permission'] === 'Detect.Route') || isStateRoot)
-            this.router.navigate([this.selectBestRoute()]);
-        else
+        if ((route.data && route.data['permission'] && route.data['permission'] === 'Detect.Route') || isStateRoot) {
+            let bestRoute = this.selectBestRoute();
+            if (bestRoute)
+                this.router.navigate([bestRoute]);
+        } else
             this.router.navigate(['/app/access-denied']);
 
         return false;
@@ -77,8 +80,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        return (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
-            this.getBestRouteForTenant() : this.getBestRouteForHost()) || '/app/access-denied';
+        let bestRoute = (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT ?
+            this.getBestRouteForTenant() : this.getBestRouteForHost());
+        return bestRoute === null ? '/app/access-denied' : bestRoute;
     }
 
     getBestRouteForTenant(preferedModule = null): string {
@@ -95,7 +99,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {
                 this.authService.setTokenBeforeRedirect();
                 location.href = AppConsts.appMemberPortalUrl;
-                return null;
+                return '';
             } else {
                 if (tenant.customLayoutType == LayoutType.BankCode)
                     return '/code-breaker';

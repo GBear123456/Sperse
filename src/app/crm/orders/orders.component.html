@@ -1,20 +1,23 @@
 <div>
     <app-headline icon="briefcase"
                   [buttons]="headlineButtons"
+                  [showCompactView]="showCompactView$ | async"
                   [showToggleToolbarButton]="true"
                   [showToggleCompactViewButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
                   [showToggleFullScreenButton]="true"
-                  (onToggleCompactView)="toggleContactView()"
+                  (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <types-dropdown [items]="orderTypes"
+        <orders-header-dropdown
                         [totalCount]="totalCount"
-                        [value]="selectedOrderType$ | async"
-                        (onValueChanged)="onOrderTypeChanged($event)">
-        </types-dropdown>
+                        [contactGroup]="selectedContactGroup$ | async"
+                        [orderType]="selectedOrderType$ | async"
+                        (onOrderTypeChanged)="onOrderTypeChanged($event)"
+                        (onContactGroupChanged)="onContactGroupChanged($event)">
+        </orders-header-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <div [hidden]="selectedOrderType.value !== orderTypesEnum.Order">
@@ -103,10 +106,13 @@
                                 <dxi-column [dataField]="orderFields.Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.Amount" [caption]="l('Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right" ></dxi-column>
                                 <dxi-column [dataField]="orderFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
-                                <dxi-column [dataField]="orderFields.OrderDate" [caption]="l('Created')" sortOrder="desc" cellTemplate="dateCell"></dxi-column>
+                                <dxi-column [dataField]="orderFields.OrderDate" [caption]="l('Created')" sortOrder="desc" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                                 <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
+                                <dxi-column [dataField]="orderFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false" >
+                                    <dxo-lookup [dataSource]="contactGroupDataSource" valueExpr="id" displayExpr="name"></dxo-lookup>
+                                </dxi-column>
                                 <dxo-sorting mode="multiple"></dxo-sorting>
                                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                                 <dxo-paging [pageSize]="20"></dxo-paging>
@@ -151,7 +157,7 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId']"
                                 dateField="OrderDate"
                                 [contactGroupId]="null"
                                 [pipelinePurposeId]="pipelinePurposeId"
@@ -219,16 +225,20 @@
                     <dxi-column [dataField]="subscriptionFields.Zip" [caption]="l('Contact.Zip')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ServiceType" [caption]="l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ServiceName" [caption]="l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.StartDate" [caption]="l('StartDate')" cellTemplate="dateCell"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.EndDate" [caption]="l('EndDate')" cellTemplate="dateCell"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.StartDate" [caption]="l('StartDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.EndDate" [caption]="l('EndDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.Fee" [width]="170" cssClass="padding-right" [caption]="l('Fee')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.StatusName" [caption]="l('Status')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.OrderAmount" [width]="190" cssClass="padding-right" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>  
+                    <dxi-column [dataField]="subscriptionFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false" >
+                        <dxo-lookup [dataSource]="contactGroupDataSource" valueExpr="id" displayExpr="name"></dxo-lookup>
+                    </dxi-column>
+  
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>

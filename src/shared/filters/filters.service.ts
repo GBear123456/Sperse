@@ -144,16 +144,36 @@ export class FiltersService {
         return data;
     }
 
-    static filterByAmount(filter) {
+    static filterByAmount(filter, filterValueModifier?: (value) => number) {
         let data = {};
         data[filter.field] = {};
         each(filter.items, (item: FilterItemModel, key) => {
-            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+            item && item.value && (data[filter.field][filter.operator[key]] = +(
+                filterValueModifier
+                ? filterValueModifier(item.value)
+                : item.value
+            ));
         });
         return data;
     }
 
     static filterByFee(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
+    static filterByCommission(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
+    static filterByProductAmount(filter) {
+        return FiltersService.filterByAmount(filter);
+    }
+
+    static filterByCommissionRate(filter) {
+        return FiltersService.filterByAmount(filter, (value) => +(value / 100).toFixed(4));
+    }
+
+    static filterByTotalAmount(filter) {
         return FiltersService.filterByAmount(filter);
     }
 
@@ -364,7 +384,7 @@ export class FiltersService {
         this.hasFilterSelected = false;
         _.forEach(this.filters, (x) => {
             if (x.items) {
-                x.isSelected = _.any(x.items, y => {
+                x.isSelected = !x.hidden && _.any(x.items, y => {
                     if (y && y.value && (!_.isArray(y.value)
                         || (y.value.length && y.value[0].hasOwnProperty && y.value[0].hasOwnProperty('value')
                               ? y.value.some(val => val.value)

@@ -542,7 +542,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         });
                 }
             },
-            [ { text: this.l('SendCancellationEmail'), visible: true }],
+            [ { text: this.l('SendCancellationEmail'), visible: true, checked: false }],
             this.l('AreYouSure')
         );
     }

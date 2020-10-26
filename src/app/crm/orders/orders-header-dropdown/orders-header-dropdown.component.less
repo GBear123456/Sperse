@@ -1,0 +1,47 @@
+:host {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+
+    ::ng-deep dx-drop-down-box {
+        cursor: pointer;
+        background: transparent!important;
+        input {
+            border: none;
+            font-size: 24px;
+            font-weight: 600;
+        }
+    }
+}
+
+.orders-header-dropdown {
+    display: flex;
+    flex-flow: column;
+    .orders-list {
+        display: flex;
+        justify-content: space-around;
+        line-height: 40px;
+        border-bottom: 1px solid #dedede;
+        span {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 0 10px;
+            opacity: 0.5;
+            &.selected {
+                opacity: 1;
+                color: #000;
+                cursor: default;
+                font-weight: 600;
+            }
+        }
+    }
+    ::ng-deep dx-list {
+        .dx-item.dx-list-item {
+            border: none;
+            .name {
+                font-size: 16px;                
+            }
+        }
+    }
+}

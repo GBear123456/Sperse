@@ -1,0 +1,31 @@
+<section class="account-section">
+    <header class="section-header">
+        <div class="logo">
+            <a [href]="originUrl">
+                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
+                     src="./assets/common/images/app-logo-on-dark.png"
+                     alt="logo" width="200" height="60"/>
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId"
+                     [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
+                     alt="logo"
+                     width="auto" height="60"/>
+            </a>
+        </div>
+    </header>
+    <main class="content">
+        <div class="left-side">
+            <router-outlet></router-outlet>
+            <p class="agree-rights">By continuing, you agree with our
+                <!--<a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &-->
+                <a (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a></p>
+            <div class="copyright">
+                <span class="">Powered By</span><a target="_blank" href="https://www.sperse.com"><i class="sperse-logo"></i></a>
+            </div>
+        </div>
+        <div class="right-side">
+            <div class="dots"></div>
+            <div class="video-container"></div>
+            <div class="bg-circle"></div>
+        </div>
+    </main>
+</section>

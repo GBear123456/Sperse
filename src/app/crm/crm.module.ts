@@ -53,8 +53,10 @@ import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
+import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
+import { OrdersHeaderDropdownComponent } from './orders/orders-header-dropdown/orders-header-dropdown.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
@@ -89,6 +91,9 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { ListsModule } from '../shared/common/lists/lists.module';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
+import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
+import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
+import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 
 @NgModule({
     imports: [
@@ -167,7 +172,12 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         CrmIntroComponent,
         ActivityComponent,
         TypesDropdownComponent,
-        EntityCheckListDialogComponent
+        EntityCheckListDialogComponent,
+        OrdersHeaderDropdownComponent,
+        CommissionHistoryComponent,
+        CommissionEarningsDialogComponent,
+        LedgerCompleteDialogComponent,
+        RequestWithdrawalDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -183,7 +193,10 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
         InvoiceAddressDialog,
         CreateActivityDialogComponent,
         CrmIntroComponent,
-        EntityCheckListDialogComponent
+        EntityCheckListDialogComponent,
+        CommissionEarningsDialogComponent,
+        LedgerCompleteDialogComponent,
+        RequestWithdrawalDialogComponent
     ]
 })
 export class CrmModule {

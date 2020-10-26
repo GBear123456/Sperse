@@ -17,4 +17,8 @@ export interface OrderDto {
     SourceAffiliateCode: string;
     SourceEntryUrl: string;
     DateProcessed: string;
+    ContactGroupId: string;
+    ContactXref: string;
+    ServiceProductId: string;
+    SourceOrganizationUnitId: number;
 }

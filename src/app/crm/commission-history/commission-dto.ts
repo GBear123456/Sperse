@@ -1,0 +1,29 @@
+export interface CommissionDto {
+    BuyerAffiliateCode: string;
+    BuyerContactId: number;
+    BuyerEmailAddress: string;
+    BuyerName: string;
+    CommissionAmount: number;
+    CommissionRate: number;
+    CommissionableAmount: number;
+    EarnedDate: string;
+    Id: number;
+    InvoiceDate: string;
+    InvoiceNumber: string;
+    InvoiceStatus: string;
+    OrderDate: string;
+    OrderNumber: string;
+    ProductAmount: number;
+    ProductCode: string;
+    ProductName: string;
+    ResellerAffiliateCode: string;
+    ResellerContactId: number;
+    ResellerEmailAddress: string;
+    ResellerName: string;
+    Status: string;
+    TransactionAuthCode: string;
+    TransactionDate: string;
+    TransactionGatewayName: string;
+    TransactionId: string;
+    OrderId: string;
+}

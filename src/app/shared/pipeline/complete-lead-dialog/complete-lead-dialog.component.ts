@@ -3,10 +3,11 @@ import { Component, Injector } from '@angular/core';
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
@@ -29,9 +30,8 @@ export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
         super(injector);
 
         this.orderStages = this.data.stages.filter((item) => !item['isFinal']);
-        this.orderStageId = _.findWhere(this.orderStages, {sortOrder: 0}).id;
         this.dialogRef['_overlayRef'].hostElement.classList.add('lead-complete');
-        invoicesService.settings$.pipe(first()).subscribe(res =>
+        invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((res: InvoiceSettings) =>
             this.currency = getCurrencySymbol(res.currency, 'wide'));
     }
 

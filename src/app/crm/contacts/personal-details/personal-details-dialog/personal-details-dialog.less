@@ -39,6 +39,17 @@
         min-width: 100px!important;
     }
 
+    ::ng-deep dx-number-box {
+        display: inline-block;
+        &.dx-state-focused .dx-placeholder {
+            top: -30px!important;
+        }
+    }
+
+    ::ng-deep dx-button {
+        margin-bottom: 4px;
+    }
+
     mat-dialog-content {
         overflow: hidden;
         max-height: 100%!important;
@@ -89,6 +100,11 @@
 
         span, a {
             padding-right: 30px;
+            i.remove {
+                font-weight: 100;
+                font-size: 20px;
+                color: red;
+            }
             i.save-to-clipboard {
                 padding-left: 30px;
                 display: none;
@@ -97,6 +113,10 @@
                 i.save-to-clipboard {
                     display: inline-block;
                 }
+            }
+            &.empty {
+                font-style: italic;
+                color: #aaa;
             }
         }
 
@@ -114,7 +134,16 @@
             padding-left: 20px;
         }
 
+        #affiliateContactLink {
+            font-size: 18px;
+            padding: 7px;
+            cursor: pointer;
+            color: #00aeef;
+        }
+
         ::ng-deep .affiliate-info {
+            overflow: visible;
+
             .field {
                 padding: 2px 0 !important;
             }
@@ -123,11 +152,26 @@
                 padding-bottom: 0 !important;
             }
 
-            inplace-edit {
+            .zero inplace-edit {
+                dx-text-box input, .link a {
+                    background-color: rgba(209, 172, 0, 0.2)!important;
+                    border: solid 1px #d1ac00!important;
+                    color: #d1ac00!important; 
+                }
+            }
+
+            .undefined inplace-edit {
+                dx-text-box input, .link a {
+                    background-color: #dadee1!important;
+                    border: solid 1px rgba(104, 111, 118, 0.7)!important;
+                    color: rgba(104, 111, 118, 0.7)!important;
+                }
+            }
+
+            .affiliate-code > inplace-edit {
                 .inplace-edit-edit-mode {
                     display: inline-block;
-                    width: 100%;
-                    //padding-bottom: 30px;
+                    width: 330px!important;
                     height: auto;
 
                     dx-text-box input {

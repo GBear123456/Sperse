@@ -9,6 +9,7 @@ import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
@@ -49,6 +50,7 @@ import { ServerCacheService } from '@shared/common/server-cache-service/server-c
         DxCheckBoxModule,
         DxSelectBoxModule,
         DxTextBoxModule,
+        DxNumberBoxModule,
         DxTextAreaModule,
         DxDateBoxModule,
         DxDropDownBoxModule,

@@ -8,7 +8,6 @@ import {
     OnDestroy,
     ViewChild
 } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
@@ -31,7 +30,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivityServiceProxy, ActivityType, PipelineDto } from '@shared/service-proxies/service-proxies';
+import { ActivityServiceProxy, ActivityType, PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -134,12 +133,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     constructor(
         injector: Injector,
         private activityProxy: ActivityServiceProxy,
-        private pipelineService: PipelineService,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
         private permissionCheckerService: PermissionCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
-        private httpClient: HttpClient,
+        public  pipelineService: PipelineService,
         public appService: AppService,
         public dialog: MatDialog
     ) {
@@ -628,9 +626,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     activityStagesLoad() {
-        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity)
+        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity, null)
             .subscribe((result: PipelineDto) => {
-                this.stages = result.stages.map((stage) => {
+                this.stages = result.stages.map((stage: StageDto) => {
                     return {
                         id: stage.id,
                         index: stage.sortOrder,

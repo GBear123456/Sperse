@@ -529,9 +529,14 @@ input.form-control {
             }
         }
 
-        .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused),
-        .dx-datagrid-rowsview .dx-selection.dx-row > td, .dx-datagrid-rowsview .dx-selection.dx-row:hover > td {
-            background-color: rgba(244, 245, 246, .6);
+        tr.dx-data-row.dx-selection,
+        tr.dx-data-row.dx-state-hover,
+        tr.dx-data-row:hover {
+            background: #f2f7fa !important;
+        }
+
+        .dx-datagrid-rowsview td {
+            background-color: transparent !important;    
 
             .dx-checkbox-icon {
                 border-color: rgba(104, 111, 118, .5);

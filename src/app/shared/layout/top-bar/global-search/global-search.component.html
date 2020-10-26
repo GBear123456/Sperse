@@ -11,7 +11,8 @@
                 accessKey="global-search-tooltip"
                 [closeOnOutsideClick]="true"
                 width="437px"
-                target="#global-search-textbox">
+                target="#global-search-textbox"
+                (onContentReady)="tooltipReady($event)">
         <dxo-position my="left top" at="left bottom" of="#global-search-textbox"></dxo-position>
         <div *dxTemplate="let data = data of 'content'">
             <dx-scroll-view>
@@ -20,7 +21,8 @@
                         <div class="group" *ngIf="group.entities && group.entities.length">
                             <header>
                                 <h4>{{ group.name }}</h4>
-                                <a *ngIf="group.entities && group.entities.length > 2" (click)="showAll($event, group.link, group.linkParams)">
+                                <a *ngIf="group.entities && group.entities.length > 2"
+                                   (click)="showAll($event, group.link, group.linkParams)">
                                     {{ ls.l('ShowAll') }}
                                 </a>
                             </header>

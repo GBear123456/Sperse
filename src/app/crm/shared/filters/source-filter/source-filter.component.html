@@ -30,7 +30,7 @@
         </dx-text-box>
     </div>
     <div class="field" *ngIf="hasElementProperty('channelCode')">
-        <label for="filterChannel">{{ ls.l('Channel') }}</label>
+        <label for="filterChannel">{{ ls.l('ChannelCode') }}</label>
         <dx-text-box [placeholder]="ls.l('EnterValue')"
                      [elementAttr]="{ id: 'filterChannel' }"
                      [(value)]="items.element.channelCode">
@@ -49,5 +49,5 @@
                      [elementAttr]="{ id: 'filterEntryUrl' }"
                      [(value)]="items.element.entryUrl">
         </dx-text-box>
-    </div>     
+    </div>
 </div>

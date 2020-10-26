@@ -1,8 +1,9 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactsService } from '../contacts.service';
@@ -17,7 +18,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     styleUrls: ['./contact-information.component.less'],
     providers: [ LifecycleSubjectsService ]
 })
-export class ContactInformationComponent implements OnInit, OnDestroy {
+export class ContactInformationComponent implements OnInit, AfterViewInit, OnDestroy {
     public data: {
         contactInfo: ContactInfoDto
     };
@@ -33,15 +34,24 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
         private lifeCycleService: LifecycleSubjectsService,
         public ls: AppLocalizationService
     ) {
-        this.contactsService.contactInfoSubscribe(() => {
-            if (this.contactsService.settingsDialogOpened.value)
-                this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, false);
-            setTimeout(() => this.updateToolbar());
+        this.dialog.closeAll();
+        this.contactsService.contactInfoSubscribe(contactInfo => {
+            if (contactInfo)
+                setTimeout(() => this.updateToolbar());
         }, this.ident);
     }
 
     ngOnInit() {
         this.data = this.contactService['data'];
+    }
+
+    ngAfterViewInit() {
+        this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe(opened => {
+            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, opened);
+        });
     }
 
     updateToolbar() {
@@ -52,7 +62,7 @@ export class ContactInformationComponent implements OnInit, OnDestroy {
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.personalDetailsService.togglePersonalDetailsDialog('contact-information-personal-details-dialog');
+                    this.contactsService.toggleSettingsDialog();
                 }
             }
         });

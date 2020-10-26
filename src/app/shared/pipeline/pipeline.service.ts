@@ -92,7 +92,7 @@ export class PipelineService {
         this.compactView.next(!this.compactView.value);
     }
 
-    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): Observable<PipelineDto> {
+    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup): Observable<PipelineDto> {
         let pipeline = this.pipelineObservables[pipelinePurposeId] || {};
         if (pipeline[String(contactGroupId)])
             return pipeline[String(contactGroupId)];
@@ -132,21 +132,23 @@ export class PipelineService {
         }
     }
 
-    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): StageDto[] {
+    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup): StageDto[] {
         const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId);
         return pipeline && pipeline.stages;
     }
 
-    getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup = ContactGroup.Client): PipelineDto {
+    getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup): PipelineDto {
         let pipelines = this.pipelineDefinitions[pipelinePurposeId];
         return pipelines && pipelines[String(contactGroupId)];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup = ContactGroup.Client): Stage {
+    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup): Stage {
         return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId), {name: stageName});
     }
 
-    updateEntityStage(pipelinePurposeId: string, entity, fromStage: Stage, toStage: Stage, complete = null, forced = false) {
+    updateEntityStage(pipelinePurposeId: string, contactGroupId: ContactGroup,
+        entity: any, fromStage: Stage, toStage: Stage, complete = null, forced = false
+    ) {
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {
@@ -158,7 +160,7 @@ export class PipelineService {
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
                     this.updateLeadStage(fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
-                    this.processLead(fromStage, toStage, entity, complete, forced);
+                    this.processLead(contactGroupId, fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_ORDER)
                     this.cancelOrder(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ORDER_STAGE)
@@ -178,7 +180,7 @@ export class PipelineService {
             complete && complete();
     }
 
-    updateEntitiesStage(pipelineId, entities, targetStageName: string, contactGroupId: ContactGroup = ContactGroup.Client) {
+    updateEntitiesStage(pipelineId: string, entities, targetStageName: string, contactGroupId: ContactGroup): Observable<any> {
         let subject = new Subject<any>();
 
         this.updateEntitiesStageInternal(
@@ -194,7 +196,7 @@ export class PipelineService {
         return subject.asObservable();
     }
 
-    private updateEntitiesStageInternal(pipelineId, contactGroupId: ContactGroup,
+    private updateEntitiesStageInternal(pipelineId: string, contactGroupId: ContactGroup,
         entities, targetStageName: string, data, complete, declinedList
     ) {
         let entity = entities.pop();
@@ -204,6 +206,7 @@ export class PipelineService {
             if (
                 !this.updateEntityStage(
                     pipelineId,
+                    contactGroupId,
                     entity,
                     this.getStageByName(pipelineId, entity.Stage || entity.stage, contactGroupId),
                     this.getStageByName(pipelineId, targetStageName, contactGroupId),
@@ -271,13 +274,13 @@ export class PipelineService {
         });
     }
 
-    processLead(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+    processLead(contactGroupId: ContactGroup, fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
         this.ignoreStageChecklist(fromStage, this.getEntityId(entity), useLastData).subscribe(ignore => {
             if (entity.data)
                 return this.processLeadInternal(entity,
                     {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             if (!useLastData || !this.lastEntityData$) {
-                this.lastEntityData$ = this.getPipelineDefinitionObservable(
+                this.lastEntityData$ = contactGroupId == ContactGroup.Client ? this.getPipelineDefinitionObservable(
                     AppConsts.PipelinePurposeIds.order,
                     null
                 ).pipe(first(),
@@ -288,7 +291,7 @@ export class PipelineService {
                             }
                         }).afterClosed();
                     }), publishReplay(), refCount()
-                );
+                ) : of({});
             }
 
             this.lastEntityData$.subscribe(data => {
@@ -532,7 +535,7 @@ export class PipelineService {
             complete && complete();
     }
 
-    getStageColorByName(stageName: string, contactGroupId: ContactGroup = ContactGroup.Client): string {
+    getStageColorByName(stageName: string, contactGroupId: ContactGroup): string {
         const stage = this.getStageByName(AppConsts.PipelinePurposeIds.lead, stageName, contactGroupId);
         return this.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder);
     }

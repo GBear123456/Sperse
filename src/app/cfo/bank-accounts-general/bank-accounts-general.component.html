@@ -9,6 +9,7 @@
         <synch-progress [showSyncAccountButton]="true"
                         class="synch-progress"
                         (onSyncStarted)="refresh()"
+                        (onAutoSyncButtonClicked)="openAutoSyncDialog()"
                         (onComplete)="refresh()">
         </synch-progress>
 <!--        <sync-date-picker></sync-date-picker>-->

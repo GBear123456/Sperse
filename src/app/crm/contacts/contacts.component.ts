@@ -148,7 +148,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.loadTargetEntity(e, TargetDirectionEnum.Prev);
         });
         this.contactsService.next.pipe(takeUntil(this.destroy$)).subscribe((e) => {
-            this.loadTargetEntity(e, TargetDirectionEnum.Next)
+            this.loadTargetEntity(e, TargetDirectionEnum.Next);
         });
     }
 
@@ -681,7 +681,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let sourceStage = this.pipelineService.getStageByName(pipelineId, this.leadInfo.stage, this.contactGroupId.value);
         let targetStage = this.pipelineService.getStageByName(pipelineId, $event.itemData.name, this.contactGroupId.value);
 
-        if (this.pipelineService.updateEntityStage(pipelineId, this.leadInfo, sourceStage, targetStage, () => {
+        if (this.pipelineService.updateEntityStage(pipelineId, this.contactGroupId.value, this.leadInfo, sourceStage, targetStage, () => {
             this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);
         })) {
             this.leadInfo.stage = targetStage.name;

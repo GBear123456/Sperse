@@ -1,6 +1,7 @@
 <div [@routerTransition]>
     <app-headline [names]="[ l('Tasks') ]"
                   icon="docs"
+                  [showCompactView]="pipelineService.compactView$ | async"
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="ui.showReload"

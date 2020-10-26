@@ -370,12 +370,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     save(): void {
-        if (!this.person.firstName && !this.person.lastName && !this.hideCompanyField && !this.company) {
+        if (!this.person.firstName && !this.person.lastName && (this.hideCompanyField || !this.company)
+            && !this.contacts.emails[0].email && !this.contacts.phones[0].number
+        ) {
             this.isTitleValid = false;
-            return this.notifyService.error(this.ls.l('FullNameIsRequired'));
+            return this.notifyService.error(this.ls.l('RequiredContactInfoIsMissing'));
         }
 
-        if (!ValidationHelper.ValidateName(this.title)) {
+        if (this.title && !ValidationHelper.ValidateName(this.title)) {
             this.isTitleValid = false;
             return this.notifyService.error(this.ls.l('FullNameIsNotValid'));
         }

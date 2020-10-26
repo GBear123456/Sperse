@@ -1,11 +1,11 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, takeUntil, first } from 'rxjs/operators';
+import { finalize, filter, takeUntil, first, debounceTime } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
@@ -42,7 +42,7 @@ import { LayoutSection } from '@app/crm/contacts/lead-information/layout-section
     styleUrls: ['./lead-information.component.less'],
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService, CurrencyPipe ]
 })
-export class LeadInformationComponent implements OnInit, OnDestroy {
+export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
     @ViewChild('loaderWrapper', { static: false }) loaderWrapper: ElementRef;
@@ -124,7 +124,8 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                     { name: 'affiliateCode', lname: 'LeadInformation_SourceAffiliateCode' },
                     { name: 'contact', lname: 'SourceContact' },
                     { name: 'campaignCode' },
-                    { name: 'channelCode' }
+                    { name: 'channelCode' },
+                    { name: 'importFileName', lname: 'FileName', readonly: true, hideEmpty: true }
                 ]
             },
             {
@@ -187,8 +188,6 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             if (contactInfo) {
                 this.data.contactInfo = contactInfo;
                 this.initToolbarInfo();
-                if (this.contactsService.settingsDialogOpened.value)
-                    this.toggleOrgUnitsDialog(false);
                 this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
                 this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                     contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
@@ -196,8 +195,17 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
                 this.loadOrganizationUnits();
             }
         }, this.ident);
-        this.invoicesService.settings$.pipe(first()).subscribe(settings => {
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
             this.invoiceSettings = settings;
+        });
+    }
+
+    ngAfterViewInit() {
+        this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe(opened => {
+            this.toggleOrgUnitsDialog(opened);
         });
     }
 
@@ -206,7 +214,7 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
             optionButton: {
                 name: 'options',
                 options: { checkPressed: () => this.contactsService.settingsDialogOpened.value },
-                action: this.toggleOrgUnitsDialog.bind(this)
+                action: () => this.contactsService.toggleSettingsDialog()
             }
         }));
     }
@@ -337,26 +345,21 @@ export class LeadInformationComponent implements OnInit, OnDestroy {
         this.sourceComponent.toggle();
     }
 
-    toggleOrgUnitsDialog(closeIfExists = true): void {
-        setTimeout(() => {
-            if (!this.dialog.getDialogById('lead-organization-units-dialog')) {
-                this.dialog.open(OrganizationUnitsDialogComponent, {
-                    id: 'lead-organization-units-dialog',
-                    panelClass: ['slider'],
-                    hasBackdrop: false,
-                    closeOnNavigation: true,
-                    data: {
-                        title: this.ls.l('Owner'),
-                        selectionMode: 'single'
-                    }
-                }).afterClosed().pipe(filter(Boolean)).subscribe(() => {
-                    this.contactsService.closeSettingsDialog();
-                });
-                this.contactsService.openSettingsDialog();
-            } else if (closeIfExists) {
-                this.contactsService.closeSettingsDialog();
-            }
-        });
+    toggleOrgUnitsDialog(open = true): void {
+        let dialog = this.dialog.getDialogById('lead-organization-units-dialog');
+        if (!dialog)
+            open && this.dialog.open(OrganizationUnitsDialogComponent, {
+                id: 'lead-organization-units-dialog',
+                panelClass: ['slider'],
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: {
+                    title: this.ls.l('Owner'),
+                    selectionMode: 'single'
+                }
+            });
+        else if (!open)
+            dialog.close();
     }
 
     saveToClipboard(event, value: string) {

@@ -324,7 +324,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
+    private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    showCompactView$: Observable<Boolean> = combineLatest(
+        this.dataLayoutType$,
+        this.pipelineService.compactView$,
+        this.gridCompactView.asObservable(),
+    ).pipe(
+        map(([layoutType, pipelineCompactView, gridCompactView]: [DataLayoutType, Boolean, Boolean]) => {
+            return layoutType == DataLayoutType.Pipeline ? pipelineCompactView : gridCompactView;
+        })
+    );
     hidePipeline$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.Pipeline;
     }));
@@ -802,6 +812,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (filtersToChange.length) {
                 this.filtersService.change(filtersToChange);
             } else if (searchValueChanged) {
+                setTimeout(() => this.filtersService.clearAllFilters());
                 this.refresh();
             }
         });
@@ -828,7 +839,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             pluck('dataLayoutType'),
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         );
-        queryDataLayoutType$.subscribe((dataLayoutType) => {
+        queryDataLayoutType$.subscribe((dataLayoutType: DataLayoutType) => {
             this.toggleDataLayout(+dataLayoutType);
         });
         queryDataLayoutType$.pipe(
@@ -1602,9 +1613,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleCompactView() {
-        this.pipelineService.toggleContactView();
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
+        if (this.showPipeline)
+            this.pipelineService.toggleContactView();
+        else {
+            DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+            this.gridCompactView.next(DataGridService.isCompactView(this.dataGrid));
+        }
     }
 
     searchValueChange(e: object) {
@@ -1717,7 +1731,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
                 this.selectedLeads,
-                $event.name
+                $event.name,
+                this.contactGroupId.value
             ).subscribe(declinedList => {
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
@@ -1819,7 +1834,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     });
                 }
             },
-            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites) } ]
+            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites), checked: false } ]
         );
     }
 
@@ -1953,7 +1968,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 [{
                     text: this.l('ApplyCurrentFrom', this.l('SourceContactName'), this.l('AffiliateCode')),
-                    visible: true
+                    visible: true,
+                    checked: false
                 }],
                 this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
             );

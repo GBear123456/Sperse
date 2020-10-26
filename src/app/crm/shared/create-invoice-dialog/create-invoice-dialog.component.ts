@@ -15,7 +15,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
-import { finalize, first, switchMap } from 'rxjs/operators';
+import { finalize, first, switchMap, filter } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
@@ -52,7 +52,8 @@ import {
     ContactInfoDto,
     ContactInfoDetailsDto,
     PersonContactInfoDto,
-    EntityAddressInfo
+    EntityAddressInfo,
+    ProductServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -80,7 +81,7 @@ import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/c
         '../../contacts/addresses/addresses.styles.less',
         'create-invoice-dialog.component.less'
     ],
-    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy ],
+    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy ],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
@@ -192,6 +193,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private contactProxy: ContactServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
+        private productProxy: ProductServiceProxy,
         private customerProxy: CustomerServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
@@ -214,7 +216,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.invoicesService.settings$.pipe(first()).subscribe(settings => {
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
             this.invoiceSettings = settings;
             if (!this.data.invoice) {
                 this.notes = settings.defaultNote;
@@ -403,7 +405,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     unitId: row['unitId'] as InvoiceLineUnit,
                     productCode: '',
                     description: row['description'],
-                    sortOrder: index
+                    sortOrder: index,
+                    commissionableAmount: undefined
                 });
             });
             subscription$ = this.invoiceProxy.update(data);
@@ -425,7 +428,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     unitId: row['unitId'] as InvoiceLineUnit,
                     productCode: '',
                     description: row['description'],
-                    sortOrder: index
+                    sortOrder: index,
+                    commissionableAmount: undefined
                 });
             });
             subscription$ = this.invoiceProxy.create(data);
@@ -584,7 +588,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     productsLookupRequest(phrase = '', callback?) {
-        this.invoiceProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+        this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.descriptions = (this.products = res).map(item => item.description);
                 this.changeDetectorRef.markForCheck();

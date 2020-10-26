@@ -75,8 +75,7 @@ import {
     ContactServiceProxy,
     ContactStatusDto,
     CreateContactEmailInput,
-    LayoutType,
-    ServiceTypeInfo
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
@@ -337,10 +336,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     button: {
                         text: '+' + this.l('Add'),
-                        action: () => {
+                        action: (event) => {
+                            event.stopPropagation();
                             this.showClientDetails(this.actionEvent, 'notes', {
                                 addNew: true
                             });
+                            this.actionEvent = undefined;
                         }
                     }
                 },
@@ -546,21 +547,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     dataSource$: this.store$.pipe(
                         select(SubscriptionsStoreSelectors.getSubscriptions),
-                        filter(Boolean),
-                        map((subscriptions: ServiceTypeInfo[]) => {
-                            return subscriptions.map((subscription: ServiceTypeInfo) => {
-                                return {
-                                    ...subscription,
-                                    current: null,
-                                    past: null,
-                                    never: null
-                                };
-                            });
-                        })
+                        filter(Boolean), first()
                     ),
                     dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: this.appService.isHostTenant ? 'name' : 'id',
-                    keyExpr: 'id'
+                    nameField: this.appService.isHostTenant ? 'name' : 'code'
                 })
         }
     });
@@ -832,7 +822,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     private handleStageChange() {
         this.pipelineService.stageChange$.subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
+            this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(AppConsts.PipelinePurposeIds.lead, ContactGroup.Client)).name);
         });
     }
 
@@ -854,6 +844,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (searchValueChanged) {
                         this.searchValue = params.searchValue || '';
                         this.initToolbarConfig();
+                        setTimeout(() => this.filtersService.clearAllFilters());
                     }
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
@@ -947,6 +938,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.filtersService.apply(() => {
             this.selectedClientKeys = [];
             this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -1186,7 +1178,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             () => {
                                                 this.refresh();
                                                 this.dataGrid.instance.deselectAll();
-                                            }
+                                            }, false, client.UserId
                                         );
                                     }
                                 },

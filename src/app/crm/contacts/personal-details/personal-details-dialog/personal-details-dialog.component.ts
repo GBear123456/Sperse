@@ -9,12 +9,13 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
+import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { VerificationChecklistItemType, VerificationChecklistItem,
@@ -24,8 +25,9 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput
 } from '@shared/service-proxies/service-proxies';
+import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ContactsService } from '../../contacts.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -39,12 +41,14 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { CrmService } from '@app/crm/crm.service';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
     styleUrls: ['personal-details-dialog.less']
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild('checklistScroll', {static: false}) checklistScroll: DxScrollViewComponent;
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
@@ -80,6 +84,18 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateCodeLength)
         }
     ];
+    affiliateRateValidationRules = [
+        {
+            type: 'pattern',
+            pattern: AppConsts.regexPatterns.affiliateRate,
+            message: this.ls.l('InvalidAffiliateRate')
+        },
+        {
+            type: 'stringLength',
+            max: AppConsts.maxAffiliateRateLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateRateLength)
+        }
+    ];
     xrefValidationRules = [
     {
         type: 'stringLength',
@@ -97,7 +113,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistLeadId: number;
     checklistOrderId: number;
     sourceContactInfo$: Observable<GetSourceContactInfoOutput>;
+    refreshSourceContactInfo: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     checklistSources = [];
+    manageAllowed = false;
+    defaultAffiliateRate;
+    affiliateRateInitil;
+    affiliateRate;
 
     constructor(
         private route: ActivatedRoute,
@@ -116,6 +137,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        public invoicesService: InvoicesService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
@@ -131,9 +153,20 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             });
         });
 
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((res: InvoiceSettings) => {
+            if (res.defaultAffiliateRate !== null)
+                this.defaultAffiliateRate = (res.defaultAffiliateRate * 100).toFixed(2);
+        });
+
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
                 this.contactInfo = contactInfo;
+                this.affiliateRateInitil = this.affiliateRate =
+                    this.contactInfo.affiliateRate === null ? null
+                        : (this.contactInfo.affiliateRate * 100).toFixed(2);
+                this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
                 this.contactProxy.getContactLastModificationInfo(
@@ -150,7 +183,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.initContactLeadsDataSource();
                 this.initContactOrdersDataSource();
                 this.initChecklistSources();
-                this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage);
+                this.stageColor = this.pipelineService.getStageColorByName(leadInfo.stage, ContactGroup.Client);
             }
         }, this.ident);
 
@@ -162,6 +195,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             let key = this.cacheHelper.getCacheKey(
                 abp.session.userId.toString(), this.ident
             );
+
             if (this.cacheService.exists(key))
                 this.overviewPanelSetting = this.cacheService.get(key);
         }
@@ -182,10 +216,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 map((leadInfo: LeadInfoDto) => leadInfo.contactGroupId),
                 distinctUntilChanged()
             ),
-            this.contactsService.contactId$.pipe(distinctUntilChanged())
+            this.contactsService.contactId$.pipe(distinctUntilChanged()),
+            this.refreshSourceContactInfo.asObservable()
         ).pipe(
-            switchMap(([contactGroupId, contactId]: [string, number]) => this.contactProxy.getSourceContactInfo(contactGroupId, contactId)
-        ));
+            switchMap(([contactGroupId, contactId, ]: [string, number, null]) =>
+                this.contactProxy.getSourceContactInfo(contactId)
+            )
+        );
     }
 
     ngAfterViewInit() {
@@ -198,6 +235,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     right: '0px'
                 });
             }, 100);
+        });
+    }
+
+    updateAffiliateRate(value?) {
+        this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
+        this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
+            contactId: this.contactInfo.id,
+            affiliateRate: this.affiliateRate == null ? null : parseFloat((this.affiliateRate / 100).toFixed(4))
+        })).subscribe(() => {
+            this.affiliateRateInitil = this.affiliateRate;
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+        }, () => {
+            this.affiliateRate = this.affiliateRateInitil;
         });
     }
 
@@ -411,6 +461,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             case this.ls.l('Xref'):
                 this.updateXref('');
                 break;
+            case this.ls.l('AffiliateRate'):
+                this.updateAffiliateRate();
+                break;
         }
     }
 
@@ -570,10 +623,33 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         { queryParams: this.route.snapshot.queryParams }
                     ));
                 } else {
-                    this.notifyService.error(this.ls.l('NoPermissionError'))
+                    this.notifyService.error(this.ls.l('NoPermissionError'));
                 }
             });
         }
+    }
+
+    onSourceContactChanged(contact?) {
+        this.contactProxy.updateAffiliateContact(
+            new UpdateAffiliateContactInput({
+                contactId: this.contactInfo.id,
+                affiliateContactId: contact ? contact.id : null
+            })
+        ).subscribe(() => {
+            this.refreshSourceContactInfo.next(null);
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+        });
+        contact && this.sourceComponent.toggle();
+    }
+
+    openSourceContactList(event) {
+        event.stopPropagation();
+        this.sourceComponent.toggle();
+    }
+
+    removeSourceContact(event) {
+        event.stopPropagation();
+        this.onSourceContactChanged();
     }
 
     ngOnDestroy() {

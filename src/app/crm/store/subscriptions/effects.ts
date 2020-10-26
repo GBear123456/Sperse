@@ -9,7 +9,7 @@ import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as subscriptionsActions from './actions';
-import { OrderSubscriptionServiceProxy, ServiceTypeInfo } from 'shared/service-proxies/service-proxies';
+import { ServiceProductServiceProxy, ServiceProductDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
 import { StoreHelper } from '@root/store/store.helper';
@@ -18,7 +18,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Injectable()
 export class SubscriptionsStoreEffects {
     constructor(
-        private subscriptionsService: OrderSubscriptionServiceProxy,
+        private subscriptionsService: ServiceProductServiceProxy,
         private actions$: Actions,
         private store$: Store<State>
     ) {}
@@ -33,9 +33,9 @@ export class SubscriptionsStoreEffects {
                 return empty();
             }
 
-            return this.subscriptionsService.getServiceTypes()
+            return this.subscriptionsService.getAll(true)
                 .pipe(
-                    map((subscriptions: ServiceTypeInfo[]) => {
+                    map((subscriptions: ServiceProductDto[]) => {
                         return new subscriptionsActions.LoadSuccessAction(subscriptions);
                     }),
                     catchError(err => {

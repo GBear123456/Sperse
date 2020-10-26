@@ -1,30 +1,30 @@
 /** Core imports */
-import { Component, OnInit, Injector, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
+import { ClipboardService } from 'ngx-clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
-import { forkJoin, Observable, of } from 'rxjs';
-import { first, publishReplay, refCount, finalize } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { finalize, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactServiceProxy,
     ContactInfoDto,
-    NotesServiceProxy,
+    ContactServiceProxy,
     NoteInfoDto,
-    PersonContactInfoDto,
-    OrganizationContactInfoDto
+    NotesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
-import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './notes.component.html',
@@ -34,18 +34,25 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
 
+    private formatting = AppConsts.formatting;
+    private readonly ident = 'Notes';
+
     public data: {
         contactInfo: ContactInfoDto
     };
-    private formatting = AppConsts.formatting;
-    private readonly ident = 'Notes';
-    public actionRecordData: any;
+
+    public userTimezone = DateHelper.getUserTimezone();
     public actionMenuItems: ActionMenuItem[];
+    public userId = abp.session.userId;
+    public actionRecordData: any;
+    public showGridView = false;
+    notes: NoteInfoDto[];
 
     constructor(injector: Injector,
         private clientService: ContactsService,
         private notesService: NotesServiceProxy,
         private contactService: ContactServiceProxy,
+        private clipboardService: ClipboardService,
         private dialog: MatDialog,
         private route: ActivatedRoute
     ) {
@@ -57,8 +64,9 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         clientService.leadInfoSubscribe(() => {
             this.data = this.contactService['data'];
             this.loadData().subscribe(
-                (notes: NoteInfoDto[]) => this.dataSource = notes
+                (notes: NoteInfoDto[]) => this.notes = notes
             );
+            this.updateToolbar();
         }, this.ident);
     }
 
@@ -70,12 +78,22 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                             : this.loadData();
         dataSource$.subscribe((notes: NoteInfoDto[]) => {
             if (this.componentIsActivated) {
-                this.dataSource = notes;
+                this.notes = notes;
                 if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
-                    setTimeout(() => this.openNoteAddDialog());
+                    setTimeout(() => this.clientService.showNoteAddDialog());
             }
         });
         this.initActionMenuItems();
+    }
+
+    private updateToolbar() {
+        this.clientService.toolbarUpdate({
+            optionButton: {
+                name: 'dataGrid',
+                options: { checkPressed: () => this.showGridView },
+                action: () => { this.showGridView = !this.showGridView; }
+            }
+        });
     }
 
     private initActionMenuItems() {
@@ -96,7 +114,10 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     invalidate() {
         this.data = this.contactService['data'];
         this.loadData().subscribe(
-            (notes: NoteInfoDto[]) => this.dataSource = notes
+            (notes: NoteInfoDto[]) => {
+                this.notes = notes;
+                this.updateToolbar();
+            }
         );
     }
 
@@ -127,25 +148,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         return notes$;
     }
 
-    openNoteAddDialog(noteData?) {
-        /** When every piece of data is loaded - open note add dialog */
-        forkJoin(
-            this.clientService.contactInfo$.pipe(first()),
-            this.clientService.personContactInfo$.pipe(first()),
-            this.clientService.organizationContactInfo$.pipe(first())
-        ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
-            this.dialog.open(NoteAddDialogComponent, {
-                panelClass: ['slider'],
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    note: noteData,
-                    contactInfo: contactInfo
-                }
-            });
-        });
-    }
-
     onToolbarPreparing($event) {
         let toolbarItems = $event.toolbarOptions.items;
         toolbarItems.push({
@@ -169,7 +171,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     editNote(data?) {
-        this.openNoteAddDialog(data || this.actionRecordData);
+        this.clientService.showNoteAddDialog(data || this.actionRecordData);
     }
 
     deleteNote() {
@@ -180,6 +182,17 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             this.invalidate();
             this.notify.success(this.l('SuccessfullyDeleted'));
         });
+    }
+
+    copyToClipbord(event, note) {
+        this.clipboardService.copyFromContent(note);
+        this.notify.info(this.l('SavedToClipboard'));
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    showActonMenu(note: NoteInfoDto) {
+        return (note && note.addedByUserId === this.userId) || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
     }
 
     ngOnDestroy() {

@@ -14,7 +14,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { finalize, switchMap, first, map } from 'rxjs/operators';
+import { finalize, filter, switchMap, first, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -110,8 +110,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             }
         }, this.ident);
 
-        this.invoicesService.settings$.pipe(first()).subscribe(res => {
-            this.settings = res;
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
+            this.settings = settings;
         });
     }
 
@@ -139,6 +139,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                         [
                             this.invoiceFields.Key,
                             this.invoiceFields.InvoiceId,
+                            this.invoiceFields.InvoiceNumber,
                             this.invoiceFields.InvoiceStatus
                         ],
                         this.fieldsDependencies
@@ -200,7 +201,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.duplicateInvoiceDisabled =
                     this.previewDisabled = isOrder;
                     this.markAsPaidDisabled = isOrder || [
-                        InvoiceStatus.Final, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid
+                        InvoiceStatus.Final, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid, InvoiceStatus.Refunded
                     ].indexOf(invoice.InvoiceStatus) < 0;
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
@@ -333,14 +334,18 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.startLoading(true);
         const invoice: InvoiceDto = event.data;
         this.pipelineService.updateEntitiesStage(
-            AppConsts.PipelinePurposeIds.order, [{
+            AppConsts.PipelinePurposeIds.order,
+            [{
                 Id: invoice.OrderId,
                 ContactId: invoice.ContactId,
                 CreationTime: invoice.Date,
                 Stage: invoice.OrderStage
-            }], event.value
+            }],
+            event.value,
+            null
+        ).pipe(
+            finalize(() => this.finishLoading(true))
         ).subscribe(declinedList => {
-            this.finishLoading(true);
             if (declinedList.length)
                 event.value = invoice.OrderStage;
             else {

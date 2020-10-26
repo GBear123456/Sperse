@@ -10,8 +10,8 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
-import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, forkJoin, Observable } from 'rxjs';
+import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil, debounceTime } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 
@@ -24,6 +24,7 @@ import {
     SubscriptionsStoreActions,
     SubscriptionsStoreSelectors
 } from '@app/crm/store';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -48,7 +49,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoiceSettings, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
@@ -102,10 +103,49 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private rootComponent: any;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
+    private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
+    private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
+        this.showOrdersPipeline ? DataLayoutType.Pipeline : DataLayoutType.DataGrid
+    );
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
+    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
+    readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     private filters: FilterModel[];
     private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
+    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
+    showCompactView$: Observable<Boolean> = combineLatest(
+        this.dataLayoutType.asObservable(),
+        this.pipelineService.compactView$,
+        this.gridCompactView.asObservable(),
+    ).pipe(
+        map(([layoutType, pipelineCompactView, gridCompactView]: [DataLayoutType, Boolean, Boolean]) => {
+            return layoutType == DataLayoutType.Pipeline ? pipelineCompactView : gridCompactView;
+        })
+    );
+    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
+    selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
+    contactGroupDataSource = Object.keys(ContactGroup).filter(
+        (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
+    ).map((group: string) => ({
+        id: ContactGroup[group],
+        name: this.l('ContactGroup_' + group)
+    }));
+    private contactGroupFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'ContactGroup',
+        field: this.orderFields.ContactGroupId,
+        hidden: true,
+        items: {
+            ContactGroupId: new FilterCheckBoxesModel({
+                selectedKeys$: this.selectedContactGroup$,
+                dataSource: this.contactGroupDataSource,
+                nameField: 'name',
+                keyExpr: 'id'
+            }),
+        }
+    });
     private sourceFilter: FilterModel = new FilterModel({
         component: FilterSourceComponent,
         caption: 'Source',
@@ -117,11 +157,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     });
     private ordersFilters: FilterModel[] = [
+        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'creation',
-            field: 'OrderDate',
+            field: this.orderFields.OrderDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
@@ -131,7 +172,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({ purpose: AppConsts.PipelinePurposeIds.order }))),
+                        dataSource$: this.store$.pipe(
+                            select(PipelinesStoreSelectors.getPipelineTreeSource(
+                                { purpose: AppConsts.PipelinePurposeIds.order })
+                            )
+                        ),
                         nameField: 'name',
                         parentExpr: 'parentId',
                         keyExpr: 'id'
@@ -140,9 +185,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'Amount',
-            field: 'Amount',
+            field: this.orderFields.Amount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
         this.subscriptionStatusFilter,
@@ -152,7 +198,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'email',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'Email',
+            field: this.orderFields.Email,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -165,7 +211,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.userIsMember,
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'ContactXref',
+            field: this.orderFields.ContactXref,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -177,7 +223,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'PersonalAffiliateCode',
+            field: this.orderFields.PersonalAffiliateCode,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -189,7 +235,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'phone',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'Phone',
+            field: this.orderFields.Phone,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -200,11 +246,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         })
     ];
     private subscriptionsFilters: FilterModel[] = [
+        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'ContactDate',
-            field: 'ContactDate',
+            field: this.subscriptionFields.ContactDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
@@ -212,7 +259,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'StartDate',
-            field: 'StartDate',
+            field: this.subscriptionFields.StartDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
@@ -220,14 +267,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'EndDate',
-            field: 'EndDate',
+            field: this.subscriptionFields.EndDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
         new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'Status',
-            field: 'StatusId',
+            field: this.subscriptionFields.StatusId,
             isSelected: true,
             items: {
                 element: new FilterCheckBoxesModel(
@@ -244,19 +291,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterInputsComponent,
+            options: { type: 'number'},
             operator: { from: 'ge', to: 'le' },
             caption: 'Fee',
-            field: 'Fee',
+            field: this.subscriptionFields.Fee,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.getSubscriptionsFilter('Subscription'),
+        this.getSubscriptionsFilter('Subscription', true),
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'email',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'EmailAddress',
+            field: this.subscriptionFields.EmailAddress,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -269,7 +317,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             caption: 'xref',
             hidden: this.appSession.userIsMember,
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'ContactXref',
+            field: this.subscriptionFields.ContactXref,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -281,7 +329,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'affiliateCode',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'PersonalAffiliateCode',
+            field: this.subscriptionFields.PersonalAffiliateCode,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -293,7 +341,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterMultilineInputComponent,
             caption: 'phone',
             filterMethod: this.filtersService.filterByMultiline,
-            field: 'PhoneNumber',
+            field: this.subscriptionFields.PhoneNumber,
             items: {
                 element: new FilterMultilineInputModel({
                     ls: this.localizationService,
@@ -305,7 +353,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     private filterChanged = false;
     masks = AppConsts.masks;
-    private formatting = AppConsts.formatting;
+    formatting = AppConsts.formatting;
     headlineButtons: HeadlineButton[] = [
         {
             enabled: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
@@ -319,20 +367,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
-    orderTypes = [
-        {
-            text: this.l('Orders'),
-            value: OrderType.Order
-        },
-        {
-            text: this.l('Subscriptions'),
-            value: OrderType.Subscription
-        }
-    ];
-    public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
-    readonly orderFields: KeysEnum<OrderDto> = OrderFields;
-    readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
     searchClear = false;
     ordersDataSource: any = {
@@ -348,7 +382,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(
                     this.ordersGrid,
-                    [ this.orderFields.Id, this.orderFields.ContactId, this.orderFields.LeadId ]
+                    [
+                        this.orderFields.Id,
+                        this.orderFields.LeadId,
+                        this.orderFields.ContactId,
+                        this.orderFields.ContactGroupId
+                    ]
                 );
             }
         }
@@ -364,7 +403,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(
                     this.subscriptionsGrid,
-                    [ this.subscriptionFields.Id, this.subscriptionFields.ContactId, this.subscriptionFields.LeadId ]
+                    [
+                        this.subscriptionFields.Id,
+                        this.subscriptionFields.LeadId,
+                        this.subscriptionFields.ContactId,
+                        this.subscriptionFields.ContactGroupId
+                    ]
                 );
             }
         })
@@ -378,8 +422,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
-    subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
+    oDataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues();
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
     search$: Observable<string> = this.search.asObservable();
     private subscriptionsPivotGridDataSource = {
@@ -484,14 +527,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     };
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
-        this.ordersODataRequestValues$,
+        this.oDataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
-        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid),
+        debounceTime(600),
         takeUntil(this.destroy$),
-        switchMap(this.waitUntil(OrderType.Order)),
-        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
+        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid && this.selectedOrderType.value == OrderType.Order),
+        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
             return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -517,13 +560,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
-        this.subscriptionsODataRequestValues$,
+        this.oDataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
+        debounceTime(600),
         takeUntil(this.destroy$),
-        switchMap(this.waitUntil(OrderType.Subscription)),
-        map(([oDataRequestValues, ]: [ODataRequestValues, null]) => {
+        filter(() => this.selectedOrderType.value == OrderType.Subscription),
+        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
             return this.getODataUrl(
                 'SubscriptionSlice',
                 oDataRequestValues.filter,
@@ -575,7 +619,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         public dialog: MatDialog,
     ) {
         super(injector);
-        invoicesService.settings$.subscribe(res => this.currency = res.currency);
+        invoicesService.settings$.pipe(
+            filter(Boolean)
+        ).subscribe((res: InvoiceSettings) => this.currency = res.currency);
         this._activatedRoute.queryParams.pipe(
             takeUntil(this.destroy$),
             filter(() => this.componentIsActivated),
@@ -630,7 +676,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     this.initOrdersToolbarConfig();
                 else
                     this.initSubscriptionsToolbarConfig();
-                this.invalidate();
+                this.filtersService.clearAllFilters();
+                this.selectedContactGroup.next(undefined);
+                setTimeout(() => this.filtersService.change([this.contactGroupFilter]));
             }
             if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
                 this.searchClear = false;
@@ -665,23 +713,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         || this.selectedOrderType.value === OrderType.Subscription;
     }
 
-    getODataRequestValues(orderType: OrderType) {
+    getODataRequestValues() {
         return concat(
             this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
-                filter(() => this.selectedOrderType.value === orderType),
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
-        );
-    }
-
-    private waitUntil(orderType: OrderType) {
-        return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
-            filter((dataOrderType: OrderType) => dataOrderType === orderType),
-            first(),
-            mapTo(data)
         );
     }
 
@@ -699,18 +738,29 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    private getSubscriptionsFilter(caption: string) {
+    private getSubscriptionsFilter(caption: string, oDataFilterMethod = false) {
         return new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: caption,
-            field: 'ServiceTypeId',
+            field: caption === 'Subscription' ? this.subscriptionFields.ServiceProductId : this.orderFields.ServiceProductId,
+            filterMethod: oDataFilterMethod ? (filter: FilterModel) => {
+                return {or: (filter.items.element['selectedItems'] || []).map(item => {
+                    if (item.parentId)
+                        return {ServiceProductId: item.parentId, ServiceLevelId: item.id};
+                    else
+                        return {ServiceProductId: item.id};
+                })};
+            } : undefined,
             items: {
                 element: new FilterCheckBoxesModel(
                     {
                         dataSource$: this.store$.pipe(select(SubscriptionsStoreSelectors.getSubscriptions)),
                         dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                        recursive: true,
                         nameField: 'name',
-                        keyExpr: 'id'
+                        keyExpr: 'id',
+                        dataStructure: 'tree',
+                        itemsExpr: 'serviceProductLevels'
                     })
             }
         });
@@ -719,9 +769,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private getSourceOrganizationUnitFilter() {
         return new FilterModel({
             component: FilterCheckBoxesComponent,
-            caption: 'SourceOrganizationUnitId',
+            caption: this.subscriptionFields.SourceOrganizationUnitId,
             hidden: this.appSession.userIsMember,
-            field: 'SourceOrganizationUnitId',
+            field: this.orderFields.SourceOrganizationUnitId,
             items: {
                 element: new FilterCheckBoxesModel(
                     {
@@ -1158,7 +1208,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     toggleOrdersDataLayout(dataLayoutType: DataLayoutType) {
         this.showOrdersPipeline = dataLayoutType == DataLayoutType.Pipeline;
-        this.ordersDataLayoutType = dataLayoutType;
+        this.dataLayoutType.next(this.ordersDataLayoutType = dataLayoutType);
         this.initDataSource();
         this.initOrdersToolbarConfig();
         if (this.showOrdersPipeline)
@@ -1210,10 +1260,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.stagesComponent.toggle();
     }
 
-    toggleContactView() {
-        this.pipelineService.toggleContactView();
-        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
-        this.dataGrid.instance.updateDimensions();
+    toggleCompactView() {
+        if (this.showOrdersPipeline)
+            this.pipelineService.toggleContactView();
+        else {
+            DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+            this.gridCompactView.next(DataGridService.isCompactView(this.dataGrid));
+        }
     }
 
     processFilterInternal() {
@@ -1235,7 +1288,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filters,
             this.getCheckCustomFilter.bind(this),
             null,
-            this.getSubscriptionsParams()
+            this.selectedOrderType.value === OrderType.Order ? this.getSubscriptionsParams() : undefined
         );
     }
 
@@ -1247,11 +1300,27 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        let value = this.subscriptionStatusFilter.items.element.value;
-        return value && value.map(item => ({
-            name: 'serviceTypeIds',
-            value: item
-        }));
+        let productIndex, levelIndex, productId = null, result = [],
+            selectedItems = this.subscriptionStatusFilter.items.element['selectedItems'];
+        selectedItems && selectedItems.forEach(item => {
+            if (productId != item.parentId) {
+                levelIndex = 0;
+                isNaN(productIndex) ? productIndex = 0 : productIndex++;
+                productId = item.parentId || item.id;
+                result.push({
+                    name: 'subscriptionFilters[' + productIndex + '].ProductId',
+                    value: productId
+                });
+            }
+            if (item.parentId) {
+                result.push({
+                    name: 'subscriptionFilters[' + productIndex + '].LevelIds[' + levelIndex + ']',
+                    value: item.id
+                });
+                levelIndex++;
+            }
+        });
+        return result;
     }
 
     searchValueChange(e: object) {
@@ -1349,7 +1418,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
                 this.selectedOrders,
-                $event.name
+                $event.name,
+                null
             ).subscribe((declinedList) => {
                 this.filterChanged = true;
                 if (this.showOrdersPipeline)
@@ -1384,7 +1454,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     this.deleteOrdersInternal(forceDelete);
                 }
             },
-            [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites)}]
+            [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites), checked: false }]
         );
     }
 
@@ -1403,9 +1473,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderTypeChanged(event) {
-        if (event.event && event.previousValue != event.value) {
+        if (event.value != this.selectedOrderType.value) {
             this.searchClear = true;
             this.selectedOrderType.next(event.value);
+        }
+    }
+
+    onContactGroupChanged(event) {
+        if (event.itemData.value != this.selectedContactGroup.value) {
+            this.selectedContactGroup.next(event.itemData.value);
+            this.filtersService.change([this.contactGroupFilter]);
         }
     }
 
@@ -1423,7 +1500,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.initSubscriptionsToolbarConfig();
         setTimeout(() => {
             this.initDataSource();
-            this.processFilterInternal();
+            this.filtersService.change([this.contactGroupFilter]);
         });
     }
 

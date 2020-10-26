@@ -33,6 +33,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { OrderType } from '@app/crm/orders/order-type.enum';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'global-search',
@@ -161,6 +162,7 @@ export class GlobalSearchComponent implements OnInit {
                 LeadFields.SourceChannelCode,
                 LeadFields.CustomerId
             ],
+            { contactGroupId: ContactGroup[contactGroup] },
             { contactGroup: contactGroup }
         );
     }
@@ -200,6 +202,7 @@ export class GlobalSearchComponent implements OnInit {
                 SubscriptionFields.LeadId,
                 SubscriptionFields.ContactId
             ],
+            null,
             { orderType: OrderType.Subscription }
         )
     }
@@ -211,13 +214,15 @@ export class GlobalSearchComponent implements OnInit {
         search: string,
         permission: AppPermissions,
         selectFields: string[],
+        params?: Params,
         linkParams?: Params
     ): Observable<GlobalSearchGroup> {
         return (this.permissionService.isGranted(permission)
                 ? this.http.get(
                     odataUrl,
                     this.getOptions(search, {
-                        $select: selectFields.join(',')
+                        $select: selectFields.join(','),
+                        ...params
                     }))
                 : of(null)
         ).pipe(
@@ -288,6 +293,10 @@ export class GlobalSearchComponent implements OnInit {
 
     getContactPhotoUrl(pictureId: string): string {
         return this.profileService.getContactPhotoUrl(pictureId);
+    }
+
+    tooltipReady(e) {
+        e.component._$popupContent[0].classList.add('global-search-popup-content');
     }
 
     moveToEntityDetails(e, entity: GlobalSearchGroupEntity, itemsLink: string) {

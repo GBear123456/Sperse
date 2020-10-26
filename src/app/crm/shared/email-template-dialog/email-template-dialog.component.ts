@@ -127,8 +127,12 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
-        if (!this.data.tags && this.data.contact)
-            this.communicationProxy.getEmailData(undefined, this.data.contact.id).subscribe((res: GetEmailDataOutput) => {
+        if (this.data.templateId)
+            this.loadTemplateById(this.data.templateId);
+        else if (!this.data.tags && this.data.contact)
+            this.communicationProxy.getEmailData(
+                undefined, this.data.contact.id
+            ).subscribe((res: GetEmailDataOutput) => {
                 this.data.tags = res.tags;
             });
     }
@@ -256,47 +260,51 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     startLoading() {
-        this.modalDialog.startLoading();
+        this.modalDialog && this.modalDialog.startLoading();
     }
 
     finishLoading() {
-        this.modalDialog.finishLoading();
+        this.modalDialog && this.modalDialog.finishLoading();
     }
 
     extendDefaultValidator(e) {
-        const defaultAdapter = e.component.option("adapter");
+        const defaultAdapter = e.component.option('adapter');
         const forceValidationBypass = this.forceValidationBypass;
         const newAdapter = $.extend(
             {},
             defaultAdapter,
             {
                 bypass: function() {
-                    return forceValidationBypass || this.editor.option("disabled");
+                    return forceValidationBypass || this.editor.option('disabled');
                 }
-            })
-        e.component.option("adapter", newAdapter);
+            });
+        e.component.option('adapter', newAdapter);
     }
 
     onTemplateChanged(event) {
         if (event.value) {
             this.data.templateId = event.value;
-            if (this.templateEditMode || this.data.switchTemplate) {
-                this.startLoading();
-                this.emailTemplateProxy.getTemplate(event.value).pipe(
-                    finalize(() => this.finishLoading())
-                ).subscribe((res: GetTemplateReponse) => {
-                    this.data.bcc = res.bcc;
-                    this.data.body = res.body;
-                    this.data.cc = res.cc;
-                    this.data.subject = res.subject;
-                    this.showCC = Boolean(res.cc && res.cc.length);
-                    this.showBCC = Boolean(res.bcc && res.bcc.length);
-                    this.onTemplateChange.emit(event.value);
-                    this.invalidate();
-                });
-            } else
+            if (this.templateEditMode || this.data.switchTemplate)
+                this.loadTemplateById(event.value);
+            else
                 this.onTemplateChange.emit(event.value);
         }
+    }
+
+    loadTemplateById(templateId) {
+        this.startLoading();
+        this.emailTemplateProxy.getTemplate(templateId).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe((res: GetTemplateReponse) => {
+            this.data.bcc = res.bcc;
+            this.data.body = res.body;
+            this.data.cc = res.cc;
+            this.data.subject = res.subject;
+            this.showCC = Boolean(res.cc && res.cc.length);
+            this.showBCC = Boolean(res.bcc && res.bcc.length);
+            this.onTemplateChange.emit(templateId);
+            this.invalidate();
+        });
     }
 
     invalidate() {
@@ -304,7 +312,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.isComplexTemplate)
             this.initTemplatePreview();
         else {
-            this.ckEditor.setData(this.data.body);
+            this.ckEditor.setData(this.data.body || '');
             this.updateDataLength();
         }
         this.changeDetectorRef.markForCheck();
@@ -358,8 +366,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     onCKReady(event) {
         this.ckEditor = event.ui.editor;
         setTimeout(() => {
-            if (this.data.body)
-                this.ckEditor.setData(this.data.body);
+            this.invalidate();
             if (this.tagsButton) {
                 let root = this.ckEditor.sourceElement.parentNode,
                     headingElement = root.querySelector('.ck-heading-dropdown');
@@ -367,7 +374,6 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.tagsButton.nativeElement, headingElement);
                 headingElement.style.width = '100px';
             }
-            this.updateDataLength();
         }, 1000);
     }
 
@@ -510,7 +516,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     initTemplatePreview() {
         let win = this.preview.nativeElement.contentWindow;
         win.document.open();
-        win.document.write(this.data.body);
+        win.document.write(this.data.body || '');
         win.document.close();
     }
 

@@ -67,6 +67,10 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this.rootComponent.overflowHidden(true);
     }
 
+    openAutoSyncDialog() {
+        this.bankAccountsComponent.openAutoSyncDialog();
+    }
+
     reload() {
         this.refresh();
     }
