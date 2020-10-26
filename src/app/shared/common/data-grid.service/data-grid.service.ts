@@ -67,11 +67,16 @@ export class DataGridService {
         return organizationUnitName;
     }
 
-    static getSelectFields(dataGrid, requiredFields?: string[], fieldsDependencies?: FieldDependencies) {
+    static getSelectFields(
+        dataGrid,
+        requiredFields?: string[],
+        fieldsDependencies?: FieldDependencies
+    ) {
         let selectFields = requiredFields || [];
         const visibleColumns = dataGrid.instance.getVisibleColumns();
         visibleColumns.forEach((column: dxDataGridColumn) => {
-            if (column.dataField && (!requiredFields || requiredFields.indexOf(column.dataField) < 0)) {
+            if (column.dataField && (!requiredFields || requiredFields.indexOf(column.dataField) < 0)
+                && column.dataField.indexOf('.') < 0) {
                 selectFields.push(column.dataField);
             }
         });

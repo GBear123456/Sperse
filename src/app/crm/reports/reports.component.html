@@ -270,6 +270,113 @@
             </dxo-summary>
         </dx-data-grid>
     </div>
+    <div [hidden]="totalCount <=0 || selectedReportType !== reportTypesEnum.SubscriptionTracker">
+        <dx-data-grid #subscriptionTrackerGrid
+                      class="main-component-view subscription-tracker-grid"
+                      [allowColumnReordering]="true"
+                      [allowColumnResizing]="true"
+                      [columnAutoWidth]="true"
+                      [hoverStateEnabled]="true"
+                      [showBorders]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [pager]="defaultGridPagerConfig"
+                      (onCellClick)="trackerGridCellClick($event)"
+                      (onContentReady)="onContentReady(true)"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getFullName"
+                        [caption]="ls.l('Contact.FullName')"
+                        [dataField]="subscriptionTrackerFields.FullName"
+                        headerCellTemplate="headerCellTemplate"
+                        name="fullName">
+                <dxi-column [dataField]="subscriptionTrackerFields.ContactId"
+                            [visible]="subscriptionTrackerColumnsVisibility.fullName"
+                            width="75px">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.Email"
+                            [visible]="subscriptionTrackerColumnsVisibility.fullName">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.AffiliateCode"
+                            [caption]="ls.l('AffiliateCode')"
+                            [visible]="subscriptionTrackerColumnsVisibility.fullName">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.FullName"
+                            [visible]="subscriptionTrackerColumnsVisibility.fullName">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getTotalRevenue"
+                        [caption]="ls.l('Revenue')"
+                        [dataField]="subscriptionTrackerFields.TotalRevenue"
+                        minWidth="120px"
+                        headerCellTemplate="headerCellTemplate"
+                        name="revenue">
+                <dxi-column *ngFor="let month of transactionMonths"
+                            alignment="right"
+                            [allowSorting]="false"
+                            [caption]="month"
+                            [customizeText]="getMonthValue"
+                            [dataField]="'TransactionRevenues.' + month"
+                            [visible]="subscriptionTrackerColumnsVisibility.revenue">
+                </dxi-column>
+                <dxi-column alignment="right"
+                            [allowSorting]="false"
+                            [calculateCellValue]="getTotalRevenue"
+                            [caption]="ls.l('Totals')"
+                            [visible]="subscriptionTrackerColumnsVisibility.revenue"
+                            [dataField]="subscriptionTrackerFields.TotalRevenue">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getTotalRefunds"
+                        [caption]="ls.l('Refunds')"
+                        [dataField]="subscriptionTrackerFields.TotalRefunds"
+                        minWidth="120px"
+                        headerCellTemplate="headerCellTemplate"
+                        name="refunds">
+                <dxi-column *ngFor="let month of transactionMonths"
+                            alignment="right"
+                            [allowSorting]="false"
+                            [caption]="month"
+                            [customizeText]="getMonthValue"
+                            [dataField]="'TransactionRefunds.' + month"
+                            [visible]="subscriptionTrackerColumnsVisibility.refunds">
+                </dxi-column>
+                <dxi-column alignment="right"
+                            [allowSorting]="false"
+                            [calculateCellValue]="getTotalRefunds"
+                            [caption]="ls.l('Totals')"
+                            [dataField]="subscriptionTrackerFields.TotalRefunds"
+                            [visible]="subscriptionTrackerColumnsVisibility.refunds">
+                </dxi-column>
+            </dxi-column>
+            <dxi-column alignment="right"
+                        [calculateCellValue]="getNetCollected"
+                        [caption]="ls.l('NetCollected')"
+                        minWidth="120px"
+                        headerCellTemplate="headerCellTemplate"
+                        name="netCollected">
+                <dxi-column *ngFor="let month of transactionMonths"
+                            [allowSorting]="false"
+                            alignment="right"
+                            [visible]="subscriptionTrackerColumnsVisibility.netCollected"
+                            [caption]="month"
+                            [dataField]="'TransactionNetCollected.' + month"
+                            [customizeText]="getMonthValue">
+                </dxi-column>
+                <dxi-column alignment="right"
+                            [allowSorting]="false"
+                            [caption]="ls.l('Totals')"
+                            [calculateCellValue]="getNetCollected"
+                            [visible]="subscriptionTrackerColumnsVisibility.netCollected">
+                </dxi-column>
+            </dxi-column>
+            <div *dxTemplate="let cell of 'headerCellTemplate'">
+                <span>{{ cell.column.caption }}</span>
+                <i class="toggle-button fa fa-{{ subscriptionTrackerColumnsVisibility[cell.column.name] ? 'minus' : 'plus' }}"></i>
+            </div>
+        </dx-data-grid>
+    </div>
     <app-no-data
         [hidden]="!isDataLoaded || totalCount"
         [showLink]="false">
