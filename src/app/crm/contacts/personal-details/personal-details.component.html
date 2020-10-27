@@ -32,10 +32,10 @@
                         (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-check-box>
                     <dx-tag-box *ngSwitchCase="'list'"
-                        width="260px"
                         [multiline]="field.multiline"
                         [placeholder]="ls.l('EditValuePlaceholder')"
                         [items]="field.source | async"
+                        noDataText=""
                         [acceptCustomValue]="true"
                         [value]="person[field.name]"
                         (onValueChanged)="updateValue($event.value, field.name)">
