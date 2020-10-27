@@ -11,7 +11,6 @@ import {
 import { Params } from '@angular/router';
 
 /** Third party imports */
-import { select, Store } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
@@ -19,6 +18,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, forkJoin, concat, Observable } from 'rxjs';
 import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
+import DevExpress from 'devextreme/bundles/dx.all';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -210,8 +210,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         text: this.l('Resellers')
     }];
 
-    currency$: Observable<string> = this.invoicesService.settings$.pipe(
-        map((settings: InvoiceSettings) => settings && settings.currency)
+    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => {
+            return {
+                type: 'currency',
+                precision: 2,
+                currency: settings && settings.currency
+            }
+        })
     );
 
     get dataGrid(): DxDataGridComponent {
@@ -583,18 +589,22 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             items: [
                                 {
                                     action: (options) => {
-                                        this.exportToXLS(options);
+                                        this.exportToXLS(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls'
                                 },
                                 {
-                                    action: this.exportToCSV.bind(this),
+                                    action: (options) => {
+                                        this.exportToCSV(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false)
+                                    },
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet'
                                 },
                                 {
-                                    action: this.exportToGoogleSheet.bind(this),
+                                    action: (options) => {
+                                        this.exportToGoogleSheet(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false)
+                                    },
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet'
                                 },

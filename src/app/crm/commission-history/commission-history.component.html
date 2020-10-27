@@ -119,8 +119,8 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('ProductAmount')"
-                                    cellTemplate="amountCell"
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ProductName"
                                     [caption]="l('ProductName')"
@@ -146,8 +146,8 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionRate"
                                     [caption]="l('Rate')"
-                                    cellTemplate="rateCell" 
-                                    cssClass="padding-right">
+                                    format="percent"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionId"
                                     dataType="string"
@@ -159,9 +159,9 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionAmount"
-                                    [caption]="l('CommissionAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [caption]="l('CommissionAmount')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.Status"
                                     [caption]="l('Status')" 
@@ -169,19 +169,19 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CommissionableAmount')"
-                                    cellTemplate="amountCell"
+                                    [format]="currencyFormat$ | async"
                                     [visible]="false"
-                                    cssClass="padding-right">
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceStatus"
                                     [caption]="l('InvoiceStatus')"
                                     [visible]="false" 
-                                    cssClass="padding-right">
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
                                     [caption]="l('BuyerEmailAddress')"
                                     [visible]="false" 
-                                    cssClass="clipboard-holder">
+                                    cssClass="clipboard-holder clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
                                     [caption]="l('BuyerAffiliateCode')"
@@ -196,14 +196,6 @@
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'rateCell'" class="clipboard-holder">
-                            {{cellData.value | percent}}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: (currency$ | async)}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -291,16 +283,12 @@
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.TotalAmount"
                                     [caption]="l('TotalAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone }}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: (currency$ | async)}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -357,43 +345,39 @@
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.EarnedAmount"
                                     [caption]="l('EarnedAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
                                     [caption]="l('PendingEarningsAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
                                     [caption]="l('PendingWithdrawalsAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
                                     [caption]="l('UnaccountedEarningsAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.WithdrawnAmount"
-                                    [caption]="l('WithdrawnAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [caption]="l('WithdrawnAmount')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AvailableBalance"
                                     [caption]="l('AvailableBalance')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: (currency$ | async)}}
-                        </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
