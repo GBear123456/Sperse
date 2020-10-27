@@ -176,6 +176,28 @@
                                     [allowExporting]="false"
                                     [allowEditing]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateContactName"
+                                    [caption]="l('AffiliateContactName')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateContactEmailAddress"
+                                    [caption]="l('AffiliateContactEmailAddress')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateContactAffiliateCode"
+                                    [caption]="l('AffiliateContactAffiliateCode')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateRate"
+                                    [caption]="l('AffiliateRate')"
+                                    format="percent"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <div *ngIf="isCFOClientAccessAllowed && usersInstancesLoadingSubscription && usersInstancesLoadingSubscription.closed">
                                 <ng-container *ngIf="crmService.isCfoAvailable(data.data.UserId) | async; else verify">

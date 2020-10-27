@@ -14,4 +14,8 @@ export interface PartnerDto {
     Xref: string;
     AffiliateCode: string;
     UserId: number;
+    AffiliateContactName: string;
+    AffiliateContactEmailAddress: string;
+    AffiliateContactAffiliateCode: string;
+    AffiliateRate: number;
 }

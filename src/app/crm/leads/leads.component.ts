@@ -537,7 +537,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.CompanyName,
         this.leadFields[this.dateField],
         this.leadFields.PhotoPublicId,
-        this.leadFields.Email
+        this.leadFields.Email,
+        this.leadFields.AffiliateContactName,
+        this.leadFields.AffiliateContactAffiliateCode
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
@@ -614,7 +616,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.leadFields.UserId,
                             this.leadFields.Email,
                             this.leadFields.Phone,
-                            this.leadFields.StageChecklistPointDoneCount
+                            this.leadFields.StageChecklistPointDoneCount,
+                            this.leadFields.AffiliateContactName,
+                            this.leadFields.AffiliateContactAffiliateCode
                         ]
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;

@@ -35,4 +35,6 @@ export const LeadFields: KeysEnum<LeadDto> = {
     BankCode: 'BankCode',
     StageChecklistPointDoneCount: 'StageChecklistPointDoneCount',
     ContactGroupId: 'ContactGroupId',
+    AffiliateContactName: 'AffiliateContactName',
+    AffiliateContactAffiliateCode: 'AffiliateContactAffiliateCode'
 };
