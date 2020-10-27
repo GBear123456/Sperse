@@ -355,16 +355,6 @@
                                     [caption]="l('EmailAddress')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.AffiliateCode"
-                                    [caption]="l('ResellerAffiliateCode')"
-                                    [visible]="false"
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="resellersFields.AvailableBalance"
-                                    [caption]="l('AvailableBalance')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
                         <dxi-column [dataField]="resellersFields.EarnedAmount"
                                     [caption]="l('EarnedAmount')" 
                                     cellTemplate="amountCell" 
@@ -389,6 +379,16 @@
                                     [caption]="l('WithdrawnAmount')" 
                                     cellTemplate="amountCell" 
                                     cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.AvailableBalance"
+                                    [caption]="l('AvailableBalance')" 
+                                    cellTemplate="amountCell" 
+                                    cssClass="padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.AffiliateCode"
+                                    [caption]="l('ResellerAffiliateCode')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
                         </dxi-column>
 
                         <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
