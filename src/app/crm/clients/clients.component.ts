@@ -535,7 +535,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    private usersInstancesLoadingSubscription: Subscription;
+    public usersInstancesLoadingSubscription: Subscription;
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private subscriptionStatusFilter = new FilterModel({
