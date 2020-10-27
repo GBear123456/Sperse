@@ -618,10 +618,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             visible: true,
             items: [
                 {
-                    text: this.l('Call'),
-                    class: 'call',
-                    disabled: true,
-                    action: () => {}
+                    text: this.l('SMS'),
+                    class: 'sms fa fa-commenting-o',
+                    action: (data?) => {
+                        let entity = data || this.actionEvent.data || this.actionEvent;
+                        this.contactsService.showSMSDialog({                    
+                            phoneNumber: entity.Phone || entity.PhoneNumber
+                        });
+                    }
                 },
                 {
                     text: this.l('SendEmail'),

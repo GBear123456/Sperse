@@ -165,10 +165,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             visible: true,
             items: [
                 {
-                    text: this.l('Call'),
-                    class: 'call',
-                    disabled: true,
-                    action: () => {}
+                    text: this.l('SMS'),
+                    class: 'sms fa fa-commenting-o',
+                    action: (data?) => {
+                        this.contactService.showSMSDialog({                    
+                            phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
+                        });
+                    }
                 },
                 {
                     text: this.l('SendEmail'),
@@ -537,7 +540,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.CompanyName,
         this.leadFields[this.dateField],
         this.leadFields.PhotoPublicId,
-        this.leadFields.Email
+        this.leadFields.Email,
+        this.leadFields.Phone
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );

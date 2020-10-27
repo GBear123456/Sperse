@@ -302,10 +302,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             visible: true,
             items: [
                 {
-                    text: this.l('Call'),
-                    class: 'call',
-                    disabled: true,
-                    action: () => {}
+                    text: this.l('SMS'),
+                    class: 'sms fa fa-commenting-o',
+                    action: () => {
+                        this.contactService.showSMSDialog({                    
+                            phoneNumber: (this.actionEvent.data || this.actionEvent).Phone
+                        });
+                    }
                 },
                 {
                     text: this.l('SendEmail'),
