@@ -34,7 +34,8 @@ export class ODataService {
     ) {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
-            let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + (options.headers.context || '');
+            let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + 
+                ((options.headers && options.headers.context) || '');
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
     }

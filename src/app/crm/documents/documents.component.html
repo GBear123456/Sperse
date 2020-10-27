@@ -1,0 +1,23 @@
+<app-headline [names]="[ ls.ls(localization, 'Documents') ]"
+              [text]=""
+              [showReloadButton]="ui.showReload"
+              (onToggleLeftMenu)="repaint()"
+              (onReload)="refresh()">
+    <import-progress-bar></import-progress-bar>
+    <calendar-button></calendar-button>
+</app-headline>
+<div [@routerTransition]>
+    <div class="wrapper">
+        <dx-file-manager [fileProvider]="fileProvider" [height]="getHeight()">
+            <dxo-permissions 
+                create="true"
+                copy="true"
+                move="true"
+                delete="true"
+                rename="true"
+                upload="true"
+                download="true">
+            </dxo-permissions>
+        </dx-file-manager>
+    </div>
+</div>

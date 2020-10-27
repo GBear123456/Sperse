@@ -40,6 +40,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
+import { DxFileManagerModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
@@ -52,6 +53,7 @@ import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DocumentsComponent } from './documents/documents.component';
 import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { LeadsComponent } from './leads/leads.component';
@@ -129,6 +131,7 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         DxSchedulerModule,
         DxPopoverModule,
         DxCalendarModule,
+        DxFileManagerModule,
 
         MatSidenavModule,
         MatProgressBarModule,
@@ -158,6 +161,7 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
     ],
     declarations: [
         ClientsComponent,
+        DocumentsComponent,
         PartnersComponent,
         LeadsComponent,
         OrdersComponent,
