@@ -211,6 +211,10 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         this.changeDetectorRef.markForCheck();
     }
 
+    checkSelectionAllowed() {
+        return this.relatedItemsKeys && (this.relatedItemsKeys.length == 1 || this.hasBulkUpdatePermission && this.relatedItemsKeys.length > 1);
+    }
+    
     ngOnDestroy() {
         if (this.showOrgUnits) {
             this.contactsService.unsubscribe(this.ident);
