@@ -1,12 +1,14 @@
 /** Core imports */
 import {
+    ViewChild,
+    Component,    
     ChangeDetectionStrategy,
-    Component,
     ChangeDetectorRef
 } from '@angular/core';
 
 /** Third party imports */
 import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
+import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -23,6 +25,8 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentsComponent {
+    @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
+
     fileProvider = new RemoteFileProvider({
         endpointUrl: 'https://mydomain.com/api/files'
     });
@@ -38,6 +42,10 @@ export class DocumentsComponent {
 
     getHeight() {
         return innerHeight - 150 + 'px';
+    }
+
+    refresh() {
+        this.fileManager.instance.refresh();
     }
 
     activate() {

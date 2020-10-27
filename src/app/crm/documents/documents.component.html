@@ -1,10 +1,6 @@
 <app-headline [names]="[ ls.ls(localization, 'Documents') ]"
-              [text]=""
               [showReloadButton]="ui.showReload"
-              (onToggleLeftMenu)="repaint()"
               (onReload)="refresh()">
-    <import-progress-bar></import-progress-bar>
-    <calendar-button></calendar-button>
 </app-headline>
 <div [@routerTransition]>
     <div class="wrapper">

@@ -78,7 +78,7 @@ export class CrmService {
         return ['app/crm/contact', contactId]
             .concat(leadId ? ['lead', leadId] : [])
             .concat(organizationId ? ['company', organizationId] : [])
-            .concat(section ? [ section ] : [])
+            .concat(section ? [ section ] : []);
     }
 
     static getModuleNameFromLayoutType(dataLayoutType: DataLayoutType) {
@@ -213,7 +213,7 @@ export class CrmService {
         if (oDataRequestValues && oDataRequestValues.params && oDataRequestValues.params.length) {
             oDataRequestValues.params.forEach((param: Param) => {
                 params[param.name] = param.value;
-            })
+            });
         }
         return params;
     }
@@ -273,7 +273,7 @@ export class CrmService {
                 map((permissionsOutput: GetUserPermissionsForEditOutput) => permissionsOutput.grantedPermissionNames),
                 publishReplay(),
                 refCount()
-            )
+            );
         }
         return !userId ? of([]) : this.usersPermissions[userId];
     }
