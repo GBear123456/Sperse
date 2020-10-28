@@ -92,8 +92,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.OrderDate"
                                     [caption]="l('OrderDate')" 
-                                    cellTemplate="dateCell" 
-                                    [visible]="false"
+                                    cellTemplate="dateCell"                                     
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceDate"
@@ -111,6 +110,7 @@
                         <dxi-column [dataField]="commissionFields.EarnedDate"
                                     [caption]="l('EarnedDate')" 
                                     cellTemplate="dateCell"
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ProductCode"
@@ -120,7 +120,13 @@
                         </dxi-column>
                         <dxi-column width="130px"
                                     [dataField]="commissionFields.ProductAmount"
-                                    [caption]="l('ProductAmount')"
+                                    [caption]="l('Price')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column width="150px"
+                                    [dataField]="commissionFields.CommissionableAmount"
+                                    [caption]="l('CV')"
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
@@ -134,6 +140,14 @@
                                     [dataField]="commissionFields.BuyerName"
                                     [caption]="l('BuyerName')">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
+                                    [caption]="l('BuyerEmailAddress')"
+                                    cssClass="clipboard-holder clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
+                                    [caption]="l('BuyerAffiliateCode')"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
                                     [dataField]="commissionFields.ResellerName"
@@ -142,12 +156,10 @@
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
                                     [dataField]="commissionFields.ResellerEmailAddress"
-                                    [caption]="l('ResellerEmailAddress')"
-                                    [visible]="false">
+                                    [caption]="l('ResellerEmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
-                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionRate"
@@ -166,7 +178,7 @@
                         </dxi-column>
                         <dxi-column width="140px"
                                     [dataField]="commissionFields.CommissionAmount"
-                                    [caption]="l('CommissionAmount')"
+                                    [caption]="l('Commission')"
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
@@ -175,27 +187,10 @@
                                     [caption]="l('Status')" 
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column width="150px"
-                                    [dataField]="commissionFields.CommissionableAmount"
-                                    [caption]="l('CommissionableAmount')"
-                                    [format]="currencyFormat$ | async"
-                                    [visible]="false"
-                                    cssClass="clipboard-holder padding-right">
-                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceStatus"
                                     [caption]="l('InvoiceStatus')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
-                                    [caption]="l('BuyerEmailAddress')"
-                                    [visible]="false" 
-                                    cssClass="clipboard-holder clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
-                                    [caption]="l('BuyerAffiliateCode')"
-                                    [visible]="false" 
-                                    cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionGatewayName"
                                     [caption]="l('TransactionGatewayName')"
