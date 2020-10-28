@@ -384,6 +384,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     private handleDataGridUpdate(): void {
         this.listenForUpdate().pipe(skip(1)).subscribe(() => {
+            this.selectedRecords = [];
+            this.dataGrid.instance.clearSelection();
+            this.initToolbarConfig();
             this.processFilterInternal();
         });
     }
@@ -455,7 +458,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
         this.filtersService.apply(() => {
             this.initToolbarConfig();
-            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -465,6 +467,19 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     initToolbarConfig() {
+        let calcelButton = {
+            widget: 'dxButton',
+            options: {
+                text: this.l('Cancel' + (this.selectedViewType == this.LEDGER_VIEW ? 'Ledgers' : 'Commissions')),
+                visible: this.selectedViewType != this.RESELLERS_VIEW,
+                disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                    || !this.selectedRecords.length
+                    || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                    || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
+                onClick: this.applyCancel.bind(this)
+            }
+        };
+
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -511,7 +526,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             {
                 location: 'before',
                 locateInMenu: 'auto',
-                items: <any[]>(this.selectedViewType == this.LEDGER_VIEW ? [
+                items: this.selectedViewType == this.LEDGER_VIEW ? [
                     {
                         widget: 'dxButton',
                         options: {
@@ -539,6 +554,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             onClick: this.approveEarnings.bind(this)
                         }
                     },
+                    calcelButton,
                     {
                         widget: 'dxButton',
                         options: {
@@ -562,20 +578,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 this.sourceComponent.toggle();
                             }
                         }
-                    }]).concat(
-                        <any[]>[{
-                            widget: 'dxButton',
-                            options: {
-                                text: this.l('Cancel' + (this.selectedViewType == this.LEDGER_VIEW ? 'Ledgers' : 'Commissions')),
-                                visible: this.selectedViewType != this.RESELLERS_VIEW,
-                                disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
-                                    || !this.selectedRecords.length
-                                    || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                    || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
-                                onClick: this.applyCancel.bind(this)
-                            }
-                        }]
-                    )
+                    }, calcelButton
+                ]
             },
             {
                 location: 'after',
@@ -618,7 +622,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 ]
             }
         ];
-        return this.toolbarConfig;
+        this.changeDetectorRef.detectChanges();
     }
 
     requestWithdrawal() {
@@ -662,8 +666,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             finalize(() => this.finishLoading())
                         ).subscribe(() => {
                             this.notify.success(this.l('AppliedSuccessfully'));
-                            this.dataGrid.instance.clearSelection();
-                            this.selectedRecords = [];
                             this.refresh();
                         });
                     }
@@ -697,8 +699,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             finalize(() => this.finishLoading())
                         ).subscribe(() => {
                             this.notify.success(this.l('AppliedSuccessfully'));
-                            this.dataGrid.instance.clearSelection();
-                            this.selectedRecords = [];
                             this.refresh();
                         });
                     }
@@ -808,8 +808,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.selectedViewType = event.value;
             this.initFilterConfig(true);
             this.setDataGridInstance();
-            this.initToolbarConfig();
-            this.changeDetectorRef.detectChanges();
+            this.initToolbarConfig();            
         }
     }
 
@@ -833,8 +832,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         }).filter(Boolean)
                     ).subscribe(() => {
                         this.refresh();
-                        this.selectedRecords = [];
-                        this.dataGrid.instance.clearSelection();
                         this.notify.success(this.l('AppliedSuccessfully'));
                     });
                 }
