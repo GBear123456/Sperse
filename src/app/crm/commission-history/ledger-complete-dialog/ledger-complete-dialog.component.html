@@ -4,6 +4,8 @@
 <mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover">
         <dx-select-box
+            valueExpr="id"
+            displayExpr="text"
             [placeholder]="ls.l('PaymentSystem')"
             [dataSource]="paymentSystems"
             [(value)]="paymentSystem">
