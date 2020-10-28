@@ -276,7 +276,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     ];
     reportTypesEnum = ReportType;
     subscriptionTrackerColumnsVisibility = {
-        fullName: false,
+        buyerInfo: false,
         revenue: false,
         refunds: false,
         netCollected: false

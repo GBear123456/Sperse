@@ -285,23 +285,23 @@
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxi-column alignment="right"
                         [calculateCellValue]="getFullName"
-                        [caption]="ls.l('Contact.FullName')"
+                        [caption]="ls.l('BuyerInfo')"
                         [dataField]="subscriptionTrackerFields.FullName"
                         headerCellTemplate="headerCellTemplate"
-                        name="fullName">
-                <dxi-column [dataField]="subscriptionTrackerFields.ContactId"
-                            [visible]="subscriptionTrackerColumnsVisibility.fullName"
-                            width="75px">
-                </dxi-column>
-                <dxi-column [dataField]="subscriptionTrackerFields.Email"
-                            [visible]="subscriptionTrackerColumnsVisibility.fullName">
+                        name="buyerInfo">
+                <dxi-column [dataField]="subscriptionTrackerFields.FullName"
+                            [visible]="subscriptionTrackerColumnsVisibility.buyerInfo">
                 </dxi-column>
                 <dxi-column [dataField]="subscriptionTrackerFields.AffiliateCode"
                             [caption]="ls.l('AffiliateCode')"
-                            [visible]="subscriptionTrackerColumnsVisibility.fullName">
+                            [visible]="subscriptionTrackerColumnsVisibility.buyerInfo">
                 </dxi-column>
-                <dxi-column [dataField]="subscriptionTrackerFields.FullName"
-                            [visible]="subscriptionTrackerColumnsVisibility.fullName">
+                <dxi-column [dataField]="subscriptionTrackerFields.ContactId"
+                            [visible]="false"
+                            width="75px">
+                </dxi-column>
+                <dxi-column [dataField]="subscriptionTrackerFields.Email"
+                            [visible]="false">
                 </dxi-column>
             </dxi-column>
             <dxi-column alignment="right"
