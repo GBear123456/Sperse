@@ -4,6 +4,7 @@
 <mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover">
         <dx-select-box
+            height="47px"
             [placeholder]="ls.l('Contact')"
             [searchEnabled]="true"
             [dataSource]="dataSource"
@@ -12,6 +13,9 @@
             fieldTemplate="commonView">
             <div *dxTemplate="let cell of 'commonView'" class="contact-field-template">
                 <dx-text-box
+                    width="230px"
+                    height="47px"
+                    [hint]="cell?.FullName"
                     valueChangeEvent="keyup"
                     [placeholder]="ls.l('Contact')"
                     [activeStateEnabled]="false"

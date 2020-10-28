@@ -27,6 +27,13 @@
                 target=".dx-state-hover .dx-link.dx-link-edit"
                 (onItemClick)="onMenuItemClick($event)">
         </action-menu>
+        <source-contact-list #sourceList
+            targetSelector=".dx-button[aria-label^=Reassign]"
+            [selectedLeads]="[]"
+            [selectedKeys]="[]"
+            [relatedItemsKeys]="selectedRecords"
+            (onApply)="onSourceApply($event)">
+        </source-contact-list>
         <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
@@ -34,6 +41,7 @@
                     <dx-data-grid #commissionDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  columnResizingMode="widget"
                                   [visible]="selectedViewType == COMMISSION_VIEW"
                                   [renderAsync]="true"
                                   [dataSource]="commissionDataSource"
@@ -62,6 +70,12 @@
                                     sortOrder="desc"
                                     [sortIndex]="0">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.OrderId"
+                                    [caption]="l('OrderId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false"
+                                    [sortIndex]="0">
+                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerContactId"
                                     [caption]="l('ResellerContactId')"
                                     cssClass="tabular clipboard-holder"
@@ -78,8 +92,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.OrderDate"
                                     [caption]="l('OrderDate')" 
-                                    cellTemplate="dateCell" 
-                                    [visible]="false"
+                                    cellTemplate="dateCell"                                     
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceDate"
@@ -97,6 +110,7 @@
                         <dxi-column [dataField]="commissionFields.EarnedDate"
                                     [caption]="l('EarnedDate')" 
                                     cellTemplate="dateCell"
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ProductCode"
@@ -104,37 +118,54 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductAmount"
-                                    [caption]="l('ProductAmount')"
-                                    cellTemplate="amountCell"
-                                    cssClass="padding-right">
+                        <dxi-column width="130px"
+                                    [dataField]="commissionFields.ProductAmount"
+                                    [caption]="l('Price')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductName"
-                                    [caption]="l('ProductName')"
+                        <dxi-column width="150px"
+                                    [dataField]="commissionFields.CommissionableAmount"
+                                    [caption]="l('CV')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.ProductName"
+                                    [caption]="l('ProductName')">
+                        </dxi-column>
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.BuyerName"
+                                    [caption]="l('BuyerName')">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
+                                    [caption]="l('BuyerEmailAddress')"
+                                    cssClass="clipboard-holder clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
+                                    [caption]="l('BuyerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerName"
-                                    [caption]="l('BuyerName')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.ResellerName"
+                                    [caption]="l('ResellerName')">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ResellerName"
-                                    [caption]="l('ResellerName')"
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ResellerEmailAddress"
-                                    [caption]="l('ResellerEmailAddress')"
-                                    [visible]="false"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.ResellerEmailAddress"
+                                    [caption]="l('ResellerEmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
-                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionRate"
                                     [caption]="l('Rate')"
-                                    cellTemplate="rateCell" 
-                                    cssClass="padding-right">
+                                    format="percent"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionId"
                                     dataType="string"
@@ -145,52 +176,34 @@
                                     [caption]="l('TransactionAuthCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.CommissionAmount"
-                                    [caption]="l('CommissionAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                        <dxi-column width="140px"
+                                    [dataField]="commissionFields.CommissionAmount"
+                                    [caption]="l('Commission')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.Status"
+                        <dxi-column width="120px"
+                                    [dataField]="commissionFields.Status"
                                     [caption]="l('Status')" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.CommissionableAmount"
-                                    [caption]="l('CommissionableAmount')"
-                                    cellTemplate="amountCell"
-                                    [visible]="false"
-                                    cssClass="padding-right">
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceStatus"
                                     [caption]="l('InvoiceStatus')"
                                     [visible]="false" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
-                                    [caption]="l('BuyerEmailAddress')"
-                                    [visible]="false" 
-                                    cssClass="clipboard-holder">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
-                                    [caption]="l('BuyerAffiliateCode')"
-                                    [visible]="false" 
-                                    cssClass="clipboard-holder">
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionGatewayName"
                                     [caption]="l('TransactionGatewayName')"
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        
+                        <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                            {{cellData.value}}
+                        </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'rateCell'" class="clipboard-holder">
-                            {{cellData.value | percent}}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: (currency$ | async)}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -208,6 +221,7 @@
                     <dx-data-grid #ledgerDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  columnResizingMode="widget"
                                   [visible]="selectedViewType == LEDGER_VIEW"
                                   [renderAsync]="true"
                                   [allowColumnReordering]="true"
@@ -241,13 +255,15 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column [dataField]="ledgerFields.ContactName"
-                                    [caption]="l('Customer.Name')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="ledgerFields.ContactName"
+                                    [caption]="l('Customer.Name')">
                         </dxi-column>
-                        <dxi-column [dataField]="ledgerFields.EmailAddress"
-                                    [caption]="l('EmailAddress')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="ledgerFields.EmailAddress"
+                                    [caption]="l('EmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.AffiliateCode"
                                     [caption]="l('AffiliateCode')"
@@ -278,16 +294,16 @@
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.TotalAmount"
                                     [caption]="l('TotalAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                            {{cellData.value}}
+                        </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone }}
-                        </div>
-
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: (currency$ | async)}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -305,6 +321,7 @@
                     <dx-data-grid #resellersDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  columnResizingMode="widget"
                                   [visible]="selectedViewType == RESELLERS_VIEW"
                                   [renderAsync]="true"
                                   [allowColumnReordering]="true"
@@ -334,52 +351,54 @@
                                     sortOrder="desc"
                                     [sortIndex]="0">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.FullName"
-                                    [caption]="l('Customer.Name')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="resellersFields.FullName"
+                                    [caption]="l('Customer.Name')">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.EmailAddress"
-                                    [caption]="l('EmailAddress')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="resellersFields.EmailAddress"
+                                    [caption]="l('EmailAddress')">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.EarnedAmount"
+                                    [caption]="l('EarnedAmount')" 
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
+                                    [caption]="l('PendingEarningsAmount')" 
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
+                                    [caption]="l('PendingWithdrawalsAmount')" 
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
+                                    [caption]="l('UnaccountedEarningsAmount')" 
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.WithdrawnAmount"
+                                    [caption]="l('WithdrawnAmount')"
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="resellersFields.AvailableBalance"
+                                    [caption]="l('AvailableBalance')" 
+                                    [format]="currencyFormat$ | async"
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.AffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.AvailableBalance"
-                                    [caption]="l('AvailableBalance')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="resellersFields.EarnedAmount"
-                                    [caption]="l('EarnedAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="resellersFields.PendingEarningsAmount"
-                                    [caption]="l('PendingEarningsAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="resellersFields.PendingWithdrawalsAmount"
-                                    [caption]="l('PendingWithdrawalsAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="resellersFields.UnaccountedEarningsAmount"
-                                    [caption]="l('UnaccountedEarningsAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
-                        <dxi-column [dataField]="resellersFields.WithdrawnAmount"
-                                    [caption]="l('WithdrawnAmount')" 
-                                    cellTemplate="amountCell" 
-                                    cssClass="padding-right">
-                        </dxi-column>
 
-                        <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                            {{cellData.value | currency: (currency$ | async)}}
+                        <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                            {{cellData.value}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

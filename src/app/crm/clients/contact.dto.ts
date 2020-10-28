@@ -19,4 +19,8 @@ export interface ContactDto {
     SourceContactId: number;
     ParentId: number;
     GroupId: string;
+    AffiliateContactName: string;
+    AffiliateContactEmailAddress: string;
+    AffiliateContactAffiliateCode: string;
+    AffiliateRate: number;
 }

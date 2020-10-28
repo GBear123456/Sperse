@@ -82,8 +82,8 @@
                                   accesskey="narrowHeaderPanel"
                                   [rowDragging]="{
                                       cursorOffset: {x: 30},
-                                      allowDropInsideItem: isMergeAllowed, 
-                                      showDragIcons: false, 
+                                      allowDropInsideItem: isMergeAllowed,
+                                      showDragIcons: false,
                                       onDragEnd: onDragEnd
                                   }"
                                   [renderAsync]="true"
@@ -148,6 +148,27 @@
                         <dxi-column [dataField]="partnerFields.ContactDate" [caption]="l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column [dataField]="partnerFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="partnerFields.AffiliateCode" [caption]="l('AffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateContactName"
+                                    [caption]="l('AffiliateContactName')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateContactEmailAddress"
+                                    [caption]="l('AffiliateContactEmailAddress')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateContactAffiliateCode"
+                                    [caption]="l('AffiliateContactAffiliateCode')"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="partnerFields.AffiliateRate"
+                                    [caption]="l('AffiliateRate')"
+                                    format="percent"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
                         </div>

@@ -7497,14 +7497,11 @@ export class CommissionServiceProxy {
     }
 
     /**
-     * @paymentSystem (optional) 
      * @body (optional) 
      * @return Success
      */
-    completeWithdrawals(paymentSystem: string | null | undefined, body: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Commission/CompleteWithdrawals?";
-        if (paymentSystem !== undefined)
-            url_ += "paymentSystem=" + encodeURIComponent("" + paymentSystem) + "&"; 
+    completeWithdrawals(body: CompleteWithdrawalInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CompleteWithdrawals";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -23334,62 +23331,6 @@ export class OrderSubscriptionServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    getServiceTypes(): Observable<ServiceTypeInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetServiceTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetServiceTypes(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetServiceTypes(<any>response_);
-                } catch (e) {
-                    return <Observable<ServiceTypeInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ServiceTypeInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetServiceTypes(response: HttpResponseBase): Observable<ServiceTypeInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ServiceTypeInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ServiceTypeInfo[]>(<any>null);
-    }
 }
 
 @Injectable()
@@ -28073,292 +28014,6 @@ export class SessionServiceProxy {
             }));
         }
         return _observableOf<AuthTestOutput>(<any>null);
-    }
-}
-
-@Injectable()
-export class SimpleServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    method1(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple01/Simple/Method1";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMethod1(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMethod1(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMethod1(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @param1 (optional) 
-     * @return Success
-     */
-    method2(param1: number | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple01/Simple/Method2?";
-        if (param1 !== undefined)
-            url_ += "param1=" + encodeURIComponent("" + param1) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMethod2(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMethod2(<any>response_);
-                } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<number>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMethod2(response: HttpResponseBase): Observable<number> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @integerValue (optional) 
-     * @return Success
-     */
-    get(stringValue: string, integerValue: number | null | undefined): Observable<OutputDto> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/Get?";
-        if (stringValue === undefined || stringValue === null)
-            throw new Error("The parameter 'stringValue' must be defined and cannot be null.");
-        else
-            url_ += "StringValue=" + encodeURIComponent("" + stringValue) + "&"; 
-        if (integerValue !== undefined)
-            url_ += "IntegerValue=" + encodeURIComponent("" + integerValue) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(<any>response_);
-                } catch (e) {
-                    return <Observable<OutputDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OutputDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<OutputDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OutputDto.fromJS(resultData200) : new OutputDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OutputDto>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    post(body: InputDto | null | undefined): Observable<OutputDto> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/Post";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPost(<any>response_);
-                } catch (e) {
-                    return <Observable<OutputDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OutputDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPost(response: HttpResponseBase): Observable<OutputDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OutputDto.fromJS(resultData200) : new OutputDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OutputDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getLeadsWithOrder(): Observable<LeadDto[]> {
-        let url_ = this.baseUrl + "/api/services/HUB/Simple02/Simple/GetLeadsWithOrder";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLeadsWithOrder(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetLeadsWithOrder(<any>response_);
-                } catch (e) {
-                    return <Observable<LeadDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<LeadDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetLeadsWithOrder(response: HttpResponseBase): Observable<LeadDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(LeadDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LeadDto[]>(<any>null);
     }
 }
 
@@ -40169,7 +39824,6 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     syncRef!: string | undefined;
     syncTypeId!: string | undefined;
     autoSyncTime!: string | undefined;
-    autoSyncTimeZone!: string | undefined;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -40197,7 +39851,6 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.syncRef = data["syncRef"];
             this.syncTypeId = data["syncTypeId"];
             this.autoSyncTime = data["autoSyncTime"];
-            this.autoSyncTimeZone = data["autoSyncTimeZone"];
         }
     }
 
@@ -40225,7 +39878,6 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["syncRef"] = this.syncRef;
         data["syncTypeId"] = this.syncTypeId;
         data["autoSyncTime"] = this.autoSyncTime;
-        data["autoSyncTimeZone"] = this.autoSyncTimeZone;
         return data; 
     }
 }
@@ -40242,7 +39894,6 @@ export interface ISyncAccountBankDto {
     syncRef: string | undefined;
     syncTypeId: string | undefined;
     autoSyncTime: string | undefined;
-    autoSyncTimeZone: string | undefined;
 }
 
 export enum GroupByPeriod {
@@ -41917,9 +41568,7 @@ export enum AdjustmentType {
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType!: AdjustmentType | undefined;
     cashflowTypeId!: string | undefined;
-    accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     accountId!: number | undefined;
     currencyId!: string | undefined;
@@ -41942,9 +41591,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
-            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
@@ -41967,9 +41614,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
-        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
@@ -41985,9 +41630,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: AdjustmentType | undefined;
     cashflowTypeId: string | undefined;
-    accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     accountId: number | undefined;
     currencyId: string | undefined;
@@ -42006,7 +41649,6 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
     cashFlowTypeId!: string | undefined;
     accountingTypeId!: number | undefined;
     categoryId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     accountId!: number | undefined;
     categorization!: { [key: string] : string; } | undefined;
@@ -42029,7 +41671,6 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
             this.cashFlowTypeId = data["cashFlowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             if (data["categorization"]) {
@@ -42058,7 +41699,6 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         if (this.categorization) {
@@ -42080,7 +41720,6 @@ export interface ICashFlowCommentThreadDto {
     cashFlowTypeId: string | undefined;
     accountingTypeId: number | undefined;
     categoryId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     accountId: number | undefined;
     categorization: { [key: string] : string; } | undefined;
@@ -42345,7 +41984,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     categoryId!: number | undefined;
     reportSectionGroup!: SectionGroup | undefined;
     reportSectionId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -42371,7 +42009,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             this.categoryId = data["categoryId"];
             this.reportSectionGroup = data["reportSectionGroup"];
             this.reportSectionId = data["reportSectionId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -42405,7 +42042,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         data["categoryId"] = this.categoryId;
         data["reportSectionGroup"] = this.reportSectionGroup;
         data["reportSectionId"] = this.reportSectionId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -42432,7 +42068,6 @@ export interface IStatsDetailFilter {
     categoryId: number | undefined;
     reportSectionGroup: SectionGroup | undefined;
     reportSectionId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -45171,7 +44806,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
     categoryId!: number | undefined;
     reportSectionGroup!: SectionGroup | undefined;
     reportSectionId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -45195,7 +44829,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
             this.categoryId = data["categoryId"];
             this.reportSectionGroup = data["reportSectionGroup"];
             this.reportSectionId = data["reportSectionId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -45227,7 +44860,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
         data["categoryId"] = this.categoryId;
         data["reportSectionGroup"] = this.reportSectionGroup;
         data["reportSectionId"] = this.reportSectionId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -45252,7 +44884,6 @@ export interface IStatsDetailFilterBase {
     categoryId: number | undefined;
     reportSectionGroup: SectionGroup | undefined;
     reportSectionId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -45992,7 +45623,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     categoryId!: number | undefined;
     reportSectionGroup!: SectionGroup | undefined;
     reportSectionId!: number | undefined;
-    subCategoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -46018,7 +45648,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             this.categoryId = data["categoryId"];
             this.reportSectionGroup = data["reportSectionGroup"];
             this.reportSectionId = data["reportSectionId"];
-            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -46052,7 +45681,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data["categoryId"] = this.categoryId;
         data["reportSectionGroup"] = this.reportSectionGroup;
         data["reportSectionId"] = this.reportSectionId;
-        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -46079,7 +45707,6 @@ export interface ICreateCashFlowCommentThreadInput {
     categoryId: number | undefined;
     reportSectionGroup: SectionGroup | undefined;
     reportSectionId: number | undefined;
-    subCategoryId: number | undefined;
     transactionDescriptor: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -46374,6 +46001,68 @@ export class RequestWithdrawalInput implements IRequestWithdrawalInput {
 export interface IRequestWithdrawalInput {
     contactId: number;
     amount: number | undefined;
+}
+
+export enum PaymentSystem {
+    CheckPayment = "CheckPayment", 
+    CreditAccountBalance = "CreditAccountBalance", 
+    CryptoBitcoin = "CryptoBitcoin", 
+    DebitCardTransfer = "DebitCardTransfer", 
+    TransferBankACH = "TransferBankACH", 
+    TransferBankSEPA = "TransferBankSEPA", 
+    TransferBankWire = "TransferBankWire", 
+    PayQuicker = "PayQuicker", 
+    PayPal = "PayPal", 
+    SpersePay = "SpersePay", 
+    Tipalti = "Tipalti", 
+}
+
+export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
+    withdrawalIds!: number[] | undefined;
+    paymentSystem!: PaymentSystem;
+
+    constructor(data?: ICompleteWithdrawalInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["withdrawalIds"] && data["withdrawalIds"].constructor === Array) {
+                this.withdrawalIds = [];
+                for (let item of data["withdrawalIds"])
+                    this.withdrawalIds.push(item);
+            }
+            this.paymentSystem = data["paymentSystem"];
+        }
+    }
+
+    static fromJS(data: any): CompleteWithdrawalInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CompleteWithdrawalInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.withdrawalIds && this.withdrawalIds.constructor === Array) {
+            data["withdrawalIds"] = [];
+            for (let item of this.withdrawalIds)
+                data["withdrawalIds"].push(item);
+        }
+        data["paymentSystem"] = this.paymentSystem;
+        return data; 
+    }
+}
+
+export interface ICompleteWithdrawalInput {
+    withdrawalIds: number[] | undefined;
+    paymentSystem: PaymentSystem;
 }
 
 export class SubscribableEditionComboboxItemDto implements ISubscribableEditionComboboxItemDto {
@@ -66098,7 +65787,8 @@ export interface IUpdateOrderStagePointInput {
 
 export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateContactInput {
     orderId!: number;
-    affiliateContactId!: number | undefined;
+    affiliateContactId!: number;
+    assignToBuyerContact!: boolean | undefined;
 
     constructor(data?: IUpdateOrderAffiliateContactInput) {
         if (data) {
@@ -66113,6 +65803,7 @@ export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateCo
         if (data) {
             this.orderId = data["orderId"];
             this.affiliateContactId = data["affiliateContactId"];
+            this.assignToBuyerContact = data["assignToBuyerContact"];
         }
     }
 
@@ -66127,13 +65818,15 @@ export class UpdateOrderAffiliateContactInput implements IUpdateOrderAffiliateCo
         data = typeof data === 'object' ? data : {};
         data["orderId"] = this.orderId;
         data["affiliateContactId"] = this.affiliateContactId;
+        data["assignToBuyerContact"] = this.assignToBuyerContact;
         return data; 
     }
 }
 
 export interface IUpdateOrderAffiliateContactInput {
     orderId: number;
-    affiliateContactId: number | undefined;
+    affiliateContactId: number;
+    assignToBuyerContact: boolean | undefined;
 }
 
 export class ProcessOrderInfo implements IProcessOrderInfo {
@@ -66504,7 +66197,7 @@ export interface IUpdateOrderSubscriptionInput {
 }
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
-    orderSubscriptionId!: number;
+    subscriptionId!: number;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelOrderSubscriptionInput) {
@@ -66518,7 +66211,7 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 
     init(data?: any) {
         if (data) {
-            this.orderSubscriptionId = data["orderSubscriptionId"];
+            this.subscriptionId = data["subscriptionId"];
             this.cancelationReason = data["cancelationReason"];
         }
     }
@@ -66532,14 +66225,14 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["orderSubscriptionId"] = this.orderSubscriptionId;
+        data["subscriptionId"] = this.subscriptionId;
         data["cancelationReason"] = this.cancelationReason;
         return data; 
     }
 }
 
 export interface ICancelOrderSubscriptionInput {
-    orderSubscriptionId: number;
+    subscriptionId: number;
     cancelationReason: string | undefined;
 }
 
@@ -66593,46 +66286,6 @@ export interface ICancelAllInput {
     contactId: number;
     serviceProductCodes: string[] | undefined;
     cancelationReason: string | undefined;
-}
-
-export class ServiceTypeInfo implements IServiceTypeInfo {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IServiceTypeInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ServiceTypeInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ServiceTypeInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IServiceTypeInfo {
-    id: string | undefined;
-    name: string | undefined;
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
@@ -71163,6 +70816,7 @@ export enum LayoutType {
     BankCode = "BankCode", 
     Rapid = "Rapid", 
     HOA = "HOA", 
+    Sperser = "Sperser", 
 }
 
 export class FaviconDto implements IFaviconDto {
@@ -71567,126 +71221,6 @@ export class AuthTestOutput implements IAuthTestOutput {
 export interface IAuthTestOutput {
     tenantName: string | undefined;
     userName: string | undefined;
-}
-
-export class OutputDto implements IOutputDto {
-    id!: number | undefined;
-    result!: boolean | undefined;
-
-    constructor(data?: IOutputDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.result = data["result"];
-        }
-    }
-
-    static fromJS(data: any): OutputDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OutputDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["result"] = this.result;
-        return data; 
-    }
-}
-
-export interface IOutputDto {
-    id: number | undefined;
-    result: boolean | undefined;
-}
-
-export class InputDto implements IInputDto {
-    stringValue!: string;
-    integerValue!: number | undefined;
-
-    constructor(data?: IInputDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.stringValue = data["stringValue"];
-            this.integerValue = data["integerValue"];
-        }
-    }
-
-    static fromJS(data: any): InputDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new InputDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["stringValue"] = this.stringValue;
-        data["integerValue"] = this.integerValue;
-        return data; 
-    }
-}
-
-export interface IInputDto {
-    stringValue: string;
-    integerValue: number | undefined;
-}
-
-export class LeadDto implements ILeadDto {
-    id!: number | undefined;
-    stageId!: number | undefined;
-
-    constructor(data?: ILeadDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.stageId = data["stageId"];
-        }
-    }
-
-    static fromJS(data: any): LeadDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["stageId"] = this.stageId;
-        return data; 
-    }
-}
-
-export interface ILeadDto {
-    id: number | undefined;
-    stageId: number | undefined;
 }
 
 export class CreateStageInput implements ICreateStageInput {
@@ -77357,7 +76891,7 @@ export class CommissionLedgerEntryInfo implements ICommissionLedgerEntryInfo {
     status!: CommissionLedgerEntryStatus | undefined;
     type!: CommissionLedgerEntryType | undefined;
     totalAmount!: number | undefined;
-    paymentSystem!: string | undefined;
+    paymentSystem!: PaymentSystem | undefined;
 
     constructor(data?: ICommissionLedgerEntryInfo) {
         if (data) {
@@ -77410,7 +76944,7 @@ export interface ICommissionLedgerEntryInfo {
     status: CommissionLedgerEntryStatus | undefined;
     type: CommissionLedgerEntryType | undefined;
     totalAmount: number | undefined;
-    paymentSystem: string | undefined;
+    paymentSystem: PaymentSystem | undefined;
 }
 
 export class GetLedgerOutput implements IGetLedgerOutput {

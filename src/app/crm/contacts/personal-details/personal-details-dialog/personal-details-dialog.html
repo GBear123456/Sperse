@@ -9,7 +9,7 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
-                            <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate === 0, 'undefined': affiliateRate === null}">
+                            <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate == 0, 'undefined': affiliateRate === null}">
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
@@ -46,28 +46,34 @@
                                 <mat-panel-title>{{ ls.l('SourceInfo') }}</mat-panel-title>
                             </mat-expansion-panel-header>
                             <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
-                                <div *ngIf="sourceContactInfo.sourceContactLevel1 as sourceContactLevel1" class="field">
+                                <div class="field">
                                     <source-contact-list
                                         [leadId]="leadInfo?.id"
-                                        [selectedKey]="sourceContactLevel1?.id"
+                                        [selectedKey]="sourceContactInfo.sourceContactLevel1?.id"
                                         [targetSelector]="'#affiliateContactLink'"
                                         (onItemSelected)="onSourceContactChanged($event)">
                                     </source-contact-list>
                                     <label>{{ ls.l('PersonalSettings.Contact1') }}:</label>
                                     <div>
                                         <div class="thumbnail">
-                                            <img [src]="getThumbnailSrc(sourceContactLevel1.photoPublicId)"/>
+                                            <img [src]="getThumbnailSrc(sourceContactInfo?.sourceContactLevel1?.photoPublicId)"/>
                                         </div>
                                         <div class="field-info">
-                                            <a *ngIf="sourceContactLevel1.name" (click)="openContactDetails(sourceContactLevel1.id)">{{ sourceContactLevel1.name }}
+                                            <a [ngClass]="{empty: !sourceContactInfo?.sourceContactLevel1}" (click)="openContactDetails(sourceContactInfo?.sourceContactLevel1?.id)">
+                                                {{ sourceContactInfo?.sourceContactLevel1?.name || (ls.l('Set') + ' ' + ls.l('PersonalSettings.Contact1')) }}
                                                 <i id="affiliateContactLink" class="edit fa fa-pencil"
-                                                    (click)="$event.stopPropagation();sourceComponent.toggle();">
+                                                    (click)="openSourceContactList($event)">
                                                 </i>
-                                                <i class="save-to-clipboard"
-                                                   (click)="saveToClipboard($event, sourceContactLevel1.name)">
-                                                </i>
+                                                <ng-container *ngIf="sourceContactInfo?.sourceContactLevel1">
+                                                    <i class="remove fa fa-times"
+                                                        (click)="removeSourceContact($event)">
+                                                    </i>
+                                                    <i class="save-to-clipboard"
+                                                        (click)="saveToClipboard($event, sourceContactInfo?.sourceContactLevel1?.name)">
+                                                    </i>
+                                                </ng-container>
                                             </a>
-                                            <div *ngIf="sourceContactLevel1.affiliateCode as affiliateCode" class="additional-info">
+                                            <div *ngIf="sourceContactInfo?.sourceContactLevel1?.affiliateCode as affiliateCode" class="additional-info">
                                                 <span>{{ ls.l('AffiliateCode') }}: </span>
                                                 <span class="bold">{{ affiliateCode }}</span>
                                             </div>

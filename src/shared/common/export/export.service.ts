@@ -11,9 +11,11 @@ import capitalize from 'underscore.string/capitalize';
 import * as moment from 'moment';
 import { exportFromMarkup } from 'devextreme/viz/export';
 import { ImageFormat } from '@shared/common/export/image-format.enum';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
 import * as jsPDF from 'jspdf';
 import { PdfExportHeader } from './pdf-export-header.interface';
+
+/** Application imports */
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Injectable()
 export class ExportService {
@@ -28,9 +30,11 @@ export class ExportService {
         this.exportGoogleSheetService = injector.get(ExportGoogleSheetService);
     }
 
-    getFileName(dataGrid?, name?: string, prefix?: string): string {
+    getFileName(dataGrid?, name?: string, prefix?: string, showItemsInName: boolean = true): string {
         name = name || dataGrid && dataGrid.export.fileName || '';
-        let itemsName = capitalize(location.href.split('/').pop().split('?').shift());
+        let itemsName = showItemsInName
+            ? capitalize(location.href.split('/').pop().split('?').shift())
+            : '';
         return (prefix ? prefix : '') + itemsName.replace('Leads', 'Contacts') + '_' +
             (!name || name == 'DataGrid' ? '' : name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
@@ -81,62 +85,66 @@ export class ExportService {
             callback(dataGrid.instance.getSelectedRowsData());
     }
 
-    exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string): Promise<any> {
+    exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean): Promise<any> {
         this.loadingService.startLoading();
         if (dataGrid && dataGrid.instance && dataGrid.instance.getDataSource().isLoading())
             return new Promise((resolve) => {
                 dataGrid.instance.on('contentReady', () => {
                     dataGrid.instance.off('contentReady');
-                    resolve(this.exportTo(option, type, dataGrid, prefix));
+                    resolve(this.exportTo(option, type, dataGrid, prefix, showItemsInName));
                 });
             });
         else
-            return this['exportTo' + type + 'Internal'](dataGrid, option == 'all', prefix)
+            return this['exportTo' + type + 'Internal'](dataGrid, option == 'all', prefix, showItemsInName)
                 .then(() => this.loadingService.finishLoading());
     }
 
-    exportToXLS(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        return this.exportTo(option, 'Excel', dataGrid, prefix);
+    exportToXLS(option, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean) {
+        return this.exportTo(option, 'Excel', dataGrid, prefix, showItemsInName);
     }
 
-    exportToCSV(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        return this.exportTo(option, 'CSV', dataGrid, prefix);
+    exportToCSV(option, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean) {
+        return this.exportTo(option, 'CSV', dataGrid, prefix, showItemsInName);
     }
 
     exportToPDF(option, dataGrid: DxDataGridComponent, prefix?: string) {
         return this.exportTo(option, 'PDF', dataGrid, prefix);
     }
 
-    exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null, prefix?: string) {
-        return this.exportTo(option, 'GoogleSheets', dataGrid, prefix);
+    exportToGoogleSheet(option, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean) {
+        return this.exportTo(option, 'GoogleSheets', dataGrid, prefix, showItemsInName);
     }
 
     exportBlobToGoogleSheet(blob: Blob, sheetName: string): Promise<any> {
         return this.exportGoogleSheetService.exportBlob(blob, sheetName);
     }
 
-    moveItemsToCSV(data, dataGrid, prefix?: string) {
+    moveItemsToCSV(data, dataGrid, prefix?: string, showItemsInName?: boolean) {
         if (data) {
             setTimeout(() => {
                 let _headers = [''];
                 if (data.length > 0)
                     _headers = Object.keys(data[0]);
 
-                new Angular5Csv(data.map(dataItem => ({ ...dataItem})), this.getFileName(dataGrid, null, prefix), { headers: _headers, replaceNulls: true });
+                new Angular5Csv(
+                    data.map(dataItem => ({ ...dataItem})),
+                    this.getFileName(dataGrid, null, prefix, showItemsInName),
+                    { headers: _headers, replaceNulls: true }
+                );
             });
         }
     }
 
-    private exportToCSVInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToCSVInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         return new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
-                this.moveItemsToCSV(data, dataGrid, prefix);
+                this.moveItemsToCSV(data, dataGrid, prefix, showItemsInName);
                 resolve();
             }, exportAllData);
         });
     }
 
-    private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         return this.exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
                 let visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns(),
@@ -154,10 +162,10 @@ export class ExportService {
                 });
                 resolve(rowData);
             }, exportAllData);
-        }), this.getFileName(dataGrid, null, prefix));
+        }), this.getFileName(dataGrid, null, prefix, showItemsInName));
     }
 
-    private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         return new Promise(resolve => {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),
@@ -173,7 +181,7 @@ export class ExportService {
                     return res;
                 };
 
-            dataGrid.export.fileName = this.getFileName(dataGrid, null, prefix);
+            dataGrid.export.fileName = this.getFileName(dataGrid, null, prefix, showItemsInName);
             if (isLoadPanel)
                 instance.option('loadPanel.enabled', false);
 
@@ -197,7 +205,7 @@ export class ExportService {
         });
     }
 
-    private exportToPDFInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
+    private exportToPDFInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         const visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns()
             .filter((column: DevExpress.ui.dxDataGridColumn) => column.dataField);
         function getHeaders(columns: DevExpress.ui.dxDataGridColumn[]): PdfExportHeader[]  {
@@ -220,7 +228,7 @@ export class ExportService {
             this.getDataFromGrid(
                 dataGrid,
                 (data) => {
-                    this.moveItemsToPDF(data, dataGrid, getHeaders(visibleColumns), prefix);
+                    this.moveItemsToPDF(data, dataGrid, getHeaders(visibleColumns), prefix, showItemsInName);
                     resolve();
                 },
                 exportAllData
@@ -244,7 +252,7 @@ export class ExportService {
         });
     }
 
-    private moveItemsToPDF(data, dataGrid, headers: PdfExportHeader[], prefix) {
+    private moveItemsToPDF(data, dataGrid, headers: PdfExportHeader[], prefix, showItemsInName?: boolean) {
         const items = data.map((item) => {
             let newItem = {};
             for (let key in item) {
@@ -275,7 +283,7 @@ export class ExportService {
                     headerBackgroundColor: '#f3f7fa'
                 }
             );
-            doc.save(this.getFileName(dataGrid, null, prefix));
+            doc.save(this.getFileName(dataGrid, null, prefix, showItemsInName));
         }
     }
 

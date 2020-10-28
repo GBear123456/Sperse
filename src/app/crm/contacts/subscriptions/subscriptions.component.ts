@@ -135,7 +135,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             if (result) {
                 this.orderSubscriptionService
                     .cancel(new CancelOrderSubscriptionInput({
-                        orderSubscriptionId: id,
+                        subscriptionId: id,
                         cancelationReason: result.cancellationReason
                     }))
                     .subscribe(() => {
