@@ -41,6 +41,7 @@
                     <dx-data-grid #commissionDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  columnResizingMode="widget"
                                   [visible]="selectedViewType == COMMISSION_VIEW"
                                   [renderAsync]="true"
                                   [dataSource]="commissionDataSource"
@@ -117,27 +118,32 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductAmount"
+                        <dxi-column width="130px"
+                                    [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('ProductAmount')"
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ProductName"
-                                    [caption]="l('ProductName')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.ProductName"
+                                    [caption]="l('ProductName')">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.BuyerName"
-                                    [caption]="l('BuyerName')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.BuyerName"
+                                    [caption]="l('BuyerName')">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ResellerName"
-                                    [caption]="l('ResellerName')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.ResellerName"
+                                    [caption]="l('ResellerName')">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ResellerEmailAddress"
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.ResellerEmailAddress"
                                     [caption]="l('ResellerEmailAddress')"
-                                    [visible]="false"
-                                    cssClass="clipboard-holder">
+                                    [visible]="false">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
@@ -158,16 +164,19 @@
                                     [caption]="l('TransactionAuthCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.CommissionAmount"
+                        <dxi-column width="140px"
+                                    [dataField]="commissionFields.CommissionAmount"
                                     [caption]="l('CommissionAmount')"
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.Status"
+                        <dxi-column width="120px"
+                                    [dataField]="commissionFields.Status"
                                     [caption]="l('Status')" 
-                                    cssClass="padding-right">
+                                    cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.CommissionableAmount"
+                        <dxi-column width="150px"
+                                    [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CommissionableAmount')"
                                     [format]="currencyFormat$ | async"
                                     [visible]="false"
@@ -193,6 +202,10 @@
                                     [visible]="false" 
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        
+                        <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                            {{cellData.value}}
+                        </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone}}
@@ -213,6 +226,7 @@
                     <dx-data-grid #ledgerDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  columnResizingMode="widget"
                                   [visible]="selectedViewType == LEDGER_VIEW"
                                   [renderAsync]="true"
                                   [allowColumnReordering]="true"
@@ -246,13 +260,15 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column [dataField]="ledgerFields.ContactName"
-                                    [caption]="l('Customer.Name')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="ledgerFields.ContactName"
+                                    [caption]="l('Customer.Name')">
                         </dxi-column>
-                        <dxi-column [dataField]="ledgerFields.EmailAddress"
-                                    [caption]="l('EmailAddress')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="ledgerFields.EmailAddress"
+                                    [caption]="l('EmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.AffiliateCode"
                                     [caption]="l('AffiliateCode')"
@@ -287,6 +303,10 @@
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
 
+                        <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                            {{cellData.value}}
+                        </div>
+
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | date: formatting.dateTime : userTimezone }}
                         </div>
@@ -306,6 +326,7 @@
                     <dx-data-grid #resellersDataGrid
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
+                                  columnResizingMode="widget"
                                   [visible]="selectedViewType == RESELLERS_VIEW"
                                   [renderAsync]="true"
                                   [allowColumnReordering]="true"
@@ -335,13 +356,15 @@
                                     sortOrder="desc"
                                     [sortIndex]="0">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.FullName"
-                                    [caption]="l('Customer.Name')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="resellersFields.FullName"
+                                    [caption]="l('Customer.Name')">
                         </dxi-column>
-                        <dxi-column [dataField]="resellersFields.EmailAddress"
-                                    [caption]="l('EmailAddress')"
-                                    cssClass="clipboard-holder">
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="resellersFields.EmailAddress"
+                                    [caption]="l('EmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="resellersFields.EarnedAmount"
                                     [caption]="l('EarnedAmount')" 
@@ -378,6 +401,10 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+
+                        <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                            {{cellData.value}}
+                        </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
