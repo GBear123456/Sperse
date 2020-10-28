@@ -33,15 +33,24 @@
 }
 
 /deep/ .contact-field-template {
+    height: 47px;
+    padding: 0!important;
     position: relative;
+    background-color: #FFF;
+    border-bottom: 1px solid #dedede;
     & > div {
         position: absolute;
         display: block;
-        right: 50px;
-        top: 20px;
+        right: 40px;
+        top: 15px;
     }
 
-    dx-text-box input {
-        cursor: pointer;
+    dx-text-box {
+        width: 230px;
+        input {
+            cursor: pointer;
+            text-overflow: ellipsis;
+            border: none;
+        }
     }
 }
