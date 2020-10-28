@@ -22,8 +22,20 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     styleUrls: ['ledger-complete-dialog.component.less']
 })
 export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
-    paymentSystems = ['PayQuicker', 'PayPal'];
-    paymentSystem = this.paymentSystems[0];
+    paymentSystems = [
+        'Check Payment',
+        'CreditAccount Balance',
+        'Crypto: Bitcoin',
+        'Debit Card Transfer',
+        'Transfer Bank ACH',
+        'Transfer Bank SEPA',
+        'Transfer Bank Wire',
+        'PayQuicker',
+        'PayPal',
+        'SpersePay',
+        'Tipalti'
+    ];
+    paymentSystem = 'PayQuicker';
 
     constructor(
         injector: Injector,
