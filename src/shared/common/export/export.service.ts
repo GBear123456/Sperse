@@ -139,7 +139,7 @@ export class ExportService {
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string) {
         return this.exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
-                let visibleColumns = dataGrid.instance.getVisibleColumns(),
+                let visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns(),
                     rowData = this.exportGoogleSheetService.getHeaderRows(visibleColumns);
 
                 data.forEach((val: any) => {
