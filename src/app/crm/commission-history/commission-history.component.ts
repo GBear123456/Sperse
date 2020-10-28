@@ -216,7 +216,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 type: 'currency',
                 precision: 2,
                 currency: settings && settings.currency
-            }
+            };
         })
     );
 
@@ -511,71 +511,71 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             {
                 location: 'before',
                 locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'actions',
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
-                            || this.selectedViewType == this.RESELLERS_VIEW,
-                        options: {
-                            items: [
-                                {
-                                    text: this.l('RequestWithdrawal'),
-                                    visible: this.selectedViewType == this.LEDGER_VIEW,
-                                    action: this.requestWithdrawal.bind(this)
-                                },
-                                {
-                                    text: this.l('AddNewEarnings'),
-                                    visible: this.selectedViewType == this.LEDGER_VIEW,
-                                    action: this.applyEarnings.bind(this)
-                                },
-                                {
-                                    text: this.l('ApproveLedger'),
-                                    visible: this.selectedViewType == this.LEDGER_VIEW,
-                                    disabled: !this.selectedRecords.length
-                                        || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                        || this.selectedRecords.every(item => item.Status !== LedgerStatus.Pending),
-                                    action: this.approveEarnings.bind(this)
-                                },
-                                {
-                                    text: this.l('Complete'),
-                                    visible: this.selectedViewType == this.LEDGER_VIEW,
-                                    action: this.applyComplete.bind(this),
-                                    disabled: !this.selectedRecords.length
-                                        || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                        || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal))
-                                },
-                                {
-                                    text: this.l('Cancel'),
-                                    action: this.applyCancel.bind(this),
-                                    disabled: !this.selectedRecords.length
-                                        || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                        || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
-                                }
-                            ]
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
+                items: <any[]>(this.selectedViewType == this.LEDGER_VIEW ? [
                     {
                         widget: 'dxButton',
                         options: {
-                            height: '36px',
+                            text: this.l('RequestWithdrawal'),
+                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                            onClick: this.requestWithdrawal.bind(this)
+                        }
+                    },
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('AddNewEarnings'),
+                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                            onClick: this.applyEarnings.bind(this)
+                        }
+                    },
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('ApproveLedger'),
+                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                                || !this.selectedRecords.length
+                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                || this.selectedRecords.every(item => item.Status !== LedgerStatus.Pending),
+                            onClick: this.approveEarnings.bind(this)
+                        }
+                    },
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('UpdatePaymentStatus'),
+                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                                || !this.selectedRecords.length
+                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal)),
+                            onClick: this.applyComplete.bind(this)
+                        }
+                    }] : [{
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('ReassignCommissions'),
+                            icon: './assets/common/icons/assign-icon.svg',
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
                             disabled: !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                 || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
-                            text: this.l('ReassignCommissions'),
                             onClick: (e) => {
                                 this.sourceComponent.toggle();
                             }
                         }
-                    }
-                ]
+                    }]).concat(
+                        <any[]>[{
+                            widget: 'dxButton',
+                            options: {
+                                text: this.l('Cancel' + (this.selectedViewType == this.LEDGER_VIEW ? 'Ledgers' : 'Commissions')),
+                                visible: this.selectedViewType != this.RESELLERS_VIEW,
+                                disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                                    || !this.selectedRecords.length
+                                    || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
+                                    || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
+                                onClick: this.applyCancel.bind(this)
+                            }
+                        }]
+                    )
             },
             {
                 location: 'after',
@@ -596,14 +596,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 },
                                 {
                                     action: (options) => {
-                                        this.exportToCSV(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false)
+                                        this.exportToCSV(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet'
                                 },
                                 {
                                     action: (options) => {
-                                        this.exportToGoogleSheet(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false)
+                                        this.exportToGoogleSheet(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet'
@@ -803,6 +803,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     onViewTypeChanged(event) {
         if (this.selectedViewType != event.value) {
+            this.selectedRecords = [];
+            this.dataGrid.instance.clearSelection();
             this.selectedViewType = event.value;
             this.initFilterConfig(true);
             this.setDataGridInstance();
