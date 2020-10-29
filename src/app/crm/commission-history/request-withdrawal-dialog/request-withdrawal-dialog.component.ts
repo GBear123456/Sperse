@@ -52,6 +52,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
     currency$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => settings && settings.currency)
     );
+    date: Date;
+    today: Date = new Date();
 
     constructor(
         injector: Injector,
@@ -74,7 +76,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.requestWithdrawal(new RequestWithdrawalInput({
                             contactId: this.selectedContact.Id,
-                            amount: this.withdrawalAmount
+                            amount: this.withdrawalAmount,
+                            date: this.date
                         })).pipe(finalize(
                             () => this.loadingService.finishLoading(this.elementRef.nativeElement)
                         )).subscribe(() => {
@@ -82,7 +85,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                             this.dialogRef.close();
                         });                        
                     }
-                }, [ ]
+                }, []
             );
         } else
             this.notify.error(this.ls.l('ContactAndAmountRequired'));
