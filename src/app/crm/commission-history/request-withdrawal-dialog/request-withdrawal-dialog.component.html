@@ -34,7 +34,7 @@
             [max]="selectedContact?.AvailableBalance"
             [(value)]="withdrawalAmount">
         </dx-number-box>
-        <dx-date-box type="date" [(value)]="date"></dx-date-box>
+        <dx-date-box type="date" [(value)]="date" [max]="today"></dx-date-box>
     </dx-scroll-view>
 </mat-dialog-content>
 <mat-dialog-actions>
