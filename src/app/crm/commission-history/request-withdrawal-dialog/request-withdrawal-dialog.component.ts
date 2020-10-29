@@ -53,6 +53,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
         map((settings: InvoiceSettings) => settings && settings.currency)
     );
     date: Date;
+    today: Date = new Date();
 
     constructor(
         injector: Injector,
