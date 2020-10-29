@@ -4,7 +4,7 @@ import { Component, Injector, ElementRef } from '@angular/core';
 /** Third party imports */
 import * as moment from 'moment-timezone';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
@@ -22,7 +22,11 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     styleUrls: ['commission-earnings-dialog.component.less']
 })
 export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
-    contacts$: Observable<PendingCommissionContactInfo[]> = this.commissionProxy.getPendingCommissionContacts();
+    contacts$: Observable<PendingCommissionContactInfo[]> = this.commissionProxy.getPendingCommissionContacts().pipe(
+        map(data => data.sort((prev, next) => {
+            return prev.name.localeCompare(next.name);
+        }))
+    );
     calendarOptions = { allowFutureDates: false };
     contactId: number;
     dateRange = {

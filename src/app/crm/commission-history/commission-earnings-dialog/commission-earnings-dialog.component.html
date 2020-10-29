@@ -5,6 +5,7 @@
     <dx-scroll-view showScrollbar="onHover" height="500px">
         <dx-select-box
             [placeholder]="ls.l('AllAffiliates')"
+            [searchEnabled]="true"
             [dataSource]="contacts$ | async"
             [displayExpr]="'name'"
             [valueExpr]="'id'"
