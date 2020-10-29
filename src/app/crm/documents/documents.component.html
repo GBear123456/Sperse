@@ -4,10 +4,10 @@
 </app-headline>
 <div [@routerTransition]>
     <div class="wrapper">
-        <dx-file-manager [fileProvider]="fileProvider" [height]="getHeight()">
+        <dx-file-manager [fileProvider]="fileProvider" [allowedFileExtensions]="allowedFileExtensions" [height]="getHeight()">
             <dxo-permissions 
                 create="true"
-                copy="true"
+                copy="false"
                 move="true"
                 delete="true"
                 rename="true"

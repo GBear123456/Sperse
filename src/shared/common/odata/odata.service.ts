@@ -34,6 +34,11 @@ export class ODataService {
     ) {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
+            if (!options.headers || !options.headers['Authorization'])
+                options.headers = {
+                    Authorization: 'Bearer ' + abp.auth.getToken(),
+                    ...(options.headers || {})
+                };
             let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + 
                 ((options.headers && options.headers.context) || '');
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));

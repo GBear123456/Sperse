@@ -16,6 +16,7 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -28,8 +29,9 @@ export class DocumentsComponent {
     @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
 
     fileProvider = new RemoteFileProvider({
-        endpointUrl: 'https://mydomain.com/api/files'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/FileManager/Files'
     });
+    allowedFileExtensions = ['.csv', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.tiff', '.pdf'];
 
     constructor(
         private appService: AppService,
