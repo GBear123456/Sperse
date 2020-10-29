@@ -7,10 +7,15 @@
             [placeholder]="ls.l('AllAffiliates')"
             [searchEnabled]="true"
             [dataSource]="contacts$ | async"
-            [displayExpr]="'name'"
-            [valueExpr]="'id'"
+            itemTemplate="itemTemplate"
+            valueExpr="id"
+            displayExpr="name"
             [(value)]="contactId"
             [showClearButton]="true">
+            <div *dxTemplate="let contact of 'itemTemplate'" class="affiliates-list-item-content">
+                <div class="name">{{ contact.name }}</div>
+                <div class="affiliate-code">{{ contact.affiliateCode }}</div>
+            </div>
         </dx-select-box>
         <calendar [values]="dateRange" [options]="calendarOptions"></calendar>
     </dx-scroll-view>

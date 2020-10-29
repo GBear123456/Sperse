@@ -23,7 +23,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 })
 export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
     contacts$: Observable<PendingCommissionContactInfo[]> = this.commissionProxy.getPendingCommissionContacts().pipe(
-        map(data => data.sort((prev, next) => {
+        map(data => data.sort((prev: PendingCommissionContactInfo, next: PendingCommissionContactInfo) => {
             return prev.name.localeCompare(next.name);
         }))
     );

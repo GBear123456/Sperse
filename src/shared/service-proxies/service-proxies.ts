@@ -46084,6 +46084,7 @@ export interface ISetResolvedInput {
 export class PendingCommissionContactInfo implements IPendingCommissionContactInfo {
     id!: number | undefined;
     name!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: IPendingCommissionContactInfo) {
         if (data) {
@@ -46098,6 +46099,7 @@ export class PendingCommissionContactInfo implements IPendingCommissionContactIn
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -46112,6 +46114,7 @@ export class PendingCommissionContactInfo implements IPendingCommissionContactIn
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -46119,6 +46122,7 @@ export class PendingCommissionContactInfo implements IPendingCommissionContactIn
 export interface IPendingCommissionContactInfo {
     id: number | undefined;
     name: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class AffiliateCommissionInput implements IAffiliateCommissionInput {
