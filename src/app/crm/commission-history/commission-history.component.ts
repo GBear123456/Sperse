@@ -145,7 +145,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.commissionDataGrid,
-                    [ this.commissionFields.Id, this.commissionFields.OrderId ]
+                    [
+                        this.commissionFields.Id,
+                        this.commissionFields.OrderId,
+                        this.commissionFields.CommissionAmount
+                    ]
                 );
             }
         })
@@ -808,7 +812,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.selectedViewType = event.value;
             this.initFilterConfig(true);
             this.setDataGridInstance();
-            this.initToolbarConfig();            
+            this.initToolbarConfig();
         }
     }
 
