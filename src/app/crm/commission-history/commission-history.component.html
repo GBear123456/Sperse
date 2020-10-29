@@ -209,11 +209,23 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
+
                         <dxo-summary>
                             <dxi-group-item [column]="commissionFields.Id"
                                             summaryType="count"
-                                            [displayFormat]="'{0} ' + l('Customers').toLocaleLowerCase()">
+                                            [displayFormat]="'{0} ' + l('Records').toLocaleLowerCase()">
                             </dxi-group-item>
+                            <dxi-group-item [column]="commissionFields.CommissionAmount"
+                                            summaryType="sum"
+                                            [valueFormat]="currencyFormat$ | async"
+                                            [displayFormat]="l('Commission') + ' ' + l('Total') + ': {0}'">
+                            </dxi-group-item>
+                            <dxi-total-item [column]="commissionFields.CommissionAmount"
+                                            [showInColumn]="commissionFields.OrderNumber"
+                                            [displayFormat]="l('Commission') + ' ' + l('Total') + ': {0}'"
+                                            [valueFormat]="currencyFormat$ | async"
+                                            summaryType="sum">
+                            </dxi-total-item>
                         </dxo-summary>
                     </dx-data-grid>
                 </div>
