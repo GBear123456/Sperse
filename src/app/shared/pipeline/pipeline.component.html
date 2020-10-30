@@ -12,8 +12,7 @@
              [ngStyle]="{
                  backgroundColor: stage.color,
                  borderLeftColor: stage.color,
-                 borderRightColor: stage.color,
-                 width: parent.offsetWidth + 'px'
+                 borderRightColor: stage.color
              }">
             <span class="stageName">{{stage.name}}</span>
             <div *ngIf="stage?.total !== undefined">
@@ -70,7 +69,7 @@
                             </a>
                         </li>
                         <ng-container *ngIf="isChecklistAllowed && !stage.isFinal">
-                            <hr>    
+                            <hr>
                             <li class="list-group-item">
                                 <a (click)="showChecklistConfigDialog(stage)" [ngClass]="{disabled: !isConfigureAllowed}">
                                     <i class="check-list-stage"></i> <span>{{l('CheckList_Stage')}}</span>
