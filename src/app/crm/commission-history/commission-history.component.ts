@@ -475,7 +475,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     private getFilters() {
         return this.selectedViewType === this.COMMISSION_VIEW
-            ? this.commissionFilters : this.ledgerFilters;
+            ? this.commissionFilters
+            : (this.selectedViewType === this.LEDGER_VIEW
+               ? this.ledgerFilters
+               : null
+            );
     }
 
     initToolbarConfig() {
