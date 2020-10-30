@@ -610,8 +610,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             icon: './assets/common/icons/assign-icon.svg',
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
                             disabled: !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
-                                || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
+                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {
                                 this.sourceComponent.toggle();
                             }
@@ -855,12 +854,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.l('ConfirmReassignCommissions'),
             (isConfirmed: boolean, [ assignToBuyerContact ]: boolean[]) => {
                 if (isConfirmed) {
+                    this.startLoading();
                     forkJoin.apply(forkJoin,
                         this.selectedRecords.map((item, index) => {
-                            if (index == this.selectedRecords.indexOf(item)
-                                && item.Status == CommissionStatus.Pending
-                                && item.OrderId
-                            ) {
+                            if (index == this.selectedRecords.indexOf(item) && item.OrderId) {
                                 return this.orderProxy.updateAffiliateContact(new UpdateOrderAffiliateContactInput({
                                     orderId: item.OrderId,
                                     affiliateContactId: event[0].id,
@@ -868,6 +865,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 }));
                             }
                         }).filter(Boolean)
+                    ).pipe(
+                        finalize(() => this.finishLoading())
                     ).subscribe(() => {
                         this.refresh();
                         this.notify.success(this.l('AppliedSuccessfully'));
