@@ -754,11 +754,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource$: this.store$.pipe(select(SubscriptionsStoreSelectors.getSubscriptions)),
+                        dataSource$: this.store$.pipe(
+                            select(SubscriptionsStoreSelectors.getSubscriptions),
+                            map(items => {
+                                return (items || []).map(parent => {
+                                    parent.uid = parent.id;
+                                    parent.serviceProductLevels.forEach(child => {
+                                        child.uid = parent.id + ':' + child.id;
+                                    });
+                                    return parent;
+                                });
+                            })
+                        ),
                         dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
                         recursive: true,
                         nameField: 'name',
-                        keyExpr: 'id',
+                        keyExpr: 'uid',
                         dataStructure: 'tree',
                         itemsExpr: 'serviceProductLevels'
                     })
