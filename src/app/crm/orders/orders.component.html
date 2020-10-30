@@ -112,6 +112,9 @@
                                 <dxi-column [dataField]="orderFields.Stage" [caption]="l('Stage')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.Amount" [caption]="l('Amount')" cellTemplate="amountCell" [width]="185" cssClass="padding-right" ></dxi-column>
                                 <dxi-column [dataField]="orderFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column [dataField]="orderFields.AffiliateContactAffiliateCode" [caption]="l('AffiliateContactAffiliateCode')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column [dataField]="orderFields.AffiliateContactId" [caption]="l('AffiliateContactId')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
+                                <dxi-column [dataField]="orderFields.AffiliateContactName" [caption]="l('AffiliateContactName')" cssClass="clipboard-holder"></dxi-column>
                                 <dxi-column [dataField]="orderFields.OrderDate" [caption]="l('Created')" sortOrder="desc" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                                 <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>

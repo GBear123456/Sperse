@@ -13,6 +13,9 @@ export interface OrderDto {
     Amount: number;
     OrderType: string;
     OrderDate: string;
+    AffiliateContactAffiliateCode: string;
+    AffiliateContactId: string;
+    AffiliateContactName: string;
     PersonalAffiliateCode: string;
     SourceAffiliateCode: string;
     SourceEntryUrl: string;

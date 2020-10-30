@@ -38,9 +38,9 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
             beforeSend: (request) => {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                request.params.$filter = '(AvailableBalance gt 0)' + 
+                request.params.$filter = '(AvailableBalance gt 0)' +
                     (this.searchValue ? " and contains(FullName, '" + this.searchValue + "')" : '');
-                request.params.$select = [ 
+                request.params.$select = [
                     ResellersFields.Id,
                     ResellersFields.FullName,
                     ResellersFields.AvailableBalance
@@ -83,7 +83,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                         )).subscribe(() => {
                             this.notify.success(this.ls.l('SuccessfullyAdded'));
                             this.dialogRef.close();
-                        });                        
+                        });
                     }
                 }, []
             );
@@ -100,5 +100,9 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                 this.dataSource.reload();
             }
         }, 600);
+    }
+
+    onSelectionChanged(event) {
+        this.withdrawalAmount = event.selectedItem.AvailableBalance;
     }
 }

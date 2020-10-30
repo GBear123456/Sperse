@@ -10,7 +10,8 @@
             [dataSource]="dataSource"
             [(value)]="selectedContact"
             itemTemplate="commonView"
-            fieldTemplate="commonView">
+            fieldTemplate="commonView"
+            (onSelectionChanged)="onSelectionChanged($event)">
             <div *dxTemplate="let cell of 'commonView'" class="contact-field-template">
                 <dx-text-box
                     width="230px"
