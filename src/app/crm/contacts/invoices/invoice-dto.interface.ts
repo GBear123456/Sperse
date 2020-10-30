@@ -13,4 +13,5 @@ export interface InvoiceDto {
     OrderNumber: string;
     OrderStage: string;
     OrderType: string;
+    AffiliateContactName: string;
 }
