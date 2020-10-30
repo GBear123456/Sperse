@@ -3,6 +3,8 @@ import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-i
 import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 
 export class SourceFilterModelBase extends FilterItemModel {
+    contactFieldExpr = 'SourceContactId';
+
     public getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         this.value.forEach((item) => {
@@ -40,6 +42,8 @@ export class SourceContactFilterModel extends SourceFilterModelBase {
 
     constructor(init?: Partial<SourceContactFilterModel>) {
         super(init, true);
+        if (init && init.contactFieldExpr)
+            this.contactFieldExpr = init.contactFieldExpr;
     }
 
     get value() {
@@ -47,7 +51,7 @@ export class SourceContactFilterModel extends SourceFilterModelBase {
             {
                 property: 'contact',
                 label: this.ls.l('SourceContact'),
-                name: 'SourceContactId',
+                name: this.contactFieldExpr,
                 value: this.contact && this.contact.id,
                 displayValue: this.contact && this.contact.name
             }
@@ -83,7 +87,7 @@ export class SourceFilterModel extends SourceFilterModelBase {
                 label: this.ls.l('SourceAffiliateCode'),
                 name: 'SourceAffiliateCode',
                 value: this.affiliateCode
-            }, 
+            },
             {
                 property: 'contact',
                 label: this.ls.l('SourceContact'),

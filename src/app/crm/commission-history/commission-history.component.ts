@@ -43,6 +43,8 @@ import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
+import { SourceContactFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
@@ -242,6 +244,16 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     commissionFilters = [
         new FilterModel({
+            component: FilterSourceComponent,
+            caption: 'Source',
+            items: {
+                element: new SourceContactFilterModel({
+                    contactFieldExpr: this.commissionFields.ResellerContactId,
+                    ls: this.localizationService
+                })
+            }
+        }),
+        new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'OrderDate',
@@ -314,6 +326,16 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     ];
 
     ledgerFilters = [
+        new FilterModel({
+            component: FilterSourceComponent,
+            caption: 'Source',
+            items: {
+                element: new SourceContactFilterModel({
+                    contactFieldExpr: this.ledgerFields.ContactId,
+                    ls: this.localizationService
+                })
+            }
+        }),
         new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'Type',
