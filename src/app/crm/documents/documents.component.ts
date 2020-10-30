@@ -29,7 +29,7 @@ export class DocumentsComponent {
     @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
 
     fileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/FileManager/Files'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
     });
     allowedFileExtensions = ['.csv', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.tiff', '.pdf'];
 
