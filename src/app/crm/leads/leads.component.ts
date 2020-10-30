@@ -168,7 +168,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
                     action: (data?) => {
-                        this.contactService.showSMSDialog({                    
+                        this.contactService.showSMSDialog({
                             phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                         });
                     }
@@ -541,7 +541,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields[this.dateField],
         this.leadFields.PhotoPublicId,
         this.leadFields.Email,
-        this.leadFields.Phone
+        this.leadFields.Phone,
+        this.leadFields.AffiliateContactName,
+        this.leadFields.AffiliateContactAffiliateCode
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
@@ -618,7 +620,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.leadFields.UserId,
                             this.leadFields.Email,
                             this.leadFields.Phone,
-                            this.leadFields.StageChecklistPointDoneCount
+                            this.leadFields.StageChecklistPointDoneCount,
+                            this.leadFields.AffiliateContactName,
+                            this.leadFields.AffiliateContactAffiliateCode
                         ]
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1838,7 +1842,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     });
                 }
             },
-            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites) } ]
+            [ { text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites), checked: false } ]
         );
     }
 
@@ -1972,7 +1976,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 [{
                     text: this.l('ApplyCurrentFrom', this.l('SourceContactName'), this.l('AffiliateCode')),
-                    visible: true
+                    visible: true,
+                    checked: false
                 }],
                 this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
             );

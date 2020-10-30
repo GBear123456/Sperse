@@ -368,7 +368,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
             },
             [{
                 text: this.ls.l('ForceDelete'),
-                visible: this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites)
+                visible: this.permissionService.isGranted(AppPermissions.CRMForceDeleteEntites), 
+                checked: false
             }]
         );
     }

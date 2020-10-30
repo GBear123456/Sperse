@@ -1,4 +1,5 @@
 export enum ReportType {
     Subscribers,
-    SubscribersStats
+    SubscribersStats,
+    SubscriptionTracker
 }

@@ -25,4 +25,5 @@ export interface CommissionDto {
     TransactionDate: string;
     TransactionGatewayName: string;
     TransactionId: string;
+    OrderId: string;
 }

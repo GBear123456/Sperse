@@ -9,6 +9,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import DevExpress from 'devextreme';
 
 declare const gapi: any;
 
@@ -59,17 +60,17 @@ export class ExportGoogleSheetService {
     }
 
     private uploadToGoogleDrive(accessToken: string, mimeType: string, blob: Blob, fileName): Promise<any> {
-        var fileMetadata = {
+        let fileMetadata = {
             name: fileName,
             mimeType: mimeType
         };
 
-        var form = new FormData();
+        let form = new FormData();
         form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
         form.append('file', blob);
 
         return new Promise(resolve => {
-            var xhr = new XMLHttpRequest();
+            let xhr = new XMLHttpRequest();
             xhr.open('post', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink');
             xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
             xhr.responseType = 'json';
@@ -140,20 +141,24 @@ export class ExportGoogleSheetService {
         return returnDateTime;
     }
 
-    getCellData(value: any, col: any) {
+    getCellData(value: any, col: DevExpress.ui.dxDataGridColumn) {
         let cellData = {
             userEnteredFormat: {
                 horizontalAlignment: col.fixedPosition || 'LEFT',
                 verticalAlignment: 'MIDDLE',
                 //wrapStrategy:'LEGACY_WRAP',
-                numberFormat: {
-                }
+                numberFormat: {}
             },
             userEnteredValue: {}
         };
 
-        if (typeof (value) == 'number') {
+        if (!isNaN(+value)) {
             cellData.userEnteredValue['numberValue'] = value;
+            if (col.cellTemplate === 'amountCell') {
+                cellData.userEnteredFormat.numberFormat['type'] = 'CURRENCY';
+            } else if (col.cellTemplate === 'rateCell') {
+                cellData.userEnteredFormat.numberFormat['type'] = 'PERCENT';
+            }
         } else if (typeof (value) == 'boolean') {
             cellData.userEnteredValue['boolValue'] = value;
         } else if (value instanceof Date) {

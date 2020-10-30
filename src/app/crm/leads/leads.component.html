@@ -198,6 +198,16 @@
                                         [caption]="l('Stage')"
                                         cssClass="clipboard-holder">
                             </dxi-column>
+                            <dxi-column [dataField]="leadFields.AffiliateContactName"
+                                        [caption]="l('AffiliateContactName')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.AffiliateContactAffiliateCode"
+                                        [caption]="l('AffiliateContactAffiliateCode')"
+                                        [visible]="false"
+                                        cssClass="clipboard-holder">
+                            </dxi-column>
                             <ng-container *ngIf="tenantHasBankCodeFeature">
                                 <dxi-column dataField="BankCode"
                                             cellTemplate="bankCodeCell"

@@ -1,5 +1,13 @@
 /** Core imports */
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 
 /** Third party imports */
@@ -7,8 +15,9 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { Subject } from 'rxjs';
-import { takeUntil, map, filter } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
@@ -38,8 +47,13 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { ReportType } from '@app/crm/reports/report-type.enum';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { ToolbarGroupModel } from '../../shared/common/toolbar/toolbar.model';
-import {AppSessionService} from "@shared/common/session/app-session.service";
+import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { AppSessionService } from "@shared/common/session/app-session.service";
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { SubscriptionTrackerDto } from '@app/crm/reports/subscription-tracker-dto';
+import { SubscriptionTrackerFields } from '@app/crm/reports/subscription-tracker-fields.enum';
+import { ODataService } from '@shared/common/odata/odata.service';
+import { TransactionDto } from '@app/crm/reports/transction-dto';
 
 @Component({
     selector: 'reports-component',
@@ -54,6 +68,7 @@ import {AppSessionService} from "@shared/common/session/app-session.service";
 export class ReportsComponent implements OnInit, AfterViewInit {
     @ViewChild('subscribersDataGrid', { static: false }) subscribersDataGrid: DxDataGridComponent;
     @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
+    @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
     toolbarConfig: ToolbarGroupModel[] = [
         {
             location: 'before', items: [
@@ -172,6 +187,46 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             });
         }
     });
+    readonly subscriptionTrackerFields: KeysEnum<SubscriptionTrackerDto> = SubscriptionTrackerFields;
+    transactionMonthsObj = {};
+    transactionMonths: string[];
+    subscriptionTrackerDataSource = {
+        requireTotalCount: true,
+        store: {
+            type: 'odata',
+            key: this.subscriptionTrackerFields.ContactId,
+            url: this.oDataService.getODataUrl('SubscriptionTracker'),
+            version: AppConsts.ODataVersion,
+            deserializeDates: false,
+            beforeSend: (request) => {
+                this.isDataLoaded = false;
+                this.changeDetectorRef.detectChanges();
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            },
+            onLoaded: (contacts: SubscriptionTrackerDto[]) => {
+                const monthFormat = 'MMM YY';
+                contacts.forEach((contact: SubscriptionTrackerDto) => {
+                    contact['TransactionRevenues'] = {};
+                    contact['TransactionRefunds'] = {};
+                    contact['TransactionNetCollected'] = {};
+                    contact.Transactions.forEach((transaction: TransactionDto) => {
+                        const month: moment.Moment = moment(transaction.Date);
+                        const monthString: string = month.format(monthFormat)
+                        this.transactionMonthsObj[monthString] = month;
+                        if (transaction.Amount > 0) {
+                            contact['TransactionRevenues'][monthString] = (contact['TransactionRevenues'][monthString] || 0) + transaction.Amount;
+                        } else if (transaction.Amount < 0) {
+                            contact['TransactionRefunds'][monthString] = (contact['TransactionRefunds'][monthString] || 0) + transaction.Amount;
+                        }
+                        contact['TransactionNetCollected'][monthString] = (contact['TransactionNetCollected'][monthString] || 0) + transaction.Amount;
+                    });
+                });
+                this.transactionMonths = Object.values(this.transactionMonthsObj)
+                    .sort((dateA: moment.Moment, dateB: moment.Moment) => dateA.isAfter(dateB) ? 1 : -1)
+                    .map((date: moment.Moment) => date.format(monthFormat));
+            }
+        }
+    };
     filters = [
         new FilterModel({
             component: FilterCheckBoxesComponent,
@@ -213,9 +268,19 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         {
             text: this.ls.l('SubscriberDailyStats'),
             value: ReportType.SubscribersStats
+        },
+        {
+            text: this.ls.l('SubscriptionTrackerReport'),
+            value: ReportType.SubscriptionTracker
         }
     ];
     reportTypesEnum = ReportType;
+    subscriptionTrackerColumnsVisibility = {
+        buyerInfo: false,
+        revenue: false,
+        refunds: false,
+        netCollected: false
+    };
 
     constructor(
         private filtersService: FiltersService,
@@ -231,6 +296,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         private cacheHelper: CacheHelper,
         private invoiceService: InvoicesService,
         private appSessionService: AppSessionService,
+        private oDataService: ODataService,
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService,
         public appService: AppService,
@@ -268,13 +334,17 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     get dataSource() {
         return this.selectedReportType === ReportType.Subscribers
             ? this.subscribersDataSource
-            : this.statsDataSource;
+            : (this.selectedReportType === ReportType.SubscribersStats
+               ? this.statsDataSource
+               : this.subscriptionTrackerDataSource);
     }
 
     get dataGrid() {
         return this.selectedReportType === ReportType.Subscribers
                 ? this.subscribersDataGrid
-                : this.statsDataGrid;
+                : (this.selectedReportType === ReportType.SubscribersStats
+                   ? this.statsDataGrid
+                   : this.subscriptionTrackerGrid);
     }
 
     toggleColumnChooser() {
@@ -292,8 +362,18 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.filtersService.disable();
     }
 
-    onContentReady() {
+    onContentReady(saveCount = false) {
         this.isDataLoaded = true;
+        if (saveCount) {
+            let gridInstance = this.dataGrid && this.dataGrid.instance;
+            if (gridInstance) {
+                let dataSource = gridInstance.getDataSource && gridInstance.getDataSource();
+                if (dataSource) {
+                    this.totalCount = dataSource.totalCount();
+                }
+            }
+        }
+
         this.changeDetectorRef.detectChanges();
     }
 
@@ -305,17 +385,17 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
 
-    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data. bankPassFee);
+    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.bankPassFee);
 
-    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data. bankVaultFee);
+    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.bankVaultFee);
 
     customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.wtbFee);
 
-    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data. totalFee);
+    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.totalFee);
 
-    customizeBankConnectAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data. bankConnectAmount);
+    customizeBankConnectAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.bankConnectAmount);
 
-    customizeBankBeyondAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data. bankBeyondAmount);
+    customizeBankBeyondAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.bankBeyondAmount);
 
     customizeStarterKitAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.starterKitAmount);
 
@@ -332,11 +412,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     customizeAmountSummary = (itemInfo) => this.currencyPipe.transform(itemInfo.value, this.currency);
 
     initDataSource() {
-        if (this.selectedReportType === ReportType.Subscribers) {
-            this.setDataGridInstance(this.dataGrid);
-        } else if (this.selectedReportType === ReportType.SubscribersStats) {
-            this.setDataGridInstance(this.dataGrid);
-        }
+        this.setDataGridInstance(this.dataGrid);
     }
 
     private setDataGridInstance(dataGrid: DxDataGridComponent) {
@@ -355,6 +431,29 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                  this.initDataSource();
                  this.reload();
             });
+        }
+    }
+
+    getFullName = (data: SubscriptionTrackerDto) => {
+        return data.FullName;
+    }
+
+    getTotalRevenue = (data: SubscriptionTrackerDto) => this.currencyPipe.transform(data.TotalRevenue);
+
+    getTotalRefunds = (data: SubscriptionTrackerDto) => this.currencyPipe.transform(data.TotalRefunds);
+
+    getNetCollected = (data: SubscriptionTrackerDto) => this.currencyPipe.transform(data.TotalRevenue + data.TotalRefunds);
+
+    getMonthValue = (cell) => {
+        return this.currencyPipe.transform(cell.value || 0);
+    }
+
+    trackerGridCellClick(cell) {
+        //console.log(cell);
+        /** Expand/collapse parent columns */
+        if (cell.event.target.classList.contains('toggle-button')) {
+            this.subscriptionTrackerColumnsVisibility[cell.column.name] = !this.subscriptionTrackerColumnsVisibility[cell.column.name];
+            cell.event.stopPropagation();
         }
     }
 

@@ -468,7 +468,6 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         this.files = files;
         if (this.files.length) {
             let file = this.files[0];
-
             if (file.fileEntry)
                 file.fileEntry['file'](this.loadFileContent.bind(this));
             else

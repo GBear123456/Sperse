@@ -32,4 +32,6 @@ export interface LeadDto {
     BankCode: string;
     StageChecklistPointDoneCount: number;
     ContactGroupId: string;
+    AffiliateContactName: string;
+    AffiliateContactAffiliateCode: string;
 }

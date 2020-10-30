@@ -1582,7 +1582,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     this.deleteOrdersInternal(forceDelete, orderIds);
                 }
             },
-            [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites)}]
+            [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites), checked: false }]
         );
     }
 

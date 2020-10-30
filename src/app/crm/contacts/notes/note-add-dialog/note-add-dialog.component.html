@@ -12,7 +12,12 @@
                         [(value)]="type">
                     </dx-select-box>
                     <mat-dialog-actions>
-                        <button mat-button (click)="saveNote()" [disabled]="!enableSaveButton" class="button-layout button-primary">{{l('Save')}}</button>
+                        <button mat-button
+                                [disabled]="!enableSaveButton"
+                                class="button-layout button-primary"
+                                (click)="saveNote()">
+                            {{l('Save')}}
+                        </button>
                     </mat-dialog-actions>
                     <span class="close" (click)="close()"></span>
                 </div>
