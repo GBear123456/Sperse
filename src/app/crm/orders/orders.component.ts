@@ -758,9 +758,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             select(SubscriptionsStoreSelectors.getSubscriptions),
                             map(items => {
                                 return (items || []).map(parent => {
-                                    parent.uid = parent.id;
+                                    parent['uid'] = parent.id;
                                     parent.serviceProductLevels.forEach(child => {
-                                        child.uid = parent.id + ':' + child.id;
+                                        child['uid'] = parent.id + ':' + child.id;
                                     });
                                     return parent;
                                 });

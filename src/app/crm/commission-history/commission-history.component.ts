@@ -251,7 +251,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     contactFieldExpr: this.commissionFields.ResellerContactId,
                     ls: this.localizationService
                 })
-            }
+            },
+            filterMethod: FiltersService.filterBySource
         }),
         new FilterModel({
             component: FilterCalendarComponent,
@@ -334,7 +335,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     contactFieldExpr: this.ledgerFields.ContactId,
                     ls: this.localizationService
                 })
-            }
+            },
+            filterMethod: FiltersService.filterBySource
         }),
         new FilterModel({
             component: FilterCheckBoxesComponent,
