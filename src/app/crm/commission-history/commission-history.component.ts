@@ -244,8 +244,16 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
-            caption: 'earnedDate',
+            caption: 'OrderDate',
             field: this.commissionFields.OrderDate,
+            items: { from: new FilterItemModel(), to: new FilterItemModel() },
+            options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
+        }),
+        new FilterModel({
+            component: FilterCalendarComponent,
+            operator: { from: 'ge', to: 'le' },
+            caption: 'EarnedDate',
+            field: this.commissionFields.EarnedDate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),

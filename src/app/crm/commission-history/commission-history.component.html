@@ -86,7 +86,8 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.OrderNumber"
+                        <dxi-column width="180px"
+                                    [dataField]="commissionFields.OrderNumber"
                                     [caption]="l('OrderNumber')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
@@ -95,6 +96,11 @@
                                     cellTemplate="dateCell"                                     
                                     cssClass="tabular">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.EarnedDate"
+                                    [caption]="l('EarnedDate')" 
+                                    cellTemplate="dateCell"                                     
+                                    cssClass="tabular">
+                        </dxi-column> 
                         <dxi-column [dataField]="commissionFields.InvoiceDate"
                                     [caption]="l('InvoiceDate')" 
                                     cellTemplate="dateCell" 
@@ -118,13 +124,13 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        <dxi-column width="130px"
+                        <dxi-column width="120px"
                                     [dataField]="commissionFields.ProductAmount"
                                     [caption]="l('Price')"
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
-                        <dxi-column width="150px"
+                        <dxi-column width="120px"
                                     [dataField]="commissionFields.CommissionableAmount"
                                     [caption]="l('CV')"
                                     [format]="currencyFormat$ | async"
