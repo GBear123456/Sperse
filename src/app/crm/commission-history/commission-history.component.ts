@@ -490,6 +490,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.filtersService.setup(
                 this.filters = this.getFilters()
             );
+            if (!this.filters.length) {
+                this.filtersService.fixed = false;
+            }
         }
 
         this.filtersService.apply(() => {
@@ -502,12 +505,12 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             ? this.commissionFilters
             : (this.selectedViewType === this.LEDGER_VIEW
                ? this.ledgerFilters
-               : null
+               : []
             );
     }
 
     initToolbarConfig() {
-        let calcelButton = {
+        let cancelButton = {
             widget: 'dxButton',
             options: {
                 text: this.l('Cancel' + (this.selectedViewType == this.LEDGER_VIEW ? 'Ledgers' : 'Commissions')),
@@ -519,7 +522,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 onClick: this.applyCancel.bind(this)
             }
         };
-
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -594,7 +596,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             onClick: this.approveEarnings.bind(this)
                         }
                     },
-                    calcelButton,
+                    cancelButton,
                     {
                         widget: 'dxButton',
                         options: {
@@ -617,7 +619,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 this.sourceComponent.toggle();
                             }
                         }
-                    }, calcelButton
+                    }, cancelButton
                 ]
             },
             {
