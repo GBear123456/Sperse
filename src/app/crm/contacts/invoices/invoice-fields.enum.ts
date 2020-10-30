@@ -14,4 +14,5 @@ export const InvoiceFields: KeysEnum<InvoiceDto> = {
     OrderNumber: 'OrderNumber',
     OrderStage: 'OrderStage',
     OrderType: 'OrderType',
+    AffiliateContactName: 'AffiliateContactName'
 };
