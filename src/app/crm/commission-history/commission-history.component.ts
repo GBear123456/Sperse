@@ -245,7 +245,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     commissionFilters = [
         new FilterModel({
             component: FilterSourceComponent,
-            caption: 'Source',
+            caption: 'Reseller',
             items: {
                 element: new SourceContactFilterModel({
                     contactFieldExpr: this.commissionFields.ResellerContactId,
@@ -328,7 +328,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     ledgerFilters = [
         new FilterModel({
             component: FilterSourceComponent,
-            caption: 'Source',
+            caption: 'Reseller',
             items: {
                 element: new SourceContactFilterModel({
                     contactFieldExpr: this.ledgerFields.ContactId,
