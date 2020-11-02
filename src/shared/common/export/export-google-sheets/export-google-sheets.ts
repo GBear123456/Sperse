@@ -152,12 +152,14 @@ export class ExportGoogleSheetService {
             userEnteredValue: {}
         };
 
-        if (!isNaN(+value)) {
+        if (typeof value == 'number') {
             cellData.userEnteredValue['numberValue'] = value;
-            if (col.cellTemplate === 'amountCell') {
-                cellData.userEnteredFormat.numberFormat['type'] = 'CURRENCY';
-            } else if (col.cellTemplate === 'rateCell') {
-                cellData.userEnteredFormat.numberFormat['type'] = 'PERCENT';
+            if (col.format) {
+                if (col.format['type'] && col.format['type'] === 'currency') {
+                    cellData.userEnteredFormat.numberFormat['type'] = 'CURRENCY';
+                } else if (col.format === 'percent') {
+                    cellData.userEnteredFormat.numberFormat['type'] = 'PERCENT';
+                }
             }
         } else if (typeof (value) == 'boolean') {
             cellData.userEnteredValue['boolValue'] = value;
