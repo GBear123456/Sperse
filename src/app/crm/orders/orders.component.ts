@@ -10,8 +10,19 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable } from 'rxjs';
-import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil, debounceTime } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import {
+    filter,
+    finalize,
+    first,
+    map,
+    mapTo,
+    pluck,
+    skip,
+    switchMap,
+    takeUntil,
+    distinctUntilChanged
+} from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 
@@ -116,6 +127,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.showOrdersPipeline ? DataLayoutType.Pipeline : DataLayoutType.DataGrid
     );
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
@@ -125,7 +137,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
     showCompactView$: Observable<Boolean> = combineLatest(
-        this.dataLayoutType.asObservable(),
+        this.dataLayoutType$,
         this.pipelineService.compactView$,
         this.gridCompactView.asObservable(),
     ).pipe(
@@ -431,9 +443,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    oDataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues();
+    ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
+    subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
-    search$: Observable<string> = this.search.asObservable();
+    search$: Observable<string> = this.search.asObservable().pipe(distinctUntilChanged());
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -536,14 +549,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     };
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
-        this.oDataRequestValues$,
+        this.ordersODataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
-        debounceTime(600),
         takeUntil(this.destroy$),
-        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid && this.selectedOrderType.value == OrderType.Order),
-        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
+        switchMap(this.waitUntilLayoutType(DataLayoutType.DataGrid)),
+        switchMap(this.waitUntilOrderType(OrderType.Order)),
+        map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
             return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -569,14 +582,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
-        this.oDataRequestValues$,
+        this.subscriptionsODataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
-        debounceTime(600),
         takeUntil(this.destroy$),
-        filter(() => this.selectedOrderType.value == OrderType.Subscription),
-        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
+        switchMap(this.waitUntilOrderType(OrderType.Subscription)),
+        map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
             return this.getODataUrl(
                 'SubscriptionSlice',
                 oDataRequestValues.filter,
@@ -829,6 +841,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.selectedOrderType.value === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
 
+    private waitUntilOrderType(orderType: OrderType) {
+        return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
+            filter((dataOrderType: OrderType) => dataOrderType === orderType),
+            first(),
+            mapTo(data)
+        );
+    }
+
+    private waitUntilLayoutType(layoutType: DataLayoutType) {
+        return (data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+            first(),
+            mapTo(data)
+        );
+    }
+
     get dataSource() {
         return this.selectedOrderType.value === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
@@ -838,10 +866,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         || this.selectedOrderType.value === OrderType.Subscription;
     }
 
-    getODataRequestValues() {
+    getODataRequestValues(orderType: OrderType) {
         return concat(
             this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
+                filter(() => this.selectedOrderType.value === orderType),
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(
