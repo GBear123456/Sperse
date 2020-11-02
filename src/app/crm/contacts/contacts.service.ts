@@ -658,7 +658,7 @@ export class ContactsService {
                 },
                 [ {
                     text: this.ls.l('SendCancellationEmail'),
-                    visible: this.userId.value && status.id === ContactStatus.Inactive, 
+                    visible: this.userId.value && status.id === ContactStatus.Inactive,
                     checked: false
                 } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')

@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ls.l('UploadDocumentsDialogTitle')}}<span class="close" (click)="close()"></span></h2>
+<mat-dialog-content>
+    <div class="wrapper">
+        <dx-file-manager
+            width="360px"
+            [height]="getHeight()"
+            [fileProvider]="fileProvider" 
+            [itemView]="{mode: 'thumbnails'}"
+            [allowedFileExtensions]="allowedFileExtensions"
+            (onOptionChanged)="onSelectedFileOpened($event)"
+            (onContentReady)="onContentReady()">
+            <dxo-permissions 
+                [create]="false"
+                [copy]="false"
+                [move]="false"
+                [remove]="false"
+                [rename]="false"
+                [upload]="false"
+                [download]="false">
+            </dxo-permissions>
+        </dx-file-manager>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onAddFile()">{{ls.l('Add')}}</button>
+</mat-dialog-actions>

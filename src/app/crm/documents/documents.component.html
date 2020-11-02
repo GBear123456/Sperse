@@ -4,15 +4,18 @@
 </app-headline>
 <div [@routerTransition]>
     <div class="wrapper">
-        <dx-file-manager [fileProvider]="fileProvider" [allowedFileExtensions]="allowedFileExtensions" [height]="getHeight()">
+        <dx-file-manager 
+            [fileProvider]="fileProvider" 
+            [allowedFileExtensions]="allowedFileExtensions" 
+            [height]="getHeight()">
             <dxo-permissions 
-                create="true"
-                copy="false"
-                move="true"
-                delete="true"
-                rename="true"
-                upload="true"
-                download="true">
+                [create]="true"
+                [copy]="false"
+                [move]="true"
+                [remove]="true"
+                [rename]="true"
+                [upload]="true"
+                [download]="true">
             </dxo-permissions>
         </dx-file-manager>
     </div>
