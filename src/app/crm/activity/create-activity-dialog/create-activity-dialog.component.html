@@ -61,15 +61,15 @@
                             <ng-container *ngFor="let type of ['date', 'datetime']">
                                 <dx-date-box #startDateRef
                                              maxLength="10"
-                                             *ngIf="isAllDay ? type == 'date' : type =='datetime'"
+                                             *ngIf="type == (isAllDay ? 'date' : 'datetime')"
                                              [type]="type"
-                                             [max]="endDate"
+                                             [max]="getEndDayTime(endDate)"
                                              (onFocusIn)="openCalendar($event)"
                                              (onClosed)="removeFocusFromElement($event)"
                                              [(value)]="startDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
-                                                             message="{{ls.l('StartDateIsRequired')}}."></dxi-validation-rule>
+                                            message="{{ls.l('StartDateIsRequired')}}."></dxi-validation-rule>
                                     </dx-validator>
                                 </dx-date-box>
                             </ng-container>
@@ -82,16 +82,16 @@
                         <div class="col-4 align-self-center">
                             <ng-container *ngFor="let type of ['date', 'datetime']">
                                 <dx-date-box #endDateRef
-                                             *ngIf="isAllDay ? type == 'date' : type =='datetime'"
+                                             *ngIf="type == (isAllDay ? 'date' : 'datetime')"
                                              maxLength="10"
                                              [type]="type"
-                                             [min]="startDate"
+                                             [min]="getStartDayTime(startDate)"
                                              (onFocusIn)="openCalendar($event)"
                                              (onClosed)="removeFocusFromElement($event)"
                                              [(value)]="endDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
-                                                             message="{{ls.l('EndDateIsRequired')}}."></dxi-validation-rule>
+                                            message="{{ls.l('EndDateIsRequired')}}."></dxi-validation-rule>
                                     </dx-validator>
                                 </dx-date-box>
                             </ng-container>
