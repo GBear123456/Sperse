@@ -66,6 +66,14 @@ export class DocumentsComponent {
         this.fileManager.instance.refresh();
     }
 
+    customizeDetailColumns(columns) {
+        return columns.map(column => {
+            if (column.dataField == 'dateModified')
+                column.width = 200;
+            return column;
+        });
+    }
+
     activate() {
         this.ui.overflowHidden(true);
         this.lifeCycleSubject.activate.next();
