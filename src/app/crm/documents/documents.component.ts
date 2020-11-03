@@ -32,6 +32,17 @@ export class DocumentsComponent {
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
     });
     allowedFileExtensions = ['.csv', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.tiff', '.pdf'];
+    contextMenu = {
+        items: [            
+            {
+                name: 'load',
+                icon: 'download',
+                closeMenuOnClick: true,
+                text: this.ls.l('Download'),
+                onClick: this.download.bind(this)
+            }, 'rename', 'move', 'delete', 'refresh'
+        ]
+    };
 
     constructor(
         private appService: AppService,
@@ -39,7 +50,12 @@ export class DocumentsComponent {
         private lifeCycleSubject: LifecycleSubjectsService,
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService
-    ) {
+    ) {}
+
+    download(event) {
+        this.fileManager.instance.getSelectedItems().forEach(item => {
+            //this.documentsService.downloadDocument(item.key);
+        });
     }
 
     getHeight() {

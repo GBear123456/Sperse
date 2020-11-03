@@ -4,7 +4,8 @@
 </app-headline>
 <div [@routerTransition]>
     <div class="wrapper">
-        <dx-file-manager 
+        <dx-file-manager
+            [contextMenu]="contextMenu"
             [fileProvider]="fileProvider" 
             [allowedFileExtensions]="allowedFileExtensions" 
             [height]="getHeight()">
@@ -15,7 +16,7 @@
                 [remove]="true"
                 [rename]="true"
                 [upload]="true"
-                [download]="true">
+                [download]="false">
             </dxo-permissions>
         </dx-file-manager>
     </div>
