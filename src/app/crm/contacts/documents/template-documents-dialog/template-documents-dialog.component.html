@@ -7,7 +7,6 @@
             [fileProvider]="fileProvider" 
             [itemView]="{mode: 'thumbnails'}"
             [allowedFileExtensions]="allowedFileExtensions"
-            (onOptionChanged)="onSelectedFileOpened($event)"
             (onContentReady)="onContentReady()">
             <dxo-permissions 
                 [create]="false"
