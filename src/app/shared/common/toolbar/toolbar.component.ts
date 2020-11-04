@@ -321,7 +321,6 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 icon: this.getImgURI('folder')
             },
             options: {
-                hint: this.ls.l('Options'),
                 accessKey: 'settings',
                 icon: this.getImgURI('profile-gear'),
                 text: this.ls.l('Settings')
@@ -436,10 +435,10 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         let supportedButtons = this.getSupportedButtons();
         let items = [];
         if (this._config)
-            this._config.forEach((group, configIndex: number) => {
+            this._config.forEach((group: ToolbarGroupModel, configIndex: number) => {
                 let groupItems = group.items.filter((item => this.checkItemVisible(item))),
                     count = groupItems.length;
-                groupItems.forEach((item, index) => {
+                groupItems.forEach((item: ToolbarGroupModelItem, index: number) => {
                     this.initDropDownMenu(item);
                     let internalConfig = supportedButtons[item.name];
                     let mergedConfig = _.extend(
