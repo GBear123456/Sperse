@@ -12,6 +12,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
 import {
+    distinctUntilChanged,
     filter,
     finalize,
     first,
@@ -20,8 +21,7 @@ import {
     pluck,
     skip,
     switchMap,
-    takeUntil,
-    distinctUntilChanged
+    takeUntil
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
@@ -82,6 +82,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -384,7 +385,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     permissions = AppPermissions;
     currency: string;
-    totalCount: number;
+    ordersTotalCount: number;
+    subscriptionsTotalCount: number;
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
@@ -841,6 +843,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.selectedOrderType.value === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
 
+    set totalCount(value: number) {
+        if (this.selectedOrderType.value === OrderType.Order) {
+            this.ordersTotalCount = value;
+        } else if (this.selectedOrderType.value === OrderType.Subscription) {
+            this.subscriptionsTotalCount = value;
+        }
+    }
+
+    get totalCount() {
+        return this.selectedOrderType.value === OrderType.Order
+               ? this.ordersTotalCount
+               : this.subscriptionsTotalCount;
+    }
+
     private waitUntilOrderType(orderType: OrderType) {
         return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
             filter((dataOrderType: OrderType) => dataOrderType === orderType),
@@ -868,13 +884,19 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     getODataRequestValues(orderType: OrderType) {
         return concat(
-            this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
+            /** Do not emit initial empty filters for subscriptions since they apply its own initial filters */
+            orderType === OrderType.Subscription
+                ? of(null)
+                : this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
                 filter(() => this.selectedOrderType.value === orderType),
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
+            distinctUntilChanged((prev: ODataRequestValues, curr: ODataRequestValues) => {
+                return prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
+            })
         );
     }
 
@@ -1414,7 +1436,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     subscribeToFilter() {
-        this.filtersService.apply(filters => {
+        this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
             this.processFilterInternal();
@@ -1655,7 +1677,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private changeOrderType(orderType: OrderType) {
-        this.totalCount = undefined;
         if (this.searchClear) {
             this.searchValue = '';
             this.search.next(this.searchValue);
