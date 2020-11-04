@@ -9,6 +9,7 @@ import {
 /** Third party imports */
 import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
+import { loadMessages } from "devextreme/localization";
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -31,7 +32,7 @@ export class DocumentsComponent {
     fileProvider = new RemoteFileProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
     });
-    allowedFileExtensions = ['.csv', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.tiff', '.pdf'];
+
     contextMenu = {
         items: [            
             {
@@ -50,7 +51,13 @@ export class DocumentsComponent {
         private lifeCycleSubject: LifecycleSubjectsService,
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        loadMessages({
+            'en': {
+                'dxFileManager-newDirectoryName': this.ls.l('TypeDirectoryName'),
+            }
+        });
+    }
 
     download(event) {
         this.fileManager.instance.getSelectedItems().forEach(item => {
