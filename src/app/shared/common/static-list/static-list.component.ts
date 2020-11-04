@@ -74,7 +74,7 @@ export class StaticListComponent {
     get selectionDisabled() {
         return (this.relatedItemsKeys && !this.relatedItemsKeys.length)
             || (!this.highlightSelected && !this.isBulkUpdateAvailable());
-    };
+    }
 
     constructor(
         private filtersService: FiltersService,
@@ -97,15 +97,17 @@ export class StaticListComponent {
 
     changeItems(selectedData = this.selectedItems[0]) {
         if (this.relatedItemsKeys && this.relatedItemsKeys.length && this.showConfirmation && this.isBulkUpdateAvailable()) {
+            this.toggle();
             this.messageService.confirm(
                 this.updateConfirmationMessage || this.ls.l('BulkUpdateConfirmation', this.relatedItemsKeys.length),
                 this.updateConfirmationTitle || null,
                 isConfirmed => {
                     isConfirmed && this.onItemSelected.emit(selectedData);
+                    this.selectedItems = [];
                 }
             );
-        }
-        this.onItemSelected.emit(selectedData);
+        } else
+            this.onItemSelected.emit(selectedData);
     }
 
     onInitialized($event) {
