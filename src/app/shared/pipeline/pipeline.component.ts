@@ -243,6 +243,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.getEntityById(this.getAccessKey(value[4]), newStage),
                         newStage
                     );
+                this.pipelineService.resetIgnoreChecklist();
                 if (value[1].classList.contains('selected')) {
                     const checkReloadStages = (entity, stages?: Stage[]) => {
                         this.selectedEntities.splice(this.selectedEntities.indexOf(entity), 1);
