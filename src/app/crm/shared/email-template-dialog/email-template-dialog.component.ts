@@ -31,6 +31,8 @@ import {
     ContactServiceProxy,
     GetEmailDataOutput
 } from '@shared/service-proxies/service-proxies';
+import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
+import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
@@ -118,6 +120,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
         private communicationProxy: ContactCommunicationServiceProxy,
+        private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -566,6 +569,38 @@ export class EmailTemplateDialogComponent implements OnInit {
             });
         e.stopPropagation();
         e.preventDefault();
+    }
+
+    openDocuments() {
+        this.dialog.open(TemplateDocumentsDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: true,
+            closeOnNavigation: true,
+            data: {
+                fullHeight: true,
+                showProviders: true
+            }
+        }).afterClosed().subscribe(data => {
+            this.attachments = this.attachments.concat(
+                data.map(item => {
+                    let attachment = {
+                        id: item.key,
+                        name: item.name,
+                        size: item.size,
+                        progress: 0
+                    };
+                    return attachment;
+                })
+            );
+            this.changeDetectorRef.detectChanges();
+        });
+    }
+
+    attachmentClick(event, attachment) {
+        if (!attachment.url) {
+            this.documentsService.downloadDocument(attachment.id);
+            event.stopPropagation();
+        }
     }
 
     close() {

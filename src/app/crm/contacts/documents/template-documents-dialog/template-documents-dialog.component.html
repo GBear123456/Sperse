@@ -1,11 +1,20 @@
-<h2 mat-dialog-title>{{ls.l('UploadDocumentsDialogTitle')}}<span class="close" (click)="close()"></span></h2>
+<h2 mat-dialog-title>{{ls.l('TemplateDocumentsDialogTitle')}}<span class="close" (click)="close()"></span></h2>
 <mat-dialog-content>
     <div class="wrapper">
+        <dx-tabs 
+            [width]="300"
+            [dataSource]="folderTabs"
+            [selectedIndex]="data.showProviders ? 0 : 1"
+            [scrollByContent]="true"
+            [showNavButtons]="true"
+            (onSelectionChanged)="onProviderChanged($event)"
+        ></dx-tabs>
+        <i class="layout-view dx-icon-{{layout == 'details' ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
         <dx-file-manager
             width="360px"
             [height]="getHeight()"
-            [fileProvider]="fileProvider" 
-            [itemView]="{mode: 'thumbnails'}"
+            [fileProvider]="documentsFileProvider" 
+            [itemView]="{mode: layout}"
             [allowedFileExtensions]="allowedFileExtensions"
             (onContentReady)="onContentReady()">
             <dxo-permissions 

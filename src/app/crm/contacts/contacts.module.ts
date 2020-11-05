@@ -24,6 +24,7 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxButtonGroupModule } from 'devextreme-angular/ui/button-group';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
@@ -243,6 +244,7 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
         DxTreeListModule,
         DxTreeViewModule,
         DxTagBoxModule,
+        DxTabsModule,
         RoundProgressModule,
         PipelineModule,
         DxRadioGroupModule,

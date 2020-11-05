@@ -8,7 +8,6 @@ import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ContactsService } from '../../contacts.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -21,13 +20,34 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
 
     private slider: any;
-    fileProvider = new RemoteFileProvider({
+    private readonly VIEW_MODE_DETAILS    = 'details';
+    private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
+
+    layout = this.VIEW_MODE_THUMBNAILS;
+    documentsFileProvider = new RemoteFileProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
     });
-    allowedFileExtensions = ['.csv', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.tiff', '.pdf'];
+    templatesFileProvider = new RemoteFileProvider({
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
+    });
+    folderTabs = [
+        {     
+            id: 0,
+            visible: this.data.showProviders,
+            text: this.ls.l('Documents'),
+            provider: this.documentsFileProvider,
+            icon: "inactivefolder", 
+        },
+        { 
+            id: 1,
+            visible: true,
+            text: this.ls.l('Templates'),
+            provider: this.templatesFileProvider,
+            icon: "activefolder", 
+        }
+    ];
 
     constructor(
-        private clientService: ContactsService,
         private elementRef: ElementRef,
         private notify: NotifyService,
         private loadingService: LoadingService,
@@ -37,7 +57,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
-                top: '75px',
+                top: (this.data.fullHeight ? 0: 75) + 'px',
                 right: '-100vw'
             });
         });
@@ -48,7 +68,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
-            top: '75px',
+            top: (this.data.fullHeight ? 0: 75) + 'px',
             right: '-100vw'
         });
     }
@@ -60,7 +80,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             this.dialogRef.updateSize(undefined, '100vh');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
-                    top: '75px',
+                    top: (this.data.fullHeight ? 0: 75) + 'px',
                     right: '0px'
                 });
             }, 100);
@@ -79,8 +99,22 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         );
     }
 
+    onProviderChanged(event) {
+        this.fileManager.instance.option(
+            'fileProvider', 
+            event.addedItems[0].provider
+        );
+        console.log(event);        
+    }
+
     onAddFile() {
-        let item = this.fileManager.instance.getSelectedItems();
+        this.dialogRef.close(
+            this.fileManager.instance.getSelectedItems());
+    }
+
+    onLayoutToogle() {
+        this.layout = this.layout == this.VIEW_MODE_DETAILS 
+            ? this.VIEW_MODE_THUMBNAILS : this.VIEW_MODE_DETAILS;
     }
 
     close() {

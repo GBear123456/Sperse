@@ -41,7 +41,6 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ContactsService } from '../contacts.service';
 import { UploadDocumentsDialogComponent } from './upload-documents-dialog/upload-documents-dialog.component';
-import { TemplateDocumentsDialogComponent } from './template-documents-dialog/template-documents-dialog.component';
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
@@ -187,22 +186,11 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 options: {
                     text: this.l('Templates'),
                     onClick: () => {
-                        this.showTemplatesDialog();
+                        this.clientService.showTemplateDocumentsDialog();
                     }
                 }
             }
         }));
-    }
-
-    showTemplatesDialog() {
-        this.dialog.open(TemplateDocumentsDialogComponent, {
-            panelClass: ['slider'],
-            hasBackdrop: false,
-            closeOnNavigation: true,
-            data: {
-                contactId: this.data.contactInfo.id
-            }
-        });        
     }
 
     initViewerToolbar(conf: any = {}) {

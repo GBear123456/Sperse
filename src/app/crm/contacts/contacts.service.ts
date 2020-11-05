@@ -52,6 +52,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup } from '@shared/AppEnums';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { EmailTags } from './contacts.const';
+import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component';
 import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
@@ -546,6 +547,17 @@ export class ContactsService {
                 }
             }).afterClosed();
         }));
+    }
+
+    showTemplateDocumentsDialog(showProviders = false) {
+        this.dialog.open(TemplateDocumentsDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                showProviders: showProviders
+            }
+        });        
     }
 
     deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {
