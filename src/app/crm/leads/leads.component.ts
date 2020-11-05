@@ -1738,7 +1738,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.stagesComponent.tooltipVisible = false;
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
-                this.selectedLeads,
+                this.selectedLeads.filter(lead =>
+                    lead.Stage != $event.name),
                 $event.name,
                 this.contactGroupId.value
             ).subscribe(declinedList => {
