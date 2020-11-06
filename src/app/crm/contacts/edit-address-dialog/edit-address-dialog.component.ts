@@ -125,6 +125,9 @@ export class EditAddressDialog {
                     this.types = result.filter((type) => {
                         return type['isCompany'] == this.data.isCompany;
                     });
+                if (!this.data.usageTypeId)
+                    this.data.usageTypeId = this.types[0].id;
+
             });
     }
 
