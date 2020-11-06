@@ -4,7 +4,9 @@
 </app-headline>
 <div [@routerTransition]>
     <div class="wrapper">
+        <i class="layout-view dx-icon-{{layout == 'details' ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
         <dx-file-manager
+            [itemView]="{mode: layout}"
             [contextMenu]="contextMenu"
             [fileProvider]="fileProvider" 
             [customizeDetailColumns]="customizeDetailColumns"
