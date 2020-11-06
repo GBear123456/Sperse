@@ -211,7 +211,8 @@
         .content-view {
             width: 70%;
             iframe {
-                height: calc(100vh - 420px);
+                height: calc(100% - 70px);
+                border-bottom: 1px solid #ddd;
                 padding: 0 0 0 20px;
             }
         }
@@ -260,6 +261,12 @@
                         border: 1px dashed #dedede;
                         text-align: right;
                         float: right;
+                        i {
+                            font-size: 21px;
+                            display: inline-block;
+                            vertical-align: bottom;
+                            padding: 0 5px;
+                        }
                     }
                 }
                 .instant-attachments {
