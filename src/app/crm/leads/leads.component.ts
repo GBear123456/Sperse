@@ -9,7 +9,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, from, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, forkJoin, from, merge, Observable, of, ReplaySubject } from 'rxjs';
 import {
     filter,
     first,
@@ -22,10 +22,11 @@ import {
     switchMap,
     takeUntil,
     tap,
-    finalize
+    finalize,
+    distinctUntilChanged,
+    withLatestFrom
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-import invert from 'lodash/invert';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -63,7 +64,8 @@ import {
     LeadServiceProxy,
     OrganizationUnitDto,
     ContactServiceProxy,
-    UpdateLeadSourceContactsInput
+    UpdateLeadSourceContactsInput,
+    StageDto
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
@@ -115,6 +117,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { MessageService } from '@abp/message/message.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -159,6 +162,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
     }
     actionEvent: any;
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     actionMenuGroups: ActionMenuGroup[] = [
         {
             key: '',
@@ -235,12 +239,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 {
                     getText: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.contactGroupId.value);
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.selectedContactGroup);
                         return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
                     },
                     class: 'checklist',
                     checkVisible: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.contactGroupId.value);
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.selectedContactGroup);
                         return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
                     },
                     action: (data?) => {
@@ -269,32 +273,57 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         }
     ];
-    contactGroups = Object.keys(ContactGroup)
-        .filter((group: string) => this.permission.checkCGPermission(ContactGroup[group], ''))
-        .map((group: string) => ({
-            text: this.getUserGroup(group),
-            value: group
-        }));
-    private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
-    private readonly cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
-    selectedContactGroup = this._activatedRoute.snapshot.queryParams.contactGroup
-        || this.cacheService.get(this.cacheKey) || Object.keys(ContactGroup).shift();
-    contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject(ContactGroup[this.selectedContactGroup]);
-    contactGroupId$: Observable<ContactGroup> = this.contactGroupId.asObservable();
-    userGroupText$: Observable<string> = this.contactGroupId$.pipe(
-        map((contactGroupId: ContactGroup) => {
-            this.initAssignedUsersSelector();
-            return this.getUserGroup(invert(ContactGroup)[contactGroupId.toString()]).toLowerCase();
+    /** Get all leads pipelines */
+    pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
+        select(PipelinesStoreSelectors.getPipelines({
+            purpose: this.pipelinePurposeId
+        })),
+        map((pipelines: PipelineDto[]) => {
+            return pipelines.filter((pipeline: PipelineDto) => {
+                return this.permission.checkCGPermission(pipeline.contactGroupId, '');
+            });
         })
     );
+    pipelineTypes$: Observable<TypeItem[]> = this.pipelines$.pipe(
+        map((pipelines: PipelineDto[]) => {
+            return pipelines.map((pipeline: PipelineDto) => {
+                return {
+                    text: pipeline.name,
+                    value: pipeline.id
+                };
+            });
+        })
+    )
+    private readonly CONTACT_GROUP_CACHE_KEY = 'SELECTED_PIPELINE_ID';
+    private readonly cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
+    selectedPipelineId: ReplaySubject<number> = new ReplaySubject(1);
+    selectedPipelineId$: Observable<number> = this.selectedPipelineId.asObservable().pipe(
+        distinctUntilChanged()
+    );
+    selectedPipeline$: Observable<PipelineDto> = combineLatest(
+        this.pipelines$,
+        this.selectedPipelineId$
+    ).pipe(
+        map(([pipelines, pipelineId]: [PipelineDto[], number]) => {
+            return pipelines.find((pipeline: PipelineDto) => pipeline.id == pipelineId);
+        })
+    );
+    /** Get pipeline contactGroup @todo remove using of contact group in all places */
+    selectedContactGroup$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
+        map((pipeline: PipelineDto) => pipeline.contactGroupId)
+    );
+    selectedContactGroup: ContactGroup;
+    userGroupText$: Observable<string> = this.selectedPipeline$.pipe(
+        map((selectedPipeline: PipelineDto) => this.getUserGroup(selectedPipeline.name))
+    );
+    userGroupText: string;
 
     stages = [];
     pipelineDataSource: any;
     collection: any;
-    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
     manageDisabled = true;
-    manageCGPermision = '';
+    manageCGPermission = '';
     sliceStorageKey = 'CRM_Contacts_Slice_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
 
     filterModelLists: FilterModel;
@@ -318,6 +347,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         caption: 'states',
         items: {
             countryStates: new FilterStatesModel(this.filterStatesService)
+        }
+    });
+    pipelineFilter = new FilterModel({
+        hidden: true,
+        caption: 'pipelineId',
+        items: {
+            PipelineId: new FilterItemModel()
         }
     });
 
@@ -357,13 +393,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     formatting = AppConsts.formatting;
 
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
-    public headlineButtons: HeadlineButton[] = [
-        {
-            enabled: this.permission.checkCGPermission(ContactGroup.Client),
-            action: this.createLead.bind(this),
-            label: this.getHeadlineButtonName()
-        }
-    ];
+    public headlineButtons$: Observable<HeadlineButton[]> = this.selectedPipeline$.pipe(
+        map((selectedPipeline: PipelineDto) => {
+            return [
+                {
+                    enabled: this.permission.checkCGPermission(selectedPipeline.contactGroupId),
+                    action: this.createLead.bind(this),
+                    label: this.l('CreateNew') + ' ' + this.l('Pipeline_' + selectedPipeline.name + '_Single')
+                }
+            ]
+        })
+    );
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
@@ -375,8 +415,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                loadOptions,
-                { contactGroupId: this.contactGroupId.value.toString() },
+                loadOptions
             );
         },
         onChanged: () => {
@@ -504,8 +543,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
-                        this.dateField,
-                        { contactGroupId: this.contactGroupId.value.toString() }
+                        this.dateField
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -531,7 +569,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(this.contactGroupId.value, 'ViewCommunicationHistory.SendSMSAndEmail');
+    isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(
+        this.selectedContactGroup,
+        'ViewCommunicationHistory.SendSMSAndEmail'
+    );
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     pipelineSelectFields: string[] = [
         this.leadFields.Id,
@@ -551,7 +592,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
-    assignedUsersSelector;
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
@@ -559,6 +599,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     isBankCodeLayoutType: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     hasBulkPermission: boolean = this.permission.isGranted(AppPermissions.CRMBulkUpdates);
+    assignedUsersSelector$: any = this.selectedContactGroup$.pipe(
+        map((selectedContactGroup: ContactGroup) => {
+            return select(
+                ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+                { contactGroup: selectedContactGroup }
+            );
+        })
+    );
 
     constructor(
         injector: Injector,
@@ -586,73 +634,69 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         public appService: AppService
     ) {
         super(injector);
-        this.contactGroupOptionInit();
+        this.setInitialPipelineId();
+        this.listenAndUpdateContactGroup();
         this.crmService.updateDateFilter(this._activatedRoute.snapshot.queryParams, this.filterDate);
         this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
-        this.odataRequestValues$ = concat(
-            this.oDataService.getODataFilter(
-                [this.filterDate, this.filterCountryStates],
-                this.filtersService.getCheckCustom
-            ).pipe(first()),
-            this.filterChanged$.pipe(
-                switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
-            )
-        ).pipe(
-            filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
-        );
-        this.dataSource = {
-            uri: this.dataSourceURI,
-            requireTotalCount: true,
-            store: {
-                key: this.leadFields.Id,
-                type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    request.params.contactGroupId = this.contactGroupId.value;
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.params.$select = DataGridService.getSelectFields(
-                        this.dataGrid,
-                        [
-                            this.leadFields.Id,
-                            this.leadFields.CustomerId,
-                            this.leadFields.OrganizationId,
-                            this.leadFields.UserId,
-                            this.leadFields.Email,
-                            this.leadFields.Phone,
-                            this.leadFields.StageChecklistPointDoneCount,
-                            this.leadFields.AffiliateContactName,
-                            this.leadFields.AffiliateContactAffiliateCode
-                        ]
-                    );
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
-                deserializeDates: false
-            }
-        };
-        this.totalDataSource = new DataSource({
-            paginate: false,
-            store: new ODataStore({
-                version: AppConsts.ODataVersion,
-                beforeSend: (request) => {
-                    this.totalCount = undefined;
-                    request.params.contactGroupId = this.contactGroupId.value;
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
-                onLoaded: (count: any) => {
-                    this.totalCount = count;
+        this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
+            this.pipelineFilter.items.PipelineId.value = selectedPipelineId;
+
+            this.dataSource = {
+                uri: this.dataSourceURI,
+                requireTotalCount: true,
+                store: {
+                    key: this.leadFields.Id,
+                    type: 'odata',
+                    url: this.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.$select = DataGridService.getSelectFields(
+                            this.dataGrid,
+                            [
+                                this.leadFields.Id,
+                                this.leadFields.CustomerId,
+                                this.leadFields.OrganizationId,
+                                this.leadFields.UserId,
+                                this.leadFields.Email,
+                                this.leadFields.Phone,
+                                this.leadFields.StageChecklistPointDoneCount,
+                                this.leadFields.AffiliateContactName,
+                                this.leadFields.AffiliateContactAffiliateCode
+                            ]
+                        );
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    deserializeDates: false
                 }
-            })
-        });
-        if (this.userManagementService.checkBankCodeFeature()) {
-            this.pivotGridDataSource.fields.unshift({
-                area: 'filter',
-                dataField: 'BankCode'
+            };
+            this.totalDataSource = new DataSource({
+                paginate: false,
+                store: new ODataStore({
+                    version: AppConsts.ODataVersion,
+                    beforeSend: (request) => {
+                        this.totalCount = undefined;
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    },
+                    onLoaded: (count: any) => {
+                        this.totalCount = count;
+                    }
+                })
             });
-            this.pipelineSelectFields.push('BankCode');
-        }
-        this.initAssignedUsersSelector();
+            this.odataRequestValues$ = concat(
+                this.oDataService.getODataFilter(
+                    [this.filterDate, this.filterCountryStates, this.pipelineFilter],
+                    this.filtersService.getCheckCustom
+                ).pipe(first()),
+                this.filterChanged$.pipe(
+                    switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
+                )
+            ).pipe(
+                filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
+            );
+        });
+        this.addBankCodeField();
     }
 
     ngOnInit() {
@@ -666,24 +710,71 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.handleModuleChange();
         this.activate();
         this.handleFiltersPining();
+        this.handleUserGroupTextUpdate()
     }
 
     ngAfterViewInit() {
-        this.initDataSource();
+        this.selectedPipelineId$.pipe(first()).subscribe(() => {
+            this.initDataSource();
+        });
+    }
+
+    private handleUserGroupTextUpdate() {
+        this.userGroupText$.pipe(takeUntil(this.lifeCycleSubjectsService.destroy$))
+            .subscribe((userGroupText: string) => {
+                 this.userGroupText = userGroupText;
+            });
+    }
+
+    private setInitialPipelineId() {
+        /** Get initial opened pipeline from queryParams or cache */
+        let pipelineId = this._activatedRoute.snapshot.queryParams.pipelineId || this.cacheService.get(this.cacheKey);
+        if (pipelineId) {
+            this.selectedPipelineId.next(+pipelineId);
+        } else {
+            /** If there is no pipelineId - then get the first pipeline */
+            this.pipelines$.subscribe((pipelines: PipelineDto[]) => {
+                let pipelineId = pipelines[0].id;
+                /** If there is contactGroup in query params - then find first pipeline with
+                 *  that contactGroup and set its id, else set first pipeline id */
+                const contactGroup = this._activatedRoute.snapshot.queryParams.contactGroup;
+                if (contactGroup) {
+                    const pipeline = pipelines.find((pipeline: PipelineDto) => {
+                        return pipeline.contactGroupId === ContactGroup[contactGroup];
+                    });
+                    if (pipeline) {
+                        pipelineId = pipeline.id;
+                    }
+                }
+                this.selectedPipelineId.next(pipelineId);
+            });
+        }
+    }
+
+    private listenAndUpdateContactGroup() {
+        this.selectedContactGroup$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe((selectedContactGroup: ContactGroup) => {
+            this.selectedContactGroup = selectedContactGroup;
+        });
+    }
+
+    private addBankCodeField() {
+        if (this.userManagementService.checkBankCodeFeature()) {
+            this.pivotGridDataSource.fields.unshift({
+                area: 'filter',
+                dataField: 'BankCode'
+            });
+            this.pipelineSelectFields.push('BankCode');
+        }
     }
 
     private getInitialFilter() {
         return [
             this.filterDate.getODataFilterObject(),
-            this.filtersService.getCheckCustom(this.filterCountryStates)
+            this.filtersService.getCheckCustom(this.filterCountryStates),
+            this.pipelineFilter.getODataFilterObject()
         ];
-    }
-
-    private initAssignedUsersSelector() {
-        this.assignedUsersSelector = select(
-            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
-            { contactGroup: this.contactGroupId.value }
-        );
     }
 
     private handleFiltersPining() {
@@ -711,8 +802,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private handleTotalCountUpdate() {
         combineLatest(
             this.odataRequestValues$,
-            this.refresh$,
-            this.contactGroupId$
+            this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe(([odataRequestValues, ]) => {
@@ -759,8 +849,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField,
-                { contactGroupId: this.contactGroupId.value.toString() }
+                this.dateField
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -835,10 +924,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private handleContactGroupParam() {
         this.queryParams$.pipe(
             pluck('contactGroup'),
-            filter((contactGroup: string) => contactGroup && this.selectedContactGroup !== contactGroup)
-        ).subscribe((contactGroup: string) => {
-            this.selectedContactGroup = contactGroup;
-            this.contactGroupId.next(ContactGroup[this.selectedContactGroup]);
+            filter((contactGroup: string) => contactGroup && this.selectedContactGroup !== contactGroup),
+            withLatestFrom(this.pipelines$)
+        ).subscribe(([contactGroup, pipelines]: [string, PipelineDto[]]) => {
+            /** If contact group is in query params - then update pipelineId with the
+             *  first pipeline that has that contact group
+             *  @todo remove using of contact group in future */
+            const pipeline: PipelineDto = pipelines.find((pipeline: PipelineDto) => {
+                return pipeline.contactGroupId === ContactGroup[contactGroup];
+            });
+            if (pipeline) {
+                this.selectedPipelineId.next(pipeline.id);
+            }
         });
     }
 
@@ -852,7 +949,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         queryDataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType == DataLayoutType.DataGrid),
-            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId.value))
+            withLatestFrom(this.selectedPipelineId$),
+            switchMap(([dataLayoutType, selectedPipelineId]: [DataLayoutType, number]) => {
+                return this.pipelineService.getPipelineDefinitionObservable(
+                    this.pipelinePurposeId, this.selectedContactGroup, selectedPipelineId
+                );
+            })
         ).subscribe((pipelineDefinition: PipelineDto) => {
             this.onStagesLoaded(pipelineDefinition);
         });
@@ -879,7 +981,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
             this.odataRequestValues$,
-            this.contactGroupId$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -900,13 +1001,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Map),
             this.selectedMapArea$
         ).pipe(
-            map(([[oDataRequestValues, contactGroupId, ], mapArea]: [[ODataRequestValues, ContactGroup, null], MapArea]) => {
+            map(([[oDataRequestValues, pipelineId, ], mapArea]: [[ODataRequestValues, number, null], MapArea]) => {
                 return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
                     oDataRequestValues,
                     mapArea,
-                    this.dateField,
-                    { contactGroupId: contactGroupId.toString() }
+                    this.dateField
                 );
             }),
             filter((mapUrl: string) => {
@@ -954,12 +1054,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return this.dataLayoutType.value === DataLayoutType.Map;
     }
 
-    private getContactGroup(contactGroupId: string = this.contactGroupId.value.toString()): string {
-        return invert(ContactGroup)[contactGroupId];
-    }
-
-    private getUserGroup(contactGroup: string): string {
-        return this.l('ContactGroup_' + contactGroup);
+    private getUserGroup(pipelineName: string): string {
+        return this.l('Pipeline_' + pipelineName + '_Plural');
     }
 
     getOrganizationUnitName = (e) => {
@@ -971,15 +1067,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.filtersService.fixed = false;
         this.filtersService.disable();
         this.initToolbarConfig();
-    }
-
-    contactGroupOptionInit() {
-        this.headlineButtons[0].label = this.getHeadlineButtonName();
-        this.createButtonEnabledSet();
-    }
-
-    private createButtonEnabledSet() {
-        this.headlineButtons[0].enabled = this.permission.checkCGPermission(this.contactGroupId.value);
     }
 
     onContentReady(event) {
@@ -1032,6 +1119,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.filtersService.checkIfAnySelected();
         } else {
             this.filtersService.setup(this.filters = [
+                this.pipelineFilter,
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'startswith',
@@ -1082,10 +1170,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(
-                                    select(PipelinesStoreSelectors.getPipelineTreeSource(
-                                        { purpose: this.pipelinePurposeId })
-                                    )
+                                dataSource$: this.selectedPipelineId$.pipe(
+                                    switchMap((selectedPipelineId: number) => {
+                                        return this.store$.pipe(
+                                            select(PipelinesStoreSelectors.getPipelineTreeSource(
+                                                { id: selectedPipelineId }
+                                            ))
+                                        );
+                                    })
                                 ),
                                 nameField: 'name',
                                 keyExpr: 'id'
@@ -1138,7 +1230,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(this.assignedUsersSelector),
+                                dataSource$: this.assignedUsersSelector$.pipe(
+                                    switchMap((assignedUsersSelector: any) => this.store$.pipe(assignedUsersSelector))
+                                ),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -1231,8 +1325,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.permission.checkCGPermission(this.contactGroupId.value);
-        this.manageCGPermision = this.permission.getCGPermissionKey(this.contactGroupId.value, 'Manage');
+        this.manageDisabled = !this.permission.checkCGPermission(this.selectedContactGroup);
+        this.manageCGPermission = this.permission.getCGPermissionKey(this.selectedContactGroup, 'Manage');
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -1282,7 +1376,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -1312,7 +1406,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
                     {
                         name: 'lists',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -1320,7 +1414,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -1328,7 +1422,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -1336,7 +1430,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId.value, ''),
+                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -1351,7 +1445,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedLeads.length || !this.permission.checkCGPermission(this.contactGroupId.value),
+                        disabled: !this.selectedLeads.length || !this.permission.checkCGPermission(this.selectedContactGroup),
                         options: {
                             items: [
                                 {
@@ -1363,7 +1457,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedLeads.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedLeads[0], this.selectedLeads[1], false, true, () => this.refresh(), true);
+                                        this.contactService.mergeContact(
+                                            this.selectedLeads[0],
+                                            this.selectedLeads[1],
+                                            false,
+                                            true,
+                                            () => this.refresh(),
+                                            true
+                                        );
                                     }
                                 }
                             ]
@@ -1408,14 +1509,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     text: this.l('RP Email'),
                                     disabled: this.selectedClientKeys.length < 1,
-                                    visible: this.appSession.isPerformancePartnerTenant && ContactGroup[this.selectedContactGroup] == ContactGroup.Partner,
+                                    visible: this.appSession.isPerformancePartnerTenant && this.selectedContactGroup == ContactGroup.Partner,
                                     action: () => {
                                         this.message.confirm('', this.l('ReferralPartnersSendEmailConfirmation', this.selectedClientKeys.length), (res) => {
                                             if (res) {
-                                                abp.ui.setBusy();
+                                                this.loadingService.startLoading();
                                                 this.contactProxy
                                                     .sendReferralPartnersEmail(this.selectedClientKeys)
-                                                    .pipe(finalize(() => abp.ui.clearBusy()))
+                                                    .pipe(finalize(() => this.loadingService.finishLoading()))
                                                     .subscribe();
                                             }
                                         });
@@ -1473,7 +1574,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                                 this.exportService.getFileName(
                                                     null,
                                                     'PivotGrid',
-                                                    this.getUserGroup(this.getContactGroup())
+                                                    this.userGroupText
                                                 )
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
@@ -1481,7 +1582,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                             return this.exportToXLS(
                                                 options,
                                                 null,
-                                                this.getUserGroup(this.getContactGroup())
+                                                this.userGroupText
                                             );
                                         }
                                     }),
@@ -1493,7 +1594,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToCSV(
                                         options,
                                         null,
-                                        this.getUserGroup(this.getContactGroup())
+                                        this.userGroupText
                                     )),
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet',
@@ -1503,7 +1604,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     action: this.exportData.bind(this, options => this.exportToGoogleSheet(
                                         options,
                                         null,
-                                        this.getUserGroup(this.getContactGroup())
+                                        this.userGroupText
                                     )),
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet',
@@ -1582,9 +1683,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private exportToImage(format: ImageFormat) {
         if (this.showChart) {
-            this.chartComponent.exportTo(format, this.getUserGroup(this.getContactGroup()));
+            this.chartComponent.exportTo(format, this.userGroupText);
         } else if (this.showMap) {
-            this.mapComponent.exportTo(format, this.getUserGroup(this.getContactGroup()));
+            this.mapComponent.exportTo(format, this.userGroupText);
         }
     }
 
@@ -1710,7 +1811,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             data: {
                 refreshParent: () => this.refresh(),
                 isInLeadMode: true,
-                customerType: ContactGroup[this.selectedContactGroup]
+                customerType: this.selectedContactGroup,
+                /** @todo add leadType to check how to show dialog */
             }
         });
     }
@@ -1719,17 +1821,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.selectedLeads = $event.component.getSelectedRowsData();
     }
 
-    onStagesLoaded($event) {
-        let pipeline = this.pipelineService.getPipeline(
-            this.pipelinePurposeId, this.contactGroupId.value);
-        this.stages = $event.stages.map((stage) => {
+    onStagesLoaded(pipeline: PipelineDto) {
+        this.stages = pipeline.stages.map((stage: StageDto) => {
             return {
                 id: pipeline.id + ':' + stage.id,
                 index: stage.sortOrder,
                 name: stage.name
             };
         });
-
         this.initToolbarConfig();
     }
 
@@ -1740,7 +1839,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.pipelinePurposeId,
                 this.selectedLeads,
                 $event.name,
-                this.contactGroupId.value
+                this.selectedContactGroup
             ).subscribe(declinedList => {
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
@@ -1924,28 +2023,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.actionEvent = null;
     }
 
-    getHeadlineButtonName(contactGroup?: string) {
-        return this.l('CreateNew') + ' ' +
-            this.getUserGroup(contactGroup ? contactGroup : this.selectedContactGroup).slice(0, -1);
-    }
-
-    onContactGroupChanged(event) {
+    onSelectedPipelineChanged(event) {
         if (event.previousValue != event.value) {
+            this.selectedPipelineId.next(event.value);
             this.filterModelStages.clearFilterItems();
             this.filterModelStages.isSelected = false;
-
-            this._router.navigate([], {
-                queryParamsHandling: 'merge',
-                relativeTo: this._activatedRoute,
-                queryParams: {
-                    contactGroup: event.value,
-                    dataLayoutType: this.dataLayoutType.value
-                }
-            });
-
-            this.headlineButtons[0].label = this.getHeadlineButtonName(event.value);
+            this.pipelineFilter.items.PipelineId.value = +event.value;
             this.cacheService.set(this.cacheKey, event.value);
-            this.createButtonEnabledSet();
             this.initToolbarConfig();
         }
     }
@@ -2004,8 +2088,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             closeOnNavigation: true,
             data: {
                 entity: lead,
-                pipelinePurposeId: this.pipelinePurposeId,
-                contactGroupId: this.contactGroupId
+                pipelinePurposeId: this.pipelinePurposeId
             }
         });
     }

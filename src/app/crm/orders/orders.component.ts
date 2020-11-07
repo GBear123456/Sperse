@@ -1732,8 +1732,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             closeOnNavigation: true,
             data: {
                 entity: entity,
-                pipelinePurposeId: this.pipelinePurposeId,
-                contactGroupId: entity.contactGroupId
+                pipelinePurposeId: this.pipelinePurposeId
             }
         });
     }

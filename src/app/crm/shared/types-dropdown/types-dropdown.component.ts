@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
 
 @Component({
     selector: 'types-dropdown',
@@ -6,7 +7,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     styleUrls: ['./types-dropdown.component.less']
 })
 export class TypesDropdownComponent {
-    @Input() items;
+    @Input() items: TypeItem[];
     @Input() totalCount: number;
     @Input() value;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();

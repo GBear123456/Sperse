@@ -1,5 +1,5 @@
 <div [@routerTransition]>
-    <app-headline [buttons]="headlineButtons"
+    <app-headline [buttons]="headlineButtons$ | async"
                   [showCompactView]="showCompactView$ | async"
                   [showToggleCompactViewButton]="showPipeline || showDataGrid"
                   [showReloadButton]="ui.showReload"
@@ -11,10 +11,10 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <types-dropdown [items]="contactGroups"
+        <types-dropdown [items]="pipelineTypes$ | async"
                         [totalCount]="totalCount"
-                        [value]="selectedContactGroup"
-                        (onValueChanged)="onContactGroupChanged($event)">
+                        [value]="selectedPipelineId$ | async"
+                        (onValueChanged)="onSelectedPipelineChanged($event)">
         </types-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>
@@ -56,24 +56,24 @@
         <tags-list [selectedKeys]="selectedClientKeys"
                    [bulkUpdateMode]="true"
                    [filterModel]="filterModelTags"
-                   [managePermission]="manageCGPermision">
+                   [managePermission]="manageCGPermission">
         </tags-list>
         <lists-list [selectedKeys]="selectedClientKeys"
                     [bulkUpdateMode]="true"
                     [filterModel]="filterModelLists"
-                    [managePermission]="manageCGPermision">
+                    [managePermission]="manageCGPermission">
         </lists-list>
         <user-assignment-list [selectedKeys]="selectedClientKeys"
             [bulkUpdateMode]="true"
             [filterModel]="filterModelAssignment"
             [proxyService]="contactProxy"
             [permissionKey]="permissions.CRMCustomersManageAssignments"
-            [assignedUsersSelector]="assignedUsersSelector">
+            [assignedUsersSelector]="assignedUsersSelector$ | async">
         </user-assignment-list>
         <rating [selectedKeys]="selectedClientKeys"
                 [bulkUpdateMode]="true"
                 [filterModel]="filterModelRating"
-                [managePermission]="manageCGPermision">
+                [managePermission]="manageCGPermission">
         </rating>
         <crm-stars-list [selectedKeys]="selectedClientKeys"
                         [bulkUpdateMode]="true"
@@ -330,6 +330,7 @@
                     <app-pipeline
                             totalsURI="LeadCount"
                             dragulaName="leadStages"
+                            [pipelineId]="selectedPipelineId$ | async"
                             [dataSource]="pipelineDataSource"
                             [selectFields]="pipelineSelectFields"
                             [pipelinePurposeId]="pipelinePurposeId"
@@ -337,7 +338,7 @@
                             [(selectedEntities)]="selectedLeads"
                             dateField="LeadDate"
                             [actionMenuGroups]="actionMenuGroups"
-                            [contactGroupId]="contactGroupId.value"
+                            [contactGroupId]="selectedContactGroup$ | async"
                             [moveDisabled]="manageDisabled"
                             (onEntityStageChanged)="onLeadStageChanged($event)"
                             (onStagesLoaded)="onStagesLoaded($event)"
@@ -357,8 +358,8 @@
             <slice-chart [width]="contentWidth$ | async"
                          [height]="contentHeight$ | async"
                          [infoItems]="chartInfoItems"
-                         [itemsName]="l('ContactGroup_' + selectedContactGroup)"
-                         [title]="l('ContactGroup_' + selectedContactGroup) + ' number'"
+                         [itemsName]="userGroupText"
+                         [title]="userGroupText + ' number'"
                          argumentField="creationDate"
                          valueField="count">
             </slice-chart>
@@ -367,7 +368,7 @@
             <slice-info [items]="mapInfoItems$ | async"></slice-info>
             <slice-map [width]="contentWidth$ | async"
                        [height]="mapHeight$ | async"
-                       [contactGroupText]="userGroupText$ | async"
+                       [contactGroupText]="userGroupText"
                        [dataIsLoading]="mapDataIsLoading"
                        [data]="mapData$ | async"
                        (onMapItemClick)="mapItemClick($event)">
